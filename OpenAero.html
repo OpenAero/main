@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<!--
+  This file is part of OpenAero.
+
+  OpenAero is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  OpenAero is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with OpenAero.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<html>
+  <head>
+  <title>OpenAero</title>
+    <link rel="stylesheet" href="OpenAero.css">
+    <script src="config.js" type="text/javascript"></script>
+    <script src="logo.js" type="text/javascript"></script>
+    <script src="figures.js" type="text/javascript"></script>
+    <script src="allowed.js" type="text/javascript"></script>
+    <script src="OpenAero.js" type="text/javascript"></script>
+  </head>
+<body onLoad="doOnLoad();">
+<div id=topBlock>
+  <div id="openAeroLogo">OpenAero</div>
+  <div id=mainMenu>
+    <ul id="menu">
+      <li><a href='#'>File</a>
+      <ul>
+	<li><div class=openSequence><a href=#>Open sequence</a><input type=file id=file size=1  onChange="openSequence();"><div></li>
+	<li><a href="#" onClick="saveSequence();">Save sequence</a></li>
+	<li><a href="#" onClick="saveSvg();">Save as image</a></li>
+	<li><a href="#" onClick="printAllForms();">Print forms</a></li>
+      </ul>
+      <li><a href="#">View</a>
+      <ul>
+	<li><a href=# onClick="selectForm('A');">Form A</a></li>
+	<li><a href=# onClick="selectForm('B');">Form B</a></li>
+	<li><a href=# onClick="selectForm('C');">Form C</a></li>
+      </ul>
+      <li><a href="#">Help</a>
+      <ul>
+	<li><a href=# onClick="window.open('language.html', 'OpenAero language', 'menubar=no, scrollbars=yes, status=no, toolbar=no, top=30px, width=900px');">OpenAero language</a></li>
+	<li><a href=# onClick="window.open('opensave.html', 'OpenAero opening and saving sequences', 'menubar=no, scrollbars=yes, status=no, toolbar=no, top=30px, width=900px');">Opening/saving files</a></li>
+	<li><a href=# onClick="window.open('arestisystem.html', 'The Aresti aerocryptographic system', 'menubar=no, scrollbars=yes, status=no, toolbar=no, top=30px, width=900px');">Aresti system</a></li>
+      </ul>
+    </ul>
+  </div>
+  <form name=action action="#" method="POST">
+  <input type=text name=sequence_text id=sequence_text style="width:100%;" onKeyUp="checkSequenceChanged()">
+  </form>
+</div>
+<div id=leftBlock>
+  <div id=sequenceInfo>
+    <div class="sectionLabel">Sequence&nbsp;info</div><div class="sectionLabelClose">&nbsp;</div>
+    <div class=item><div class="label">Pilot</div><input type=text name=pilot id=pilot onChange="changeTitle()"></div>
+    <div class=item><div class="label">Aircraft</div><input type=text name=aircraft id=aircraft></div>
+    <div class=item><div class="label">Location</div><input type=text name=location id=location onChange="changeTitle()"></div>
+    <div class=item><div class="label">Date</div><input type=text name=date id=date onChange="changeTitle()"></div>
+    <div class="item combo"><div class="label">Rules</div><input type=text name=rules id=rules><ul id=rulesList></ul></div>
+    <div class="item combo"><div class="label">Category</div><input type=text name=category id=category><ul id=categoryList></ul></div>
+    <div class="item combo"><div class="label">Program</div><input type=text name=program id=program><ul id=programList></ul></div>
+    <div class=item><div class="label">Positioning</div><input type=text name=positioning id=positioning></div>
+    <div class=item><div class="label">Logo<div id=removeLogo></div><input type=hidden id=logo></div><div id=activeLogo><a href="#" onClick="logoChooser()">Choose logo</a></div>
+    </div>
+    <div class=item><div class="label">Notes</div><textarea name=notes id=notes></textarea></div>
+  </div>
+  <div id=alerts>
+    <div class="sectionLabel">Alerts</div><div class="sectionLabelClose">&nbsp;</div>
+  </div>
+</div>
+<div id="svgContainer">
+</div>
+<div id="saveFileFormDiv">
+  <form action="download.php" method="post" id="saveFileForm">
+    <input type="hidden" name="name" />
+    <input type="hidden" name="data" />
+    <input type="hidden" name="format" />
+  </form>
+</div>
+</body>
+</html>

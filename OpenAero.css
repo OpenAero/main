@@ -1,0 +1,244 @@
+/* OpenAero.css file
+
+// This file is part of OpenAero.
+
+//  OpenAero is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+
+//  OpenAero is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
+
+//  You should have received a copy of the GNU General Public License
+//  along with OpenAero.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+body {
+  padding: 0px;
+}
+a {
+  color: blue;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+#svgContainer {
+  margin-top: 60px;
+  margin-left: 205px;
+/*  width:1000px;
+  height:1000px;*/
+  background-color:#ffffff;
+}
+#topBlock {
+  position: fixed;
+  background: #f0f0f0;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 50px;
+  padding: 0 4px 4px 4px;
+  z-index: 10;
+}
+#leftBlock {
+  position: fixed;
+  background: #f0f0f0;
+  top: 50px;
+  left: 0px;
+  width: 200px;
+  min-height: 800px;
+  padding: 4px;
+  z-index: 1;
+}
+#openAeroLogo {
+  float:left;
+  color: white;
+  font-weight: bold;
+  font-size: 14px;
+  border-right: 1px solid #888;
+  border-bottom: 1px solid #888;
+  border-radius: 3px;
+  background: #ff6030;
+  padding: 3px;
+  margin-right: 3px;
+}
+#mainMenu {
+  width: 960px;
+  background: #f0f0f0;
+  height: 25px;
+  font-size: 14px;
+}
+#sequenceInfo {
+  border: 1px solid #888;
+  font-size: 12px;
+  margin-top: 10px;
+}
+#alerts {
+  border: 1px solid #888;
+  font-size: 12px;
+  color: #d22;
+  margin-top: 10px;
+}
+.sectionLabel {
+  float: left;
+  font-size: 14px;
+  font-weight: bold;
+  color: #000;
+  letter-spacing: 2px;
+  margin-top: -10px;
+  margin-left: 10px;
+  background: #f0f0f0;
+}
+.sectionLabelClose {
+  float:left;
+}
+.item {
+  clear: both;
+  margin: 2px;
+}
+.label {
+  float: left;
+}
+#sequenceInfo input {
+  float: right;
+  width: 120px;
+  font-size: 12px;
+  border: 1px solid black;
+}
+#sequenceInfo textarea {
+  width: 188px;
+  font-size: 12px;
+  border: 1px solid black;
+}
+#activeLogo {
+  float: right;
+  font-size: 12px;
+}
+#sequenceInfo file {
+  float: right;
+  width: 120px;
+  font-size: 12px;
+  border: 1px solid black;
+}
+#mainMenu ul {
+  float: left;
+}
+.openSequence {
+  position: relative;
+}
+#mainMenu input {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  font-size: 14px;
+  width: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+#sequence_text {
+  font-family: monospace;
+  font-size: 12px;
+  letter-spacing: 1px;
+  padding: 2px;
+}
+#chooseLogo svg {
+  margin: 10px 10px 0 0;
+}
+/*alertBox styling*/
+#alertBox {
+  position: absolute;
+  z-index: 999;
+  top: 40%;
+  left: 20%;
+  width: 60%;
+  background: #eee;
+  border: 2px solid #888;
+  border-radius: 5px;
+}
+#alertBox div {
+  margin: 5px;
+  padding: 2px;
+}
+#alertBox #close {
+  float: right;
+  border: 1px solid #000;
+  border-radius: 2px;
+  text-decoration: none;
+}
+#alertBox #close:hover {
+  background: #fff;
+  text-decoration: none;
+}
+#saveFileFormDiv {
+  width:1px;
+  height:1px;
+  border:0px;
+  display:none;
+}
+/*MENU DROPDOWN FUNCTIONALITY*/
+/*set up ul tags*/ 
+#menu, #menu ul{ padding:0; margin:0}
+/*set up a tags*/ 
+#menu a{display:block;}
+/*position level 1 links horizontally*/ 
+#menu li{display:block; float:left;}
+/*undo previous style for level 2 links*/
+#menu li ul li{float:none;}
+/*position level 2 links vertically and hide*/ 
+#menu li ul{display:none; position:absolute; z-index:10; -webkit-transform-style: preserve-3d; margin-top: -2px; border-right: 1px solid #aaa; border-bottom: 1px solid #aaa}
+/*unhide level 2 links on li:hover from level 1*/ 
+#menu li:hover ul{display:block;}
+
+/*DROPDOWN STYLING:*/
+#menu {
+  height:25px
+}
+#menu a {
+  color:#00f;
+  text-decoration: none;
+  padding:5px 10px 5px 10px;
+ }
+#menu a:hover {
+  color:#03f;
+}
+#menu li {
+  background-color:#FFF;
+/*  border:solid 1px #CCC; */
+  margin-left:-1px
+}
+#menu li:hover {
+  background-color:#ddf;
+}
+/*Combo input box*/
+.combo {
+  position:relative;
+}
+.combo * {
+  padding:0;
+  margin:0;
+}
+.combo input {
+  width:120px;
+  background-color:#ffc;
+  height:1.5em;
+  z-index:0;
+}
+.combo ul {
+  padding:1px;
+  border:2px solid #ccc;
+  width: 89px;
+  background-color:#ffc;
+  position:absolute;
+  right:3px;
+  top:1.5em;
+  display:none;
+  z-index:1;
+}
+.combo li {
+  display:block;
+  width: 100%;
+  cursor: pointer;
+}
