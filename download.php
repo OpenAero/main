@@ -1,4 +1,7 @@
 <?php
+// download.php
+// Allows saving of files from OpenAero when running on a server (local or online)
+
 // TO DO: add code to prevent unauthorised use
 
 // Check if all data is present
@@ -17,6 +20,7 @@ $filename = preg_replace('/[^a-z0-9\-\_\.]/i','',$_POST['name']);
 header("Cache-Control: ");
 header("Content-type: ".$_POST['format']);
 header('Content-Disposition: attachment; filename="'.$filename.'"');
-	 
+
+// Create file output 
 echo $_POST['data'];
 ?>

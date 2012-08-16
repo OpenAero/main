@@ -1,4 +1,4 @@
-// OpenAero.js 0.9.2
+// OpenAero.js 0.9.3
 // This file is part of OpenAero.
 
 //  OpenAero is free software: you can redistribute it and/or modify
@@ -64,10 +64,17 @@ var connectors = 0
 var PI2 = Math.PI * 2
 // logoImg holds the active logo image
 var logoImg = false
-// openWindow holds the new window handle that may be necessary when saving files
+// openWindow holds the new window handle that may be necessary when saving files on other browsers than Firefox
 var openWindow = ''
 // seqCheckAvail indicates if sequence checking is available for a rule/cat/seq combination
 var seqCheckAvail = new Array()
+// variables used for checking sequence validity
+var checkAllowRegex = []
+var checkAllowCatId = []
+var checkCatGroup = []
+var checkFigGroup = []
+var checkConv = []
+var checkRule = []
 // figPattern is the complete pattern for each figure
   var figPattern = new Array()
 // figBase is the pattern for each figure as it's written in the sequence, with + and - but without any rolls
@@ -999,6 +1006,10 @@ function changeCombo(id) {
     changeTitle();
   }
   if (id == 'program') {
+    var ruleName = document.getElementById('rules').value
+    var categoryName = document.getElementById('category').value
+    var programName = document.getElementById('program').value
+    if (seqCheckAvail[ruleName][categoryName][programName]) loadRules(ruleName, categoryName, programName)
     changeTitle()
   }
 
@@ -1228,51 +1239,117 @@ function parseRulesFile() {
 function loadRules(ruleName, catName, seqName) {
 // Set parseSection to true to match the global rules
   var parseSection = true
+  var ruleSection = '[' + ruleName + ' ' + catName + ' ' + seqName + ']'
+// First clear the arrays
+  checkAllowRegex = []
+  checkAllowCatId = []
+  checkCatGroup = []
+  checkFigGroup = []
+  checkConv = []
+  checkRule = []
 // Walk through the rules
   for (var i=0; i<rules.length; i++) {
 // Check for [section] or (section) to match sequence type specific rules
     if ((rules[i].charAt(0) == '[') || (rules[i].charAt(0) == '(')) {
-      if (rules[i] == ('['+ruleName+' '+catName+' '+seqName+']')) {
+      if (rules[i] == ruleSection) {
 	parseSection = true;
       } else {
 	parseSection = false;
       }
     } else if (parseSection) {
 // when parseSection = true, continue
+// First we remove any spaces around '=', this makes parsing easier
+      rules[i] = rules[i].replace(/ *= */g, '=')
+// We also remove spaces around : or ; except when it is a 'why-' line
+      if (!rules[i].match(/^why-.+/)) {
+	rules[i] = rules[i].replace(/ *: */g, ':')
+	rules[i] = rules[i].replace(/ *; */g, ';')
+      }
       if (rules[i].match(/^more=/)) {
-	var subRuleName = rules[i].replace('more=', '')
+// Apply 'more' rules
+	var subRuleRegex = RegExp('^[\\\[\\\(]'+rules[i].replace('more=', '')+'[\\\]\\\)]')
 	for (var j=(i+1); j<rules.length; j++) {
-	  if (rules[i].match(regExp('^[\[\(]'+subRuleName+'[\]\)]'))) break;
+	  if (rules[j].match(subRuleRegex)) break;
 	}
 	i = j
       } else if (rules[i].match(/^group-/)) {
+// Apply 'group' rules
 	var newGroup = rules[i].replace(/^group-/, '').split('=')
 	checkCatGroup[newGroup[0]] = new Array()
 	checkCatGroup[newGroup[0]]['regex'] = newGroup[1]
       } else if (rules[i].match(/^Group-/)) {
+// Apply 'Group' rules
 	var newGroup = rules[i].replace(/^Group-/, '').split('=')
 	checkFigGroup[newGroup[0]] = new Array()
 	checkFigGroup[newGroup[0]]['regex'] = newGroup[1]
       } else if (rules[i].match(/^allow=/)) {
+// Apply 'allow' rules
 	var newCatLine = rules[i].replace(/^allow=/, '')
 	var newCat = newCatLine.match(/^[^\s]*/g)
 	var newRules = newCatLine.replace(newCat, '').split(';')
-	for (j = 0; j<newRules.length; j++) {
+	for (var j = 0; j<newRules.length; j++) {
 	  newRules[j] = newRules[j].replace(/^\s+|\s+$/g, '')
 	}
-        allowRegex.push = {'regex':newCat, 'rules':newRules}
-      } else if (rules[i].match(/[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/)) {
+        checkAllowRegex.push = {'regex':newCat, 'rules':newRules}
+      } else if (rules[i].match(/^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/)) {
+// Apply figure number rules
 	var newCatLine = rules[i]
 	var newCat = newCatLine.match(/^[^\s]*/g)
 	var newRules = newCatLine.replace(newCat, '').split(';')
-	for (j = 0; j<newRules.length; j++) {
+	for (var j = 0; j<newRules.length; j++) {
 	  newRules[j] = newRules[j].replace(/^\s+|\s+$/g, '')
 	}
-        allowCatId.push = {'id':newCat, 'rules':newRules}
+        checkAllowCatId.push = {'id':newCat, 'rules':newRules}
+      } else if (rules[i].match(/[^-]+-min=\d+$/)) {
+// Apply [group]-min rules
+	var group = rules[i].replace(/-min/, '').split('=')
+	if (checkCatGroup[group[0]]) checkCatGroup[group[0]]['min'] = group[1];
+	if (checkFigGroup[group[0]]) checkFigGroup[group[0]]['min'] = group[1];
+      } else if (rules[i].match(/[^-]+-max=\d+$/)) {
+// Apply [group]-max rules
+	var group = rules[i].replace(/-max/, '').split('=')
+	if (checkCatGroup[group[0]]) checkCatGroup[group[0]]['max'] = group[1];
+	if (checkFigGroup[group[0]]) checkFigGroup[group[0]]['max'] = group[1];
+      } else if (rules[i].match(/[^-]+-repeat=\d+$/)) {
+// Apply [group]-repeat rules
+	var group = rules[i].replace(/-repeat/, '').split('=')
+	if (checkCatGroup[group[0]]) checkCatGroup[group[0]]['repeat'] = group[1];
+	if (checkFigGroup[group[0]]) checkFigGroup[group[0]]['repeat'] = group[1];
+      } else if (rules[i].match(/[^-]+-minperfig=\d+$/)) {
+// Apply [group]-minperfig rules
+	var group = rules[i].replace(/-minperfig/, '').split('=')
+	if (checkCatGroup[group[0]]) checkCatGroup[group[0]]['minperfig'] = group[1];
+	if (checkFigGroup[group[0]]) checkFigGroup[group[0]]['minperfig'] = group[1];
+      } else if (rules[i].match(/[^-]+-maxperfig=\d+$/)) {
+// Apply [group]-maxperfig rules
+	var group = rules[i].replace(/-maxperfig/, '').split('=')
+	if (checkCatGroup[group[0]]) checkCatGroup[group[0]]['maxperfig'] = group[1];
+	if (checkFigGroup[group[0]]) checkFigGroup[group[0]]['maxperfig'] = group[1];
+      } else if (rules[i].match(/[^-]+-name=.+$/)) {
+// Apply [group]-name rules
+	var group = rules[i].replace(/-name/, '').split('=')
+	if (checkCatGroup[group[0]]) checkCatGroup[group[0]]['name'] = group[1];
+	if (checkFigGroup[group[0]]) checkFigGroup[group[0]]['name'] = group[1];
+      } else if (rules[i].match(/^conv-[^=]+=.+/)) {
+// Apply conv-x rules
+	var convName = rules[i].match(/[^=]+/).toString().replace(/^conv-/, '')
+	var convRules = rules[i].replace('conv-'+convName+'=', '').split(';')
+	checkConv[convName] = new Array()
+	for (var j = 0; j<convRules.length; j++) {
+	  var convRuleParts = convRules[j].split('=')
+	  checkConv[convName][j] = {'regex':convRuleParts[0], 'replace':convRuleParts[1]}
+	}
+      } else if (rules[i].match(/^rule-[^=]+=.+/)) {
+// Apply rule-x rules
+	var newRuleName = rules[i].match(/[^=]+/).toString().replace(/^rule-/, '')
+	var checkRuleParts = rules[i].replace('rule-'+newRuleName+'=', '').split(':')
+	checkRule[newRuleName] = {'conv':checkRuleParts[0], 'regex':checkRuleParts[1]}
+      } else if (rules[i].match(/^why-[^=]+=.+/)) {
+// Apply why-x rules
+	var newRuleName = rules[i].match(/[^=]+/).toString().replace(/^why-/, '')
+	if (checkRule[newRuleName]) checkRule[newRuleName]['why'] = rules[i].replace(/^[^=]+=/, '')
       }
     }
-        
-//    seqCheckRegex
   }
 }
 
@@ -2581,8 +2658,9 @@ function parseSequence (string) {
     lineElement = lineElement / scale
     scale = 1
   }
-// Create a separate 'figure' for moveForward (x>). OLAN has it coupled to a figure but OpenAero keeps sequence drawing instructions separate
-  string = string.replace(RegExp('([0-9]*' + userpat.moveforward + '+)', 'g'), "$1 ")
+// Create a separate 'figure' for moveForward (x>) at the beginning of a figure. OLAN has it coupled to a figure but OpenAero keeps sequence drawing instructions separate
+  string = string.replace(RegExp(' ([0-9]*' + userpat.moveforward + '+)', 'g'), " $1 ")
+  string = string.replace(RegExp('^([0-9]*' + userpat.moveforward + '+)', 'g'), "$1 ")
 // Remove leading, trailing and multiple spaces
   string = string.replace(/^\s+|\s+$/g, '')
   string = string.replace(/  +/g, ' ')
@@ -2642,10 +2720,10 @@ function parseSequence (string) {
       }
 // Handle the very special case where there's only an upright (1) or inverted (2) spin
       if (base.replace(/-/g, '') == 's') {
-	fig = fig.replace('s', 'ivs')
+	fig = fig.replace(/(\d*)s/, "iv$1s")
 	base = base.replace('s', 'iv')
       } else if (base.replace(/-/g, '') == 'is') {
-	fig = fig.replace('is', 'ivis')
+	fig = fig.replace(/(\d*)is/, "iv$1is")
 	base = base.replace('is', 'iv')
       }
 // To continue determining the base we remove if, is, f, s

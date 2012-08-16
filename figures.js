@@ -15,7 +15,6 @@
 //  You should have received a copy of the GNU General Public License
 //  along with OpenAero.  If not, see <http://www.gnu.org/licenses/>.
 
-
 // This file defines all the basic shapes.
 // Every figure is encoded in the following manner: figs.push("*ENCODING*");
 // The 'push' term is not related to pushing or pulling in aerobatics but is necessary for the software

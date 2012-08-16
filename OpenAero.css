@@ -105,6 +105,7 @@ a:hover {
 #sequenceInfo input {
   float: right;
   width: 120px;
+  height: 1.5em;
   font-size: 12px;
   border: 1px solid black;
 }
@@ -228,11 +229,11 @@ a:hover {
 }
 .combo ul {
   padding:1px;
-  border:2px solid #ccc;
-  width: 89px;
+  border: 1px solid #000;
+  width: 90px;
   background-color:#ffc;
   position:absolute;
-  right:3px;
+  right:0px;
   top:1.5em;
   display:none;
   z-index:1;
