@@ -2,7 +2,6 @@
 * removed bug where figures like 1 1/2 spin weren't handled correctly from e.g. '6s'
 * made some improvements to language.html
 * fixed bug where figures where added by having a character after > at the end of a figure
-* created framework for sequence checking
 
 0.9.2
 * added/updated logos
