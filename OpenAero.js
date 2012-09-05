@@ -1,4 +1,4 @@
-// OpenAero.js 0.9.3
+// OpenAero.js 0.9.5
 // This file is part of OpenAero.
 
 //  OpenAero is free software: you can redistribute it and/or modify
@@ -75,6 +75,7 @@ var checkCatGroup = []
 var checkFigGroup = []
 var checkConv = []
 var checkRule = []
+var rulesActive = false
 // figPattern is the complete pattern for each figure
   var figPattern = new Array()
 // figBase is the pattern for each figure as it's written in the sequence, with + and - but without any rolls
@@ -705,7 +706,7 @@ function makeSnap (params) {
     }
     path = path + 'l ' + roundTwo(dx) + ',' + roundTwo(dy) + ' z'
     if (params[1] == 0) pathStyle = 'posfill'; else pathStyle = 'negfill'
-    pathsArray.push ({'path':path, 'style':pathStyle, 'dx':radCos * snapElement * 0.75, 'dy':-radSin * snapElement * 0.75})
+    pathsArray.push ({'path':path, 'style':pathStyle, 'dx':radCos * snapElement075, 'dy':-radSin * snapElement075})
 // Where necessary, print the roll numbers after completing the first roll point and arc.
 // This is only necessary for rolls that are not multiples of 180
     if (extent == Math.abs(params[0])) {
@@ -1006,13 +1007,16 @@ function changeCombo(id) {
     changeTitle();
   }
   if (id == 'program') {
-    var ruleName = document.getElementById('rules').value
-    var categoryName = document.getElementById('category').value
-    var programName = document.getElementById('program').value
-    if (seqCheckAvail[ruleName][categoryName][programName]) loadRules(ruleName, categoryName, programName)
+    var ruleName = document.getElementById('rules').value.toLowerCase()
+    var categoryName = document.getElementById('category').value.toLowerCase()
+    var programName = document.getElementById('program').value.toLowerCase()
+    if (seqCheckAvail[ruleName][categoryName][programName]) {
+// Load rules, check the sequence and display any alerts
+      rulesActive = true
+      loadRules(ruleName, categoryName, programName)
+    } else rulesActive = false;
     changeTitle()
   }
-
 }
 
 // createSelection selects part of an input field. This can be used when editing figures
@@ -1273,15 +1277,15 @@ function loadRules(ruleName, catName, seqName) {
 	}
 	i = j
       } else if (rules[i].match(/^group-/)) {
-// Apply 'group' rules
+// Apply 'group' rules => single catalog id match
 	var newGroup = rules[i].replace(/^group-/, '').split('=')
 	checkCatGroup[newGroup[0]] = new Array()
-	checkCatGroup[newGroup[0]]['regex'] = newGroup[1]
+	checkCatGroup[newGroup[0]]['regex'] = RegExp(newGroup[1] + '[0-9\.]*', '')
       } else if (rules[i].match(/^Group-/)) {
-// Apply 'Group' rules
+// Apply 'Group' rules => full figure (multiple catalog id) match
 	var newGroup = rules[i].replace(/^Group-/, '').split('=')
 	checkFigGroup[newGroup[0]] = new Array()
-	checkFigGroup[newGroup[0]]['regex'] = newGroup[1]
+	checkFigGroup[newGroup[0]]['regex'] = RegExp(newGroup[1] + '[0-9\.]*', 'g')
       } else if (rules[i].match(/^allow=/)) {
 // Apply 'allow' rules
 	var newCatLine = rules[i].replace(/^allow=/, '')
@@ -1290,7 +1294,7 @@ function loadRules(ruleName, catName, seqName) {
 	for (var j = 0; j<newRules.length; j++) {
 	  newRules[j] = newRules[j].replace(/^\s+|\s+$/g, '')
 	}
-        checkAllowRegex.push = {'regex':newCat, 'rules':newRules}
+        checkAllowRegex.push = {'regex':RegExp(newCat, 'g'), 'rules':newRules}
       } else if (rules[i].match(/^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/)) {
 // Apply figure number rules
 	var newCatLine = rules[i]
@@ -1337,19 +1341,136 @@ function loadRules(ruleName, catName, seqName) {
 	checkConv[convName] = new Array()
 	for (var j = 0; j<convRules.length; j++) {
 	  var convRuleParts = convRules[j].split('=')
-	  checkConv[convName][j] = {'regex':convRuleParts[0], 'replace':convRuleParts[1]}
+	  checkConv[convName][j] = {'regex':RegExp(convRuleParts[0], 'g'), 'replace':convRuleParts[1]}
 	}
       } else if (rules[i].match(/^rule-[^=]+=.+/)) {
 // Apply rule-x rules
 	var newRuleName = rules[i].match(/[^=]+/).toString().replace(/^rule-/, '')
 	var checkRuleParts = rules[i].replace('rule-'+newRuleName+'=', '').split(':')
-	checkRule[newRuleName] = {'conv':checkRuleParts[0], 'regex':checkRuleParts[1]}
+	checkRule[newRuleName] = {'conv':checkRuleParts[0], 'regex':RegExp(checkRuleParts[1], 'g')}
       } else if (rules[i].match(/^why-[^=]+=.+/)) {
 // Apply why-x rules
 	var newRuleName = rules[i].match(/[^=]+/).toString().replace(/^why-/, '')
 	if (checkRule[newRuleName]) checkRule[newRuleName]['why'] = rules[i].replace(/^[^=]+=/, '')
       }
     }
+  }
+// Check the loaded rules against the sequence and display any alerts
+  checkRules()
+  displayAlerts ()
+}
+
+// checkRules will check a complete sequence against the loaded rules and produce alerts where necessary
+function checkRules () {
+  var figNr = 0
+  figureK = 0
+  var connectors = 0
+  groupMatch = []
+  for (var i = 0; i < figure.length; i++) {
+    aresti = figure[i]['aresti']
+    k = figure[i]['k']
+    var figString = ''
+    if (aresti) {
+      figNr++
+// Check if the figure is a connector
+      if (regexConnector.test(figure[i]['string'])) {
+	connectors++
+      } else {
+	var figK = 0
+	var groupFigMatch = []
+// Walk through the elements of the figure
+	for (var j = 0; j < aresti.length; j++) {
+// Check all group rules on all elements
+	  for (group in checkCatGroup) {
+	    if (group != 'k') {
+	      var match = aresti[j].match(checkCatGroup[group]['regex'])
+	      if (match) {
+		if (!groupFigMatch[group]) groupFigMatch[group] = []
+		groupFigMatch[group].push(match[0])
+		if (!groupMatch[group]) groupMatch[group] = []
+		groupMatch[group].push(match[0])
+	      }
+  // Do checks after the last aresti code of the figure has been processed
+	      if (j == (aresti.length - 1)) {
+		if (groupFigMatch[group]) {
+		  if (checkCatGroup[group]['maxperfig'] && (groupFigMatch[group].length > checkCatGroup[group]['maxperfig'])) checkAlert(group, 'maxperfig', figNr)
+		  if (checkCatGroup[group]['minperfig'] && (groupFigMatch[group].length < checkCatGroup[group]['minperfig'])) checkAlert(group, 'minperfig', figNr)
+		}
+	      }
+	    }
+	  }
+	  figK = figK + parseInt(k[j])
+	  figString = figString + aresti[j] + ' '
+	}
+	for (group in checkFigGroup) {
+	  var match = figString.match(checkFigGroup[group]['regex'])
+	  if (match) {
+	    if (!groupMatch[group]) groupMatch[group] = []
+	    for (j = 0; j < match.length; j++) groupMatch[group].push(match[j]);
+	  }
+	}
+	if (checkCatGroup['k']['minperfig']) {
+	  if (figK < checkCatGroup['k']['minperfig']) checkAlert('k', 'minperfig', figNr)
+	}
+	if (checkCatGroup['k']['maxperfig']) {
+	  if (figK > checkCatGroup['k']['maxperfig']) checkAlert('k', 'maxperfig', figNr)
+	}
+      }
+      figureK = figureK + figK
+    }
+    if (checkCatGroup['k']['min']) {
+      if (figureK < checkCatGroup['k']['min']) checkAlert('k', 'min')
+    }
+    if (checkCatGroup['k']['max']) {
+      if (figureK > checkCatGroup['k']['max']) checkAlert('k', 'max')
+    }
+    
+  }
+// Run checks on maximum and minimum occurrence of a group
+// Go through all groups
+  for (group in checkCatGroup) {
+// Did we have a match on this group?
+    if (groupMatch[group]) {
+// Check for max and min occurrences of the group
+      if (checkCatGroup[group]['max'] && (groupMatch[group].length > checkCatGroup[group]['max'])) checkAlert(group, 'max')
+      if (checkCatGroup[group]['min'] && (groupMatch[group].length < checkCatGroup[group]['min'])) checkAlert(group, 'min')
+// Check for repeats of the exact same figure when necessary
+      if (checkCatGroup[group]['repeat']) {
+	var matches = []
+	for (j = 0; j < groupMatch[group].length; j++) {
+	  if (matches[groupMatch[group][j]]) matches[groupMatch[group][j]]++; else matches[groupMatch[group][j]] = 1
+	}
+	for (match in matches) {
+	  if (checkCatGroup[group]['repeat'] && (matches[match] > checkCatGroup[group]['repeat'])) checkAlert(group, 'repeat')
+	}
+      }
+    } else {
+// No occurrences of this group, was there a minimum?
+      if (checkCatGroup[group]['min']) checkAlert(group, 'min')
+    }
+  }
+}
+
+// checkAlert adds an alert resulting from sequence checking
+// 'group' represents the affected group
+// 'type' represents the type of checking error
+function checkAlert (group, type, figNr) {
+  if (figNr) alertFig = 'Fig ' + figNr + ':'; else alertFig = ''
+  switch (type) {
+    case 'maxperfig':
+      alertMsgs.push(alertFig + 'Not more than ' + checkCatGroup[group]['maxperfig'] + ' of ' + checkCatGroup[group]['name'] + ' allowed per figure')
+      break;
+    case 'minperfig':
+      alertMsgs.push(alertFig + 'At least ' + checkCatGroup[group]['minperfig'] + ' of ' + checkCatGroup[group]['name'] + ' required per figure')
+      break   
+    case 'max':
+      alertMsgs.push(alertFig + 'Not more than ' + checkCatGroup[group]['max'] + ' of ' + checkCatGroup[group]['name'] + ' allowed')
+      break;
+    case 'min':
+      alertMsgs.push(alertFig + 'At least ' + checkCatGroup[group]['min'] + ' of ' + checkCatGroup[group]['name'] + ' required')
+      break;
+    case 'repeat':
+      alertMsgs.push(alertFig + 'Not more than ' + checkCatGroup[group]['repeat'] + ' exact repetitions of ' + checkCatGroup[group]['name'] + ' allowed')
   }
 }
 
@@ -1589,12 +1710,13 @@ function displayAlerts () {
     container.appendChild (document.createElement('br'))
     container.appendChild (document.createTextNode(alertMsgs[i]))
   }
+// Clear all alerts
+  alertMsgs = []
 }
 
 // do some kind of draw
 function draw () {
   figure = []
-  alertMsgs = []
   rebuildSequenceSvg ()
   Attitude = 0
   X = 0
@@ -1707,6 +1829,8 @@ function loadedSequence(evt) {
   draw()
   changeTitle()
   sequenceSaved = true
+// Activate the loading of the checking rules (if any)
+  changeCombo('program')
 }
 
 // loadedLogo will be called when a logo image has been loaded
@@ -2407,23 +2531,22 @@ function buildFigure (figNrs, figString, seqNr) {
     // Build roll elements
 	      case ('roll'):
 		rollPaths = buildShape('Roll', Array(roll[rollnr][j]['extent'], roll[rollnr][j]['stops'], rollTop), rollPaths)
-		lineLength = lineLength + Math.abs(parseInt(roll[rollnr][j]['extent'] / 360))
 		break;
 	      case ('possnap'):
 		rollPaths = buildShape('Snap', Array(roll[rollnr][j]['extent'], 0, rollTop), rollPaths)
-		lineLength = lineLength + Math.abs(parseInt(roll[rollnr][j]['extent'] / 360))
+		lineLength = lineLength + Math.abs(parseInt(roll[rollnr][j]['extent'] / 360)) * (snapElement075 / lineElement)
 		break;
 	      case ('negsnap'):
 		rollPaths = buildShape('Snap', Array(roll[rollnr][j]['extent'], 1, rollTop), rollPaths)
-		lineLength = lineLength + Math.abs(parseInt(roll[rollnr][j]['extent'] / 360))
+		lineLength = lineLength + Math.abs(parseInt(roll[rollnr][j]['extent'] / 360)) * (snapElement075 / lineElement)
 		break;
 	      case ('posspin'):
 		rollPaths = buildShape('Spin', Array(roll[rollnr][j]['extent'], 0, rollTop), rollPaths)
-		lineLength = lineLength + Math.abs(parseInt(roll[rollnr][j]['extent'] / 360))
+		lineLength = lineLength + Math.abs(parseInt(roll[rollnr][j]['extent'] / 360)) * (spinElement / lineElement)
 		break;
 	      case ('negspin'):
 		rollPaths = buildShape('Spin', Array(roll[rollnr][j]['extent'], 1, rollTop), rollPaths)
-		lineLength = lineLength + Math.abs(parseInt(roll[rollnr][j]['extent'] / 360))
+		lineLength = lineLength + Math.abs(parseInt(roll[rollnr][j]['extent'] / 360)) * (spinElement / lineElement)
 	    }
   // Find which roll in figures.js matches. There should only be one. Then add Aresti nr and K factor
 	    var rollAtt = rollAttitudes[Attitude]
@@ -2783,7 +2906,7 @@ function parseSequence (string) {
 	Direction = 270
 // Downwind entry 'figure'
       } else if ((firstFigure) && (base == '+ed+')) {
-	Direction = 180
+	Direction = 180 - Direction
       } else {
 	buildIllegal ()
 	if (i == (figures.length - 1)) {
@@ -2794,6 +2917,8 @@ function parseSequence (string) {
       }
     }
   }
+// Check the sequence against the correct rules
+  if (rulesActive) checkRules ();
 // Build the last figure stop shape after all's done. This won't work well if 'move' figures are added at the end
   if (!firstFigure) figure.push({'paths': buildShape ('FigStop', true)})
 // Set firstFigure back to true for another drawing session

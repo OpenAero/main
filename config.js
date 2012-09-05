@@ -1,4 +1,4 @@
-// config.js file
+// config.js 0.9.5
 
 // This file is part of OpenAero.
 
@@ -47,6 +47,7 @@ var lineElement2 = lineElement * 2
 var lineElement24 = lineElement * 2.4
 var lineElement3 = lineElement * 3
 // derived snap element sizes, prevents many calculations during runtime
+var snapElement075 = snapElement * 0.75
 var snapElement12 = snapElement * 1.2
 var snapElement2 = snapElement * 2
 var snapElement24 = snapElement * 2.4
@@ -66,6 +67,7 @@ var superFamilies = new Array()
 superFamilies['unlimited'] = {'2.':'2', '5.':'5', '6.':'6', '1.':'7', '7.':'7', '8.':'7'}
 superFamilies['advanced'] = {'9.11.':'3', '9.12.':'3', '9.9.':'4', '9.10.':'4', '2.':'2', '5.':'5', '6.':'6', '1.':'7', '7.':'7', '8.':'7'}
 superFamilies['yak52'] = superFamilies['advanced']
+superFamilies['intermediate'] = superFamilies['advanced']
 // Total K for Unknown connector figures
 var connectorsTotalK = 24
 

@@ -1,3 +1,10 @@
+0.9.5
+* added SF for Intermediate
+* corrected handling for line length in hammer with rolls up
+
+0.9.4
+* partially implemented sequence validity checking
+
 0.9.3
 * removed bug where figures like 1 1/2 spin weren't handled correctly from e.g. '6s'
 * made some improvements to language.html

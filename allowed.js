@@ -1,4 +1,4 @@
-// allowed.js file
+// allowed.js 0.9.4
 
 // This file is part of OpenAero.
 
