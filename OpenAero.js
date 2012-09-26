@@ -1,4 +1,4 @@
-// OpenAero.js 0.9.5
+// OpenAero.js 1.0.0
 // This file is part of OpenAero.
 
 //  OpenAero is free software: you can redistribute it and/or modify
@@ -73,8 +73,9 @@ var checkAllowRegex = []
 var checkAllowCatId = []
 var checkCatGroup = []
 var checkFigGroup = []
-var checkConv = []
 var checkRule = []
+var figCheckLine = []
+var defRules = []
 var rulesActive = false
 // figPattern is the complete pattern for each figure
   var figPattern = new Array()
@@ -186,6 +187,12 @@ combo.prototype.rset = function(self) {self.ul.style.display = 'none'; self.sel 
 // Use for all drawing functions to prevent rendering errors and keep SVG file size down
 function roundTwo (nr) {
   return (nr + 0.005).toFixed(2)
+}
+
+// sanitizeSpaces does:
+// transform tabs to spaces, multiple to single spaces and remove leading and trailing spaces
+function sanitizeSpaces (line) {
+  return line.replace(/[\t]/g, ' ').replace(/\s\s+/g, ' ').replace(/^\s/g,'').replace(/\s$/g,'')
 }
 
 // getSuperFamily returns the superfamily for a category of the figure described by an array of Aresti numbers
@@ -520,7 +527,7 @@ function makeTurn (draw) {
   regex = /io|IO/
   if (regex.test(draw)) var switchRollDir = true; else switchRollDir = false
 // Check if the exit direction is flipped
-  if (draw.charAt(0) == '>') var sign = -1; else var sign = 1
+  if (draw.charAt(0) == userpat.moveforward) var sign = -1; else var sign = 1
 // See if we start with an outside roll
   regex = /J/
   if (regex.test(draw)) var rollDir = -sign; else var rollDir = sign
@@ -726,13 +733,16 @@ function makeSnap (params) {
     extent = extent - 360
 // For more than 360 degrees, draw a line between the rolls and the roll tip connect line
     if (extent > 0) {
-// Make the line between the two rolls. Always positive for now
+// Save the status of the load variable, don't want to change that during the roll
+      var saveLoad = NegLoad
+// Make the line between the two rolls
 // Only move the pointer for rolls in the top
       if (rollTop) {
         pathsArray = buildShape ('Move', Array(1.5, 0), pathsArray)
       } else {
 	pathsArray = buildShape ('Line', Array(1.5, 0), pathsArray)
       }
+      NegLoad = saveLoad
 // Get the relative movement by the line and use this to build the tip connector line
       dx = pathsArray[pathsArray.length - 1]['dx'] + radCos * snapElement2
       dy = pathsArray[pathsArray.length - 1]['dy'] - radSin * snapElement2
@@ -975,15 +985,15 @@ function changeTitle () {
 }
 
 function changeCombo(id) {
-  var ruleName = document.getElementById('rules').value
+  var ruleName = document.getElementById('rules').value.toLowerCase()
   if (id == 'rules') {
     var categoryList = document.getElementById('categoryList')
   // Clean up the list
     while (categoryList.childNodes.length > 0) categoryList.removeChild(categoryList.lastChild);
     if (seqCheckAvail[ruleName]) {
-      for (categoryName in seqCheckAvail[ruleName]) {
+      for (categoryName in seqCheckAvail[ruleName]['cats']) {
 	var listItem = document.createElement('li')
-	listItem.appendChild(document.createTextNode(categoryName))
+	listItem.appendChild(document.createTextNode(seqCheckAvail[ruleName]['cats'][categoryName]['name']))
 	categoryList.appendChild(listItem)
       }
     }
@@ -991,14 +1001,14 @@ function changeCombo(id) {
     new combo('category','#cc9','#ffc');
   }
   if ((id == 'rules') || (id == 'category')) {
-    var categoryName = document.getElementById('category').value
+    var categoryName = document.getElementById('category').value.toLowerCase()
     var programList = document.getElementById('programList')
   // Clean up the list
     while (programList.childNodes.length > 0) programList.removeChild(programList.lastChild);
-    if (seqCheckAvail[ruleName][categoryName]) {
-      for (programName in seqCheckAvail[ruleName][categoryName]) {
+    if (seqCheckAvail[ruleName]['cats'][categoryName]) {
+      for (programName in seqCheckAvail[ruleName]['cats'][categoryName]['seqs']) {
 	var listItem = document.createElement('li')
-	listItem.innerHTML = programName
+	listItem.appendChild(document.createTextNode(seqCheckAvail[ruleName]['cats'][categoryName]['seqs'][programName]))
 	programList.appendChild(listItem)
       }
     }
@@ -1010,7 +1020,7 @@ function changeCombo(id) {
     var ruleName = document.getElementById('rules').value.toLowerCase()
     var categoryName = document.getElementById('category').value.toLowerCase()
     var programName = document.getElementById('program').value.toLowerCase()
-    if (seqCheckAvail[ruleName][categoryName][programName]) {
+    if (seqCheckAvail[ruleName]['cats'][categoryName]['seqs'][programName]) {
 // Load rules, check the sequence and display any alerts
       rulesActive = true
       loadRules(ruleName, categoryName, programName)
@@ -1152,11 +1162,10 @@ function removeLogo() {
 // parseFiguresFile parses the figures file and stores it in several arrays for fast retrieval
 function parseFiguresFile () {
   for (var i = 0; i < figs.length; i++) {
-// Transform tabs to spaces and multiple to single spaces
-    var line = figs[i].replace(/[\t]/g," ")
-    var tmpline = line.replace(/\s\s+/g, ' ')
+// Clean up the lines
+    line = sanitizeSpaces(figs[i])
 // Split the remainder on the space. Family 9 should now have two elements, the others three 
-    var splitLine = tmpline.split(" ")
+    var splitLine = line.split(" ")
 
     if (splitLine[0]) {
 // Next we split the Aresti and K-factors part
@@ -1225,16 +1234,16 @@ function parseRulesFile() {
         parts.splice(parts.length - 1, 1)
 	parts.splice(0, 1)
         var catName = parts.join(' ')
-        if (!seqCheckAvail[ruleName]) seqCheckAvail[ruleName] = new Array();
-        if (!seqCheckAvail[ruleName][catName]) seqCheckAvail[ruleName][catName] = new Array();
-	seqCheckAvail[ruleName][catName][seqName] = true			  
+        if (!seqCheckAvail[ruleName.toLowerCase()]) seqCheckAvail[ruleName.toLowerCase()] = {'name':ruleName, 'cats':[]};
+        if (!seqCheckAvail[ruleName.toLowerCase()]['cats'][catName.toLowerCase()]) seqCheckAvail[ruleName.toLowerCase()]['cats'][catName.toLowerCase()] = {'name':catName, 'seqs':[]};
+	seqCheckAvail[ruleName.toLowerCase()]['cats'][catName.toLowerCase()]['seqs'][seqName.toLowerCase()] = seqName		  
       }
     }
   }
   var rulesList = document.getElementById('rulesList')
   for (ruleName in seqCheckAvail) {
     var listItem = document.createElement('li')
-    listItem.innerHTML = ruleName
+    listItem.innerHTML = seqCheckAvail[ruleName]['name']
     rulesList.appendChild(listItem)
   }
 }
@@ -1249,13 +1258,14 @@ function loadRules(ruleName, catName, seqName) {
   checkAllowCatId = []
   checkCatGroup = []
   checkFigGroup = []
-  checkConv = []
   checkRule = []
+  defRules = []
 // Walk through the rules
   for (var i=0; i<rules.length; i++) {
+    rules[i] = sanitizeSpaces(rules[i])
 // Check for [section] or (section) to match sequence type specific rules
     if ((rules[i].charAt(0) == '[') || (rules[i].charAt(0) == '(')) {
-      if (rules[i] == ruleSection) {
+      if (rules[i].toLowerCase() == ruleSection.toLowerCase()) {
 	parseSection = true;
       } else {
 	parseSection = false;
@@ -1294,16 +1304,30 @@ function loadRules(ruleName, catName, seqName) {
 	for (var j = 0; j<newRules.length; j++) {
 	  newRules[j] = newRules[j].replace(/^\s+|\s+$/g, '')
 	}
-        checkAllowRegex.push = {'regex':RegExp(newCat, 'g'), 'rules':newRules}
-      } else if (rules[i].match(/^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/)) {
+        checkAllowRegex.push ({'regex':RegExp(newCat, 'g'), 'rules':newRules})
+      } else if (rules[i].match(/^allow-defrules=/)) {
+// Apply 'allow-defrules' rules
+	var newCatLine = rules[i].replace(/^allow-defrules=/, '')
+	defRules = newCatLine.replace(/[\s]+/g, '').split(';')
+      } else if (rules[i].match(/^[0-9]+\./)) {
 // Apply figure number rules
+// The key of checkAllowCatId is equal to the figure number
+// The value is an array of rules that have to be applied
 	var newCatLine = rules[i]
-	var newCat = newCatLine.match(/^[^\s]*/g)
-	var newRules = newCatLine.replace(newCat, '').split(';')
-	for (var j = 0; j<newRules.length; j++) {
-	  newRules[j] = newRules[j].replace(/^\s+|\s+$/g, '')
-	}
-        checkAllowCatId.push = {'id':newCat, 'rules':newRules}
+	var newCat = newCatLine.match(/^[^\s]*/g)[0]
+  // Create an array with rules that have to be applied to the figure
+	var newRules = newCatLine.replace(newCat, '').replace(/[\s]+/g, '').split(';')
+	// When there are no rules we want an empty array, whereas split provides an array with one empty string
+	if (newRules[0] == '') newRules = []
+  // Check if the figure string applies to multiple figures, such as 1.1.1.1-4
+  // If so, make a new checkAllowCatId for each figure
+	var multiple = newCat.match(/[0-9]+\-[0-9]+$/)
+	if (multiple) {
+	  multiple = multiple[0]
+	  for (var j = multiple.split('-')[0]; j < (parseInt(multiple.split('-')[1]) + 1); j++) {
+	    checkAllowCatId[newCat.replace(multiple, '') + j] = newRules
+	  }
+	} else checkAllowCatId[newCat] = newRules
       } else if (rules[i].match(/[^-]+-min=\d+$/)) {
 // Apply [group]-min rules
 	var group = rules[i].replace(/-min/, '').split('=')
@@ -1336,21 +1360,23 @@ function loadRules(ruleName, catName, seqName) {
 	if (checkFigGroup[group[0]]) checkFigGroup[group[0]]['name'] = group[1];
       } else if (rules[i].match(/^conv-[^=]+=.+/)) {
 // Apply conv-x rules
-	var convName = rules[i].match(/[^=]+/).toString().replace(/^conv-/, '')
-	var convRules = rules[i].replace('conv-'+convName+'=', '').split(';')
-	checkConv[convName] = new Array()
-	for (var j = 0; j<convRules.length; j++) {
-	  var convRuleParts = convRules[j].split('=')
-	  checkConv[convName][j] = {'regex':RegExp(convRuleParts[0], 'g'), 'replace':convRuleParts[1]}
-	}
+// DEPRECATED
+//	var convName = rules[i].match(/^conv-[^=]+/)[0].replace(/^conv-/, '')
+//	var convRules = rules[i].replace('conv-'+convName+'=', '').split(';')
+//	checkConv[convName] = []
+//	for (var j = 0; j<convRules.length; j++) {
+//	  var convRuleParts = convRules[j].split('=')
+//	  checkConv[convName][j] = {'regex':RegExp(convRuleParts[0], 'g'), 'replace':convRuleParts[1]}
+//	}
       } else if (rules[i].match(/^rule-[^=]+=.+/)) {
 // Apply rule-x rules
-	var newRuleName = rules[i].match(/[^=]+/).toString().replace(/^rule-/, '')
-	var checkRuleParts = rules[i].replace('rule-'+newRuleName+'=', '').split(':')
-	checkRule[newRuleName] = {'conv':checkRuleParts[0], 'regex':RegExp(checkRuleParts[1], 'g')}
+	var newRuleName = rules[i].match(/[^=]+/)[0].replace(/^rule-/, '')
+	var checkRuleParts = rules[i].replace('rule-'+newRuleName+'=', '')
+	var colonPos = checkRuleParts.indexOf(':')
+	checkRule[newRuleName] = {'conv':checkRuleParts.substring(0,colonPos), 'regex':RegExp(checkRuleParts.substring(colonPos + 1), 'g')}
       } else if (rules[i].match(/^why-[^=]+=.+/)) {
 // Apply why-x rules
-	var newRuleName = rules[i].match(/[^=]+/).toString().replace(/^why-/, '')
+	var newRuleName = rules[i].match(/[^=]+/)[0].replace(/^why-/, '')
 	if (checkRule[newRuleName]) checkRule[newRuleName]['why'] = rules[i].replace(/^[^=]+=/, '')
       }
     }
@@ -1361,6 +1387,7 @@ function loadRules(ruleName, catName, seqName) {
 }
 
 // checkRules will check a complete sequence against the loaded rules and produce alerts where necessary
+// the Aresti list according description in allowed.js is in the array figCheckLine
 function checkRules () {
   var figNr = 0
   figureK = 0
@@ -1368,9 +1395,10 @@ function checkRules () {
   groupMatch = []
   for (var i = 0; i < figure.length; i++) {
     aresti = figure[i]['aresti']
-    k = figure[i]['k']
-    var figString = ''
     if (aresti) {
+      k = figure[i]['k']
+      var figString = figCheckLine[figure[i]['seqNr']]
+//      alert(figString) // DEBUG
       figNr++
 // Check if the figure is a connector
       if (regexConnector.test(figure[i]['string'])) {
@@ -1399,9 +1427,52 @@ function checkRules () {
 	      }
 	    }
 	  }
+	  // Check for specific allowed figures if the checkAllowCatId object is not empty
+	  // Used only for Unknowns at this point (2012)
+	  if (Object.keys(checkAllowCatId).length > 0) {
+	    if (!(aresti[j] in checkAllowCatId)) checkAlert (aresti[j], 'notAllowed', figNr)
+	  }
+	  
 	  figK = figK + parseInt(k[j])
-	  figString = figString + aresti[j] + ' '
 	}
+	// Run rule checks on specific allowed figures if the checkAllowCatId object is not empty
+	// Used only for Unknowns at this point (2012)
+	if (Object.keys(checkAllowCatId).length > 0) {
+	  var arestiNr = figString.split(' ')[0]
+	  if (arestiNr in checkAllowCatId) {
+	    // Apply rules to the figure
+	    for (k = 0; k < checkAllowCatId[arestiNr].length; k++) {
+	    // Run the checks on the rolls
+  	      var checkLine = figString.replace(arestiNr + ' ', '')
+	      rule = checkAllowCatId[arestiNr][k]
+	      // Apply conversions to the Aresti number before checking the rule
+	      if (checkRule[rule]['conv']) {
+		var conversion = checkRule[rule]['conv']
+		for (l = 0; l < checkConv[conversion].length; l++) {
+		  checkLine = checkLine.replace(checkConv[conversion][l]['regex'], checkConv[conversion][l]['replace'])
+//      alert ('#' + checkLine + '#') // DEBUG
+		}
+	      }
+	      if (checkLine.match(checkRule[rule]['regex'])) checkAlert (checkRule[rule]['why'], 'rule', figNr)
+	    }
+	    // Check default rules when applicable
+	    if (defRules != []) {
+	      for (k = 0; k < defRules.length; k++) {
+		var checkLine = figString.replace(arestiNr + ' ', '')
+		rule = defRules[k]
+		// Apply conversions to the Aresti number before checking the rule
+		if (checkRule[rule]['conv']) {
+		  var conversion = checkRule[rule]['conv']
+		  for (l = 0; l < checkConv[conversion].length; l++) {
+		    checkLine = checkLine.replace(checkConv[conversion][l]['regex'], checkConv[conversion][l]['replace'])
+		  }
+		}
+	        if (checkLine.match(checkRule[rule]['regex'])) checkAlert (checkRule[rule]['why'], 'rule', figNr)
+	      }
+	    }
+	  }
+	}
+	// Check the Group rules for complete figures
 	for (group in checkFigGroup) {
 	  var match = figString.match(checkFigGroup[group]['regex'])
 	  if (match) {
@@ -1426,7 +1497,7 @@ function checkRules () {
     }
     
   }
-// Run checks on maximum and minimum occurrence of a group
+// Run checks on maximum and minimum occurrence of a group (catalog ID)
 // Go through all groups
   for (group in checkCatGroup) {
 // Did we have a match on this group?
@@ -1449,28 +1520,66 @@ function checkRules () {
       if (checkCatGroup[group]['min']) checkAlert(group, 'min')
     }
   }
+// Run checks on maximum and minimum occurrence of a Group (complete figure)
+// Go through all groups
+  for (group in checkFigGroup) {
+// Did we have a match on this group?
+    if (groupMatch[group]) {
+// Check for max and min occurrences of the group
+      if (checkFigGroup[group]['max'] && (groupMatch[group].length > checkFigGroup[group]['max'])) checkAlert(group, 'figmax')
+      if (checkFigGroup[group]['min'] && (groupMatch[group].length < checkFigGroup[group]['min'])) checkAlert(group, 'figmin')
+// Check for repeats of the exact same figure when necessary
+      if (checkFigGroup[group]['repeat']) {
+	var matches = []
+	for (j = 0; j < groupMatch[group].length; j++) {
+	  if (matches[groupMatch[group][j]]) matches[groupMatch[group][j]]++; else matches[groupMatch[group][j]] = 1
+	}
+	for (match in matches) {
+	  if (checkFigGroup[group]['repeat'] && (matches[match] > checkFigGroup[group]['repeat'])) checkAlert(group, 'figrepeat')
+	}
+      }
+    } else {
+// No occurrences of this group, was there a minimum?
+      if (checkFigGroup[group]['min']) checkAlert(group, 'figmin')
+    }
+  }
 }
 
 // checkAlert adds an alert resulting from sequence checking
-// 'group' represents the affected group
+// 'value' represents a value for processing
 // 'type' represents the type of checking error
-function checkAlert (group, type, figNr) {
-  if (figNr) alertFig = 'Fig ' + figNr + ':'; else alertFig = ''
+function checkAlert (value, type, figNr) {
+  if (figNr) alertFig = '(' + figNr + ') '; else alertFig = ''
   switch (type) {
     case 'maxperfig':
-      alertMsgs.push(alertFig + 'Not more than ' + checkCatGroup[group]['maxperfig'] + ' of ' + checkCatGroup[group]['name'] + ' allowed per figure')
+      alertMsgs.push(alertFig + 'Not more than ' + checkCatGroup[value]['maxperfig'] + ' of ' + checkCatGroup[value]['name'] + ' per figure')
       break;
     case 'minperfig':
-      alertMsgs.push(alertFig + 'At least ' + checkCatGroup[group]['minperfig'] + ' of ' + checkCatGroup[group]['name'] + ' required per figure')
+      alertMsgs.push(alertFig + 'At least ' + checkCatGroup[value]['minperfig'] + ' of ' + checkCatGroup[value]['name'] + ' per figure')
       break   
     case 'max':
-      alertMsgs.push(alertFig + 'Not more than ' + checkCatGroup[group]['max'] + ' of ' + checkCatGroup[group]['name'] + ' allowed')
+      alertMsgs.push(alertFig + 'Not more than ' + checkCatGroup[value]['max'] + ' of ' + checkCatGroup[value]['name'] + ' allowed')
       break;
     case 'min':
-      alertMsgs.push(alertFig + 'At least ' + checkCatGroup[group]['min'] + ' of ' + checkCatGroup[group]['name'] + ' required')
+      alertMsgs.push(alertFig + 'At least ' + checkCatGroup[value]['min'] + ' of ' + checkCatGroup[value]['name'] + ' required')
       break;
     case 'repeat':
-      alertMsgs.push(alertFig + 'Not more than ' + checkCatGroup[group]['repeat'] + ' exact repetitions of ' + checkCatGroup[group]['name'] + ' allowed')
+      alertMsgs.push(alertFig + 'Not more than ' + checkCatGroup[value]['repeat'] + ' exact repetitions of ' + checkCatGroup[value]['name'] + ' allowed')
+      break;
+    case 'figmax':
+      alertMsgs.push(alertFig + 'Not more than ' + checkFigGroup[value]['max'] + ' of ' + checkFigGroup[value]['name'] + ' allowed')
+      break;
+    case 'figmin':
+      alertMsgs.push(alertFig + 'At least ' + checkFigGroup[value]['min'] + ' of ' + checkFigGroup[value]['name'] + ' required')
+      break;
+    case 'figrepeat':
+      alertMsgs.push(alertFig + 'Not more than ' + checkFigGroup[value]['repeat'] + ' exact repetitions of ' + checkFigGroup[value]['name'] + ' allowed')
+      break;
+    case 'rule':
+      alertMsgs.push(alertFig + value)
+      break;
+    case 'notAllowed':
+      alertMsgs.push(alertFig + value + ' is not allowed in this sequence')
   }
 }
 
@@ -1708,7 +1817,9 @@ function displayAlerts () {
 // Display messages, start with a break to stay clear from the label
   for (var i = 0; i < alertMsgs.length; i++) {
     container.appendChild (document.createElement('br'))
-    container.appendChild (document.createTextNode(alertMsgs[i]))
+    var htmlText = document.createElement('span')
+    container.appendChild (htmlText)
+    htmlText.innerHTML = alertMsgs[i]
   }
 // Clear all alerts
   alertMsgs = []
@@ -1740,7 +1851,7 @@ function draw () {
   displayAlerts ()
 }
 
-// checkSequenceChanged is called by unKeyUp on the sequence input field to check if it has to be redrawn
+// checkSequenceChanged is called by onKeyUp on the sequence input field to check if it has to be redrawn
 function checkSequenceChanged () {
   if (activeSequence != document.action.sequence_text.value) {
     activeSequence = document.action.sequence_text.value
@@ -1770,7 +1881,7 @@ function openSequence () {
 }
 
 // openFile is called to open a file
-// file = file objevt from file input element
+// file = file object from file input element
 // handler = name of correct handler to execute after loading. Function names are loaded<handler>
 function openFile (file, handler) {
   // Check for the various File API support.
@@ -1910,7 +2021,7 @@ function saveFile(data, name, filter, format) {
       netscape.security.PrivilegeManager.revertPrivilege("UniversalXPConnect");
       openWindow.close();
     } catch (e) {
-  // If nsIFiliePicker didn't work, try HTML5 FileWriter
+  // If nsIFilePicker didn't work, try HTML5 FileWriter
       if (window.requestFileSystem) {
 	window.requestFileSystem(window.TEMPORARY, 5*1024*1024 /*5MB*/, onInitFs, errorHandler)
 	function onInitFs(fs) {
@@ -2256,6 +2367,7 @@ function buildMoveForward (extent) {
 }
 
 // buildFigure parses a complete figure as defined by the figNrs and figString and puts it in array figure
+// It also creates a figCheckLine for each figure that can be used for sequence validity checking
 function buildFigure (figNrs, figString, seqNr) {
   var figNr = figNrs[0]
   var roll = new Array()
@@ -2274,7 +2386,7 @@ function buildFigure (figNrs, figString, seqNr) {
     if (splitLR.length > 1) {
       moreRolls = splitLR[1].replace(regEx, '').split(')')
       for (var i = 0; i < moreRolls.length; i++) {
-	rollPatterns[i + 1] = moreRolls[i].replace(/\(/g, '')
+	      rollPatterns[i + 1] = moreRolls[i].replace(/\(/g, '')
       }
     }
   // Parse the roll patterns and find out where to put rolls, snaps and spins
@@ -2286,105 +2398,105 @@ function buildFigure (figNrs, figString, seqNr) {
       if (activeForm == 'C') rollSign = -1; else rollSign = 1
       extent = 0
       if (rollPattern) {
-	for (j = 0; j < rollPattern.length; j++) {
-	  switch (rollPattern.charAt(j)) {
-    // Long line before or after roll, twice the length of the same pattern in figures.js
-	    case (userpat.rollext):
-	      roll[i].push({'type':'line', 'extent':3, 'load':NegLoad})
-	      break;
-    // Short line before or after roll, twice the length of the same pattern in figures.js
-	    case (userpat.rollextshort):
-	      roll[i].push({'type':'line', 'extent':1, 'load':NegLoad})
-	      break;
-    // Make line before or after roll shorter
-	    case (userpat.rolllineshorten):
-	      roll[i].push({'type':'line', 'extent':-1, 'load':NegLoad})
-	      break;
-    // Switch roll direction
-	    case (userpat.opproll):
-	      rollSign = -rollSign
-	      break;
-	    case ('f'):
-  // Add snaps
-  // When there was a roll before, add a line first
-	      if (extent > 0) roll[i].push({'type':'line', 'extent':2, 'load':NegLoad})
-	      roll[i].push({'type':'possnap', 'extent':rollSign * 360, 'pattern':'1f'})
-	      extent = 360
-	      break;
-	    case ('s'):
-  // Add spins
-  // When there was a roll before, add a line first
-	      if (extent > 0) roll[i].push({'type':'line', 'extent':2, 'load':NegLoad})
-	      roll[i].push({'type':'posspin', 'extent':rollSign * 360, 'pattern':'1s'})
-	      extent = 360
-	      break;
-	    case('i'):
-  // Add inverted snaps and spins
-  // When there was a roll before, add a line first
-	      if (extent > 0) roll[i].push({'type':'line', 'extent':2, 'load':NegLoad})
-	      if (rollPattern.charAt(j + 1) == 'f') {
-		j++
-		roll[i].push({'type':'negsnap', 'extent':rollSign * 360, 'pattern':'1if'})
-		extent = 360
-	      } else if (rollPattern.charAt(j + 1) == 's') {
-		j++
-		roll[i].push({'type':'negspin', 'extent':rollSign * 360, 'pattern':'1is'})
-		extent = 360
-	      }
-	      break;
-    // Handle all different kinds of rolls and their notation
-	    default:
-	      if (parseInt(rollPattern.charAt(j))) {
-		var startJ = j
-		stops = 0
-      // When there was a roll before, add a line first
-		if (extent > 0) roll[i].push({'type':'line', 'extent':2, 'load':NegLoad})
-		if (parseInt(rollPattern.charAt(j + 1))) {
-		  stops = parseInt(rollPattern.charAt(j + 1))
-		  extent = parseInt(rollPattern.charAt(j)) * (360 / stops)
-		  j++
-		} else if (parseInt(rollPattern.charAt(j)) == 1) {
-		  extent = 360
-		} else if (parseInt(rollPattern.charAt(j)) == 4) {
-		  extent = 90
-		} else if (parseInt(rollPattern.charAt(j)) == 8) {
-		  stops = 8
-		  extent = 90
-		} else if (parseInt(rollPattern.charAt(j)) == 9) {
-		  extent = 720
-		} else {
-		  extent = 90 * parseInt(rollPattern.charAt(j))
-		}
-		var illegalSnapSpin = false;
-		switch (rollPattern.charAt(j + 1)) {
-		  case ('i'):
-		    if (rollPattern.charAt(j + 2) == 'f') {
-		      j = j + 2
-		      if (!stops) roll[i].push({'type':'negsnap', 'extent':rollSign * extent, 'pattern':rollPattern.substring(startJ, j + 1)}); else illegalSnapSpin = rollPattern.substring(j - 1, j + 1)
-		    } else if (rollPattern.charAt(j + 2) == 's') {
-		      j = j + 2
-		      if (!stops) roll[i].push({'type':'negspin', 'extent':rollSign * extent, 'pattern':rollPattern.substring(startJ, j + 1)}); else illegalSnapSpin = rollPattern.substring(j - 1, j + 1)
-		    } 
-		    break;
-		  case ('f'):
-		    j++
-		    if (!stops) roll[i].push({'type':'possnap', 'extent':rollSign * extent, 'pattern':rollPattern.substring(startJ, j + 1)}); else illegalSnapSpin = rollPattern.substring(j, j + 1)
-		    break;
-		  case ('s'):
-		    j++
-		    if (!stops) roll[i].push({'type':'posspin', 'extent':rollSign * extent, 'pattern':rollPattern.substring(startJ, j + 1)}); else illegalSnapSpin = rollPattern.substring(j, j + 1)
-		    break;
-		  default:
-		    roll[i].push({'type':'roll', 'extent':rollSign * extent, 'stops':stops, 'pattern':rollPattern.substring(startJ, j + 1)})
-		}
-		if (illegalSnapSpin) {
-		  alertMsgs.push ('Fig ' + seqNr + ':' + rollPattern.substring(startJ, j + 1) + userText.illegalFig + rollPattern.substring(startJ, startJ + 1) + illegalSnapSpin)
-		  extent = 0
-		}
-		rollSums[i] = rollSums[i] + rollSign * extent
-	      }
-	  }
-	}
+				for (j = 0; j < rollPattern.length; j++) {
+				  switch (rollPattern.charAt(j)) {
+			    // Long line before or after roll, twice the length of the same pattern in figures.js
+				    case (userpat.rollext):
+				      roll[i].push({'type':'line', 'extent':3, 'load':NegLoad})
+				      break;
+			    // Short line before or after roll, twice the length of the same pattern in figures.js
+				    case (userpat.rollextshort):
+				      roll[i].push({'type':'line', 'extent':1, 'load':NegLoad})
+				      break;
+			    // Make line before or after roll shorter
+				    case (userpat.rolllineshorten):
+				      roll[i].push({'type':'line', 'extent':-1, 'load':NegLoad})
+				      break;
+			    // Switch roll direction
+				    case (userpat.opproll):
+				      rollSign = -rollSign
+				      break;
+				    case ('f'):
+			  // Add snaps
+			  // When there was a roll before, add a line first
+				      if (extent > 0) roll[i].push({'type':'line', 'extent':2, 'load':NegLoad})
+				      roll[i].push({'type':'possnap', 'extent':rollSign * 360, 'pattern':'1f'})
+				      extent = 360
+				      break;
+				    case ('s'):
+			  // Add spins
+			  // When there was a roll before, add a line first
+				      if (extent > 0) roll[i].push({'type':'line', 'extent':2, 'load':NegLoad})
+				      roll[i].push({'type':'posspin', 'extent':rollSign * 360, 'pattern':'1s'})
+				      extent = 360
+				      break;
+				    case('i'):
+			  // Add inverted snaps and spins
+			  // When there was a roll before, add a line first
+				      if (extent > 0) roll[i].push({'type':'line', 'extent':2, 'load':NegLoad})
+				      if (rollPattern.charAt(j + 1) == 'f') {
+					j++
+					roll[i].push({'type':'negsnap', 'extent':rollSign * 360, 'pattern':'1if'})
+					extent = 360
+				      } else if (rollPattern.charAt(j + 1) == 's') {
+					j++
+					roll[i].push({'type':'negspin', 'extent':rollSign * 360, 'pattern':'1is'})
+					extent = 360
+				      }
+				      break;
+			    // Handle all different kinds of rolls and their notation
+				    default:
+				      if (parseInt(rollPattern.charAt(j))) {
+					var startJ = j
+					stops = 0
+			      // When there was a roll before, add a line first
+					if (extent > 0) roll[i].push({'type':'line', 'extent':2, 'load':NegLoad})
+					if (parseInt(rollPattern.charAt(j + 1))) {
+					  stops = parseInt(rollPattern.charAt(j + 1))
+					  extent = parseInt(rollPattern.charAt(j)) * (360 / stops)
+					  j++
+					} else if (parseInt(rollPattern.charAt(j)) == 1) {
+					  extent = 360
+					} else if (parseInt(rollPattern.charAt(j)) == 4) {
+					  extent = 90
+					} else if (parseInt(rollPattern.charAt(j)) == 8) {
+					  stops = 8
+					  extent = 90
+					} else if (parseInt(rollPattern.charAt(j)) == 9) {
+					  extent = 720
+					} else {
+					  extent = 90 * parseInt(rollPattern.charAt(j))
+					}
+					var illegalSnapSpin = false;
+					switch (rollPattern.charAt(j + 1)) {
+					  case ('i'):
+					    if (rollPattern.charAt(j + 2) == 'f') {
+					      j = j + 2
+					      if (!stops) roll[i].push({'type':'negsnap', 'extent':rollSign * extent, 'pattern':rollPattern.substring(startJ, j + 1)}); else illegalSnapSpin = rollPattern.substring(j - 1, j + 1)
+					    } else if (rollPattern.charAt(j + 2) == 's') {
+					      j = j + 2
+					      if (!stops) roll[i].push({'type':'negspin', 'extent':rollSign * extent, 'pattern':rollPattern.substring(startJ, j + 1)}); else illegalSnapSpin = rollPattern.substring(j - 1, j + 1)
+					    } 
+					    break;
+					  case ('f'):
+					    j++
+					    if (!stops) roll[i].push({'type':'possnap', 'extent':rollSign * extent, 'pattern':rollPattern.substring(startJ, j + 1)}); else illegalSnapSpin = rollPattern.substring(j, j + 1)
+					    break;
+					  case ('s'):
+					    j++
+					    if (!stops) roll[i].push({'type':'posspin', 'extent':rollSign * extent, 'pattern':rollPattern.substring(startJ, j + 1)}); else illegalSnapSpin = rollPattern.substring(j, j + 1)
+					    break;
+					  default:
+					    roll[i].push({'type':'roll', 'extent':rollSign * extent, 'stops':stops, 'pattern':rollPattern.substring(startJ, j + 1)})
+					}
+					if (illegalSnapSpin) {
+					  alertMsgs.push ('Fig ' + seqNr + ':' + rollPattern.substring(startJ, j + 1) + userText.illegalFig + rollPattern.substring(startJ, startJ + 1) + illegalSnapSpin)
+					  extent = 0
+					}
+					rollSums[i] = rollSums[i] + rollSign * extent
+				      }
+				  }
+				}
       }
     }
   // We now have all the roll patterns parsed but the numbering may not match the numbering of the figRolls because rolls may be missing.
@@ -2393,12 +2505,12 @@ function buildFigure (figNrs, figString, seqNr) {
   // Only do something if rolls have been skipped
     if (rollsSkip > 0) {
       for (var i = (figRolls[figNr].length - 1); i > rollsSkip; i--) {
-	roll[i] = roll[i - rollsSkip]
-	rollSums[i] = rollSums[i - rollsSkip]
+				roll[i] = roll[i - rollsSkip]
+				rollSums[i] = rollSums[i - rollsSkip]
       }
       for (var i = rollsSkip; i > 0; i--) {
-	roll[i] = Array()
-	rollSums[i] = 0
+				roll[i] = Array()
+				rollSums[i] = 0
       }
     }
 // Set the number of the first roll for drawing later on
@@ -2409,18 +2521,18 @@ function buildFigure (figNrs, figString, seqNr) {
     if (figNrs.length > 1) {
       rollCorrMin = 9999; // Just a very large number to start with so the first correction will allways be smaller
       for (var i = 0; i < figNrs.length; i++) {
-	rollCorr = 0
-	for (var j = 0; j < roll.length; j++) {
-	  if (figRolls[figNrs[i]][j] == 1) {
-	    rollCorr = rollCorr + Math.abs((parseInt(rollSums[j] / 360) - (rollSums[j] / 360)) * 360)
-	  } else if (figRolls[figNrs[i]][j] == 2) {
-	    rollCorr = rollCorr + Math.abs((parseInt((rollSums[j] + 180) / 360) - ((rollSums[j] + 180) / 360)) * 360)
-	  } 
-	}
-	if (rollCorr < rollCorrMin) {
-	  rollCorrMin = rollCorr
-	  figNr = figNrs[i]
-	}
+				rollCorr = 0
+				for (var j = 0; j < roll.length; j++) {
+				  if (figRolls[figNrs[i]][j] == 1) {
+				    rollCorr = rollCorr + Math.abs((parseInt(rollSums[j] / 360) - (rollSums[j] / 360)) * 360)
+				  } else if (figRolls[figNrs[i]][j] == 2) {
+				    rollCorr = rollCorr + Math.abs((parseInt((rollSums[j] + 180) / 360) - ((rollSums[j] + 180) / 360)) * 360)
+				  } 
+				}
+				if (rollCorr < rollCorrMin) {
+				  rollCorrMin = rollCorr
+				  figNr = figNrs[i]
+				}
       }
       var figureDraw = figDraw[figNr]
     } else var figureDraw = figDraw[figNrs[0]]
@@ -2428,6 +2540,7 @@ function buildFigure (figNrs, figString, seqNr) {
 // The chosen figure is now final, so we can assign Aresti Nr and K Factor to the figure
   var arestiNrs = new Array(figAresti[figNr])
   var kFactors = new Array(figKPwrd[figNr])
+  figCheckLine[seqNr] = figAresti[figNr]
 // If we are not in Form A we check for entry and exit extension and apply them
   if (activeForm != 'A') {
     var basePos = figString.indexOf(bareFigBase)
@@ -2502,6 +2615,8 @@ function buildFigure (figNrs, figString, seqNr) {
 	break;
   // Make rolls, including any line lenghthening and/or shortening
       case (figpat.fullroll):
+  // Make a space on the figCheckLine before every possible roll
+  figCheckLine[seqNr] = figCheckLine[seqNr] + ' '
 	if (roll[rollnr]) {
 	  var rollPaths = Array ()
 	  rollSum = 0
@@ -2571,8 +2686,22 @@ function buildFigure (figNrs, figString, seqNr) {
 	    if (rollI >= 0) {
 	      arestiNrs.push (rollAresti[rollI])
 	      kFactors.push (rollKPwrd[rollI])
+// Check if there was a roll before the current one and add ; or , as appropriate for checking
+	      var k = j - 1
+	while (k > -1) {      
+        if (roll[rollnr][k]['type'] != 'line') {
+          if ((roll[rollnr][j]['extent'] / roll[rollnr][k]['extent']) > 0) {
+            figCheckLine[seqNr] = figCheckLine[seqNr] + ';'
+          } else {
+            figCheckLine[seqNr] = figCheckLine[seqNr] + ','
+          }
+          break;
+        }
+        k--
+	}
+        figCheckLine[seqNr] = figCheckLine[seqNr] + rollAresti[rollI]
 	    }
-	    if (roll[rollnr][j]['type'] != 'line') {
+      if (roll[rollnr][j]['type'] != 'line') {
 	      rollSum = rollSum + roll[rollnr][j]['extent']
 	      rollDone = true
   // Half rolls and all rolls in the vertical change direction and possibly attitude
@@ -2697,7 +2826,8 @@ function buildFigure (figNrs, figString, seqNr) {
 	  if (rollTop) {
 	    paths.push ({'path':'', 'style':'', 'dx':dx - (dxRolls / 2), 'dy':dy - (dyRolls / 2)})
 	  }
-	}  
+	}
+
 
   // The roll drawing has past, so make sure the rollTop variable is set to false
 	rollTop = false
@@ -2708,9 +2838,9 @@ function buildFigure (figNrs, figString, seqNr) {
       case ('j'):
       case ('J'):
 	if (regexChangeDir.test (figString)) {
-	  if (activeForm == 'C') var prefix = ''; else var prefix = '>'
+	  if (activeForm == 'C') var prefix = ''; else var prefix = userpat.moveforward
 	} else {
-	  if (activeForm == 'C') var prefix = '>'; else var prefix = ''
+	  if (activeForm == 'C') var prefix = userpat.moveforward; else var prefix = ''
 	}
 	paths = buildShape ('Turn', prefix + figureDraw.replace(/[^jioJIO\d]+/g, ''), paths)
 	var regex = /[jioJIO\d]+/
@@ -2765,12 +2895,19 @@ function buildFigure (figNrs, figString, seqNr) {
 // Make the end of figure symbol
   paths = buildShape ('FigStop', '', paths)
 // The figure is complete. Create the final figure array for later processing (drawing Forms)
-  var figureArray = {'paths':paths, 'aresti':arestiNrs, 'k':kFactors, 'string':figString}
+  var figureArray = {'paths':paths, 'aresti':arestiNrs, 'k':kFactors, 'string':figString, 'seqNr':seqNr}
   figure.push(figureArray)
+  // Replace double spaces on the figCheckLine with the fake Aresti code for no roll
+  while (figCheckLine[seqNr].match(/(  )|( $)/)) {
+    figCheckLine[seqNr] = figCheckLine[seqNr].replace('  ', ' 0.0.0.0 ')
+    figCheckLine[seqNr] = figCheckLine[seqNr].replace(/ $/, ' 0.0.0.0')
+  }
 }
 
 // parseSequence parses the sequence character string
 function parseSequence (string) {
+  // Clear the figCheckLine array
+  figCheckLine = []
   var seqNr = 1
   var fig = ''
   connectors = 0
@@ -2785,8 +2922,7 @@ function parseSequence (string) {
   string = string.replace(RegExp(' ([0-9]*' + userpat.moveforward + '+)', 'g'), " $1 ")
   string = string.replace(RegExp('^([0-9]*' + userpat.moveforward + '+)', 'g'), "$1 ")
 // Remove leading, trailing and multiple spaces
-  string = string.replace(/^\s+|\s+$/g, '')
-  string = string.replace(/  +/g, ' ')
+  string = sanitizeSpaces(string)
 // Move forward without connecting line
 // See if there is a y-axis swap symbol and activate it, except when it matches the subSequence code
   if (string.replace(' '+userpat.subSequence+' ','').indexOf(userpat.swapYaxis) > -1) yAxisOffset = 180 - yAxisOffset

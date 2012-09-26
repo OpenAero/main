@@ -1,4 +1,4 @@
-/* OpenAero.css file
+/* OpenAero.css 1.0.0
 
 // This file is part of OpenAero.
 
@@ -81,6 +81,7 @@ a:hover {
   font-size: 12px;
   color: #d22;
   margin-top: 10px;
+  background: #fff;
 }
 .sectionLabel {
   float: left;
@@ -178,6 +179,10 @@ a:hover {
   height:1px;
   border:0px;
   display:none;
+}
+#version {
+  margin:5px;
+  float:right;
 }
 /*MENU DROPDOWN FUNCTIONALITY*/
 /*set up ul tags*/ 
