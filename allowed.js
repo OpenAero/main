@@ -841,7 +841,7 @@ rules.push("3.3.1.4");
 // Hammerheads
 rules.push("5.2.1.1");
 rules.push("5.2.1.3 NR2");
-rules.push("5.3.1.1 NHR2");
+rules.push("5.3.1.1 NR1 ; NR2 ; NHR3");
 
 // Half loops
 rules.push("7.2.1.1 NF1 ; NHR1 ; NR2");
