@@ -1,3 +1,10 @@
+1.0.0
+* complete sequence checking for CIVA Advanced & Unlimited 2012
+* complete sequence checking for BAeA/VINK Intermediate 2012
+* modified allowed.js for sequence checking
+* added version number in menu bar
+* added function for cleaning up tabs and space characters
+
 0.9.5
 * added SF for Intermediate
 * corrected handling for line length in hammer with rolls up
@@ -8,7 +15,7 @@
 0.9.3
 * removed bug where figures like 1 1/2 spin weren't handled correctly from e.g. '6s'
 * made some improvements to language.html
-* fixed bug where figures where added by having a character after > at the end of a figure
+* fixed bug where figures were added by having a character after > at the end of a figure
 
 0.9.2
 * added/updated logos
