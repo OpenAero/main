@@ -1,3 +1,7 @@
+1.0.1
+* added automatic separation of the starts of figures for sequence clarity
+* added drag & drop repositioning of figures
+
 1.0.0
 * complete sequence checking for CIVA Advanced & Unlimited 2012
 * complete sequence checking for BAeA/VINK Intermediate 2012

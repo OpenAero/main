@@ -1,4 +1,4 @@
-/* OpenAero.css 1.0.0
+/* OpenAero.css 1.0.1
 
 // This file is part of OpenAero.
 
@@ -27,6 +27,7 @@ a:hover {
   text-decoration: underline;
 }
 #svgContainer {
+  position: absolute;
   margin-top: 60px;
   margin-left: 205px;
 /*  width:1000px;
@@ -183,6 +184,19 @@ a:hover {
 #version {
   margin:5px;
   float:right;
+}
+.figureStart {
+  z-index: 1;
+  position: absolute;
+  display: hidden;
+}
+.figureStart hover {
+  display: block;
+}
+#selectFigure {
+/* z-index must be lower than that of .figureStart to prevent blinking */
+  z-index: 0;
+  position: absolute;
 }
 /*MENU DROPDOWN FUNCTIONALITY*/
 /*set up ul tags*/ 

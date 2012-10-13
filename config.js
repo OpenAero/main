@@ -1,4 +1,4 @@
-// config.js 0.9.5
+// config.js 1.0.1
 
 // This file is part of OpenAero.
 
@@ -61,6 +61,10 @@ var spinElement3 = spinElement * 3
 var yAxisOffsetDefault = 30
 // how much to flatten turns in the Y axis
 var flattenTurn = (2 / 3)
+// how far apart the starts of figures should at least be
+var minFigStartDist = lineElement * 3
+var minFigStartDistSq = minFigStartDist * minFigStartDist
+
 // Superfamily definitions
 // For every category the list of SF is defined below. The order MATTERS! The SF will be decided by the first aresti fig nr match
 var superFamilies = new Array()
@@ -86,7 +90,7 @@ style['posfill'] = 'stroke: black; stroke-width: 1px; fill: white;'
 // Negative filled path style
 style['negfill'] = 'stroke: black; stroke-width: 1px; fill: red;'
 // Dotted path style
-style['dotted'] = 'stroke-dasharray: 1, 2; stroke: black; stroke-width: 1px; fill: none;'
+style['dotted'] = 'stroke-dasharray: 1, 3; stroke: black; stroke-width: 1px; fill: none;'
 // Illegal figure cross style
 style['illegalCross'] = 'stroke: red; stroke-width: 3px; fill: none;'
 // Illegal figure box style
@@ -153,6 +157,7 @@ regexChangeDir = new RegExp ('[' + userpat.samedir + '\\' + userpat.switchdir + 
 regexMoveForward = new RegExp ('^[0-9]*' + userpat.moveforward + '+')
 regexDrawInstr=/[\[\]\%]+/
 regexConnector = new RegExp (userpat.connector)
+regexMoveTo = /\[[0-9\-]*,[0-9\-]*\]/
 
 // ****************
 // define texts for user interaction
