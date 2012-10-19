@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--
-  OpenAero.html version 1.0.1
+  OpenAero.html version 1.0.2
 
   This file is part of OpenAero.
 
@@ -35,7 +35,7 @@
     <ul id="menu">
       <li><a href='#'>File</a>
       <ul>
-	<li><div class=openSequence><a href=#>Open sequence</a><input type=file id=file size=1  onChange="openSequence();"><div></li>
+	<li><div class=openSequence><a href=#>Open sequence</a><form id="fileForm"><input type=file id=file size=1  onChange="openSequence();"></form><div></li>
 	<li><a href="#" onClick="saveSequence();">Save sequence</a></li>
 	<li><a href="#" onClick="saveSvg();">Save as image</a></li>
 	<li><a href="#" onClick="printAllForms();">Print forms</a></li>
@@ -45,6 +45,13 @@
 	<li><a href=# onClick="selectForm('A');">Form A</a></li>
 	<li><a href=# onClick="selectForm('B');">Form B</a></li>
 	<li><a href=# onClick="selectForm('C');">Form C</a></li>
+      </ul>
+      <li><a href="#">Sequence</a>
+      <ul id="sequenceOptions">
+	<li id="entryOption"><a href=# onClick="changeEntryDirection('ed');">Downwind entry</a></li>
+	<li id="entryOption"><a href=# onClick="changeEntryDirection('ej');">X-box entry</a></li>
+	<li id="entryOption"><a href=# onClick="changeEntryDirection('eja');">X-box entry away</a></li>
+	<li><a href=# onClick="separateFigures();">Separate figures</a></li>
       </ul>
       <li><a href="#">Help</a>
       <ul>

@@ -1,3 +1,10 @@
+1.0.2
+* removed autocorrection of sequence text
+* added 'sequence' menu
+* added sequence entry options to 'sequence' menu
+* added option to separate all figures from each other
+* fixed bug where it was impossible to reload a sequence
+
 1.0.1
 * added automatic separation of the starts of figures for sequence clarity
 * added drag & drop repositioning of figures

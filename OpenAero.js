@@ -50,8 +50,8 @@ var scale = 1
 // activeForm holds the currently displayed form
 // activeForm == 'C' is true when form C is drawn. It is used in various functions to ensure exact mirroring
 var activeForm = 'B'
-// activeSequence holds the current sequence string
-var activeSequence = ''
+// activeSequence holds the current sequence string and separate figures
+var activeSequence = {'text': '', 'figures': []}
 // sequenceSaved is true when the current sequence has been saved. It starts out true as we start with an empty sequence
 var sequenceSaved = true
 // figureK holds the current total figureK
@@ -327,7 +327,7 @@ function drawWind (x, y, sign) {
   pathNode = 'M' + x + ',' + (y + 6) + ' l ' + (-sign * 80) + ',0 l 0,-6 l ' + (-sign * 16) + ',16 l ' + (sign * 16) + ',16 l 0,-6 l ' + (sign * 80) + ',0 z'
   path.setAttribute ('d', pathNode)
   path.setAttribute ('style', style['pos'])
-  document.getElementById('sequenceSvg').getElementById('sequence').appendChild(path)
+  SVGRoot.getElementById('sequence').appendChild(path)
   var text = document.createElementNS (svgNS, "text")
   text.setAttribute('x', x - (sign * 10));      
   text.setAttribute('y', y + 20);
@@ -335,7 +335,7 @@ function drawWind (x, y, sign) {
   if (sign == 1) text.setAttribute('text-anchor', 'end'); else text.setAttribute('text-anchor', 'start')
   var textNode = document.createTextNode(userText.wind);
   text.appendChild(textNode)
-  document.getElementById('sequenceSvg').getElementById('sequence').appendChild(text)
+  SVGRoot.getElementById('sequence').appendChild(text)
   return {'width':96, 'height':32}
 }
 
@@ -955,7 +955,7 @@ if (!paths) var paths = new Array()
 // drawShape draws a shape from a pathArray
 // selectFigure will be true if the figure to be drawn is one selected by hover
 function drawShape(pathArray, svgElement) {
-  if (!svgElement) svgElement = document.getElementById('sequenceSvg').getElementById('sequence')
+  if (!svgElement) svgElement = SVGRoot.getElementById('sequence')
 // decide if we are drawing a path or text or starting a figure
   if (pathArray['path']) {
     var path = document.createElementNS (svgNS, "path")
@@ -1003,7 +1003,7 @@ function drawLine (x, y, dx, dy, styleId, svg) {
   var path = document.createElementNS (svgNS, "path")
   path.setAttribute('d', 'M ' + roundTwo(x) + ',' + roundTwo(y) + ' l ' + roundTwo(dx) + ',' + roundTwo(dy))
   path.setAttribute('style',style[styleId])
-  if (svg) svg.appendChild(path); else document.getElementById('sequenceSvg').getElementById('sequence').appendChild(path)
+  if (svg) svg.appendChild(path); else SVGRoot.getElementById('sequence').appendChild(path)
 }
   
 // drawRectangle draws a rectangle at position x, y in style styleId
@@ -1015,7 +1015,7 @@ function drawRectangle (x, y, width, height, styleId, svg) {
   path.setAttribute('width', width)
   path.setAttribute('height', height)
   path.setAttribute('style',style[styleId])
-  if (svg) svg.appendChild(path); else document.getElementById('sequenceSvg').getElementById('sequence').appendChild(path)
+  if (svg) svg.appendChild(path); else SVGRoot.getElementById('sequence').appendChild(path)
 }
   
 // drawText draws any text at position x, y in style styleId with optional anchor and id
@@ -1028,7 +1028,7 @@ function drawText (text, x, y, styleId, anchor, id, svg) {
   newText.setAttribute('y', roundTwo(y));
   var textNode = document.createTextNode(text);
   newText.appendChild(textNode)
-  if (svg) svg.appendChild (newText); else document.getElementById('sequenceSvg').getElementById('sequence').appendChild(newText)
+  if (svg) svg.appendChild (newText); else SVGRoot.getElementById('sequence').appendChild(newText)
 }
 
 // draw an aresti number text with a figure
@@ -1792,6 +1792,12 @@ function mouseOutFigureStart(e) {
   if (id) container.removeChild(id);
 }
 
+/**********************************************************************
+ * 
+ * Functions for drag & drop repositioning
+ * 
+ **********************************************************************/
+ 
 // grabFigure will select a figure and allow dragging
 function grabFigure(evt) {
    // find out which element we moused down on
@@ -1898,11 +1904,84 @@ function Drop(evt) {
    }
 };
 
+/**********************************************************************
+ * 
+ * Functions for point & click altering of the sequence
+ * 
+ **********************************************************************/
+ 
+// changeEntryDirection alters the entry direction of the sequence
+function changeEntryDirection (code) {
+  // entryOptions are in reverse order of displayed
+  var entryOptions = {'eja': 'X-box entry (away)', 'ej': 'X-box entry', 'ed': 'Downwind entry', '': 'Upwind entry'}
+  if (activeSequence.figures[0]) {
+    if (entryOptions[activeSequence.figures[0]]) {
+      updateSequence(0, code, true)
+    } else updateSequence(-1, code);
+  } else updateSequence(-1, code);
+  // update the 'sequence' options list
+  // the active entry is NOT displayed as an option
+  el = document.getElementById('sequenceOptions')
+  do {
+    var option = document.getElementById('entryOption')
+    if (option) el.removeChild(option)
+  } while (option)
+  for (key in entryOptions) {
+    if (code != key) {
+      var li = document.createElement('li')
+      li.setAttribute ('id', 'entryOption')
+      var a = document.createElement('a')
+      a.setAttribute ('href', '#');
+      a.setAttribute ('onClick', 'changeEntryDirection(\'' + key + '\');');
+      a.innerHTML = entryOptions[key]
+      li.appendChild(a)
+      el.insertBefore(li, el.firstChild)
+    }
+  }
+}
+
+// separateFigures separates all the figures from each other
+function separateFigures () {
+  // Only do anything if we're not in Form A and there is more than 1 figure
+  if ((activeForm != 'A') && figure.length > 1) {
+    for (i = 1; i < figure.length; i++) {
+      var bBox = figure[i].bBox
+      if (bBox) {
+        var moveDown = 0
+        do {
+          var iterate = false;
+          for (var j = i - 1; j > -1; j--) {
+            var bBoxJ = figure[j]['bBox']
+            if (bBoxJ) {
+              if (((bBox.x + bBox.width) > bBoxJ.x) && ((bBox.y + bBox.height) > bBoxJ.y)) {
+                if ((bBox.x < (bBoxJ.x + bBoxJ.width)) && (bBox.y + moveDown) < (bBoxJ.y + bBoxJ.height)) {
+                  moveDown = bBoxJ.y + bBoxJ.height - bBox.y
+                  iterate = true;
+                }
+              }
+            }
+          }
+        } while (iterate == true);
+        if (moveDown > 0) {
+          moveDown = Math.ceil(moveDown/lineElement)
+  // No longer necessary because we redraw every time. This code could be
+  // quicker but needs extra work. Keep it here just in case...
+  //        for (j = i; j < figure.length; j++) {
+  //          if (figure[j].bBox) figure[j].bBox.y = figure[j].bBox.y + (moveDown * lineElement)
+  //        }
+          updateSequence(i - 1, '[0,' + moveDown + ']', false)
+        }
+      }
+    }
+    checkSequenceChanged();
+}
+}
+
 // drawFullFigure draws a complete Aresti figure in the sequenceSvg
 function drawFullFigure (i, draggable) {
   // Mark the starting position of the figure
   figure[i]['startPos'] = {'x':X, 'y':Y}
-  svgElement = document.getElementById('sequenceSvg').getElementById('sequence')
+  svgElement = SVGRoot.getElementById('sequence')
   var paths = figure[i]['paths']
 // Create a group for the figure, draw it and apply to the SVG
   var group = document.createElementNS (svgNS, "g")
@@ -1914,6 +1993,7 @@ function drawFullFigure (i, draggable) {
     drawShape (paths[j], group)
   }
   svgElement.appendChild(group)
+  if (draggable) figure[i]['bBox'] = group.getBBox()
 }
 
 // makeFormA creates Form A from the figures array
@@ -1921,7 +2001,7 @@ function makeFormA() {
   yAxisOffset = yAxisOffsetDefault
   Direction = 0
   figNr = 0
-  svgElement = document.getElementById('sequenceSvg').getElementById('sequence')
+  svgElement = SVGRoot.getElementById('sequence')
 // Count how many real figures there are
   for (var i = 0; i < figure.length; i++) {
     var aresti = figure[i]['aresti']
@@ -2111,31 +2191,8 @@ function draw () {
     Direction = 0
   }
   
-  var el = document.action.sequence_text
-  // read the sequence string and mark the location of the caret/selection
-  var string = el.value.replace('*', '')
-  var selStart = el.selectionStart
-  var selEnd = el.selectionEnd
-  if (selEnd > selStart) {
-    string = string.substring(0, selStart) + '*selStart*' + string.substring(selStart, selEnd - selStart) + '*selEnd*' + string.substring(selEnd);
-  } else {
-    string = string.substring(0, selStart) + '*selStart**selEnd*' + string.substring(selEnd);
-  }
-  // Create a separate 'figure' for moveForward (x>) at the beginning of a figure.
-  // OLAN has it coupled to a figure but OpenAero keeps sequence drawing instructions separate
-  string = string.replace(RegExp(' ([0-9]*' + userpat.moveforward + '+)', 'g'), " $1 ")
-  string = string.replace(RegExp('^([0-9]*' + userpat.moveforward + '+)', 'g'), "$1 ")
-  // Remove multiple spaces
-  string = sanitizeSpaces(string, true)
-  // Write the cleaned up sequence string back to the input element
-  el.value = string.replace(/\*[a-zA-Z]+\*/g, '');
-  el.selectionStart = string.indexOf('*selStart*')
-  el.selectionEnd = string.indexOf('*selEnd*') - 10
-  string = string.replace(/\*[a-zA-Z]+\*/g, '');
-  
-  parseSequence(string)
+  parseSequence()
 
-  seqSvg = document.getElementById('sequenceSvg').getElementById('sequence')
   if (activeForm == 'A') {
     makeFormA()
   } else if (activeForm == 'C') {
@@ -2146,8 +2203,34 @@ function draw () {
 
 // checkSequenceChanged is called by onKeyUp on the sequence input field to check if it has to be redrawn
 function checkSequenceChanged () {
-  if (activeSequence != document.action.sequence_text.value) {
-    activeSequence = document.action.sequence_text.value
+  if (activeSequence.text != document.action.sequence_text.value) {
+    activeSequence.text = document.action.sequence_text.value
+    string = activeSequence.text
+      var el = document.action.sequence_text
+    // read the sequence string and mark the location of the caret/selection
+  /*  var string = el.value.replace('*', '')
+    var selStart = el.selectionStart
+    var selEnd = el.selectionEnd
+    if (selEnd > selStart) {
+      string = string.substring(0, selStart) + '*selStart*' + string.substring(selStart, selEnd - selStart) + '*selEnd*' + string.substring(selEnd);
+    } else {
+      string = string.substring(0, selStart) + '*selStart**selEnd*' + string.substring(selEnd);
+    }*/
+    // Create a separate 'figure' for moveForward (x>) at the beginning of a figure.
+    // OLAN has it coupled to a figure but OpenAero keeps sequence drawing instructions separate
+    string = string.replace(RegExp(' ([0-9]*' + userpat.moveforward + '+)', 'g'), " $1 ")
+    string = string.replace(RegExp('^([0-9]*' + userpat.moveforward + '+)', 'g'), "$1 ")
+    // Remove multiple spaces
+    string = sanitizeSpaces(string)
+    // Write the cleaned up sequence string back to the input element
+//    el.value = string.replace(/\*[a-zA-Z]+\*/g, '');
+//    el.selectionStart = string.indexOf('*selStart*')
+//    el.selectionEnd = string.indexOf('*selEnd*') - 10
+//    string = string.replace(/\*[a-zA-Z]+\*/g, '');
+  
+
+    activeSequence.figures = string.split(' ')
+    
     var scrollPosition = window.pageYOffset
     draw ()
     window.scrollTo (0, scrollPosition)
@@ -2171,6 +2254,8 @@ function openSequence () {
     if (!confirm (userText.sequenceNotSavedWarning)) return;
   }
   openFile(document.getElementById('file').files[0], 'Sequence');
+  // Clear file field to enable loading the same file again
+  document.getElementById('fileForm').reset();
 }
 
 // openFile is called to open a file
@@ -2230,11 +2315,11 @@ function loadedSequence(evt) {
   logo = document.getElementById('logo').value
   if (logoImages[logo]) selectLogo(logo);
 // Draw the sequence and change the browser title after loading
-  draw()
-  changeTitle()
-  sequenceSaved = true
+  checkSequenceChanged();
+  changeTitle();
+  sequenceSaved = true;
 // Activate the loading of the checking rules (if any)
-  changeCombo('program')
+  changeCombo('program');
 }
 
 // loadedLogo will be called when a logo image has been loaded
@@ -2413,9 +2498,8 @@ function printAllForms () {
   for (var i = 0; i<pages.length; i++) {
     activeForm = pages[i]
     draw ()
-    var svg = document.getElementById('sequenceSvg')
     if (i < (pages.length - 1)) var divClass = 'breakAfter'; else var divClass = '';
-    myWindow.document.write('<div class="' + divClass + '">' + buildPrintForm (svg) + '</div>')
+    myWindow.document.write('<div class="' + divClass + '">' + buildPrintForm (SVGRoot) + '</div>')
   }
   myWindow.document.write('</body></html>')
   myWindow.print()
@@ -2598,14 +2682,13 @@ function buildPrintLogo (svg) {
 
 // saveSvg will create a download dialog box to save the currently viewed Form
 function saveSvg () {
-  var svg = document.getElementById('sequenceSvg')
   var fileName = document.getElementById('location').value+' '+
     document.getElementById('category').value+' '+
     document.getElementById('program').value+' '+
     document.getElementById('pilot').value+' '+
     'Form '+activeForm+'.svg'
   fileName = fileName.replace(/^\s+|\s+$/g, '');
-  saveFile(buildPrintForm (svg), fileName, '*.svg', 'image/svg+xml;utf8')
+  saveFile(buildPrintForm (SVGRoot), fileName, '*.svg', 'image/svg+xml;utf8')
   draw ()
 }
 
@@ -3207,9 +3290,11 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
 // figure 'fig' is placed after figure 'figNr' or over figNr' when 'replace' is true
 // Also some checks are done
 function updateSequence (figNr, fig, replace) {
+  if (fig == '') var separator = ''; else var separator = ' ';
   var el = document.action.sequence_text
   var figures = el.value.split(" ");
-  var string = ''
+  // with a negative figNr the fig is placed at the beginning
+  if (figNr > -1) var string = ''; else var string = fig + separator;
   for (var i = 0; i < figures.length; i++) {
     if (i == figNr) {
       // Handle (multiple) moveto
@@ -3227,7 +3312,7 @@ function updateSequence (figNr, fig, replace) {
         string = string + figures[i] + ' ';
         if (selectedFigure.id != null) selectedFigure.id++
       }
-      if (fig != '[0,0]') string = string + fig + ' ';
+      if (fig != '[0,0]') string = string + fig + separator;
     } else string = string + figures[i] + ' ';
   }
   // remove last added space and update field
@@ -3236,7 +3321,7 @@ function updateSequence (figNr, fig, replace) {
 }
 
 // parseSequence parses the sequence character string
-function parseSequence (string) {
+function parseSequence () {
   // Clear the figCheckLine array
   figCheckLine = []
   // Clear the figureStart array
@@ -3253,9 +3338,10 @@ function parseSequence (string) {
   }
 // Move forward without connecting line
 // See if there is a y-axis swap symbol and activate it, except when it matches the subSequence code
-  if (string.replace(' '+userpat.subSequence+' ','').indexOf(userpat.swapYaxis) > -1) yAxisOffset = 180 - yAxisOffset
+  if (activeSequence.text.replace(' '+userpat.subSequence+' ','').indexOf(userpat.swapYaxis) > -1) yAxisOffset = 180 - yAxisOffset
 // Split the string in separate figures
-  var figures = string.split(" ")
+  var figures = activeSequence.figures;
+//  var figures = string.split(" ")
   for (var i = 0; i < figures.length; i++) {
     fig = figures[i]
 // Parse out the instructions that are for drawing B and C forms only
@@ -3365,10 +3451,13 @@ function parseSequence (string) {
   }
 // Crossbox entry 'figure'
       } else if ((firstFigure) && (base == '+ej+')) {
-  Direction = 270
+        Direction = 270
+// Crossbox away entry 'figure'
+      } else if ((firstFigure) && (base == '+eja+')) {
+        Direction = 90
 // Downwind entry 'figure'
       } else if ((firstFigure) && (base == '+ed+')) {
-  Direction = 180 - Direction
+        Direction = 180 - Direction
       } else {
   buildIllegal ()
   if (i == (figures.length - 1)) {
