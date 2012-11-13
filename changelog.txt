@@ -1,9 +1,18 @@
+1.0.3
+* made sure correct entry options are also displayed after manual sequence editing
+* added Aresti Family 3 to SF definitions
+* corrected Yak52 Free max K
+* changed file saving when offline because previous method is no longer supported by Firefox or Chrome
+* fixed error in determining direction with multiple rolls on vertical
+* changed in-figure direction switching to > for X axis and ^ for Y axis to cover all (current) possibilities
+* corrected determination of foot-up/down for negative snaps from knife edge
+
 1.0.2
 * removed autocorrection of sequence text
 * added 'sequence' menu
 * added sequence entry options to 'sequence' menu
 * added option to separate all figures from each other
-* fixed bug where it was impossible to reload a sequence
+* fixed bug where it was impossible to reload a sequence file
 
 1.0.1
 * added automatic separation of the starts of figures for sequence clarity

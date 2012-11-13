@@ -1,4 +1,4 @@
-// config.js 1.0.1
+// config.js 1.0.3
 
 // This file is part of OpenAero.
 
@@ -57,7 +57,7 @@ var spinElement12 = spinElement * 1.2
 var spinElement2 = spinElement * 2
 var spinElement24 = spinElement * 2.4
 var spinElement3 = spinElement * 3
-// define the offset for figures in the y axis
+// define the offset for figures in the y axis in degrees
 var yAxisOffsetDefault = 30
 // how much to flatten turns in the Y axis
 var flattenTurn = (2 / 3)
@@ -68,8 +68,8 @@ var minFigStartDistSq = minFigStartDist * minFigStartDist
 // Superfamily definitions
 // For every category the list of SF is defined below. The order MATTERS! The SF will be decided by the first aresti fig nr match
 var superFamilies = new Array()
-superFamilies['unlimited'] = {'2.':'2', '5.':'5', '6.':'6', '1.':'7', '7.':'7', '8.':'7'}
-superFamilies['advanced'] = {'9.11.':'3', '9.12.':'3', '9.9.':'4', '9.10.':'4', '2.':'2', '5.':'5', '6.':'6', '1.':'7', '7.':'7', '8.':'7'}
+superFamilies['unlimited'] = {'2.':'2', '5.':'5', '6.':'6', '1.':'7', '3.':'7', '7.':'7', '8.':'7'}
+superFamilies['advanced'] = {'9.11.':'3', '9.12.':'3', '9.9.':'4', '9.10.':'4', '2.':'2', '5.':'5', '6.':'6', '1.':'7', '3.':'7', '7.':'7', '8.':'7'}
 superFamilies['yak52'] = superFamilies['advanced']
 superFamilies['intermediate'] = superFamilies['advanced']
 // Total K for Unknown connector figures
@@ -126,8 +126,8 @@ userpat.rollextshort = '\''
 userpat.rolllineshorten = '`'
 userpat.movedown = '^'
 userpat.moveforward = '>'
-userpat.samedir = '>'
-userpat.switchdir = '^'
+userpat.switchDirX = '>'
+userpat.switchDirY = '^'
 userpat.moveto = '['
 userpat.scale = '%'
 userpat.swapYaxis = '/'
@@ -153,11 +153,13 @@ var rollAttitudes = {'0':'', '45':'d', '90':'v', '135':'d', '180':'', '225':'id'
 // define Regex patterns for drawing and sequence parsing
 // ****************
 
-regexChangeDir = new RegExp ('[' + userpat.samedir + '\\' + userpat.switchdir + ']')
+regexChangeDir = new RegExp ('[' + userpat.switchDirX + '\\' + userpat.switchDirY + ']')
+regexSwitchDirX = new RegExp ('\\' + userpat.switchDirX)
+regexSwitchDirY = new RegExp ('\\' + userpat.switchDirY)
 regexMoveForward = new RegExp ('^[0-9]*' + userpat.moveforward + '+')
-regexDrawInstr=/[\[\]\%]+/
+regexDrawInstr = new RegExp ('[\\[\\]\\%]+')
 regexConnector = new RegExp (userpat.connector)
-regexMoveTo = /\[[0-9\-]*,[0-9\-]*\]/
+regexMoveTo = new RegExp ('\[[0-9\-]*,[0-9\-]*\]')
 
 // ****************
 // define texts for user interaction

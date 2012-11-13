@@ -1,4 +1,4 @@
-/* OpenAero.css 1.0.1
+/* OpenAero.css 1.0.3
 
 // This file is part of OpenAero.
 
@@ -198,6 +198,26 @@ a:hover {
   z-index: 0;
   position: absolute;
 }
+.largeButton {
+  text-align: center;
+  font-size: 2em;
+  font-weight: strong;
+  text-decoration: none;
+  color: white;
+  border-radius: 8px;
+  padding: 1px 10px 1px 10px;
+  background: rgb(55,176,232); /* non-W3C browsers */
+  background: -webkit-linear-gradient(top, rgba(55,176,232,1) 0%,rgba(6,109,171,1) 100%); /* Chrome10+,Safari5.1+ */
+  background: linear-gradient(to bottom, rgba(55,176,232,1) 0%,rgba(6,109,171,1) 100%); /* W3C */
+}
+.largeButton a {
+  text-decoration: none;
+  color: white;
+}
+.largeButton a:hover {
+  text-decoration: none;
+}
+
 /*MENU DROPDOWN FUNCTIONALITY*/
 /*set up ul tags*/ 
 #menu, #menu ul{ padding:0; margin:0}

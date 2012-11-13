@@ -1,4 +1,4 @@
-// OpenAero.js 1.0.1
+// OpenAero.js 1.0.3
 // This file is part of OpenAero.
 
 //  OpenAero is free software: you can redistribute it and/or modify
@@ -56,6 +56,17 @@ var activeSequence = {'text': '', 'figures': []}
 var sequenceSaved = true
 // figureK holds the current total figureK
 var figureK = 0
+// figures is an object that will hold all figure data
+// format is: figures[i].xxx where:
+// i is the figure nr (including drawing only figs)
+// xxx is a specific element, being: 
+// .string as in sequence text line
+// .paths for all the drawing paths
+// .aresti for the Aresti nrs of the figure
+// .k for the K factors of the figure
+// .bBox for the bounding rectangle
+// .startPos for the starting position
+var figures = []
 // firstFigure is true when the figure is the first of the (sub)sequence
 var firstFigure = true
 // connectors holds the number of connector figures in the sequence
@@ -1475,15 +1486,14 @@ function checkRules () {
   figureK = 0
   var connectors = 0
   groupMatch = []
-  for (var i = 0; i < figure.length; i++) {
-    aresti = figure[i]['aresti']
+  for (var i = 0; i < figures.length; i++) {
+    aresti = figures[i].aresti
     if (aresti) {
-      k = figure[i]['k']
-      var figString = figCheckLine[figure[i]['seqNr']]
-//      alert(figString) // DEBUG
+      k = figures[i].k
+      var figString = figCheckLine[figures[i].seqNr]
       figNr++
 // Check if the figure is a connector
-      if (regexConnector.test(figure[i]['string'])) {
+      if (regexConnector.test(figures[i].string)) {
   connectors++
       } else {
   var figK = 0
@@ -1675,9 +1685,9 @@ function makeMiniFormA (x, y) {
   var blockY = y
   var figNr = 0
   figureK = 0
-  for (var i = 0; i < figure.length; i++) {
-    aresti = figure[i]['aresti']
-    k = figure[i]['k']
+  for (var i = 0; i < figures.length; i++) {
+    aresti = figures[i].aresti
+    k = figures[i].k
     if (aresti) {
       figNr++
       var figK = 0
@@ -1689,7 +1699,7 @@ function makeMiniFormA (x, y) {
         blockY = blockY + 12
       }
 // Adjust figure K for connectors
-      if (regexConnector.test(figure[i]['string'])) {
+      if (regexConnector.test(figures[i].string)) {
   figK = connectorsTotalK / connectors
   if (aresti.length < 2) blockY=blockY + 12;
         drawText ('Fig ' + figNr, blockX + 4, (topBlockY + blockY) / 2 + 4, 'miniFormA')
@@ -1760,16 +1770,15 @@ function mouseOverFigureStart(e) {
   svg.setAttribute("style", 'top:9px;left:10px;');
   svg.setAttribute("width", '800px');
   svg.setAttribute("height", '800px');
-//  svg.setAttribute("draggable", 'true');
 
   // Pass through the figures and find the correct one
   var figNr = 1;
-  for (var i = 0; i < figure.length; i++) {
-    var aresti = figure[i]['aresti']
+  for (var i = 0; i < figures.length; i++) {
+    var aresti = figures[i].aresti
     // Only count real figures, no drawing instructions
     if (aresti) {
       if (figNr == id) {
-        var paths = figure[i]['paths']
+        var paths = figures[i].paths
         for (var j = 0; j < paths.length; j++) {
           drawShape (paths[j], svg, true)
         }
@@ -1780,7 +1789,6 @@ function mouseOverFigureStart(e) {
   }
   var container = document.getElementById("svgContainer");
   container.appendChild(svg)
-//  alert(new XMLSerializer().serializeToString(container))
 }
 
 // mouseOutFigureStart will un-hightlight the figure after the mouse leaves hover
@@ -1895,7 +1903,7 @@ function Drop(evt) {
         var dy = parseInt(dxdy[1] / lineElement)
         // reverse direction for dragging in Form C
         if (activeForm == 'C') dx = -dx;
-        updateSequence (figure[DragTarget.id.replace('figure', '')].index - 1, '[' + dx + ',' + dy + ']', false)
+        updateSequence (DragTarget.id.replace('figure', '') - 1, '[' + dx + ',' + dy + ']', false)
       }
       
       // set the global variable to null, so nothing will be dragged until we
@@ -1919,8 +1927,13 @@ function changeEntryDirection (code) {
       updateSequence(0, code, true)
     } else updateSequence(-1, code);
   } else updateSequence(-1, code);
-  // update the 'sequence' options list
-  // the active entry is NOT displayed as an option
+}
+
+// updateSequenceOptions updates the sequence options to reflect the
+// active start of the sequence. The active start is NOT displayed as an option
+function updateSequenceOptions (code) {
+  // entryOptions are in reverse order of displayed
+  var entryOptions = {'eja': 'X-box entry (away)', 'ej': 'X-box entry', 'ed': 'Downwind entry', '': 'Upwind entry'}
   el = document.getElementById('sequenceOptions')
   do {
     var option = document.getElementById('entryOption')
@@ -1943,15 +1956,15 @@ function changeEntryDirection (code) {
 // separateFigures separates all the figures from each other
 function separateFigures () {
   // Only do anything if we're not in Form A and there is more than 1 figure
-  if ((activeForm != 'A') && figure.length > 1) {
-    for (i = 1; i < figure.length; i++) {
-      var bBox = figure[i].bBox
+  if ((activeForm != 'A') && figures.length > 1) {
+    for (i = 1; i < figures.length; i++) {
+      var bBox = figures[i].bBox
       if (bBox) {
         var moveDown = 0
         do {
           var iterate = false;
           for (var j = i - 1; j > -1; j--) {
-            var bBoxJ = figure[j]['bBox']
+            var bBoxJ = figures[j]['bBox']
             if (bBoxJ) {
               if (((bBox.x + bBox.width) > bBoxJ.x) && ((bBox.y + bBox.height) > bBoxJ.y)) {
                 if ((bBox.x < (bBoxJ.x + bBoxJ.width)) && (bBox.y + moveDown) < (bBoxJ.y + bBoxJ.height)) {
@@ -1966,23 +1979,23 @@ function separateFigures () {
           moveDown = Math.ceil(moveDown/lineElement)
   // No longer necessary because we redraw every time. This code could be
   // quicker but needs extra work. Keep it here just in case...
-  //        for (j = i; j < figure.length; j++) {
-  //          if (figure[j].bBox) figure[j].bBox.y = figure[j].bBox.y + (moveDown * lineElement)
+  //        for (j = i; j < figures.length; j++) {
+  //          if (figures[j].bBox) figures[j].bBox.y = figures[j].bBox.y + (moveDown * lineElement)
   //        }
           updateSequence(i - 1, '[0,' + moveDown + ']', false)
         }
       }
     }
     checkSequenceChanged();
-}
+  }
 }
 
 // drawFullFigure draws a complete Aresti figure in the sequenceSvg
 function drawFullFigure (i, draggable) {
   // Mark the starting position of the figure
-  figure[i]['startPos'] = {'x':X, 'y':Y}
+  figures[i].startPos = {'x':X, 'y':Y}
   svgElement = SVGRoot.getElementById('sequence')
-  var paths = figure[i]['paths']
+  var paths = figures[i].paths
 // Create a group for the figure, draw it and apply to the SVG
   var group = document.createElementNS (svgNS, "g")
   if (draggable) group.setAttribute('id', 'figure' + i)
@@ -1993,7 +2006,7 @@ function drawFullFigure (i, draggable) {
     drawShape (paths[j], group)
   }
   svgElement.appendChild(group)
-  if (draggable) figure[i]['bBox'] = group.getBBox()
+  if (draggable) figures[i].bBox = group.getBBox()
 }
 
 // makeFormA creates Form A from the figures array
@@ -2003,9 +2016,9 @@ function makeFormA() {
   figNr = 0
   svgElement = SVGRoot.getElementById('sequence')
 // Count how many real figures there are
-  for (var i = 0; i < figure.length; i++) {
-    var aresti = figure[i]['aresti']
-    var paths = figure[i]['paths']
+  for (var i = 0; i < figures.length; i++) {
+    var aresti = figures[i].aresti
+    var paths = figures[i].paths
     if (aresti) {
   // Build the figure at the top-left
       X = 0
@@ -2029,9 +2042,9 @@ function makeFormA() {
   var y = columnTitleHeight
   var row = 0
   figureK = 0
-  for (var i = 0; i < figure.length; i++) {
-    var aresti = figure[i]['aresti']
-    var k = figure[i]['k']
+  for (var i = 0; i < figures.length; i++) {
+    var aresti = figures[i].aresti
+    var k = figures[i].k
     if (aresti) {
       var x = 0
       for (var column = 0; column < 9; column++) {
@@ -2064,14 +2077,14 @@ function makeFormA() {
         drawText (k[j], x + columnWidths[column] / 2, y + j * 14 + 14, 'FormATextBold', 'middle')
         figK = figK + parseInt(k[j])
       }
-            if (regexConnector.test(figure[i]['string'])) figK = connectorsTotalK / connectors
+            if (regexConnector.test(figures[i].string)) figK = connectorsTotalK / connectors
       break;
     case (4):
       drawRectangle (x, y, columnWidths[column], rowHeight, 'FormLine')
       drawText (figK, x + columnWidths[column] / 2, y + rowHeight / 2, 'FormATextLarge', 'middle')
       var superFamily = getSuperFamily (aresti, document.getElementById('category').value)
       if (superFamily) drawText('SF ' + superFamily,  x + columnWidths[column] / 2, y + rowHeight - 10, 'FormAText', 'middle')
-            if (regexConnector.test(figure[i]['string'])) drawText('connect',  x + columnWidths[column] / 2, y + 12, 'FormAText', 'middle')
+            if (regexConnector.test(figures[i].string)) drawText('connect',  x + columnWidths[column] / 2, y + 12, 'FormAText', 'middle')
       figureK = figureK + figK
       break;
     case (5):
@@ -2105,8 +2118,8 @@ function makeFormA() {
 function makeFormB() {
   yAxisOffset = yAxisOffsetDefault
   Direction = 0
-  for (var i = 0; i < figure.length; i++) {
-    drawFullFigure(i, figure[i]['paths'][0]['figureStart']);
+  for (var i = 0; i < figures.length; i++) {
+    if (figures[i].paths) drawFullFigure(i, figures[i]['paths'][0]['figureStart']);
   }
 
 // Find out how big the SVG has become and adjust margins
@@ -2134,8 +2147,8 @@ function makeFormB() {
 
 // makeFormC creates Form C from the figures array
 function makeFormC() {
-  for (var i = 0; i < figure.length; i++) {
-    drawFullFigure(i, figure[i]['paths'][0]['figureStart'])
+  for (var i = 0; i < figures.length; i++) {
+    if (figures[i].paths) drawFullFigure(i, figures[i]['paths'][0]['figureStart'])
   }
 // Find out how big the SVG has become and adjust margins
   var bBox = SVGRoot.getBBox()
@@ -2233,7 +2246,7 @@ function checkSequenceChanged () {
     
     var scrollPosition = window.pageYOffset
     draw ()
-    window.scrollTo (0, scrollPosition)
+    window.scrollTo (0, scrollPosition);
     sequenceSaved = false;
   }
 }
@@ -2343,7 +2356,9 @@ function loadedLogo (evt) {
 // saveFile saves a file
 // The function returns true if the file was saved
 function saveFile(data, name, filter, format) {
-  var result = false;
+  // Set saving result to true always as we currently have no method of
+  // knowing whether the file was saved or not
+  var result = true;
   savefile.data = data
   savefile.name = name
   savefile.format = format
@@ -2365,105 +2380,25 @@ function saveFile(data, name, filter, format) {
       form.submit();
     },50);
   } else {
-  // Open a new window that may be used to display the file data for saving by the user
-  // This is closed upon success from nsIFilePicker or FileWriter
-  // We have to do it now to prevent popup blocking by the browser!
-    var activeWindow = window
-    openWindow = window.open('','_blank',"menubar=yes, scrollbars=yes, status=no, toolbar=no, width=900,height=700,top=50");
-    activeWindow.focus()
-  // Try to save through mozilla nsIFilePicker
-  // Only works on Firefox
-    try {
-      // Request file write privs
-      netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect")
-      // Open the save file dialog
-      const nsIFilePicker = Components.interfaces.nsIFilePicker;
-      var fp = Components.classes["@mozilla.org/filepicker;1"].createInstance(nsIFilePicker);
-      fp.init (window, "Save File...", nsIFilePicker.modeSave);
-      if (filter) fp.appendFilter(filter['name'], filter['filter']);
-      if (name) fp.defaultString = name;
-      var rv = fp.show();
-      if (rv == nsIFilePicker.returnOK || rv == nsIFilePicker.returnReplace) {
-  // Open the file and write to it
-  var file = fp.file;
-  if (file.exists() == false) { //create as necessary
-    file.create( Components.interfaces.nsIFile.NORMAL_FILE_TYPE, 420 );
-  }
-  var outputStream = Components.classes["@mozilla.org/network/file-output-stream;1"]
-    .createInstance( Components.interfaces.nsIFileOutputStream );
-  outputStream.init( file, 0x04 | 0x08 | 0x20, 640, 0 );
-  var result = outputStream.write(data, data.length );
-  outputStream.close();
-  result = true
-      }
-      netscape.security.PrivilegeManager.revertPrivilege("UniversalXPConnect");
-      openWindow.close();
-    } catch (e) {
-  // If nsIFilePicker didn't work, try HTML5 FileWriter
-      if (window.requestFileSystem) {
-  window.requestFileSystem(window.TEMPORARY, 5*1024*1024 /*5MB*/, onInitFs, errorHandler)
-  function onInitFs(fs) {
-    fs.root.getFile(savefile.name, {create: true}, function(fileEntry) {
-
-      // Create a FileWriter object for our FileEntry (log.txt).
-      fileEntry.createWriter(function(fileWriter) {
-
-        fileWriter.onwriteend = function(e) {
-    console.log('Write completed.');
-        };
-
-        fileWriter.onerror = function(e) {
-    console.log('Write failed: ' + e.toString());
-        };
-
-        // Create a new Blob and write it to savefile.name
-        var bb = new BlobBuilder();
-        bb.append(savefile.data);
-        fileWriter.write(bb.getBlob());
-        alertBox('<a href="' + fileEntry.toURL() + '">' + userText.saveFileAsAlert + '</a>')
-        openWindow.close();
-
-      }, errorHandler);
-
-    }, errorHandler);
-  }
-      } else errorHandler();
+    // Present an alert box with a download link for the file
+    // Less gracious than through PHP bounce but only other option for now
+    
+    // Transform utf8 to base64, otherwise handling in the data URI will not work well
+    if (RegExp(';utf8$').test(format)) {
+      format = format.replace('utf8', 'base64');
+      data = btoa(data);
     }
+    // build HTML for alert box
+    var html = '<p>File saving works best through the OpenAero website '+
+      '(<a href="http://www.openaero.net">www.openaero.net</a>) or by running '+
+      'OpenAero on your own server.<br />'+
+      'However, you can save your file by right-clicking on the link below '+
+      'and choosing "Save File As..." or "Save Link As...".</p>'+
+      '<div class=largeButton><a download="' + name + '" href="data:' + format +
+      ',' + data + '">' + name + '</a></div>';
+    alertBox(html)
   }
   return result
-}
-
-// errorHandler will be called when there is a file saving error
-// This means that that both Firefox nsiFilePicker and Chrome FileWriter didn't work
-// Fall back to using the previously opened window for a data URL
-function errorHandler(e) {
-  var msg = '';
-
-  switch (e.code) {
-    case FileError.QUOTA_EXCEEDED_ERR:
-      msg = 'QUOTA_EXCEEDED_ERR';
-      break;
-    case FileError.NOT_FOUND_ERR:
-      msg = 'NOT_FOUND_ERR';
-      break;
-    case FileError.SECURITY_ERR:
-      msg = 'SECURITY_ERR';
-      break;
-    case FileError.INVALID_MODIFICATION_ERR:
-      msg = 'INVALID_MODIFICATION_ERR';
-      break;
-    case FileError.INVALID_STATE_ERR:
-      msg = 'INVALID_STATE_ERR';
-      break;
-    default:
-      msg = 'Unknown Error';
-      break;
-  };
-
-  console.log('Error: ' + msg);
-
-  openWindow.location = 'data:application/octet-stream,' + encodeURIComponent(savefile.data)
-  alertBox (userText.fileNotSaved);
 }
 
 // saveSequence will save a sequence to a .seq file
@@ -2533,6 +2468,7 @@ function buildPrintForm (svg) {
   if (activeForm == 'A') var moveRight = (620 - (w * scale)); else var moveRight = (800 - (w * scale));
   svg.getElementById('sequence').setAttribute('transform', 'translate(' + (moveRight - (bBox['x'] * scale)) + ',' + (marginTop - bBox['y']*scale) + ') scale(' + scale + ')')
 // Insert rectangle (=background) before sequence
+
   var path = document.createElementNS (svgNS, "rect")
   path.setAttribute('x', '-5')
   path.setAttribute('y', '-5')
@@ -2542,11 +2478,11 @@ function buildPrintForm (svg) {
   svg.insertBefore(path, svg.getElementById('sequence'))
 //  svg.setAttribute("width", '810px');
 //  svg.setAttribute("height", '1140px');
+
   svg.setAttribute("viewBox", '-5 -5 810 1140');
   svg.setAttribute("width", '200mm');
   svg.setAttribute("height", '280mm');
 // Add all necessary elements
-  
   buildPrintHeader (svg)
   if (activeForm == 'A') buildPrintScoreColumn (svg)
   buildPrintCornertab (svg)
@@ -2554,7 +2490,7 @@ function buildPrintForm (svg) {
 // For some reason serializeToString may convert the xlink:href to a0:href or just href for the logo image
 // So we change it back right away because otherwise the logo isn't displayed
   var sequenceSVG = new XMLSerializer().serializeToString(svg).replace (/ [^ ]*href/, ' xlink:href');
-  sequenceSVG = '<?xml version="1.0" standalone="no"?>\n<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"\n"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">\n' + sequenceSVG;
+  sequenceSVG = '<?xml version="1.0" standalone="no"?>\n<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">\n' + sequenceSVG;
   return sequenceSVG
 }
 
@@ -2633,16 +2569,18 @@ function buildPrintCornertab (svg) {
   drawLine (620, 1130, 180, -180, 'FormLine', svg)
   drawLine (680, 1120, 110, -110, 'dotted', svg)
   drawLine (730, 1120, 60, -60, 'dotted', svg)
-// Add pilot's name  
-  var newText = document.createElementNS (svgNS, "text")
-  newText.setAttribute('style', style['FormATextBold'])
-  newText.setAttribute('text-anchor', 'middle')
-  newText.setAttribute('x', 730);        
-  newText.setAttribute('y', 1060);
-  newText.setAttribute('transform', 'rotate(-45 730 1060)')
-  var textNode = document.createTextNode(document.getElementById('pilot').value);
-  newText.appendChild(textNode)
-  svg.appendChild (newText)
+// Add pilot's name
+  if (document.getElementById('pilot').value) {
+    var newText = document.createElementNS (svgNS, "text")
+    newText.setAttribute('style', style['FormATextBold'])
+    newText.setAttribute('text-anchor', 'middle')
+    newText.setAttribute('x', 730);        
+    newText.setAttribute('y', 1060);
+    newText.setAttribute('transform', 'rotate(-45 730 1060)')
+    var textNode = document.createTextNode(document.getElementById('pilot').value);
+    newText.appendChild(textNode)
+    svg.appendChild (newText)
+  }
 // Add pilot text
   var newText = document.createElementNS (svgNS, "text")
   newText.setAttribute('style', style['FormAText'])
@@ -2654,15 +2592,17 @@ function buildPrintCornertab (svg) {
   newText.appendChild(textNode)
   svg.appendChild (newText)
 // Add aircraft info
-  var newText = document.createElementNS (svgNS, "text")
-  newText.setAttribute('style', style['FormATextBold'])
-  newText.setAttribute('text-anchor', 'middle')
-  newText.setAttribute('x', 755);        
-  newText.setAttribute('y', 1085);
-  newText.setAttribute('transform', 'rotate(-45 755 1085)')
-  var textNode = document.createTextNode(document.getElementById('aircraft').value);
-  newText.appendChild(textNode)
-  svg.appendChild (newText)
+  if (document.getElementById('aircraft').value) {
+    var newText = document.createElementNS (svgNS, "text")
+    newText.setAttribute('style', style['FormATextBold'])
+    newText.setAttribute('text-anchor', 'middle')
+    newText.setAttribute('x', 755);        
+    newText.setAttribute('y', 1085);
+    newText.setAttribute('transform', 'rotate(-45 755 1085)')
+    var textNode = document.createTextNode(document.getElementById('aircraft').value);
+    newText.appendChild(textNode)
+    svg.appendChild (newText)
+  }
 // Add aircraft text
   var newText = document.createElementNS (svgNS, "text")
   newText.setAttribute('style', style['FormAText'])
@@ -2686,10 +2626,11 @@ function saveSvg () {
     document.getElementById('category').value+' '+
     document.getElementById('program').value+' '+
     document.getElementById('pilot').value+' '+
-    'Form '+activeForm+'.svg'
+    'Form '+activeForm+'.svg';
   fileName = fileName.replace(/^\s+|\s+$/g, '');
-  saveFile(buildPrintForm (SVGRoot), fileName, '*.svg', 'image/svg+xml;utf8')
-  draw ()
+  var data = buildPrintForm(SVGRoot);
+  saveFile(data, fileName, {'name':'SVG file', 'filter':'*.svg'}, 'image/svg+xml;utf8');
+  draw();
 }
 
 // savePDF will save Forms A,B and C as a single PDF
@@ -2712,7 +2653,7 @@ function inArray(arr, val) {
 }
 
 // buildIllegal builds the symbol for an illegal figure
-function buildIllegal () {
+function buildIllegal (i) {
 // create space before the figure
   var paths = new Array()
   paths = buildShape ('FigSpace' , 2, paths)
@@ -2723,26 +2664,21 @@ function buildIllegal () {
   paths.push({'path':'l ' + dx + ',' + dy + ' l 0,' + (-lineElement * 6) + ' l ' + -dx + ',' + -dy + ' z', 'style':'illegalBox', 'dx':dx, 'dy':dy})
   // Create empty space after illegal figure symbol
   paths = buildShape ('FigSpace', 2, paths)
-
-  var figureArray = {'paths': paths}
-  figure.push(figureArray)
+  figures[i].paths = paths
 }
 
 // buildMoveTo builds the symbol for a moveto and moves the cursor
-function buildMoveTo (dxdy) {
+function buildMoveTo (dxdy, i) {
   var paths = []
   if (activeForm == 'C') dxdy[0] = -dxdy[0]
   paths.push({'path':'l ' + roundTwo(dxdy[0] * lineElement) + ',' + roundTwo(dxdy[1] * lineElement), 'style':'dotted', 'dx':(dxdy[0] * lineElement), 'dy':(dxdy[1] * lineElement)})
 // Create space after the figure
-  paths = buildShape ('FigSpace' , 2, paths)
-  var figureArray = {'paths': paths}
-  figure.push(figureArray)
+  figures[i].paths = buildShape ('FigSpace' , 2, paths)
 }
 
 // buildMoveForward moves the cursor forward
-function buildMoveForward (extent) {
-  var figureArray = {'paths': buildShape ('FigSpace' , extent)}
-  figure.push({'paths': buildShape ('FigSpace' , extent)})
+function buildMoveForward (extent, i) {
+  figures[i].paths = buildShape ('FigSpace' , extent)
 }
 
 // buildFigure parses a complete figure as defined by the figNrs and figString and puts it in array figure
@@ -3051,13 +2987,18 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
   // Handle snaps on verticals and from non-knife-edge
     if (NegLoad == 0) rollAtt = '+' + rollAtt; else rollAtt = '-' + rollAtt
         } else {
-  // Handle snaps from knife edge. This is the only case (so far) where the way something is drawn (tip down=foot down) influences the K factor
+  // Handle snaps from knife edge. This is the only case (so far) where the way something is
+  // drawn (tip down=foot down for pos, tip down=foot up for neg) influences the K factor
     if ((Math.cos(dirAttToAngle (Direction, Attitude)) * roll[rollnr][j]['extent']) < 0) {
   // Foot down snap, the harder one
-      if (roll[rollnr][j]['type'] == 'possnap') rollAtt = '-' + rollAtt; else rollAtt = '+' + rollAtt;
+/* Old code, seems to be incorrect according Aresti catalogue?
+      if (roll[rollnr][j]['type'] == 'possnap') rollAtt = '-' + rollAtt; else rollAtt = '+' + rollAtt; */
+      rollAtt = '-' + rollAtt;
     } else {
   // Foot up snap, the easier one
-      if (roll[rollnr][j]['type'] == 'possnap') rollAtt = '+' + rollAtt; else rollAtt = '-' + rollAtt;
+/* Old code, seems to be incorrect according Aresti catalogue?
+      if (roll[rollnr][j]['type'] == 'possnap') rollAtt = '+' + rollAtt; else rollAtt = '-' + rollAtt; */
+      rollAtt = '+' + rollAtt;
     }
         }
       }
@@ -3084,22 +3025,38 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
         rollSum = rollSum + roll[rollnr][j]['extent']
         rollDone = true
   // Half rolls and all rolls in the vertical change direction and possibly attitude
-        if (((parseInt((rollSum + 180) / 360) - ((rollSum + 180) / 360)) == 0) || (Attitude == 90) || (Attitude == 270)) {
-    Attitude = 180 - Attitude
-    if (Attitude < 0) Attitude = Attitude + 360;
-  // See if the direction should be changed from default
-    if (regexChangeDir.test (figString)) {
-      if (activeForm == 'C') changeDir (Math.abs(rollSum)); else changeDir(-Math.abs(rollSum))
-  // Remove all direction changers from the figure string once applied
-      figString = figString.replace(regexChangeDir, '')
-    } else {
-      if (activeForm == 'C') changeDir (-Math.abs(rollSum)); else changeDir(Math.abs(rollSum))
-    }
-    rollSum = 0
-    attChanged = 180 - attChanged
+        if ((parseInt((rollSum + 180) / 360) - ((rollSum + 180) / 360)) == 0) {
+          Attitude = 180 - Attitude
+          if (Attitude < 0) Attitude = Attitude + 360;
+          if (activeForm == 'C') changeDir (-Math.abs(rollSum)); else changeDir(Math.abs(rollSum))
+          rollSum = 0
+          attChanged = 180 - attChanged
         }
       }
     }
+/*  // See if the direction should be changed from default
+  // only run one X and one Y switch per figure
+    if (((Attitude == 90) || (Attitude == 270))) {
+      if ((Direction == 0) || (Direction == 180)) {
+        if (regexSwitchDirX.test (figString)) {
+          if (activeForm == 'C') changeDir (Math.abs(rollSum)); else changeDir(-Math.abs(rollSum))
+    // Remove this direction changer from the figure string once applied
+          figString = figString.replace(regexSwitchDirX, '')
+        } else {
+          if (activeForm == 'C') changeDir (-Math.abs(rollSum)); else changeDir(Math.abs(rollSum))
+        }
+        attChanged = 180 - attChanged
+      } else {
+        if (regexSwitchDirY.test (figString)) {
+          if (activeForm == 'C') changeDir (Math.abs(rollSum)); else changeDir(-Math.abs(rollSum))
+    // Remove this direction changer from the figure string once applied
+          figString = figString.replace(regexSwitchDirY, '')
+        } else {
+          if (activeForm == 'C') changeDir (-Math.abs(rollSum)); else changeDir(Math.abs(rollSum))
+        }
+        attChanged = 180 - attChanged
+      }
+    } */      
     rollSum = rollSums[rollnr]
   // See if we have to autocorrect the rolls
     if (figRolls[figNr][rollnr] == 1) {
@@ -3207,6 +3164,24 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
     }
   }
 
+  // See if the direction should be changed from default
+  // This is only possible when there was a 1/4, 3/4 etc roll and the attitude is vertical
+  // only run one X and one Y switch per figure
+    if (((Attitude == 90) || (Attitude == 270)) && ((rollSum / 180) != parseInt(rollSum / 180))) {
+      if (activeForm == 'C') changeDir (-Math.abs(rollSum)); else changeDir(Math.abs(rollSum))
+      if ((Direction == 0) || (Direction == 180)) {
+        if (regexSwitchDirX.test (figString)) {
+          changeDir (180)
+    // Remove this direction changer from the figure string once applied
+          figString = figString.replace(regexSwitchDirX, '')
+        }
+      } else {
+        if (regexSwitchDirY.test (figString)) {
+          changeDir(180)
+          figString = figString.replace(regexSwitchDirY, '')
+        }
+      }
+    }      
 
   // The roll drawing has past, so make sure the rollTop variable is set to false
   rollTop = false
@@ -3277,8 +3252,11 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
   paths = buildShape ('FigSpace', 2, paths)
 
 // The figure is complete. Create the final figure array for later processing (drawing Forms)
-  var figureArray = {'paths':paths, 'aresti':arestiNrs, 'k':kFactors, 'string':figString, 'seqNr':seqNr, 'index':figStringIndex}
-  figure.push(figureArray)
+  figures[figStringIndex].paths = paths;
+  figures[figStringIndex].aresti = arestiNrs;
+  figures[figStringIndex].k = kFactors;
+  figures[figStringIndex].seqNr = seqNr;
+  
   // Replace double spaces on the figCheckLine with the fake Aresti code for no roll
   while (figCheckLine[seqNr].match(/(  )|( $)/)) {
     figCheckLine[seqNr] = figCheckLine[seqNr].replace('  ', ' 0.0.0.0 ')
@@ -3292,15 +3270,14 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
 function updateSequence (figNr, fig, replace) {
   if (fig == '') var separator = ''; else var separator = ' ';
   var el = document.action.sequence_text
-  var figures = el.value.split(" ");
   // with a negative figNr the fig is placed at the beginning
   if (figNr > -1) var string = ''; else var string = fig + separator;
   for (var i = 0; i < figures.length; i++) {
     if (i == figNr) {
       // Handle (multiple) moveto
       if (fig.match(regexMoveTo)) {
-        if (figures[i].match(regexMoveTo)) {
-          var dxdy1 = figures[i].replace(/[^0-9\,\-]/g, '').split(',')
+        if (figures[i].string.match(regexMoveTo)) {
+          var dxdy1 = figures[i].string.replace(/[^0-9\,\-]/g, '').split(',')
           var dxdy2 = fig.replace(/[^0-9\,\-]/g, '').split(',')
           var dx = parseInt(dxdy1[0]) + parseInt(dxdy2[0])
           var dy = parseInt(dxdy1[1]) + parseInt(dxdy2[1])
@@ -3309,11 +3286,11 @@ function updateSequence (figNr, fig, replace) {
         }
       }
       if (!replace) {
-        string = string + figures[i] + ' ';
+        string = string + figures[i].string + ' ';
         if (selectedFigure.id != null) selectedFigure.id++
       }
       if (fig != '[0,0]') string = string + fig + separator;
-    } else string = string + figures[i] + ' ';
+    } else string = string + figures[i].string + ' ';
   }
   // remove last added space and update field
   el.value = string.replace (/ $/, '');
@@ -3336,28 +3313,29 @@ function parseSequence () {
     lineElement = lineElement / scale
     scale = 1
   }
-// Move forward without connecting line
 // See if there is a y-axis swap symbol and activate it, except when it matches the subSequence code
   if (activeSequence.text.replace(' '+userpat.subSequence+' ','').indexOf(userpat.swapYaxis) > -1) yAxisOffset = 180 - yAxisOffset
-// Split the string in separate figures
-  var figures = activeSequence.figures;
-//  var figures = string.split(" ")
+// Get the split string from activeSequence
+  figures = []
+  for (var i = 0; i < activeSequence.figures.length; i++) {
+    figures[i] = {'string': activeSequence.figures[i]};
+  }
   for (var i = 0; i < figures.length; i++) {
-    fig = figures[i]
+    fig = figures[i].string
 // Parse out the instructions that are for drawing B and C forms only
     if (regexDrawInstr.test(fig) || (fig.replace(regexMoveForward, '').length == 0) || (fig == userpat.subSequence)) {
       var onlyDraw = true
       if (fig.charAt(0) == userpat.moveto) {
 // Move to new position
   var dxdy = fig.replace(/[^0-9\,\-]/g, '').split(',')
-  if ((dxdy[0] >= 0 || dxdy[0] < 0) && (dxdy[1] >= 0 || dxdy[1] < 0)) buildMoveTo (dxdy);
+  if ((dxdy[0] >= 0 || dxdy[0] < 0) && (dxdy[1] >= 0 || dxdy[1] < 0)) buildMoveTo (dxdy, i);
       } else if (regexMoveForward.test(fig)) {
 // Move forward without connecting line
         var moveFwd = fig.match(regexMoveForward)[0]
         if (parseInt (moveFwd)) {
-      figure.push({'paths': buildShape ('FigSpace', parseInt(moveFwd) + moveFwd.length - moveFwd.match(/[0-9]*/).length - 1)})
+      figures[i].paths = buildShape ('FigSpace', parseInt(moveFwd) + moveFwd.length - moveFwd.match(/[0-9]*/).length - 1)
   } else {
-      figure.push({'paths': buildShape ('FigSpace', moveFwd.length)})
+      figures[i].paths = buildShape ('FigSpace', moveFwd.length)
   }
       } else if (fig.charAt(fig.length - 1) == userpat.scale) {
 // Change scale
@@ -3452,14 +3430,19 @@ function parseSequence () {
 // Crossbox entry 'figure'
       } else if ((firstFigure) && (base == '+ej+')) {
         Direction = 270
+        updateSequenceOptions ('ej');
 // Crossbox away entry 'figure'
       } else if ((firstFigure) && (base == '+eja+')) {
         Direction = 90
+        updateSequenceOptions ('eja');
 // Downwind entry 'figure'
       } else if ((firstFigure) && (base == '+ed+')) {
         Direction = 180 - Direction
+        updateSequenceOptions ('ed');
+      } else if (firstFigure) {
+        updateSequenceOptions ('');
       } else {
-  buildIllegal ()
+  buildIllegal (i);
   if (i == (figures.length - 1)) {
     alertMsgs.push (userText.illegalAtEnd)
   } else {  
@@ -3472,11 +3455,11 @@ function parseSequence () {
   if (rulesActive) checkRules ();
 // Build the last figure stop shape after all's done. This won't work well if 'move' figures are added at the end
   if (!firstFigure) {
-    paths = figure[figure.length - 1]['paths']
+    paths = figures[figures.length - 1]['paths']
     // remove space at end of figure
     paths.pop();
     paths = buildShape ('FigStop', true, paths)
-    figure[figure.length - 1]['paths'] = paths
+    figures[figures.length - 1]['paths'] = paths
   }
 // Set firstFigure back to true for another drawing session
   firstFigure = true
