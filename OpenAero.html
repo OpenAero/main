@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--
-  OpenAero.html version 1.0.3
+  OpenAero.html version 1.1.0
 
   This file is part of OpenAero.
 
@@ -26,49 +26,62 @@
     <script src="logo.js" type="text/javascript"></script>
     <script src="figures.js" type="text/javascript"></script>
     <script src="allowed.js" type="text/javascript"></script>
-    <script src="OpenAero.js" type="text/javascript"></script>
   </head>
 <body onLoad="doOnLoad();">
+<!-- Top block -->
 <div id=topBlock>
   <div id="openAeroLogo">OpenAero</div>
+  <!-- Menu -->
   <div id=mainMenu>
     <ul id="menu">
+	  <!-- File menu -->
       <li><a href='#'>File</a>
       <ul>
-	<li><div class=openSequence><a href=#>Open sequence</a><form id="fileForm"><input type=file id=file size=1  onChange="openSequence();"></form><div></li>
-	<li><a href="#" onClick="saveSequence();">Save sequence</a></li>
-	<li><a href="#" onClick="saveSvg();">Save as image</a></li>
-	<li><a href="#" onClick="printAllForms();">Print forms</a></li>
+		<li><div class=openSequence><a href=#>Open sequence</a><form id="fileForm"><input type=file id=file size=1 onChange="openSequence();"></form><div></li>
+		<li><a href="#" onClick="saveSequence();">Save sequence</a></li>
+		<li><a href="#" onClick="saveSvg();">Save as image</a></li>
+		<li><a href="#" onClick="printAllForms();">Print forms</a></li>
       </ul>
+      <!-- View menu -->
       <li><a href="#">View</a>
       <ul>
-	<li><a href=# onClick="selectForm('A');">Form A</a></li>
-	<li><a href=# onClick="selectForm('B');">Form B</a></li>
-	<li><a href=# onClick="selectForm('C');">Form C</a></li>
+		<li><a href=# onClick="selectForm('A');">Form A</a></li>
+		<li><a href=# onClick="selectForm('B');">Form B</a></li>
+		<li><a href=# onClick="selectForm('C');">Form C</a></li>
       </ul>
+      <!-- Sequence menu -->
       <li><a href="#">Sequence</a>
       <ul id="sequenceOptions">
-	<li id="entryOption"><a href=# onClick="changeEntryDirection('ed');">Downwind entry</a></li>
-	<li id="entryOption"><a href=# onClick="changeEntryDirection('ej');">X-box entry</a></li>
-	<li id="entryOption"><a href=# onClick="changeEntryDirection('eja');">X-box entry away</a></li>
-	<li><a href=# onClick="separateFigures();">Separate figures</a></li>
+		<li id="entryOption"><a href=# onClick="changeEntryDirection('ed');">Downwind entry</a></li>
+		<li id="entryOption"><a href=# onClick="changeEntryDirection('ej');">X-box entry</a></li>
+		<li id="entryOption"><a href=# onClick="changeEntryDirection('eja');">X-box entry away</a></li>
+		<li><a href=# onClick="separateFigures();">Separate figures</a></li>
       </ul>
+      <!-- Help menu -->
       <li><a href="#">Help</a>
       <ul>
-	<li><a href=# onClick="window.open('language.html', 'OpenAero language', 'menubar=no, scrollbars=yes, status=no, toolbar=no, top=30px, width=900px');">OpenAero language</a></li>
-	<li><a href=# onClick="window.open('opensave.html', 'OpenAero opening and saving sequences', 'menubar=no, scrollbars=yes, status=no, toolbar=no, top=30px, width=900px');">Opening/saving files</a></li>
-	<li><a href=# onClick="window.open('arestisystem.html', 'The Aresti aerocryptographic system', 'menubar=no, scrollbars=yes, status=no, toolbar=no, top=30px, width=900px');">Aresti system</a></li>
+		<li><a href=# onClick="window.open('language.html', 'OpenAero language', 'menubar=no, scrollbars=yes, status=no, toolbar=no, top=30px, width=900px');">OpenAero language</a></li>
+		<li><a href=# onClick="window.open('opensave.html', 'OpenAero opening and saving sequences', 'menubar=no, scrollbars=yes, status=no, toolbar=no, top=30px, width=900px');">Opening/saving files</a></li>
+		<li><a href=# onClick="window.open('arestisystem.html', 'The Aresti aerocryptographic system', 'menubar=no, scrollbars=yes, status=no, toolbar=no, top=30px, width=900px');">Aresti system</a></li>
       </ul>
     </ul>
-    <div id=version>Version: 1.0.3</div>
+    <!-- Current version -->
+    <div id=version>Version: 1.1.0</div>
   </div>
-  <form name=action action="#" method="POST">
-  <input type=text name=sequence_text id=sequence_text style="width:97%;" onKeyUp="checkSequenceChanged()">
-  </form>
+  <!-- Sequence text -->
+  <input type=text name=sequence_text id=sequence_text style="width:97%;" onKeyUp="checkSequenceChanged();">
 </div>
+<!-- Left main block -->
 <div id=leftBlock>
+  <div class=tabSelector>
+	<ul>
+	  <li id=tab-sequenceInfo class=activeTab><a href="#" onClick="selectTab(this);">Sequence info</a></li>
+	  <li id=tab-figureInfo class=inactiveTab><a href="#" onClick="selectTab(this);">Figure chooser</a></li>
+	</ul>
+  </div>
+  <div class=clearBoth></div>
+  <!-- Sequence info -->
   <div id=sequenceInfo>
-    <div class="sectionLabel">Sequence&nbsp;info</div><div class="sectionLabelClose">&nbsp;</div>
     <div class=item><div class="label">Pilot</div><input type=text name=pilot id=pilot onChange="changeTitle()"></div>
     <div class=item><div class="label">Aircraft</div><input type=text name=aircraft id=aircraft></div>
     <div class=item><div class="label">Location</div><input type=text name=location id=location onChange="changeTitle()"></div>
@@ -81,12 +94,51 @@
     </div>
     <div class=item><div class="label">Notes</div><textarea name=notes id=notes></textarea></div>
   </div>
-  <div id=alerts>
+  <!-- Figure Chooser -->
+  <div id=figureInfo class=section style="display: none;">
+    <div id=figureHeader class="sectionLabel"></div><div class="sectionLabelClose">&nbsp;</div>
+    <div class=clearBoth></div>
+	<div>
+	  Family<select id=figureGroup onChange="changeFigureGroup(this);"></select>
+	</div>
+    <div id="figureChooser">
+	  <table id="figureChooserTable"></table>
+	</div>
+	<!-- This section will be for roll selection
+    <div id="roll1" class=section>
+      <div class="sectionLabel">First roll position</div><div class="sectionLabelClose">&nbsp;</div>
+      <select id=roll1-1 onChange="changeRoll(this);"></select>
+      <select id=roll1-2 onChange="changeRoll(this);"></select>
+    </div>
+    <div id="roll2" class=section>
+      <div class="sectionLabel">Second roll position</div><div class="sectionLabelClose">&nbsp;</div>
+      <select id=roll2-1 onChange="changeRoll(this);"></select>
+      <select id=roll2-2 onChange="changeRoll(this);"></select>
+    </div>
+    <div id="roll3" class=section>
+      <div class="sectionLabel">Third roll position</div><div class="sectionLabelClose">&nbsp;</div>
+      <select id=roll3-1 onChange="changeRoll(this);"></select>
+      <select id=roll3-2 onChange="changeRoll(this);"></select>
+    </div>
+    <div id="roll4" class=section>
+      <div class="sectionLabel">Fourth roll position</div><div class="sectionLabelClose">&nbsp;</div>
+      <select id=roll4-1 onChange="changeRoll(this);"></select>
+      <select id=roll4-2 onChange="changeRoll(this);"></select>
+    </div>
+    -->
+  </div>
+  <!-- Alerts -->
+  <div id=alerts class=section>
     <div class="sectionLabel">Alerts</div><div class="sectionLabelClose">&nbsp;</div>
   </div>
 </div>
+<!-- Container for the sequence svg -->
 <div id="svgContainer">
 </div>
+<!-- Container for SVGs for the figure chooser -->
+<div id="figureSvgContainer">
+</div>
+<!-- Hidden div used for saving files through download.php -->
 <div id="saveFileFormDiv">
   <form action="download.php" method="post" id="saveFileForm">
     <input type="hidden" name="name" />
@@ -95,4 +147,6 @@
   </form>
 </div>
 </body>
+<!-- The main script. Put it at the end when everything else is loaded --> 
+<script src="OpenAero.js" type="text/javascript"></script>
 </html>

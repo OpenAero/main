@@ -1,3 +1,7 @@
+1.1.0
+* added point & click selection of base figures
+* cleaned up code, joined separate variables into objects
+
 1.0.3
 * made sure correct entry options are also displayed after manual sequence editing
 * added Aresti Family 3 to SF definitions

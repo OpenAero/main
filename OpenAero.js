@@ -1,4 +1,4 @@
-// OpenAero.js 1.0.3
+// OpenAero.js 1.1.0
 // This file is part of OpenAero.
 
 //  OpenAero is free software: you can redistribute it and/or modify
@@ -53,10 +53,12 @@ var activeForm = 'B'
 // activeSequence holds the current sequence string and separate figures
 var activeSequence = {'text': '', 'figures': []}
 // sequenceSaved is true when the current sequence has been saved. It starts out true as we start with an empty sequence
-var sequenceSaved = true
+var sequenceSaved = true;
+// sequenceText holds the sequence_text input field object
+var sequenceText = document.getElementById('sequence_text');
 // figureK holds the current total figureK
 var figureK = 0
-// figures is an object that will hold all figure data
+// figures is an object that will hold all figure data of the sequence
 // format is: figures[i].xxx where:
 // i is the figure nr (including drawing only figs)
 // xxx is a specific element, being: 
@@ -83,6 +85,8 @@ var figureStart = []
 var selectedFigure = {'id':null}
 // SVGRoot is the sequence SVG object
 var SVGRoot = null
+// figureSvg holds the figures for selection
+var figureSvg = false
 // These variables are used for dragging and dropping
 var TrueCoords = null;
 var GrabPoint = null;
@@ -99,22 +103,20 @@ var checkRule = []
 var figCheckLine = []
 var defRules = []
 var rulesActive = false
-// figPattern is the complete pattern for each figure
-  var figPattern = new Array()
-// figBase is the pattern for each figure as it's written in the sequence, with + and - but without any rolls
-  var figBase = new Array()
+// fig will hold all figures in the catalog in the form
+// fig[i].xxx where xxx is:
+// .base    : the pattern for each figure as it's written in the sequence, with + and - but without any rolls
+// .aresti  : the Aresti number for each figure 
+// .rolls   : shows which roll positions are possible for each figure
+// .kpwrd   : the powered K factor for each figure
+// .kglide  : the glider K factor for each figure
+// .draw    : the drawing instructions for each figure
+// .group   : to which group every figure belongs
+var fig = []
 // figBaseLookup holds the same data as figBase, but with the base as key and corresponding figure(s) as an array for fast lookup
   var figBaseLookup = new Array()
-// figRolls shows which roll positions are possible for each figure
-  var figRolls = new Array()
-// figAresti is the Aresti number for each figure 
-  var figAresti = new Array ()
-// figK is the K factor for each figure
-  var figKPwrd = new Array ()
-// figK is the K factor for each figure
-  var figKGlide = new Array ()
-// figDraw are the drawing instructions for each figure
-  var figDraw = new Array ()
+// figGroup holds the figure group data
+  var figGroup = []
 // rollBase holds the base for each roll (roll, snap, spin) element
   var rollBase = new Array ()
 // rollAresti is the Aresti number for each roll
@@ -123,8 +125,6 @@ var rulesActive = false
   var rollKPwrd = new Array ()
 // rollK is the K factor for each roll
   var rollKGlide = new Array ()
-// figure is the array which will hold drawing instructions, Aresti nrs and K factors for each complete figure in the sequence
-  var figure = new Array ()
 // alertMsgs will hold any alerts about figures and the sequence
   var alertMsgs = new Array ()
 
@@ -169,23 +169,38 @@ function rebuildSequenceSvg () {
   GrabPoint = SVGRoot.createSVGPoint();
 }
 
+// rebuildFigureSvg deletes and recreates the svg that holds a figure
+// Want to put it in figureSvgContainer but that doesn't work! Why?
+// For now keep it in svgContainer div
+function rebuildFigureSvg () {
+  var container = document.getElementById("svgContainer");
+  while (container.childNodes.length > 0) container.removeChild(container.lastChild);
+  figureSvg = document.createElementNS(svgNS, "svg");
+  figureSvg.setAttribute("xmlns", svgNS) 
+  figureSvg.setAttribute("version", "1.2");
+  figureSvg.setAttribute("baseProfile", "tiny");
+  figureSvg.setAttribute("id", "figureSvg");
+  var group = document.createElementNS (svgNS, "g")
+  group.setAttribute('id', 'sequence');
+  figureSvg.appendChild(group);
+  container.appendChild(figureSvg);
+}
+
 // selectFilter builds a svg color filter for use with a selected figure
+// White areas (such as inside of pos flick)  will become slightly yellow
+// Black and red will become magenta
 function selectFilter (svg) {
   var filter = document.createElementNS (svgNS, 'filter');
   filter.setAttribute('id', 'selectFilter');
   var el = document.createElementNS (svgNS, 'feComponentTransfer');
-  // build filter for magenta; Red=1, Green=0, Blue=0.5
+  // build filter for magenta; Red=1, Blue=0.75
   var feFunc = document.createElementNS (svgNS, 'feFuncR');
   feFunc.setAttribute('type', 'table')
-  feFunc.setAttribute('tableValues', '1')
-  el.appendChild(feFunc)
-  var feFunc = document.createElementNS (svgNS, 'feFuncG');
-  feFunc.setAttribute('type', 'table')
-  feFunc.setAttribute('tableValues', '0')
+  feFunc.setAttribute('tableValues', '1 1')
   el.appendChild(feFunc)
   var feFunc = document.createElementNS (svgNS, 'feFuncB');
   feFunc.setAttribute('type', 'table')
-  feFunc.setAttribute('tableValues', '0.5')
+  feFunc.setAttribute('tableValues', '0.75 0.75')
   el.appendChild(feFunc)
   filter.appendChild(el)
   svg.appendChild(filter)
@@ -213,6 +228,8 @@ function alertBox(html) {
   closeDiv.appendChild(aElem)
   div.appendChild(closeDiv)
   document.body.appendChild(div)
+  // return the div
+  return div
 }
 
 //closeAlertBox removes any alertBoxes
@@ -246,6 +263,23 @@ function combo(id,h,l) {
   self.inp.onkeyup = function(e) {var k = (e)? e.keyCode : event.keyCode; if (k == 40 || k == 13) {if (self.sel == self.list.length-1) {self.list[self.sel].style.backgroundColor = self.l; self.sel = -1;} if (self.sel > -1) self.list[self.sel].style.backgroundColor = self.l; self.inp.value = self.list[++self.sel].firstChild.data; self.list[self.sel].style.backgroundColor = self.h;} else if (k == 38 && self.sel > 0) {self.list[self.sel].style.backgroundColor = self.l; self.inp.value = self.list[--self.sel].firstChild.data; self.list[self.sel].style.backgroundColor = self.h;}changeCombo(id);return false;};
 }
 combo.prototype.rset = function(self) {self.ul.style.display = 'none'; self.sel = -1; for (var i=self.list.length - 1; i >= 0; i--) {self.list[i].style.backgroundColor = self.l;}return false;};
+
+// selectTab allows us to select different tabbed pages
+function selectTab (e) {
+  if (typeof e === 'object') {
+    var li = e.parentNode;
+  } else {
+    var li = document.getElementById(e);
+  }
+  var ul = li.parentNode;
+  var list = ul.getElementsByTagName('li');
+  for (var i = list.length - 1; i>=0; i--) {
+    list[i].setAttribute('class', 'inactiveTab');
+    document.getElementById(list[i].id.replace('tab-', '')).setAttribute('style', 'display:none;')
+  }
+  li.setAttribute('class', 'activeTab');
+  document.getElementById(li.id.replace('tab-', '')).setAttribute('style', '')
+}
 
 // roundTwo returns a number rounded to two decimal places
 // Use for all drawing functions to prevent rendering errors and keep SVG file size down
@@ -515,8 +549,8 @@ function makeTurnArc (rad, startRad, stopRad, pathsArray) {
   if ((stopRad > Math.PI) && (stopRad < PI2)) radEllipse = radEllipse + Math.PI
   stopX = Math.cos (radEllipse) * curveRadius
   stopY = - (Math.sin (radEllipse) * curveRadius * flattenTurn)
-  dx = (stopX - startX) * sign
-  dy = (stopY - startY) * sign
+  dx = roundTwo(stopX - startX) * sign
+  dy = roundTwo(stopY - startY) * sign
   if (rad > 0) sweepFlag = 0; else sweepFlag = 1
   if (Math.abs (rad) < Math.PI) longCurve = 0; else longCurve = 1
   if ((Attitude > 90) && (Attitude < 270)) {
@@ -591,7 +625,7 @@ function makeTurnRoll (param, rad) {
   return pathsArray
 }
 
-// makeTurn builds turns and rolling circles from the draw instructions parsed from figDraw
+// makeTurn builds turns and rolling circles from the draw instructions parsed from fig[i].draw
 function makeTurn (draw) {
 // parse base
   var pathsArray = new Array()
@@ -1006,6 +1040,7 @@ function drawShape(pathArray, svgElement) {
   }
   if ('dx' in pathArray) X = roundTwo(X + pathArray['dx'])
   if ('dy' in pathArray) Y = roundTwo(Y + pathArray['dy'])
+  return svgElement;
 }
 
 // drawLine draws a line from x,y to x+dx,y+dy in style styleId
@@ -1056,6 +1091,9 @@ function doOnLoad () {
   parseFiguresFile();
 // Parse the rules file
   parseRulesFile();
+  // Activate the first figure selection group
+  changeFigureGroup(document.getElementById('figureGroup'))
+  document.getElementById('figureHeader').innerHTML = userText.addingFigure;
 // Some browsers keep the input fields after reload, so do a draw to make sure an entered sequence is shown
   draw();
 // Also update the browser title
@@ -1254,61 +1292,73 @@ function removeLogo() {
   
 // parseFiguresFile parses the figures file and stores it in several arrays for fast retrieval
 function parseFiguresFile () {
+  var groupRegex = new RegExp('^F[0-9]')
+  var figGroupSelector = document.getElementById('figureGroup')
+  var figGroupNr = -1;
   for (var i = 0; i < figs.length; i++) {
 // Clean up the lines
     line = sanitizeSpaces(figs[i])
-// Split the remainder on the space. Family 9 should now have two elements, the others three 
-    var splitLine = line.split(" ")
-
-    if (splitLine[0]) {
-// Next we split the Aresti and K-factors part
-      var arestiK = splitLine[1].split("(")
-      var kFactors = arestiK[1].replace(")","").split(":")
-// Split K factors on the colon; kFactors[0] is for Powered, kFactors[1] is for Gliders
-// For now, we will only handle Powered
-      figPattern[i] = splitLine[0]
-      figAresti[i] = arestiK[0]
-      figKPwrd[i] = kFactors[0]
-      figKGlide[i] = kFactors[1]
-// We will extract roll elements for everything but roll figures and (rolling) turns
-      turnRegex = /[^o]j/
-      if (turnRegex.test(splitLine[0])) {
-  theBase = splitLine[0]
-  if (theBase in figBaseLookup) figBaseLookup[theBase].push(i); else figBaseLookup[theBase] = [i]
-  figBase[i] = theBase
-        figDraw[i] = splitLine[2]
-      } else if (splitLine.length > 2) {
-  theBase = splitLine[0].replace(/[\d\(\)\_\^\&]+/g, '')
-  if (theBase in figBaseLookup) figBaseLookup[theBase].push(i); else figBaseLookup[theBase] = [i]
-  figBase[i] = theBase
-  figDraw[i] = splitLine[2]
-// Find which rolls are possible in this figure, handle the empty base of rolls on horizontal
-        if (theBase.replace(/[\+\-]+/g, '') != '') {
-          rollbase = splitLine[0].split(theBase.replace(/[\+\-]+/g, ''))
-  } else rollbase = Array(splitLine[0].replace(/[\+\-]+/g, ''))
-  rolls = rollbase.join(')').replace(/[\(\+\-]+/g, '').split(')')
-  figRolls[i] = new Array()
-  for (r = 0; r < rolls.length; r++) {
-    switch (rolls[r]) {
-      case (figpat.fullroll):
-        figRolls[i][r] = 1;
-        break;
-      case (figpat.halfroll):
-          figRolls[i][r] = 2;
-        break;
-      case (figpat.anyroll):
-        figRolls[i][r] = 3;
-        break;
-      default:
-        figRolls[i][r] = 0;
-    }
-  }
-// Handle rolls
-      } else {
-        rollBase[i] = splitLine[0]
-        rollAresti[i] = arestiK[0]
-        rollKPwrd[i] = kFactors[0]
-        rollKGlide[i] = kFactors[1]
+  // Split the remainder on the space. Figure group lines and
+  // Family 9 should now have two elements, the others three 
+      var splitLine = line.split(" ")
+    // check if we are dealing with a 'figure group' line
+    if (groupRegex.test(line)) {
+      // increase figGroupNr counter
+      figGroupNr++
+      // parse family and name
+      figGroup[figGroupNr] = {'family':splitLine[0].replace(/^F/, ''), 'name':splitLine[1]}
+      // add an option for the group to the figure selector
+      var option = document.createElement('option')
+      option.setAttribute('value', figGroupNr);
+      option.innerHTML = line.replace(/^F/, '');
+      figGroupSelector.appendChild(option)
+    } else {
+      if (splitLine[0]) {
+  // Next we split the Aresti and K-factors part
+        var arestiK = splitLine[1].split("(")
+        var kFactors = arestiK[1].replace(")","").split(":")
+  // Split K factors on the colon; kFactors[0] is for Powered, kFactors[1] is for Gliders
+        fig[i] = {'aresti':arestiK[0], 'kpwrd':kFactors[0], 'kglide':kFactors[1], 'group':figGroupNr, 'pattern':splitLine[0]};
+  // We will extract roll elements for everything but roll figures and (rolling) turns
+        turnRegex = /[^o]j/
+        if (turnRegex.test(splitLine[0])) {
+          theBase = splitLine[0]
+          if (theBase in figBaseLookup) figBaseLookup[theBase].push(i); else figBaseLookup[theBase] = [i]
+          fig[i].base = theBase
+          fig[i].draw = splitLine[2]
+        } else if (splitLine.length > 2) {
+          theBase = splitLine[0].replace(/[\d\(\)\_\^\&]+/g, '')
+          if (theBase in figBaseLookup) figBaseLookup[theBase].push(i); else figBaseLookup[theBase] = [i]
+          fig[i].base = theBase
+          fig[i].draw = splitLine[2]
+        // Find which rolls are possible in this figure, handle the empty base of rolls on horizontal
+          if (theBase.replace(/[\+\-]+/g, '') != '') {
+            rollbase = splitLine[0].split(theBase.replace(/[\+\-]+/g, ''))
+          } else rollbase = Array(splitLine[0].replace(/[\+\-]+/g, ''))
+          rolls = rollbase.join(')').replace(/[\(\+\-]+/g, '').split(')')
+          fig[i].rolls = new Array()
+          for (r = 0; r < rolls.length; r++) {
+            switch (rolls[r]) {
+              case (figpat.fullroll):
+                fig[i].rolls[r] = 1;
+                break;
+              case (figpat.halfroll):
+                fig[i].rolls[r] = 2;
+                break;
+              case (figpat.anyroll):
+                fig[i].rolls[r] = 3;
+                break;
+              default:
+                fig[i].rolls[r] = 0;
+            }
+          }
+        } else {
+        // Handle rolls
+          rollBase[i] = splitLine[0]
+          rollAresti[i] = arestiK[0]
+          rollKPwrd[i] = kFactors[0]
+          rollKGlide[i] = kFactors[1]
+        }
       }
     }
   }
@@ -1675,6 +1725,101 @@ function checkAlert (value, type, figNr) {
   }
 }
 
+// changeFigureGroup updates the figure group in the figure chooser
+function changeFigureGroup(e) {
+  var figureGroup = e.value
+  var table = document.getElementById('figureChooserTable');
+  firstFigure = false;
+  // clear the figureChooser div
+  while (table.childNodes.length > 0) table.removeChild(table.lastChild);
+  for (i = 0; i < fig.length; i++) {
+    if (fig[i]) {
+      if (fig[i].group == figureGroup) {
+        if (!fig[i].svg) {
+          // The figure has not been drawn in this session, go ahead and draw it
+          // first we take the original base and remove + and full/any roll symbols
+          var figure = fig[i].pattern.replace(/[\+\_\&]/g, '');
+          // next we replace half roll symbols by actual half rolls
+          figure = figure.replace(figpat.halfroll, '2');
+          figures[-1] = [];
+          if (figure[0] != '-') {
+            Attitude = 0;
+            Direction = 0;
+          } else {
+            Attitude = 180;
+            Direction = 180;
+          }
+          buildFigure ([i], figure, false, -1);
+          var paths = figures[-1].paths;
+          for (j = paths.length - 1; j >= 0; j--) {
+            if (paths[j].style == 'neg') paths[j].style = 'chooserNeg'; else if (paths[j].style == 'pos') paths[j].style = 'chooserPos';
+          }
+          figures[-1] = {'paths': paths}
+          rebuildFigureSvg();
+          drawFullFigure(-1, false, figureSvg);
+          // Get the drawn figure from the SVG and set the correct scaling
+          var group = figureSvg.getElementById('figure-1')
+          var bBox = group.getBBox()
+          // figure will be max 100x100 but we scale to 96x96 for some extra margin
+          var scaleFigure = 96 / bBox['width']
+          if ((96 / bBox['height']) < scaleFigure) scaleFigure = 96 / bBox['height']
+          scaleFigure = scaleFigure.toFixed(4);
+          var xMargin = (100 - bBox['width'] * scaleFigure) / 2;
+          var yMargin = (100 - bBox['height'] * scaleFigure) / 2;
+          group.setAttribute('transform', 'translate(' + roundTwo((xMargin - bBox['x']*scaleFigure)) + ' ' + roundTwo((yMargin - bBox['y']*scaleFigure)) + ') scale(' + scaleFigure + ')')
+          figureSvg.setAttribute('viewBox', '0 0 100 100');
+          figureSvg.setAttribute('width', 100);
+          figureSvg.setAttribute('height', 100);
+          fig[i].svg = figureSvg;
+        }
+        if (fig[i].aresti.match(/\.[013]$/)) {
+          var tr = document.createElement('tr');
+          table.appendChild(tr);
+        }
+        var td = document.createElement('td');
+        tr.appendChild(td);
+        var a = document.createElement('a');
+        a.setAttribute('href', '#')
+        a.setAttribute('id', i)
+        a.setAttribute('onmousedown', 'selectFigure(this);');
+        td.appendChild(a)
+        a.appendChild(fig[i].svg)
+      }
+    }
+  }
+  // When any figure was drawn, redraw sequence
+  if (-1 in figures) {
+    // Clear alert messages created by building figures
+    alertMsgs = []
+    // Reset variables for drawing sequence
+    delete figures[-1];
+    draw();
+  }
+}
+
+// selectFigure is executed when clicking a figure in the figureChooser
+// (e = object) or from grabFigure (e = figNr)
+function selectFigure (e) {
+  if (typeof e === 'object') {
+    // Replace the selected figure or add a new figure at the end
+    // first we take the original base and remove + and full/any roll symbols
+    var figure = fig[e.id].pattern.replace(/[\+\_\&]/g, '');
+    // next we replace half roll symbols by actual half rolls
+    figure = figure.replace(/\^/g, '2');
+    // See if a figure was grabbed already. If so, replace it
+    if (selectedFigure.id) {
+      updateSequence(selectedFigure.id, figure, true)
+    } else {
+      updateSequence(figures.length - 1, figure, false);
+      e = false;
+    }
+  } else e = document.getElementById(e);
+  var table = document.getElementById('figureChooserTable');
+  var selected = table.getElementsByClassName('selected');
+  for (i = 0; i < selected.length; i++) selected[i].removeAttribute('class');
+  if (e) e.parentNode.setAttribute('class', 'selected');
+}
+
 // ###################################################
 // Functions for creating complete sequences
 
@@ -1813,34 +1958,64 @@ function grabFigure(evt) {
    // if another figure was previously selected, remove that filter
    var selFig = SVGRoot.getElementById('figure'+selectedFigure.id)
    if (selFig) selFig.setAttribute('filter', '');
-  // only drag real sequence figures
-   if ( targetElement.id.match(/figure[0-9]/) ) {
-      //set the item moused down on as the element to be dragged
-      DragTarget = targetElement;
-      // apply color filter
-      DragTarget.setAttribute('filter', 'url(#selectFilter)');
-       // move this element to the "top" of the display, so it is always over other elements
-      DragTarget.parentNode.appendChild( DragTarget );
-
-      // turn off all pointer events to the dragged element, this does 2 things:
-      //    1) allows us to drag text elements without selecting the text
-      //    2) allows us to find out where the dragged element is dropped (see Drop)
-      DragTarget.setAttribute('pointer-events', 'none');
-
-      // we need to find the current position and translation of the grabbed element,
-      //    so that we only apply the differential between the current location
-      //    and the new location
-      GrabPoint.x = TrueCoords.x;
-      GrabPoint.y = TrueCoords.y;
-      
-      // fill selectedFigure with BBox values
-      selectedFigure = targetElement.getBBox()
-      // the DragTarget id is the new selectedFigure.id
-      selectedFigure.id = DragTarget.id.replace('figure', '');
-      
-      // var scaleFigure = roundTwo((columnWidths[column] - 10) / bBox['width'])
-
+   // define header element for info
+   var header = document.getElementById('figureHeader');
+   // only drag real sequence figures
+   if (targetElement.id.match(/^figure[0-9]/)) {
+     if ( figures[targetElement.id.replace('figure', '')].draggable ) {
+        //set the item moused down on as the element to be dragged
+        DragTarget = targetElement;
+        // apply color filter
+        DragTarget.setAttribute('filter', 'url(#selectFilter)');
+         // move this element to the "top" of the display, so it is always over other elements
+        DragTarget.parentNode.appendChild( DragTarget );
+  
+        // turn off all pointer events to the dragged element, this does 2 things:
+        //    1) allows us to drag text elements without selecting the text
+        //    2) allows us to find out where the dragged element is dropped (see Drop)
+        DragTarget.setAttribute('pointer-events', 'none');
+  
+        // we need to find the current position and translation of the grabbed element,
+        //    so that we only apply the differential between the current location
+        //    and the new location
+        GrabPoint.x = TrueCoords.x;
+        GrabPoint.y = TrueCoords.y;
+        
+        // fill selectedFigure with BBox values
+        selectedFigure = targetElement.getBBox()
+        // the DragTarget id is the new selectedFigure.id
+        selectedFigure.id = DragTarget.id.replace('figure', '');
+        
+        // show figure chooser with this figure active
+        selectTab ('tab-figureInfo');
+        var figNr = figures[selectedFigure.id].figNr
+        var figureGroup = fig[figNr].group;
+        var select = document.getElementById ('figureGroup')
+        var options = select.options
+        for (i = options.length - 1; i >= 0; i--) {
+          if (options[i].value == figureGroup) {
+            options[i].setAttribute('selected', 'true');
+            var selectedGroup = options[i];
+            select.selectedIndex = i;
+          } else {
+            options[i].removeAttribute('selected');
+          }
+        }
+        changeFigureGroup(selectedGroup);
+        var figure = document.getElementById(figNr);
+        var div = document.getElementById('figureChooser');
+        // Get the vertical offset of the <tr> in which the element is
+        var scroll = figure.parentNode.parentNode.offsetTop;
+        // Select the correct figure and scroll selector there
+        selectFigure(figNr);
+        div.scrollTop = scroll;
+        header.innerHTML = userText.editingFigure + figures[selectedFigure.id].seqNr;
+     } else selectedFigure.id = null;
    } else selectedFigure.id = null;
+   if (selectedFigure.id === null) {
+     header.innerHTML = userText.addingFigure;
+     selectFigure(false);
+   }
 };
 
 // Drag allows to drag the selected figure to a new position
@@ -1964,7 +2139,7 @@ function separateFigures () {
         do {
           var iterate = false;
           for (var j = i - 1; j > -1; j--) {
-            var bBoxJ = figures[j]['bBox']
+            var bBoxJ = figures[j].bBox
             if (bBoxJ) {
               if (((bBox.x + bBox.width) > bBoxJ.x) && ((bBox.y + bBox.height) > bBoxJ.y)) {
                 if ((bBox.x < (bBoxJ.x + bBoxJ.width)) && (bBox.y + moveDown) < (bBoxJ.y + bBoxJ.height)) {
@@ -1991,22 +2166,29 @@ function separateFigures () {
 }
 
 // drawFullFigure draws a complete Aresti figure in the sequenceSvg
-function drawFullFigure (i, draggable) {
+// or in an other svg object when provided
+function drawFullFigure (i, draggable, svg) {
+  // default to SVGRoot when no svg object provided
+  if (!svg) svg = SVGRoot;
   // Mark the starting position of the figure
-  figures[i].startPos = {'x':X, 'y':Y}
-  svgElement = SVGRoot.getElementById('sequence')
+  figures[i].startPos = {'x':X, 'y':Y};
+  figures[i].draggable = draggable;
+  svgElement = svg.getElementById('sequence')
   var paths = figures[i].paths
 // Create a group for the figure, draw it and apply to the SVG
   var group = document.createElementNS (svgNS, "g")
-  if (draggable) group.setAttribute('id', 'figure' + i)
+  group.setAttribute('id', 'figure' + i)
   if (selectedFigure.id == i) {
     group.setAttribute('filter', 'url(#selectFilter)');
   }
+  // put the group in the DOM
+  svgElement.appendChild(group)
   for (var j = 0; j < paths.length; j++) {
     drawShape (paths[j], group)
   }
-  svgElement.appendChild(group)
-  if (draggable) figures[i].bBox = group.getBBox()
+  if (draggable) {
+    figures[i].bBox = group.getBBox();
+  }
 }
 
 // makeFormA creates Form A from the figures array
@@ -2023,7 +2205,7 @@ function makeFormA() {
   // Build the figure at the top-left
       X = 0
       Y = 0
-      drawFullFigure(i, true)
+      drawFullFigure(i, false)
       figNr ++
     }
   }
@@ -2059,6 +2241,7 @@ function makeFormA() {
       var group = document.getElementById('figure' + i)
       var bBox = group.getBBox()
       var scaleFigure = roundTwo((columnWidths[column] - 10) / bBox['width'])
+      scaleFigure = scaleFigure.toFixed(4);
       if (((rowHeight - 20) / bBox['height']) < scaleFigure) scaleFigure = roundTwo((rowHeight - 10) / bBox['height'])
       var xMargin = (columnWidths[column] - bBox['width'] * scaleFigure) / 2
       var yMargin = (rowHeight - bBox['height'] * scaleFigure) / 2
@@ -2190,21 +2373,21 @@ function displayAlerts () {
 
 // do some kind of draw
 function draw () {
-  figure = []
-  rebuildSequenceSvg ()
+  rebuildSequenceSvg ();
+  firstFigure = true;
   Attitude = 0
   X = 0
   Y = 0
   var content = ''
   if (activeForm == 'C') {
-    yAxisOffset = 180 - yAxisOffsetDefault
-    Direction = 180
+    yAxisOffset = 180 - yAxisOffsetDefault;
+    Direction = 180;
   } else {
-    yAxisOffset = yAxisOffsetDefault
-    Direction = 0
+    yAxisOffset = yAxisOffsetDefault;
+    Direction = 0;
   }
   
-  parseSequence()
+  parseSequence();
 
   if (activeForm == 'A') {
     makeFormA()
@@ -2216,10 +2399,10 @@ function draw () {
 
 // checkSequenceChanged is called by onKeyUp on the sequence input field to check if it has to be redrawn
 function checkSequenceChanged () {
-  if (activeSequence.text != document.action.sequence_text.value) {
-    activeSequence.text = document.action.sequence_text.value
+  if (activeSequence.text != sequenceText.value) {
+    activeSequence.text = sequenceText.value
     string = activeSequence.text
-      var el = document.action.sequence_text
+    var el = sequenceText
     // read the sequence string and mark the location of the caret/selection
   /*  var string = el.value.replace('*', '')
     var selStart = el.selectionStart
@@ -2243,9 +2426,10 @@ function checkSequenceChanged () {
   
 
     activeSequence.figures = string.split(' ')
+    if (activeSequence.figures.length <= selectedFigure.id) selectedFigure.id = null;
     
-    var scrollPosition = window.pageYOffset
-    draw ()
+    var scrollPosition = window.pageYOffset;
+    draw ();
     window.scrollTo (0, scrollPosition);
     sequenceSaved = false;
   }
@@ -2320,7 +2504,7 @@ function loadedSequence(evt) {
       var key = lines[i].toLowerCase().replace(/[^a-z]/g, '')
       var value = lines[i + 1]
       if (key == 'sequence') {
-  key = 'sequence_text'
+        key = 'sequence_text'
       }
       if (document.getElementById(key) && value) document.getElementById(key).value = value
     }
@@ -2421,6 +2605,34 @@ function saveSequence () {
   } else {
     sequenceSaved = false;
   }
+}
+
+// errorHandler will be called when there is a file error
+function errorHandler(e) {
+  var msg = '';
+
+  switch (e.code) {
+    case FileError.QUOTA_EXCEEDED_ERR:
+      msg = 'QUOTA_EXCEEDED_ERR';
+      break;
+    case FileError.NOT_FOUND_ERR:
+      msg = 'NOT_FOUND_ERR';
+      break;
+    case FileError.SECURITY_ERR:
+      msg = 'SECURITY_ERR';
+      break;
+    case FileError.INVALID_MODIFICATION_ERR:
+      msg = 'INVALID_MODIFICATION_ERR';
+      break;
+    case FileError.INVALID_STATE_ERR:
+      msg = 'INVALID_STATE_ERR';
+      break;
+    default:
+      msg = 'Unknown Error';
+      break;
+  };
+
+  console.log('Error: ' + msg);
 }
 
 // printAllForms will print forms A,B and C. This can also be used to output them to PDF
@@ -2691,8 +2903,8 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
   var paths = new Array()
 // In the first part we handle everything except (rolling) turns
   turnRegex = /[^o]j/
-  bareFigBase = figBase[figNr].replace(/[\+\-]+/g, '')
-  if (!turnRegex.test(figBase[figNr])) {
+  bareFigBase = fig[figNr].base.replace(/[\+\-]+/g, '')
+  if (!turnRegex.test(fig[figNr].base)) {
     // First we split the figstring in it's elements, the bareFigBase is empty for rolls on horizontal
     if (bareFigBase != '') var splitLR = figString.split(bareFigBase); else var splitLR = Array(figString);
   // Find the roll patterns
@@ -2814,12 +3026,12 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
         }
       }
     }
-  // We now have all the roll patterns parsed but the numbering may not match the numbering of the figRolls because rolls may be missing.
+  // We now have all the roll patterns parsed but the numbering may not match the numbering of the fig[i].rolls because rolls may be missing.
   // This is inconvenient and confusing, so we'll now adjust the numbering when necessary
-    rollsSkip = figRolls[figNr].length - rollPatterns.length
+    rollsSkip = fig[figNr].rolls.length - rollPatterns.length
   // Only do something if rolls have been skipped
     if (rollsSkip > 0) {
-      for (var i = (figRolls[figNr].length - 1); i > rollsSkip; i--) {
+      for (var i = (fig[figNr].rolls.length - 1); i > rollsSkip; i--) {
         roll[i] = roll[i - rollsSkip]
         rollSums[i] = rollSums[i - rollsSkip]
       }
@@ -2829,7 +3041,7 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
       }
     }
 // Set the number of the first roll for drawing later on
-    if (figRolls[figNr][0] > 0) var rollnr = 0; else var rollnr = 1;
+    if (fig[figNr].rolls[0] > 0) var rollnr = 0; else var rollnr = 1;
 
   // If there are multiple figNrs we check the rolls to see which one matches best
   // It's very important that with different figures with the same figure base the roll total is equal in the figures.js file
@@ -2838,9 +3050,9 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
       for (var i = 0; i < figNrs.length; i++) {
         rollCorr = 0
         for (var j = 0; j < roll.length; j++) {
-          if (figRolls[figNrs[i]][j] == 1) {
+          if (fig[figNrs[i]].rolls[j] == 1) {
             rollCorr = rollCorr + Math.abs((parseInt(rollSums[j] / 360) - (rollSums[j] / 360)) * 360)
-          } else if (figRolls[figNrs[i]][j] == 2) {
+          } else if (fig[figNrs[i]].rolls[j] == 2) {
             rollCorr = rollCorr + Math.abs((parseInt((rollSums[j] + 180) / 360) - ((rollSums[j] + 180) / 360)) * 360)
           } 
         }
@@ -2849,13 +3061,16 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
           figNr = figNrs[i]
         }
       }
-      var figureDraw = figDraw[figNr]
-    } else var figureDraw = figDraw[figNrs[0]]
-  } else var figureDraw = figDraw[figNrs[0]]
-// The chosen figure is now final, so we can assign Aresti Nr and K Factor to the figure
-  var arestiNrs = new Array(figAresti[figNr])
-  var kFactors = new Array(figKPwrd[figNr])
-  figCheckLine[seqNr] = figAresti[figNr]
+      var figureDraw = fig[figNr].draw
+    } else var figureDraw = fig[figNrs[0]].draw
+  } else var figureDraw = fig[figNrs[0]].draw;
+// The chosen figure is now final, so we can:
+// assign Aresti Nr and K Factor to the figure
+// fix the figNr in the figures object
+  var arestiNrs = new Array(fig[figNr].aresti);
+  var kFactors = new Array(fig[figNr].kpwrd);
+  figures[figStringIndex].figNr = figNr;
+  figCheckLine[seqNr] = fig[figNr].aresti
 // If we are not in Form A we check for entry and exit extension and apply them
   if (activeForm != 'A') {
     var basePos = figString.indexOf(bareFigBase)
@@ -3059,7 +3274,7 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
     } */      
     rollSum = rollSums[rollnr]
   // See if we have to autocorrect the rolls
-    if (figRolls[figNr][rollnr] == 1) {
+    if (fig[figNr].rolls[rollnr] == 1) {
       autoCorr = (parseInt(rollSum / 360) - (rollSum / 360)) * 360
 // When a line is standing by to be built, build it before doing the autocorrect
       if (autoCorr != 0) {
@@ -3085,7 +3300,7 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
         if (Attitude < 0) Attitude = Attitude + 360
         changeDir(180)
       }
-    } else if (figRolls[figNr][rollnr] == 2) {
+    } else if (fig[figNr].rolls[rollnr] == 2) {
       autoCorr = (parseInt((rollSum + 180) / 360) - ((rollSum + 180) / 360)) * 360
 // When a line is standing by to be built, build it before doing the autocorrect
       if (autoCorr != 0) {
@@ -3143,7 +3358,7 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
   // Invert the angle when it was a half roll
   // Move the pointer to where the roll should be. Start it offset so it is centered on the top (especially for multiple rolls)
     if (rollTop) {
-      if (figRolls[figNr][rollnr] == 2) rollTopAngleAfter = -rollTopAngleAfter
+      if (fig[figNr].rolls[rollnr] == 2) rollTopAngleAfter = -rollTopAngleAfter
         
       paths = buildShape ('Curve', rollTopAngleAfter, paths)
       dx = paths[paths.length - 1]['dx']
@@ -3265,23 +3480,23 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
 }
 
 // updateSequence updates the sequence character string
-// figure 'fig' is placed after figure 'figNr' or over figNr' when 'replace' is true
+// figure 'figure' is placed after figure 'figNr' or over figNr' when 'replace' is true
 // Also some checks are done
-function updateSequence (figNr, fig, replace) {
-  if (fig == '') var separator = ''; else var separator = ' ';
-  var el = document.action.sequence_text
+function updateSequence (figNr, figure, replace) {
+  if (figure == '') var separator = ''; else var separator = ' ';
+  var el = sequenceText;
   // with a negative figNr the fig is placed at the beginning
-  if (figNr > -1) var string = ''; else var string = fig + separator;
+  if (figNr > -1) var string = ''; else var string = figure + separator;
   for (var i = 0; i < figures.length; i++) {
     if (i == figNr) {
       // Handle (multiple) moveto
-      if (fig.match(regexMoveTo)) {
+      if (figure.match(regexMoveTo)) {
         if (figures[i].string.match(regexMoveTo)) {
           var dxdy1 = figures[i].string.replace(/[^0-9\,\-]/g, '').split(',')
-          var dxdy2 = fig.replace(/[^0-9\,\-]/g, '').split(',')
+          var dxdy2 = figure.replace(/[^0-9\,\-]/g, '').split(',')
           var dx = parseInt(dxdy1[0]) + parseInt(dxdy2[0])
           var dy = parseInt(dxdy1[1]) + parseInt(dxdy2[1])
-          fig = '[' + dx + ',' + dy + ']';
+          figure = '[' + dx + ',' + dy + ']';
           replace = true;
         }
       }
@@ -3289,7 +3504,7 @@ function updateSequence (figNr, fig, replace) {
         string = string + figures[i].string + ' ';
         if (selectedFigure.id != null) selectedFigure.id++
       }
-      if (fig != '[0,0]') string = string + fig + separator;
+      if (figure != '[0,0]') string = string + figure + separator;
     } else string = string + figures[i].string + ' ';
   }
   // remove last added space and update field
@@ -3304,7 +3519,7 @@ function parseSequence () {
   // Clear the figureStart array
   figureStart = []
   var seqNr = 1
-  var fig = ''
+  var figure = ''
   connectors = 0
 // Make sure the scale is set to 1 before parsing
   if (scale != 1) {
@@ -3321,67 +3536,67 @@ function parseSequence () {
     figures[i] = {'string': activeSequence.figures[i]};
   }
   for (var i = 0; i < figures.length; i++) {
-    fig = figures[i].string
+    figure = figures[i].string
 // Parse out the instructions that are for drawing B and C forms only
-    if (regexDrawInstr.test(fig) || (fig.replace(regexMoveForward, '').length == 0) || (fig == userpat.subSequence)) {
+    if (regexDrawInstr.test(figure) || (figure.replace(regexMoveForward, '').length == 0) || (figure == userpat.subSequence)) {
       var onlyDraw = true
-      if (fig.charAt(0) == userpat.moveto) {
+      if (figure.charAt(0) == userpat.moveto) {
 // Move to new position
-  var dxdy = fig.replace(/[^0-9\,\-]/g, '').split(',')
+  var dxdy = figure.replace(/[^0-9\,\-]/g, '').split(',')
   if ((dxdy[0] >= 0 || dxdy[0] < 0) && (dxdy[1] >= 0 || dxdy[1] < 0)) buildMoveTo (dxdy, i);
-      } else if (regexMoveForward.test(fig)) {
+      } else if (regexMoveForward.test(figure)) {
 // Move forward without connecting line
-        var moveFwd = fig.match(regexMoveForward)[0]
+        var moveFwd = figure.match(regexMoveForward)[0]
         if (parseInt (moveFwd)) {
       figures[i].paths = buildShape ('FigSpace', parseInt(moveFwd) + moveFwd.length - moveFwd.match(/[0-9]*/).length - 1)
   } else {
       figures[i].paths = buildShape ('FigSpace', moveFwd.length)
   }
-      } else if (fig.charAt(fig.length - 1) == userpat.scale) {
+      } else if (figure.charAt(figure.length - 1) == userpat.scale) {
 // Change scale
   if (scale != 1) {
     curveRadius = curveRadius / scale
     rollcurveRadius = rollcurveRadius / scale
     lineElement = lineElement / scale
   }
-  scale = 1 + (parseInt (fig.replace(userpat.scale, '')) / 10)
+  scale = 1 + (parseInt (figure.replace(userpat.scale, '')) / 10)
   if (!scale) scale = 1
   if (scale < 0.1) scale = 0.1
   curveRadius = curveRadius * scale
   rollcurveRadius = rollcurveRadius * scale
   lineElement = lineElement * scale
-      } else if (fig == userpat.subSequence) {
+      } else if (figure == userpat.subSequence) {
 // Start subsequence
   firstFigure = true;
         Attitude = 0
   Direction = 0
       }
     } else {
-      if (regexConnector.test(fig)) connectors++
+      if (regexConnector.test(figure)) connectors++
 // To determine the base we remove all non-alphabet characters (except -)
-      var base = fig.replace(/[^a-z\-]+/g, '')
+      var base = figure.replace(/[^a-z\-]+/g, '')
 // Replace any x> format to move forward by x times >
-      if (regexMoveForward.test(fig)) {
+      if (regexMoveForward.test(figure)) {
         var moveFwd = fig.match(regexMoveForward)[0]
         if (parseInt (moveFwd)) {
-      fig = fig.replace(regexMoveForward, parseInt(moveFwd) + moveFwd.length - moveFwd.match(/[0-9]*/).length - 1)
+      figure = figure.replace(regexMoveForward, parseInt(moveFwd) + moveFwd.length - moveFwd.match(/[0-9]*/).length - 1)
   } else {
-      fig = fig.replace(regexMoveForward, moveFwd.length)
+      figure = figure.replace(regexMoveForward, moveFwd.length)
   }
       }
 // Handle the very special case where there's only an upright (1) or inverted (2) spin
       if (base.replace(/-/g, '') == 's') {
-  fig = fig.replace(/(\d*)s/, "iv$1s")
+  figure = figure.replace(/(\d*)s/, "iv$1s")
   base = base.replace('s', 'iv')
       } else if (base.replace(/-/g, '') == 'is') {
-  fig = fig.replace(/(\d*)is/, "iv$1is")
+  figure = figure.replace(/(\d*)is/, "iv$1is")
   base = base.replace('is', 'iv')
       }
 // To continue determining the base we remove if, is, f, s
       base = base.replace(/if|is|f|s/g, '')
 // Handle simple horizontal rolls that change from upright to inverted or vv
       if (base == '-') {
-  if (fig.replace(/[^a-z0-9\-\+]+/g, '').charAt(0) == '-') base = base + '+'; else base = '+' + base
+  if (figure.replace(/[^a-z0-9\-\+]+/g, '').charAt(0) == '-') base = base + '+'; else base = '+' + base
 // Handle everything else
       } else {
   if (base.charAt(0) != '-') base = '+' + base;
@@ -3405,7 +3620,7 @@ function parseSequence () {
       }
 // Handle turns and rolling turns. They do have numbers in the base
       if ((base.charAt(1) == 'j') || ((base.charAt(1) == 'i') && (base.charAt(2) == 'j'))) {
-  base = fig.replace(/[^a-z0-9\-\+]+/g, '')
+  base = figure.replace(/[^a-z0-9\-\+]+/g, '')
         if (base.charAt(0) != '-') base = '+' + base;
         if (base.charAt(base.length - 1) != '-') base = base + '+'
       }
@@ -3417,7 +3632,7 @@ function parseSequence () {
     Attitude = 180
     Direction = 180 - Direction
   }
-  buildFigure (figNrs, fig, seqNr, i)
+  buildFigure (figNrs, figure, seqNr, i)
   seqNr ++
   firstFigure = false;
 // Reset scale to 1 after completing a figure
@@ -3461,6 +3676,4 @@ function parseSequence () {
     paths = buildShape ('FigStop', true, paths)
     figures[figures.length - 1]['paths'] = paths
   }
-// Set firstFigure back to true for another drawing session
-  firstFigure = true
 }

@@ -1,4 +1,4 @@
-// config.js 1.0.3
+// config.js 1.1.0
 
 // This file is part of OpenAero.
 
@@ -74,6 +74,13 @@ superFamilies['yak52'] = superFamilies['advanced']
 superFamilies['intermediate'] = superFamilies['advanced']
 // Total K for Unknown connector figures
 var connectorsTotalK = 24
+// available rolls
+var rollTypes = {'':'none','4':'1/4','2':'1/2','1':'1','5':'1 1/4','6':'1 1/2','7':'1 3/4','9':'2','22':'2x2','32':'3x2','42':'4x2'}
+for (i = 2; i < 9; i++) rollTypes[i + '4'] = i + 'x4';
+rollTypes['8'] = '2x8';
+for (i = 2; i < 9; i++) rollTypes[(i*2) + '8'] = (i*2) + 'x8';
+var flickTypes = {'2f':'1/2 pos flick','3f':'3/4 pos flick','f':'1 pos flick','5f':'1 1/4 pos flick','6f':'1 1/2 pos flick','7f':'1 3/4 pos flick','9f':'2 pos flick','2if':'1/2 neg flick','3if':'3/4 neg flick','if':'1 neg flick','5if':'1 1/4 neg flick','6if':'1 1/2 neg flick','7if':'1 3/4 neg flick','9if':'2 neg flick'};
+var spinTypes = {'s':'1 pos spin','5s':'1 1/4 pos spin','6s':'1 1/2 pos spin','7s':'1 3/4 pos spin','9s':'2 pos spin','is':'1 neg spin','5is':'1 1/4 neg spin','6is':'1 1/2 neg spin','7is':'1 3/4 neg spin','9is':'2 neg spin'};
 
 // *************
 // Define styles and font sizes
@@ -81,8 +88,10 @@ var connectorsTotalK = 24
 var style = new Array()
 // Positive line style
 style['pos'] = 'stroke: black; stroke-width: 1px; fill: none;'
+style['chooserPos'] = 'stroke: black; stroke-width: 3px; fill: none;'
 // Negative line style
 style['neg'] = 'stroke-dasharray: 5, 3; stroke: red; stroke-width: 1px; fill: none;'
+style['chooserNeg'] = 'stroke-dasharray: 10, 6; stroke: red; stroke-width: 3px; fill: none;'
 // Black filled path style
 style['blackfill'] = 'stroke: black; stroke-width: 1px; fill: black;'
 // Positive filled path style
@@ -184,3 +193,6 @@ userText.logoExplain = 'Upload your own logo by clicking on the file chooser bel
 userText.sequenceNotSavedWarning = 'Your current sequence has not been saved.\nAre you sure you want to open a new one?'
 userText.fileOpeningNotSupported = 'File opening is not supported in this browser.'
 userText.unknownFileType = 'File opening is not supported in this browser.'
+userText.pleaseWaitStartup = 'Please wait while OpenAero is starting up...';
+userText.editingFigure = 'Edit figure ';
+userText.addingFigure = 'Add new figure'; 

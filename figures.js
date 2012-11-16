@@ -1,4 +1,4 @@
-// figures.js file
+// figures.js file 1.1.0
 
 // This file is part of OpenAero.
 
@@ -16,6 +16,9 @@
 //  along with OpenAero.  If not, see <http://www.gnu.org/licenses/>.
 
 // This file defines all the basic shapes.
+// They are grouped for easy user selection through the interface
+// The grouping is of the format "Fxxx Name", where xxx is an Aresti family group
+// with any number of dots (so e.g. just 3 or 8.5)
 // Every figure is encoded in the following manner: figs.push("*ENCODING*");
 // The 'push' term is not related to pushing or pulling in aerobatics but is necessary for the software
 // The *ENCODING* part is of the following format:
@@ -82,6 +85,7 @@ var figs = new Array();
 //
 
 // Family 1.1. Single Lines
+figs.push("F1.1 Single Lines");
 
 // 1.1.1.1 through 1.1.1.4 (was 1.1.1 through 1.1.4)
 figs.push("+_+ 1.1.1.1(2) ~_~");
@@ -170,6 +174,7 @@ figs.push("+iz^+ 1.1.11.3(10:) ~''Z~_~d''~");
 figs.push("-iz^- 1.1.11.4(10:) ~''z~_~D''~");
 
 // Family 1.2. Two Lines
+figs.push("F1.2 Two Lines");
 
 // 1.2.1.1-4
 figs.push("+_t&+ 1.2.1.1(13) ~d~_~Z~_~v~");
@@ -268,6 +273,7 @@ figs.push("+&ikz^+ 1.2.16.3(18:) ~V~_~z~_~Z~~");
 figs.push("-&ikz^- 1.2.16.4(17:) ~v~_~Z~_~z~~");
 
 // Family 1.3. Three lines
+figs.push("F1.3 Three Lines");
 
 // 1.3.1.1-4
 figs.push("+_w(&)_- 1.3.1.1(22:) ~d''_''~~Z~_~Z~~_~d~");
@@ -370,6 +376,7 @@ figs.push("-&ipn(^)&- 1.3.16.4(25:) -~v~_''~Z~~_~Z~''_~V~");
 //
 
 // Family 2.1. 90 degree turns
+figs.push("F2.1 90 degree Turns");
 
 // 2.1.1.1-2 (90 degree turn, no roll)
 // can be written as j or 1j
@@ -391,6 +398,7 @@ figs.push("+1jo1+ 2.1.3.3(15:21) ~''J11''~");
 figs.push("-1jo1- 2.1.3.4(16:22) ~''j11''~");
 
 // Family 2.2. 180 degree turns
+figs.push("F2.2 180 degree Turns");
 
 // 2.2.1.1-2 (180 degree turn, no roll)
 figs.push("+2j+ 2.2.1.1(4) ~j2~");
@@ -427,6 +435,7 @@ figs.push("+2joi2+ 2.2.6.3(25:37) ~''JIO22''~");
 figs.push("-2joi2- 2.2.6.4(26:38) ~''jio22''~");
 
 // Family 2.3. 270 degree turns
+figs.push("F2.3 270 degree Turns");
 
 // 2.3.1.1-2: (270 degree turn, no roll)
 figs.push("+3j+ 2.3.1.1(5) ~''j3''~");
@@ -457,6 +466,7 @@ figs.push("+3joi3+ 2.3.5.3(36:55) ~~JIO33~~");
 figs.push("-3joi3- 2.3.5.4(37:56) ~~jio33~~");
 
 // Family 2.4. 360 degree turns
+figs.push("F2.4 360 degree Turns");
 
 // 2.4.1.1-2
 figs.push("+4j+ 2.4.1.1(6) ~j4~");
@@ -510,6 +520,7 @@ figs.push("-4joi4- 2.4.8.4(47:72) ~''jio44''~");
 //
 
 // Family 3.3 Three Corners
+figs.push("F3 Combinations of Lines");
 
 // 3.3.1.1-4
 figs.push("+dz- 3.3.1.1(9) ~d~v~d~");
@@ -544,6 +555,7 @@ figs.push("-irqq+ 3.8.1.4(23) ~d~d~D~D~D~D~D~D~");
 //
 
 // Family 5.2. Two Line Stall Turns
+figs.push("F5.2 Two line Stall Turns");
 
 // 5.2.1.1-4
 figs.push("+&h&+ 5.2.1.1(17) ~v~_~h~_''v~");
@@ -552,6 +564,7 @@ figs.push("+&h&- 5.2.1.3(18) ~v~_~h~_''V~");
 figs.push("-&h&+ 5.2.1.4(22) ~V~_~H~_''v~");
 
 // Family 5.3. Three Line Stall Turns
+figs.push("F5.3 Three line Stall Turns");
 
 // 5.3.1.1-4
 figs.push("+_dh(&)&+ 5.3.1.1(18) ~d~_~d~_~h~_''v~");
@@ -578,6 +591,7 @@ figs.push("+&hd(&)^- 5.3.4.3(20) ~v~_~h~_''d~_~D~");
 figs.push("-&hd(&)^+ 5.3.4.4(25) ~V~_~H~_''D~_~d~");
 
 // Family 5.4. Four Line Stall Turns
+figs.push("F5.4 Four line Stall Turns");
 
 // 5.4.1.1-4
 figs.push("+_dhd(&)(&)_+ 5.4.1.1(19) ~d~_~d~_~h~_''d~_~d~");
@@ -606,6 +620,7 @@ figs.push("-^dhd(&)(&)^+ 5.4.4.4(24) ~D~_~d~_~H~_''D~_~d~");
 //
 // Family 6. Tail Slides
 //
+figs.push("F6 Tail Slides");
 
 // Family 6.2. Two Line Tail Slides
 
@@ -627,6 +642,7 @@ figs.push("-&ita&+ 6.2.2.4(17:22) ~~V''_''~t~~_''v~~");
 //
 
 // Family 7.2. Half Loops
+figs.push("F7.2 Half Loops");
 
 // 7.2.1.1-4
 figs.push("+_m_- 7.2.1.1(6) ~_m_~");
@@ -653,6 +669,7 @@ figs.push("+^a^- 7.2.4.3(6) ~_m_~");
 figs.push("-^a^+ 7.2.4.4(8) ~_M_~");
 
 // Family 7.3. Three-Quarter Loops
+figs.push("F7.3 Three-Quarter Loops");
 
 // 7.3.1.1-4
 figs.push("+_g_- 7.3.1.1(16) ~d~~_''P~~_''d~");
@@ -679,6 +696,7 @@ figs.push("+^ig^- 7.3.4.3(19) ~D~~_''P~~_''D~");
 figs.push("-^ig^+ 7.3.4.4(15) ~d~~_''p~~_''d~");
 
 // Family 7.4. Whole Loops
+figs.push("F7.4 Whole Loops");
 
 // 7.4.1.1-4
 figs.push("+o_+ 7.4.1.1(10) ~''o!_''~");
@@ -720,6 +738,7 @@ figs.push("-iqq- 7.4.6.4(19:) ~~d~d~d~d~d~d~d~d~~");
 // New for 2012 - coded by Wouter Liefting
 // coded as "or" when the reverse is after 3/4 loop,
 // and as "ro" when the reverse is after 1/4 loop.
+figs.push("F7.4 Reversing Whole Loops");
 
 // 7.4.7.1-4
 figs.push("+_or(_)_- 7.4.7.1(11) ~_v=m!_V=_~-");
@@ -773,6 +792,7 @@ figs.push("-^iro(_)^+ 7.4.14.4(11) ~_V=m!_v=_~");
 // Family 7.5. Horizontal Ss
 // New for 2012 - coded by Wouter Liefting
 // coded as "cm" - for Cuban - iMmelman
+figs.push("F7.5 Horizontal \"S\"s");
 
 // 7.5.1.1-4
 figs.push("+_cm(_)_+ 7.5.1.1(16) ~~~~_c'''_'''C_~~~~");
@@ -824,6 +844,7 @@ figs.push("-^icm(^)^+ 7.5.8.4(20) ~~~~_C'''_'''C_~~~~-");
 
 
 // Family 7.5. (cont) Vertical Ss
+figs.push("F7.5 Vertical \"S\"s");
 
 // 7.5.9.1-4
 figs.push("+mm+ 7.5.9.1(12) ~~mM~~");
@@ -838,6 +859,7 @@ figs.push("+imm^- 7.5.10.3(14) ~~M_M~~");
 figs.push("-imm^+ 7.5.10.4(10) ~~m_m~~");
 
 // Family 7.8. Horizontal 8s
+figs.push("F7.8 Horizontal \"8\"s");
 
 // 7.8.1.1-4
 figs.push("+_cc(_)_+ 7.8.1.1(20) ~~~~_c''_''~P''_~~''d~~");
@@ -888,6 +910,7 @@ figs.push("+^ircc(^)_+ 7.8.8.3(25) ~~D''''_~~P''_''~C_~~~~");
 figs.push("-^ircc(^)_- 7.8.8.4(20) ~~d''''_~~p''_''~c_~~~~");
 
 // Family 7.8. (cont) Horizontal Super 8s
+figs.push("F7.8 Horizontal Super \"8\"s");
 
 // 7.8.9.1-4
 figs.push("+_gg(_)_+ 7.8.9.1(23) ~~d''_''~P~''_''~p~~''_''D~~");
@@ -938,6 +961,7 @@ figs.push("+^igg(^)^- 7.8.16.3(31) ~~D''_''~P~''_''~P~~''_''D~~");
 figs.push("-^igg(^)^+ 7.8.16.4(24) ~~d''_''~p~''_''~p~~''_''d~~");
 
 // Family 7.8. (cont) Vertical 8s
+figs.push("F7.8 Vertical \"8\"s");
 
 // 7.8.17.1-4
 figs.push("+oo+ 7.8.17.1(22) ~mOm~");
@@ -980,6 +1004,7 @@ figs.push("-iooo^- 7.8.22.4(18) ~o_''o~");
 //
 
 // Family 8.4. Humpty Bumps
+figs.push("F8.4 Humpty Bumps");
 
 // 8.4.1.1-4
 figs.push("+&b&+ 8.4.1.1(13) ~''v~''_''m/~''_~v''~");
@@ -1006,6 +1031,7 @@ figs.push("+&ib&- 8.4.4.3(14) ~''V~''_''m/~''_~v''~");
 figs.push("-&ipb&+ 8.4.4.4(16) -~''v~''_''M/~''_~V''~");
 
 // Family 8.4. (cont) Diagonal Humpty Bumps
+figs.push("F8.4 Diagonal Humpty Bumps");
 
 // 8.4.5.1-4
 figs.push("+_bz_+ 8.4.5.1(13:) ~~~d~''_''m~''_~~z~~~~");
@@ -1152,6 +1178,7 @@ figs.push("+^izb^+ 8.4.28.3(17:) ~~~~Z~''_''~m''_''~D''~");
 figs.push("-^izb^- 8.4.28.4(18:) ~~~~z~''_''~M''_''~d''~");
 
 // Family 8.5. Half Cubans
+figs.push("F8.5 Half Cubans");
 
 // 8.5.1.1-4
 figs.push("+_rc_- 8.5.1.1(12) ~d~~''_~C_''~~~");
@@ -1202,6 +1229,7 @@ figs.push("+^ic^- 8.5.8.3(11) ~~~''_c'''_'~~d~");
 figs.push("-^ic^+ 8.5.8.4(14) ~~~''_C'''_'~~D~");
 
 // Family 8.5. (cont) Vertical 5/8th Loops
+figs.push("F8.5 Vertical 5/8ths Loops");
 
 // 8.5.9.1-4
 figs.push("+_y&+ 8.5.9.1(12) ~d~''_''c~''_''~v~");
@@ -1300,6 +1328,7 @@ figs.push("+&iryz^- 8.5.24.3(17:) ~~V~~_~c~_~z~");
 figs.push("-&iryz^+ 8.5.24.4(20:) ~~v~~_~C~_~Z~");
 
 // Family 8.6. P Loops
+figs.push('F8.6 "P" Loops');
 
 // 8.6.1.1-4
 figs.push("+&rp(_)_+ 8.6.1.1(11) ~v''_''~p!__''~");
@@ -1354,6 +1383,7 @@ figs.push("-^ip(_)&- 8.6.8.4(15) ~~_P!_~~_''v~");
 // coded as follows (based on pre-2012 porpoise)
 // pp = 3/4 loop with reverse, line, 1/4 loop
 // rpp = 1/4 loop, line, 3/4 loop with reverse
+figs.push('F8.6 Reversing "P" Loops');
 
 // 8.6.9.1-4
 figs.push("+&rpp(_)_- 8.6.9.1(13) ~~~~v~_~m!_V=_~-");
@@ -1403,9 +1433,8 @@ figs.push("-^pp(_)&- 8.6.16.2(15) ~_v=M!_~_~V~");
 figs.push("+^ipp(_)&+ 8.6.16.3(15) ~_v=M!_~_~V~");
 figs.push("-^ipp(_)&- 8.6.16.4(13) ~_V=m!_~_~v~");
 
-
-
 // Family 8.7. Q Loops
+figs.push('F8.7 "Q" Loops');
 
 // 8.7.1.1-4
 figs.push("+_rq(_)_+ 8.7.1.1(11) ~d''_''~r!__~~");
@@ -1461,6 +1490,7 @@ figs.push("-^iq(_)^- 8.7.8.4(17) ~~_R!_~~_''d~");
 // pbb = push, pull
 // bpb = pull, push
 // pbpb = push, push
+figs.push('F8.8 Double Humpty Bumps');
 
 // 8.8.1.1-4
 figs.push("+&bb(&)&- 8.8.1.1(18) ~''v~'_'m/~~''_~m/''_~v''~-");
@@ -1511,6 +1541,7 @@ figs.push("+&ibb(&)&+ 8.8.8.3(19) ~''V~'_'m/~~''_~m/''_~v''~");
 figs.push("-&ipbpb(&)&- 8.8.8.4(25) -~''v~'_'M/~~''_~M/''_~V''~-");
 
 // Family 8.10. Reversing 1.25 Loops
+figs.push('F8.10 Reversing 1 1/4 Loops');
 
 // 8.10.1.1-4
 figs.push("+_co&+ 8.10.1.1(19) ~~~_pM''_''V~");
@@ -1524,15 +1555,16 @@ figs.push("-_co&+ 8.10.2.2(20) ~~~_Pm''_''V~");
 figs.push("+_ico&- 8.10.2.3(19) ~~~_Pm''_''V~");
 figs.push("-_ico&+ 8.10.2.4(18) ~~~_pM''_''v~");
 
-
 //############ family 0 figures - non FAI catalog ################
+figs.push('F0 non-Aresti catalog');
+
 // wingover
-figs.push("+jw+ 0.0.0(8) ~d~''Dj2D''~d~");
+figs.push("+jw+ 0.0.0(8) ~d~''D2jD''~d~");
 
 //Clover leaf (with optional roll in top)
 // we use 0.x based
 figs.push("+&oj_+ 0.1.0(14:13) ~''v=_p!_~");
-figs.push("+_ioj&+ 0.2.0(11:10) ~''p!__v=~");
+figs.push("+_ioj4+ 0.2.0(11:10) ~''p!__v=~");
 
 //extended tip-head hammer - for any "on spot turn around" (like knife edge up-down)
 figs.push("+&th&+ 0.4.1(17) ~v~_~u~_''v~");
