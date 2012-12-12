@@ -1,3 +1,17 @@
+1.2.0
+* added new figures for 2013
+* added graphical modification of figures with rolls, gaps, size etc.
+* added selection of figures by going through figure text
+* changed base figure chooser
+* added powered/glider K factor selection
+* improved download link with suggested filename for Chrome browser
+* fixed some N figure bugs
+* added automatic logo selection when selecting rules
+* added latest version checking (only active online ofcourse)
+* added saving current sequence as cookie
+* added warning when leaving OpenAero without saving sequence
+* many small bugfixes and code cleanups
+
 1.1.0
 * added point & click selection of base figures
 * cleaned up code, joined separate variables into objects

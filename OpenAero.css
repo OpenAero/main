@@ -1,6 +1,9 @@
-/* OpenAero.css 1.1.0
+/* OpenAero.css 1.2.0
 
 // This file is part of OpenAero.
+
+//  OpenAero was originally designed by Ringo Massa and built upon ideas
+//  of Jose Luis Aresti, Michael Golan, Alan Cassidy and many others. 
 
 //  OpenAero is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -16,9 +19,18 @@
 //  along with OpenAero.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/* General styling */
 body {
-  padding: 0px;
+  margin: 0;
+  padding: 0;
   font-family: Helvetica, Verdana, sans-serif;
+}
+span {
+  margin: 0;
+  padding: 0;
+}
+img {
+  margin: 0;
 }
 a {
   color: blue;
@@ -31,37 +43,109 @@ a:hover {
 a:focus { 
   outline: none; 
 }
+input {
+  border-left: 1px solid #222;
+  border-top: 1px solid #222;
+  border-right: 1px solid #aaa;
+  border-bottom: 1px solid #aaa;
+  border-radius: 3px;
+  margin-bottom: 1px;
+}
+select {
+  border-left: 1px solid #222;
+  border-top: 1px solid #222;
+  border-right: 1px solid #aaa;
+  border-bottom: 1px solid #aaa;
+  border-radius: 3px;
+  margin-bottom: 1px;
+  background: #f0f0f0;
+}
+textarea {
+  border-left: 1px solid #222;
+  border-top: 1px solid #222;
+  border-right: 1px solid #aaa;
+  border-bottom: 1px solid #aaa;
+  border-radius: 3px;
+}
 .clearBoth {
   clear: both;
 }
-#svgContainer {
+.clearSpace {
+  clear: both;
+  height: 8px;
+}
+/*#svgContainer {
   position: absolute;
   margin-top: 60px;
   margin-left: 265px;
   background-color:#ffffff;
+}*/
+#svgContainer {
+  position: relative;
+  padding: 10px;
+  margin-right: 10px;
+  height: 100%;
+  background-color:#ffffff;
+  overflow: auto;
 }
 #figureSvgContainer {
-  display: none;
+  position: absolute;
+  left:-500;
+  width:0;
+  height:0;
+  opacity:0;
+}
+#figureChooserSvg {
+  position: absolute;
+  left:-500;
+  width:0;
+  height:0;
+  opacity:0;
 }
 #topBlock {
   position: fixed;
-  background: #f0f0f0;
+  background: #fafafa;
+  background: -webkit-linear-gradient(top, #ffffff, #f0f0f0);
+  border-bottom: 1px solid #888;
+  -moz-box-shadow: 0px 1px 2px rgba(0,0,0,0.5);
+  -webkit-box-shadow: 0px 1px 2px rgba(0,0,0,0.5);
+  box-shadow: 0px 1px 2px rgba(0,0,0,0.5);
   top: 0px;
   left: 0px;
   width: 100%;
-  height: 50px;
+  height: 49px;
   padding: 0 4px 4px 4px;
   z-index: 10;
 }
-#leftBlock {
+#main {
   position: fixed;
-  background: #f0f0f0;
-  top: 50px;
-  left: 0px;
-  width: 260px;
-  min-height: 800px;
+  top: 0px;
+  padding: 50px 0 0 0;
+  width: 100%;
+  height: 90%;
+}
+#leftBlock {
+  float: left;
+  overflow: auto;
+  background: #f4f4f4;
+  background: -webkit-linear-gradient(top, #f4f4f4, #e8e8e8);
+  width: 276px;
+  height: 99%;
+/*  min-height: 800px;*/
   padding: 4px;
   z-index: 1;
+}
+#figureSelector {
+  position: fixed;
+  overflow: auto;
+  background: rgba(240, 240, 240, 0.7);
+  top: 50px;
+  right: 0px;
+  width: 260px;
+  height: 95%;
+  min-height: 500px;
+  padding: 4px;
+  z-index: 2;
 }
 #openAeroLogo {
   float:left;
@@ -76,14 +160,35 @@ a:focus {
   margin-right: 3px;
 }
 #mainMenu {
-  width: 960px;
-  background: #f0f0f0;
+  width: 100%;
   height: 25px;
   font-size: 14px;
 }
 .section {
+  position: relative;
+  float: left;
+  width: 98%;
   border: 1px solid #888;
-  margin-top: 10px;
+  border-radius: 3px;
+  margin: 10px 1px 1px 1px;
+}
+.documentation {
+  width: auto;
+  margin: 1em;
+  padding: 2em;
+  background: #f8f8f8;
+  background: -webkit-linear-gradient(top, #ffffff, #f4f4f4);
+  background: linear-gradient(top, #ffffff, #f4f4f4);
+}
+.docs {
+  background: #f8f8f8;
+  background: -webkit-linear-gradient(315deg, #ffe090, #fff);
+  background: linear-gradient(315deg, #ffe090, #fff);
+}
+.docs img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
 #sequenceInfo {
   font-size: 12px;
@@ -95,19 +200,18 @@ a:focus {
   font-size: 12px;
   color: #d22;
   background: #fff;
+  clear: both;
 }
 .sectionLabel {
   float: left;
   font-size: 14px;
-  font-weight: bold;
   color: #000;
-  letter-spacing: 2px;
-  margin-top: -10px;
-  margin-left: 10px;
+  margin: -10px 0 -8px 10px;
   background: #f0f0f0;
 }
 .sectionLabelClose {
-  float:left;
+  clear: both;
+  margin-bottom: -8px;
 }
 .item {
   clear: both;
@@ -121,12 +225,16 @@ a:focus {
   width: 180px;
   height: 1.5em;
   font-size: 12px;
-  border: 1px solid black;
+}
+#sequenceInfo select {
+  float: right;
+  width: 182px;
+  height: 1.6em;
+  font-size: 12px;
 }
 #sequenceInfo textarea {
   width: 248px;
   font-size: 12px;
-  border: 1px solid black;
 }
 #activeLogo {
   float: right;
@@ -193,16 +301,26 @@ a:focus {
   border:0px;
   display:none;
 }
-#version {
+.version {
   position: absolute;
   top:5px;
-  right:15px;
+  right:10px;
+  text-align:right;
+}
+#latestVersion {
+  margin:-2px 1em 0 0;
+  border:0;
+  height:16px;
+  width:200px;
+}
+#version {
+  margin-right: 1em;
 }
 .figureStart {
   z-index: 1;
   position: absolute;
   display: hidden;
-}
+}f
 .figureStart hover {
   display: block;
 }
@@ -230,7 +348,7 @@ a:focus {
 .largeButton a:hover {
   text-decoration: none;
 }
-/*TAB SELECTER FUNCTIONALITY*/
+/*TAB SELECTOR FUNCTIONALITY*/
 .tabSelector {
   clear: both;
 }
@@ -262,23 +380,167 @@ a:focus {
   border-bottom: 1px solid #f0f0f0;
   font-weight: bold;
 }
+/****************************
+ *  Theming figure edit tab *
+ ****************************/
+
+#figureOptions {
+  float: right;
+/*  clear: both;*/
+}
+#selectedFigure {
+  position: relative;
+  float: left;
+  margin-left: 2px;
+  width: 140px;
+  height: 140px;
+  background: white;
+  border: 2px solid #00f;
+  border-radius: 3px;
+  cursor: pointer;
+}
+.display {
+  display: block;
+}
+.nodisplay {
+  display: none;
+}
+.hoverdisplay div {
+  display: none;
+}
+.hoverdisplay:hover div {
+  display: block;
+}
+#addFigureText {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 98%;
+  height: 98%;
+  text-align: center;
+  background: white;
+  opacity: 0.7;
+  z-index: 1;
+}
+#addFigureText div {
+  margin-top: 1em;
+  font-size: 2em;
+  color: black;
+  text-align: center;
+}
+/* buttons */
+.button {
+  float: left;
+  width: 32px;
+  height: 32px;
+  margin: 1px;
+}
+#switchX {
+  background-image: url('buttons/switchX.png');
+}
+#switchY {
+  background-image: url('buttons/switchY.png');
+}
+#deleteFig {
+  background-image: url('buttons/trash.png');
+}
+#magMin {
+  background-image: url('buttons/magmin.png');
+}
+#magPlus {
+  background-image: url('buttons/magplus.png');
+}
+#moveNoLine {
+  background-image: url('buttons/moveforward.png');
+}
+#straightLine {
+  background-image: url('buttons/straightline.png');
+}
+#curvedLine {
+  background-image: url('buttons/curvedline.png');
+}
+#scale {
+  float: left;
+  font-size: 16px;
+  text-align: center;
+  height: 26px;
+  width: 26px;
+  margin: 2px;
+}
+#moveX,#moveY {
+  float: left;
+  font-size: 16px;
+  text-align: center;
+  height: 20px;
+  width: 46px;
+  margin: 2px;
+}
+#figureInfo.section select {
+  float: left;
+  border: 1px;
+}
+#entryExitExtension span {
+  float: left;
+  margin-left: 3px;
+  font-size: 14px;
+  clear: none;
+}
+#entryExitExtension span span {
+  margin: 0px;
+}
+.rollGaps {
+  float: left;
+  clear: none;
+}
+.plusMin span {
+  margin-left: 5px;
+}
+.minButton {
+  float: left;
+  margin-left: 5px;
+	background-image: url('buttons/smallMinus.png');
+	background-color: transparent;
+	background-repeat: no-repeat;
+	background-position: 0 0; /* equivalent to 'top left' */
+	border: none;
+	height: 20px;
+  width: 20px;
+  color: transparent;
+}
+.plusButton {
+  float:left;
+	background-image: url('buttons/smallPlus.png');
+	background-color: transparent;
+	background-repeat: no-repeat;
+	background-position: 0 0; /* equivalent to 'top left' */
+	border: none;
+	height: 20px;
+  width: 20px;
+  color: transparent;
+}
+.plusMinText {
+  float: left;
+  font-size: 12px;
+  width: 1.5em;
+  text-align: center;
+}
 #figureHeader {
   font-size: 14px;
 }
 #figureChooser {
   margin: 2px;
   width: 256px;
-  height: 180px;
-  background: white;
+  height: 90%;
+  background: rgba(255, 255, 255, 0.7);
   overflow: auto;
 }
 table#figureChooserTable td {
   padding: 5px;
-  border:2px solid #eee;
-  border-radius:5px;
+  border: 2px solid #eee;
+  border-radius: 5px;
 }
 table#figureChooserTable td.selected {
-  border:2px solid magenta;
+  border: 2px solid magenta;
 }
 /*MENU DROPDOWN FUNCTIONALITY*/
 /*set up ul tags*/ 

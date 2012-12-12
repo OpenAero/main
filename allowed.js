@@ -1,6 +1,9 @@
-// allowed.js 1.0.0
+// allowed.js 1.2.0
 
 // This file is part of OpenAero.
+
+//  OpenAero was originally designed by Ringo Massa and built upon ideas
+//  of Jose Luis Aresti, Michael Golan, Alan Cassidy and many others. 
 
 //  OpenAero is Free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -23,9 +26,9 @@
 
 // First, we define the rules array
 // var rules will contain most rules. Thy are parsed by the software later
-var rules = []
+var rules = [];
 // var checkConv contains all conversions of Aresti numbers to short code, done by regex
-var checkConv = []
+var checkConv = [];
 //
 // this contains a list of allowed and/or required figures for specific programs
 // program action to check a sequence:
@@ -455,7 +458,7 @@ rules.push("allow=^[1-9]"); //all figures are allowed for the Free program
 rules.push("[CIVA Yak52 Free]");
 rules.push("posnl=40");
 rules.push("basefig-max=12");
-rules.push("k-max=225");
+rules.push("k-max=180");
 
 rules.push("fam5-min=1");
 rules.push("fam7-min=1");

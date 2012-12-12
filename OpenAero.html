@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <!--
-  OpenAero.html version 1.1.0
-
+  OpenAero.html version 1.2.0
   This file is part of OpenAero.
+
+  OpenAero was originally designed by Ringo Massa and built upon ideas
+  of Jose Luis Aresti, Michael Golan, Alan Cassidy and many others. 
 
   OpenAero is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -20,133 +22,165 @@
 
 <html>
   <head>
-  <title>OpenAero</title>
+    <meta charset="UTF-8">
+    <title>OpenAero</title>
     <link rel="stylesheet" href="OpenAero.css">
     <script src="config.js" type="text/javascript"></script>
     <script src="logo.js" type="text/javascript"></script>
     <script src="figures.js" type="text/javascript"></script>
     <script src="allowed.js" type="text/javascript"></script>
   </head>
-<body onLoad="doOnLoad();">
-<!-- Top block -->
-<div id=topBlock>
-  <div id="openAeroLogo">OpenAero</div>
-  <!-- Menu -->
-  <div id=mainMenu>
-    <ul id="menu">
-	  <!-- File menu -->
-      <li><a href='#'>File</a>
-      <ul>
-		<li><div class=openSequence><a href=#>Open sequence</a><form id="fileForm"><input type=file id=file size=1 onChange="openSequence();"></form><div></li>
-		<li><a href="#" onClick="saveSequence();">Save sequence</a></li>
-		<li><a href="#" onClick="saveSvg();">Save as image</a></li>
-		<li><a href="#" onClick="printAllForms();">Print forms</a></li>
-      </ul>
-      <!-- View menu -->
-      <li><a href="#">View</a>
-      <ul>
-		<li><a href=# onClick="selectForm('A');">Form A</a></li>
-		<li><a href=# onClick="selectForm('B');">Form B</a></li>
-		<li><a href=# onClick="selectForm('C');">Form C</a></li>
-      </ul>
-      <!-- Sequence menu -->
-      <li><a href="#">Sequence</a>
-      <ul id="sequenceOptions">
-		<li id="entryOption"><a href=# onClick="changeEntryDirection('ed');">Downwind entry</a></li>
-		<li id="entryOption"><a href=# onClick="changeEntryDirection('ej');">X-box entry</a></li>
-		<li id="entryOption"><a href=# onClick="changeEntryDirection('eja');">X-box entry away</a></li>
-		<li><a href=# onClick="separateFigures();">Separate figures</a></li>
-      </ul>
-      <!-- Help menu -->
-      <li><a href="#">Help</a>
-      <ul>
-		<li><a href=# onClick="window.open('language.html', 'OpenAero language', 'menubar=no, scrollbars=yes, status=no, toolbar=no, top=30px, width=900px');">OpenAero language</a></li>
-		<li><a href=# onClick="window.open('opensave.html', 'OpenAero opening and saving sequences', 'menubar=no, scrollbars=yes, status=no, toolbar=no, top=30px, width=900px');">Opening/saving files</a></li>
-		<li><a href=# onClick="window.open('arestisystem.html', 'The Aresti aerocryptographic system', 'menubar=no, scrollbars=yes, status=no, toolbar=no, top=30px, width=900px');">Aresti system</a></li>
-      </ul>
-    </ul>
-    <!-- Current version -->
-    <div id=version>Version: 1.1.0</div>
-  </div>
-  <!-- Sequence text -->
-  <input type=text name=sequence_text id=sequence_text style="width:97%;" onKeyUp="checkSequenceChanged();">
-</div>
-<!-- Left main block -->
-<div id=leftBlock>
-  <div class=tabSelector>
-	<ul>
-	  <li id=tab-sequenceInfo class=activeTab><a href="#" onClick="selectTab(this);">Sequence info</a></li>
-	  <li id=tab-figureInfo class=inactiveTab><a href="#" onClick="selectTab(this);">Figure chooser</a></li>
-	</ul>
-  </div>
-  <div class=clearBoth></div>
-  <!-- Sequence info -->
-  <div id=sequenceInfo>
-    <div class=item><div class="label">Pilot</div><input type=text name=pilot id=pilot onChange="changeTitle()"></div>
-    <div class=item><div class="label">Aircraft</div><input type=text name=aircraft id=aircraft></div>
-    <div class=item><div class="label">Location</div><input type=text name=location id=location onChange="changeTitle()"></div>
-    <div class=item><div class="label">Date</div><input type=text name=date id=date onChange="changeTitle()"></div>
-    <div class="item combo"><div class="label">Rules</div><input type=text name=rules id=rules><ul id=rulesList></ul></div>
-    <div class="item combo"><div class="label">Category</div><input type=text name=category id=category><ul id=categoryList></ul></div>
-    <div class="item combo"><div class="label">Program</div><input type=text name=program id=program><ul id=programList></ul></div>
-    <div class=item><div class="label">Positioning</div><input type=text name=positioning id=positioning></div>
-    <div class=item><div class="label">Logo<div id=removeLogo></div><input type=hidden id=logo></div><div id=activeLogo><a href="#" onClick="logoChooser()">Choose logo</a></div>
+  <body onLoad="doOnLoad();">
+    <!-- Top block -->
+    <div id=topBlock>
+      <div id="openAeroLogo">OpenAero</div>
+      <!-- Menu -->
+      <div id=mainMenu>
+        <ul id="menu">
+        <!-- File menu -->
+          <li><a href='#'>File</a>
+          <ul>
+            <li><div class=openSequence><a href=#>Open sequence</a><form id="fileForm"><input type=file id=file size=1 onChange="openSequence();"></form><div></li>
+            <li><a href="#" onClick="saveSequence();">Save sequence</a></li>
+            <li><a href="#" onClick="saveSvg();">Save as image</a></li>
+            <li><a href="#" onClick="printAllForms();">Print forms</a></li>
+          </ul>
+          <!-- View menu -->
+          <li><a href="#">View</a>
+          <ul>
+            <li><a href=# onClick="selectForm('A');">Form A</a></li>
+            <li><a href=# onClick="selectForm('B');">Form B</a></li>
+            <li><a href=# onClick="selectForm('C');">Form C</a></li>
+          </ul>
+          <!-- Sequence menu -->
+          <li><a href="#">Sequence</a>
+          <ul id="sequenceOptions">
+            <li class="entryOption"><a href=# onClick="changeEntryDirection('ed');">Downwind entry</a></li>
+            <li class="entryOption"><a href=# onClick="changeEntryDirection('ej');">X-box entry</a></li>
+            <li class="entryOption"><a href=# onClick="changeEntryDirection('eja');">X-box entry away</a></li>
+            <li><a href=# onClick="flipYAxis();">Flip Y-axis</a></li>
+            <li><a href=# onClick="separateFigures();">Separate figures</a></li>
+          </ul>
+          <!-- Help menu -->
+          <li><a href="#">Help</a>
+          <ul>
+            <li><a href=# onClick="window.open('manual.html', 'OpenAero manual', 'menubar=no, scrollbars=yes, status=no, toolbar=no, top=30px, width=900px');">Manual</a></li>
+            <li><a href=# onClick="window.open('language.html', 'OpenAero language', 'menubar=no, scrollbars=yes, status=no, toolbar=no, top=30px, width=900px');">OpenAero language</a></li>
+            <li><a href="http://code.google.com/p/open-aero/wiki/Installation" target="_blank">Installation</a></li>
+            <li><a href=# onClick="window.open('arestisystem.html', 'The Aresti aerocryptographic system', 'menubar=no, scrollbars=yes, status=no, toolbar=no, top=30px, width=900px');">Aresti system</a></li>
+          </ul>
+        </ul>
+        <!-- Current version -->
+        <div class=version>
+          <a href="http://code.google.com/p/open-aero/downloads/list?can=3" target="_blank"><img id="latestVersion" src=""></img></a>
+          <span id=version>Version: <script>document.write(version);</script></span>
+        </div>
+      </div>
+      <!-- Sequence text -->
+      <input type=text name=sequence_text id=sequence_text style="width:97%;" onInput="checkSequenceChanged();" onKeyUp="checkSequenceChanged();" onMouseUp="checkSequenceChanged();" >
     </div>
-    <div class=item><div class="label">Notes</div><textarea name=notes id=notes></textarea></div>
-  </div>
-  <!-- Figure Chooser -->
-  <div id=figureInfo class=section style="display: none;">
-    <div id=figureHeader class="sectionLabel"></div><div class="sectionLabelClose">&nbsp;</div>
-    <div class=clearBoth></div>
-	<div>
-	  Family<select id=figureGroup onChange="changeFigureGroup(this);"></select>
-	</div>
-    <div id="figureChooser">
-	  <table id="figureChooserTable"></table>
-	</div>
-	<!-- This section will be for roll selection
-    <div id="roll1" class=section>
-      <div class="sectionLabel">First roll position</div><div class="sectionLabelClose">&nbsp;</div>
-      <select id=roll1-1 onChange="changeRoll(this);"></select>
-      <select id=roll1-2 onChange="changeRoll(this);"></select>
+    <!-- main sequence area -->
+    <div id="main">
+      <!-- Left main block -->
+      <div id=leftBlock>
+        <div class=tabSelector>
+        <ul>
+          <li id=tab-sequenceInfo class=activeTab><a href="#" onClick="selectTab(this);">Sequence&nbsp;info</a></li>
+          <li id=tab-figureInfo class=inactiveTab><a href="#" onClick="selectTab(this);">Figure&nbsp;editor</a></li>
+        </ul>
+        </div>
+        <div class=clearBoth></div>
+        <!-- Sequence info -->
+        <div id="sequenceInfo">
+          <div class=item><div class="label">Pilot</div><input type=text name=pilot id=pilot onChange="changeSequenceInfo()"></div>
+          <div class=item><div class="label">Aircraft</div><input type=text name=aircraft id=aircraft onChange="changeSequenceInfo()"></div>
+          <div class=item><div class="label">Location</div><input type=text name=location id=location onChange="changeSequenceInfo()"></div>
+          <div class=item><div class="label">Date</div><input type=text name=date id=date onChange="changeSequenceInfo()"></div>
+          <div class=item><div class="label">K-Factors</div>
+            <select name="class" id="class" onChange="draw();changeSequenceInfo();">
+              <option value="powered">Powered</option>
+              <option value="glider">Glider</option>
+            </select></div>
+          <div class="item combo"><div class="label">Rules</div><input type=text name=rules id=rules><ul id=rulesList></ul></div>
+          <div class="item combo"><div class="label">Category</div><input type=text name=category id=category><ul id=categoryList></ul></div>
+          <div class="item combo"><div class="label">Program</div><input type=text name=program id=program><ul id=programList></ul></div>
+          <div class=item><div class="label">Positioning</div><input type=text name=positioning id=positioning onChange="changeSequenceInfo()"></div>
+          <div class=item><div class="label">Logo<div id=removeLogo></div><input type=hidden id=logo></div><div id=activeLogo><a href="#" onClick="logoChooser()">Choose logo</a></div>
+          </div>
+          <div class=item><div class="label">Notes</div><textarea name=notes id=notes onChange="changeSequenceInfo()"></textarea></div>
+        </div>
+        <!-- Figure Chooser -->
+        <div id="figureInfo" class=section style="position:fixed;left: -5000px;">
+          <div id=figureHeader class="sectionLabel"></div><div class="sectionLabelClose">&nbsp;</div>
+          <div id="selectedFigure">
+            <svg xmlns="http://www.w3.org/2000/svg" version="1.2" baseProfile="tiny" id="selectedFigureSvg"></svg>
+            <div id="addFigureText" onMouseDown="showFigureSelector();"><div>Click to add figure</div></div>
+          </div>
+          <div id="figureOptions">
+            <div>
+              <div id="switchY" class="button" onClick="clickButton(this);"><img src="buttons/mask.png"></div>
+              <div id="switchX" class="button" onClick="clickButton(this);"><img src="buttons/mask.png"></div>
+              <div id="deleteFig" class="button" onClick="clickButton(this);"><img src="buttons/mask.png"></div>
+              <div class=clearSpace></div>
+            </div>
+            <div>
+              <div id="magMin" class="button" onClick="clickButton(this);"><img src="buttons/mask.png"></div>
+              <input type=text size=2 name=scale id=scale value="0" onKeyUp="updateFigure();">
+              <div id="magPlus" class="button" onClick="clickButton(this);"><img src="buttons/mask.png"></div>
+              <div class=clearSpace></div>
+            </div>
+            <div>
+              <div id="moveNoLine" class="button" onClick="clickButton(this);"><img src="buttons/mask.png"></div>
+              <div id="straightLine" class="button" onClick="clickButton(this);"><img src="buttons/mask.png"></div>     
+              <!-- hide the curvedLine with opacity 0 until implemented -->
+              <div id="curvedLine" class="button" style="opacity:0;" onClick="clickButton(this);"><img src="buttons/mask.png"></div>
+              <div class=clearBoth></div>
+              <input type=text size=2 name=moveX id=moveX disabled="disabled" onChange="updateFigure();">
+              <input type=text size=2 name=moveY id=moveY disabled="disabled" onChange="updateFigure();">
+            </div>
+            </div>
+            <div class="clearBoth"></div>
+            <div id="entryExitExtension" class="section">
+              <div class="sectionLabel">Entry/exit extension</div><div class="sectionLabelClose">&nbsp;</div>
+              <span>Entry</span>
+              <span id="entryExt" class="plusMin"></span>
+              <span>Figure</span>
+              <span id="exitExt" class="plusMin"></span>
+              <span>Exit</span>
+            </div>
+            <div id="rollInfo"></div>
+          </div>
+        <!-- Alerts -->
+        <div id=alerts class=section>
+          <div class="sectionLabel">Alerts</div><div class="sectionLabelClose">&nbsp;</div>
+        </div>
+      </div>
+      <!-- Container for the sequence svg -->
+      <div id="svgContainer"></div>
+      <!-- Figure selector -->
+      <div id="figureSelector" style="right:-300px;">
+        <div>
+          <select id=figureGroup onChange="changeFigureGroup(this);"></select>
+          <a href="#" onMouseDown="hideFigureSelector();">[Close]</a>
+        </div>
+        <div id="figureChooser">
+        <table id="figureChooserTable"></table>
+        </div>
+      </div>
     </div>
-    <div id="roll2" class=section>
-      <div class="sectionLabel">Second roll position</div><div class="sectionLabelClose">&nbsp;</div>
-      <select id=roll2-1 onChange="changeRoll(this);"></select>
-      <select id=roll2-2 onChange="changeRoll(this);"></select>
+    <!-- Container for SVGs for the figure chooser -->
+    <div id="figureSvgContainer">
+      <svg xmlns="http://www.w3.org/2000/svg" version="1.2" baseProfile="tiny" id="figureChooserSvg"></svg>
     </div>
-    <div id="roll3" class=section>
-      <div class="sectionLabel">Third roll position</div><div class="sectionLabelClose">&nbsp;</div>
-      <select id=roll3-1 onChange="changeRoll(this);"></select>
-      <select id=roll3-2 onChange="changeRoll(this);"></select>
+    <!-- Hidden div used for saving files through download.php -->
+    <div id="saveFileFormDiv">
+      <form action="download.php" method="post" id="saveFileForm">
+        <input type="hidden" name="name" />
+        <input type="hidden" name="data" />
+        <input type="hidden" name="format" />
+      </form>
     </div>
-    <div id="roll4" class=section>
-      <div class="sectionLabel">Fourth roll position</div><div class="sectionLabelClose">&nbsp;</div>
-      <select id=roll4-1 onChange="changeRoll(this);"></select>
-      <select id=roll4-2 onChange="changeRoll(this);"></select>
-    </div>
-    -->
-  </div>
-  <!-- Alerts -->
-  <div id=alerts class=section>
-    <div class="sectionLabel">Alerts</div><div class="sectionLabelClose">&nbsp;</div>
-  </div>
-</div>
-<!-- Container for the sequence svg -->
-<div id="svgContainer">
-</div>
-<!-- Container for SVGs for the figure chooser -->
-<div id="figureSvgContainer">
-</div>
-<!-- Hidden div used for saving files through download.php -->
-<div id="saveFileFormDiv">
-  <form action="download.php" method="post" id="saveFileForm">
-    <input type="hidden" name="name" />
-    <input type="hidden" name="data" />
-    <input type="hidden" name="format" />
-  </form>
-</div>
-</body>
-<!-- The main script. Put it at the end when everything else is loaded --> 
-<script src="OpenAero.js" type="text/javascript"></script>
+  </body>
+  <!-- The main script. Put it at the end when everything else is loaded --> 
+  <script src="OpenAero.js" type="text/javascript"></script>
 </html>

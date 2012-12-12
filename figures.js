@@ -1,6 +1,9 @@
-// figures.js file 1.1.0
+// figures.js file 1.2.0
 
 // This file is part of OpenAero.
+
+//  OpenAero was originally designed by Ringo Massa and built upon ideas
+//  of Jose Luis Aresti, Michael Golan, Alan Cassidy and many others. 
 
 //  OpenAero is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -327,7 +330,7 @@ figs.push("-^iw(&)^- 1.3.8.4(20) ~d''_''~~z~_~Z~~_~D~");
 figs.push("+&n(_)&+ 1.3.9.1(24:) ~v~_''~z~~_~Z~''_~V~");
 figs.push("-&pn(_)&- 1.3.9.2(24:) -~V~_''~Z~~_~z~''_~v~");
 figs.push("+&ipn(_)&+ 1.3.9.3(22:) ~V~_''~Z~~_~z~''_~v~");
-figs.push("-&in(_)&- 1.3.9.4(23:) -~v~_''~z~~_~z~''_~V~");
+figs.push("-&in(_)&- 1.3.9.4(23:) -~v~_''~z~~_~Z~''_~V~");
 
 // 1.3.10-1-4
 figs.push("+&n(_)&- 1.3.10.1(23:) ~v~_''~z~~_~Z~''_~v~");
@@ -355,7 +358,7 @@ figs.push("-&ipn(_)&- 1.3.13.4(23:) -~v~_''~Z~~_~z~''_~V~");
 
 // 1.3.14.1-4
 figs.push("+&pn(_)&- 1.3.14.1(22:) ~v~_''~Z~~_~z~''_~v~");
-figs.push("-&n(_)&+ 1.3.14.2(25:) -~V~_''~Z~~_~Z~''_~V~");
+figs.push("-&n(_)&+ 1.3.14.2(25:) -~V~_''~z~~_~Z~''_~V~");
 figs.push("+&in(_)&- 1.3.14.3(24:) ~V~_''~z~~_~Z~''_~V~");
 figs.push("-&ipn(_)&+ 1.3.14.4(22:) -~v~_''~Z~~_~z~''_~v~");
 
@@ -380,10 +383,10 @@ figs.push("F2.1 90 degree Turns");
 
 // 2.1.1.1-2 (90 degree turn, no roll)
 // can be written as j or 1j
-figs.push("+1j+ 2.1.1.1(3) ~j1~");
-figs.push("-1j- 2.1.1.2(4) ~J1~");
 figs.push("+j+ 2.1.1.1(3) ~j1~");
 figs.push("-j- 2.1.1.2(4) ~J1~");
+figs.push("+1j+ 2.1.1.1(3) ~j1~");
+figs.push("-1j- 2.1.1.2(4) ~J1~");
 
 // 2.1.2.1-4 (90 degree turn, 1/2 roll)
 figs.push("+1j5- 2.1.2.1(14:19) ~''j15''~");
@@ -428,11 +431,18 @@ figs.push("-2j2- 2.2.5.2(23:31) ~''J22''~");
 figs.push("+2jo2+ 2.2.5.3(24:34) ~''J22''~");
 figs.push("-2jo2- 2.2.5.4(25:35) ~''j22''~");
 
-// 2.2.6.1-4 (180 degreet turn 1 followed by opposite 1 roll)
+// 2.2.6.1-4 (180 degree turn, 1 followed by opposite 1 roll)
 figs.push("+2jio2+ 2.2.6.1(25:37) ~''jio22''~");
 figs.push("-2jio2- 2.2.6.2(26:38) ~''JIO22''~");
 figs.push("+2joi2+ 2.2.6.3(25:37) ~''JIO22''~");
 figs.push("-2joi2- 2.2.6.4(26:38) ~''jio22''~");
+
+// 2.2.7.1-4 (180 degree turn, 0.5 followed by 1 opposite roll)
+// CHECK
+figs.push("+2jio51- 2.2.7.1(26:37) ~''jio251''~");
+figs.push("-2jio51+ 2.2.7.2(26:37) ~''JIO251''~");
+figs.push("+2joi51- 2.2.7.3(27:39) ~''JIO251''~");
+figs.push("-2joi51+ 2.2.7.4(27:39) ~''jio251''~");
 
 // Family 2.3. 270 degree turns
 figs.push("F2.3 270 degree Turns");
@@ -464,6 +474,13 @@ figs.push("+3jio3+ 2.3.5.1(35:53) ~~jio33~~");
 figs.push("-3jio3- 2.3.5.2(36:54) ~~JIO33~~");
 figs.push("+3joi3+ 2.3.5.3(36:55) ~~JIO33~~");
 figs.push("-3joi3- 2.3.5.4(37:56) ~~jio33~~");
+
+// 2.3.6.1-4: (270 degree turn, 0.5 roll followed by 1 opposite roll)
+// CHECK
+figs.push("+3jio51- 2.3.6.1(37) ~~jio351~~");
+figs.push("-3jio51+ 2.3.6.2(37) ~~JIO351~~");
+figs.push("+3joi51- 2.3.6.3(38) ~~JIO351~~");
+figs.push("-3joi51+ 2.3.6.4(38) ~~jio351~~");
 
 // Family 2.4. 360 degree turns
 figs.push("F2.4 360 degree Turns");
@@ -1432,6 +1449,100 @@ figs.push("+^pp(_)&+ 8.6.16.1(12) ~_V=m!_~_~v~");
 figs.push("-^pp(_)&- 8.6.16.2(15) ~_v=M!_~_~V~");
 figs.push("+^ipp(_)&+ 8.6.16.3(15) ~_v=M!_~_~V~");
 figs.push("-^ipp(_)&- 8.6.16.4(13) ~_V=m!_~_~v~");
+
+// New for 2013. More regular (non-reversing) P-loops, but with a half roll on top.
+// In the CIVA proposal the full rolls on the horizontal and vertical segments were left out.
+// Problem is that this makes the match criteria too broad. So they are added here, just in case,
+// but commented out for the future.
+figs.push('F8.6 "P" Loops w/ half rolls on top');
+
+// 8.6.17.1-4
+// CHECK
+figs.push("+rp(^)- 8.6.17.1(14) ~v''''~p!_''~");
+figs.push("-rp(^)+ 8.6.17.2(14) ~V''''~P!_''~");
+figs.push("+irp(^)- 8.6.17.3(14) ~V''''~P!_''~");
+figs.push("-irp(^)+ 8.6.17.4(14) ~v''''~p!_''~");
+// figs.push("+&rp(^)_- 8.6.17.1(14) ~v''_''~p!__''~");
+// figs.push("-&rp(^)_+ 8.6.17.2(14) ~V''_''~P!__''~");
+// figs.push("+&irp(^)_- 8.6.17.3(14) ~V''_''~P!__''~");
+// figs.push("-&irp(^)_+ 8.6.17.4(14) ~v''_''~p!__''~");
+
+// 8.6.18.1-4
+// CHECK
+figs.push("+rp(^)^+ 8.6.18.1(13) ~v''''~p!__''~");
+figs.push("-rp(^)^- 8.6.18.2(14) ~V''''~P!__''~");
+figs.push("+irp(^)^+ 8.6.18.3(14) ~V''''~P!__''~");
+figs.push("-irp(^)^- 8.6.18.4(14) ~v''''~p!__''~");
+// figs.push("+&rp(^)^+ 8.6.18.1(13) ~v''_''~p!__''~");
+// figs.push("-&rp(^)^- 8.6.18.2(14) ~V''_''~P!__''~");
+// figs.push("+&irp(^)^+ 8.6.18.3(14) ~V''_''~P!__''~");
+// figs.push("-&irp(^)^- 8.6.18.4(14) ~v''_''~p!__''~");
+
+// 8.6.19.1-4
+// CHECK
+figs.push("+rp(^)+ 8.6.19.1(12) ~v''''~P!_''~");
+figs.push("-rp(^)- 8.6.19.2(15) ~V''''~p!_''~");
+figs.push("+irp(^)+ 8.6.19.3(15) ~V''''~p!_''~");
+figs.push("-irp(^)- 8.6.19.4(13) ~v''''~P!_''~");
+// figs.push("+&rp(^)_+ 8.6.19.1(12) ~v''_''~P!__''~");
+// figs.push("-&rp(^)_- 8.6.19.2(15) ~V''_''~p!__''~");
+// figs.push("+&irp(^)_+ 8.6.19.3(15) ~V''_''~p!__''~");
+// figs.push("-&irp(^)_- 8.6.19.4(13) ~v''_''~P!__''~");
+
+// 8.6.20.1-4
+// CHECK
+figs.push("+rp(^)^- 8.6.20.1(13) ~v''''~P!__''~");
+figs.push("-rp(^)^+ 8.6.20.2(15) ~V''''~p!__''~");
+figs.push("+irp(^)^- 8.6.20.3(15) ~V''''~p!__''~");
+figs.push("-irp(^)^+ 8.6.20.4(13) ~v''''~P!__''~");
+// figs.push("+&rp(^)^- 8.6.20.1(13) ~v''_''~P!__''~");
+// figs.push("-&rp(^)^+ 8.6.20.2(15) ~V''_''~p!__''~");
+// figs.push("+&irp(^)^- 8.6.20.3(15) ~V''_''~p!__''~");
+// figs.push("-&irp(^)^+ 8.6.20.4(13) ~v''_''~P!__''~");
+
+// 8.6.21.1-4
+// CHECK
+figs.push("+p(^)- 8.6.21.1(14) ~~p!_~~''V~");
+figs.push("-p(^)+ 8.6.21.2(14) ~~P!_~~''v~");
+figs.push("+ip(^)- 8.6.21.3(14) ~~P!_~~''v~");
+figs.push("-ip(^)+ 8.6.21.4(14) ~~p!_~~''V~");
+// figs.push("+_p(^)&- 8.6.21.1(14) ~~_p!_~~_''V~");
+// figs.push("-_p(^)&+ 8.6.21.2(14) ~~_P!_~~_''v~");
+// figs.push("+_ip(^)&- 8.6.21.3(14) ~~_P!_~~_''v~");
+// figs.push("-_ip(^)&+ 8.6.21.4(14) ~~_p!_~~_''V~");
+
+// 8.6.22.1-4
+// CHECK
+figs.push("+p(^)+ 8.6.22.1(13) ~~p!_~~''v~");
+figs.push("-p(^)- 8.6.22.2(15) ~~P!_~~''V~");
+figs.push("+ip(^)+ 8.6.22.3(14) ~~P!_~~''V~");
+figs.push("-ip(^)- 8.6.22.4(13) ~~p!_~~''v~");
+// figs.push("+_p(^)&+ 8.6.22.1(13) ~~_p!_~~_''v~");
+// figs.push("-_p(^)&- 8.6.22.2(15) ~~_P!_~~_''V~");
+// figs.push("+_ip(^)&+ 8.6.22.3(14) ~~_P!_~~_''V~");
+// figs.push("-_ip(^)&- 8.6.22.4(13) ~~_p!_~~_''v~");
+
+// 8.6.23.1-4
+// CHECK
+figs.push("+^p(^)+ 8.6.23.1(13) ~~_P!_~~''v~");
+figs.push("-^p(^)- 8.6.23.2(14) ~~_p!_~~''V~");
+figs.push("+^ip(^)+ 8.6.23.3(14) ~~_p!_~~''V~");
+figs.push("-^ip(^)- 8.6.23.4(14) ~~_P!_~~''v~");
+// figs.push("+^p(^)&+ 8.6.23.1(13) ~~_P!_~~_''v~");
+// figs.push("-^p(^)&- 8.6.23.2(14) ~~_p!_~~_''V~");
+// figs.push("+^ip(^)&+ 8.6.23.3(14) ~~_p!_~~_''V~");
+// figs.push("-^ip(^)&- 8.6.23.4(14) ~~_P!_~~_''v~");
+
+// 8.6.24.1-4
+// CHECK
+figs.push("+^p(^)- 8.6.24.1(15) ~~_P!_~~''V~");
+figs.push("-^p(^)+ 8.6.24.2(13) ~~_p!_~~''v~");
+figs.push("+^ip(^)- 8.6.24.3(13) ~~_p!_~~''v~");
+figs.push("-^ip(^)+ 8.6.24.4(15) ~~_P!_~~''V~");
+// figs.push("+^p(^)&- 8.6.24.1(15) ~~_P!_~~_''V~");
+// figs.push("-^p(^)&+ 8.6.24.2(13) ~~_p!_~~_''v~");
+// figs.push("+^ip(^)&- 8.6.24.3(13) ~~_p!_~~_''v~");
+// figs.push("-^ip(^)&+ 8.6.24.4(15) ~~_P!_~~_''V~");
 
 // Family 8.7. Q Loops
 figs.push('F8.7 "Q" Loops');
