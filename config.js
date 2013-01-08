@@ -1,4 +1,4 @@
-// config.js 1.2.0
+// config.js 1.2.1
 
 // This file is part of OpenAero.
 
@@ -34,7 +34,7 @@
 // Define active version number of OpenAero
 // **************
 
-var version = '1.2.0';
+var version = '1.2.1';
 
 // **************
 // Define drawing lengths, radiuses etc
@@ -89,8 +89,10 @@ var rollTypes = [':none','4:1/4','2:1/2','3:3/4','1:1','5:1 1/4','6:1 1/2','7:1 
 for (i = 2; i < 9; i++) rollTypes.push(i + '4:' + i + 'x4');
 rollTypes.push('8:2x8');
 for (i = 2; i < 9; i++) rollTypes.push((i*2) + '8:' + (i*2) + 'x8');
-var flickTypes = ['2f:1/2 pos flick','3f:3/4 pos flick','f:1 pos flick','5f:1 1/4 pos flick','6f:1 1/2 pos flick','7f:1 3/4 pos flick','9f:2 pos flick','2if:1/2 neg flick','3if:3/4 neg flick','if:1 neg flick','5if:1 1/4 neg flick','6if:1 1/2 neg flick','7if:1 3/4 neg flick','9if:2 neg flick'];
-var spinTypes = ['s:1 pos spin','5s:1 1/4 pos spin','6s:1 1/2 pos spin','7s:1 3/4 pos spin','9s:2 pos spin','is:1 neg spin','5is:1 1/4 neg spin','6is:1 1/2 neg spin','7is:1 3/4 neg spin','9is:2 neg spin'];
+var posFlickTypes = ['2f:1/2 pos flick','3f:3/4 pos flick','f:1 pos flick','5f:1 1/4 pos flick','6f:1 1/2 pos flick','7f:1 3/4 pos flick','9f:2 pos flick'];
+var negFlickTypes = ['2if:1/2 neg flick','3if:3/4 neg flick','if:1 neg flick','5if:1 1/4 neg flick','6if:1 1/2 neg flick','7if:1 3/4 neg flick','9if:2 neg flick'];
+var posSpinTypes = ['s:1 pos spin','5s:1 1/4 pos spin','6s:1 1/2 pos spin','7s:1 3/4 pos spin','9s:2 pos spin'];
+var negSpinTypes = ['is:1 neg spin','5is:1 1/4 neg spin','6is:1 1/2 neg spin','7is:1 3/4 neg spin','9is:2 neg spin'];
 // how many rolls per roll position
 var rollsPerRollElement = 2;
 
@@ -167,6 +169,7 @@ userpat.movedown = '^';
 userpat.moveforward = '>';
 userpat.switchDirX = '>';
 userpat.switchDirY = '^';
+userpat.curveTo = '(';
 userpat.moveto = '[';
 userpat.scale = '%';
 userpat.flipYaxis = '/';
@@ -187,6 +190,8 @@ figpat.hammer = 'h';
 figpat.pushhammer = 'H';
 figpat.tailslidecanopy = 't';
 figpat.tailslidewheels = 'T';
+figpat.pointTip = 'u';
+figpat.pushPointTip = 'U';
 var drawAngles = {'d':45, 'v':90, 'z':135, 'm':180, 'c':225, 'p':270, 'r':315, 'o':360, 'D':-45, 'V':-90, 'Z':-135, 'M':-180, 'C':-225, 'P':-270, 'R':-315, 'O':-360};
 var rollAttitudes = {'0':'', '45':'d', '90':'v', '135':'d', '180':'', '225':'id', '270':'iv', '315':'id'};
 
@@ -198,47 +203,69 @@ var regexChangeDir = new RegExp ('[' + userpat.switchDirX + '\\' + userpat.switc
 var regexSwitchDirX = new RegExp ('\\' + userpat.switchDirX);
 var regexSwitchDirY = new RegExp ('\\' + userpat.switchDirY);
 var regexMoveForward = new RegExp ('^[0-9]*' + userpat.moveforward + '+');
-var regexDrawInstr = new RegExp ('[\\[\\]\\%]+');
 var regexConnector = new RegExp (userpat.connector);
+var regexCurveTo = new RegExp ('\([0-9\-]*,[0-9\-]*\)');
 var regexMoveTo = new RegExp ('\[[0-9\-]*,[0-9\-]*\]');
+// regexDrawInstr matches moveTo, curveTo and scale
+var regexDrawInstr = /^(\[|\()[0-9\-]+,[0-9\-]+(\]|\)$)|[0-9]+\%/;
 var regexLongForward = new RegExp ('\\' + userpat.longforward, 'g');
 var regexEntryShorten = /`+\+/;
 var regexExitShorten = /\+`+/;
 var regexFlipYAxis = /(^|[^\/])\/([^\/]|$)/g;
+var regexTurn = /[^a-z]j[io0-9]/;
 
 // ****************
 // define texts for user interaction
 // ****************
 
 var userText = [];
-userText.removeLogo = 'Remove logo';
-userText.chooseLogo = 'Choose logo';
-userText.pilot = 'pilot';
 userText.ac = 'A/C';
-userText.closeIt = 'Close';
-userText.wind = 'wind/vent';
-userText.illegalFig = ' is illegal, try ';
-userText.autocorrectRoll = ':Added autocorrect roll';
-userText.setUpright = ':set upright entry';
-userText.setInverted = ':set inverted entry';
-userText.illegalAtEnd = 'Illegal figure at the end';
-userText.illegalBefore = 'Illegal figure before figure ';
-userText.saveFileAsAlert = 'To download your file, right-click on this text and choose "Save link as..." or "Save file as...".';
-userText.logoExplain = 'Upload your own logo by clicking on the file chooser below, or select one of the displayed logos.';
-userText.sequenceNotSavedWarning = 'Your current sequence has not been saved.\nAre you sure you want to open a new one?';
-userText.fileOpeningNotSupported = 'File opening is not supported in this browser.';
-userText.unknownFileType = 'File opening is not supported in this browser.';
-userText.pleaseWaitStartup = 'Please wait while OpenAero is starting up...';
-userText.editingFigure = 'Edit figure ';
 userText.addingFigure = 'Add new figure'; 
-userText.confirmLeave = 'You\'re leaving OpenAero. Any sequence that is not saved will be lost.';
-userText.rollPos = ['First roll position', 'Second roll position', 'Third roll position', 'Fourth roll position'];
+userText.autocorrectRoll = ':Added autocorrect roll';
+userText.chooseLogo = 'Choose logo';
 userText.clickAddFigure = 'Click to add figure';
-userText.clickChangeFigure = 'Click to change figure';
+userText.clickChangeFigure = 'Click to change/add figure';
+userText.closeIt = 'Close';
+userText.confirmLeave = 'You\'re leaving OpenAero. Any sequence that is not saved will be lost.';
+userText.desktopVersion = 'Desktop version';
 userText.downloadHTML5 = 'However, you can save your file by clicking on the link below.';
 userText.downloadLegacy = 'However, you can save your file by right-clicking on the link below '+
   'and choosing "Save File As..." or "Save Link As...".';
 userText.downloadWarning = 'File saving works best through the OpenAero website '+
   '(<a href="http://www.openaero.net">www.openaero.net</a>) or by running '+
   'OpenAero on your own server.';
+userText.editingFigure = 'Edit figure ';
+userText.fileOpeningNotSupported = 'File opening is not supported in this browser.';
+userText.figSelectorAddAfter = 'Add new figure after active';
+userText.figSelectorAddBefore = 'Add new figure before active';
+userText.figSelectorAddEnd = 'Add new figure at end';
+userText.figSelectorAddStart = 'Add new figure at start';
+userText.figSelectorReplace = 'Replace active figure';
+userText.illegalAtEnd = 'Illegal figure at the end';
+userText.illegalBefore = 'Illegal figure before figure ';
+userText.illegalFig = ' is illegal, try ';
+userText.logoExplain = 'Upload your own logo by clicking on the file chooser below, or select one of the displayed logos.';
+userText.mobileVersion = 'Mobile version';
+userText.pilot = 'pilot';
+userText.pleaseWaitStartup = 'Please wait while OpenAero is starting up...';
 userText.printForms = 'OpenAero printing forms...';
+userText.removeLogo = 'Remove logo';
+userText.rollPos = ['First roll position', 'Second roll position', 'Third roll position', 'Fourth roll position'];
+userText.saveFileAsAlert = 'To download your file, right-click on this text and choose "Save link as..." or "Save file as...".';
+userText.separateFigures = 'This will remove all sequence position formatting. Are you sure you want to continue?';
+userText.sequenceNotSavedWarning = 'Your current sequence has not been saved.\nAre you sure you want to open a new one?';
+userText.setUpright = ':set upright entry';
+userText.setInverted = ':set inverted entry';
+userText.tooltip = [];
+userText.tooltip.switchX = 'Switch X exit direction';
+userText.tooltip.switchY = 'Switch Y exit direction';
+userText.tooltip.deleteFig = 'Delete active figure';
+userText.tooltip.magMin = 'Make figure smaller';
+userText.tooltip.magPlus = 'Make figure larger';
+userText.tooltip.moveNoLine = 'Move figure forward';
+userText.tooltip.straightLine = 'Move figure to a new position with a straight line';
+userText.tooltip.curvedLine = 'Move figure to a new position with a curved line';
+userText.tooltip.subSequence = 'Start a sub sequence from this figure';
+userText.tooltip.connector = 'Make this figure a connector for Unknown sequences';
+userText.unknownFileType = 'File opening is not supported in this browser.';
+userText.wind = 'wind/vent';

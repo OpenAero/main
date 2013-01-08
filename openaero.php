@@ -1,5 +1,5 @@
 <?php
-// openaero.php 1.2.0
+// openaero.php 1.2.1
 
 // This file is part of OpenAero.
 
@@ -19,7 +19,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with OpenAero.  If not, see <http://www.gnu.org/licenses/>.
 
-// This file handles multple functions that have to be executed in PHP to work
+// This file handles multiple functions that have to be executed in PHP to work
 //
 
 switch ($_REQUEST['f']) {

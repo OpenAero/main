@@ -1,6 +1,6 @@
 ﻿<!DOCTYPE html>
 <!--
-  arestisystem.html version 1.2.0
+  arestisystem.html version 1.2.1
   This file is part of OpenAero.
 
   OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -161,7 +161,7 @@ The C, G, P, Q & Y loops all have an "inverted" version
 <br><b><sp>iw</b> Inverted Bow (tie or X) 
 <br>
 <br><b><sp>gg</b> double goldfish (super-8)
-<br><b><sp>igg</b> inverted double goldfish (diagoanls down)
+<br><b><sp>igg</b> inverted double goldfish (diagonals down)
 <br>
 <p><br><b>Oddball figures</b>
 <br><b>f</b> flick roll on a horizontal line (see <a href="#rolls">rolls</a>)
@@ -179,6 +179,7 @@ The C, G, P, Q & Y loops all have an "inverted" version
 <br>
 <br><b><sp>zy</b> Z-style entry keyhole (Y) loop
 <br><b><sp>rzy</b> reverse Z-style exit keyhole (Y) loop
+</p>
 
 <p>
 <b>Special figures: Rolling turns</b>
@@ -198,6 +199,14 @@ The C, G, P, Q & Y loops all have an "inverted" version
 <br>
 <br><b>4j2</b> a 360 degree rolling turn with 2 rolls inside
 <br><b>4j1</b> a 360 degree rolling turn with 1 roll inside
+</p>
+
+<p>
+<b>Non-Aresti figures</b><br>
+<b>oj</b> Clover Leaf (ioj = reverse clover)<br>
+<b>mj</b> Half barrel roll with 90&deg; offset in top<br>
+<b>aj</b> Descending half barrel roll with 90&deg; offset in top<br>
+</p>
 </div>
 
 <div class="section documentation">
@@ -337,16 +346,22 @@ You may also use "74" and "84" to indicate 1 3/4 roll and two full rolls in quar
 <p style="margin-bottom:0px;">
 <b>ed</b> Downwind entry (only at the beginning of the sequence)
 <br><b>ej</b> Crosswind entry (only at the beginning of the sequence)
+<br><b>eja</b> Crosswind entry away from viewer (only at the beginning of the sequence)
 <br><b>[x,y]</b> Move x to the right and y down (negative for moving left or up) before starting the next figure
+<br><b>(x,y)</b> Just as previous, but with a curved line
 <br><b>></b> Has two different functions:</p>
 <ul>
-<li>When placed after a figure: Continue forward. Can also be used to switch exit direction in figures with 1/4, 3/4 etc roll up or down.
+<li>When placed after a figure: Switch upwind/downwind exit direction in figures with 1/4, 3/4 etc roll up or down.
 <li>When placed separately: Move forward by a small amount without connecting line. A number can be placed in front (e.g. <b>5></b> to move forward 5 units). 
 </ul>
-<p style="margin-top:0px;"><b>x%</b> Increase (positive x) or decrease (negative x) the size of the next figure
+<p style="margin-top:0px;">
+<b>^</b> Switch away/toward crosswind exit direction in figures with 1/4, 3/4 etc roll up or down
+<br><b>x%</b> Increase (positive x) or decrease (negative x) the size of the next figure
 <br><b>/</b> Change the direction in which the Y-axis is drawn (only for the complete sequence)
 <br><b>~</b> Increase the length of the line at the beginning or end of a figure
+<br><b>+</b> Increase the length of the line at the beginning or end of a figure by three steps
 <br><b>=</b> Mark figure as a connector for Unknown sequences
+<br><b>//</b> Start new sub-sequence
 </p>
 </div>
   </BODY>

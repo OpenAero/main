@@ -1,23 +1,26 @@
-/* OpenAero.css 1.2.0
+/*
+ OpenAero.css 1.2.1
+ This file is part of OpenAero.
 
-// This file is part of OpenAero.
+  OpenAero was originally designed by Ringo Massa and built upon ideas
+  of Jose Luis Aresti, Michael Golan, Alan Cassidy and many others. 
 
-//  OpenAero was originally designed by Ringo Massa and built upon ideas
-//  of Jose Luis Aresti, Michael Golan, Alan Cassidy and many others. 
+  OpenAero is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
 
-//  OpenAero is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published by
-//  the Free Software Foundation, either version 3 of the License, or
-//  (at your option) any later version.
+  OpenAero is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
 
-//  OpenAero is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU General Public License for more details.
-
-//  You should have received a copy of the GNU General Public License
-//  along with OpenAero.  If not, see <http://www.gnu.org/licenses/>.
+  You should have received a copy of the GNU General Public License
+  along with OpenAero.  If not, see <http://www.gnu.org/licenses/>.
 */
+
+/* This file defines the common css styles for the desktop and
+   mobile versions */
 
 /* General styling */
 body {
@@ -58,7 +61,7 @@ select {
   border-bottom: 1px solid #aaa;
   border-radius: 3px;
   margin-bottom: 1px;
-  background: #f0f0f0;
+  background: #ffffff;
 }
 textarea {
   border-left: 1px solid #222;
@@ -72,21 +75,7 @@ textarea {
 }
 .clearSpace {
   clear: both;
-  height: 8px;
-}
-/*#svgContainer {
-  position: absolute;
-  margin-top: 60px;
-  margin-left: 265px;
-  background-color:#ffffff;
-}*/
-#svgContainer {
-  position: relative;
-  padding: 10px;
-  margin-right: 10px;
-  height: 100%;
-  background-color:#ffffff;
-  overflow: auto;
+  height: 2px;
 }
 #figureSvgContainer {
   position: absolute;
@@ -101,51 +90,6 @@ textarea {
   width:0;
   height:0;
   opacity:0;
-}
-#topBlock {
-  position: fixed;
-  background: #fafafa;
-  background: -webkit-linear-gradient(top, #ffffff, #f0f0f0);
-  border-bottom: 1px solid #888;
-  -moz-box-shadow: 0px 1px 2px rgba(0,0,0,0.5);
-  -webkit-box-shadow: 0px 1px 2px rgba(0,0,0,0.5);
-  box-shadow: 0px 1px 2px rgba(0,0,0,0.5);
-  top: 0px;
-  left: 0px;
-  width: 100%;
-  height: 49px;
-  padding: 0 4px 4px 4px;
-  z-index: 10;
-}
-#main {
-  position: fixed;
-  top: 0px;
-  padding: 50px 0 0 0;
-  width: 100%;
-  height: 90%;
-}
-#leftBlock {
-  float: left;
-  overflow: auto;
-  background: #f4f4f4;
-  background: -webkit-linear-gradient(top, #f4f4f4, #e8e8e8);
-  width: 276px;
-  height: 99%;
-/*  min-height: 800px;*/
-  padding: 4px;
-  z-index: 1;
-}
-#figureSelector {
-  position: fixed;
-  overflow: auto;
-  background: rgba(240, 240, 240, 0.7);
-  top: 50px;
-  right: 0px;
-  width: 260px;
-  height: 95%;
-  min-height: 500px;
-  padding: 4px;
-  z-index: 2;
 }
 #openAeroLogo {
   float:left;
@@ -168,9 +112,13 @@ textarea {
   position: relative;
   float: left;
   width: 98%;
-  border: 1px solid #888;
-  border-radius: 3px;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-bottom: 1px solid #aaa;
+  border-right: 1px solid #aaa;
+  border-radius: 5px;
   margin: 10px 1px 1px 1px;
+  background: #f4f4f4;
 }
 .documentation {
   width: auto;
@@ -179,6 +127,9 @@ textarea {
   background: #f8f8f8;
   background: -webkit-linear-gradient(top, #ffffff, #f4f4f4);
   background: linear-gradient(top, #ffffff, #f4f4f4);
+  -moz-box-shadow: 5px 5px 8px rgba(0, 0, 0, 0.3);
+  -webkit-box-shadow: 5px 5px 8px rgba(0, 0, 0, 0.3);
+  box-shadow: 5px 5px 8px rgba(0, 0, 0, 0.3);
 }
 .docs {
   background: #f8f8f8;
@@ -207,7 +158,14 @@ textarea {
   font-size: 14px;
   color: #000;
   margin: -10px 0 -8px 10px;
-  background: #f0f0f0;
+  border-top: 1px solid #fff;
+  background: #f4f4f4;
+  border-radius: 10px;
+  padding-left: 3px;
+  padding-right: 3px;
+}
+#alerts .sectionLabel {
+  background: #fff;
 }
 .sectionLabelClose {
   clear: both;
@@ -232,13 +190,12 @@ textarea {
   height: 1.6em;
   font-size: 12px;
 }
-#sequenceInfo textarea {
-  width: 248px;
+#notes {
+  width: 98%;
   font-size: 12px;
 }
 #activeLogo {
   float: right;
-  font-size: 12px;
 }
 #sequenceInfo file {
   float: right;
@@ -261,11 +218,21 @@ textarea {
   opacity: 0;
   cursor: pointer;
 }
-#sequence_text {
+#sequenceTextContainer {
+  position: relative;
   font-family: monospace;
-  font-size: 12px;
-  letter-spacing: 1px;
+  font-size: 16px;
   padding: 2px;
+  width: 100%;
+}
+#sequenceTextClone {
+  color: transparent;
+  top: 0px;
+  left: 2px;
+  font-family: monospace;
+  font-size: 16px;
+  width: 98%;
+  min-height: 16px;
 }
 #chooseLogo svg {
   margin: 10px 10px 0 0;
@@ -300,12 +267,6 @@ textarea {
   height:1px;
   border:0px;
   display:none;
-}
-.version {
-  position: absolute;
-  top:5px;
-  right:10px;
-  text-align:right;
 }
 #latestVersion {
   margin:-2px 1em 0 0;
@@ -374,12 +335,13 @@ textarea {
   border-bottom: 1px solid black;
 }
 .tabSelector .activeTab {
-  background: #f0f0f0;
+  background: #f4f4f4;
   margin-left: -1px;
   border-left: 1px solid white;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid #f4f4f4;
   font-weight: bold;
 }
+
 /****************************
  *  Theming figure edit tab *
  ****************************/
@@ -475,6 +437,20 @@ textarea {
   width: 46px;
   margin: 2px;
 }
+#subSequence {
+  background-image: url('buttons/subsequence.png');
+}
+#connector {
+  background-image: url('buttons/connector.png');
+}
+
+/* button tooltips, disabled for mobile */
+a.tooltip {outline:none; }
+a.tooltip span {
+  display:none;
+}
+
+/* figureInfo styling */
 #figureInfo.section select {
   float: left;
   border: 1px;
@@ -491,9 +467,6 @@ textarea {
 .rollGaps {
   float: left;
   clear: none;
-}
-.plusMin span {
-  margin-left: 5px;
 }
 .minButton {
   float: left;
@@ -521,18 +494,71 @@ textarea {
 .plusMinText {
   float: left;
   font-size: 12px;
-  width: 1.5em;
+  width: 1.25em;
   text-align: center;
 }
 #figureHeader {
   font-size: 14px;
 }
+/* roll selector */
+.posFlickSelectOption {
+  color: #00f;
+}
+.negFlickSelectOption {
+  color: #f00;
+}
+.posSpinSelectOption {
+  color: #00f;
+}
+.negSpinSelectOption {
+  color: #f00;
+}
+
+/* logo chooser theme */
+
+#logoChooserContainer {
+  position: absolute;
+  z-index: 20;
+  width: 240px;
+  padding: 6px;
+  margin-bottom: 100px;
+  left: 2px;
+  top: 8px;
+  background: #fff;
+  background: -webkit-linear-gradient(top, #f4f4f8, #fff);
+  background: linear-gradient(top, #f4f4f8, #fff);
+  border: 1px solid #888;
+  border-radius: 5px;
+  -moz-border-radius: 5px;
+  -moz-box-shadow: 5px 5px 8px rgba(0, 0, 0, 0.5);
+  -webkit-box-shadow: 5px 5px 8px rgba(0, 0, 0, 0.5);
+  box-shadow: 5px 5px 8px rgba(0, 0, 0, 0.5);
+}
+
+#logoChooserContainer img {
+  float: right;
+  margin: 0 0 4px 4px;
+}
+
+#logoChooserContainer input {
+  float: none;
+  clear: both;
+}
+
+/* figure chooser theming */
+
 #figureChooser {
   margin: 2px;
   width: 256px;
   height: 90%;
   background: rgba(255, 255, 255, 0.7);
   overflow: auto;
+}
+#figureChooser a:hover {
+  text-decoration: none;
+}
+#figureSelectorClose {
+  float: right;
 }
 table#figureChooserTable td {
   padding: 5px;
@@ -542,6 +568,9 @@ table#figureChooserTable td {
 table#figureChooserTable td.selected {
   border: 2px solid magenta;
 }
+
+/* main menu theming */
+
 /*MENU DROPDOWN FUNCTIONALITY*/
 /*set up ul tags*/ 
 #menu, #menu ul{ padding:0; margin:0}
@@ -552,9 +581,39 @@ table#figureChooserTable td.selected {
 /*undo previous style for level 2 links*/
 #menu li ul li{float:none;}
 /*position level 2 links vertically and hide*/ 
-#menu li ul{display:none; position:absolute; z-index:10; -webkit-transform-style: preserve-3d; margin-top: -2px; border-right: 1px solid #aaa; border-bottom: 1px solid #aaa}
+#menu li ul{
+  display:none;
+  position:absolute;
+  z-index:10;
+  -webkit-transform-style: preserve-3d;
+  margin-top: -2px;
+  border-right: 1px solid #aaa;
+  border-bottom: 1px solid #aaa;
+  -moz-box-shadow: 5px 5px 8px rgba(0, 0, 0, 0.5);
+  -webkit-box-shadow: 5px 5px 8px rgba(0, 0, 0, 0.5);
+  box-shadow: 5px 5px 8px rgba(0, 0, 0, 0.5);
+}
 /*unhide level 2 links on li:hover from level 1*/ 
 #menu li:hover ul{display:block;}
+/*undo previous style for level 3 links*/
+#menu li ul li ul li{float:none;}
+/*position level 3 links vertically and hide*/ 
+#menu li ul li ul{
+  display:none;
+  position:absolute;
+  left:-162px;
+  width:160px;
+  z-index:10;
+  -webkit-transform-style:
+  preserve-3d;
+  margin-top: -24px;
+  border-right: 1px solid #aaa;
+  border-bottom: 1px solid #aaa
+}
+/*don't unhide level 3 links on li:hover from level 1*/ 
+#menu li:hover ul li ul{display:none;}
+/*unhide level 3 links on li:hover from level 2*/ 
+#menu li:hover ul li:hover ul{display:block;}
 
 /*DROPDOWN STYLING:*/
 #menu {
@@ -569,7 +628,7 @@ table#figureChooserTable td.selected {
   color:#03f;
 }
 #menu li {
-  background-color:#FFF;
+  background-color:#fbfbfb;
 /*  border:solid 1px #CCC; */
   margin-left:-1px
 }

@@ -1,0 +1,181 @@
+/*
+ mobile.css 1.2.1
+ This file is part of OpenAero.
+
+  OpenAero was originally designed by Ringo Massa and built upon ideas
+  of Jose Luis Aresti, Michael Golan, Alan Cassidy and many others. 
+
+  OpenAero is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  OpenAero is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with OpenAero.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/* This file defines all the css styles for the mobile version
+ * They will override any equivalent css styles in OpenAero.css */
+
+body {
+  font-size: 1.25em;
+}
+select {
+  background-color: #fff;
+}
+#topBlock {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  background: #fafafa;
+  background: -webkit-linear-gradient(top, #ffffff, #f0f0f0);
+  border-bottom: 1px solid #888;
+  -moz-box-shadow: 0px 1px 2px rgba(0,0,0,0.5);
+  -webkit-box-shadow: 0px 1px 2px rgba(0,0,0,0.5);
+  box-shadow: 0px 1px 2px rgba(0,0,0,0.5);
+  width: 320px;
+  height: 75px;
+  padding: 0 0 2px 0;
+  z-index: 10;
+}
+#openAeroLogo {
+  display: none;
+}
+.version {
+  display: none;
+}
+#sequence_text {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  /* 16px is minimum size to prevent auto-zoom */
+  font-size: 16px;
+  width: 314px;
+  height: 50px;
+  resize: none;
+  /* OpenAero text as SVG background */
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.2" width="320" height="54"><text x="160" y="42" text-anchor="middle" font-family="Verdana" font-size="46" style="fill:#ffebb0;stroke:#ffebb0;letter-spacing:6px;">OpenAero</text></svg>');
+}
+#main {
+	position: absolute;
+  top: 84px;
+  width: 320px;
+}
+#leftBlock {
+  position: absolute;
+  top: 2px;
+  left: 0px;
+  background: #f4f4f4;
+  width: 320px;
+  padding: 0;
+  z-index: 1;
+}
+#sequenceInfo {
+  background: -webkit-linear-gradient(top, #f4f4f4, #e0e0ff);
+  font-size: 14px;
+}
+#figureInfo {
+  background: -webkit-linear-gradient(top, #f4f4f4, #e0e0ff);
+}
+.tabSelector li {
+  width: 100px;
+}
+.inactiveTab {
+  font-size: 14px;
+}
+.activeTab {
+  font-size: 14px;
+}
+#svgContainer {
+  position: absolute;
+  top: 26px;
+  left: 0px;
+  width: 312px;
+  background-color:#ffffff;
+  background: -webkit-linear-gradient(top, #f4f4f4, #ffffff);
+  padding: 4px;
+  z-index: 2;
+}
+#figureSelector {
+  position: absolute;
+  top: 26px;
+  left: 0px;
+  width: 320px;
+  padding: 0px;
+  background: #f4f4f4;
+  background: -webkit-linear-gradient(top, #f4f4f4, #e0e0ff);
+  z-index: 2;
+}
+.button {
+  margin-left: 5px;
+  margin-right: 5px;
+}
+.minButton {
+	background-image: url('buttons/minus.png');
+	height: 32px;
+  width: 32px;
+}
+.plusButton {
+	background-image: url('buttons/plus.png');
+	height: 32px;
+  width: 32px;
+}
+.plusMinText {
+  font-size: 24px;
+}
+#scale {
+  margin-left: 6px;
+  margin-right: 6px;
+}
+#moveX,#moveY {
+  margin-left: 6px;
+  margin-right: 6px;
+}
+.rollSelect {
+  font-size: 2em;
+}
+
+/* logo chooser theme */
+#activeLogo {
+  float: right;
+}
+#logoChooserContainer {
+  left: 30px;
+}
+
+/* figure chooser theming */
+
+#figureChooser {
+  margin: 2px;
+  width: 318px;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.7);
+  overflow: auto;
+}
+table#figureChooserTable td {
+  padding: 1px;
+  border: 1px solid #eee;
+  border-radius: 5px;
+}
+table#figureChooserTable td.selected {
+  border: 1px solid magenta;
+}
+#figureSelectorOptionsDiv select,#figureSelectorGroupDiv select {
+  font-size: 16px;
+}
+/*alertBox styling*/
+#alertBox {
+  position: absolute;
+  z-index: 999;
+  top: 40%;
+  left: 5%;
+  width: 90%;
+  background: #eee;
+  border: 2px solid #888;
+  border-radius: 5px;
+}

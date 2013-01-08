@@ -1,4 +1,4 @@
-// figures.js file 1.2.0
+// figures.js file 1.2.1
 
 // This file is part of OpenAero.
 
@@ -53,6 +53,7 @@ var figs = new Array();
 //  h add a hammerhead sign
 //  t add a tailslide sign 
 //  T add a wheels-up tailslide sign
+//  u pointed top (non-Aresti)
 //  j a turn (oj=outside, ioj=inside-outside, oij=outside-inside)
 //  _ roll location
 //
@@ -63,7 +64,6 @@ var figs = new Array();
 //   letter!_  is a looping portion with a roll inside   eg o!_
 //   letter=   means to draw the figure "exact" with actual looping portion (no hard corners, see pp figure)
 //   letter/   means to draw the looping portion half-size (see b figure)
-//	letter&   meaning unknown
 
 //diagonal
 //zee
@@ -1674,14 +1674,34 @@ figs.push("+jw+ 0.0.0(8) ~d~''D2jD''~d~");
 
 //Clover leaf (with optional roll in top)
 // we use 0.x based
-figs.push("+&oj_+ 0.1.0(14:13) ~''v=_p!_~");
-figs.push("+_ioj4+ 0.2.0(11:10) ~''p!__v=~");
+figs.push("+oj_+ 0.4.1.1(14:13) ~''v=4p!_~");
+figs.push("+ioj_+ 0.4.1.2(11:10) ~''p!_4v=~");
+
+//Half barrel rolls
+// use 0.2.x.y as equivalent to 7.2.x.y
+figs.push("+_mj_- 0.2.1.1(10) ~''_v=4v=_~");
+figs.push("-_mj_+ 0.2.1.2(12) ~''_V=4V=_~");
+figs.push("+_aj_- 0.2.1.3(12) ~''_V=4V=_~");
+figs.push("-_aj_+ 0.2.1.4(10) ~''_v=4v=_~");
+figs.push("+_mj^+ 0.2.2.1(10) ~''_v=4v=_~");
+figs.push("-_mj^- 0.2.2.2(13) ~''_V=4V=_~");
+figs.push("+_aj^+ 0.2.2.3(12) ~''_V=4V=_~");
+figs.push("-_aj^- 0.2.2.4(11) ~''_v=4v=_~");
+
+figs.push("+^mj_+ 0.2.3.1(12) ~''_V=4V=_~");
+figs.push("-^mj_- 0.2.3.2(11) ~''_v=4v=_~");
+figs.push("+^aj_+ 0.2.3.3(10) ~''_v=4v=_~");
+figs.push("-^aj_- 0.2.3.4(13) ~''_V=4V=_~");
+figs.push("+^mj^- 0.2.4.1(12) ~''_V=4V=_~");
+figs.push("-^mj^+ 0.2.4.2(10) ~''_v=4v=_~");
+figs.push("+^aj^- 0.2.4.3(10) ~''_v=4v=_~");
+figs.push("-^aj^+ 0.2.4.4(12) ~''_V=4V=_~");
 
 //extended tip-head hammer - for any "on spot turn around" (like knife edge up-down)
-figs.push("+&th&+ 0.4.1(17) ~v~_~u~_''v~");
-figs.push("-&th&- 0.4.2(23) ~V~_~U~_''V~");
-figs.push("+&th&- 0.4.3(18) ~v~_~u~_''V~");
-figs.push("-&th&+ 0.4.4(22) ~V~_~U~_''v~");
+figs.push("+&th&+ 0.5.1.1(17) ~v~_~u~_''v~");
+figs.push("-&th&- 0.5.1.2(23) ~V~_~U~_''V~");
+figs.push("+&th&- 0.5.1.3(18) ~v~_~u~_''V~");
+figs.push("-&th&+ 0.5.1.4(22) ~V~_~U~_''v~");
 
 //extended vertical up-down lines figure, sort of alternate to the uh figure with a connector on top
 figs.push("+&vv(_)&+ 0.11.1(20) ~v~''_~V''_''V~_''~v~");
@@ -1695,39 +1715,39 @@ figs.push("-&ihat(_)&- 0.12.4(20) ~v~''_~v''_''v~_''~v~");
 
 
 //hammer p loop
-figs.push("+&hp(&)_+ 0.5.1(20) ~v~_~h''_''~p_''~");
-figs.push("-&hp(&)_- 0.5.2(20) ~V~_~H''_''~P_''~");
-figs.push("+&hp(&)_- 0.5.3(20) ~v~_~h''_''~P_''~");
-figs.push("-&hp(&)_+ 0.5.4(20) ~V~_~H''_''~p_''~");
+figs.push("+&hp(&)_+ 0.5.2.1(20) ~v~_~h''_''~p_''~");
+figs.push("-&hp(&)_- 0.5.2.2(20) ~V~_~H''_''~P_''~");
+figs.push("+&hp(&)_- 0.5.2.3(20) ~v~_~h''_''~P_''~");
+figs.push("-&hp(&)_+ 0.5.2.4(20) ~V~_~H''_''~p_''~");
 
-figs.push("+&hp(&)^- 0.6.1(20) ~v~_~h''_''~p_''~");
-figs.push("-&hp(&)^+ 0.6.2(20) ~V~_~H''_''~P_''~");
-figs.push("+&hp(&)^+ 0.6.3(20) ~v~_~h''_''~P_''~");
-figs.push("-&hp(&)^- 0.6.4(20) ~V~_~H''_''~p_''~");
+figs.push("+&hp(&)^- 0.5.3.1(20) ~v~_~h''_''~p_''~");
+figs.push("-&hp(&)^+ 0.5.3.2(20) ~V~_~H''_''~P_''~");
+figs.push("+&hp(&)^+ 0.5.3.3(20) ~v~_~h''_''~P_''~");
+figs.push("-&hp(&)^- 0.5.3.4(20) ~V~_~H''_''~p_''~");
 
 //ip-hammer loop
 
-figs.push("+_iph(&)&+ 0.7.1(20) ~~_P~~_~h~~_~v~");
-figs.push("-_iph(&)&- 0.7.2(20) ~~_p~~_~H~~_~V~");
-figs.push("+_iph(&)&- 0.7.3(20) ~~_P~~_~h~~_~V~");
-figs.push("-_iph(&)&+ 0.7.4(20) ~~_p~~_~H~~_~v~");
+figs.push("+_iph(&)&+ 0.5.4.1(20) ~~_P~~_~h~~_~v~");
+figs.push("-_iph(&)&- 0.5.4.2(20) ~~_p~~_~H~~_~V~");
+figs.push("+_iph(&)&- 0.5.4.3(20) ~~_P~~_~h~~_~V~");
+figs.push("-_iph(&)&+ 0.5.4.4(20) ~~_p~~_~H~~_~v~");
 
-figs.push("+^iph(&)&+ 0.8.1(20) ~~_p~~_~h~~_~v~");
-figs.push("-^iph(&)&- 0.8.2(20) ~~_P~~_~H~~_~V~");
-figs.push("+^iph(&)&- 0.8.3(20) ~~_p~~_~h~~_~V~");
-figs.push("-^iph(&)&+ 0.8.4(20) ~~_P~~_~H~~_~v~");
+figs.push("+^iph(&)&+ 0.5.6.1(20) ~~_p~~_~h~~_~v~");
+figs.push("-^iph(&)&- 0.5.6.2(20) ~~_P~~_~H~~_~V~");
+figs.push("+^iph(&)&- 0.5.6.3(20) ~~_p~~_~h~~_~V~");
+figs.push("-^iph(&)&+ 0.5.6.4(20) ~~_P~~_~H~~_~v~");
 
 //ib-hammer 
-figs.push("+&ibh(&)&+ 0.9.1(20) ~~V~_''m~~_~h~~_''v~");
-figs.push("-&ibh(&)&+ 0.9.2(20) -~~v~_''m~~_~h~~_''v~");
-figs.push("+&ibh(&)&- 0.9.3(20) ~~V~_''m~~_~h~~_''V~");
-figs.push("-&ibh(&)&- 0.9.4(20) -~~v~_''m~~_~h~~_''V~");
+figs.push("+&ibh(&)&+ 0.5.7.1(20) ~~V~_''m~~_~h~~_''v~");
+figs.push("-&ibh(&)&+ 0.5.7.2(20) -~~v~_''m~~_~h~~_''v~");
+figs.push("+&ibh(&)&- 0.5.7.3(20) ~~V~_''m~~_~h~~_''V~");
+figs.push("-&ibh(&)&- 0.5.7.4(20) -~~v~_''m~~_~h~~_''V~");
 
 //ipb-hammer 
-figs.push("+&ipbh(&)&+ 0.10.1(20) ~~V~_''M~~_~h~~_''v~");
-figs.push("-&ipbh(&)&+ 0.10.2(20) -~~v~_''M~~_~h~~_''v~");
-figs.push("+&ipbh(&)&- 0.10.3(20) ~~V~_''M~~_~h~~_''V~");
-figs.push("-&ipbh(&)&- 0.10.4(20) -~~v~_''M~~_~h~~_''V~");
+figs.push("+&ipbh(&)&+ 0.5.8.1(20) ~~V~_''M~~_~h~~_''v~");
+figs.push("-&ipbh(&)&+ 0.5.8.2(20) -~~v~_''M~~_~h~~_''v~");
+figs.push("+&ipbh(&)&- 0.5.8.3(20) ~~V~_''M~~_~h~~_''V~");
+figs.push("-&ipbh(&)&- 0.5.8.4(20) -~~v~_''M~~_~h~~_''V~");
 
 //can also add hib hipb figures 
 //can also add hammer at the top of a k figure etc, but it would be very hard to judge

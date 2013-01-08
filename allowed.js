@@ -1,4 +1,4 @@
-// allowed.js 1.2.0
+// allowed.js 1.2.1
 
 // This file is part of OpenAero.
 
@@ -20,7 +20,8 @@
     
 // This file defines all the rules for sequence checking.
 // Every rule is encoded in the following manner: rules.push("*ENCODING*");
-// The 'push' term is not related to pushing or pulling in aerobatics but is necessary for the software
+// The 'push' term is not related to pushing or pulling in aerobatics but
+// is necessary for the software.
 // The *ENCODING* part is of the following format:
 // This format should be strictly maintained to make sure the software works!
 
@@ -364,30 +365,6 @@ rules.push("fam9-repeat=1");
 
 rules.push("allow=^([1-9]|0.[12])"); //all figures + clover leaf
 
-rules.push("[BAeA Intermediate Free]");
-rules.push("basefig-max=11");
-rules.push("k-max=160 ");
-
-rules.push("basefig-repeat=1");
-rules.push("roll-repeat=1");
-rules.push("snap-repeat=1");
-rules.push("spin-repeat=1");
-
-rules.push("fam1-min=1");
-rules.push("fam5-min=1");
-rules.push("fam7-min=1");
-rules.push("fam8-min=1");
-
-rules.push("froll-min=1");
-rules.push("hroll-min=1");
-rules.push("qroll-min=1");
-
-rules.push("snap-min=1");
-rules.push("spin-min=1");
-
-rules.push("allow=^[1-9]"); //all figures are allowed for the Free program
-
-
 rules.push("[IAC Intermediate Free]");
 rules.push("poslj=8");
 rules.push("basefig-max=15");
@@ -418,7 +395,7 @@ rules.push("allow=^[1-9]"); //all figures are allowed for the Free program
 */
 
 //######################################################################################
-//##### VINK INTERMEDIATE FREE #########################################################
+//##### BAeA & VINK INTERMEDIATE FREE ##################################################
 //######################################################################################
 
 //
@@ -426,37 +403,10 @@ rules.push("allow=^[1-9]"); //all figures are allowed for the Free program
 //
 
 rules.push("[VINK Intermediate Free]");
-rules.push("posnl=20");
-rules.push("basefig-max=11");
-rules.push("k-max=170");
+rules.push("more=BAeA Intermediate Free");
+rules.push("[BAeA Intermediate Free]");
 
-rules.push("fam1-min=1");
-
-rules.push("group-roller=^2\\.[1-4]\\.[^1]");
-rules.push("roller-name=Rolling turn, family 2.1 to 2.4");
-rules.push("roller-min=1");
-
-rules.push("fam5-min=1");
-rules.push("fam7-min=1");
-rules.push("froll-min=1");
-rules.push("hroll-min=1");
-rules.push("qroll-min=1");
-rules.push("snap-min=1 ");
-rules.push("spin-min=1");
-
-rules.push("emptyline-max=0");
-
-rules.push("basefig-repeat=1");
-rules.push("fam9-repeat=1");
-
-rules.push("allow=^[1-9]"); //all figures are allowed for the Free program
-
-//######################################################################################
-//##### CIVA YAK52 FREE ################################################################
-//######################################################################################
-
-rules.push("[CIVA Yak52 Free]");
-rules.push("posnl=40");
+rules.push("posnl=30");
 rules.push("basefig-max=12");
 rules.push("k-max=180");
 
@@ -467,7 +417,39 @@ rules.push("froll-min=1");
 rules.push("hroll-min=1");
 rules.push("qroll-min=1");
 rules.push("eroll-min=1");
-rules.push("snap-min=2");
+rules.push("snap-min=1");
+rules.push("spin-min=1");
+
+rules.push("group-roller=^2\\.[1-4]\\.[^1]");
+rules.push("roller-name=Rolling turn, family 2.1 to 2.4");
+rules.push("roller-min=1");
+
+rules.push("emptyline-max=0");
+
+rules.push("basefig-repeat=1");
+rules.push("fam9-repeat=1");
+
+rules.push("opposite-min=1"); //one opposite roll is required!
+
+rules.push("allow=^[1-9]"); //all figures are allowed for the Free program
+
+//######################################################################################
+//##### CIVA YAK52 FREE ################################################################
+//######################################################################################
+
+rules.push("[CIVA Yak52 Free]");
+rules.push("posnl=30");
+rules.push("basefig-max=12");
+rules.push("k-max=180");
+
+rules.push("fam5-min=1");
+rules.push("fam7-min=1");
+rules.push("fam8-min=1");
+rules.push("froll-min=1");
+rules.push("hroll-min=1");
+rules.push("qroll-min=1");
+rules.push("eroll-min=1");
+rules.push("snap-min=1");
 rules.push("spin-min=1");
 
 rules.push("group-roller=^2\\.[1-4]\\.[^1]");
