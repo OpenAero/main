@@ -212,7 +212,7 @@ var regexLongForward = new RegExp ('\\' + userpat.longforward, 'g');
 var regexEntryShorten = /`+\+/;
 var regexExitShorten = /\+`+/;
 var regexFlipYAxis = /(^|[^\/])\/([^\/]|$)/g;
-var regexTurn = /[^a-z]j[io0-9]/;
+var regexTurn = /[0-9\+\-]j[io0-9\+\-]/;
 
 // ****************
 // define texts for user interaction
