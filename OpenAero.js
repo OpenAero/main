@@ -1,4 +1,4 @@
-// OpenAero.js 1.2.1
+// OpenAero.js 1.2.2
 // This file is part of OpenAero.
 
 //  OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -1201,6 +1201,7 @@ function drawShape(pathArray, svgElement) {
     circle.setAttribute('r', minFigStartDist / 2);
     circle.setAttribute('stroke', 'none');
     circle.setAttribute('fill', 'transparent');
+    circle.setAttribute('class', 'figStartCircle');
     svgElement.appendChild (circle);
   }
   if ('dx' in pathArray) X = roundTwo(X + pathArray['dx']);
@@ -2102,7 +2103,8 @@ function buildLogoSvg(logoImage, width, height) {
   return svg;
 }
 
-// logoChooser will display the available logo's in the sequence window and allow for selection of a logo
+// logoChooser will display the available logo's in the sequence window
+// and allow for selection of a logo
 function logoChooser() {
 // define logo thumbnail width and height
   var width = 110;
@@ -2111,13 +2113,16 @@ function logoChooser() {
   var container = document.getElementById('logoChooserContainer');
   container.removeAttribute('style');
 // Clean up the container
-  while (container.childNodes.length > 0) container.removeChild(container.lastChild);
+  while (container.childNodes.length > 0) {
+    container.removeChild(container.lastChild);
+  }
 // Show selection text and file field
   container.innerHTML = '<div><a href="#" onMouseDown="hideLogoChooser();">' +
     '<img src="buttons/close.png"></a></div>' +
     '<div id=uploadLogo>' + userText.logoExplain +
     '<input type="file" id="logoFile" accept="image/*" ' +
-    'onChange="hideLogoChooser();openFile(document.getElementById(\'logoFile\').files[0], \'Logo\')">' +
+    'onChange="hideLogoChooser();' +
+    'openFile(document.getElementById(\'logoFile\').files[0], \'Logo\')">' +
     '</div><div id=chooseLogo></div>';
 // Show all the logo images
   container = document.getElementById('chooseLogo');
@@ -2130,7 +2135,8 @@ function logoChooser() {
   }
 }
 
-// selectLogo is called when a logo is clicked in the logoChooser and will select the correct logo for use
+// selectLogo is called when a logo is clicked in the logoChooser and
+// will select the correct logo for use
 function selectLogo(logo) {
   logoImg = logoImages[logo];
   document.getElementById('logo').value = logo;
@@ -2145,22 +2151,23 @@ function uploadLogo (file) {
   selectLogo ('mylogo');
 }
 
-// drawActiveLogo makes a small thumbnail of the active logo in the Sequence info and adds 'remove logo' link
+// drawActiveLogo makes a small thumbnail of the active logo in the
+// Sequence info and adds 'remove logo' link
 function drawActiveLogo() {
   var width = 60;
   var height = 60;
   var container = document.getElementById('activeLogo');
   container.removeChild(container.lastChild);
-// Make a link to the logoChooser
+  // Make a link to the logoChooser
   var link = document.createElement('a');
   link.setAttribute("href", "#");
   link.setAttribute("onClick", "logoChooser()");
   container.appendChild(link);
-// Create logo svg
+  // Create logo svg
   link.appendChild(buildLogoSvg(logoImg, width, height));
 
   var container = document.getElementById('removeLogo');
-// Make a link to removeLogo when it's not there
+  // Make a link to removeLogo when it's not there
   if (container.childNodes.length < 1) {
     var link = document.createElement('a');
     link.setAttribute("href", "#");
@@ -2188,7 +2195,8 @@ function removeLogo() {
   link.appendChild(text);
 }
   
-// parseFiguresFile parses the figures file and stores it in several arrays for fast retrieval
+// parseFiguresFile parses the figures file and stores it in several
+// arrays for fast retrieval
 function parseFiguresFile () {
   var groupRegex = new RegExp('^F[0-9]');
   var figGroupSelector = document.getElementById('figureGroup');
@@ -2215,9 +2223,11 @@ function parseFiguresFile () {
         // Next we split the Aresti and K-factors part
         var arestiK = splitLine[1].split("(")
         var kFactors = arestiK[1].replace(")","").split(":");
-        // Split K factors on the colon; kFactors[0] is for Powered, kFactors[1] is for Gliders
+        // Split K factors on the colon; kFactors[0] is for Powered,
+        // kFactors[1] is for Gliders
         fig[i] = {'aresti':arestiK[0], 'kpwrd':kFactors[0], 'kglider':kFactors[1], 'group':figGroupNr, 'pattern':splitLine[0]};
-        // We will extract roll elements for everything but roll figures and (rolling) turns
+        // We will extract roll elements for everything but roll figures
+        // and (rolling) turns
         if (regexTurn.test(splitLine[0])) {
           // handle (rolling) turns
           theBase = splitLine[0];
@@ -2234,7 +2244,8 @@ function parseFiguresFile () {
           } else figBaseLookup[theBase] = [i];
           fig[i].base = theBase;
           fig[i].draw = splitLine[2];
-          // Find which rolls are possible in this figure, handle the empty base of rolls on horizontal
+          // Find which rolls are possible in this figure, handle the
+          // empty base of rolls on horizontal
           if (theBase.replace(/[\+\-]+/g, '') != '') {
             rollbase = splitLine[0].split(theBase.replace(/[\+\-]+/g, ''));
           } else rollbase = Array(splitLine[0].replace(/[\+\-]+/g, ''));
@@ -2268,7 +2279,8 @@ function parseFiguresFile () {
   }
 }
 
-// parseRulesFile walks through the rules file to find out which rules are available
+// parseRulesFile walks through the rules file to find out which rules
+// are available
 function parseRulesFile() {
   for (var i=0; i<rules.length; i++) {
     // Check for [section]
@@ -2299,7 +2311,8 @@ function parseRulesFile() {
   }
 }
 
-// loadRules loads the rules for the active sequence and stores it in several arrays for fast retrieval
+// loadRules loads the rules for the active sequence and stores it in
+// several arrays for fast retrieval
 function loadRules(ruleName, catName, seqName) {
 // Set parseSection to true to match the global rules
   var parseSection = true;
@@ -2438,8 +2451,9 @@ function loadRules(ruleName, catName, seqName) {
   displayAlerts ();
 }
 
-// checkRules will check a complete sequence against the loaded rules and produce alerts where necessary
-// the Aresti list according description in allowed.js is in the array figCheckLine
+// checkRules will check a complete sequence against the loaded rules
+// and produce alerts where necessary.
+// The Aresti list according description in allowed.js is in the array figCheckLine
 function checkRules () {
   var figNr = 0;
   figureK = 0;
@@ -2482,7 +2496,8 @@ function checkRules () {
               }
             }
           }
-          // Check for specific allowed figures if the checkAllowCatId object is not empty
+          // Check for specific allowed figures if the checkAllowCatId
+          // object is not empty
           // Used only for Unknowns at this point (2012)
           if (Object.keys(checkAllowCatId).length > 0) {
             if (!(aresti[j] in checkAllowCatId)) {
@@ -2492,7 +2507,8 @@ function checkRules () {
           
           figK = figK + parseInt(k[j]);
         }
-        // Run rule checks on specific allowed figures if the checkAllowCatId object is not empty
+        // Run rule checks on specific allowed figures if the
+        // checkAllowCatId object is not empty
         // Used only for Unknowns at this point (2012)
         if (Object.keys(checkAllowCatId).length > 0) {
           var arestiNr = figString.split(' ')[0];
@@ -2757,7 +2773,11 @@ function changeFigureGroup(e) {
           buildFigure ([i], figure, false, -1);
           var paths = figures[-1].paths;
           for (j = paths.length - 1; j >= 0; j--) {
-            if (paths[j].style == 'neg') paths[j].style = 'chooserNeg'; else if (paths[j].style == 'pos') paths[j].style = 'chooserPos';
+            if (paths[j].style == 'neg') {
+              paths[j].style = 'chooserNeg';
+            } else if (paths[j].style == 'pos') {
+              paths[j].style = 'chooserPos';
+            }
           }
           figures[-1] = {'paths': paths};
           // clear the svg
@@ -2769,8 +2789,12 @@ function changeFigureGroup(e) {
           var bBox = group.getBBox();
           var xMargin = bBox.width / 20;
           var yMargin = bBox.height / 20;
-          group.setAttribute('transform', 'translate(' + roundTwo((xMargin - bBox.x)) + ' ' + roundTwo((yMargin - bBox.y)) + ')')
-          svg.setAttribute('viewBox', '0 0 '+roundTwo(bBox.width+xMargin*2)+' '+roundTwo(bBox.height+yMargin*2));
+          group.setAttribute('transform', 'translate(' +
+            roundTwo((xMargin - bBox.x)) + ' ' +
+            roundTwo((yMargin - bBox.y)) + ')');
+          svg.setAttribute('viewBox', '0 0 '+
+            roundTwo(bBox.width+xMargin*2)+' '+
+            roundTwo(bBox.height+yMargin*2));
           svg.setAttribute('width', size);
           svg.setAttribute('height', size);
           svg.setAttribute('id', 'figureChooser'+i);
@@ -2995,7 +3019,8 @@ function markFigureStarts (dx,dy) {
   }
 }
 
-// mouseOverFigureStart will highlight the figure over the start of which the mouse hovers
+// mouseOverFigureStart will highlight the figure over the start of
+// which the mouse hovers
 function mouseOverFigureStart(e) {
   var circle = e.lastChild;
 //  circle.setAttribute('stroke', 'magenta')
@@ -3057,7 +3082,8 @@ function grabFigure(evt) {
      if ( figures[targetElement.id.replace('figure', '')].draggable ) {
         //set the item moused down on as the element to be dragged
         DragTarget = targetElement;
-         // move this element to the "top" of the display, so it is always over other elements
+        // move this element to the "top" of the display, so it is
+        // always over other elements
         DragTarget.parentNode.appendChild( DragTarget );
   
         // turn off all pointer events to the dragged element, this does 2 things:
@@ -3139,7 +3165,7 @@ function Drag(evt) {
     // Don't drag figure 0, it's auto positioned
     if (DragTarget.id != 'figure0') {
       // account for the offset between the element's origin and the
-      //    exact place we grabbed it... this way, the drag will look more natural
+      // exact place we grabbed it... this way, the drag will look more natural
       var newX = TrueCoords.x - GrabPoint.x;
       var newY = TrueCoords.y - GrabPoint.y;
 
@@ -3166,7 +3192,7 @@ function Drag(evt) {
       }
     }
   }
-};
+}
 
 // Drop is activated when a figure is dropped at a new position
 function Drop(evt) {
@@ -3229,7 +3255,6 @@ function flipYAxis () {
         break;
       }
     }
-      //sequenceText.value = userpat.flipYaxis + sequenceText.value;
   }
   checkSequenceChanged();
 }
@@ -3243,10 +3268,7 @@ function updateSequenceOptions (code) {
   // create a nodeList and remove the items of the nodelist
   var options = el.getElementsByClassName('entryOption');
   while (options[0]) el.removeChild(options[0]);
-//  do {
-//    var option = document.getElementById('entryOption');
-//    if (option) el.removeChild(option);
-//  } while (option)
+
   for (key in entryOptions) {
     if (code != key) {
       var li = document.createElement('li');
@@ -3355,19 +3377,19 @@ function makeFormA() {
   Direction = 0;
   figNr = 0;
   svgElement = SVGRoot.getElementById('sequence');
-// Count how many real figures there are
+  // Count how many real figures there are
   for (var i = 0; i < figures.length; i++) {
     var aresti = figures[i].aresti;
     var paths = figures[i].paths;
     if (aresti) {
-  // Build the figure at the top-left
+      // Build the figure at the top-left
       X = 0;
       Y = 0;
       drawFullFigure(i, false);
       figNr ++;
     }
   }
-// The final form will be 800x1000px, leaving room for the print header
+  // The final form will be 800x1000px, leaving room for the print header
   var columnTitleHeight = 50;
   var columnTitles = Array('No:20', 'Symbol:100', 'Cat. No.:70', 'K:30', 'Total K:60', 'Marks:80', 'Remarks:220', 'Pos:40');
   var columnWidths = Array(20, 100, 70, 30, 60, 40, 40, 220, 40);
@@ -3763,14 +3785,19 @@ function loadedSequence(evt) {
 
 // activateXMLsequence will make a sequence provided as XML active
 function activateXMLsequence (xml) {
+  // myElement will hold every entry as a node
   var myElement = document.createElement('div');
+  // myTextArea will translate HTML escape characters to regular ones
+  var myTextArea = document.createElement('textarea');
   myElement.innerHTML = xml;
   var rootNode = myElement.getElementsByTagName("sequence")[0];
   var nodes = rootNode.childNodes;
   // Put every element in the correct field. Replace &gt; by >
   for (var ele in nodes) {
     if(nodes[ele].innerHTML) {
-      document.getElementById(nodes[ele].nodeName.toLowerCase()).value = nodes[ele].innerHTML.replace(/\&gt\;/g, '>');
+      // translate escape characters by browser through myTextArea
+      myTextArea.innerHTML = nodes[ele].innerHTML;
+      document.getElementById(nodes[ele].nodeName.toLowerCase()).value = myTextArea.value;
     }
   }
 }
@@ -3932,7 +3959,7 @@ function printAllForms () {
   myWindow.document.write('<html><head><style type="text/css"' +
     'media="print">body {margin: 0px;}@page {size:A4 portrait;margin:0mm;}</style></head><body>')
   for (var i = 0; i<pages.length; i++) {
-    activeForm = pages[i];o
+    activeForm = pages[i];
     draw ();
     if (i < (pages.length - 1)) {
       var divClass = 'breakAfter';
@@ -3949,16 +3976,20 @@ function printAllForms () {
   activeForm = activeFormSave;
   draw ();
 }
-  
+
 // buildPrintForm will build a complete SVG string for printing a form
 // from a provided SVG object and activeForm global.
 // The default size of the page is A4, 800x1130
 function buildPrintForm (svg) {
+  // remove all elements that have className figStartCircle from the svg.
+  // Otherwise they may show up as big black circles
+  var el = svg.getElementsByClassName('figStartCircle');
+  for (var i = 0; i < el.length; i++) el[i].parentNode.removeChild(el[i]);
   // Find the size and adjust scaling if necessary, upscaling to a maximum factor of 2
   // The sequence max width=800, height=1000
   var bBox = svg.getBBox();
   w = parseInt(bBox['width']);
-  h = parseInt(bBox['height']);
+  h = parseInt(bBox['height'] + 20); // add some margin to the bottom
   // For form A we need to add the righthand scoring column, so max width = 620
   if (activeForm === 'A') {
     var scale = 620 / w;
@@ -3975,8 +4006,8 @@ function buildPrintForm (svg) {
   svg.getElementById('sequence').setAttribute('transform', 'translate(' +
     (moveRight - (bBox['x'] * scale)) + ',' + (marginTop - bBox['y']*scale) +
     ') scale(' + scale + ')');
+    
   // Insert rectangle (=background) before sequence
-
   var path = document.createElementNS (svgNS, "rect");
   path.setAttribute('x', '-5');
   path.setAttribute('y', '-5');
@@ -5038,11 +5069,15 @@ function parseSequence () {
       if (figure.charAt(0) == userpat.moveto) {
         // Move to new position
         var dxdy = figure.replace(/[^0-9\,\-]/g, '').split(',');
-        if ((dxdy[0] >= 0 || dxdy[0] < 0) && (dxdy[1] >= 0 || dxdy[1] < 0)) buildMoveTo (dxdy, i);
+        if ((dxdy[0] >= 0 || dxdy[0] < 0) && (dxdy[1] >= 0 || dxdy[1] < 0)) {
+          buildMoveTo (dxdy, i);
+        }
       } else if (figure.charAt(0) == userpat.curveTo) {
         // Curve to new position
         var dxdy = figure.replace(/[^0-9\,\-]/g, '').split(',');
-        if ((dxdy[0] >= 0 || dxdy[0] < 0) && (dxdy[1] >= 0 || dxdy[1] < 0)) buildCurveTo (dxdy, i);
+        if ((dxdy[0] >= 0 || dxdy[0] < 0) && (dxdy[1] >= 0 || dxdy[1] < 0)) {
+          buildCurveTo (dxdy, i);
+        }
       } else if (regexMoveForward.test(figure)) {
         // Move forward without connecting line
         var moveFwd = figure.match(regexMoveForward)[0];

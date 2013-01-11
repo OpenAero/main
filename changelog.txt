@@ -1,3 +1,7 @@
+1.2.2
+* fixed several bugs that were created in version 1.2.1
+* improved css layout for large sequences
+
 1.2.1
 * solved bug in "Separate figures" option
 * added options to make a figure a connector and/or start of sub sequence

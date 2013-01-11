@@ -1,4 +1,4 @@
-// config.js 1.2.1
+// config.js 1.2.2
 
 // This file is part of OpenAero.
 
@@ -204,7 +204,7 @@ var regexSwitchDirX = new RegExp ('\\' + userpat.switchDirX);
 var regexSwitchDirY = new RegExp ('\\' + userpat.switchDirY);
 var regexMoveForward = new RegExp ('^[0-9]*' + userpat.moveforward + '+');
 var regexConnector = new RegExp (userpat.connector);
-var regexCurveTo = new RegExp ('\([0-9\-]*,[0-9\-]*\)');
+var regexCurveTo = new RegExp ('[\(][0-9\-]*,[0-9\-]*[\)]');
 var regexMoveTo = new RegExp ('\[[0-9\-]*,[0-9\-]*\]');
 // regexDrawInstr matches moveTo, curveTo and scale
 var regexDrawInstr = /^(\[|\()[0-9\-]+,[0-9\-]+(\]|\)$)|[0-9]+\%/;

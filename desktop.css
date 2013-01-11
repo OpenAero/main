@@ -53,9 +53,9 @@
 #main {
   position: fixed;
   top: 0px;
+  bottom: 2px;
   padding: 50px 0 0 0;
   width: 100%;
-  height: 90%;
 }
 #leftBlock {
   float: left;
@@ -84,7 +84,7 @@
   overflow: scroll;
 }
 #figureSelector {
-  position: fixed;
+  position: absolute;
   overflow: auto;
   background: #f4f4f4;
   background: -webkit-linear-gradient(top, #f4f4f4, #e8e8e8);
@@ -92,9 +92,9 @@
   right: 0px;
   width: 260px;
   height: 95%;
-  min-height: 500px;
   padding: 4px;
   z-index: 2;
+  overflow: auto;
 }
 
 /* button tooltips */
