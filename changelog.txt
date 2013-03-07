@@ -1,3 +1,16 @@
+1.2.3
+* changed drawing logic concerning roll direction to be in line with OLAN
+* added HTML5 appcache functionality to make OpenAero available offline wihout manual installation and improve update handling
+* added green highlights of 'fitting' figures in chooser
+* added 'Save as link' option
+* moved OpenAero.html to index.html
+* added several logos
+* added 'Harmony' for glider
+* corrected flick K counting on vertical down hammer/tailslide and after rolls
+* removed mini Form A from Form C
+* added function for specifying Unknown seq figure letter on Form A
+* several bugfixes and small additions
+  
 1.2.2
 * fixed several bugs that were created in version 1.2.1
 * improved css layout for large sequences

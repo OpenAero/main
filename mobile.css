@@ -1,5 +1,5 @@
 /*
- mobile.css 1.2.1
+ mobile.css 1.2.3
  This file is part of OpenAero.
 
   OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -39,7 +39,7 @@ select {
   -webkit-box-shadow: 0px 1px 2px rgba(0,0,0,0.5);
   box-shadow: 0px 1px 2px rgba(0,0,0,0.5);
   width: 320px;
-  height: 75px;
+  height: 78px;
   padding: 0 0 2px 0;
   z-index: 10;
 }
@@ -63,7 +63,7 @@ select {
 }
 #main {
 	position: absolute;
-  top: 84px;
+  top: 80px;
   width: 320px;
 }
 #leftBlock {
@@ -84,32 +84,41 @@ select {
 }
 .tabSelector li {
   width: 100px;
+  height: 28px;
 }
 .inactiveTab {
-  font-size: 14px;
+  font-size: 16px;
 }
 .activeTab {
-  font-size: 14px;
+  font-size: 16px;
 }
 #svgContainer {
   position: absolute;
-  top: 26px;
+  top: 30px;
   left: 0px;
   width: 312px;
   background-color:#ffffff;
-  background: -webkit-linear-gradient(top, #f4f4f4, #ffffff);
+  /*background: -webkit-linear-gradient(top, #f4f4f4, #ffffff);*/
   padding: 4px;
   z-index: 2;
 }
 #figureSelector {
   position: absolute;
-  top: 26px;
-  left: 0px;
+  overflow: hidden;
+  top: 4px;
+  left: -320px;
+  -moz-transition: 0.2s left;
+  -o-transition: 0.2s left;
+  -webkit-transition: 0.2s left;
+  transition: 0.2s left;
   width: 320px;
   padding: 0px;
   background: #f4f4f4;
   background: -webkit-linear-gradient(top, #f4f4f4, #e0e0ff);
   z-index: 2;
+}
+#figureSelector.active {
+  left:0;
 }
 .button {
   margin-left: 5px;
@@ -140,15 +149,14 @@ select {
   font-size: 2em;
 }
 
-/* logo chooser theme */
+/* logo chooser */
 #activeLogo {
   float: right;
 }
-#logoChooserContainer {
+#logoChooserContainer.active {
   left: 30px;
 }
-
-/* figure chooser theming */
+/* figure chooser */
 
 #figureChooser {
   margin: 2px;
@@ -168,14 +176,9 @@ table#figureChooserTable td.selected {
 #figureSelectorOptionsDiv select,#figureSelectorGroupDiv select {
   font-size: 16px;
 }
-/*alertBox styling*/
+/* alertBox */
 #alertBox {
-  position: absolute;
-  z-index: 999;
-  top: 40%;
+  top: 10%;
   left: 5%;
   width: 90%;
-  background: #eee;
-  border: 2px solid #888;
-  border-radius: 5px;
 }

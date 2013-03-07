@@ -1,4 +1,4 @@
-// figures.js file 1.2.1
+// figures.js file 1.2.3
 
 // This file is part of OpenAero.
 
@@ -643,15 +643,15 @@ figs.push("F6 Tail Slides");
 
 // 6.2.1.1-4
 figs.push("+&ta&+ 6.2.1.1(15:17) ~~v''_''~t~~_''v~~");
-figs.push("-&ta&- 6.2.1.2(18:23) ~~V''_''~T~~_''V~~");
+figs.push("-&ta&- 6.2.1.2(18:23) ~~V''_''~t~~_''V~~");
 figs.push("+&ta&- 6.2.1.3(16:18) ~~v''_''~t~~_''V~~");
-figs.push("-&ta&+ 6.2.1.4(17:22) ~~V''_''~T~~_''v~~");
+figs.push("-&ta&+ 6.2.1.4(17:22) ~~V''_''~t~~_''v~~");
 
 // 6.2.2.1-4
 figs.push("+&ita&+ 6.2.2.1(15:17) ~~v''_''~T~~_''v~~");
-figs.push("-&ita&- 6.2.2.2(18:23) ~~V''_''~t~~_''V~~");
+figs.push("-&ita&- 6.2.2.2(18:23) ~~V''_''~T~~_''V~~");
 figs.push("+&ita&- 6.2.2.3(16:18) ~~v''_''~T~~_''V~~");
-figs.push("-&ita&+ 6.2.2.4(17:22) ~~V''_''~t~~_''v~~");
+figs.push("-&ita&+ 6.2.2.4(17:22) ~~V''_''~T~~_''v~~");
 
 
 //
@@ -753,9 +753,63 @@ figs.push("-iqq- 7.4.6.4(19:) ~~d~d~d~d~d~d~d~d~~");
 
 // Family 7.4. (cont) Reversing Whole Loops
 // New for 2012 - coded by Wouter Liefting
+// coded as "ao" (Alternating O) when the reverse is after 3/4 loop,
+// and as "rao" (Rev Alternating O) when the reverse is after 1/4 loop.
+figs.push("F7.4 Reversing Whole Loops");
+
+// 7.4.7.1-4
+figs.push("+_ao(_)_- 7.4.7.1(11) ~_v=m!_V=_~-");
+figs.push("-_ao(_)_+ 7.4.7.2(13) ~_V=M!_v=_~-");
+figs.push("+_iao(_)_- 7.4.7.3(13) ~_V=M!_v=_~-");
+figs.push("-_iao(_)_+ 7.4.7.4(11) ~_v=m!_V=_~-");
+
+// 7.4.8.1-4
+figs.push("+_ao(_)^+ 7.4.8.1(11) ~_v=m!_V=_~");
+figs.push("-_ao(_)^- 7.4.8.2(14) ~_V=M!_v=_~");
+figs.push("+_iao(_)^+ 7.4.8.3(13) ~_V=M!_v=_~");
+figs.push("-_iao(_)^- 7.4.8.4(12) ~_v=m!_V=_~");
+
+// 7.4.9.1-4
+figs.push("+^ao(_)_+ 7.4.9.1(13) ~_V=M!_v=_~");
+figs.push("-^ao(_)_- 7.4.9.2(12) ~_v=m!_V=_~");
+figs.push("+^iao(_)_+ 7.4.9.3(11) ~_v=m!_V=_~");
+figs.push("-^iao(_)_- 7.4.9.4(14) ~_V=M!_v=_~");
+
+// 7.4.10.1-4
+figs.push("+^ao(_)^- 7.4.10.1(13) ~_V=M!_v=_~-");
+figs.push("-^ao(_)^+ 7.4.10.2(11) ~_v=m!_V=_~-");
+figs.push("+^iao(_)^- 7.4.10.3(11) ~_v=m!_V=_~-");
+figs.push("-^iao(_)^+ 7.4.10.4(13) ~_V=M!_v=_~-");
+
+// 7.4.11.1-4
+figs.push("+_rao(_)_- 7.4.11.1(13) ~_v=M!_V=_~-");
+figs.push("-_rao(_)_+ 7.4.11.2(11) ~_V=m!_v=_~-");
+figs.push("+_irao(_)_- 7.4.11.3(11) ~_V=m!_v=_~-");
+figs.push("-_irao(_)_+ 7.4.11.4(13) ~_v=M!_V=_~-");
+
+// 7.4.12.1-4
+figs.push("+_rao(_)^+ 7.4.12.1(13) ~_v=M!_V=_~");
+figs.push("-_rao(_)^- 7.4.12.2(12) ~_V=m!_v=_~");
+figs.push("+_irao(_)^+ 7.4.12.3(11) ~_V=m!_v=_~");
+figs.push("-_irao(_)^- 7.4.12.4(14) ~_v=M!_V=_~");
+
+// 7.4.13.1-4
+figs.push("+^rao(_)_- 7.4.13.1(11) ~_V=m!_v=_~-");
+figs.push("-^rao(_)_+ 7.4.13.2(14) ~_v=M!_V=_~-");
+figs.push("+^irao(_)_- 7.4.13.3(13) ~_v=M!_V=_~-");
+figs.push("-^irao(_)_+ 7.4.13.4(12) ~_V=m!_v=_~-");
+
+// 7.4.14.1-4
+figs.push("+^rao(_)^- 7.4.14.1(11) ~_V=m!_v=_~");
+figs.push("-^rao(_)^+ 7.4.14.2(13) ~_v=M!_V=_~");
+figs.push("+^irao(_)^- 7.4.14.3(13) ~_v=M!_V=_~");
+figs.push("-^irao(_)^+ 7.4.14.4(11) ~_V=m!_v=_~");
+
+// PREVIOUS CODING KEPT FOR BACKWARD COMPATIBILITY
+// Family 7.4. (cont) Reversing Whole Loops
+// New for 2012 - coded by Wouter Liefting
 // coded as "or" when the reverse is after 3/4 loop,
 // and as "ro" when the reverse is after 1/4 loop.
-figs.push("F7.4 Reversing Whole Loops");
 
 // 7.4.7.1-4
 figs.push("+_or(_)_- 7.4.7.1(11) ~_v=m!_V=_~-");
@@ -805,11 +859,63 @@ figs.push("-^ro(_)^+ 7.4.14.2(13) ~_v=M!_V=_~");
 figs.push("+^iro(_)^- 7.4.14.3(13) ~_v=M!_V=_~");
 figs.push("-^iro(_)^+ 7.4.14.4(11) ~_V=m!_v=_~");
 
-
 // Family 7.5. Horizontal Ss
 // New for 2012 - coded by Wouter Liefting
-// coded as "cm" - for Cuban - iMmelman
+// coded as "ac" - for Alternating Cuban
 figs.push("F7.5 Horizontal \"S\"s");
+
+// 7.5.1.1-4
+figs.push("+_ac(_)_+ 7.5.1.1(16) ~~~~_c'''_'''C_~~~~");
+figs.push("-_ac(_)_- 7.5.1.2(16) ~~~~_C'''_'''c_~~~~");
+figs.push("+_iac(_)_+ 7.5.1.3(16) ~~~~_C'''_'''c_~~~~");
+figs.push("-_iac(_)_- 7.5.1.4(16) ~~~~_c'''_'''C_~~~~");
+
+// 7.5.2.1-4
+figs.push("+_ac(^)_- 7.5.2.1(15) ~~~~_c'''_'''c_~~~~-");
+figs.push("-_ac(^)_+ 7.5.2.2(20) ~~~~_C'''_'''C_~~~~-");
+figs.push("+_iac(^)_- 7.5.2.3(20) ~~~~_C'''_'''C_~~~~-");
+figs.push("-_iac(^)_+ 7.5.2.4(15) ~~~~_c'''_'''c_~~~~-");
+
+// 7.5.3.1-4
+figs.push("+^ac(_)_- 7.5.3.1(16) ~~~~_C'''_'''c_~~~~-");
+figs.push("-^ac(_)_+ 7.5.3.2(16) ~~~~_c'''_'''C_~~~~-");
+figs.push("+^iac(_)_- 7.5.3.3(16) ~~~~_c'''_'''C_~~~~-");
+figs.push("-^iac(_)_+ 7.5.3.4(16) ~~~~_C'''_'''c_~~~~-");
+
+// 7.5.4.1-4
+figs.push("+_ac(_)^- 7.5.4.1(16) ~~~~_c'''_'''C_~~~~-");
+figs.push("-_ac(_)^+ 7.5.4.2(16) ~~~~_C'''_'''c_~~~~-");
+figs.push("+_iac(_)^- 7.5.4.3(16) ~~~~_C'''_'''c_~~~~-");
+figs.push("-_iac(_)^+ 7.5.4.4(16) ~~~~_c'''_'''C_~~~~-");
+
+// 7.5.5.1-4
+figs.push("+^ac(^)_+ 7.5.5.1(20) ~~~~_C'''_'''C_~~~~");
+figs.push("-^ac(^)_- 7.5.5.2(15) ~~~~_c'''_'''c_~~~~");
+figs.push("+^iac(^)_+ 7.5.5.3(15) ~~~~_c'''_'''c_~~~~");
+figs.push("-^iac(^)_- 7.5.5.4(20) ~~~~_C'''_'''C_~~~~");
+
+// 7.5.6.1-4
+figs.push("+^ac(_)^+ 7.5.6.1(16) ~~~~_C'''_'''c_~~~~");
+figs.push("-^ac(_)^- 7.5.6.2(17) ~~~~_c'''_'''C_~~~~");
+figs.push("+^iac(_)^+ 7.5.6.3(16) ~~~~_c'''_'''C_~~~~");
+figs.push("-^iac(_)^- 7.5.6.4(17) ~~~~_C'''_'''c_~~~~");
+
+// 7.5.7.1-4
+figs.push("+_ac(^)^+ 7.5.7.1(15) ~~~~_c'''_'''c_~~~~");
+figs.push("-_ac(^)^- 7.5.7.2(20) ~~~~_C'''_'''C_~~~~");
+figs.push("+_iac(^)^+ 7.5.7.3(20) ~~~~_C'''_'''C_~~~~");
+figs.push("-_iac(^)^- 7.5.7.4(15) ~~~~_c'''_'''c_~~~~");
+
+// 7.5.8.1-4
+figs.push("+^ac(^)^- 7.5.8.1(20) ~~~~_C'''_'''C_~~~~-");
+figs.push("-^ac(^)^+ 7.5.8.2(15) ~~~~_c'''_'''c_~~~~-");
+figs.push("+^iac(^)^- 7.5.8.3(15) ~~~~_c'''_'''c_~~~~-");
+figs.push("-^iac(^)^+ 7.5.8.4(20) ~~~~_C'''_'''C_~~~~-");
+
+// PREVIOUS CODING KEPT FOR BACKWARD COMPATIBILITY
+// Family 7.5. Horizontal Ss
+// New for 2012 - coded by Wouter Liefting
+// coded as "cm" - for Cuban iMmelmann
 
 // 7.5.1.1-4
 figs.push("+_cm(_)_+ 7.5.1.1(16) ~~~~_c'''_'''C_~~~~");
@@ -1898,8 +2004,9 @@ figs.push("iv42 9.2.5.8(15)");
 
 //glider 3 point rolls!
 //	                33          63 
-//3   =9.3.3(   ,    ,     ,   :17,     ,     ,     ,  :28)
-//id3 =9.3.4(   ,    ,     ,   :17,     ,     ,     ,     )
+figs.push("33 9.3.3.4(0:17)");
+figs.push("63 9.3.3.8(0:28)");
+figs.push("id33 9.3.4.4(0:17)");
 
 //	           42   43     44    45    46    47    48 
 figs.push("v24 9.4.1.2(9:14)");
@@ -2143,5 +2250,8 @@ figs.push("iv6is 9.12.1.6(5:9)");
 figs.push("iv7is 9.12.1.7(5:10)");
 figs.push("iv9is 9.12.1.8(5:10)");
 
-//glider super roll
+//glider slow roll
 
+figs.push("02 9.13.1.2(0:8)");
+figs.push("01 9.13.1.4(0:16)");
+figs.push("06 9.13.1.6(0:20)");

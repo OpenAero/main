@@ -1,5 +1,5 @@
 <?php
-// openaero.php 1.2.1
+// openaero.php 1.2.3
 
 // This file is part of OpenAero.
 
@@ -29,6 +29,8 @@ switch ($_REQUEST['f']) {
   case 'version':
     version();
     break;
+  default:
+    header( 'Content-Type:' );
 }
 
 // download allows saving of files from OpenAero when running on a server (local or online)
