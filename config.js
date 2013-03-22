@@ -1,4 +1,4 @@
-// config.js 1.2.3
+// config.js 1.2.4
 
 // This file is part of OpenAero.
 
@@ -34,15 +34,12 @@
 // Define active version number of OpenAero
 // **************
 
-var version = '1.2.3';
+var version = '1.2.4';
 var versionNew = '<strong>OpenAero has been upgraded to version ' +
   version + '</strong><br>New features:<ul>' +
-  '<li>Updated drawing logic. Now practically identical to OLAN '+
-  'but DIFFERENT from previous OpenAero versions</li>' +
-  '<li>Glider support</li>' +
-  '<li>green highlights of fitting figures in chooser</li>' +
-  '<li>"Save as link" option</li>' +
-  '<li>Automatic installation for offline use</li>' +
+  '<li>Improved compatibility with OLAN</li>' +
+  '<li>Several bugs resolved</li>' +
+  '<li>Some sequences may look different from OpenAero 1.2.3 or earlier!</li>' +
   '</ul>';
 
 // define the labels (=input field ids) for saving/loading sequences
@@ -240,19 +237,22 @@ var regexChangeDir = new RegExp ('[' + userpat.switchDirX + '\\' + userpat.switc
 var regexSwitchDirX = new RegExp ('\\' + userpat.switchDirX);
 var regexSwitchDirY = new RegExp ('\\' + userpat.switchDirY);
 var regexMoveForward = new RegExp ('^[0-9]*' + userpat.moveforward + '+');
+var regexMoveDown = new RegExp ('^[0-9]*\\' + userpat.movedown + '+');
 var regexConnector = new RegExp (userpat.connector);
 var regexCurveTo = new RegExp ('^[\(][0-9\-]*,[0-9\-]*[\)]$');
 var regexMoveTo = new RegExp ('^\[[0-9\-]*,[0-9\-]*\]$');
 // regexDrawInstr matches moveTo, curveTo, scale and text
-var regexDrawInstr = /^(\[|\()[0-9\-]+,[0-9\-]+(\]|\)$)|([0-9]+\%)|("[^"]*"$)/;
+var regexDrawInstr = /^(\[|\().+(\]|\)$)|([0-9]+\%)|("[^"]*"$)/;
 var regexLongForward = new RegExp ('\\' + userpat.longforward, 'g');
 var regexEntryShorten = /`+\+(.*[a-zA-Z])/;
 var regexExitShorten = /([a-zA-Z].*)\+`+/;
-var regexFlipYAxis = /(^|[^\/])\/([^\/]|$)/g;
+var regexFlipYAxis = /\/[^\/\]]/;
+var regexFlipYAxisReplace = /(^|[^\/])\/([^\/]|$)/g;
 var regexTurn = /[0-9\+\-]j[io0-9\+\-]/;
 // regexOLANBumpBug is used to check for the Humpty Bump direction bug
 // in OLAN. Can be removed (incl relevant code in OpenAero.js) in 2015
 var regexOLANBumpBug = /(\&b)|(\&ipb)/;
+var regexOLANNBug = /n/;
 var regexTextBlock = /^"[^"]*"$/;
 
 // ****************
@@ -300,12 +300,16 @@ userText.noCookies = 'It seems cookies are disabled in your browser. ' +
 // OLANBumpBugWarning can be removed (with asociated code in OpenAero.js)
 // in 2015
 userText.OLANBumpBugWarning = ' has been detected to be a Humpty Bump ' +
-  'from Y to X axis. <font color=red>These may be drawn differently in ' +
-  'OLAN and OpenAero!</font> Please check correct direction.<br>' +
-  'This message will not be shown for this sequence again.';
-userText.OLANBumpBugWarningMulti = ' have been detected to be a Humpty Bump ' +
-  'from Y to X axis. <font color=red>These may be drawn differently in ' +
-  'OLAN and OpenAero!</font> Please check correct direction.<br>' +
+  'from Y to X axis. ';
+userText.OLANBumpBugWarningMulti = ' have been detected to be a Humpty ' +
+  'Bump from Y to X axis. '
+userText.OLANNBugWarning = ' has been detected to be an N figure ' +
+  'with direction change on X axis. ';
+userText.OLANNBugWarningMulti = ' have been detected to be N figures ' +
+  'with direction change on X axis. ';
+userText.OLANBugWarningFooter = '<font color=red>These figures or the ' +
+  'ones following may be drawn differently in OLAN and OpenAero!</font> ' +
+  'Please check correct direction.<br>' +
   'This message will not be shown for this sequence again.';
 userText.pilot = 'pilot';
 userText.pilotnumberIAC1 = "pilot\'s";
@@ -346,5 +350,9 @@ userText.unknownFileType = 'File opening is not supported in this browser.';
 userText.warningPre123 = 'The file you just opened was created with an ' +
   'OpenAero version older than 1.2.3. Please check that all figure exit ' +
   'directions are correct. When you save this sequence again this ' +
-  'warning will not be shown any more.'; 
+  'warning will not be shown any more.';
+userText.warningPre124 = 'The file you just opened was created with an ' +
+  'OpenAero version older than 1.2.4. Please check that all double ' +
+  'Humpty Bump directions are correct. When you save this sequence ' +
+  'again this warning will not be shown any more.'; 
 userText.wind = 'wind/vent';

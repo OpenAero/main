@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--
-  index.html version 1.2.3
+  index.html version 1.2.4
   This file is part of OpenAero.
 
   OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -52,9 +52,7 @@
   </head>
   <body onLoad="doOnLoad();">
     <!-- overlay div for use with alertBox and loading -->
-    <div id="alertBoxOverlay">
-      <svg id="loaderSvg" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="100%" height="40%" viewBox="-19 -19 38 38"><defs><circle id="ref" cx="10" cy="10" r="4"/></defs>   <g id="a"><use xlink:href="#ref"style="fill:#adadad;fill-opacity:0.5;stroke-width:0" /><use xlink:href="#ref" transform="rotate(45)" style="fill:#adadad;fill-opacity:0.5;" /><use xlink:href="#ref" transform="rotate(90)" style="fill:#c1c1c1;fill-opacity:0.56862745;" /><use xlink:href="#ref" transform="rotate(135)" style="fill:#d7d7d7;fill-opacity:0.67843161;" /><use xlink:href="#ref" transform="rotate(180)" style="fill:#e9e9e9;fill-opacity:0.78431373;" /><use xlink:href="#ref" transform="rotate(225)" style="fill:#f4f4f4;fill-opacity:0.89019608;" /><use xlink:href="#ref" transform="rotate(270)" style="fill:#ffffff;fill-opacity:1;" /><use xlink:href="#ref" transform="rotate(315)" style="fill:#adadad;fill-opacity:0.5;" /><animateTransform attributeName="transform" attributeType="XML" type="rotate" begin="0s" dur="1s" repeatCount="indefinite" calcMode="discrete" values="0  ;  45;  90; 135; 180; 225; 270; 315"  keyTimes="0.0; 0.13; 0.27; 0.40; 0.53; 0.67; 0.80; 0.93" /></g></svg>
-
+    <div id="alertBoxOverlay" style="display:none;">
       <!-- warn when javascript is disabled -->
       <noscript>
         You need a JavaScript-capable browser to use this software.

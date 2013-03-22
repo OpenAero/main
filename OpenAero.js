@@ -1,4 +1,4 @@
-﻿// OpenAero.js 1.2.3
+﻿// OpenAero.js 1.2.4
 // This file is part of OpenAero.
 
 //  OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -33,12 +33,10 @@ var intervalID = [];
 var svgNS = "http://www.w3.org/2000/svg";
 // xlink Name Space for including image in svg
 var xlinkNS="http://www.w3.org/1999/xlink";
-// set y axis offset to the default
-// Modif GG start
 // Get ellipse perameters for perspective drawing
 var perspective_param = get_ellipse_parameters(yAxisOffsetDefault,yAxisScaleFactor);
 var True_Drawing_Angle
-// Modif GG End
+// set y axis offset to the default
 var yAxisOffset = yAxisOffsetDefault;
 // Attitude goes from 0 to 359
 // 0 = upright LTR, 45 = 45 up LTR, 90 = vertical up belly right etc
@@ -55,6 +53,8 @@ var NegLoad = 0;
 var goRight = true;
 // goFront determines direction for 1/4 roll to Y axis
 var goFront = true;
+// updateGoRight determines if it should be updated in changeAtt
+var updateGoRight = true;
 // X is x position on canvas
 var X = 0;
 // Y is y position on canvas
@@ -79,14 +79,16 @@ var figureK = 0;
 // format is: figures[i].xxx where:
 // i is the figure nr (including drawing only figs)
 // xxx is a specific element, being: 
-// .string as in sequence text line
-// .paths for all the drawing paths
-// .aresti for the Aresti nrs of the figure
-// .k for the K factors of the figure
-// .figNr for the base figure index in fig[]
-// .bBox for the bounding rectangle
-// .startPos for the starting position
-// .draggable boolean to indicate if draggable or not
+// .string     as in sequence text line
+// .paths      for all the drawing paths
+// .aresti     for the Aresti nrs of the figure
+// .k          for the K factors of the figure
+// .figNr      for the base figure index in fig[]
+// .bBox       for the bounding rectangle
+// .startPos   for the starting position
+// .draggable  boolean to indicate if draggable or not
+// .connector  true for connector figures
+// .unknownFigureLetter = letter for Free Unknown figures
 var figures = [];
 // firstFigure is true when the figure is the first of the (sub)sequence
 var firstFigure = true;
@@ -96,6 +98,8 @@ var connectors = 0;
 var unknownFigureLetter = false;
 // Tau is 2 times PI. Saves calculations during runtime
 var Tau = Math.PI * 2;
+// degToRad is Pi / 180. Saves calculations for degree to rad conversions
+var degToRad = Math.PI / 180;
 // logoImg holds the active logo image
 var logoImg = false;
 // sequenceXML holds the XML string with all sequence info
@@ -126,6 +130,8 @@ var loadComplete = false;
 // code in : OpenAero.js config.js index.html
 var OLANBumpBugCheck = false;
 var OLANBumpBugFigs = [];
+var OLANNBugFigs = [];
+var OLANSequence = false;
 
 // seqCheckAvail indicates if sequence checking is available for a rule/cat/seq combination
 var seqCheckAvail = [];
@@ -424,12 +430,12 @@ function dirAttToAngle (dir, att) {
   }
 // Check for right or left half, calculate angle and make negative for left half
   if ((theta < 90) || (theta > 270)) {
-    var angle = ((theta + att) / 360) * Tau;
+    var angle = (theta + att) * degToRad;
     if (angle > Tau) {
       angle = angle - Tau;
     } else if (angle < 0) angle = angle + Tau;
   } else {
-    var angle = ((theta - att) / 360) * Tau;
+    var angle = (theta - att) * degToRad;
     if (angle >= 0) {
       angle = angle - Tau;
     } else if (angle < -Tau) angle = angle + Tau;
@@ -453,18 +459,22 @@ function changeAtt (value) {
   while (Attitude >= 360) Attitude = Attitude - 360;
   // update goRight for attitude changes. We monitor the exit direction
   // but also the direction through the top or bottom when ending vert.
-  if (((Direction == 0) || (Direction == 180)) && (value != 0)) {
-    if (Direction == 0) {
-      goRight = false;
-    } else {
-      goRight = true;
+  // Don't update this time when updateGoRight is false, used for
+  // double bumps
+  if (updateGoRight) {
+    if (((Direction == 0) || (Direction == 180)) && (value != 0)) {
+      if (Direction == 0) {
+        goRight = false;
+      } else {
+        goRight = true;
+      }
+      if ((Attitude > 90) && (Attitude < 270)) {
+        goRight = !goRight;
+      } else if ((Attitude == 90) || (Attitude == 270)) {
+        if ((Attitude == 90) == (value < 0)) goRight = !goRight;
+      }
     }
-    if ((Attitude > 90) && (Attitude < 270)) {
-      goRight = !goRight;
-    } else if ((Attitude == 90) || (Attitude == 270)) {
-      if ((Attitude == 90) == (value < 0)) goRight = !goRight;
-    }
-  }
+  } else updateGoRight = true;
 }
 
 // *******************************************************************************
@@ -503,7 +513,6 @@ function makeFigStart (seqNr) {
   // Create a marker for possible automatic repositioning of the figure start
   pathsArray.push({'figureStart': true});
   // Create the first figure mark if applicable
-// Modif GG Start
   var ref_rayon = 9;
   var open = Math.PI / 6;
   var rayon = ref_rayon;
@@ -540,16 +549,15 @@ function makeFigStart (seqNr) {
     // Make the marker
     pathsArray.push({'path': 'm -4,0 a4,4 0 1 1 0,0.01', 'style':'blackfill', 'dx':Math.cos(angle) * 4, 'dy':- Math.sin(angle) * 4});
   }
-// Modif GG End
   return pathsArray;
 }
 
 // makeFigStop creates figure stop
 function makeFigStop (lastFig) {
   var pathArray = [];
-  var angle = ((Direction + 90) / 360) * Tau;
-  var dx = roundTwo(Math.cos(angle) * lineElement);
-  var dy = - roundTwo(Math.sin(angle) * lineElement);
+  var angle = (Direction + 90) * degToRad;
+  var dx = roundTwo(Math.cos(angle) * lineElement / scale);
+  var dy = - roundTwo(Math.sin(angle) * lineElement / scale);
   if (lastFig) {
     var angle2 = dirAttToAngle (Direction, Attitude);
     var dx2 = roundTwo(Math.cos(angle2) * lineElement);
@@ -582,19 +590,30 @@ function makeFigSpace (extent) {
   return Array(pathArray);
 }
 
+// makeVertSpace creates vertical space
+function makeVertSpace (extent) {
+  var pathArray = [];
+  pathArray['path'] = '';
+  pathArray['style'] = 'neg';
+  pathArray['dx'] = 0;
+  pathArray['dy'] = lineElement * extent;
+  return Array(pathArray);
+}
+
 // makeFigLast creates last figure stop
 function makeFigLast () {
   var pathArray = new Array(2);
 }
 
 // makeLine creates lines
+// Params:
+// 0: line length
 function makeLine (Params) {
   var Extent = Params[0];
   var pathArray = [];
   var angle = dirAttToAngle (Direction, Attitude);
   var dx = roundTwo(Math.cos(angle) * lineElement * Extent);
   var dy = - roundTwo(Math.sin(angle) * lineElement * Extent);
-// Modif GG Start
   if (((Direction == 90) || (Direction == 270)) && curvePerspective) {
     dx = roundTwo(yAxisScaleFactor*dx);
     if ((Attitude == 90) || (Attitude == 270)) {
@@ -602,7 +621,7 @@ function makeLine (Params) {
       dy = roundTwo(yAxisScaleFactor*dy);
     }
     if (((Attitude == 45) || (Attitude == 315)) || ((Attitude == 225) || (Attitude == 135))) {
-      angle = angle - (yAxisOffset * Math.PI / 180);
+      angle = angle - (yAxisOffset * degToRad);
       dx = roundTwo(scaleLine.x * Math.cos(angle) * lineElement * Extent);
       if (yAxisOffset > 90) {
         dy = roundTwo((-scaleLine.y * Math.cos(angle) + Math.sin(angle)) * lineElement * Extent);
@@ -613,19 +632,10 @@ function makeLine (Params) {
       if (dx < 0) True_Drawing_Angle = True_Drawing_Angle + Math.PI;
     }
   } else True_Drawing_Angle = angle;
-// Modif GG End
   pathArray['path'] = 'l ' + dx + ',' + dy;
-  if ((Attitude == 90) || (Attitude == 270)) {
-    if (NegLoad == 0) {
+  if (NegLoad == 0) {
       pathArray['style'] = 'pos';
-    } else pathArray['style'] = 'neg';
-  } else if ((Attitude > 90) && (Attitude < 270)) {
-    pathArray['style'] = 'neg';
-    NegLoad = 1;
-  } else {
-    pathArray['style'] = 'pos';
-    NegLoad = 0;
-  }
+  } else pathArray['style'] = 'neg';
   pathArray['dx'] = dx;
   pathArray['dy'] = dy;
   return Array(pathArray);
@@ -659,51 +669,42 @@ function makeCorner (param) {
   return Array(pathArray);
 }
 
-// Modif GG Start
-//
-// get_ellipse_parameters gets the ellipse radius and orientation from the perspective angle and the Y axis scale factor
+// get_ellipse_parameters gets the ellipse radius and orientation from
+// the perspective angle and the Y axis scale factor
 function get_ellipse_parameters(P_Angle,Y_Scale) {
-//
-  if ((P_Angle == 30) && (Y_Scale == 0.7)) return {'x_radius': 0.559 , 'y_radius': 1.085 ,'rot_angle': 15 };
+  if ((P_Angle == 30) && (Y_Scale == 0.7)) {
+    return {'x_radius': 0.559 , 'y_radius': 1.085 ,'rot_angle': 15 };
+  }
   if (Y_Scale == 1) {
     var Rot_axe_Ellipse = (90 - yAxisOffsetDefault) /2;
-    var X_axis_Radius = yAxisScaleFactor * Math.sqrt(1 - Math.sin(yAxisOffsetDefault*Math.PI/180)) ;
-    var Y_axis_Radius = Math.sqrt(1 + Math.sin(yAxisOffsetDefault*Math.PI/180)) ;
+    var X_axis_Radius = yAxisScaleFactor * Math.sqrt(1 - Math.sin(yAxisOffsetDefault*degToRad)) ;
+    var Y_axis_Radius = Math.sqrt(1 + Math.sin(yAxisOffsetDefault*degToRad)) ;
     return {'x_radius': X_axis_Radius , 'y_radius': Y_axis_Radius ,'rot_angle': Rot_axe_Ellipse };
   }
-  var prev_r2 = 0;
-  Loops = 0;
-  var step = -Math.PI/25;
-  var A = Y_Scale * Math.cos(P_Angle*Math.PI/180);
-  var A2 = Math.pow(A,2);
-  var B = Y_Scale * Math.sin(P_Angle*Math.PI/180);
-  for (var w = Math.PI/2; w > 0 ; w+= step) {
-    Loops++; 
-    r2 = A2 * Math.pow(Math.cos(w),2) +  Math.pow(B*Math.cos(w) + Math.sin(w),2);
-    if (r2 < prev_r2) {
-      prev_r2 = r2;
-      step = -step/10
-      var Loops_1 = Loops;
-      for (var w1 = w + step; w1 < (Math.PI/2) ; w1+= step) {
-        Loops++; 
-        r2 = A2 * Math.pow(Math.cos(w1),2) +  Math.pow(B*Math.cos(w1) + Math.sin(w1),2);
-        if (r2 < prev_r2) {
-          var r_max = roundTwo(Math.sqrt(prev_r2));
-          w1 = w1 - step;
-          var X_El = A*Math.cos(w1)
-          var Y_El = B*Math.cos(w1) + Math.sin(w1)
-          var orient = roundTwo(180 * Math.atan((A*Math.cos(w1))/(B*Math.cos(w1) + Math.sin(w1))) / Math.PI);
-          w1 = w1 + Math.PI/2;
-          var r_min = roundTwo(Math.sqrt(A2 * Math.pow(Math.cos(w1),2) +  Math.pow(B*Math.cos(w1) + Math.sin(w1),2)));
-          return {'x_radius':r_min, 'y_radius':r_max ,'rot_angle':orient}
-        }
-        prev_r2 = r2;
-      } 
-      return 'Calculation failed in loop 2 (w1)';
-    } 
-    prev_r2 = r2; 
-  } 
-  return 'Calculation failed';
+  var A = Y_Scale * Math.cos(P_Angle*degToRad);
+  var B = Y_Scale * Math.sin(P_Angle*degToRad);
+  // Parameters for perspective of elements in the vertical plane
+  // (loops or loop parts)
+  var theta = (Math.PI + Math.atan(-2*B/(1 - Y_Scale * Y_Scale)))/2 ;
+  var V_orient = roundTwo(90 - (180 * Math.atan((Math.sin(theta) +
+    B*Math.cos(theta)) / (A*Math.cos(theta))) / Math.PI)) ;
+  var V_r_max = roundTwo(Math.sqrt(Math.pow(A*Math.cos(theta),2) +
+    Math.pow(Math.sin(theta) + B*Math.cos(theta),2)));
+  theta = theta + Math.PI/2 ;
+  var V_r_min = roundTwo(Math.sqrt(Math.pow(A*Math.cos(theta),2) +
+    Math.pow(Math.sin(theta) + B*Math.cos(theta),2)));
+  // Parameters for perspective of elements in the horizontal plane
+  // (turns or rolling turns)
+  theta = Math.atan(2*A/(1 - Y_Scale * Y_Scale))/2 ;
+  var H_r_max = roundTwo(Math.sqrt(Math.pow(Math.cos(theta) +
+    A*Math.sin(theta),2) + Math.pow(B*Math.sin(theta),2)));
+  theta = theta + Math.PI/2 ;
+  var H_r_min = roundTwo(Math.sqrt(Math.pow(Math.cos(theta) +
+    A*Math.sin(theta),2) + Math.pow(B*Math.sin(theta),2)));
+  var H_orient = roundTwo(180 * Math.atan((B*Math.sin(theta)) /
+    (Math.cos(theta) + A*Math.sin(theta))) / Math.PI);
+// Returns only vertical plane parameters (not the horizontal one, for the moment)
+  return {'x_radius': V_r_min, 'y_radius': V_r_max ,'rot_angle': V_orient}
 }
 
 // dirAttToXYAngle modified from dirAttToAngle to just care about angle in a vertical "plan".
@@ -722,12 +723,12 @@ function dirAttToXYAngle (dir, att) {
   }
 // Check for right or left half, calculate angle and make negative for left half
   if ((theta < 90) || (theta > 270)) {
-    var angle = ((theta + att) / 360) * Tau;
+    var angle = (theta + att) * degToRad;
     if (angle > Tau) {
       angle = angle - Tau;
     } else if (angle < 0) angle = angle + Tau;
   } else {
-    var angle = ((theta - att) / 360) * Tau;
+    var angle = (theta - att) * degToRad;
     if (angle >= 0) {
       angle = angle - Tau;
     } else if (angle < -Tau) angle = angle + Tau;
@@ -783,16 +784,14 @@ function makeCurve (param) {
     var Rot_axe_Ellipse = (yAxisOffset < 90) ? perspective_param.rot_angle : -perspective_param.rot_angle;
     var X_axis_Radius = perspective_param.x_radius * Radius;
     var Y_axis_Radius = perspective_param.y_radius * Radius;
-    dy = dy - dx * Math.sin(yAxisOffset*Math.PI/180);
-    dx = dx * Math.cos(yAxisOffset*Math.PI/180);
+    dy = dy - dx * Math.sin(yAxisOffset * degToRad);
+    dx = dx * Math.cos(yAxisOffset * degToRad);
     pathArray['path'] = 'a' + roundTwo(X_axis_Radius) + ',' +  roundTwo(Y_axis_Radius) + ' ' + Rot_axe_Ellipse + ' ' + longCurve +
      ' ' + sweepFlag + ' ' + roundTwo(dx) + ',' + roundTwo(dy);
   } else {
     pathArray['path'] = 'a' + Radius + ',' + Radius + ' 0 ' + longCurve +
       ' ' + sweepFlag + ' ' + roundTwo(dx) + ',' + roundTwo(dy);
   }
-// Modif GG End
-//
   pathArray['dx'] = dx;
   pathArray['dy'] = dy;
   return Array(pathArray);
@@ -938,15 +937,7 @@ function makeTurn (draw) {
   // Check if we are in an in/out or out/in roll
   regex = /io|IO/;
   if (regex.test(draw)) var switchRollDir = true; else switchRollDir = false;
-  // Check if the exit direction is flipped
-  if (draw.charAt(0) == userpat.moveforward) {
-    var sign = -1;
-  } else var sign = 1;
-  // See if we start with an outside roll
-  regex = /J/;
-  if (regex.test(draw)) var rollDir = -sign; else var rollDir = sign;
-  // See if we start inverted, this will also flip the drawing direction
-  if (Attitude == 180) rollDir = -rollDir;
+  var sign = 1;
   var numbers = draw.replace(/[^\d]+/g, '');
   var extent = parseInt(numbers.charAt(0)) * 90;
   // Set the default exit direction
@@ -974,6 +965,16 @@ function makeTurn (draw) {
       rollDir = -rollDir;
     }
   }
+    // Check if the exit direction is flipped
+  if (draw.charAt(0) == userpat.moveforward) {
+    var sign = -sign;
+  }
+  // See if we start with an outside roll
+  regex = /J/;
+  if (regex.test(draw)) var rollDir = -sign; else var rollDir = sign;
+  // See if we start inverted, this will also flip the drawing direction
+  if (Attitude == 180) rollDir = -rollDir;
+
   // See if direction change is called for by the preparsed draw string
   var stopRad = dirAttToAngle (Direction + (sign * extent), Attitude);
   if (stopRad < 0) stopRad = stopRad + Tau;
@@ -1056,10 +1057,7 @@ function makeRoll (params) {
   var sweepFlag = params[0] > 0 ? 1 : 0;
   if (params.length > 2) var rollTop = params[2];
   var rad = dirAttToAngle (Direction, Attitude);
-// Modif GG Start
-//alertMsgs.push(' Angle : ' + roundTwo(rad * 180 / Math.PI));
   if (((Attitude == 45) || (Attitude == 315)) || ((Attitude == 225) || (Attitude == 135))) rad = True_Drawing_Angle;
-// Modif GG End
   // calculate sin and cos for rad once to save calculation time
   var radSin = Math.sin(rad);
   var radCos = Math.cos(rad);
@@ -1143,13 +1141,11 @@ function makeRoll (params) {
     if (extent > 0) {
       // Make the line between the two rolls. Always positive for now
       // Only move the pointer for rolls in the top
-// Modif GG Start
       if (rollTop) {
         pathsArray = buildShape ('Move', Array(1/scale, 0), pathsArray);
       } else {
         pathsArray = buildShape ('Line', Array(1/scale, 0), pathsArray);
       }
-// Modif GG End
       // Get the relative movement by the line and use this to build the tip connector line
       dx = pathsArray[pathsArray.length - 1]['dx'];
       dy = pathsArray[pathsArray.length - 1]['dy'];
@@ -1189,11 +1185,8 @@ function makeSnap (params) {
   var extent = Math.abs(params[0]);
   var sign = params[0] > 0 ? 1 : -1;
   var rad = dirAttToAngle (Direction, Attitude);
-  // calculate sin and cos for rad once to save calculation time
-// Modif GG Start
-//alertMsgs.push(' Angle : ' + roundTwo(rad * 180 / Math.PI));
   if (((Attitude == 45) || (Attitude == 315)) || ((Attitude == 225) || (Attitude == 135))) rad = True_Drawing_Angle;
-// Modif GG End
+  // calculate sin and cos for rad once to save calculation time
   var radSin = Math.sin(rad);
   var radCos = Math.cos(rad);
   if (params.length > 2) var rollTop = params[2];
@@ -1350,7 +1343,6 @@ function makeHammer (extent) {
   pathArray = [];
   Attitude = 270;
   changeDir(180);
-// Modif GG Start
   pathArray['style'] = 'pos';
   if ((Direction == 90) || (Direction == 270)) {
     dy = roundTwo((1 - scaleLine.y) * lineElement);
@@ -1359,7 +1351,6 @@ function makeHammer (extent) {
   } else {
     pathArray['path'] = "l " + (lineElement) + "," + (lineElement);
   }
-// Modif GG End
   pathArray['dx'] = 0;
   pathArray['dy'] = lineElement * extent;
   return Array(pathArray);
@@ -1381,7 +1372,6 @@ function makeTailslide (param) {
   if (angle > 0) dx = -Radius; else dx = Radius;
   dy = Radius;
   // Make the path and move the cursor
-// Modif GG Start
   if (((Direction == 90) || (Direction == 270)) && curvePerspective) {
     var Rot_axe_Ellipse = (yAxisOffset < 90) ? perspective_param.rot_angle : -perspective_param.rot_angle;
     var X_axis_Radius = perspective_param.x_radius * Radius;
@@ -1413,7 +1403,6 @@ function makeTailslide (param) {
     pathsArray[1]['path'] = 'a' + Radius + ',' + Radius + ' 0 0 ' +
       sweepFlag + ' ' + dx + ',' + dy;
   }
-// Modif GG End
   pathsArray[1]['style'] = 'pos';
   pathsArray[1]['dx'] = dx;
   pathsArray[1]['dy'] = dy;
@@ -1438,12 +1427,18 @@ function makePointTip (extent) {
 // makeTextBlock makes text blocks
 function makeTextBlock (text) {
   var pathsArray = [];
-  // handle the special code for Unknown figure designation
+  // handle special code for Unknown figure designation
   var regex = /^@[A-Z]/;
   var match = text.match(regex);
   if (match) {
     text = text.replace (match[0], '');
     unknownFigureLetter = match[0].replace('@', '');
+  }
+  // handle special code for Unknown connector
+  var regex = /^connector$/;
+  if (text.match(regex)) {
+    text = '';
+    unknownFigureLetter = 'X';
   }
   if (text != '') {
     var angle = dirAttToAngle (Direction, Attitude);
@@ -1582,6 +1577,10 @@ function drawArestiText(figNr, aresti) {
 
 // doOnLoad is only called on initial loading of the page
 function doOnLoad () {
+  // show loading overlay and circles
+  var el = document.getElementById('alertBoxOverlay');
+  el.removeAttribute('style');
+  el.innerHTML = '<svg id="loaderSvg" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="100%" height="40%" viewBox="-19 -19 38 38"><defs><circle id="ref" cx="10" cy="10" r="4"/></defs>   <g id="a"><use xlink:href="#ref"style="fill:#adadad;fill-opacity:0.5;stroke-width:0" /><use xlink:href="#ref" transform="rotate(45)" style="fill:#adadad;fill-opacity:0.5;" /><use xlink:href="#ref" transform="rotate(90)" style="fill:#c1c1c1;fill-opacity:0.56862745;" /><use xlink:href="#ref" transform="rotate(135)" style="fill:#d7d7d7;fill-opacity:0.67843161;" /><use xlink:href="#ref" transform="rotate(180)" style="fill:#e9e9e9;fill-opacity:0.78431373;" /><use xlink:href="#ref" transform="rotate(225)" style="fill:#f4f4f4;fill-opacity:0.89019608;" /><use xlink:href="#ref" transform="rotate(270)" style="fill:#ffffff;fill-opacity:1;" /><use xlink:href="#ref" transform="rotate(315)" style="fill:#adadad;fill-opacity:0.5;" /><animateTransform attributeName="transform" attributeType="XML" type="rotate" begin="0s" dur="1s" repeatCount="indefinite" calcMode="discrete" values="0  ;  45;  90; 135; 180; 225; 270; 315"  keyTimes="0.0; 0.13; 0.27; 0.40; 0.53; 0.67; 0.80; 0.93" /></g></svg>';
   // determine if we are running on a mobile browser by screen width
   if (screen.width < 761) setMobile (true); else setMobile (false);
   // check if cookies are supported
@@ -1623,7 +1622,8 @@ function doOnLoad () {
   // set default Y axis offset and start direction
   setYAxisOffset (yAxisOffsetDefault);
   Direction = 0;
-
+  // set OpenAero version for saving
+  document.getElementById('oa_version').value = version;
   // Load sequence cookie (if any)
   sequenceXML = getCookie('sequence');
   if (sequenceXML) activateXMLsequence (sequenceXML);
@@ -1929,8 +1929,8 @@ function setYAxisOffset (offset) {
   // set scaleLine object to prevent calculations in makeLine and other
   // functions
   if (curvePerspective) {
-    scaleLine.x = yAxisScaleFactor * Math.cos(yAxisOffset * Math.PI/180);
-    scaleLine.y = yAxisScaleFactor * Math.sin(yAxisOffset * Math.PI/180);
+    scaleLine.x = yAxisScaleFactor * Math.cos(yAxisOffset * degToRad);
+    scaleLine.y = yAxisScaleFactor * Math.sin(yAxisOffset * degToRad);
   } else {
     scaleLine.x = 1;
     scaleLine.y = 1;
@@ -2238,6 +2238,7 @@ function updateFigure() {
   var moveToFig = false;
   var curveToFig = false;
   var moveForwardFig = false;
+  var moveDownFig = false;
   var scaleFig = false;
   var subSequence = false;
   // continue as long as we're not at the beginning and are not on
@@ -2249,6 +2250,8 @@ function updateFigure() {
         moveToFig = i;
       } else if (prevFig.moveForward) {
         moveForwardFig = i;
+      } else if (prevFig.moveDown) {
+        moveDownFig = i;
       } else if (prevFig.scale) {
         scaleFig = i;
       } else if (prevFig.subSequence) {
@@ -2284,6 +2287,12 @@ function updateFigure() {
     // remove any moveForward
     if (moveForwardFig != false) {
       updateSequence (moveForwardFig, '', true);
+      if (moveToFig != false) moveToFig--;
+    }
+    // remove any moveDown
+    if (moveDownFig != false) {
+      updateSequence (moveDownFig, '', true);
+      if (moveToFig != false) moveToFig--;
     }
     // replace any moveTo or curveTo
     //if ((Math.abs(moveX) > 0) || (Math.abs(moveY) > 0)) {
@@ -2296,15 +2305,17 @@ function updateFigure() {
         updateSequence (selectedFigure.id - 1, movePattern, false);
         return;
       }
-    //} else if (moveToFig != false) {
-      // remove moveTo or curveTo
-      //updateSequence (moveToFig, '', true);
-    //}
   } else if (el3.getAttribute('src') == mask.on) {
     // set moveTo with curved line
     // remove any moveForward
     if (moveForwardFig != false) {
       updateSequence (moveForwardFig, '', true);
+      if (moveToFig != false) moveToFig--;
+    }
+    // remove any moveDown
+    if (moveDownFig != false) {
+      updateSequence (moveDownFig, '', true);
+      if (moveToFig != false) moveToFig--;
     }
     // replace any moveTo or curveTo
     //if ((Math.abs(moveX) > 0) || (Math.abs(moveY) > 0)) {
@@ -2326,6 +2337,7 @@ function updateFigure() {
     // remove any moveTo
     if (moveToFig != false) {
       updateSequence (moveToFig, '', true);
+      if (moveForwardFig != false) moveForwardFig--;
     }
     // replace any moveForward
     if (parseInt(moveX) > 0) {
@@ -2954,7 +2966,7 @@ function checkRules () {
       var figString = figCheckLine[figures[i].seqNr];
       figNr++;
       // Check if the figure is a connector
-      if (regexConnector.test(figures[i].string)) {
+      if (figures[i].connector) {
         connectors++;
       } else {
         var figK = 0;
@@ -3533,7 +3545,7 @@ function makeMiniFormA (x, y) {
         blockY += 12;
       }
       // Adjust figure K for connectors
-      if (regexConnector.test(figures[i].string)) {
+      if (figures[i].connector) {
         figK = connectorsTotalK / connectors;
         if (aresti.length < 2) blockY += 12;
         drawText ('Fig ' + figNr, blockX + 4, (topBlockY + blockY) / 2 + 4, 'miniFormA');
@@ -3813,9 +3825,9 @@ function changeEntryDirection (code) {
 
 // flipYAxis will flip the drawn direction of the Y axis
 function flipYAxis () {
-  if (activeSequence.text.replace(' '+userpat.subSequence+' ','').indexOf(userpat.flipYaxis) > -1) {
+  if (activeSequence.text.match(regexFlipYAxis)) {
     // disable flip
-    sequenceText.value = sequenceText.value.replace(regexFlipYAxis, '$1$2');
+    sequenceText.value = sequenceText.value.replace(regexFlipYAxisReplace, '$1$2');
   } else {
     // add flip to first real figure, if it exists
     for (var i = 0; i < figures.length; i++) {
@@ -4021,7 +4033,7 @@ function makeFormA() {
               drawText (k[j], x + columnWidths[column] / 2, y + (j + 1) * fontsize, 'FormATextBold' + fontsize + 'px', 'middle');
               figK = figK + parseInt(k[j]);
             }
-            if (regexConnector.test(figures[i].string)) figK = connectorsTotalK / connectors;
+            if (figures[i].connector) figK = connectorsTotalK / connectors;
             break;
           case (4):
             drawRectangle (x, y, columnWidths[column], rowHeight, 'FormLine');
@@ -4031,7 +4043,7 @@ function makeFormA() {
               drawText('SF ' + superFamily,  x + columnWidths[column] / 2, y + rowHeight - 10, 'FormAText', 'middle');
             }
             // check if mark as connector or specific unknown figure
-            if (regexConnector.test(figures[i].string)) {
+            if (figures[i].connector) {
               drawText('connect',  x + columnWidths[column] / 2, y + 15, 'FormAText', 'middle');
             } else if (figures[i].unknownFigureLetter) {
               drawText('Fig ' + figures[i].unknownFigureLetter,  x + columnWidths[column] / 2, y + 15, 'FormAText', 'middle');
@@ -4220,6 +4232,13 @@ function checkSequenceChanged () {
             thisFigure.stringStart = thisFigure.stringStart + match[0].length;
             thisFigure.string = thisFigure.string.replace(regexMoveForward, '');
           }
+          // do the same for moveDown (x^)
+          var match = thisFigure.string.match (regexMoveDown);
+          if (match) {
+            figure.push ({'string':match[0], 'stringStart':thisFigure.stringStart, 'stringEnd':(thisFigure.stringStart + match[0].length)});
+            thisFigure.stringStart = thisFigure.stringStart + match[0].length;
+            thisFigure.string = thisFigure.string.replace(regexMoveDown, '');
+          }          
           // only add figures that are not empty
           if (thisFigure.string != '') {
             figure.push ({'string':thisFigure.string, 'stringStart':thisFigure.stringStart, 'stringEnd':i});
@@ -4336,27 +4355,46 @@ function loadedSequence(evt) {
     OLANBumpBugCheck = false;
   } else {
     // OLAN sequence, transform to XML
+    OLANSequence = true;
+    var activeKey = false;
     var lines = fileString.split('\n');
     fileString = '<sequence>';
-    for (var i = 0; i < lines.length; i = i + 2) {
-      var key = lines[i].toLowerCase().replace(/[^a-z]/g, '');
-      var value = lines[i + 1];
-      if (key === 'sequence') {
-        key = 'sequence_text';
-      }
-      if (inArray(sequenceXMLlabels, key) && value) {
-        fileString += '<' + key + '>' + value + '</' + key + '>';
-      }
+    for (var i = 0; i < lines.length; i++) {
+      // remove Windows linebreak
+      lines[i] = lines[i].replace('\r', '');
+      // check for key match
+      if (lines[i].match(/^\[[a-zA-Z]+\]$/)) {
+        var key = lines[i].toLowerCase().replace(/[^a-z]/g, '');
+        if (key === 'sequence') {
+          key = 'sequence_text';
+        }
+        if (activeKey) {
+          fileString += '</' + activeKey + '>';
+          activeKey = false;
+        }
+        if (inArray(sequenceXMLlabels, key)) {
+          fileString += '<' + key + '>';
+          activeKey = key;
+        } else activeKey = false;
+      } else if (activeKey) fileString += lines[i];
     }
-    // end with oa_version 1.2.3 to prevent message about drawing
-    fileString += '<oa_version>1.2.3</oa_version></sequence>';
+    if (activeKey) fileString += '</' + activeKey + '>';
+    // end with oa_version 1.2.4 to prevent message about drawing
+    fileString += '<oa_version>1.2.4</oa_version></sequence>';
     OLANBumpBugCheck = true;
   }
-  activateXMLsequence (fileString);  
+  activateXMLsequence (fileString);
   // make sure no figure is selected
   selectFigure (false);
   // Draw the sequence and change the browser title after loading
   checkSequenceChanged();
+  // update the sequence if OLANSequence was true
+  if (OLANSequence) {
+    OLANSequence = false;
+    updateSequence (-1, '');
+    activeSequence.text = '';
+    checkSequenceChanged();
+  }
   changeSequenceInfo();
   sequenceSaved = true;
   window.onbeforeunload = null;
@@ -4393,11 +4431,13 @@ function activateXMLsequence (xml) {
   var ruleName = document.getElementById('rules').value.toLowerCase();
   var categoryName = document.getElementById('category').value.toLowerCase();
   var programName = document.getElementById('program').value.toLowerCase();
-  if (ruleName && categoryName && programName) {
-    if (seqCheckAvail[ruleName]['cats'][categoryName]['seqs'][programName]) {
-      // Load rules, check the sequence and display any alerts
-      rulesActive = true;
-      loadRules(ruleName, categoryName, programName);
+  if (seqCheckAvail[ruleName]) {
+    if (seqCheckAvail[ruleName]['cats'][categoryName]) {
+      if (seqCheckAvail[ruleName]['cats'][categoryName]['seqs'][programName]) {
+        // Load rules, check the sequence and display any alerts
+        rulesActive = true;
+        loadRules(ruleName, categoryName, programName);
+      } else rulesActive = false;
     } else rulesActive = false;
   } else rulesActive = false;
 }
@@ -4409,6 +4449,10 @@ function checkOpenAeroVersion () {
   if (oa_version.value == '') {
     // before 1.2.3
     alertBox(userText.warningPre123);
+  } else if (compVersion (oa_version.value, '1.2.4') < 0) {
+    if (sequenceText.value.match (/(b|pb)(b|pb)/)) {
+      alertBox(userText.warningPre124);
+    }
   }
   // add any additional checks through else if ...
   // compVersion can be used to check against specific minimum versions
@@ -4962,8 +5006,18 @@ function buildCurveTo (dxdy, i) {
 
 // buildMoveForward moves the cursor forward
 function buildMoveForward (extent, i) {
-  figures[i].paths = buildShape ('FigSpace' , extent);
-  figures[i].moveForward = extent;
+  if (extent > 0) {
+    figures[i].paths = buildShape ('FigSpace' , extent);
+    figures[i].moveForward = extent;
+  }
+}
+
+// buildMoveDown moves the cursor downward
+function buildMoveDown (extent, i) {
+  if (extent > 0) {
+    figures[i].paths = buildShape ('VertSpace' , extent);
+    figures[i].moveDown = extent;
+  }
 }
 
 // buildFigure parses a complete figure as defined by the figNrs and
@@ -4992,13 +5046,21 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
     if (bareFigBase != '') {
       var splitLR = figString.split(bareFigBase);
     } else var splitLR = Array(figString);
+    // start with an empty set of rolls
+    for (var i = 0; i < fig[figNr].rolls.length; i++) {
+      rollPatterns[i] = '';
+    }
     // Find the roll patterns
     regEx = /[\+<\~\^\>]+/g;
     rollPatterns[0] = splitLR[0].replace(regEx, '');
     if (splitLR.length > 1) {
       moreRolls = splitLR[1].replace(regEx, '').split(')');
       for (var i = 0; i < moreRolls.length; i++) {
-        rollPatterns[i + 1] = moreRolls[i].replace(/\(/g, '');
+        if (moreRolls[i].match(/\(/)) {
+          rollPatterns[i + 1] = moreRolls[i].replace(/\(/g, '');
+        } else {
+          rollPatterns[fig[figNr].rolls.length - 1] = moreRolls[i];
+        }
       }
     }
     // Parse the roll patterns and find out where to put rolls, snaps and spins
@@ -5012,7 +5074,7 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
       extent = 0;
       var subRoll = 0;
       var switchRoll = '';
-      if (rollPattern) {
+      if (rollPattern != '') {
         for (j = 0; j < rollPattern.length; j++) {
           switch (rollPattern.charAt(j)) {
           // Long line before or after roll, twice the length of the same pattern in figures.js
@@ -5081,9 +5143,7 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
                 var startJ = j;
                 stops = 0;
                 // When there was a roll before, add a line first
-// Modif GG Start
-//                if (extent > 0) roll[i].push({'type':'line', 'extent':2, 'load':NegLoad})
-//alertMsgs.push(' rollPattern : ' + rollPattern + ' bareFigBase : ' + bareFigBase);
+
                 if (extent > 0) {
                   var regex = /[fs]/;
                   if (regex.test(rollPattern)) {                 
@@ -5092,7 +5152,7 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
                     roll[i].push({'type':'line', 'extent':1, 'load':NegLoad})
                   }
                 }
-// Modif GG End
+
                 if (parseInt(rollPattern.charAt(j + 1))) {
                   stops = parseInt(rollPattern.charAt(j + 1));
                   extent = parseInt(rollPattern.charAt(j)) * (360 / stops);
@@ -5182,23 +5242,6 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
         }
       }
     }
-    // We now have all the roll patterns parsed but the numbering may not
-    // match the numbering of the fig[i].rolls because rolls may be missing.
-    // This is inconvenient and confusing, so we'll now adjust the numbering when necessary
-    rollsSkip = fig[figNr].rolls.length - rollPatterns.length;
-    // Only do something if rolls have been skipped
-    if (rollsSkip > 0) {
-      for (var i = (fig[figNr].rolls.length - 1); i > rollsSkip; i--) {
-        roll[i] = roll[i - rollsSkip];
-        rollSums[i] = rollSums[i - rollsSkip];
-        rollInfo[i] = rollInfo[i - rollsSkip];
-      }
-      for (var i = rollsSkip; i > 0; i--) {
-        roll[i] = [];
-        rollSums[i] = 0;
-        rollInfo[i] = {'gap':[0], 'pattern':[]};
-      }
-    }
     // Set the number of the first roll for drawing later on
     // To do this we check the fig.pattern for a roll match before the base
     if (fig[figNr].pattern.match(/^[\+\-][_\^\&]/)) {
@@ -5285,9 +5328,19 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
   // Build the start of figure symbol
   paths = buildShape('FigStart', seqNr, paths);
   for (var i = 0; i < figureDraw.length; i++) {
-  // First sum continuous lines in the figure
+    // set correct load
+    if ((figureDraw[i] == figpat.longforward) || (figureDraw[i] == figpat.forward)) {
+      if ((Attitude != 90) && (Attitude != 270)) {
+        if ((Attitude > 90) && (Attitude < 270)) {
+          NegLoad = 1;
+        } else {
+          NegLoad = 0;
+        }
+      }
+    }
+    // Sum continuous lines in the figure
     switch (figureDraw.charAt(i)) {
-  // Make long lines
+      // Make long lines
       case (figpat.longforward):
         lineSum = lineSum + 4;
         lineDraw = true;
@@ -5296,7 +5349,7 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
         lineSum = lineSum + 3;
         lineDraw = true;
         break;
-        // Make short lines
+      // Make short lines
       case (figpat.forward):
       case (userpat.rollextshort):
         lineSum++;
@@ -5468,6 +5521,14 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
                 } else changeDir(Math.abs(rollSum));
                 rollSum = 0;
                 attChanged = 180 - attChanged;
+              }
+              // check correct load after non-vertical rolls
+              if ((Attitude != 90) && (Attitude != 270)) {
+                if ((Attitude > 90) && (Attitude < 270)) {
+                  NegLoad = 1;
+                } else {
+                  NegLoad = 0;
+                }
               }
             }
           }
@@ -5753,32 +5814,79 @@ function checkQRollSwitch (figString, figStringIndex, pattern, seqNr, rollSum, f
     } else changeDir(Math.abs(rollSum));
     // find the next angle. Usually this will occur before a new rolling
     // element EXCEPT for tailslides and hammerheads
+    var nextAngle = 0;
     var nextRollExtent = 0;
+    var nextRollExtentPrev = 0;
+    var switchVert = false;
+    var doubleBump = figString.match (/(pb|b)(pb|b)/);
+    if (rollnr == 0) var firstRoll = true; else var firstRoll = false;
     for (var i = fdIndex + 1; i < figureDraw.length; i++) {
       if (figureDraw[i] in drawAngles) {
-        // found an angle, break the loop
-        var nextAngle = drawAngles[figureDraw[i]];
-        break;
+        // found an angle
+        nextAngle = drawAngles[figureDraw[i]];
+        // break the loop when the angle doesn't bring us back to vertical
+        if ((nextAngle / 180) != parseInt (nextAngle / 180)) {
+          break;
+        }
       } else if (figureDraw[i] == figpat.fullroll) {
         // see if there are more rolls before any angle. This happens on
         // tailslides and hammers and influences the direction in which we
         // will have to turn to end up correct at the end of the figure
         rollnr++;
+        nextRollExtentPrev = nextRollExtent;
         for (var j = 0; j < roll[rollnr].length; j++) {
           if (roll[rollnr][j]['type'] != 'line') {
             nextRollExtent += parseInt(roll[rollnr][j]['extent']);
           }
         }
-      } else if ((figureDraw[i] == figpat.tailslidecanopy) || (figureDraw[i] == figpat.tailslidewheels)) {
+        // when the next roll is a 1/4 roll there is no need to continue.
+        // Special code for double bumps: HACK
+        // This may need to be made more generic in the future
+        // when one of the following rolls is a 1/4 we just care about
+        // the direction of this roll. It should make the next curve go
+        // in the correct direction.
+        // We know this routine will be called again for the next roll
+        if ((nextRollExtent / 180) != parseInt(nextRollExtent / 180)) {
+          if (doubleBump && firstRoll) {
+            if (rollnr == 2) {
+              nextRollExtent = nextRollExtentPrev;
+              break;
+            }
+            // see if there's a first part direction switcher (;> or ;^).
+            // Remove when applied
+            var regex = /;[>^](b|pb|ib|ipb)/;
+            if (figString.match (regex)) {
+              var switchDir = true;
+              figString = figString.replace(regex, "$1");
+            } else var switchDir = false;
+            if ((Direction == 0) || (Direction == 180)) {
+              if (((((Attitude == 90) == (Direction == 0)) == (nextAngle > 0)) == goRight) != switchDir) {
+                changeDir(180);
+              }
+              updateGoRight = false;
+              goFront = !goFront;
+            } else {
+              if (((((Attitude == 90) == (Direction == 270)) == (nextAngle > 0)) == goFront) != switchDir) {
+                changeDir(180);
+              }
+            }
+            return figString;
+          } else {
+            // The exit direction will be based on this roll next time
+            // checkQRollSwitch is called
+            break;
+          }
+            
+        } else {
+          // we have continued to the next vertical roll, so the vertical
+          // has switched
+          switchVert = !switchVert;
+        }
+
+      } else if (figureDraw[i] == figpat.hammer) {
         // set a 'virtual' roll for the tailslides. HARDCODED
         nextRollExtent += 180;
       }
-    }
-    // if there is a nextRollextent (on hammers and tailslides) apply it
-    if (nextRollExtent != 0) {
-      changeDir(nextRollExtent);
-      // if this is also a 1/4 roll, switch goFront
-      if ((nextRollExtent / 180) != parseInt(nextRollExtent / 180)) goFront = !goFront;
     }
     if ((Direction == 0) || (Direction == 180)) {
       // change roll direction depending on the X direction we want to
@@ -5788,7 +5896,7 @@ function checkQRollSwitch (figString, figStringIndex, pattern, seqNr, rollSum, f
       if (Math.abs(nextAngle) > 180) nextAngle = -nextAngle;
       // multiple switches decide if we should go right or left
       // each switch toggles the decision
-      if ((((Attitude == 90) == (Direction == 0)) == (nextAngle > 0)) == goRight) {
+      if (((((Attitude == 90) == (Direction == 0)) == (nextAngle > 0)) == goRight) != switchVert) {
         changeDir(180);
       }
       if (regexSwitchDirX.test (figString)) {
@@ -5801,6 +5909,14 @@ function checkQRollSwitch (figString, figStringIndex, pattern, seqNr, rollSum, f
       if (OLANBumpBugCheck) {
         if (regexOLANBumpBug.test(pattern)) {
           OLANBumpBugFigs.push (seqNr);
+          // autocorrect loaded OLAN sequence when applicable
+          if (OLANSequence) {
+            if (regexSwitchDirX.test (figString)) {
+              figures[figStringIndex].string = figures[figStringIndex].string.replace(regexSwitchDirX, '');
+            } else {
+              figures[figStringIndex].string = figures[figStringIndex].string + userpat.switchDirX;
+            }
+          }
         }
       }
       // just changed from Y to X axis. Make the default direction for
@@ -5808,17 +5924,36 @@ function checkQRollSwitch (figString, figStringIndex, pattern, seqNr, rollSum, f
       // will keep e.g. 4b4 the same when starting on X or Y axis
       goFront = !goFront;
     } else {
-      // change roll direction to go toward the viewer by default
-      if ((((Attitude == 90) == (Direction == 90)) == (nextAngle < 0)) == goFront) {
+      // count angles greater than 180 as negative. e.g. Rev P-loop will
+      // first go the 'wrong' way before ending the 'right' way
+      if (Math.abs(nextAngle) > 180) nextAngle = -nextAngle;
+      // autocorrect loaded OLAN sequence when applicable
+      if (OLANSequence && !goFront) {
+        goFront = true;
+        if (regexSwitchDirY.test (figString)) {
+          figures[figStringIndex].string = figures[figStringIndex].string.replace(regexSwitchDirY, '');
+        } else {
+          figures[figStringIndex].string = figures[figStringIndex].string + userpat.switchDirY;
+        }
+      }
+      if (((((Attitude == 90) == (Direction == 90)) == (nextAngle < 0)) == goFront) != switchVert) {
         changeDir(180);
       }      
       if (regexSwitchDirY.test (figString)) {
         changeDir(180);
         figures[figStringIndex].switchY = true;
         if (nextRollExtent == 0) figString = figString.replace(regexSwitchDirY, '');
-      } else figures[figStringIndex].switchY = false;
+      } else {
+        figures[figStringIndex].switchY = false;
+      }
+      // check for the OLAN N direction bug
+      if (OLANBumpBugCheck && figures[figStringIndex].switchX) {
+        if (regexOLANNBug.test(pattern)) {
+          OLANNBugFigs.push (seqNr);
+        }
+      }
     }
-    if (nextRollExtent != 0) changeDir (-nextRollExtent);
+    if ((nextRollExtent / 180) == parseInt(nextRollExtent / 180)) changeDir (-nextRollExtent);
   }
   return figString;
 }
@@ -5835,17 +5970,22 @@ function updateSequence (figNr, figure, replace) {
   if (figNr > -1) var string = ''; else var string = figure + separator;
   for (var i = 0; i < figures.length; i++) {
     if (i == figNr) {
-      // Handle (multiple) moveto or curveto
-      if ((figure.match(regexMoveTo) || figure.match(regexCurveTo)) && !replace) {
-        if (figures[i].string.match(regexMoveTo) || figures[i].string.match(regexCurveTo)) {
-          var dxdy1 = figures[i].string.replace(/[^0-9\,\-]/g, '').split(',');
-          var dxdy2 = figure.replace(/[^0-9\,\-]/g, '').split(',');
-          var dx = parseInt(dxdy1[0]) + parseInt(dxdy2[0]);
-          var dy = parseInt(dxdy1[1]) + parseInt(dxdy2[1]);
-          figure = '[' + dx + ',' + dy + ']';
-          replace = true;
+      if (!replace) {
+        // Handle (multiple) moveto or curveto
+        if (figure.match(regexMoveTo) || figure.match(regexCurveTo)) {
+          if (figures[i].string.match(regexMoveTo) || figures[i].string.match(regexCurveTo)) {
+            var dxdy1 = figures[i].string.replace(/[^0-9\,\-]/g, '').split(',');
+            var dxdy2 = figure.replace(/[^0-9\,\-]/g, '').split(',');
+            var dx = parseInt(dxdy1[0]) + parseInt(dxdy2[0]);
+            var dy = parseInt(dxdy1[1]) + parseInt(dxdy2[1]);
+            figure = '[' + dx + ',' + dy + ']';
+            replace = true;
+          } else  if (figures[i].string.match(regexMoveForward) || figures[i].string.match(regexMoveDown)) {
+            replace = true;
+          }
         }
       }
+          
       if (!replace) {
         string += figures[i].string + ' ';
       }
@@ -5895,7 +6035,7 @@ function parseSequence () {
   }
   // See if there is a y-axis flip symbol and activate it, except when 
   // it matches the subSequence code which is similar (/ or //)
-  if (activeSequence.text.replace(' '+userpat.subSequence+' ','').indexOf(userpat.flipYaxis) > -1) {
+  if (activeSequence.text.match(regexFlipYAxis)) {
     setYAxisOffset (180 - yAxisOffset);
   }
   // Get the split string from activeSequence
@@ -5938,7 +6078,7 @@ function parseSequence () {
     figure = figure.replace (regexLongForward, userpat.forward+userpat.forward+userpat.forward);
     
     // Parse out the instructions that are for drawing B and C forms only
-    if (figure.match(regexDrawInstr) || (figure.replace(regexMoveForward, '').length == 0) || (figure == userpat.subSequence)) {
+    if (figure.match(regexDrawInstr) || (figure.replace(regexMoveForward, '').length == 0) || (figure.replace(regexMoveDown, '').length == 0) || (figure == userpat.subSequence)) {
       var onlyDraw = true;
       if (figure.charAt(0) == userpat.moveto) {
         // Move to new position
@@ -5959,6 +6099,14 @@ function parseSequence () {
           buildMoveForward (parseInt(moveFwd) + moveFwd.length - moveFwd.match(/[0-9]*/).length - 1, i);
         } else {
           buildMoveForward (moveFwd.length, i);
+        }
+      } else if (regexMoveDown.test(figure)) {
+        // Move down without connecting line
+        var moveDn = figure.match(regexMoveDown)[0];
+        if (parseInt (moveDn)) {
+          buildMoveDown (parseInt(moveDn) + moveDn.length - moveDn.match(/[0-9]*/).length - 1, i);
+        } else {
+          buildMoveDown (moveDn.length, i);
         }
       } else if (figure.charAt(figure.length - 1) == userpat.scale) {
         // Change scale
@@ -6020,8 +6168,9 @@ function parseSequence () {
         // end the base with a '+' if there is no '-'
         if (base.charAt(base.length - 1) != '-') base = base + '+';
       }
-      // Autocorrect the entry attitude for figures after the first (sub)figure where necessary
-      if (!firstFigure) {
+      // Autocorrect the entry attitude for figures after the first
+      // (sub)figure where necessary
+      if (!(firstFigure || subSequence)) {
       // Start upright
         if (Attitude == 0) {
           while (base.charAt(0) == '-') {
@@ -6037,7 +6186,7 @@ function parseSequence () {
         }
       }
       // Handle turns and rolling turns. They do have numbers in the base
-      if ((base.charAt(1) == 'j') || ((base.charAt(1) == 'i') && (base.charAt(2) == 'j'))) {
+      if (base.match(/^.j/)) {
         base = figure.replace(/[^a-z0-9\-\+]+/g, '');
         if (base.charAt(0) != '-') base = '+' + base;
         if (base.charAt(base.length - 1) != '-') base = base + '+'
@@ -6047,7 +6196,7 @@ function parseSequence () {
       if (figNrs) {
         // When the first figure starts negative we make sure the
         // Attitude is inverted and the DRAWING direction stays the same
-        if ((firstFigure) && (base.charAt(0) == '-')) {
+        if ((firstFigure || subSequence) && (base.charAt(0) == '-')) {
           Attitude = 180;
           changeDir(-180);
         }
@@ -6061,7 +6210,13 @@ function parseSequence () {
         if (regexConnector.test(figure)) {
           connectors++;
           figures[i].connector = true;
+        } else if (figures[i].unknownFigureLetter) {
+          if (figures[i].unknownFigureLetter == 'X') {
+            connectors++;
+            figures[i].connector = true;
+          }
         }
+            
         // check if this is the first figure of a subSequence
         if (subSequence) {
           figures[i].subSequence = true;
@@ -6077,18 +6232,49 @@ function parseSequence () {
           scale = 1;
         }
         // Crossbox entry 'figure'
-      } else if ((firstFigure) && (base == '+ej+')) {
+      } else if (base == '+ej+') {
         Direction = 270;
-        updateSequenceOptions ('ej');
+        if (firstFigure) {
+          updateSequenceOptions ('ej');
+        } else {
+          subSequence = true;
+        }
         // Crossbox away entry 'figure'
-      } else if ((firstFigure) && (base == '+eja+')) {
+      } else if (base == '+eja+') {
         Direction = 90;
-        updateSequenceOptions ('eja');
+        if (firstFigure) {
+          updateSequenceOptions ('eja');
+        } else {
+          subSequence = true;
+        }
         // Downwind entry 'figure'
-      } else if ((firstFigure) && (base == '+ed+')) {
-        Direction = 180 - Direction;
-        goRight = !goRight;
-        updateSequenceOptions ('ed');
+      } else if (base == '+ed+') {
+        if (activeForm == 'C') {
+          Direction = 0;
+          goRight = true;
+        } else {
+          Direction = 180;
+          goRight = false;
+        }
+        if (firstFigure) {
+          updateSequenceOptions ('ed');
+        } else {
+          subSequence = true;
+        }
+        // Upwind entry 'figure'
+      } else if (base == '+eu+') {
+        if (activeForm == 'C') {
+          Direction = 180;
+          goRight = false;
+        } else {
+          Direction = 0;
+          goRight = true;
+        }
+        if (firstFigure) {
+//          updateSequenceOptions ('eu');
+        } else {
+          subSequence = true;
+        }
       } else if (firstFigure) {
         updateSequenceOptions ('');
       } else {
@@ -6106,8 +6292,9 @@ function parseSequence () {
   if (rulesActive) checkRules ();
   // check for any OLAN Humpty Bump bug messages
   if (OLANBumpBugCheck) {
+    var warning = '';
     if (OLANBumpBugFigs.length >= 1) {
-      var warning = 'Fig ';
+      warning = 'Fig ';
       for (var i = 0; i < OLANBumpBugFigs.length; i++) {
         warning += OLANBumpBugFigs[i];
         if (i < (OLANBumpBugFigs.length -1)) warning += ' and ';
@@ -6115,8 +6302,21 @@ function parseSequence () {
       if (OLANBumpBugFigs.length < 2) {
         warning += userText.OLANBumpBugWarning;
       } else warning += userText.OLANBumpBugWarningMulti;
-      alertBox(warning);
+    }
+    if (OLANNBugFigs.length >= 1) {
+      warning += 'Fig ';
+      for (var i = 0; i < OLANNBugFigs.length; i++) {
+        warning += OLANNBugFigs[i];
+        if (i < (OLANNBugFigs.length -1)) warning += ' and ';
+      }
+      if (OLANNBugFigs.length < 2) {
+        warning += userText.OLANNBugWarning;
+      } else warning += userText.OLANNBugWarningMulti;
+    }
+    if (warning != '') {
+      alertBox(warning + userText.OLANBugWarningFooter);
       OLANBumpBugFigs = [];
+      OLANNBugFigs = [];
       OLANBumpBugCheck = false;
     }
   }
