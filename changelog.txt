@@ -1,3 +1,26 @@
+1.3.0
+* updated connector and Free Unknown Figure handling
+* added figure queue functions
+* added print dialog with several options and improved print scaling
+* improved Form A layout, removed fig start numbers
+* added (optional) sequence string to Form B and C print
+* added option to remove Mini Form A from form B
+* fixed 90/270 turn direction bug on Form C
+* added Check Sequence window with logging
+* added full support for IAC style forms
+* added checking of multiple sequences at a time
+* added browser version and compatibility checking
+* added figures information to .seq file for export to Acro etc.
+* improved rules/category/program selection handling
+* added fig nrs to sequence check reporting and logging for min/max/repeat
+* improved handling of multiple drag & drop of same figure
+* added French rules and extended rule parsing options
+
+1.2.4
+* removed several bugs
+* improved OLAN compatibility and figure direction logic
+* added automatic update of OLAN string to OpenAero string
+
 1.2.3
 * changed drawing logic concerning roll direction to be in line with OLAN
 * added HTML5 appcache functionality to make OpenAero available offline wihout manual installation and improve update handling

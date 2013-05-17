@@ -1,7 +1,6 @@
 CACHE MANIFEST
-# OpenAero Appcache version 1.2.4.1
+# OpenAero Appcache version 1.3.0.2
 about.html
-allowed.js
 arestisystem.html
 buttons/smallMinus.png
 buttons/switchX.png
@@ -20,6 +19,7 @@ buttons/trash.png
 buttons/connector.png
 buttons/magmin.png
 buttons/subsequence.png
+buttons/switchFirstRoll.png
 buttons/plus.png
 buttons/minus.png
 buttons/mask.png
@@ -59,5 +59,11 @@ mobile.css
 OpenAero.css
 OpenAero.html
 OpenAero.js
+rules/rules13.js
+rules/rules13-civa.js
+rules/rules13-baea.js
+rules/rules13-france.js
+rules/rules13-vink.js
+vkbeautify.js
 NETWORK: 
 openaero.php

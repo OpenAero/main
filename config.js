@@ -1,4 +1,4 @@
-// config.js 1.2.4
+// config.js 1.3.0
 
 // This file is part of OpenAero.
 
@@ -34,12 +34,15 @@
 // Define active version number of OpenAero
 // **************
 
-var version = '1.2.4';
+var version = '1.3.0';
 var versionNew = '<strong>OpenAero has been upgraded to version ' +
   version + '</strong><br>New features:<ul>' +
-  '<li>Improved compatibility with OLAN</li>' +
-  '<li>Several bugs resolved</li>' +
-  '<li>Some sequences may look different from OpenAero 1.2.3 or earlier!</li>' +
+  '<li>Figure queue</li>' +
+  '<li>Improved Free Unknown handling</li>' +
+  '<li>New options for printing/saving</li>' +
+  '<li>Added IAC style forms</li>' +
+  '<li>Added French sequence checking rules</li>' +
+  '<li>Multiple sequence checking (for contest organisers)</li>' +
   '</ul>';
 
 // define the labels (=input field ids) for saving/loading sequences
@@ -88,6 +91,10 @@ var scaleLine = {'x':1, 'y':1};
 var numberInCircle = false;
 // define whether to show curves in perspective on Y axis
 var curvePerspective = true;
+// show mini Form A on Form B
+var miniFormA = true;
+// define whether to draw IAC style forms by default
+var iacForms = false;
 
 // how far apart the starts of figures should at least be
 var minFigStartDist = lineElement * 3;
@@ -145,15 +152,16 @@ style['corrfill'] = 'stroke: red; stroke-width: 2px; fill: red;';
 // Roll font size
 rollFontSize = 14;
 // Roll text style
-style['rollText'] = 'font-family: sans; font-size: ' + rollFontSize +
-  'px; stroke: red; stroke-width: 0.5px; fill: red;';
-// Modif GG Start
-// Numero de Figure
-style['figNbr_09'] = 'font-family: verdana, helvetica, sans; font-size: 14px;  font-weight: bold; fill: black;';
-style['figNbr_10'] = 'font-family: verdana, helvetica, sans; font-size: 12px;  font-weight: bold; fill: black;';
-// Modif GG End
+style['rollText'] = 'font-family: arial, sans; font-size: ' +
+  rollFontSize + 'px; font-weight: bold; fill: red;';
+// Figure Number
+style['figNbr_09'] = 'font-family: verdana, helvetica, sans; font-size: 14px; font-weight: bold; fill: black;';
+style['figNbr_10'] = 'font-family: verdana, helvetica, sans; font-size: 12px; font-weight: bold; fill: black;';
 // Text block style
-style['textBlock'] = 'font-family: sans; font-size: 14px; fill: black;'; 
+style['textBlock'] = 'font-family: verdana, helvetica, sans; font-size: 14px; fill: black;';
+style['textBlockBorder'] = 'stroke: black; stroke-width: 1px; fill: none;';
+style['textBlockBorderBold'] = 'stroke: black; stroke-width: 2px; fill: none;';
+style['textBlockBorderBoldRed'] = 'stroke: red; stroke-width: 2px; fill: none;';
 // Mini Form A styles
 style['miniFormA'] = 'font-family: verdana, helvetica, sans; font-size: 10px; fill: black;';
 style['miniFormATotal'] = 'font-family: verdana, helvetica, sans; font-size: 16px; font-weight: bold; fill: black;';
@@ -173,6 +181,8 @@ style['FormLine'] = 'stroke: black; stroke-width: 1px; fill: none;';
 style['FormLineBold'] = 'stroke: black; stroke-width: 4px; fill: none;';
 // Print styles
 style['FormBackground'] = 'fill: white;';
+style['sequenceString'] = 'font-family: verdana, helvetica, sans; font-size: 12px; color: blue;';
+style['windArrow'] = 'stroke: black; stroke-width: 1.5px; fill: white;';
 
 // ***************
 // Set png masks for buttons
@@ -263,7 +273,12 @@ var userText = [];
 userText.ac = 'A/C';
 userText.addingFigure = 'Add new figure'; 
 userText.autocorrectRoll = ':Added autocorrect roll';
+userText.cancel = 'Cancel';
 userText.category = 'Category';
+userText.checkMulti = 'Check multiple sequences';
+userText.checkSequence = 'Sequence check result';
+userText.checkingRules = 'Sequence checking rules';
+userText.chooseFiles = 'Choose your files here:';
 userText.chooseLogo = 'Choose logo';
 userText.clickAddFigure = 'Click to add figure';
 userText.clickChangeFigure = 'Click to change/add figure';
@@ -279,12 +294,19 @@ userText.downloadWarning = 'File saving works best through the OpenAero ' +
   'website (<a href="http://www.openaero.net">www.openaero.net</a>) when ' +
   'you are online or by running OpenAero on your own server.';
 userText.editingFigure = 'Edit figure ';
-userText.fileOpeningNotSupported = 'File opening is not supported in this browser.';
+userText.fileOpeningNotSupported = 'File opening is not supported in ' +
+  'this browser. Some functions have been disabled.';
 userText.figSelectorAddAfter = 'Add new figure after active';
 userText.figSelectorAddBefore = 'Add new figure before active';
 userText.figSelectorAddEnd = 'Add new figure at end';
 userText.figSelectorAddStart = 'Add new figure at start';
 userText.figSelectorReplace = 'Replace active figure';
+userText.figureAlreadyInQueue ='This figure is already in the queue';
+userText.figureQueue = 'Figure Queue';
+userText.getChrome = 'For optimum use of OpenAero, please download the ' +
+  'latest version of the <a href="https://www.google.com/intl/en/chrome/browser/">' +
+  'Google Chrome</a> browser.';
+userText.iacForms = 'Print forms IAC style';
 userText.illegalAtEnd = 'Illegal figure at the end';
 userText.illegalBefore = 'Illegal figure before figure ';
 userText.illegalFig = ' is illegal, try ';
@@ -297,6 +319,9 @@ userText.noCookies = 'It seems cookies are disabled in your browser. ' +
   'To enable cookies in the Chrome browser, please copy the following ' +
   'url to your address bar:<br />' + 
   'chrome://chrome/settings/content';
+userText.noRules = 'No sequence validity checking rules available.';
+userText.numberInCircle = 'Figure numbers in circle';
+userText.ok = 'OK';
 // OLANBumpBugWarning can be removed (with asociated code in OpenAero.js)
 // in 2015
 userText.OLANBumpBugWarning = ' has been detected to be a Humpty Bump ' +
@@ -311,37 +336,57 @@ userText.OLANBugWarningFooter = '<font color=red>These figures or the ' +
   'ones following may be drawn differently in OLAN and OpenAero!</font> ' +
   'Please check correct direction.<br>' +
   'This message will not be shown for this sequence again.';
+userText.orFileDrop = 'Or drag & drop your files here';
 userText.pilot = 'pilot';
+userText.pilotNo = 'Pilot\'s No.';
 userText.pilotnumberIAC1 = "pilot\'s";
 userText.pilotnumberIAC2 = "number";
 userText.pleaseWaitStartup = 'Please wait while OpenAero is starting up...';
+userText.print = 'Print';
+userText.printDialog = 'Print options';
+userText.printExplain = 'You can set the options for printing below.<br>' +
+  'To <i>save</i> your forms, click <strong>Print</strong> and then choose ' +
+  '<i>destination</i> <strong>Save as PDF</strong> in the browser\'s ' +
+  'print menu.';
 userText.printForms = 'OpenAero printing forms...';
+userText.printMiniFormA = 'Print mini Form A on Form B';
+userText.printString = 'Print sequence string';
+userText.program = 'Program';
 userText.programme = 'Programme';
+userText.queueEmpty = 'There are no figures in the queue to save';
+userText.queueNotSaved = 'The queue figures have NOT been saved';
+userText.queueSaved = 'The queue figures have been saved';
 userText.removeLogo = 'Remove logo';
 userText.rollPos = ['First roll position', 'Second roll position', 'Third roll position', 'Fourth roll position'];
 userText.runFromFile = 'It seems you are running OpenAero directly from ' +
   'a file. As of version 1.2.3 (february 2013) this is no longer ' +
-  'recommended.<br />' +
+  'recommended as some functions will be unavailable.<br />' +
   'Please go to <a href="http://openaero.net">openaero.net</a>. ' +
   'OpenAero will automatically install in your browser and will also ' +
   'be available offline.';
 userText.saveAsURL = 'The link presented below contains your complete ' +
   'sequence. You can copy it to email, bookmark it etc...';
+userText.saveAsURLTitle = 'Save sequence as link';
 userText.saveFileAsAlert = 'To download your file, right-click on this ' +
   'text and choose "Save link as..." or "Save file as...".';
+userText.selectCategoryFirst = 'Select Category first';
+userText.selectRulesFirst = 'Select Rules first';
 userText.separateFigures = 'This will remove all sequence position ' +
   'formatting. Are you sure you want to continue?';
+userText.sequenceCorrect = 'Sequence is correct';
 userText.sequenceNotSavedWarning = 'Your current sequence has not been ' +
   'saved.\nAre you sure you want to open a new one?';
 userText.setUpright = ':set upright entry';
 userText.setInverted = ':set inverted entry';
+userText.showLog = 'Show log';
 userText.tooltip = [];
+userText.tooltip.switchFirstRoll = 'Switch first roll direction';
 userText.tooltip.switchX = 'Switch X exit direction';
 userText.tooltip.switchY = 'Switch Y exit direction';
 userText.tooltip.deleteFig = 'Delete active figure';
 userText.tooltip.magMin = 'Make figure smaller';
 userText.tooltip.magPlus = 'Make figure larger';
-userText.tooltip.moveNoLine = 'Move figure forward';
+userText.tooltip.moveForward = 'Move figure forward without a line';
 userText.tooltip.straightLine = 'Move figure to a new position with a straight line';
 userText.tooltip.curvedLine = 'Move figure to a new position with a curved line';
 userText.tooltip.subSequence = 'Start a sub sequence from this figure';
@@ -356,3 +401,4 @@ userText.warningPre124 = 'The file you just opened was created with an ' +
   'Humpty Bump directions are correct. When you save this sequence ' +
   'again this warning will not be shown any more.'; 
 userText.wind = 'wind/vent';
+userText.windIAC = 'wind direction';

@@ -1,5 +1,5 @@
 /*
- OpenAero.css 1.2.3
+ OpenAero.css 1.3.0
  This file is part of OpenAero.
 
   OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -79,12 +79,27 @@ textarea {
   border-bottom: 1px solid #aaa;
   border-radius: 3px;
 }
+.fileDrop {
+  left: 0px;
+  right: 0px;
+  height: 6em;
+  border: 5px dashed #aaa;
+  border-radius: 20px;
+  background-color: #fff;
+  color: #aaa;
+  font-size: 2em;
+  text-align: center;
+  padding: 2em;
+}
 .clearBoth {
   clear: both;
 }
 .clearSpace {
   clear: both;
   height: 2px;
+}
+.noDisplay {
+  display: none;
 }
 #figureSvgContainer {
   position: absolute;
@@ -221,7 +236,7 @@ textarea {
 #mainMenu ul {
   float: left;
 }
-.openSequence {
+.openFile {
   position: relative;
 }
 #mainMenu input {
@@ -252,8 +267,8 @@ textarea {
 #chooseLogo svg {
   margin: 10px 10px 0 0;
 }
-/*alertBox styling*/
-#alertBox {
+/*alertBox and print dialog styling*/
+#alertBox,#printDialog,#checkSequence,#checkMulti {
   position: absolute;
   z-index: 999;
   top: 30%;
@@ -266,20 +281,34 @@ textarea {
   -webkit-box-shadow: 5px 5px 8px rgba(0, 0, 0, 0.5);
   box-shadow: 5px 5px 8px rgba(0, 0, 0, 0.5);
 }
-#alertBox div {
+#checkSequence {
+  top: 10%;
+}
+.textButton {
+  float:left;
+  background: #55b;
+  background: -webkit-linear-gradient(top, #66d 0%,#55b 100%); /* Chrome10+,Safari5.1+ */
+  background: linear-gradient(to bottom, #66d 0%,#55b 100%); /* W3C */
+  color: white;
+  font-weight: bold;
+  border: 2px solid #bcf;
+  border-radius: 5px;
+  padding: 2px;
+  margin: 2px;
+  text-decoration: none;
+  cursor: pointer;
+}
+.textButton:hover {
+  background: #77d;
+  text-decoration: none;
+}
+#alertBox div,#printDialog div,#checkSequence div,#checkMulti div {
   overflow: auto;
   margin: 5px;
   padding: 2px;
 }
-#alertBox #close {
+.close {
   float: right;
-  border: 1px solid #000;
-  border-radius: 2px;
-  text-decoration: none;
-}
-#alertBox #close:hover {
-  background: #fff;
-  text-decoration: none;
 }
 #alertBoxOverlay {
 /* set font for noscript warning */
@@ -306,6 +335,19 @@ textarea {
   position: absolute;
   top: 30%;
 }
+.boxTitle {
+  display: block;
+  margin: -2px -1px 5px -1px;
+  padding: 1px 10px 1px 10px;
+  background: #ff9050;
+  background: -webkit-linear-gradient(top, #ffa058 0%,#ff8048 100%); /* Chrome10+,Safari5.1+ */
+  background: linear-gradient(to bottom, #ffa058 0%,#ff8048 100%); /* W3C */
+  color: #fff;
+  font-weight: bold;
+  border-bottom: 1px solid white;
+  border-radius: 5px 5px 0 0;
+}
+
 #saveFileFormDiv {
   width:1px;
   height:1px;
@@ -410,6 +452,11 @@ textarea {
   border-radius: 3px;
   cursor: pointer;
 }
+#unknownFigureChooser {
+	float: left;
+  width: 144px;
+  overflow-x: hidden;
+}
 .display {
   display: block;
 }
@@ -446,6 +493,9 @@ textarea {
   height: 32px;
   margin: 1px;
 }
+#switchFirstRoll {
+  background-image: url('buttons/switchFirstRoll.png');
+}
 #switchX {
   background-image: url('buttons/switchX.png');
 }
@@ -461,7 +511,7 @@ textarea {
 #magPlus {
   background-image: url('buttons/magplus.png');
 }
-#moveNoLine {
+#moveForward {
   background-image: url('buttons/moveforward.png');
 }
 #straightLine {
@@ -616,6 +666,7 @@ a.tooltip span {
   float: right;
 }
 table#figureChooserTable td {
+  position: relative;
   padding: 5px;
   border: 2px solid #eee;
   border-radius: 5px;
@@ -626,6 +677,18 @@ table#figureChooserTable td.selected {
 table#figureChooserTable td.matchingFigure {
   box-shadow:inset 4px 4px #a0ff60;
 }
+.removeFromQueueButton {
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  opacity: 0.3;
+  transition: opacity .1s ease-in-out;
+  -moz-transition: opacity .1s ease-in-out;
+  -webkit-transition: opacity .1s ease-in-out;
+}
+.removeFromQueueButton:hover {
+  opacity: 1;
+}
 /* main menu theming */
 
 /*MENU DROPDOWN FUNCTIONALITY*/
@@ -634,24 +697,35 @@ table#figureChooserTable td.matchingFigure {
 /*set up a tags*/ 
 #menu a{display:block;}
 /*position level 1 links horizontally*/ 
-#menu li{display:block; float:left;}
+#menu li {
+  display:block;
+  float:left;
+}
 /*undo previous style for level 2 links*/
-#menu li ul li{float:none;}
+#menu li ul li {
+  float:none;
+}
 /*position level 2 links vertically and hide*/ 
-#menu li ul{
+#menu li ul {
   display:none;
   position:absolute;
   z-index:10;
   -webkit-transform-style: preserve-3d;
-  margin-top: -2px;
+  margin-top: -3px; /* prevents menu disappearing on FF */
   border-right: 1px solid #aaa;
   border-bottom: 1px solid #aaa;
   -moz-box-shadow: 5px 5px 8px rgba(0, 0, 0, 0.5);
   -webkit-box-shadow: 5px 5px 8px rgba(0, 0, 0, 0.5);
   box-shadow: 5px 5px 8px rgba(0, 0, 0, 0.5);
+  background-color:#fbfbfb;
 }
 /*unhide level 2 links on li:hover from level 1*/ 
-#menu li:hover ul{display:block;}
+#menu li:hover ul {
+  display:block;
+}
+#menu li.active ul {
+  display:block;
+}
 /*undo previous style for level 3 links*/to
 #menu li ul li ul li{float:none;}
 /*position level 3 links vertically and hide*/ 
@@ -661,16 +735,17 @@ table#figureChooserTable td.matchingFigure {
   left:-162px;
   width:160px;
   z-index:10;
-  -webkit-transform-style:
-  preserve-3d;
+  -webkit-transform-style: preserve-3d;
   margin-top: -24px;
   border-right: 1px solid #aaa;
   border-bottom: 1px solid #aaa
 }
 /*don't unhide level 3 links on li:hover from level 1*/ 
 #menu li:hover ul li ul{display:none;}
+#menu li.active ul li ul{display:none;}
 /*unhide level 3 links on li:hover from level 2*/ 
 #menu li:hover ul li:hover ul{display:block;}
+#menu li.active ul li.active ul{display:block;}
 
 /*DROPDOWN STYLING:*/
 #menu {
@@ -679,15 +754,15 @@ table#figureChooserTable td.matchingFigure {
 #menu a {
   color:#00f;
   text-decoration: none;
-  padding:5px 10px 5px 10px;
- }
+  padding:5px 15px 5px 15px;
+}
 #menu a:hover {
   color:#03f;
 }
 #menu li {
   background-color:#fbfbfb;
 /*  border:solid 1px #CCC; */
-  margin-left:-1px
+  margin-left:-1px;
 }
 #menu li:hover {
   background-color:#ddf;
@@ -722,3 +797,5 @@ table#figureChooserTable td.matchingFigure {
   width: 100%;
   cursor: pointer;
 }
+
+/* printing styles are in OpenAero.js */
