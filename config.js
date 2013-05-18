@@ -34,7 +34,7 @@
 // Define active version number of OpenAero
 // **************
 
-var version = '1.3.0';
+var version = '1.3.1';
 var versionNew = '<strong>OpenAero has been upgraded to version ' +
   version + '</strong><br>New features:<ul>' +
   '<li>Figure queue</li>' +
@@ -43,6 +43,7 @@ var versionNew = '<strong>OpenAero has been upgraded to version ' +
   '<li>Added IAC style forms</li>' +
   '<li>Added French sequence checking rules</li>' +
   '<li>Multiple sequence checking (for contest organisers)</li>' +
+  '<li>Quick bugfix to correct form C for Y-to-Y axis 180 turns</li>' +
   '</ul>';
 
 // define the labels (=input field ids) for saving/loading sequences
