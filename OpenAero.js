@@ -1195,11 +1195,19 @@ function makeTurn (draw) {
     }
     changeDir (-dirChange);
   } else {
-    // towards viewer X-to-X axis
-    if (((Direction == 0) == (Attitude == 0)) == (activeForm != 'C')) {
-      sign = -sign;
-      rollDir = -rollDir;
-    }
+    if ((Direction == 0) || (Direction == 180)) {
+      // towards viewer X-to-X axis
+      if (((Direction == 0) == (Attitude == 0)) == (activeForm != 'C')) {
+        sign = -sign;
+        rollDir = -rollDir;
+      }
+    } else {
+      // according goRight Y-to-Y axis
+      if ((((Direction == 90) == (Attitude == 0)) != goRight ) == (activeForm != 'C')) {
+        sign = -sign;
+        rollDir = -rollDir;
+      }
+    }  
   }
   // Check if the exit direction is flipped
   if (draw.charAt(0) == userpat.moveforward) {
