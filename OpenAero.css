@@ -1,5 +1,5 @@
 /*
- OpenAero.css 1.3.0
+ OpenAero.css 1.3.2
  This file is part of OpenAero.
 
   OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -45,6 +45,10 @@ a:hover {
 /* Remove Firefox dotted outline */ 
 a:focus { 
   outline: none; 
+}
+hr {
+  margin: 1px;
+  padding: 0px;
 }
 img, svg, li {
   -webkit-touch-callout: none;
@@ -97,6 +101,9 @@ textarea {
 .clearSpace {
   clear: both;
   height: 2px;
+}
+.clearLeft {
+  clear: left;
 }
 .noDisplay {
   display: none;
@@ -250,10 +257,11 @@ textarea {
 }
 #sequenceTextContainer {
   position: relative;
+  margin-right: 12px;
+  left: 22px;
   font-family: monospace;
   font-size: 16px;
   padding: 2px;
-  width: 100%;
 }
 #sequenceTextClone {
   color: transparent;
@@ -268,7 +276,7 @@ textarea {
   margin: 10px 10px 0 0;
 }
 /*alertBox and print dialog styling*/
-#alertBox,#printDialog,#checkSequence,#checkMulti {
+.box {
   position: absolute;
   z-index: 999;
   top: 30%;
@@ -398,19 +406,22 @@ textarea {
 /*TAB SELECTOR FUNCTIONALITY*/
 .tabSelector {
   clear: both;
+  overflow: hidden;
 }
 .tabSelector ul {
   padding: 0 0 1px 0;
   margin: 0;
-  border-bottom:1px solid #888;
 }
 .tabSelector li {
   margin: 0px;
   padding: 2px;
-  display: inline;
+  clear: none;
+  float: left;
+  display: block;
   border-top: 1px solid white;
   border-right: 1px solid #888;
   border-radius: 5px 5px 0 0;
+  text-align: center;
 }
 .tabSelector a {
   text-decoration: none;
@@ -421,6 +432,7 @@ textarea {
   background: -webkit-linear-gradient(top, #c0c0c8, #e0e0e0);
   background: linear-gradient(top, #c0c0c8, #e0e0e0);
   color: #448;
+  border-bottom:1px solid #888;
 }
 .tabSelector .activeTab {
   background: #f4f4f4;
@@ -486,6 +498,7 @@ textarea {
   color: black;
   text-align: center;
 }
+
 /* buttons */
 .button {
   float: left;
@@ -767,6 +780,12 @@ table#figureChooserTable td.matchingFigure {
 #menu li:hover {
   background-color:#ddf;
 }
+
+/* Class select box */
+#class {
+  background: #ffc;
+}
+
 /*Combo input box*/
 .combo {
   position:relative;

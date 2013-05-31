@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--
-  index.html version 1.3.0
+  index.html version 1.3.2
   This file is part of OpenAero.
 
   OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -51,6 +51,7 @@
     <script src="rules/rules13-baea.js" type="text/javascript"></script>
     <script src="rules/rules13-france.js" type="text/javascript"></script>
     <script src="rules/rules13-vink.js" type="text/javascript"></script>
+    <script src="rules/rules13-glider-civa.js" type="text/javascript"></script>
     <!-- example sequences -->
     <script src="examples.js" type="text/javascript"></script>
     <!-- improve look of XML output -->
@@ -67,7 +68,7 @@
       </noscript>
     </div>
     <!-- alertBox -->
-    <div id="alertBox" class="noDisplay">
+    <div id="alertBox" class="box noDisplay">
       <span class="boxTitle" id="alertTitle">
       </span>
       <div id="alertMessage">
@@ -77,7 +78,7 @@
       </div>
     </div>
     <!-- print dialog -->
-    <div id="printDialog" class="noDisplay">
+    <div id="printDialog" class="box noDisplay">
       <span class="boxTitle">
         <script>document.write(userText.printDialog);</script>
       </span>
@@ -100,6 +101,10 @@
         <input type="checkbox" id="iacForms">
         <script>document.write(userText.iacForms);</script>
       </div>
+      <div>
+        <input type="checkbox" id="inverseForms">
+        <script>document.write(userText.inverseForms);</script>
+      </div>
       <span class="textButton" onClick="printAllForms();">
         <script>document.write(userText.print);</script>
       </span>
@@ -108,7 +113,7 @@
       </span>
     </div>
     <!-- check sequence -->
-    <div id="checkSequence" class="noDisplay">
+    <div id="checkSequence" class="box noDisplay">
       <span class="boxTitle">
         <script>document.write(userText.checkSequence);</script>
       </span>
@@ -121,7 +126,7 @@
       </span>
     </div>
     <!-- check multiple -->
-    <div id="checkMulti" class="noDisplay">
+    <div id="checkMulti" class="box noDisplay">
       <span class="boxTitle">
         <script>document.write(userText.checkMulti);</script>
       </span>
@@ -138,6 +143,31 @@
         <script>document.write(userText.closeIt);</script>
       </div>
     </div>
+    <!-- Settings -->
+    <div id="settingsDialog" class="box noDisplay">
+        
+      <span class="boxTitle">
+        <script>document.write(userText.settings);</script>
+      </span>
+      <div>
+        <span>Columns in grid view: </span>
+        <span>
+          <select id="gridColumns" onChange="selectForm('grid');">
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4" selected>4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+          </select>
+        </span>
+      </div>
+      <div class="textButton close" onClick="settingsDialog();">
+        <script>document.write(userText.closeIt);</script>
+      </div>
+    </div>
+
     <!-- Top block -->
     <div id="topBlock">
       <div id="openAeroLogo">OpenAero</div>
@@ -158,9 +188,11 @@
               </li>
               <li><a href="#" onClick="clearSequence();">Clear sequence</a></li>
               <li><a href="#" onClick="saveSequence();">Save sequence</a></li>
+              <hr>
               <li><a href="#" onClick="saveAsURL();">Save as link</a></li>
               <li><a href="#" onClick="saveSvg();">Save as image</a></li>
               <li><a href="#" onClick="printDialog(true);">Print/save forms</a></li>
+              <hr>
               <li class="fileOpening">
                 <a href="#" onClick="checkMultiDialog(true);">Check multiple seq</a>
               </li>
@@ -173,6 +205,8 @@
               <li><a href=# onClick="selectForm('A');">Form A</a></li>
               <li><a href=# onClick="selectForm('B');">Form B</a></li>
               <li><a href=# onClick="selectForm('C');">Form C</a></li>
+              <li><a href=# onClick="selectForm('grid');">Figs in grid</a></li>
+              <hr>
               <li><a href=# id="setMobile" onClick="setMobile(true);">Mobile version</a></li>
             </ul>
           </li>
@@ -184,7 +218,10 @@
               <li class="entryOption"><a href=# onClick="changeEntryDirection('ej');">X-box entry</a></li>
               <li class="entryOption"><a href=# onClick="changeEntryDirection('eja');">X-box entry away</a></li>
               <li><a href=# onClick="flipYAxis();">Flip Y-axis</a></li>
+              <hr>
+              <li><a href=# onClick="clearPositioning();">Clear positioning</a></li>
               <li><a href=# onClick="separateFigures();">Separate figures</a></li>
+              <hr>
               <li><a href=# onClick="checkSequence(true);">Check sequence</a></li>
             </ul>
           </li>
@@ -211,6 +248,13 @@
             <ul id="exampleSequences">
             </ul>
           </li>
+          <!-- Tools menu -->
+          <li onMouseOver="menuActive(this);" onMouseOut="menuInactive(this);">
+            <a href="#">Tools</a>
+            <ul>
+              <li><a href="#" onClick="settingsDialog(true);">Settings</a></li>
+            </ul>
+          </li>
           <!-- Help menu -->
           <li onMouseOver="menuActive(this);" onMouseOut="menuInactive(this);">
             <a href="#">Help</a>
@@ -229,10 +273,15 @@
           <span id=version>Version: <script>document.write(version);</script></span>
         </div>
       </div>
+      <!-- undo/redo buttons -->
+      <div id="undoRedo">
+        <div id="undo" class="undoRedoButton" onClick="clickButton(this);"><div><img src="buttons/smallMask.png"></div></div>
+        <div id="redo" class="undoRedoButton clearLeft" onClick="clickButton(this);"><div><img src="buttons/smallMask.png"></div></div>
+      </div>
       <!-- Sequence text -->
       <div id="sequenceTextContainer">
         <div id="sequenceTextClone"></div>
-        <textarea id="sequence_text" rows="1" wrap="virtual" onInput="checkSequenceChanged();" onKeyUp="checkSequenceChanged();" onMouseUp="checkSequenceChanged();" onFocus="this.hasfocus = true;" onBlur="this.hasfocus = false;" onPaste="OLANBumpBugCheck=true;"></textarea>
+        <textarea id="sequence_text" rows="2" wrap="virtual" onInput="checkSequenceChanged();" onKeyUp="checkSequenceChanged();" onMouseUp="checkSequenceChanged();" onFocus="this.hasfocus = true;" onBlur="this.hasfocus = false;" onPaste="OLANBumpBugCheck=true;"></textarea>
       </div>
     </div>
     <!-- main sequence area -->
@@ -267,7 +316,7 @@
           <div class=item><div class="label">Aircraft</div><input type=text name=aircraft id=aircraft maxlength="30" onChange="changeSequenceInfo()"></div>
           <div class=item><div class="label">Location</div><input type=text name=location id=location maxlength="30" onChange="changeSequenceInfo()"></div>
           <div class=item><div class="label">Date</div><input type=text name=date id=date maxlength="30" onChange="changeSequenceInfo()"></div>
-          <div class=item><div class="label">K-Factors</div>
+          <div class=item><div class="label">Class</div>
             <select name="class" id="class" onChange="selectPwrdGlider();">
               <option value="powered">Powered</option>
               <option value="glider">Glider</option>
@@ -355,7 +404,8 @@
         <div id="design"><span>Software & design by Ringo Massa</span></div>
       </div>
       <!-- Container for the sequence svg -->
-      <div id="svgContainer"></div>
+      <div id="svgContainer">
+      </div>
       <!-- Figure selector -->
       <div id="figureSelector">
         <div>

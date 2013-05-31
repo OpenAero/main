@@ -1,3 +1,17 @@
+1.3.2
+* added option to clear all figure positioning on Forms B & C
+* added figures in grid view
+* figure now retains figure letter when moved to and from queue
+* deleting a figure now removes all positioning and other info for that figure
+* inv/upright start is no longer autocorrected. A warning and red circle are presented
+* Corrected/added many K's for Glider and some for Powered 
+* fixed bug in flick K on vertical after roll in top
+* added option for inverse (white on black) printing of forms
+* added SuperFamily 7 for non-aresti (fam 0) figures
+* changed K factors and Aresti numbers for 1/4 clovers
+* added undo/redo functionality
+* added CIVA rules for Glider
+
 1.3.1
 * Quick bugfix to correct form C for Y-to-Y axis 180 turns
 

@@ -1,4 +1,4 @@
-// config.js 1.3.0
+// config.js 1.3.2
 
 // This file is part of OpenAero.
 
@@ -34,16 +34,17 @@
 // Define active version number of OpenAero
 // **************
 
-var version = '1.3.1';
+var version = '1.3.2';
 var versionNew = '<strong>OpenAero has been upgraded to version ' +
   version + '</strong><br>New features:<ul>' +
-  '<li>Figure queue</li>' +
-  '<li>Improved Free Unknown handling</li>' +
-  '<li>New options for printing/saving</li>' +
-  '<li>Added IAC style forms</li>' +
-  '<li>Added French sequence checking rules</li>' +
-  '<li>Multiple sequence checking (for contest organisers)</li>' +
-  '<li>Quick bugfix to correct form C for Y-to-Y axis 180 turns</li>' +
+  '<li>Added Figures in Grid view</li>' +
+  '<li>Improved queue and figure handling for Free Unknowns</li>' +
+  '<li>Corrected many K factors for Glider (thanks to Dirk Maslonka)</li>' +
+  '<li>Inverted/upright start is no longer autocorrected. A warning and red circle are now presented in case of mismatch</li>' +
+  '<li>Added option for inverse (white on black) printing of forms</li>' +
+  '<li>Added undo/redo buttons</li>' +
+  '<li>Added CIVA sequence checking rules for Glider</li>' +
+  '<li>Some bug fixes</li>' +
   '</ul>';
 
 // define the labels (=input field ids) for saving/loading sequences
@@ -80,6 +81,8 @@ var spinElement12 = spinElement * 1.2;
 var spinElement2 = spinElement * 2;
 var spinElement24 = spinElement * 2.4;
 var spinElement3 = spinElement * 3;
+// define golden ratio
+Math.GR = 1.618;
 // define the offset for figures in the y axis in degrees
 var yAxisOffsetDefault = 30;
 // define the scale factor on the y axis for perspective drawing
@@ -105,12 +108,14 @@ var minFigStartDistSq = minFigStartDist * minFigStartDist;
 // For every category the list of SF is defined below. The order MATTERS!
 // The SF will be decided by the first aresti fig nr match
 var superFamilies = [];
-superFamilies['unlimited'] = {'2.':'2', '5.':'5', '6.':'6', '1.':'7', '3.':'7', '7.':'7', '8.':'7'};
-superFamilies['advanced'] = {'9.11.':'3', '9.12.':'3', '9.9.':'4', '9.10.':'4', '2.':'2', '5.':'5', '6.':'6', '1.':'7', '3.':'7', '7.':'7', '8.':'7'};
+superFamilies['unlimited'] = {'2.':'2', '5.':'5', '6.':'6', '1.':'7', '3.':'7', '7.':'7', '8.':'7', '0.':'7'};
+superFamilies['advanced'] = {'9.11.':'3', '9.12.':'3', '9.9.':'4', '9.10.':'4', '2.':'2', '5.':'5', '6.':'6', '1.':'7', '3.':'7', '7.':'7', '8.':'7', '0.':'7'};
 superFamilies['yak52'] = superFamilies['advanced'];
 superFamilies['intermediate'] = superFamilies['advanced'];
 // Total K for Unknown connector figures
-var connectorsTotalK = 24;
+var connectFig = [];
+connectFig.totalK = {'powered':24, 'glider':10};
+connectFig.max = {'powered':4, 'glider':2};
 // available rolls
 var rollTypes = [':none','4:1/4','2:1/2','3:3/4','1:1','5:1 1/4','6:1 1/2','7:1 3/4','9:2','22:2x2','32:3x2','42:4x2']
 for (i = 2; i < 9; i++) rollTypes.push(i + '4:' + i + 'x4');
@@ -195,6 +200,7 @@ mask.on = 'buttons/mask-on.png';
 mask.disable = 'buttons/mask-disable.png';
 mask.smalloff = 'buttons/smallMask.png';
 mask.smallon = 'buttons/smallMask-on.png';
+mask.smalldisable = 'buttons/smallMask-disable.png';
 
 // ***************
 // Define patterns for the user's OpenAero drawing string
@@ -311,9 +317,11 @@ userText.iacForms = 'Print forms IAC style';
 userText.illegalAtEnd = 'Illegal figure at the end';
 userText.illegalBefore = 'Illegal figure before figure ';
 userText.illegalFig = ' is illegal, try ';
+userText.inverseForms = 'Print forms in inverse color (white on black)';
 userText.loadNewVersion = 'A new version of OpenAero is available. Load it?';
 userText.logoExplain = 'Upload your own logo by clicking on the file ' +
   'chooser below, or select one of the displayed logos.';
+userText.maxConnectors = 'Maximum connecting figures allowed: ';
 userText.mobileVersion = 'Mobile version';
 userText.noCookies = 'It seems cookies are disabled in your browser. ' +
   'This means some functions of OpenAero will not work.<br>' +
@@ -321,6 +329,8 @@ userText.noCookies = 'It seems cookies are disabled in your browser. ' +
   'url to your address bar:<br />' + 
   'chrome://chrome/settings/content';
 userText.noRules = 'No sequence validity checking rules available.';
+userText.notOnFormBC = 'This function is only available when Form ' +
+  'B or C  is being viewed.';
 userText.numberInCircle = 'Figure numbers in circle';
 userText.ok = 'OK';
 // OLANBumpBugWarning can be removed (with asociated code in OpenAero.js)
@@ -377,6 +387,7 @@ userText.separateFigures = 'This will remove all sequence position ' +
 userText.sequenceCorrect = 'Sequence is correct';
 userText.sequenceNotSavedWarning = 'Your current sequence has not been ' +
   'saved.\nAre you sure you want to open a new one?';
+userText.settings = 'Settings';
 userText.setUpright = ':set upright entry';
 userText.setInverted = ':set inverted entry';
 userText.showLog = 'Show log';

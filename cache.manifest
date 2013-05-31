@@ -1,7 +1,11 @@
 CACHE MANIFEST
-# OpenAero Appcache version 1.3.1.1
+# OpenAero Appcache version 1.3.2.1
 about.html
 arestisystem.html
+buttons/figEndInv.png
+buttons/figEndUp.png
+buttons/figStartInv.png
+buttons/figStartUp.png
 buttons/smallMinus.png
 buttons/switchX.png
 buttons/moveforward.png
@@ -15,6 +19,7 @@ buttons/smallMask.png
 buttons/mask-on.png
 buttons/switchY.png
 buttons/smallMask-on.png
+buttons/smallMask-disable.png
 buttons/trash.png
 buttons/connector.png
 buttons/magmin.png
@@ -23,6 +28,14 @@ buttons/switchFirstRoll.png
 buttons/plus.png
 buttons/minus.png
 buttons/mask.png
+buttons/redo.png
+buttons/smallFigEndInv.png
+buttons/smallFigEndUp.png
+buttons/smallFigStartInv.png
+buttons/smallFigStartUp.png
+buttons/smallRedo.png
+buttons/smallUndo.png
+buttons/undo.png
 config.js
 desktop.css
 examples.js
