@@ -46,7 +46,7 @@ function download() {
   }
   
   // Sanitize the filename:
-  $filename = preg_replace('/[^a-z0-9\-\_\.]/i','',$_POST['name']);
+  $filename = preg_replace('/[^a-z0-9\-\_\. ]/i','',$_POST['name']);
    
   // Output headers:
   header("Cache-Control: ");

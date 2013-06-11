@@ -1,4 +1,4 @@
-// config.js 1.3.2
+// config.js 1.3.3
 
 // This file is part of OpenAero.
 
@@ -34,18 +34,19 @@
 // Define active version number of OpenAero
 // **************
 
-var version = '1.3.2';
+var version = '1.3.3';
 var versionNew = '<strong>OpenAero has been upgraded to version ' +
   version + '</strong><br>New features:<ul>' +
-  '<li>Added Figures in Grid view</li>' +
-  '<li>Improved queue and figure handling for Free Unknowns</li>' +
-  '<li>Corrected many K factors for Glider (thanks to Dirk Maslonka)</li>' +
-  '<li>Inverted/upright start is no longer autocorrected. A warning and red circle are now presented in case of mismatch</li>' +
-  '<li>Added option for inverse (white on black) printing of forms</li>' +
-  '<li>Added undo/redo buttons</li>' +
-  '<li>Added CIVA sequence checking rules for Glider</li>' +
-  '<li>Some bug fixes</li>' +
-  '</ul>';
+  '<li>Added buttons for setting upright/inverted entry and exit of figures</li>' +
+  '<li>Added display of figure comments to Grid view</li>' +
+  '<li>Many new print options</li>' +
+  '<li>Floating point support (a.o. for glider free)</li>' +
+  '<li>Improved multiple sequence checking</li>' +
+  '<li>Added information to figure chooser: K factor(s) and legality in sequence</li>' +
+  '<li>Improved manual</li>' +
+  '<li>Many bug fixes</li>' +
+  '</ul>' +
+  'This may take a few seconds to complete.';
 
 // define the labels (=input field ids) for saving/loading sequences
 var sequenceXMLlabels = ['pilot', 'aircraft', 'category', 'location', 'date', 'class', 'program', 'rules', 'positioning', 'harmony', 'notes', 'sequence_text', 'logo', 'oa_version'];
@@ -170,6 +171,7 @@ style['textBlockBorderBold'] = 'stroke: black; stroke-width: 2px; fill: none;';
 style['textBlockBorderBoldRed'] = 'stroke: red; stroke-width: 2px; fill: none;';
 // Mini Form A styles
 style['miniFormA'] = 'font-family: verdana, helvetica, sans; font-size: 10px; fill: black;';
+style['miniFormASmall'] = 'font-family: verdana, helvetica, sans; font-size: 8px; fill: black;';
 style['miniFormATotal'] = 'font-family: verdana, helvetica, sans; font-size: 16px; font-weight: bold; fill: black;';
 // Form A styles
 style['FormAText'] = 'font-family: verdana, helvetica, sans; font-size: 12px; fill: black;';
@@ -187,7 +189,7 @@ style['FormLine'] = 'stroke: black; stroke-width: 1px; fill: none;';
 style['FormLineBold'] = 'stroke: black; stroke-width: 4px; fill: none;';
 // Print styles
 style['FormBackground'] = 'fill: white;';
-style['sequenceString'] = 'font-family: verdana, helvetica, sans; font-size: 12px; color: blue;';
+style['sequenceString'] = 'font-family: verdana, helvetica, sans; font-size: 12px; color: blue; fill: blue;';
 style['windArrow'] = 'stroke: black; stroke-width: 1.5px; fill: white;';
 
 // ***************
@@ -263,7 +265,7 @@ var regexDrawInstr = /^(\[|\().+(\]|\)$)|([0-9]+\%)|("[^"]*"$)/;
 var regexLongForward = new RegExp ('\\' + userpat.longforward, 'g');
 var regexEntryShorten = /`+\+(.*[a-zA-Z])/;
 var regexExitShorten = /([a-zA-Z].*)\+`+/;
-var regexFlipYAxis = /\/[^\/\]]/;
+var regexFlipYAxis = /^[^\/]*\/[^\/\]]/;
 var regexFlipYAxisReplace = /(^|[^\/])\/([^\/]|$)/g;
 var regexTurn = /[0-9\+\-]j[io0-9\+\-]/;
 // regexOLANBumpBug is used to check for the Humpty Bump direction bug
@@ -294,8 +296,9 @@ userText.confirmLeave = 'You\'re leaving OpenAero. Any sequence that is not save
 userText.contest = 'Contest';
 userText.date = 'Date';
 userText.desktopVersion = 'Desktop version';
-userText.downloadHTML5 = 'However, you can save your file by clicking on the link below.';
-userText.downloadLegacy = 'However, you can save your file by right-clicking on the link below '+
+userText.download = 'Download';
+userText.downloadHTML5 = 'However, you can save your file by choosing a name and clicking download below.';
+userText.downloadLegacy = 'However, you can save your file by choosing a name, right-clicking on download below '+
   'and choosing "Save File As..." or "Save Link As...".';
 userText.downloadWarning = 'File saving works best through the OpenAero ' +
   'website (<a href="http://www.openaero.net">www.openaero.net</a>) when ' +
@@ -310,6 +313,8 @@ userText.figSelectorAddStart = 'Add new figure at start';
 userText.figSelectorReplace = 'Replace active figure';
 userText.figureAlreadyInQueue ='This figure is already in the queue';
 userText.figureQueue = 'Figure Queue';
+userText.formB = 'Form B';
+userText.formC = 'Form C';
 userText.getChrome = 'For optimum use of OpenAero, please download the ' +
   'latest version of the <a href="https://www.google.com/intl/en/chrome/browser/">' +
   'Google Chrome</a> browser.';
@@ -328,6 +333,7 @@ userText.noCookies = 'It seems cookies are disabled in your browser. ' +
   'To enable cookies in the Chrome browser, please copy the following ' +
   'url to your address bar:<br />' + 
   'chrome://chrome/settings/content';
+userText.none = 'None';
 userText.noRules = 'No sequence validity checking rules available.';
 userText.notOnFormBC = 'This function is only available when Form ' +
   'B or C  is being viewed.';
@@ -347,6 +353,7 @@ userText.OLANBugWarningFooter = '<font color=red>These figures or the ' +
   'ones following may be drawn differently in OLAN and OpenAero!</font> ' +
   'Please check correct direction.<br>' +
   'This message will not be shown for this sequence again.';
+userText.multiOverrideRules = 'Override sequence rules with current rules from Sequence info: ';
 userText.orFileDrop = 'Or drag & drop your files here';
 userText.pilot = 'pilot';
 userText.pilotNo = 'Pilot\'s No.';
@@ -354,13 +361,20 @@ userText.pilotnumberIAC1 = "pilot\'s";
 userText.pilotnumberIAC2 = "number";
 userText.pleaseWaitStartup = 'Please wait while OpenAero is starting up...';
 userText.print = 'Print';
+userText.printCheck = 'Print check result';
 userText.printDialog = 'Print options';
 userText.printExplain = 'You can set the options for printing below.<br>' +
   'To <i>save</i> your forms, click <strong>Print</strong> and then choose ' +
   '<i>destination</i> <strong>Save as PDF</strong> in the browser\'s ' +
   'print menu.';
 userText.printForms = 'OpenAero printing forms...';
-userText.printMiniFormA = 'Print mini Form A on Form B';
+userText.printFormA = 'Print Form A';
+userText.printFormB = 'Print Form B';
+userText.printFormC = 'Print Form C';
+userText.printFormGrid = 'Print Figures in grid';
+userText.printMiniFormAonB = 'Print mini Form A on Form B';
+userText.printMiniFormAonC = 'Print mini Form A on Form C';
+userText.printPilotCards = 'Print pilot cards';
 userText.printString = 'Print sequence string';
 userText.program = 'Program';
 userText.programme = 'Programme';
@@ -376,7 +390,8 @@ userText.runFromFile = 'It seems you are running OpenAero directly from ' +
   'OpenAero will automatically install in your browser and will also ' +
   'be available offline.';
 userText.saveAsURL = 'The link presented below contains your complete ' +
-  'sequence. You can copy it to email, bookmark it etc...';
+  'sequence. You can copy it to email, bookmark it etc...<br />' +
+  'Use right-click and "Copy Link Address".';
 userText.saveAsURLTitle = 'Save sequence as link';
 userText.saveFileAsAlert = 'To download your file, right-click on this ' +
   'text and choose "Save link as..." or "Save file as...".';
@@ -385,24 +400,31 @@ userText.selectRulesFirst = 'Select Rules first';
 userText.separateFigures = 'This will remove all sequence position ' +
   'formatting. Are you sure you want to continue?';
 userText.sequenceCorrect = 'Sequence is correct';
+userText.sequenceHasErrors = 'Sequence has errors:';
+userText.sequenceTest = 'Sequence test: ';
 userText.sequenceNotSavedWarning = 'Your current sequence has not been ' +
   'saved.\nAre you sure you want to open a new one?';
 userText.settings = 'Settings';
 userText.setUpright = ':set upright entry';
 userText.setInverted = ':set inverted entry';
+userText.showFullLog = 'Show full log';
 userText.showLog = 'Show log';
 userText.tooltip = [];
-userText.tooltip.switchFirstRoll = 'Switch first roll direction';
-userText.tooltip.switchX = 'Switch X exit direction';
-userText.tooltip.switchY = 'Switch Y exit direction';
+userText.tooltip.connector = 'Make this figure a connector for Unknown sequences';
+userText.tooltip.curvedLine = 'Move figure to a new position with a curved line';
 userText.tooltip.deleteFig = 'Delete active figure';
+userText.tooltip.entryExt = 'Change figure entry line length';
+userText.tooltip.exitExt = 'Change figure exit line length';
+userText.tooltip.figEntryButton = 'Switch figure entry upright/inverted';
+userText.tooltip.figExitButton = 'Switch figure exit upright/inverted';
 userText.tooltip.magMin = 'Make figure smaller';
 userText.tooltip.magPlus = 'Make figure larger';
 userText.tooltip.moveForward = 'Move figure forward without a line';
 userText.tooltip.straightLine = 'Move figure to a new position with a straight line';
-userText.tooltip.curvedLine = 'Move figure to a new position with a curved line';
 userText.tooltip.subSequence = 'Start a sub sequence from this figure';
-userText.tooltip.connector = 'Make this figure a connector for Unknown sequences';
+userText.tooltip.switchFirstRoll = 'Switch first roll direction';
+userText.tooltip.switchX = 'Switch X exit direction';
+userText.tooltip.switchY = 'Switch Y exit direction';
 userText.unknownFileType = 'File opening is not supported in this browser.';
 userText.warningPre123 = 'The file you just opened was created with an ' +
   'OpenAero version older than 1.2.3. Please check that all figure exit ' +

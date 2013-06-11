@@ -1,5 +1,5 @@
 /*
- OpenAero.css 1.3.2
+ OpenAero.css 1.3.3
  This file is part of OpenAero.
 
   OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -110,14 +110,14 @@ textarea {
 }
 #figureSvgContainer {
   position: absolute;
-  left:-500;
+  left:-500px;
   width:0;
   height:0;
   opacity:0;
 }
 #figureChooserSvg {
   position: absolute;
-  left:-500;
+  left:-500px;
   width:0;
   height:0;
   opacity:0;
@@ -139,7 +139,7 @@ textarea {
   height: 25px;
   font-size: 14px;
 }
-.section {
+.section, .docs table tr {
   position: relative;
   float: left;
   width: 98%;
@@ -150,6 +150,13 @@ textarea {
   border-radius: 5px;
   margin: 10px 1px 1px 1px;
   background: #f4f4f4;
+}
+.docs table tr td {
+  padding: 1em;
+}
+.docs table table tr {
+  border: 0;
+  background: transparent;
 }
 .documentation {
   width: auto;
@@ -166,6 +173,9 @@ textarea {
   background: #f8f8f8;
   background: -webkit-linear-gradient(315deg, #ffe090, #fff);
   background: linear-gradient(315deg, #ffe090, #fff);
+}
+.docs table {
+  margin: 1em;
 }
 .docs img {
   display: block;
@@ -279,9 +289,9 @@ textarea {
 .box {
   position: absolute;
   z-index: 999;
-  top: 30%;
-  left: 20%;
-  width: 60%;
+  top: 20%;
+  left: 10%;
+  width: 80%;
   background: #f4f4f8;
   border: 1px solid white;
   border-radius: 5px;
@@ -306,6 +316,10 @@ textarea {
   text-decoration: none;
   cursor: pointer;
 }
+.textButton a {
+  color: white;
+  text-decoration: none;
+}
 .textButton:hover {
   background: #77d;
   text-decoration: none;
@@ -314,6 +328,15 @@ textarea {
   overflow: auto;
   margin: 5px;
   padding: 2px;
+}
+#printDialog .main {
+  clear: none;
+  float: left;
+}
+#printDialog .sub {
+  clear: none;
+  float: left;
+  border-left: 1px solid #ccc;
 }
 .close {
   float: right;
@@ -356,6 +379,11 @@ textarea {
   border-radius: 5px 5px 0 0;
 }
 
+#dlTextField {
+  float: left;
+  font-size: 1.25em;
+  width: 50%;
+}
 #saveFileFormDiv {
   width:1px;
   height:1px;
@@ -365,7 +393,7 @@ textarea {
 #latestVersion {
   margin:-2px 1em 0 0;
   border:0;
-  height:16px;
+  height:18px;
   width:200px;
 }
 #version {
@@ -375,7 +403,7 @@ textarea {
   z-index: 1;
   position: absolute;
   display: hidden;
-}f
+}
 .figureStart hover {
   display: block;
 }
@@ -387,7 +415,7 @@ textarea {
 .largeButton {
   text-align: center;
   font-size: 2em;
-  font-weight: strong;
+  font-weight: bold;
   text-decoration: none;
   color: white;
   border-radius: 8px;
@@ -455,7 +483,7 @@ textarea {
 }
 #selectedFigure {
   position: relative;
-  float: left;
+  float: right;
   margin-left: 2px;
   width: 140px;
   height: 140px;
@@ -464,10 +492,12 @@ textarea {
   border-radius: 3px;
   cursor: pointer;
 }
+#selectedFigure.active {
+  float: left;
+}
 #unknownFigureChooser {
 	float: left;
   width: 144px;
-  overflow-x: hidden;
 }
 .display {
   display: block;
@@ -557,8 +587,12 @@ textarea {
 }
 
 /* button tooltips, disabled for mobile */
-a.tooltip {outline:none; }
-a.tooltip span {
+.tooltip {
+  width: 100%;
+  height: 100%;
+  outline:none;
+}
+.tooltip div {
   display:none;
 }
 
@@ -567,13 +601,13 @@ a.tooltip span {
   float: left;
   border: 1px;
 }
-#entryExitExtension span {
+#entryExit span {
   float: left;
   margin-left: 3px;
   font-size: 14px;
   clear: none;
 }
-#entryExitExtension span span {
+#entryExit span span {
   margin: 0px;
 }
 .rollGaps {
@@ -667,8 +701,8 @@ a.tooltip span {
 
 #figureChooser {
   margin: 2px;
-  width: 256px;
-  height: 80%;
+  width: 340px;
+  height: 85%;
   background: rgba(255, 255, 255, 0.7);
   overflow: auto;
 }
@@ -680,15 +714,27 @@ a.tooltip span {
 }
 table#figureChooserTable td {
   position: relative;
-  padding: 5px;
+  padding: 1px;
   border: 2px solid #eee;
   border-radius: 5px;
+  text-align: right;
+  font-size: 14px;
 }
 table#figureChooserTable td.selected {
   border: 2px solid magenta;
 }
 table#figureChooserTable td.matchingFigure {
   box-shadow:inset 4px 4px #a0ff60;
+}
+table#figureChooserTable td.figureNotAllowed {
+  outline: #ff8040 solid 2px;
+  outline-offset: -3px;
+}
+.familyA {
+  background: #fff;
+}
+.familyB {
+  background: #f8f8f8;
 }
 .removeFromQueueButton {
   position: absolute;
@@ -803,11 +849,11 @@ table#figureChooserTable td.matchingFigure {
 .combo ul {
   padding:1px;
   border: 1px solid #000;
-  width: 90px;
+  width: 120px;
   background-color:#ffc;
   position:absolute;
-  right:0px;
-  top:1.5em;
+  right:2px;
+  top:1.6em;
   display:none;
   z-index:1;
 }

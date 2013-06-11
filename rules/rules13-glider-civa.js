@@ -61,14 +61,14 @@ rules.push("floating-point=3 ");// 3 points may be reduced
 
 // Versatility acc. to CIVA Section 6 part II Ch. 4.3.3.2
 //=======================================================
-rules.push("fam5-min=1  ");// minimum one figure from family 5
+rules.push("fam5-min=1");// minimum one figure from family 5
 rules.push("fam6-min=1");
 rules.push("fam7-min=1");
 rules.push("fam8-min=1");
 
 // 4.3.3.2 a)
 //-----------
-rules.push("group-roller=^(2\\.13|2\\.2[2-6]|2\\.3[2-5]|2\\.4[3-8])  ");// new definition acc. new catIDs
+rules.push("group-roller=^(2\\.1\\.3|2\\.2\\.[2-6]|2\\.3\\.[2-5]|2\\.4\\.[3-8])");// new definition acc. new catIDs
 rules.push("roller-name=Rolling Turn with at least one full roll");
 rules.push("roller-min=1");
 
@@ -80,13 +80,13 @@ rules.push("froll2-name=no-hesitation roll (9.1.x.x) of at least 1/2 required");
 rules.push("froll2-min=1");
 
 // ii)
-rules.push("hesroll-min=1  ");// a hesitation roll of any extent (fam 9.2, 9.4 & 9.8)
+rules.push("hesroll-min=1");// a hesitation roll of any extent (fam 9.2, 9.4 & 9.8)
 
 // iii)
-rules.push("isnap-min=1  ");// minimum one inside snap roll element
+rules.push("isnap-min=1");// minimum one inside snap roll element
 
 // iv)
-rules.push("osnap-min=1  ");// minimum one outside snap roll element
+rules.push("osnap-min=1");// minimum one outside snap roll element
 
 // outsourced in 2012:
 //--------------------
@@ -100,9 +100,9 @@ rules.push("upend-name=Sequence must end flying upright");
 
 // Positioning and Harmony k-factors acc. to Ch. 4.3.6
 //====================================================
-rules.push("poslj=15+20  ");// positioning k-factor assuming line judges
-rules.push("posnl=15+20  ");// positioning k-factor assuming no line judges
-rules.push("poselec=15+20  ");// positioning k-factor assuming electric telemetry
+rules.push("poslj=15+20");// positioning k-factor assuming line judges
+rules.push("posnl=15+20");// positioning k-factor assuming no line judges
+rules.push("poselec=15+20");// positioning k-factor assuming electric telemetry
 
 rules.push("more=glider-CIVA unlimited arestibase");
 
@@ -383,16 +383,16 @@ rules.push("[glider-CIVA unlimited unknown3]");
 //###################
 // Maximum K-Factor and number of figures acc. to CIVA Section 6 part II Ch. 4.3.6
 //================================================================================
-rules.push("k-max=193  ");// maximum k-factor including maximum floating points
-rules.push("k-min=175  ");// minimum k-factor
-rules.push("basefig-max=9  ");// maximum 9 base figures per sequence (7 chosen + max 2 additional)
-rules.push("floating-point=3 ");// 3 points may be reduced
+rules.push("k-max=193");// maximum k-factor including maximum floating points
+rules.push("k-min=175");// minimum k-factor
+rules.push("basefig-max=9");// maximum 9 base figures per sequence (7 chosen + max 2 additional)
+rules.push("floating-point=3");// 3 points may be reduced
 
 // Positioning and Harmony k-factors acc. to Ch. 4.3.6
 //====================================================
-rules.push("poslj=15+10  ");// positioning k-factor assuming line judges
-rules.push("posnl=15+10  ");// positioning k-factor assuming no line judges
-rules.push("poselec=15+10  ");// positioning k-factor assuming electric telemetry
+rules.push("poslj=15+10");// positioning k-factor assuming line judges
+rules.push("posnl=15+10");// positioning k-factor assuming no line judges
+rules.push("poselec=15+10");// positioning k-factor assuming electric telemetry
 
 // Maximum number of each family
 //==============================
@@ -410,20 +410,20 @@ rules.push("[glider-CIVA unlimited unknown0]");
 //###################
 rules.push("basefig-max=28");
 
-rules.push("hesroll-repeat=4 ");// hesitation rolls of same cat-ID may not be repeated in overall figure proposal
-rules.push("snap-repeat=4  ");// snap rolls of same cat-ID may not be repeated in overall figure proposal
-rules.push("spin-repeat=4  ");// spins of same cat-ID may not be repeated in overall figure proposal
-rules.push("sroll-repeat=4  ");// superslow rolls of same cat-ID may not be repeated in overall figure proposal
+rules.push("hesroll-repeat=4");// hesitation rolls of same cat-ID may not be repeated in overall figure proposal
+rules.push("snap-repeat=4");// snap rolls of same cat-ID may not be repeated in overall figure proposal
+rules.push("spin-repeat=4");// spins of same cat-ID may not be repeated in overall figure proposal
+rules.push("sroll-repeat=4");// superslow rolls of same cat-ID may not be repeated in overall figure proposal
 
 rules.push("more=glider-CIVA unlimited unknownbase");
 
 //##########################################################################
 rules.push("(glider-CIVA unlimited unknownbase)");// specific rules for the unlimited unknown programs
 //##########################################################################
-rules.push("k-minperfig=15  ");// minimum K for every figure
-rules.push("k-maxperfig=35  ");// maximum K for every figure
+rules.push("k-minperfig=15");// minimum K for every figure
+rules.push("k-maxperfig=35");// maximum K for every figure
 
-rules.push("basefigex11-repeat=1 ");// The same catalogue number may only be used once, except of fam. 1.1.1. & 9
+rules.push("basefigex11-repeat=1");// The same catalogue number may only be used once, except of fam. 1.1.1. & 9
 
 // Definition of global rules
 //===========================
@@ -432,14 +432,14 @@ rules.push("basefigex11-repeat=1 ");// The same catalogue number may only be use
 //## Opposite slow or hesitation rolls are allowed on horizontal lines
 //>>> implemented by rule-NOU
 
-rules.push("rule-NHR=roll:[248]   ");//## new rule added ### checked
+rules.push("rule-NHR=roll:[248]");//## new rule added ### checked
 rules.push("why-NHR=no hesitation roll allowed");
 
 // acc. to 9.1.1.22:
 // Full horizontal positive flick rolls only at the appex of upward looping figures
 
-rules.push("conv-hpflick=^9\\.9\\.3\\.4=o ; ^9\\.=r ; ^0\\.=z  ");//## new converions added ### works perfect
-rules.push("rule-nfpf=hpflick:o      ");//## new rule added  ### checked
+rules.push("conv-hpflick=^9\\.9\\.3\\.4=o ; ^9\\.=r ; ^0\\.=z");//## new converions added ### works perfect
+rules.push("rule-nfpf=hpflick:o");//## new rule added  ### checked
 rules.push("why-nfpf=Rule 9.1.1.22 Full horizontal positive flick rolls only at the appex of upward looping figures!");
 
 // acc. to 9.1.1.23 and acc. to 9.1.1.25::
@@ -815,7 +815,7 @@ rules.push("fam8-min=1");
 
 // 4.3.3.3 a)
 //-----------
-rules.push("group-roller=^(2\\.[1-4]1|2\\.13\\.1)  ");// new definition acc. new catIDs
+rules.push("group-roller=^(2\\.[1-4]\\.1|2\\.1\\.3\\.1)  ");// new definition acc. new catIDs
 rules.push("roller-name=Turn with at least 90&deg; or 2.1.3.1");
 rules.push("roller-min=1");
 

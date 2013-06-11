@@ -1,4 +1,4 @@
-// examples.js 1.3.2
+// examples.js 1.3.3
 
 // This file is part of OpenAero.
 
@@ -36,7 +36,7 @@ exampleSequences['2013 CIVA Adv Known'] = '<sequence>' +
 '<notes></notes>' +
 "<sequence_text>,24pbb(3)'4--- ---isin(1),4~ ~8b.2f 3> ~~2m,8,3-~ (-4,12) -2joi15~~ ~hf.~~ ~``````2f``rc,24``````````- (0,10) -o,6 ++m32,6f-</sequence_text>" +
 '<logo>CIVA</logo>' +
-'<oa_version>1.3.2</oa_version>' +
+'<oa_version>1.3.3</oa_version>' +
 '</sequence>';
 
 exampleSequences['2013 CIVA Unl Known'] = '<sequence>' +
@@ -52,7 +52,7 @@ exampleSequences['2013 CIVA Unl Known'] = '<sequence>' +
 '<notes></notes>' +
 "<sequence_text>+,2,2f'zt,2f;2+~ 2> ~~7,3m,5if,3 [0,19] 24ip1 3> 2% ~```,s,3if...ibpb(```3)..,3f,4'> ifh5f.. 3> .8'rp(44)9> [0,8] ~++3joi15-----~ [-3,2] -.,4taf.> 34pb3^.</sequence_text>" +
 '<logo>CIVA</logo>' +
-'<oa_version>1.3.2</oa_version>' +
+'<oa_version>1.3.3</oa_version>' +
 '</sequence>';
 
 exampleSequences['2013 BAeA Int Known'] = '<sequence>' +
@@ -68,7 +68,7 @@ exampleSequences['2013 BAeA Int Known'] = '<sequence>' +
 '<notes></notes>' +
 "<sequence_text>ej /`,4`rp2~~ 5% ~~2j2 1% +24ic,24`````- [0,14] --1ic. 2> +++2j (0,10) d2- -iv`is.++++ +++4h.4.++ 22 m2 ,2f-</sequence_text>" +
 '<logo>BAeA</logo>' +
-'<oa_version>1.3.2</oa_version>' +
+'<oa_version>1.3.3</oa_version>' +
 '</sequence>';
 
 exampleSequences['2013 CIVA-Glider Unl Known'] = '<sequence>' +
@@ -76,15 +76,16 @@ exampleSequences['2013 CIVA-Glider Unl Known'] = '<sequence>' +
 '<aircraft></aircraft>' +
 '<location></location>' +
 '<date></date>' +
-'<class>powered</class>' +
-'<rules>BAeA</rules>' +
-'<category>Intermediate</category>' +
+'<class>glider</class>' +
+'<rules>CIVA</rules>' +
+'<category>Unlimited</category>' +
 '<program>Known</program>' +
-'<positioning>20</positioning>' +
+'<positioning>15</positioning>' +
+'<harmony>10</harmony>' +
 '<notes></notes>' +
 "<sequence_text>2ig ita3f-````/ -h4 o,2if- 8% -````````24``rc````- -48 2joi2</sequence_text>" +
 '<logo>CIVA</logo>' +
-'<oa_version>1.3.2</oa_version>' +
+'<oa_version>1.3.3</oa_version>' +
 '</sequence>';
 
 exampleSequences['2013 CIVA-Glider Adv Known'] = '<sequence>' +
@@ -92,13 +93,14 @@ exampleSequences['2013 CIVA-Glider Adv Known'] = '<sequence>' +
 '<aircraft></aircraft>' +
 '<location></location>' +
 '<date></date>' +
-'<class>powered</class>' +
-'<rules>BAeA</rules>' +
-'<category>Intermediate</category>' +
+'<class>glider</class>' +
+'<rules>CIVA</rules>' +
+'<category>Advanced</category>' +
 '<program>Known</program>' +
-'<positioning>20</positioning>' +
+'<positioning>15</positioning>' +
+'<harmony>10</harmony>' +
 '<notes></notes>' +
 "<sequence_text>ivs ta4+````/ b.,4 h'. o1 c..- -2j- -,24 2t. 2j</sequence_text>" +
 '<logo>CIVA</logo>' +
-'<oa_version>1.3.2</oa_version>' +
+'<oa_version>1.3.3</oa_version>' +
 '</sequence>';

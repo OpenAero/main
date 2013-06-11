@@ -1,3 +1,17 @@
+1.3.3
+* added buttons for setting upright/inverted entry and exit of figures
+* added display of figure comments to Grid view
+* added sequence check line(s) on print
+* many new print options
+* floating point support (a.o. for glider free)
+* added pilot card print
+* improved multiple sequence checking
+* added information to figure chooser: K factor(s) and legality in sequence
+* improved manual
+* added click & point figure comments editing
+* added German-Aerobatics Sportsman and Intermediate Free rules
+* many bug fixes
+
 1.3.2
 * added option to clear all figure positioning on Forms B & C
 * added figures in grid view

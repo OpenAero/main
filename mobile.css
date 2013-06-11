@@ -1,5 +1,5 @@
 /*
- mobile.css 1.3.2
+ mobile.css 1.3.3
  This file is part of OpenAero.
 
   OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -64,7 +64,7 @@ select {
   height: 58px;
   resize: none;
   /* OpenAero text as SVG background */
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.2" width="320" height="54"><text x="160" y="42" text-anchor="middle" font-family="Verdana" font-size="46" style="fill:#ffebb0;stroke:#ffebb0;letter-spacing:6px;">OpenAero</text></svg>');
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.2" width="320" height="54"><text x="143" y="46" text-anchor="middle" font-family="Verdana" font-size="46" style="fill:#ffebb0;stroke:#ffebb0;letter-spacing:6px;">OpenAero</text></svg>');
 }
 #main {
 	position: absolute;
@@ -82,7 +82,15 @@ select {
 }
 #sequenceInfo {
   background: -webkit-linear-gradient(top, #f4f4f4, #e0e0ff);
-  font-size: 14px;
+  font-size: 16px;
+}
+#sequenceInfo input {
+  width: 200px;
+  font-size: 16px;
+}
+#sequenceInfo select {
+  width: 200px;
+  font-size: 16px;
 }
 #figureInfo {
   background: -webkit-linear-gradient(top, #f4f4f4, #e0e0ff);
@@ -91,8 +99,9 @@ select {
   width: 320px;
 }
 .tabSelector li {
+  padding-top: 7px;
   width: 101px;
-  height: 22px;
+  height: 30px;
 }
 .inactiveTab {
   font-size: 16px;
@@ -103,7 +112,7 @@ select {
 }
 #svgContainer {
   position: absolute;
-  top: 30px;
+  top: 44px;
   left: 0px;
   width: 312px;
   background-color:#ffffff;
@@ -158,18 +167,25 @@ select {
 #redo {
   background-image: url('buttons/redo.png');
 }
-#figStartButton.upright {
+#figEntryButton {
   background-image: url('buttons/figStartUp.png');
 }
-#figEndButton.upright {
+#figExitButton {
   background-image: url('buttons/figEndUp.png');
 }
-#figStartButton.inverted {
+#figEntryButton.inverted {
   background-image: url('buttons/figStartInv.png');
 }
-#figEndButton.inverted {
+#figExitButton.inverted {
   background-image: url('buttons/figEndInv.png');
 }
+#figEntryButton.button {
+  margin-right: 6px;
+}
+#figExitButton.button {
+  margin-left: 6px;
+}
+
 #scale {
   margin-left: 6px;
   margin-right: 6px;
@@ -180,6 +196,10 @@ select {
 }
 .rollSelect {
   font-size: 2em;
+}
+#comments {
+  width: 296px;
+  height: 4em;
 }
 
 /* logo chooser */
@@ -209,6 +229,10 @@ table#figureChooserTable td.selected {
 #figureSelectorOptionsDiv select,#figureSelectorGroupDiv select {
   font-size: 16px;
 }
+#figureSelectorClose {
+  margin: 5px;
+}
+
 /* alertBox */
 #alertBox {
   top: 10%;
@@ -220,8 +244,15 @@ table#figureChooserTable td.selected {
   left: 5%;
   width: 90%;
 }
+
+/* menu */
 #menu a {
   padding: 6px 3px 6px 3px;
   border-left: 1px solid #ddd;
+}
+/* make the right menus float from right edge to left */
+#menu li ul.right {
+  min-width: 100px;
+  right: 3px;
 }
 

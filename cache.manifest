@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# OpenAero Appcache version 1.3.2.1
+# OpenAero Appcache version 1.3.3.2
 about.html
 arestisystem.html
 buttons/figEndInv.png
@@ -21,7 +21,6 @@ buttons/switchY.png
 buttons/smallMask-on.png
 buttons/smallMask-disable.png
 buttons/trash.png
-buttons/connector.png
 buttons/magmin.png
 buttons/subsequence.png
 buttons/switchFirstRoll.png
@@ -64,19 +63,26 @@ images/hesrolls.png
 images/ee_ext-exit.png
 images/ee_ext-entry.png
 images/multirolls.png
+images/OA_FigureAddPanel.gif
+images/OA_FigureGrid.gif
+images/OA_FigureInfoPanel.gif
+images/OA_FigureSelection.gif
+images/OA_Queue.gif
+images/OA_SequenceInfoPanel.gif
 index.html
 language.html
 logo.js
 manual.html
 mobile.css
 OpenAero.css
-OpenAero.html
 OpenAero.js
 rules/rules13.js
 rules/rules13-civa.js
 rules/rules13-baea.js
 rules/rules13-france.js
+rules/rules13-ga.js
 rules/rules13-vink.js
+rules/rules13-glider-civa.js
 vkbeautify.js
 NETWORK: 
 openaero.php
