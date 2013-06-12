@@ -413,8 +413,9 @@ userText.tooltip = [];
 userText.tooltip.connector = 'Make this figure a connector for Unknown sequences';
 userText.tooltip.curvedLine = 'Move figure to a new position with a curved line';
 userText.tooltip.deleteFig = 'Delete active figure';
-userText.tooltip.entryExt = 'Change figure entry line length';
-userText.tooltip.exitExt = 'Change figure exit line length';
+// next two disabled. Are disabling minus button
+//userText.tooltip.entryExt = 'Change figure entry line length';
+//userText.tooltip.exitExt = 'Change figure exit line length';
 userText.tooltip.figEntryButton = 'Switch figure entry upright/inverted';
 userText.tooltip.figExitButton = 'Switch figure exit upright/inverted';
 userText.tooltip.magMin = 'Make figure smaller';
