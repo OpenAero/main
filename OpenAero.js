@@ -2861,7 +2861,7 @@ function updateFigureOptions (figureId) {
     var el = document.getElementById('comments');
     if (figures[figureId].comments) {
       el.value = figures[figureId].comments;
-    }
+    } else el.value = '';
   }
 }
 
