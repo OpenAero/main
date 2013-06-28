@@ -58,11 +58,16 @@
 		produce complete and valid aerobatic sequences, the ready availability 
 		of an official and current copy of the relevant power or glider
 		<a href="http://www.arestisystem.com/" target="_blank">Aresti catalog</a> is recommended 
-		for checking.</p></td>
+		for checking.</p>
+    <p>This manual is intended for users of OpenAero. If you are interested in 
+    development of additions to OpenAero, including (National) rules, please 
+    refer to the <a href="http://code.google.com/p/open-aero/wiki/Developers" target="_blank">
+    developers wiki page</a>.</p>
+    </td>
 	</tr>
 	<tr>
 		<td colspan="2">
-		<p><b><font size="5">Creating sequences</font></b></p>
+		<p id="creating_sequences"><b><font size="5">Creating sequences</font></b></p>
 		<p>Aerobatic sequences can be created within OpenAero in either of two 
 		ways:</p>
 		<ul>
@@ -92,7 +97,7 @@
 	</tr>
 	<tr>
 		<td colspan="2">
-		<p><b><font size="5">Adding a figure</font></b></p>
+		<p id="adding_a_figure"><b><font size="5">Adding a figure</font></b></p>
 		<p>
 		<img border="0" src="images/OA_FigureAddPanel.gif" width="174" height="129" align="left">Go 
 		to the <i>Figure editor</i> tab and click on the <i>Click to add figure</i> box. A 
@@ -163,12 +168,60 @@
 		</td>
 	</tr>
 	<tr>
+    <td colspan="2">
+      <p id="figure_comments"><b><font size="5">Figure comments</font></b></p>
+      <p>The comment section can be used te enter information about the 
+      figure. Plain text can be used but there is also a variety of
+      useful special codes:</p>
+      <ul>
+        <li><strong>[</strong> : bold-line the comment box on Form B &amp; C</li>
+        <li><strong>[[</strong> : red-line the comment box on Form B &amp; C</li>
+        <li><strong>\</strong> : new line</li>
+        <li><strong>NLD</strong> : use two- or three letter 
+        <a href="http://en.wikipedia.org/wiki/ISO_3166-1" target="_blank">
+        official country code</a> in capitals to add the country's flag 
+        to Grid view</li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2">
+      <p><b><font size="5">Automated handling of Free  and Compulsory&nbsp;/&nbsp;Free&nbsp;Unknown sequence figures</font></b></p>
+      <p>When on the Sequence Info panel a combination of Class : Rules : Category : Program 
+      is set that requires special handling to meet CIVA regulations, 
+      the software will provide the following automated handling:</p>
+      <p><strong>Glider Advanced and Unlimited</strong>
+        <ul>
+          <li>Free sequences: OpenAero will resolve an excess sequence K 
+          total of up to 3 in accordance with 4.3.3.1.b). The original 
+          figure-K is shown in brackets below the adjusted value.</li>
+          <li>Unknown Compulsory sequences: OpenAero will reset up to 2 
+          figures that you designate as 'Free Unknown Link' to 10K total.</li>
+        </ul>
+      </p>
+      <p><strong>Power and Glider Advanced and Unlimited</strong>
+        <ul>
+          <li>Free Unknown sequences: you should identify each submitted 
+          figure with the officially designated alpha character (power 
+          'A' to 'J', glider 'A' to G'). Linking figures should be 
+          identified as 'Free Unknown Link', and OpenAero will reset 
+          them to 24K total (power) or 10K total (glider).</li>
+        </ul>
+      </p>
+    </td>
+  </tr>
+	<tr>
 		<td colspan="2">
 		<p><b><font size="5">Selecting and moving a figure</font></b></p>
 		<p>To select a figure, click on the start dot or select it in the 
 		sequence text line. The figure is now magenta and can be edited with the 
 		figure editor. For repositioning it can be dragged anywhere by holding 
 		down the mouse button after clicking the figure start.</p>
+    <p><i>TIP</i> : A poorly laid-out sequence that is difficult to 
+    follow can be a real problem for judges - time spent creating an 
+    easily understood flow of figures can be a good way to help improve 
+    your marks. Make sure to use the straight and curved dotted lines to 
+    show how your figures follow each other.</p>
 		</td>
 	</tr>
 	<tr>
@@ -206,7 +259,7 @@
 		figure editor. If you print the sequence you can opt to add the <i>Sequence 
 		Check Result</i> to the bottom of your Form-B.
 		Several sequences can be checked simultaneously by choosing or dragging 
-		their files to the box shown when you click menu item <i>File ... Check 
+		their files to the box shown when you click menu item <i>Tools ... Check 
 		multiple seq</i>.</p>
 		</td>
 	</tr>
@@ -239,6 +292,13 @@
 		These images can be opened in most browsers and many other applications 
 		- see <a href="http://www.fileinfo.com" target="_blank">www.fileinfo.com</a> for further 
 		advice.</p>
+		<p><u><i><b><font size="4">Saving a sequence's figures as separate
+		images</font></b></i></u></p>
+		<p>To save the current sequence figures as separate images, choose <i>Save figs separate</i> in the  
+		<i>File</i> menu. You will then get the option to save a ZIP file that 
+		contains every figure of your sequence as a separate SVG image.<br />
+		The images are oriented according the sequence flow and the form 
+		currently being viewed (B or C).</p>
 		<p><u><i><b><font size="4">Printing sequences<br>
 		</font></b></i></u>To print some or all of the sequence forms, choose <i>Print forms</i> in the 
 		<i>File menu</i>, and select the appropriate options. To save the forms as a 
@@ -251,41 +311,43 @@
 	</tr>
 	<tr>
 		<td colspan="3">
-		<table border="0" width="100%" cellspacing="1">
-			<tr>
-				<td>
-		<b><font size="5">
-				The 
-		Figure Grid system for Unknown and Free Unknown operations</font></b><p>Either from the very start or from an existing sequence, <i>View ... 
-		Figs in Grid</i> will set each figure into a tabular grid format showing the 
-		K-factors and any other relevant information. Use <i>Tools ... Settings</i> to 
-		change the number of grid columns if required. This grid can be printed 
-		for distribution to sequence designers bearing all the relevant figure 
-		information, so that submitted sequences conform to CIVA regulations.</p>
-		<p>It may be useful to add the submitting Team name or ISA country code 
-    to the figure comments. This can also be done by typing it 
-		between inverted marks into the sequence string after any Free Unknown 
-		identification letter &quot;@A&quot;, &quot;@B&quot; etc. and before the figure code - 
-		for example &quot;@F USA&quot;. This 
-		will be shown in the grid adjacent to the figure designation if present, 
-		or the first Aresti manoeuvre code if not.<br>
-&nbsp;</p>
-				</td>
-				<td rowspan="2" width="344" valign="top">
-		<b><font size="5">
-		<img border="0" src="images/OA_FigureGrid.gif" width="338" height="278" align="right"></font></b></td>
-			</tr>
-			<tr>
-				<td><b><font size="5">Importing OpenAero files into ACRO</font></b><p>OpenAero files that are stored in <i>&quot;filename.seq&quot;</i> format can be 
-		directly imported into the ACRO scoring software, thus providing a swift 
-		and accurate method for transferring all of the required figure 
-		information. Note that the OpenAero figure text string does not 
-		provide the necessary data for this procedure, and should generally be 
-		avoided if possible.</td>
-			</tr>
-		</table>
-		</td>
-	</tr>
+      <p id="grid_system"><b><font size="5">The Figure Grid system for Unknown and Free&nbsp;Unknown operations
+      </font></b></p>
+      <p>
+        <img border="0" src="images/OA_FigureGrid.gif" width="338" height="278" align="right">
+        Either from the very start or from an existing sequence, <i>View ... 
+        Figs in Grid</i> will set each figure into a tabular grid format showing the 
+        K-factors and any other relevant information. Use <i>Tools ... Settings</i> to 
+        change the number of grid columns if required. This grid can be printed 
+        for distribution to sequence designers bearing all the relevant figure 
+        information, so that submitted sequences conform to CIVA regulations.
+      </p>
+      <p>
+        It may be useful to add the submitting Team name or ISO country code 
+        to the figure comments. This can also be done by typing it 
+        between inverted marks into the sequence string after any Free Unknown 
+        identification letter &quot;@A&quot;, &quot;@B&quot; etc. and before the figure code - 
+        for example &quot;@F USA&quot;. This will be shown in the grid 
+        adjacent to the figure designation if present, 
+        or the first Aresti manoeuvre code if not.<br>
+        Also, the country flag will be added to the Grid view 
+        (courtesy of <a href="http://www.icondrawer.com" target="_blank">www.icondrawer.com</a>).
+      </p>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <b><font size="5">Importing OpenAero files into ACRO</font></b>
+      <p>
+        OpenAero files that are stored in <i>&quot;filename.seq&quot;</i> format can be 
+        directly imported into the ACRO scoring software, thus providing a swift 
+        and accurate method for transferring all of the required figure 
+        information. Note that the OpenAero figure text string does not 
+        provide the necessary data for this procedure, and should generally be 
+        avoided if possible.
+      </p>
+    </td>
+  </tr>
 </table>
 </body>
 </html>

@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# OpenAero Appcache version 1.3.3.3
+# OpenAero Appcache version 1.3.4
 about.html
 arestisystem.html
 buttons/figEndInv.png
@@ -18,6 +18,7 @@ buttons/close.png
 buttons/smallMask.png
 buttons/mask-on.png
 buttons/switchY.png
+buttons/smallInfo.png
 buttons/smallMask-on.png
 buttons/smallMask-disable.png
 buttons/trash.png
@@ -48,6 +49,7 @@ favicons/favicon114.png
 favicons/favicon128.png
 favicons/favicon195.png
 figures.js
+flags.js
 gpl_files/print.css
 gpl_files/gplv3-127x51.png
 gpl_files/layout.css
@@ -70,6 +72,7 @@ images/OA_FigureSelection.gif
 images/OA_Queue.gif
 images/OA_SequenceInfoPanel.gif
 index.html
+jszip.js
 language.html
 logo.js
 manual.html

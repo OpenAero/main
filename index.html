@@ -57,6 +57,10 @@
     <script src="examples.js" type="text/javascript"></script>
     <!-- improve look of XML output -->
     <script src="vkbeautify.js" type="text/javascript"></script>
+    <!-- create zip files. Used for individual figure image output -->
+    <script src="jszip.js" type="text/javascript"></script>
+    <!-- all the country flags -->
+    <script src="flags.js" type="text/javascript"></script>
   </head>
   <body onLoad="doOnLoad();">
     <!-- overlay div for use with alertBox and loading -->
@@ -241,6 +245,8 @@
               <hr>
               <li><a href="#" onClick="saveAsURL();">Save as link</a></li>
               <li><a href="#" onClick="saveSvg();">Save as image</a></li>
+              <li><a href="#" onClick="saveFigs();">Save figs separate</a></li>
+              <hr>
               <li><a href="#" onClick="printDialog(true);">Print/save forms</a></li>
             </ul>
           </li>
@@ -300,6 +306,14 @@
             <ul class="right">
               <li class="fileOpening">
                 <a href="#" onClick="checkMultiDialog(true);">Check multiple seq</a>
+              </li>
+              <li class="fileOpening">
+                <div class="openFile">
+                  <a href=#>Import rules file</a>
+                  <form id="rulesFileForm">
+                    <input type=file id=rulesFile size=1 onChange="openRulesFile();">
+                  </form>
+                </div>
               </li>
               <li><a href="#" onClick="settingsDialog(true);">Settings</a></li>
             </ul>
@@ -362,10 +376,22 @@
             </div>
             <div id="chooseLogo"></div>
           </div>
-          <div class=item><div class="label">Pilot</div><input type=text name=pilot id=pilot maxlength="30" onChange="changeSequenceInfo()"></div>
-          <div class=item><div class="label">Aircraft</div><input type=text name=aircraft id=aircraft maxlength="30" onChange="changeSequenceInfo()"></div>
-          <div class=item><div class="label">Location</div><input type=text name=location id=location maxlength="30" onChange="changeSequenceInfo()"></div>
-          <div class=item><div class="label">Date</div><input type=text name=date id=date maxlength="30" onChange="changeSequenceInfo()"></div>
+          <div class=item>
+            <div class="label">Pilot</div>
+            <input type=text name=pilot id=pilot maxlength="30" onChange="changeSequenceInfo()">
+          </div>
+          <div class=item>
+            <div class="label">A/C type &amp; reg</div>
+            <input type=text name=aircraft id=aircraft maxlength="30" onChange="changeSequenceInfo()">
+          </div>
+          <div class=item>
+            <div class="label">Location</div>
+            <input type=text name=location id=location maxlength="30" onChange="changeSequenceInfo()">
+          </div>
+          <div class=item>
+            <div class="label">Date</div>
+            <input type=text name=date id=date maxlength="30" onChange="changeSequenceInfo()">
+          </div>
           <div class=item><div class="label">Class</div>
             <select name="class" id="class" onChange="selectPwrdGlider();">
               <option value="powered">Power</option>
@@ -383,13 +409,15 @@
           <div class=item><div class="label">Notes</div><textarea name=notes id=notes onChange="changeSequenceInfo()"></textarea></div>
           <input type=hidden id="oa_version">
         </div>
-        <!-- Figure Chooser -->
+        <!-- Figure Editor -->
         <div id="figureInfo" class=section style="position:absolute;z-index:-1;top:-5000px;">
-          <div id="figureHeader" class="sectionLabel"></div><div class="sectionLabelClose">&nbsp;</div>
+          <span id="figureHeader" class="sectionLabel"></span><div class="sectionLabelClose">&nbsp;</div>
+          <div id="editInfo" class="info"><a href="manual.html#adding_a_figure" target="_blank"><img src="buttons/smallInfo.png"></a></div>
           <div id="figureOptions">
             <div>
               <div id="subSequence" class="button" onClick="clickButton(this);"><img src="buttons/mask.png"></div>
               <div id="deleteFig" class="button" onClick="clickButton(this);"><img src="buttons/mask.png"></div>
+              <div class="info"><a href="manual.html#adding_a_figure" target="_blank"><img src="buttons/smallInfo.png"></a></div>
               <div class=clearSpace></div>
             </div>
             <div>
@@ -453,6 +481,7 @@
             <div class="sectionLabel">Comments</div><div class="sectionLabelClose">&nbsp;</div>
             <textarea name="comments" id="comments" onChange="updateFigure();"></textarea>
             <input type="button" value="Update">
+            <span class="info"><a href="manual.html#figure_comments" target="_blank"><img src="buttons/smallInfo.png"></a></span>
           </div>
         </div>
         <!-- Alerts -->
@@ -468,6 +497,7 @@
       <!-- Figure selector -->
       <div id="figureSelector">
         <div>
+          <a href="manual.html#adding_a_figure" target="_blank" class="info"><img src="buttons/smallInfo.png"></a>
           <div id="figureSelectorClose"><a href="#" onMouseDown="hideFigureSelector();"><img src="buttons/close.png"></a></div>
           <div id="figureSelectorOptionsDiv"></div>
           <div id="figureSelectorGroupDiv"><select id="figureGroup" onChange="changeFigureGroup(this);"></select></div>

@@ -1,4 +1,4 @@
-// OpenAero rulesYY-XXX file
+// rules13.js version 1.3.4
 
 // This file is part of OpenAero.
 
@@ -18,47 +18,31 @@
 //  You should have received a copy of the GNU General Public License
 //  along with OpenAero.  If not, see <http://www.gnu.org/licenses/>.
 
-// This file defines year (YY) and rule type (XXX) specific rules
+// This file defines year (YY) specific rules
 
-//
-//
-// V 2013.0.50
 //
 // The rule files contains the specifications for sequence verification.
 // They also provide details about the position and harmony, allowed connectors, etc.
 // the free programs are relatively easy to check. The unknowns have specific rules for every figure.
-// The rulesYY.txt file is the main file for year YY
-// The rulesYY-ORG.txt file should contain information for ORG organization (eg CIVA, IAC, CIVA-glider, etc)
-// the program first load the rulesYY file, then the rulesYY-TYPE for the sequence type.
+// The rulesYY.js file is the main file for year YY
+// The rulesYY-ORG.js file should contain information for ORG organization (eg CIVA, IAC, glider-CIVA, etc)
+// the program first loads the rulesYY file, then the rulesYY-TYPE for the sequence type.
 // redirection within a file is allowed using "more=" line. Also, using "more=civa program kind" allows
 // a redirection from another organization (eg IAC or BAEA) into the civa file itself.
 //
-// Olan updates the rules files from any internet download listed in ruleslist.txt from
-// http://www.aerobatics.org.il/olan/ruleslist.txt
-//
-// if you'd like to update or create new rules for your organization:
-// 1. create the appropriate rules-org.txt file
-// 2. place it in Olan directory (menu Help-About has a link to open it)
-// 3. test the new rules file
-// 4. place it in any internet side of your organization and send me (mg@mivzak.com) the link
-// 5. or, send me the file and I will keep it in www.aerobatics.org.il (but this will require
-//    you to update me on any change)
-//
 // Generally, the file contains several types of line:
 // [section]   - refers to specific rules for specific sequence
+// (section)   - refers to specific rules which will not show up in the rules chooser
 // "name=value  - where name is usually some type of rule (especiall group-xxx), and value is a count of a regular expression,
 // catalogId value - where catalogID is an Aresti catalog number, and value is a listing of rules applied to it
 
 // To write or modify these files, you'd need:
-// 1. extensive knowledge of regular expressions (from the standard .NET 2.0)
+// 1. extensive knowledge of regular expressions
 // 2. extensive knowledge of sequence design and catalog info
 // 3. complete understanding of configuration files like this
-// 4. a basic understanding of algorithms and how Olan process the rules file
+// 4. a basic understanding of algorithms and how OpenAero processes the rules file
 
-// please contact me for help with any specific rule!!!
-
-//
-// How Olan checks a sequence:
+// How OpenAero checks a sequence:
 // 1. create a form-A like list of the sequence. Each figure on a new line.
 //  first number on line is the base figure.
 //  next are all rolls, with 0.0.0.0(0) indicating an unused optional roll.
@@ -68,18 +52,18 @@
 //    2t  would be:       1.14.1(12) 9.1.2.2(6) 0.0.0.0(0)
 
 // 2. the rulesYY for the sequence's date(year YY) are loaded.
-// 3. the rulesYY-type.txt file is loaded where "type" is sequence "rules" box (CIVA, CIVA-Glider, etc)
+// 3. the rulesYY-type.txt file is loaded where "type" is sequence "rules" box (CIVA, glider-CIVA, etc)
 // 4. all rules from the start of the file are read until the first [section]
 // 5. a line "[kind program]" is searched in the file and if found, that section is read
 // 6. a "more=section" line, if read, makes the program read the "more" section.
 
 // 7. all "group-xxx" rules have a list of (figure: count) associated with them, and a total count.
 // 8. [removed]
-// 9. Olan goes over every complete full figure (line from 1 above) and in it, every individual catalog number:
+// 9. OpenAero goes over every complete full figure (line from 1 above) and in it, every individual catalog number:
 //    a. every Group-xxx rule (capital G) is matched against the full figure(line), and if so, counted
 //  b. every group-xxx rule (lowercase g) is matched against every catalog number, and if so, counted
 //    c. group-k is special, and counts the total k instead of the number of figures
-//  d. the list of figure:count (item 8) is also counted, (ignored for connectors as specificied in "fig-connector")
+//  d. the list of figure:count (item 8) is also counted, (ignored for connectors)
 //  e. if the catalog id is not matched in "allow=" nor in the list of figures (lines without "=" eg 7.2.1-2)
 //  an error occur "figure xxx not allowed"
 //  f. for the base figure (first figure on every line), the base rules are checked, e.g.
@@ -93,20 +77,20 @@
 //    c. the "xxx" is a conversion rule, a reg-ex substitute applied to the figure line, listed as "conv-xxx="
 //    d. the conversion rule is applied
 //  e. if "yyy" "<nn"  where nn is a number, then the conversion's result numbers are summed per element and must be below nn.
-//    f. otherise, "yyy" is a regex. if the convered result matches "yyy" an error is reported
+//    f. otherwise, "yyy" is a regex. if the convered result matches "yyy" an error is reported
 //11. conversion rules "conv-xxx=" are used to check for individual figure limitations, mostly to limit rolls on unknown figures
 //  a. the conversion regex is applied for each catalog id on the line
 //    b. the conversion regex is a ";" separated list of regex=replace,
 //  c. if the regex is matched, the whole catalog info is replaced by the replace string.
 //  d. if the replace contains $1, $2 or $3 itself, this is replaced by the first or 2nd or 3rd () match of the regex
-//12. after all the full figures been counted for, olan goes thru every group (figure:count) to check for repeations
+//12. after all the full figures been counted for, OpenAero goes thru every group (figure:count) to check for repeations
 //  a. any specific figure:count with count bigger than group-repeat is reported
 //    b. the total repeats of figure:count within a groupd is matched agains group-totrepeat and reported
 //  for example, you can have a rule for snaps ("group-snap=^9\.9") the group-repeat=3 would allow
 //  any specific snap to be repeated three times. the group-totrepeat=4 would allow only 4 repeations in
 //       total (ie 4 snaps each had 2 repeations, or 2 snaps with 3 repeats)
 //  c. and group-min and group-max are checked and reported
-//13. any seqcheck-xxx rule is matched agains the OLAN representation of the sequence (can be used to test entry etc)
+//13. any seqcheck-xxx rule is matched agains the OpenAero representation of the sequence (can be used to test entry etc)
 //
 // Note that because group-k is special, and group-base is simply a count base figures, the basic test, e.g. for
 // unlimited unknown:
@@ -136,7 +120,7 @@
 // rule-A=x:regex when A is attacehd to allow figure: apply conv-x to rolls catalog info, then regex must match.
 // why-A    details of why rule has failed to apply for specific figure
 
-// seqcheck-x=  is a complete regex that must match the Olan sequence itself. can be used to ensure eg cross box entry...
+// seqcheck-x=  is a complete regex that must match the OpenAero sequence itself. can be used to ensure eg cross box entry...
 // more=section  continue reading rules from given section
 
 // for example, using "group-snap=^9\.9" defines the group of inside snaps.
@@ -167,13 +151,12 @@
 // would be true and the program will disallow the figure.
 
 //allow-defrules= list of default rules which are applied to ALL figures
-//fig-connector=  regex to define figures as "connectors" which are not checked (for unknown sequences)
-//fig-connector-min= minimum number of figures required in seq for the "connector" rule to be applied
+//connectors=XX/YY allowed number and total K of connectors
+//unknown-letters=ABCDEFGHIJ allowed letters for Free Unknown figures
 //floating-point= number of floating point that can be reduced from program if needed. FP is included in k-max.
 
 // define rules global
 var rules = [];
-
 
 rules.push("group-k=^");// group k is special, total the K-factor per fig/seq
 rules.push("group-basefig=^[1-8]");
@@ -248,8 +231,6 @@ rules.push("emptyline-name=lines(1.1.1.1-1.1.1.4) without rolls");
 rules.push("Group-combined=^");
 rules.push("combined-name=combination figures (base and rolls)");
 
-
-
 //#####################################################################
 //##### UNKNOWNS ALLOWED FIGURES RULES ################################
 //#####################################################################
@@ -277,11 +258,11 @@ rules.push("conv-qtrs=^9\\.\\d+\\.\\d.([1-8])=$1; ^0\\.=0");
 rules.push("rule-NF=roll:[fF]");
 rules.push("why-NF=no flick allowed");
 
-rules.push("rule-NOU  =roll: ,");
-rules.push("why-NOU  =no opposite or unlinked rolls allowed");
+rules.push("rule-NOU=roll: ,");
+rules.push("why-NOU=no opposite or unlinked rolls allowed");
 
-rules.push("rule-NR = roll:[^z]");
-rules.push("why-NR  =no roll allowed");
+rules.push("rule-NR=roll:[^z]");
+rules.push("why-NR=no roll allowed");
 
 
 rules.push("rule-MAX360=qtrs:<5");

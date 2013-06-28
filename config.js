@@ -1,4 +1,4 @@
-// config.js 1.3.3
+// config.js 1.3.4
 
 // This file is part of OpenAero.
 
@@ -34,17 +34,16 @@
 // Define active version number of OpenAero
 // **************
 
-var version = '1.3.3';
+var version = '1.3.4';
 var versionNew = '<strong>OpenAero has been upgraded to version ' +
   version + '</strong><br>New features:<ul>' +
-  '<li>Added buttons for setting upright/inverted entry and exit of figures</li>' +
-  '<li>Added display of figure comments to Grid view</li>' +
-  '<li>Many new print options</li>' +
-  '<li>Floating point support (a.o. for glider free)</li>' +
-  '<li>Improved multiple sequence checking</li>' +
-  '<li>Added information to figure chooser: K factor(s) and legality in sequence</li>' +
-  '<li>Improved manual</li>' +
-  '<li>Many bug fixes</li>' +
+  '<li>Added saving of all figures in a sequence as separate images in a single zip file</li>' +
+  '<li>Improved handling and position of figure queue</li>' +
+  '<li>Improved sequence design workflow</i>' +
+  '<li>Easier figure selection in sequence drawing</li>' +
+  '<li>Added country flags to Grid printout when code included in figure comment</li>' +
+  '<li>Many small improvements according user requests</li>' +
+  '<li>Fixed several bugs</li>' +
   '</ul>' +
   'This may take a few seconds to complete.';
 
@@ -109,14 +108,16 @@ var minFigStartDistSq = minFigStartDist * minFigStartDist;
 // For every category the list of SF is defined below. The order MATTERS!
 // The SF will be decided by the first aresti fig nr match
 var superFamilies = [];
-superFamilies['unlimited'] = {'2.':'2', '5.':'5', '6.':'6', '1.':'7', '3.':'7', '7.':'7', '8.':'7', '0.':'7'};
-superFamilies['advanced'] = {'9.11.':'3', '9.12.':'3', '9.9.':'4', '9.10.':'4', '2.':'2', '5.':'5', '6.':'6', '1.':'7', '3.':'7', '7.':'7', '8.':'7', '0.':'7'};
-superFamilies['yak52'] = superFamilies['advanced'];
-superFamilies['intermediate'] = superFamilies['advanced'];
+superFamilies.unlimited = {'2.':'2', '5.':'5', '6.':'6', '1.':'7', '3.':'7', '7.':'7', '8.':'7', '0.':'7'};
+superFamilies.advanced = {'9.11.':'3', '9.12.':'3', '9.9.':'4', '9.10.':'4', '2.':'2', '5.':'5', '6.':'6', '1.':'7', '3.':'7', '7.':'7', '8.':'7', '0.':'7'};
+superFamilies.yak52 = superFamilies.advanced;
+superFamilies.intermediate = superFamilies.advanced;
+superFamilies.glider = superFamilies.advanced;
 // Total K for Unknown connector figures
 var connectFig = [];
-connectFig.totalK = {'powered':24, 'glider':10};
-connectFig.max = {'powered':4, 'glider':2};
+// Version 1.3.4 : handled in rules
+//connectFig.totalK = {'powered':24, 'glider':10};
+//connectFig.max = {'powered':4, 'glider':2};
 // available rolls
 var rollTypes = [':none','4:1/4','2:1/2','3:3/4','1:1','5:1 1/4','6:1 1/2','7:1 3/4','9:2','22:2x2','32:3x2','42:4x2']
 for (i = 2; i < 9; i++) rollTypes.push(i + '4:' + i + 'x4');
@@ -135,62 +136,62 @@ var rollsPerRollElement = 2;
 // *************
 var style = [];
 // Positive line style
-style['pos'] = 'stroke: black; stroke-width: 1.5px; fill: none;';
-style['chooserPos'] = 'stroke: black; stroke-width: 3px; fill: none;';
+style.pos = 'stroke: black; stroke-width: 1.5px; fill: none;';
+style.chooserPos = 'stroke: black; stroke-width: 3px; fill: none;';
 // Negative line style
-style['neg'] = 'stroke-dasharray: 5, 3; stroke: red; stroke-width: 1.5px; fill: none;';
-style['chooserNeg'] = 'stroke-dasharray: 10, 6; stroke: red; stroke-width: 3px; fill: none;';
+style.neg = 'stroke-dasharray: 5, 3; stroke: red; stroke-width: 1.5px; fill: none;';
+style.chooserNeg = 'stroke-dasharray: 10, 6; stroke: red; stroke-width: 3px; fill: none;';
 // Black filled path style
-style['blackfill'] = 'stroke: black; stroke-width: 1px; fill: black;';
+style.blackfill = 'stroke: black; stroke-width: 1px; fill: black;';
 // Positive filled path style
-style['posfill'] = 'stroke: black; stroke-width: 1px; fill: white;';
+style.posfill = 'stroke: black; stroke-width: 1px; fill: white;';
 // Negative filled path style
-style['negfill'] = 'stroke: black; stroke-width: 1px; fill: red;';
+style.negfill = 'stroke: black; stroke-width: 1px; fill: red;';
 // Dotted path style
-style['dotted'] = 'stroke-dasharray: 1, 3; stroke: black; stroke-width: 1px; fill: none;';
+style.dotted = 'stroke-dasharray: 1, 3; stroke: black; stroke-width: 1px; fill: none;';
 // Illegal figure cross style
-style['illegalCross'] = 'stroke: red; stroke-width: 3px; fill: none;';
+style.illegalCross = 'stroke: red; stroke-width: 3px; fill: none;';
 // Illegal figure box style
-style['illegalBox'] = 'stroke: black; stroke-width: 1px; fill: none;';
+style.illegalBox = 'stroke: black; stroke-width: 1px; fill: none;';
 // Autocorrect path style
-style['corr'] = 'stroke: red; stroke-width: 2px; fill: none;';
+style.corr = 'stroke: red; stroke-width: 2px; fill: none;';
 // Autocorrect filled path style
-style['corrfill'] = 'stroke: red; stroke-width: 2px; fill: red;';
+style.corrfill = 'stroke: red; stroke-width: 2px; fill: red;';
 // Roll font size
-rollFontSize = 14;
+var rollFontSize = 14;
 // Roll text style
-style['rollText'] = 'font-family: arial, sans; font-size: ' +
+style.rollText = 'font-family: arial, sans; font-size: ' +
   rollFontSize + 'px; font-weight: bold; fill: red;';
 // Figure Number
-style['figNbr_09'] = 'font-family: verdana, helvetica, sans; font-size: 14px; font-weight: bold; fill: black;';
-style['figNbr_10'] = 'font-family: verdana, helvetica, sans; font-size: 12px; font-weight: bold; fill: black;';
+style.figNbr_09 = 'font-family: verdana, helvetica, sans; font-size: 14px; font-weight: bold; fill: black;';
+style.figNbr_10 = 'font-family: verdana, helvetica, sans; font-size: 12px; font-weight: bold; fill: black;';
 // Text block style
-style['textBlock'] = 'font-family: verdana, helvetica, sans; font-size: 14px; fill: black;';
-style['textBlockBorder'] = 'stroke: black; stroke-width: 1px; fill: none;';
-style['textBlockBorderBold'] = 'stroke: black; stroke-width: 2px; fill: none;';
-style['textBlockBorderBoldRed'] = 'stroke: red; stroke-width: 2px; fill: none;';
+style.textBlock = 'font-family: verdana, helvetica, sans; font-size: 14px; fill: black;';
+style.textBlockBorder = 'stroke: black; stroke-width: 1px; fill: none;';
+style.textBlockBorderBold = 'stroke: black; stroke-width: 2px; fill: none;';
+style.textBlockBorderBoldRed = 'stroke: red; stroke-width: 2px; fill: none;';
 // Mini Form A styles
-style['miniFormA'] = 'font-family: verdana, helvetica, sans; font-size: 10px; fill: black;';
-style['miniFormASmall'] = 'font-family: verdana, helvetica, sans; font-size: 8px; fill: black;';
-style['miniFormATotal'] = 'font-family: verdana, helvetica, sans; font-size: 16px; font-weight: bold; fill: black;';
+style.miniFormA = 'font-family: verdana, helvetica, sans; font-size: 10px; fill: black;';
+style.miniFormASmall = 'font-family: verdana, helvetica, sans; font-size: 8px; fill: black;';
+style.miniFormATotal = 'font-family: verdana, helvetica, sans; font-size: 16px; font-weight: bold; fill: black;';
 // Form A styles
-style['FormAText'] = 'font-family: verdana, helvetica, sans; font-size: 12px; fill: black;';
-style['FormATextBold'] = 'font-family: verdana, helvetica, sans; font-size: 12px; font-weight: bold; fill: black;';
-style['FormATextBold8px'] = 'font-family: verdana, helvetica, sans; font-size: 8px; font-weight: bold; fill: black;';
-style['FormATextBold9px'] = 'font-family: verdana, helvetica, sans; font-size: 9px; font-weight: bold; fill: black;';
-style['FormATextBold10px'] = 'font-family: verdana, helvetica, sans; font-size: 10px; font-weight: bold; fill: black;';
-style['FormATextBold11px'] = 'font-family: verdana, helvetica, sans; font-size: 11px; font-weight: bold; fill: black;';
-style['FormATextBold12px'] = 'font-family: verdana, helvetica, sans; font-size: 12px; font-weight: bold; fill: black;';
-style['FormATextBold13px'] = 'font-family: verdana, helvetica, sans; font-size: 13px; font-weight: bold; fill: black;';
-style['FormATextMedium'] = 'font-family: verdana, helvetica, sans; font-size: 15px; fill: black;';
-style['FormATextLarge'] = 'font-family: verdana, helvetica, sans; font-size: 18px; fill: black;';
-style['FormATextHuge'] = 'font-family: verdana, helvetica, sans; font-size: 40px; font-weight: bold; fill: black;';
-style['FormLine'] = 'stroke: black; stroke-width: 1px; fill: none;';
-style['FormLineBold'] = 'stroke: black; stroke-width: 4px; fill: none;';
+style.FormAText = 'font-family: verdana, helvetica, sans; font-size: 12px; fill: black;';
+style.FormATextBold = 'font-family: verdana, helvetica, sans; font-size: 12px; font-weight: bold; fill: black;';
+style.FormATextBold8px = 'font-family: verdana, helvetica, sans; font-size: 8px; font-weight: bold; fill: black;';
+style.FormATextBold9px = 'font-family: verdana, helvetica, sans; font-size: 9px; font-weight: bold; fill: black;';
+style.FormATextBold10px = 'font-family: verdana, helvetica, sans; font-size: 10px; font-weight: bold; fill: black;';
+style.FormATextBold11px = 'font-family: verdana, helvetica, sans; font-size: 11px; font-weight: bold; fill: black;';
+style.FormATextBold12px = 'font-family: verdana, helvetica, sans; font-size: 12px; font-weight: bold; fill: black;';
+style.FormATextBold13px = 'font-family: verdana, helvetica, sans; font-size: 13px; font-weight: bold; fill: black;';
+style.FormATextMedium = 'font-family: verdana, helvetica, sans; font-size: 15px; fill: black;';
+style.FormATextLarge = 'font-family: verdana, helvetica, sans; font-size: 18px; fill: black;';
+style.FormATextHuge = 'font-family: verdana, helvetica, sans; font-size: 40px; font-weight: bold; fill: black;';
+style.FormLine = 'stroke: black; stroke-width: 1px; fill: none;';
+style.FormLineBold = 'stroke: black; stroke-width: 4px; fill: none;';
 // Print styles
-style['FormBackground'] = 'fill: white;';
-style['sequenceString'] = 'font-family: verdana, helvetica, sans; font-size: 12px; color: blue; fill: blue;';
-style['windArrow'] = 'stroke: black; stroke-width: 1.5px; fill: white;';
+style.FormBackground = 'fill: white;';
+style.sequenceString = 'font-family: verdana, helvetica, sans; font-size: 12px; color: blue; fill: blue; word-wrap: break-word;';
+style.windArrow = 'stroke: black; stroke-width: 1.5px; fill: white;';
 
 // ***************
 // Set png masks for buttons
@@ -272,8 +273,62 @@ var regexTurn = /[0-9\+\-]j[io0-9\+\-]/;
 // in OLAN. Can be removed (incl relevant code in OpenAero.js) in 2015
 var regexOLANBumpBug = /(\&b)|(\&ipb)/;
 var regexOLANNBug = /n/;
+var regexRegistration = [];
+regexRegistration.push (/N[1-9][0-9A-Z]+/);
+regexRegistration.push (/(C|C-|G|G-|D|D-|F|F-)[A-Z]{4}/);
+regexRegistration.push (/(PH|PH-)[A-Z]{3}/);
+regexRegistration.push (/X(A|A-|B|B-|C|C-)[A-Z]{3}/);
+var regexRulesConnectors = /^connectors=([0-9]+)\/([0-9]+)/;
+var regexSequenceOptions = /^(ed|eu|ej|eja|\/\/)$/;
 var regexTextBlock = /^"[^"]*"$/;
 
+// define iso countries for flags
+var isoCountries = {"AD":"AND","AE":"ARE","AF":"AFG","AG":"ATG",
+  "AI":"AIA","AL":"ALB","AM":"ARM","AN":"ANT","AO":"AGO","AQ":"ATA",
+  "AR":"ARG","AS":"ASM","AT":"AUT","AU":"AUS","AW":"ABW","AX":"ALA",
+  "AZ":"AZE","BA":"BIH","BB":"BRB","BD":"BGD","BE":"BEL","BF":"BFA",
+  "BG":"BGR","BH":"BHR","BI":"BDI","BJ":"BEN","BL":"BLM","BM":"BMU",
+  "BN":"BRN","BO":"BOL","BR":"BRA","BS":"BHS","BT":"BTN","BV":"BVT",
+  "BW":"BWA","BY":"BLR","BZ":"BLZ","CA":"CAN","CC":"CCK","CD":"COD",
+  "CF":"CAF","CG":"COG","CH":"CHE","CI":"CIV","CK":"COK","CL":"CHL",
+  "CM":"CMR","CN":"CHN","CO":"COL","CR":"CRI","CU":"CUB","CV":"CPV",
+  "CX":"CXR","CY":"CYP","CZ":"CZE","DE":"DEU","DJ":"DJI","DK":"DNK",
+  "DM":"DMA","DO":"DOM","DZ":"DZA","EC":"ECU","EE":"EST","EG":"EGY",
+  "EH":"ESH","ER":"ERI","ES":"ESP","ET":"ETH","FI":"FIN","FJ":"FJI",
+  "FK":"FLK","FM":"FSM","FO":"FRO","FR":"FRA","GA":"GAB","GB":"GBR",
+  "GD":"GRD","GE":"GEO","GF":"GUF","GG":"GGY","GH":"GHA","GI":"GIB",
+  "GL":"GRL","GM":"GMB","GN":"GIN","GP":"GLP","GQ":"GNQ","GR":"GRC",
+  "GS":"SGS","GT":"GTM","GU":"GUM","GW":"GNB","GY":"GUY","HK":"HKG",
+  "HM":"HMD","HN":"HND","HR":"HRV","HT":"HTI","HU":"HUN","ID":"IDN",
+  "IE":"IRL","IL":"ISR","IM":"IMN","IN":"IND","IO":"IOT","IQ":"IRQ",
+  "IR":"IRN","IS":"ISL","IT":"ITA","JE":"JEY","JM":"JAM","JO":"JOR",
+  "JP":"JPN","KE":"KEN","KG":"KGZ","KH":"KHM","KI":"KIR","KM":"COM",
+  "KN":"KNA","KP":"PRK","KR":"KOR","KW":"KWT","KY":"CYM","KZ":"KAZ",
+  "LA":"LAO","LB":"LBN","LC":"LCA","LI":"LIE","LK":"LKA","LR":"LBR",
+  "LS":"LSO","LT":"LTU","LU":"LUX","LV":"LVA","LY":"LBY","MA":"MAR",
+  "MC":"MCO","MD":"MDA","ME":"MNE","MF":"MAF","MG":"MDG","MH":"MHL",
+  "MK":"MKD","ML":"MLI","MM":"MMR","MN":"MNG","MO":"MAC","MP":"MNP",
+  "MQ":"MTQ","MR":"MRT","MS":"MSR","MT":"MLT","MU":"MUS","MV":"MDV",
+  "MW":"MWI","MX":"MEX","MY":"MYS","MZ":"MOZ","NA":"NAM","NC":"NCL",
+  "NE":"NER","NF":"NFK","NG":"NGA","NI":"NIC","NL":"NLD","NO":"NOR",
+  "NP":"NPL","NR":"NRU","NU":"NIU","NZ":"NZL","OM":"OMN","PA":"PAN",
+  "PE":"PER","PF":"PYF","PG":"PNG","PH":"PHL","PK":"PAK","PL":"POL",
+  "PM":"SPM","PN":"PCN","PR":"PRI","PS":"PSE","PT":"PRT","PW":"PLW",
+  "PY":"PRY","QA":"QAT","RE":"REU","RO":"ROU","RS":"SRB","RU":"RUS",
+  "RW":"RWA","SA":"SAU","SB":"SLB","SC":"SYC","SD":"SDN","SE":"SWE",
+  "SG":"SGP","SH":"SHN","SI":"SVN","SJ":"SJM","SK":"SVK","SL":"SLE",
+  "SM":"SMR","SN":"SEN","SO":"SOM","SR":"SUR","ST":"STP","SV":"SLV",
+  "SY":"SYR","SZ":"SWZ","TC":"TCA","TD":"TCD","TF":"ATF","TG":"TGO",
+  "TH":"THA","TJ":"TJK","TK":"TKL","TL":"TLS","TM":"TKM","TN":"TUN",
+  "TO":"TON","TR":"TUR","TT":"TTO","TV":"TUV","TW":"TWN","TZ":"TZA",
+  "UA":"UKR","UG":"UGA","UM":"UMI","US":"USA","UY":"URY","UZ":"UZB",
+  "VA":"VAT","VC":"VCT","VE":"VEN","VG":"VGB","VI":"VIR","VN":"VNM",
+  "VU":"VUT","WF":"WLF","WS":"WSM","YE":"YEM","YT":"MYT","ZA":"ZAF",
+  "ZM":"ZMB","ZW":"ZWE"};
+// also for key and value reversed
+var isoCountriesReverse = []; 
+for (key in isoCountries) isoCountriesReverse[isoCountries.key] = key;
+  
 // ****************
 // define texts for user interaction
 // ****************
@@ -383,6 +438,12 @@ userText.queueNotSaved = 'The queue figures have NOT been saved';
 userText.queueSaved = 'The queue figures have been saved';
 userText.removeLogo = 'Remove logo';
 userText.rollPos = ['First roll position', 'Second roll position', 'Third roll position', 'Fourth roll position'];
+userText.rulesImported = 'Succesfully imported rules from file. Total lines (excluding comments) : ';
+userText.rulesImportTitle = 'Rules file import';
+userText.rulesNotImported = 'There were no rules imported! Maybe this ' +
+  'is not a valid rules file? Please refer to ' +
+  '<a href="http://code.google.com/p/open-aero/wiki/Developers#Creating_rule_checking_files" '+
+  'target="_blank">Creating rule checking files</a> for more information.';
 userText.runFromFile = 'It seems you are running OpenAero directly from ' +
   'a file. As of version 1.2.3 (february 2013) this is no longer ' +
   'recommended as some functions will be unavailable.<br />' +
@@ -401,7 +462,7 @@ userText.separateFigures = 'This will remove all sequence position ' +
   'formatting. Are you sure you want to continue?';
 userText.sequenceCorrect = 'Sequence is correct';
 userText.sequenceHasErrors = 'Sequence has errors:';
-userText.sequenceTest = 'Sequence test: ';
+userText.sequenceTest = 'Check: ';
 userText.sequenceNotSavedWarning = 'Your current sequence has not been ' +
   'saved.\nAre you sure you want to open a new one?';
 userText.settings = 'Settings';

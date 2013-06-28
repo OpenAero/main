@@ -32,6 +32,8 @@
 //# Modifications 2013 (ajout Prog Q 2013, Suppression Prog free)  V 2013.0.50
 //#
 //# Added Yak 52 for 2013
+//#
+//# Updated Free Unknown connectors info for OpenAero 1.3.4
 
 //######################################################################################
 //##### CIVA YAK52 FREE ################################################################
@@ -175,8 +177,9 @@ rules.push("more=civa unlimited freeunknown");
 
 rules.push("[civa unlimited freeunknown]");
 rules.push("connectors=4/24");
-rules.push("more=civa unlimited unknown");
+rules.push("unknown-letters=ABCDEFGHIJ");
 
+rules.push("more=civa unlimited unknown");
 
 rules.push("[civa unlimited unknown]");
 rules.push("poslj=10");
@@ -210,16 +213,6 @@ rules.push("basefig-repeat=1");
 rules.push("roll-repeat=1");
 rules.push("snap-repeat=1");
 rules.push("spin-repeat=1");
-
-// how to define a "connector" figure:
-// A. any LINE 1.[167].x with at most one 1/4 or 1/2 roll
-// B. any Half loop 7.[1-4].x with at most half roll
-// B. humpty without rolls, P/RP loops without rolls
-
-// these figures are considered "conectors" when checking unknown seq.
-//fig-connector=(^(1\.[12367]\.[1-4]|7\.[1-4]\.[1-4])( 9\.1\..\.[12])?$)|(^8\.[1-4]\.[12]( 9\.1\..\.[12])?$)|(^8\.3[39]\.1$)|(^8\.(34|4[01])\.[12]$)|(^2\.2\.[1-4]$)
-rules.push("fig-connector=(^(1\\.1[12367]\\.[1-4]|7\\.2[1-4]\\.[1-4])( 9\\.1\\..\\.[12])?$)|(^8\\.4[1-4]\\.[12]( 9\\.1\\..\\.[12])?$)|(^8\\.6[12]\\.1$)|(^8\\.(6[34]|55)\\.[12]$)|(^2\\.[12]1\\.[12]$)");
-rules.push("fig-connector-min=11");
 
 rules.push("more=civa unlimited unknownbase");
 
@@ -698,11 +691,8 @@ rules.push("roll-repeat=1");
 rules.push("snap-repeat=1");
 rules.push("spin-repeat=1");
 
-// these figures are considered "conectors" when checking unknown seq.
-//fig-connector=(^(1\.[12367]\.[1-4]|7\.[1-4]\.[1-4])( 9\.1\..\.[12])?$)|(^8\.[1-4]\.[12]( 9\.1\..\.[12])?$)|(^8\.3[39]\.1$)|(^8\.(34|4[01])\.[12]$)|(^2\.2\.[1-4]$)
-rules.push("fig-connector=(^(1\\.1[12367]\\.[1-4]|7\\.2[1-4]\\.[1-4])( 9\\.1\\..\\.[12])?$)|(^8\\.4[1-4]\\.[12]( 9\\.1\\..\\.[12])?$)|(^8\\.6[12]\\.1$)|(^8\\.(6[34]|55)\\.[12]$)|(^2\\.[12]1\\.[12]$)");
-//minimum number of figures to start ignoring connectors
-rules.push("fig-connector-min=11");
+rules.push("connectors=4/24");
+rules.push("unknown-letters=ABCDEFGHIJ");
 
 rules.push("more=civa advanced unknownbase");
 rules.push("(civa advanced unknownbase)");
@@ -1020,11 +1010,7 @@ rules.push("roll-repeat=1");
 rules.push("snap-repeat=1");
 rules.push("spin-repeat=1");
 
-// these figures are considered "conectors" when checking unknown seq.
-//fig-connector=(^(1\.[12367]\.[1-4]|7\.[1-4]\.[1-4])( 9\.1\..\.[12])?$)|(^8\.[1-4]\.[12]( 9\.1\..\.[12])?$)|(^8\.3[39]\.1$)|(^8\.(34|4[01])\.[12]$)|(^2\.2\.[1-4]$)
-rules.push("fig-connector=(^(1\\.1[12367]\\.[1-4]|7\\.2[1-4]\\.[1-4])( 9\\.1\\..\\.[12])?$)|(^8\\.4[1-4]\\.[12]( 9\\.1\\..\\.[12])?$)|(^8\\.6[12]\\.1$)|(^8\\.(6[34]|55)\\.[12]$)|(^2\\.[12]1\\.[12]$)");
-//minimum number of figures to start ignoring connectors
-rules.push("fig-connector-min=11");
+rules.push("connectors=4/24");
 
 rules.push("more=CIVA Yak52 unknownbase");
 rules.push("(CIVA Yak52 unknownbase)");
