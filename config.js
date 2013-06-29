@@ -1,4 +1,4 @@
-// config.js 1.3.4
+// config.js 1.3.5
 
 // This file is part of OpenAero.
 
@@ -34,16 +34,16 @@
 // Define active version number of OpenAero
 // **************
 
-var version = '1.3.4';
+var version = '1.3.5';
 var versionNew = '<strong>OpenAero has been upgraded to version ' +
   version + '</strong><br>New features:<ul>' +
+  '<li>Fixed bug causing sequence checking rules for specific rolls in figures to be ignored</li>' +
   '<li>Added saving of all figures in a sequence as separate images in a single zip file</li>' +
   '<li>Improved handling and position of figure queue</li>' +
   '<li>Improved sequence design workflow</i>' +
   '<li>Easier figure selection in sequence drawing</li>' +
   '<li>Added country flags to Grid printout when code included in figure comment</li>' +
   '<li>Many small improvements according user requests</li>' +
-  '<li>Fixed several bugs</li>' +
   '</ul>' +
   'This may take a few seconds to complete.';
 
@@ -368,6 +368,7 @@ userText.figSelectorAddStart = 'Add new figure at start';
 userText.figSelectorReplace = 'Replace active figure';
 userText.figureAlreadyInQueue ='This figure is already in the queue';
 userText.figureQueue = 'Figure Queue';
+userText.forElement = ' for element ';
 userText.formB = 'Form B';
 userText.formC = 'Form C';
 userText.getChrome = 'For optimum use of OpenAero, please download the ' +

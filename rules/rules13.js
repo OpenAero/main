@@ -1,4 +1,4 @@
-// rules13.js version 1.3.4
+// rules13.js version 1.3.5
 
 // This file is part of OpenAero.
 
@@ -52,7 +52,7 @@
 //    2t  would be:       1.14.1(12) 9.1.2.2(6) 0.0.0.0(0)
 
 // 2. the rulesYY for the sequence's date(year YY) are loaded.
-// 3. the rulesYY-type.txt file is loaded where "type" is sequence "rules" box (CIVA, glider-CIVA, etc)
+// 3. the rulesYY-type.js file is loaded where "type" is sequence "rules" box (CIVA, glider-CIVA, etc)
 // 4. all rules from the start of the file are read until the first [section]
 // 5. a line "[kind program]" is searched in the file and if found, that section is read
 // 6. a "more=section" line, if read, makes the program read the "more" section.
@@ -83,7 +83,7 @@
 //    b. the conversion regex is a ";" separated list of regex=replace,
 //  c. if the regex is matched, the whole catalog info is replaced by the replace string.
 //  d. if the replace contains $1, $2 or $3 itself, this is replaced by the first or 2nd or 3rd () match of the regex
-//12. after all the full figures been counted for, OpenAero goes thru every group (figure:count) to check for repeations
+//12. after all the full figures been counted for, OpenAero goes through every group (figure:count) to check for repeations
 //  a. any specific figure:count with count bigger than group-repeat is reported
 //    b. the total repeats of figure:count within a groupd is matched agains group-totrepeat and reported
 //  for example, you can have a rule for snaps ("group-snap=^9\.9") the group-repeat=3 would allow
@@ -101,8 +101,7 @@
 //
 //is a result of the application of the above rules! There are no built-in rules except the above.
 
-// A detailed listing of all special convensions:
-//
+// A detailed listing of all special conventions:
 
 // Group-x=regex  define a group for a full figure (match full line)
 // group-x=regex  define a group for catalog id (match rolls and base figs)
@@ -129,7 +128,7 @@
 // and "snap-repeat=2" to specify any snap element can be repeated at most twice.
 
 // a [section] describes a specific sequence for checking.
-// [iac unlimited free] first elemet is rules type, 2nd sequence type 3rd is program
+// [iac unlimited free] first element is rules type, 2nd sequence type 3rd is program
 // each section describes general rules using grouping, and specific rules per
 // allowed figure. A list of figures is provided which are allowed explicitly,
 // plus an "allow=" can be used to specify which figures to allow by regex
@@ -153,7 +152,8 @@
 //allow-defrules= list of default rules which are applied to ALL figures
 //connectors=XX/YY allowed number and total K of connectors
 //unknown-letters=ABCDEFGHIJ allowed letters for Free Unknown figures
-//floating-point= number of floating point that can be reduced from program if needed. FP is included in k-max.
+//floating-point= number of floating point that can be reduced from program
+// if needed. FP is included in k-max.
 
 // define rules global
 var rules = [];
@@ -258,7 +258,7 @@ rules.push("conv-qtrs=^9\\.\\d+\\.\\d.([1-8])=$1; ^0\\.=0");
 rules.push("rule-NF=roll:[fF]");
 rules.push("why-NF=no flick allowed");
 
-rules.push("rule-NOU=roll: ,");
+rules.push("rule-NOU=roll:[,;]");
 rules.push("why-NOU=no opposite or unlinked rolls allowed");
 
 rules.push("rule-NR=roll:[^z]");

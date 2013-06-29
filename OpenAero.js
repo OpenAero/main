@@ -1,4 +1,4 @@
-﻿// OpenAero.js 1.3.4
+﻿// OpenAero.js 1.3.5
 // This file is part of OpenAero.
 
 //  OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -4205,64 +4205,77 @@ function checkRules () {
             for (var ii = 0; ii < checkAllowCatId[arestiNr].length; ii++) {
               // copy checkArray to check
               var check = checkArray.slice(0);
-              
+              // forElement may be used to add element number to 'why'
+              var forElement = '';
               var rule = checkAllowCatId[arestiNr][ii];
+              log.push ('-basefig rule: ' + rule);
               // check if this is a rule of form rule:nr
               var ruleSplit = rule.split(':');
-              if ((ruleSplit[1] === j) || (ruleSplit.length == 1)) {
-                rule = ruleSplit[0];
+              rule = ruleSplit[0];
+              // if it is a rule of form rule:nr, only put this roll
+              // element in check
+              if (ruleSplit[1]) {
+                var rollNr = 1;
+                check = [];
+                for (var m = 0; m < checkArray.length; m++) {
+                  if (rollNr == ruleSplit[1]) {
+                    if (checkArray[m] == ' ') break;
+                    check.push (checkArray[m]);
+                  } else {
+                    if (checkArray[m] == ' ') rollNr++;
+                  }
+                }
+                forElement = userText.forElement + ruleSplit[1];
+              }
+              // Apply conversions to the Aresti number before checking the rule
+              if (checkRule[rule].conv) {
+                var conversion = checkRule[rule].conv;
+                log.push ('Apply: ' + checkRule[rule].conv);
+                logLine = 'Converted: ' + check.join('') + ' => ';
+                for (var l = 0; l < checkConv[conversion].length; l++) {
+                  for (var m = 0; m < check.length; m++) {
+                    if (!check[m].match(/[ ,;]/)) {
+                      check[m] = check[m].replace(checkConv[conversion][l].regex,
+                      checkConv[conversion][l].replace);
+                    }
+                  }
+                }
+                checkLine = check.join('');
 
-                log.push ('-basefig rule: ' + rule);
-                // Apply conversions to the Aresti number before checking the rule
-                //console.log(rule);
-                //console.log(check);
-                if (checkRule[rule].conv) {
-                  var conversion = checkRule[rule].conv;
-                  log.push ('Apply: ' + checkRule[rule].conv);
-                  logLine = 'Converted: ' + checkLine + ' => ';
-                  for (var l = 0; l < checkConv[conversion].length; l++) {
-                    for (var m = 0; m < check.length; m++) {
-                      if (!check[m].match(/[ ,;]/)) {
-                        check[m] = check[m].replace(checkConv[conversion][l].regex,
-                        checkConv[conversion][l].replace);
-                      }
-                    }
-                  }
-                  checkLine = check.join('');
-                  log.push (logLine + checkLine);
+                log.push (logLine + checkLine);
+              }
+              if (checkRule[rule].regex) {
+                if (checkLine.match(checkRule[rule].regex)) {
+                  checkAlert (checkRule[rule].why + forElement, 'rule', figNr);
+                  log.push ('*** Error: Fig ' + figNr + ': ' + checkRule[rule].why + forElement);
                 }
-                if (checkRule[rule].regex) {
-                  if (checkLine.match(checkRule[rule].regex)) {
-                    checkAlert (checkRule[rule].why, 'rule', figNr);
-                    log.push ('*** Error: Fig ' + figNr + ': ' + checkRule[rule].why);
+              } else if (checkRule[rule].less) {
+                var sum = 0;
+                for (var l = check.length - 1; l >= 0; l--) {
+                  if (check[l].match(/^[0-9]/)) {
+                    sum += parseInt (check[l]);
                   }
-                } else if (checkRule[rule].less) {
-                  var sum = 0;
-                  for (var l = check.length - 1; l >= 0; l--) {
-                    if (check[l].match(/^[0-9]/)) {
-                      sum += parseInt (check[l]);
+                  if ((check[l] == ' ') || (l == 0)) {
+                    if (sum >= parseInt (checkRule[rule].less)) {
+                      checkAlert (checkRule[rule].why + forElement, 'rule', figNr);
+                      log.push ('*** Error: Fig ' + figNr + ': ' + checkRule[rule].why + forElement);
                     }
-                    if ((check[l] == ' ') || (l == 0)) {
-                      if (sum >= parseInt (checkRule[rule].less)) {
-                        checkAlert (checkRule[rule].why, 'rule', figNr);
-                        log.push ('*** Error: Fig ' + figNr + ': ' + checkRule[rule].why);
-                      }
-                      sum = 0;
-                    }
-                  }
-                } else if (checkRule[rule].totalLess) {
-                  var sum = 0;
-                  for (var l = check.length - 1; l >= 0; l--) {
-                    if (check[l].match(/^[0-9]/)) {
-                      sum += parseInt (check[l]);
-                    }
-                  }
-                  if (sum >= parseInt (checkRule[rule].totalLess)) {
-                    checkAlert (checkRule[rule].why, 'rule', figNr);
-                    log.push ('*** Error: Fig ' + figNr + ': ' + checkRule[rule].why);
+                    sum = 0;
                   }
                 }
-              }                
+              } else if (checkRule[rule].totalLess) {
+                var sum = 0;
+                for (var l = check.length - 1; l >= 0; l--) {
+                  if (check[l].match(/^[0-9]/)) {
+                    sum += parseInt (check[l]);
+                  }
+                }
+                if (sum >= parseInt (checkRule[rule].totalLess)) {
+                  checkAlert (checkRule[rule].why + forElement, 'rule', figNr);
+                  log.push ('*** Error: Fig ' + figNr + ': ' + checkRule[rule].why + forElement);
+                }
+              }
+              
             }
             // Check default rules when applicable
             if (defRules != []) {
