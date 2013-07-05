@@ -34,16 +34,11 @@
 // Define active version number of OpenAero
 // **************
 
-var version = '1.3.5';
+var version = '1.3.6';
 var versionNew = '<strong>OpenAero has been upgraded to version ' +
   version + '</strong><br>New features:<ul>' +
-  '<li>Fixed bug causing sequence checking rules for specific rolls in figures to be ignored</li>' +
-  '<li>Added saving of all figures in a sequence as separate images in a single zip file</li>' +
-  '<li>Improved handling and position of figure queue</li>' +
-  '<li>Improved sequence design workflow</i>' +
-  '<li>Easier figure selection in sequence drawing</li>' +
-  '<li>Added country flags to Grid printout when code included in figure comment</li>' +
-  '<li>Many small improvements according user requests</li>' +
+  '<li>Fixed figure definitions for 8.6.18.x and 8.6.19.x</li>' +
+  '<li>Added IOC country codes for flags in Grid view</li>' +
   '</ul>' +
   'This may take a few seconds to complete.';
 
@@ -282,6 +277,53 @@ var regexRulesConnectors = /^connectors=([0-9]+)\/([0-9]+)/;
 var regexSequenceOptions = /^(ed|eu|ej|eja|\/\/)$/;
 var regexTextBlock = /^"[^"]*"$/;
 
+// define IOC (International Olympic Commitee) countries for flags
+var iocCountries = {"AD":"AND","AE":"UAE","AF":"AFG","AG":"ANT",
+  "AI":"AIA","AL":"ALB","AM":"ARM","AO":"ANG","AQ":"ATA",
+  "AR":"ARG","AS":"ASA","AT":"AUT","AU":"AUS","AW":"ARU",
+  "AZ":"AZE","BA":"BIH","BB":"BAR","BD":"BAN","BE":"BEL","BF":"BUR",
+  "BG":"BUL","BH":"BRN","BI":"BDI","BJ":"BEN","BM":"BER",
+  "BN":"BRU","BO":"BOL","BR":"BRA","BS":"BAH","BT":"BHU",
+  "BW":"BOT","BY":"BLR","BZ":"BIZ","CA":"CAN","CD":"COD",
+  "CF":"CAF","CG":"CGO","CH":"SUI","CI":"CIV","CK":"COK","CL":"CHI",
+  "CM":"CMR","CN":"CHN","CO":"COL","CR":"CRC","CU":"CUB","CV":"CPV",
+  "CY":"CYP","CZ":"CZE","DE":"GER","DJ":"DJI","DK":"DEN",
+  "DM":"DMA","DO":"DOM","DZ":"ALG","EC":"ECU","EE":"EST","EG":"EGY",
+  "ER":"ERI","ES":"ESP","ET":"ETH","FI":"FIN","FJ":"FIJ",
+  "FM":"FSM","FR":"FRA","GA":"GAB","GB":"GBR",
+  "GD":"GRN","GE":"GEO","GH":"GHA",
+  "GM":"GAM","GN":"GUI","GQ":"GEQ","GR":"GRE",
+  "GT":"GUA","GU":"GUM","GW":"GBS","GY":"GUY","HK":"HKG",
+  "HN":"HON","HR":"CRO","HT":"HAI","HU":"HUN","ID":"INA",
+  "IE":"IRL","IL":"ISR","IN":"IND","IQ":"IRQ",
+  "IR":"IRI","IT":"ITA","JM":"JAM","JO":"JOR",
+  "JP":"JPN","KE":"KEN","KG":"KGZ","KH":"CAM","KI":"KIR","KM":"COM",
+  "KN":"SKN","KP":"PRK","KR":"KOR","KW":"KUW","KY":"CAY","KZ":"KAZ",
+  "LA":"LAO","LB":"LIB","LC":"LCA","LI":"LIE","LK":"SRI","LR":"LBR",
+  "LS":"LES","LT":"LTU","LU":"LUX","LV":"ESA","LY":"LBA","MA":"MAR",
+  "MC":"MON","MD":"MDA","ME":"MNE","MG":"MAD","MH":"MHL",
+  "MK":"MKD","ML":"MLI","MM":"MYA","MN":"MGL",
+  "MR":"MTN","MT":"MLT","MU":"MRI","MV":"MDV",
+  "MW":"MAW","MX":"MEX","MY":"MAS","MZ":"MOZ","NA":"NAM",
+  "NE":"NIG","NG":"NGR","NI":"NCA","NL":"NED","NO":"NOR",
+  "NP":"NEP","NR":"NRU","NZ":"NZL","OM":"OMA","PA":"PAN",
+  "PE":"PER","PG":"PNG","PH":"PHI","PK":"PAK","PL":"POL",
+  "PR":"PUR","PS":"PLE","PT":"POR","PW":"PLW",
+  "PY":"PAR","QA":"QAT","RO":"ROU","RS":"SRB","RU":"RUS",
+  "RW":"RWA","SA":"KSA","SB":"SOL","SC":"SEY","SD":"SUD","SE":"SWE",
+  "SG":"SIN","SI":"SLO","SK":"SVK","SL":"SLE",
+  "SM":"SMR","SN":"SEN","SO":"SOM","SR":"SUR","ST":"STP","SV":"ESA",
+  "SY":"SYR","SZ":"SWZ","TD":"CHA","TG":"TGO",
+  "TH":"THA","TJ":"TJK","TL":"TLS","TM":"TKM","TN":"TUN",
+  "TO":"TGA","TR":"TUR","TT":"TRI","TV":"TUV","TW":"TPE","TZ":"TAN",
+  "UA":"UKR","UG":"UGA","US":"USA","UY":"URU","UZ":"UZB",
+  "VC":"VIN","VE":"VEN","VG":"IVB","VI":"ISV","VN":"VIE",
+  "VU":"VAN","WS":"SAM","YE":"YEM","ZA":"RSA",
+  "ZM":"ZAM","ZW":"ZIM"};
+// also for key and value reversed
+var iocCountriesReverse = []; 
+for (key in iocCountries) iocCountriesReverse[iocCountries[key]] = key;
+
 // define iso countries for flags
 var isoCountries = {"AD":"AND","AE":"ARE","AF":"AFG","AG":"ATG",
   "AI":"AIA","AL":"ALB","AM":"ARM","AN":"ANT","AO":"AGO","AQ":"ATA",
@@ -327,7 +369,7 @@ var isoCountries = {"AD":"AND","AE":"ARE","AF":"AFG","AG":"ATG",
   "ZM":"ZMB","ZW":"ZWE"};
 // also for key and value reversed
 var isoCountriesReverse = []; 
-for (key in isoCountries) isoCountriesReverse[isoCountries.key] = key;
+for (key in isoCountries) isoCountriesReverse[isoCountries[key]] = key;
   
 // ****************
 // define texts for user interaction

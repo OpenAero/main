@@ -1,3 +1,9 @@
+1.3.6
+* fixed figure definitions for 8.6.18.x and 8.6.19.x
+* added IOC country codes for flags in Grid view and made IOC default
+* added grid flag scaling for large number of columns
+* fixed iPad figure editor layout
+
 1.3.5
 * fixed bug causing sequence checking rules for specific rolls in figures to be ignored
 

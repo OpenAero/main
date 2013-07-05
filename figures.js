@@ -1,4 +1,4 @@
-// figures.js file 1.3.3
+// figures.js file 1.3.6
 
 // This file is part of OpenAero.
 
@@ -1571,21 +1571,23 @@ figs.push("-irp(^)+ 8.6.17.4(14) ~v''''~p!_''~");
 // figs.push("+&irp(^)_- 8.6.17.3(14) ~V''_''~P!__''~");
 // figs.push("-&irp(^)_+ 8.6.17.4(14) ~v''_''~p!__''~");
 
+// 8.6.18 and 8.6.19 figure shapes were switched in OpenAero 1.3.5 and
+// earlier. K's were correct for catalog nr but not for shape!
 // 8.6.18.1-4
-figs.push("+rp(^)^+ 8.6.18.1(12) ~v''''~p!__''~");
-figs.push("-rp(^)^- 8.6.18.2(15) ~V''''~P!__''~");
-figs.push("+irp(^)^+ 8.6.18.3(15) ~V''''~P!__''~");
-figs.push("-irp(^)^- 8.6.18.4(13) ~v''''~p!__''~");
+figs.push("+rp(^)+ 8.6.18.1(12) ~v''''~P!_''~");
+figs.push("-rp(^)- 8.6.18.2(15) ~V''''~p!_''~");
+figs.push("+irp(^)+ 8.6.18.3(15) ~V''''~p!_''~");
+figs.push("-irp(^)- 8.6.18.4(13) ~v''''~P!_''~");
 // figs.push("+&rp(^)^+ 8.6.18.1(12) ~v''_''~p!__''~");
 // figs.push("-&rp(^)^- 8.6.18.2(15) ~V''_''~P!__''~");
 // figs.push("+&irp(^)^+ 8.6.18.3(15) ~V''_''~P!__''~");
 // figs.push("-&irp(^)^- 8.6.18.4(13) ~v''_''~p!__''~");
 
 // 8.6.19.1-4
-figs.push("+rp(^)+ 8.6.19.1(13) ~v''''~P!_''~");
-figs.push("-rp(^)- 8.6.19.2(14) ~V''''~p!_''~");
-figs.push("+irp(^)+ 8.6.19.3(14) ~V''''~p!_''~");
-figs.push("-irp(^)- 8.6.19.4(14) ~v''''~P!_''~");
+figs.push("+rp(^)^+ 8.6.19.1(13) ~v''''~p!__''~");
+figs.push("-rp(^)^- 8.6.19.2(14) ~V''''~P!__''~");
+figs.push("+irp(^)^+ 8.6.19.3(14) ~V''''~P!__''~");
+figs.push("-irp(^)^- 8.6.19.4(14) ~v''''~p!__''~");
 
 // 8.6.20.1-4
 figs.push("+rp(^)^- 8.6.20.1(13) ~v''''~P!__''~");

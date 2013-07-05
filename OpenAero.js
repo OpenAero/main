@@ -1,4 +1,4 @@
-﻿// OpenAero.js 1.3.5
+﻿// OpenAero.js 1.3.6
 // This file is part of OpenAero.
 
 //  OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -2494,7 +2494,7 @@ function buildPlusMinElement (id, value) {
   if (mobileBrowser) {
     var html = '<span class="minButton" onClick="clickButton(this);">' +
       '<img src="buttons/mask.png"></span>';
-    html += '<input type="number" id="'+id+'" size="2" value="'+value+'" ' +
+    html += '<input type="number" id="'+id+'" value="'+value+'" ' +
       'class="plusMinText" onUpdate="updateFigure();" onKeyUp="updateFigure();" />';
     html += '<span class="plusButton" onClick="clickButton(this);">' +
       '<img src="buttons/mask.png"></span>';
@@ -2503,7 +2503,7 @@ function buildPlusMinElement (id, value) {
       var html = '<span class="tooltip ttRight">';
       html += '<span class="minButton" onClick="clickButton(this);">' +
         '<img src="buttons/smallMask.png"></span>';
-      html += '<input type="text" id="'+id+'" size="2" value="'+value+'" ' +
+      html += '<input type="text" id="'+id+'" value="'+value+'" ' +
         'class="plusMinText" onUpdate="updateFigure();" onKeyUp="updateFigure();" />';
       html += '<span class="plusButton" onClick="clickButton(this);">' +
         '<img src="buttons/smallMask.png"></span>';
@@ -2511,7 +2511,7 @@ function buildPlusMinElement (id, value) {
     } else {
       var html = '<span class="minButton" onClick="clickButton(this);">' +
         '<img src="buttons/smallMask.png"></span>';
-      html += '<input type="text" id="'+id+'" size="2" value="'+value+'" ' +
+      html += '<input type="text" id="'+id+'" value="'+value+'" ' +
         'class="plusMinText" onUpdate="updateFigure();" onKeyUp="updateFigure();" />';
       html += '<span class="plusButton" onClick="clickButton(this);">' +
         '<img src="buttons/smallMask.png"></span>';
@@ -5832,13 +5832,12 @@ function makeFormC() {
 // makeFormGrid creates a grid of figures
 function makeFormGrid (cols) {
   var svg = SVGRoot;
-  // width = 800
   var cw = parseInt(800 / cols);
   var ch = parseInt(cw * Math.GR);
   var x = 0;
   var y = 0;
   var col = 0;
-  var scaleMin = 100; // high number, will hold the smallest Fig scale
+  var scaleMin = Infinity; // high number, will hold the smallest Fig scale
   // draw all real figures
   for (var i = 0; i < figures.length; i++) {
     if (figures[i].aresti) {
@@ -5850,16 +5849,16 @@ function makeFormGrid (cols) {
       var figK = 0;
       var yy = y + ch - 10;
       for (var j = f.k.length - 1; j>=0; j--) {figK += parseInt(f.k[j])};
-      drawText('K: ' + figK,  x + 10, yy, 'FormATextBold', 'start');
+      drawText('K: ' + figK,  x + 5, yy, 'FormATextBold', 'start');
       for (var j = f.k.length - 1; j>=0; j--) {
         yy -= 15;
-        drawText(f.aresti[j] + '(' + f.k[j] + ')',  x + 10, yy, 'FormAText', 'start', 'Fig' + i + 'Aresti' + j, svg);
+        drawText(f.aresti[j] + '(' + f.k[j] + ')',  x + 5, yy, 'FormAText', 'start', 'Fig' + i + 'Aresti' + j, svg);
         var tw = svg.lastChild.getBBox().width;
         if (tw > textWidth) textWidth = tw;
       }
       if (figures[i].unknownFigureLetter) {
         yy -= 15;
-        drawText('Fig ' + f.unknownFigureLetter,  x + 10, yy, 'FormATextBold', 'start');
+        drawText('Fig ' + f.unknownFigureLetter,  x + 5, yy, 'FormATextBold', 'start');
       }
       
       // draw comments
@@ -5870,16 +5869,25 @@ function makeFormGrid (cols) {
         var match = f.comments.match(/[A-Z]{3}/g);
         if (match) {
           for (var j = match.length - 1; j >= 0; j--) {
+            // check for IOC codes first
+            if (iocCountriesReverse[match[j]]) {
+              code = iocCountriesReverse[match[j]].toLowerCase();
+              if (flags[code]) {
+                break;
+              } else code = false; 
+            }
+            // next check for iso codes
             if (isoCountriesReverse[match[j]]) {
               code = isoCountriesReverse[match[j]].toLowerCase();
               if (flags[code]) {
                 break;
               } else code = false; 
             }
-            if (j == 0) code = false;
           }
         }
-        if (!code) {
+        /* disabled two-letter codes as they may cause confusion through
+         * switching flags when entering the code
+        if (code === false) {
           // check for two-letter flag code
           match = f.comments.match(/[A-Z]{2}/g);
           if (match) {
@@ -5891,24 +5899,19 @@ function makeFormGrid (cols) {
               if (j == 0) code = false;
             }
           }
-        }
+        }*/
         if (code) {
-/* DEPRECATED: seems fixed through use of xlinkNS !
-          // for some reason flag does not display on screen. Add
-          // placeholder
-          drawRectangle (x + cw - 50, y + ch - 40, 44, 24, 'FormLine', svg);
-          drawText('Flag prints',  x + cw - 28, y + ch - 30, 'miniFormASmall', 'middle');
-          drawText('here',  x + cw - 28, y + ch - 20, 'miniFormASmall', 'middle');
-          */
-
+          // set scale for flag
+          var scale = roundTwo((cw - tw - 10) / 56);
+          if (scale > 1) scale = 1;
           var flag = document.createElementNS (svgNS, 'image');
-          flag.setAttribute('width', 48);
-          flag.setAttribute('height', 48);
-          flag.setAttribute('x', x + cw - 52);
-          flag.setAttribute('y', y + ch - 48);
+          flag.setAttribute('width', 48 * scale);
+          flag.setAttribute('height', 48 * scale);
+          flag.setAttribute('x', x + cw - (52 * scale));
+          flag.setAttribute('y', y + ch - (48 * scale));
           flag.setAttributeNS(xlinkNS, 'href', 'data:image/png;base64,' + flags[code]);
           svg.appendChild(flag);
-          flagWidth = 56;
+          flagWidth = 56 * scale;
         }
 
         var paths = makeTextBlock (f.comments);
@@ -5930,7 +5933,7 @@ function makeFormGrid (cols) {
           if (scale < 0.67) scale = 0.67;
           yy -= (bBox.height + 10);
           g.setAttribute ('transform', 'translate(' +
-            roundTwo(x - (bBox.x * scale) + 10) + ',' +
+            roundTwo(x - (bBox.x * scale) + 5) + ',' +
             roundTwo(yy - (bBox.y * scale)) + ') scale(' +
             roundTwo(scale) + ')');
         } else {
@@ -5947,6 +5950,10 @@ function makeFormGrid (cols) {
         
       // draw figure
       var fh = yy - y - 10;
+      // set X and Y to 0 to prevent roundoff errors in figure drawing
+      // and scaling
+      X = 0;
+      Y = 0;
       drawFullFigure(i, f.paths[0].figureStart, svg);
       var bBox = f.bBox;
       var thisFig = svg.getElementById('figure' + i);
@@ -5959,18 +5966,18 @@ function makeFormGrid (cols) {
       // move each figure to grid element center and scale appropriately
       figures[i].tx = roundTwo(x - (bBox.x * scale) + ((cw - bBox.width * scale) / 2));
       figures[i].ty = roundTwo(y - (bBox.y * scale) + ((fh - bBox.height * scale) / 2));
-      figures[i].fh = fh;
+      figures[i].fh = roundTwo(fh);
       figures[i].viewScale = roundTwo(scale);
       thisFig.setAttribute ('transform', 'translate(' +
         figures[i].tx + ',' + 
         figures[i].ty + ') scale(' + 
         figures[i].viewScale + ')');
-      x = x + cw;
+      x += cw;
       col++;
       if (col >= cols) {
         x = 0;
         col = 0;
-        y = y + ch;
+        y += ch;
       }
     }
   }
@@ -9034,7 +9041,7 @@ function parseSequence () {
           base = base + '+';
         } else base = '+' + base;
         // Handle everything else
-      } else {
+      } else if ((base != '') || figure.match(/^[^\[\(]*[0-9fs]/)) {
         // begin the base with a '+' if there is no '-'
         if (base.charAt(0) != '-') base = '+' + base;
         // end the base with a '+' if there is no '-'
@@ -9174,7 +9181,7 @@ function parseSequence () {
         } else {
           subSequence = true;
         }
-      } else {
+      } else if (base != '') {
         if (firstFigure) updateSequenceOptions ('');
       // No viable figure found, therefore Illegal
         buildIllegal (i);

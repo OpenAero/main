@@ -1,5 +1,5 @@
 /*
- mobile.css 1.3.3
+ mobile.css 1.3.6
  This file is part of OpenAero.
 
   OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -82,7 +82,7 @@ select {
 }
 #sequenceInfo {
   background: -webkit-linear-gradient(top, #f4f4f4, #e0e0ff);
-  font-size: 16px;
+  font-size: 14px;
 }
 #sequenceInfo input {
   width: 200px;
@@ -160,6 +160,7 @@ select {
 }
 .plusMinText {
   font-size: 24px;
+  height: 32px;
 }
 #undo {
   background-image: url('buttons/undo.png');
