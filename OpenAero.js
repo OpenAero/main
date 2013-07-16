@@ -6124,7 +6124,7 @@ function updateSequenceTextHeight () {
     if (cloneDiv.offsetHeight < 20) cloneDiv.innerHTML += '<br>.';
     var height = cloneDiv.offsetHeight;
     //if (height < 36) height = 36;
-    sequenceText.setAttribute('style', 'height:' + height + 'px;');
+    sequenceText.setAttribute('style', 'height:' + (height + 6) + 'px;');
     // also set the position of the "main" div
     document.getElementById('main').setAttribute ('style', 'top:' + (height - 14) + 'px;');
   } else {

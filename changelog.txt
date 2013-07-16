@@ -3,6 +3,7 @@
 * added IOC country codes for flags in Grid view and made IOC default
 * added grid flag scaling for large number of columns
 * fixed iPad figure editor layout
+* fixed Aresti NR for Glider Super Slow Rolls
 
 1.3.5
 * fixed bug causing sequence checking rules for specific rolls in figures to be ignored
