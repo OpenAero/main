@@ -1,4 +1,4 @@
-// config.js 1.3.5
+// config.js 1.3.7
 
 // This file is part of OpenAero.
 
@@ -34,11 +34,12 @@
 // Define active version number of OpenAero
 // **************
 
-var version = '1.3.6';
+var version = '1.3.7';
 var versionNew = '<strong>OpenAero has been upgraded to version ' +
   version + '</strong><br>New features:<ul>' +
-  '<li>Fixed figure definitions for 8.6.18.x and 8.6.19.x</li>' +
-  '<li>Added IOC country codes for flags in Grid view</li>' +
+  '<li>Fixed several bugs</li>' +
+  '<li>Updated Intermediate Free and French rules</li>' +
+  '<li>corrected knife edge snap foot up/down determination</li>' +
   '</ul>' +
   'This may take a few seconds to complete.';
 
@@ -94,6 +95,8 @@ var curvePerspective = true;
 var miniFormA = true;
 // define whether to draw IAC style forms by default
 var iacForms = false;
+// define default pattern for figure images saved in ZIP
+var zipImageFilenamePattern = '%location %category %program %pilot Form %form_fig_%figure.svg';
 
 // how far apart the starts of figures should at least be
 var minFigStartDist = lineElement * 3;
@@ -531,13 +534,18 @@ userText.tooltip.switchFirstRoll = 'Switch first roll direction';
 userText.tooltip.switchX = 'Switch X exit direction';
 userText.tooltip.switchY = 'Switch Y exit direction';
 userText.unknownFileType = 'File opening is not supported in this browser.';
-userText.warningPre123 = 'The file you just opened was created with an ' +
+userText.warningPre = '<p>When you save this sequence again this ' +
+  'warning will not be shown any more.</p>';
+userText.warningPre123 = '<p>The file you just opened was created with an ' +
   'OpenAero version older than 1.2.3. Please check that all figure exit ' +
-  'directions are correct. When you save this sequence again this ' +
-  'warning will not be shown any more.';
-userText.warningPre124 = 'The file you just opened was created with an ' +
+  'directions are correct.</p>';
+userText.warningPre124 = '<p>The file you just opened was created with an ' +
   'OpenAero version older than 1.2.4. Please check that all double ' +
-  'Humpty Bump directions are correct. When you save this sequence ' +
-  'again this warning will not be shown any more.'; 
+  'Humpty Bump directions are correct.</p>'; 
+userText.warningPre137 = '<p>The file you just opened was created with an ' +
+  'OpenAero version older than 1.3.7. Some snap rolls started from knife ' +
+  'edge flight may have had the wrong Aresti number and K. They should be ' +
+  'correct now. Please check.</p>'; 
 userText.wind = 'wind/vent';
 userText.windIAC = 'wind direction';
+userText.zipImageFilenamePattern = 'Separate fig images filename pattern'; 

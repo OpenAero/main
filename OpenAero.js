@@ -1,4 +1,4 @@
-﻿// OpenAero.js 1.3.6
+﻿// OpenAero.js 1.3.7
 // This file is part of OpenAero.
 
 //  OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -1661,9 +1661,11 @@ function makeTailslide (param) {
     var Rot_axe_Ellipse = (yAxisOffset < 90) ? perspective_param.rot_angle : -perspective_param.rot_angle;
     var X_axis_Radius = perspective_param.x_radius * Radius;
     var Y_axis_Radius = perspective_param.y_radius * Radius;
-    dy = dy - dx * scaleLine.y;
     dx = dx * scaleLine.x;
-    if (yAxisOffset > 90) sweepFlag = 1 - sweepFlag;
+    dy = dy - dx * scaleLine.y;
+    if (yAxisOffset > 90) {
+      dx = -dx;
+    }
     pathsArray[0]['path'] = 'a' + roundTwo(X_axis_Radius) + ',' +  roundTwo(Y_axis_Radius) + ' ' + Rot_axe_Ellipse + ' 0 ' +
       sweepFlag + ' ' + roundTwo(dx) + ',' + roundTwo(dy);
   } else {
@@ -1679,8 +1681,11 @@ function makeTailslide (param) {
     var Rot_axe_Ellipse = (yAxisOffset < 90) ? perspective_param.rot_angle : -perspective_param.rot_angle;
     var X_axis_Radius = perspective_param.x_radius * Radius;
     var Y_axis_Radius = perspective_param.y_radius * Radius;
-    dy = dy - dx * scaleLine.y;
     dx = dx * scaleLine.x;
+    dy = dy - dx * scaleLine.y;
+    if (yAxisOffset > 90) {
+      dx = -dx;
+    }
     pathsArray[1]['path'] = 'a' + roundTwo(X_axis_Radius) + ',' +  roundTwo(Y_axis_Radius) + ' ' + Rot_axe_Ellipse + ' 0 ' +
       sweepFlag + ' ' + roundTwo(dx) + ',' + roundTwo(dy);
   } else {
@@ -2597,7 +2602,7 @@ function buildRollSelectElement (figNr, rollEl, elNr) {
 
 // setOptions will:
 // -add example sequence entries to the menu
-// -set correct options in print dialog
+// -set correct options in settings dialog
 function setOptions () {
   // add example sequence entries
   var el = document.getElementById('exampleSequences');
@@ -2610,8 +2615,10 @@ function setOptions () {
       key + '</a>';
     el.appendChild(li);
   }
-  // set print dialog options
+  // set settings dialog options
   document.getElementById ('numberInCircle').setAttribute('value', numberInCircle);
+  document.getElementById ('zipImageFilenamePattern').setAttribute('value', zipImageFilenamePattern);
+  document.getElementById ('zipImageFilenamePattern').setAttribute('size', zipImageFilenamePattern.length);
 }
 
 // setPilotCardForm will enable/disable pilot card form radio buttons
@@ -3995,28 +4002,28 @@ function loadRules(ruleName, catName, programName) {
       } else if (rules[i].match(/[^-]+-min=\d+$/)) {
       // Apply [group]-min rules
         var group = rules[i].replace(/-min/, '').split('=');
-        if (checkCatGroup[group[0]]) checkCatGroup[group[0]]['min'] = group[1];
-        if (checkFigGroup[group[0]]) checkFigGroup[group[0]]['min'] = group[1];
+        if (checkCatGroup[group[0]]) checkCatGroup[group[0]]['min'] = parseInt(group[1]);
+        if (checkFigGroup[group[0]]) checkFigGroup[group[0]]['min'] = parseInt(group[1]);
       } else if (rules[i].match(/[^-]+-max=\d+$/)) {
       // Apply [group]-max rules
         var group = rules[i].replace(/-max/, '').split('=');
-        if (checkCatGroup[group[0]]) checkCatGroup[group[0]]['max'] = group[1];
-        if (checkFigGroup[group[0]]) checkFigGroup[group[0]]['max'] = group[1];
+        if (checkCatGroup[group[0]]) checkCatGroup[group[0]]['max'] = parseInt(group[1]);
+        if (checkFigGroup[group[0]]) checkFigGroup[group[0]]['max'] = parseInt(group[1]);
       } else if (rules[i].match(/[^-]+-repeat=\d+$/)) {
       // Apply [group]-repeat rules
         var group = rules[i].replace(/-repeat/, '').split('=');
-        if (checkCatGroup[group[0]]) checkCatGroup[group[0]]['repeat'] = group[1];
-        if (checkFigGroup[group[0]]) checkFigGroup[group[0]]['repeat'] = group[1];
+        if (checkCatGroup[group[0]]) checkCatGroup[group[0]]['repeat'] = parseInt(group[1]);
+        if (checkFigGroup[group[0]]) checkFigGroup[group[0]]['repeat'] = parseInt(group[1]);
       } else if (rules[i].match(/[^-]+-minperfig=\d+$/)) {
       // Apply [group]-minperfig rules
         var group = rules[i].replace(/-minperfig/, '').split('=');
-        if (checkCatGroup[group[0]]) checkCatGroup[group[0]]['minperfig'] = group[1];
-        if (checkFigGroup[group[0]]) checkFigGroup[group[0]]['minperfig'] = group[1];
+        if (checkCatGroup[group[0]]) checkCatGroup[group[0]]['minperfig'] = parseInt(group[1]);
+        if (checkFigGroup[group[0]]) checkFigGroup[group[0]]['minperfig'] = parseInt(group[1]);
       } else if (rules[i].match(/[^-]+-maxperfig=\d+$/)) {
       // Apply [group]-maxperfig rules
         var group = rules[i].replace(/-maxperfig/, '').split('=');
-        if (checkCatGroup[group[0]]) checkCatGroup[group[0]]['maxperfig'] = group[1];
-        if (checkFigGroup[group[0]]) checkFigGroup[group[0]]['maxperfig'] = group[1];
+        if (checkCatGroup[group[0]]) checkCatGroup[group[0]]['maxperfig'] = parseInt(group[1]);
+        if (checkFigGroup[group[0]]) checkFigGroup[group[0]]['maxperfig'] = parseInt(group[1]);
       } else if (rules[i].match(/[^-]+-name=.+$/)) {
       // Apply [group]-name rules
         var group = rules[i].replace(/-name/, '').split('=');
@@ -4367,19 +4374,27 @@ function checkRules () {
       }
     }
   }
+  
+  // add connectors to figureK where applicable
+  if ((connectors > 0) && (connectFig.max > 0)) {
+    figureK += connectFig.totalK;
+  }
   // check for total min/max K
   if (checkCatGroup['k']['min']) {
-    if (figureK < checkCatGroup['k']['min']) checkAlert('k', 'min');
+    if (figureK < checkCatGroup['k']['min']) {
+      checkAlert('k', 'min');
+    }
   }
   if (checkCatGroup['k']['max']) {
-    if (figureK > checkCatGroup['k']['max']) checkAlert('k', 'max');
+    if (figureK > checkCatGroup['k']['max']) {
+      checkAlert('k', 'max');
+    }
   }
 
   // Run checks on maximum and minimum occurrence of a group (catalog ID)
   // Go through all groups
   log.push ('====== Testing global repeat/min/max ======');
   for (group in checkCatGroup) {
-    //console.log(group);
     // Did we have a match on this group?
     if (groupMatch[group]) {
       //console.log('* Match');
@@ -4428,7 +4443,7 @@ function checkRules () {
       }
     } else {
       // No occurrences of this group, was there a minimum?
-      if (checkCatGroup[group]['min']) {
+      if (checkCatGroup[group]['min'] && (group != 'k')) {
         checkAlert(group, 'min');
         log.push ('*** Error: Minimum ' + checkCatGroup[group]['min'] +
           ' of group ' + group);
@@ -5102,11 +5117,11 @@ function selectFigure (e, noChooserUpdate) {
 function checkFloatingPoint () {
   var figureK = 0;
   // in case of floating-point, check total K first to determine
-  // how much to take off and where
+  // how much to take off and where. Disregard connectors.
   if (checkCatGroup.floatingPoint) {
     var figK = [];
     for (var i = 0; i < figures.length; i++) {
-      if (figures[i].aresti) {
+      if (figures[i].aresti && !figures[i].connector) {
         // build array figK[i] = XXYY, where XX = K and YY = 99 - i
         // this will enable sorting while keeping K and i relation
         figK[i] = 99 - i;
@@ -5885,21 +5900,6 @@ function makeFormGrid (cols) {
             }
           }
         }
-        /* disabled two-letter codes as they may cause confusion through
-         * switching flags when entering the code
-        if (code === false) {
-          // check for two-letter flag code
-          match = f.comments.match(/[A-Z]{2}/g);
-          if (match) {
-            for (var j = match.length - 1; j >= 0; j--) {
-              code = match[j].toLowerCase();
-              if (flags[code]) {
-                break;
-              } else code = false;
-              if (j == 0) code = false;
-            }
-          }
-        }*/
         if (code) {
           // set scale for flag
           var scale = roundTwo((cw - tw - 10) / 56);
@@ -5909,6 +5909,7 @@ function makeFormGrid (cols) {
           flag.setAttribute('height', 48 * scale);
           flag.setAttribute('x', x + cw - (52 * scale));
           flag.setAttribute('y', y + ch - (48 * scale));
+          flag.setAttribute('id', 'flag' + i);
           flag.setAttributeNS(xlinkNS, 'href', 'data:image/png;base64,' + flags[code]);
           svg.appendChild(flag);
           flagWidth = 56 * scale;
@@ -6595,8 +6596,8 @@ function OLANtoXML (string) {
       } else if (activeKey) string += lines[i];
     }
     if (activeKey) string += '</' + activeKey + '>';
-    // end with oa_version 1.2.4 to prevent message about drawing
-    string += '<oa_version>1.2.4</oa_version></sequence>';
+    // end with oa_version 1.3.7 to prevent some error messages
+    string += '<oa_version>1.3.7</oa_version></sequence>';
     OLANBumpBugCheck = true;
     return string;
 }
@@ -6653,17 +6654,27 @@ function handleDragOver(evt) {
 // sequence and provides a warning if necessary
 function checkOpenAeroVersion () {
   var oa_version = document.getElementById('oa_version');
+  var alerts = '';
   if (oa_version.value == '') {
     // before 1.2.3
-    if (sequenceText.value != '') alertBox(userText.warningPre123);
-  } else if (compVersion (oa_version.value, '1.2.4') < 0) {
+    if (sequenceText.value != '') alerts += userText.warningPre123;
+  }
+  if (compVersion (oa_version.value, '1.2.4') < 0) {
+    // check for bumps
     if (sequenceText.value.match (/(b|pb)(b|pb)/)) {
-      alertBox(userText.warningPre124);
+      alerts += userText.warningPre124;
     }
   }
-  // add any additional checks through else if ...
+  if (compVersion (oa_version.value, '1.3.7') < 0) {
+    // check for snaps started from knife edge
+    if (sequenceText.value.match (/((^|[^0-9])(4|[357]4?))[if\.'`]*[,;][\.'`]*[357]i?f/)) {
+      alerts += userText.warningPre137;
+    }
+  }
+    
+  // add any additional checks here
   // compVersion can be used to check against specific minimum versions
-  
+  if (alerts != '') alertBox(alerts + userText.warningPre);
   // set version to current version for subsequent saving
   oa_version.value = version;
 }
@@ -6728,7 +6739,7 @@ function loadedRulesFile (evt) {
 
 // saveFile saves a file
 // The function returns true if the file was saved
-function saveFile(data, name, filter, format) {
+function saveFile(data, name, filter, format, noBounce) {
   // Set saving result to true always as we currently have no method of
   // knowing whether the file was saved or not
   var result = true;
@@ -6745,10 +6756,11 @@ function saveFile(data, name, filter, format) {
     }
   }, 5000);
 
-
   if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
     var http = true;
   } else var http = false;
+  // Disable http bounce for noBounce. Used because zip files cause trouble
+  if (noBounce) http = false;
   if (http) {
     var waitTime = 2000;
   } else {
@@ -7640,6 +7652,8 @@ function saveFigs () {
   var id = selectedFigure.id;
   // create new zip object
   var zip = new JSZip();
+  // get image filename pattern
+  var fPattern = document.getElementById('zipImageFilenamePattern').value;
   // go through the active form and get each figure from the edit figure
   // box
   for (var i = 0; i < figures.length; i++) {
@@ -7653,11 +7667,22 @@ function saveFigs () {
       svg = '<?xml version="1.0" standalone="no"?>\n' +
         '<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" ' +
         '"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">\n' + svg;
-      zip.file(fileName + '_fig_' + figures[i].seqNr, svg);
+      var fName = fPattern;
+      fName = fName.replace (/%pilot/g, document.getElementById('pilot').value);
+      fName = fName.replace (/%aircraft/g, document.getElementById('aircraft').value);
+      fName = fName.replace (/%location/g, document.getElementById('location').value);
+      fName = fName.replace (/%date/g, document.getElementById('date').value);
+      fName = fName.replace (/%class/g, document.getElementById('class').value);
+      fName = fName.replace (/%rules/g, document.getElementById('rules').value);
+      fName = fName.replace (/%category/g, document.getElementById('category').value);
+      fName = fName.replace (/%program/g, document.getElementById('program').value);
+      fName = fName.replace (/%form/g, activeForm);
+      fName = fName.replace (/%figure/g, figures[i].seqNr);
+      zip.file(fName, svg);
     }
   }
   var data = zip.generate();
-  saveFile(data, fileName + '.zip', {'name':'ZIP file', 'filter':'*.zip'}, 'application/zip;base64');
+  saveFile(data, fileName + '.zip', {'name':'ZIP file', 'filter':'*.zip'}, 'application/zip;base64', true);
   selectedFigure.id = id;
   displaySelectedFigure();
 }  
@@ -8223,18 +8248,30 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
                 // Handle snaps on verticals and from non-knife-edge
                 if (NegLoad == 0) rollAtt = '+' + rollAtt; else rollAtt = '-' + rollAtt;
               } else {
+                /** Incorrect old code, foot up or down is defined by previous attitude and roll
+                 
                 // Handle snaps from knife edge. This is the only case (so far) where the way something is
                 // drawn (tip down=foot down for pos, tip down=foot up for neg) influences the K factor
                 if ((Math.cos(dirAttToAngle (Direction, Attitude)) * roll[rollnr][j]['extent']) < 0) {
                 // Foot down snap, the harder one
-                /* Old code, seems to be incorrect according Aresti catalogue?
-                  if (roll[rollnr][j]['type'] == 'possnap') rollAtt = '-' + rollAtt; else rollAtt = '+' + rollAtt; */
                   rollAtt = '-' + rollAtt;
                 } else {
                 // Foot up snap, the easier one
-                /* Old code, seems to be incorrect according Aresti catalogue?
-                  if (roll[rollnr][j]['type'] == 'possnap') rollAtt = '+' + rollAtt; else rollAtt = '-' + rollAtt; */
                   rollAtt = '+' + rollAtt;
+                }*/
+                
+                // Handle snaps from knife edge. Use rollSum to find the
+                // previous amount of roll. Use switches to determine
+                // correct virtual load/attitude combination
+                var inv = ((Attitude > 90) && (Attitude < 270));
+                inv = (inv == (((Math.abs(rollSum) - 90) / 360) == parseInt((Math.abs(rollSum) - 90) / 360)));
+                inv = (inv == ((rollSum * roll[rollnr][j].extent) > 0));
+                if (inv) {
+                  // Foot up for pos start, foot down for neg start
+                  rollAtt = '+' + rollAtt;
+                } else {
+                  // Foot down for pos start, foot up for neg start
+                  rollAtt = '-' + rollAtt;
                 }
               }
             }

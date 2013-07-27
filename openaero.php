@@ -22,6 +22,15 @@
 // This file handles multiple functions that have to be executed in PHP to work
 //
 
+// Log request for OpenAero version monitoring
+$lines = file ('timestamp.txt');
+// Only log 1 per second
+if ($lines[0] != time()) {
+  file_put_contents ('timestamp.txt', time());
+  $line = time() . ' ' . $_SERVER['REMOTE_ADDR'] . ' ' . $_REQUEST['version'] . "\n";
+  file_put_contents ('../../openaero.log', $line, FILE_APPEND);
+}
+
 switch ($_REQUEST['f']) {
   case 'download':
     download();
@@ -69,13 +78,15 @@ function version() {
       break;
     }
   }
+
   // Build svg image
   header('Content-Type: image/svg+xml');
   if (($_REQUEST['version'] == $version) || ($version == '')) exit;
   // Version provided is different from latest version
   echo "<?xml version=\"1.0\" standalone=\"no\"?>\n<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">";
-  echo '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.2" width="200" height="16">';
-  echo '<text x="195" y="16" text-anchor="end" font-family="Verdana" font-size="13" fill="blue">Download version '.$version.'</text>';
+  echo '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.2" width="200" height="18">';
+  echo '<rect width="100%" height="100%" fill="#ff8000"></rect>';
+  echo '<text x="195" y="15" text-anchor="end" font-family="Verdana" font-size="13" fill="#4040ff">Download version '.$version.'</text>';
   echo '</svg>';
 }
 ?>

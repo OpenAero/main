@@ -1,4 +1,4 @@
-// OpenAero rulesYY-XXX file 
+// OpenAero rules13-glider-civa.js file 
 
 // This file is part of OpenAero.
 
@@ -21,9 +21,9 @@
 // This file defines year (YY) and rule type (XXX) specific rules
 
 // Updates:
-//   OpenAero 1.3.4
-//   -Free Unknown rules
-//   -Advanced allowed figures for Known and Free:8.6.17-24.1-2
+// OpenAero 1.3.4
+// -Free Unknown rules
+// -Advanced allowed figures for Known and Free:8.6.17-24.1-2
 
 //###################################################################################
 //################################ CIVA GLIDERS FREE ################################
@@ -417,7 +417,8 @@ rules.push("[glider-CIVA unlimited unknown0]");
 rules.push("basefig-max=28");
 
 rules.push("hesroll-repeat=4");// hesitation rolls of same cat-ID may not be repeated in overall figure proposal
-rules.push("snap-repeat=4");// snap rolls of same cat-ID may not be repeated in overall figure proposal
+rules.push("isnap-repeat=4");// negative snap rolls of same cat-ID may not be repeated in overall figure proposal
+rules.push("osnap-repeat=4");// positive snap rolls of same cat-ID may not be repeated in overall figure proposal
 rules.push("spin-repeat=4");// spins of same cat-ID may not be repeated in overall figure proposal
 rules.push("sroll-repeat=4");// superslow rolls of same cat-ID may not be repeated in overall figure proposal
 

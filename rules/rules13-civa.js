@@ -1,4 +1,4 @@
-// OpenAero rulesYY-XXX file
+// OpenAero rules13-civa.js file
 
 // This file is part of OpenAero.
 
@@ -32,8 +32,11 @@
 //# Modifications 2013 (ajout Prog Q 2013, Suppression Prog free)  V 2013.0.50
 //#
 //# Added Yak 52 for 2013
-//#
-//# Updated Free Unknown connectors info for OpenAero 1.3.4
+//# OpenAero 1.3.4:
+//# -Updated Free Unknown connectors info
+//# OpenAero 1.3.7:
+//# -Corrected Yak52 Free rules for figure repetition
+//# -Moved rules from Intermediate to Yak52 as they are identical
 
 //######################################################################################
 //##### CIVA YAK52 FREE ################################################################
@@ -43,6 +46,11 @@ rules.push("[CIVA Yak52 Free]");
 rules.push("posnl=30");
 rules.push("basefig-max=12");
 rules.push("k-max=180");
+
+rules.push("basefig-repeat=1");
+rules.push("roll-repeat=1");
+rules.push("snap-repeat=1");
+rules.push("spin-repeat=1");
 
 rules.push("fam5-min=1");
 rules.push("fam7-min=1");
@@ -58,6 +66,12 @@ rules.push("group-roller=^2\\.(1\\.[23]|2\\.[2-6]|3\\.[2-5]|4\\.[2-8])");
 rules.push("roller-name=Rolling turn, family 2.1.2 to 2.1.3, 2.2.2 to 2.2.6, 2.3.2 to 2.3.5, 2.4.2 to 2.4.8");
 rules.push("roller-min=1");
 
+rules.push("emptyline-max=0");
+
+rules.push("opposite-min=1"); //one opposite roll is required!
+
+rules.push("allow=^[1-9]"); //all figures are allowed for the Free program
+
 //######################################################################################
 //##### CIVA INTERMEDIATE FREE #########################################################
 //######################################################################################
@@ -65,21 +79,12 @@ rules.push("roller-min=1");
 rules.push("[CIVA Intermediate Free]");
 rules.push("more=CIVA Yak52 Free");
 
-rules.push("emptyline-max=0");
-
-rules.push("basefig-repeat=1");
-rules.push("fam9-repeat=1");
-
-rules.push("opposite-min=1"); //one opposite roll is required!
-
-rules.push("allow=^[1-9]"); //all figures are allowed for the Free program
-
 //######################################################################################
 //##### ADVANCED FREE #################################################################
 //######################################################################################
 
 rules.push("[civa advanced free]");
-rules.push("posnl=30  ");//no line judges
+rules.push("posnl=30");//no line judges
 rules.push("poslj=10");
 rules.push("k-max=300");
 rules.push("basefig-max=12");
@@ -109,16 +114,16 @@ rules.push("spin-min=1");
 //spin-max=1 # Modif GG évolution Civa 2012
 
 //for 2006: opposite-min=0
-rules.push("opposite-min=1   ");//one opposite roll is required!
+rules.push("opposite-min=1");//one opposite roll is required!
 
-rules.push("allow=^[1-9]   ");//all figures are allowed for the free program
+rules.push("allow=^[1-9]");//all figures are allowed for the free program
 
 //######################################################################################
 //##### UNLIMITED FREE #################################################################
 //######################################################################################
 
 rules.push("[civa unlimited free]");
-rules.push("posnl=60  ");//assume no line judges
+rules.push("posnl=60");//assume no line judges
 rules.push("poslj=20");
 //for 2006: basefig-max=10
 rules.push("basefig-max=9");
@@ -146,16 +151,16 @@ rules.push("fam7-min=1");
 rules.push("fam8-min=1");
 //humpty-max=4 # Modif GG évolution Civa 2012
 
-rules.push("spin-min=1  ");//not clear if one spin is required:
+rules.push("spin-min=1");//not clear if one spin is required:
 //spin-max=1     #it say "only 1 figure of 9.11/9.12"
 //spin-max=1 # Modif GG évolution Civa 2012
 
 rules.push("isnap-min=2");
 rules.push("osnap-min=2");
 
-rules.push("opposite-min=1   ");//one opposite roll is required!
+rules.push("opposite-min=1");//one opposite roll is required!
 
-rules.push("allow=^[1-9]   ");//all figures are allowed for the free program
+rules.push("allow=^[1-9]");//all figures are allowed for the free program
 
 //#######################################################################################
 //###################### UNLIMITED UNKNOWNS #############################################
@@ -295,9 +300,7 @@ rules.push("rule-NORF   = roll: [1248],f");
 rules.push("why-NORF    = roll,flick combination not allowed");
 
 
-rules.push("allow-defrules=UnlimitedNOU ; UnlimitedNOUF; VUP450; VUP4S ; VDOWN360 ; VDOWN3S ;DIAGUP540 ; DIAGUP4S ; Hor10stop    ");// Modif GG (Hor10stop) évolution Civa 2012
-
-
+rules.push("allow-defrules=UnlimitedNOU ; UnlimitedNOUF; VUP450; VUP4S ; VDOWN360 ; VDOWN3S ;DIAGUP540 ; DIAGUP4S ; Hor10stop");// Modif GG (Hor10stop) évolution Civa 2012
 
 // ~%~  ~i?d%~ ~i?v%~
 //1.1.1-4  #2009 only as linking figures
@@ -409,7 +412,7 @@ rules.push("7.4.4.1-2");
 rules.push("7.4.4.3-4 NF:1");
 
 rules.push("7.4.5.1  NF:1");
-rules.push("7.4.5.4  NF:2  ");//doc say "no flick roll on any lower lines of figure" which means what?!
+rules.push("7.4.5.4  NF:2");//doc say "no flick roll on any lower lines of figure" which means what?!
 rules.push("7.4.6.1");
 
 //goldfish
@@ -535,7 +538,6 @@ rules.push("8.6.6.3-4");
 rules.push("8.6.7.3-4");
 rules.push("8.6.8.3-4");
 
-
 // ROLLS
 // v[42315] d[216] [42316]   id[216] iv[4231]
 rules.push("9.1.1.1-5");
@@ -620,7 +622,6 @@ rules.push("9.10.10.2-4");
 rules.push("9.11.1.4-6");
 rules.push("9.12.1.4-6");
 
-
 //#######################################################################################
 
 rules.push("[civa advanced unknown]");
@@ -640,6 +641,9 @@ rules.push("more=civa advanced unknownboth");
 
 rules.push("[civa advanced unknown2]");
 rules.push("k-maxperfig=40");
+rules.push("2.4.5.1-2"); // Only for unknown2
+rules.push("2.4.7.1-2"); //  "    "     "
+
 rules.push("more=civa advanced unknownboth");
 
 //#######################################################################################
@@ -661,13 +665,11 @@ rules.push("posnl=30");
 rules.push("group-one=^1\\.2[34]\\.[34]");
 rules.push("group-two=^7\\.8[1-8]");
 
-
 rules.push("k-minperfig=15");
 
 rules.push("snap-maxperfig=1");
 rules.push("snap-min=2");
 rules.push("snap-max=4");
-
 
 rules.push("spin-max=1");
 
@@ -702,7 +704,6 @@ rules.push("(civa advanced unknownbase)");
 // limited vertical rolls are 3/4 & 2/4 up(v =can't flyoff) or down(n=cant push out)
 // for Advanced Unknowns only, of course.
 
-
 // Modif GG évolution Civa 2012
 rules.push("conv-horstop=^9\\.(1|9|10)\\.[38]=1 ; ^9\\.2\\.3\\.4 = 2 ;^9\\.2\\.3\\.6 = 3 ;^9\\.2\\.3\\.8 = 4 ;^9\\.4\\.3\\.([1-8]) = $1; ^9\\.8\\.3\\.1 = 2;^9\\.8\\.3\\.2 = 4;^9\\.8\\.3\\.3 = 6;^9\\.8\\.3\\.4 = 8; ^9\\.=r ; ^0\\.=z");
 rules.push("rule-Hor10stop = horstop:<11");
@@ -719,8 +720,8 @@ rules.push("why-NRPushout   = negative recovery is not allowed after this roll")
 
 //For Adv rp figures, we convert 3/4 up to 'x' which isnt allowed
 rules.push("conv-advrp=^9\\.(1\\.1\\.3)=x ;  ^9\\.=r; ^0\\.=z");
-rules.push("rule-NR3Q1 =advrp:^x");
-rules.push("why-NR3Q1  =no more than 1/2 roll is allowed for first rolling element position");
+rules.push("rule-NR:3Q1 =advrp:^x");
+rules.push("why-NR:3Q1  =no more than 1/2 roll is allowed for first rolling element position");
 
 //for Adv p figures, we convert any hesitation full roll into 'h' to disallow flick down
 //conv-advp=^9\.[248]\.3=h   ;   ^9\.[1248]\.=r; ^9\.(9|10)=f; ^9\.1[12]=s ; ^0\.=z
@@ -778,8 +779,8 @@ rules.push("1.2.8.3 NOU");
 rules.push("2.1.3.2-4");
 rules.push("2.2.5.1-4");
 rules.push("2.3.4.1-4");
-rules.push("2.4.5.1-4");
-rules.push("2.4.7.1-4");
+//rules.push("2.4.5.1-2"); // Only for unknown2
+//rules.push("2.4.7.1-2"); //  "    "     "
 rules.push("2.2.3.1-4");
 
 rules.push("5.2.1.1 NOU");
@@ -793,7 +794,6 @@ rules.push("7.2.1.1-2  NF:1");
 rules.push("7.2.2.1-2  NF:1");
 rules.push("7.2.3.1-2  NF:1");
 rules.push("7.2.4.1-2  NF:1");
-
 
 rules.push("7.2.1.3-4  NF:2");
 rules.push("7.2.2.3-4  NF:2");
@@ -848,9 +848,9 @@ rules.push("8.4.4.2 NOU");
 
 rules.push("8.4.13.1 NOU ;NF:1 ; NF:2");
 rules.push("8.4.14.1 NOU; NF:1 ; NF:2");
-rules.push("8.4.15.1-2 NOU ; NF:2 ");// Modif GG évolution Civa 2012
-rules.push("8.4.16.1-2 NOU ; NF:2 ");// Modif GG évolution Civa 2012
-rules.push("8.4.18.1-2 NOU ; NF:2 ");// Modif GG évolution Civa 2012
+rules.push("8.4.15.1-2 NOU ; NF:2");// Modif GG évolution Civa 2012
+rules.push("8.4.16.1-2 NOU ; NF:2");// Modif GG évolution Civa 2012
+rules.push("8.4.18.1-2 NOU ; NF:2");// Modif GG évolution Civa 2012
 
 //rc
 rules.push("8.5.1.1-2 NOU:1; NF:2");
@@ -865,15 +865,15 @@ rules.push("8.5.4.1-2 NOU:1; NF:2");
 rules.push("8.5.4.3-4 NOU:1");
 
 //rp
-rules.push("8.6.1.1   NOU:1 ; NR3Q1 ;NR:2 ;NF:3");
-rules.push("8.6.1.4  NOU:1; NR:2 ");// Modif GG correction Civa 2012
-rules.push("8.6.3.1   NOU:1 ; NR3Q1 ;NR:2 ;NF:3");
+rules.push("8.6.1.1   NOU:1 ; NR:3Q1 ;NR:2 ;NF:3");
+rules.push("8.6.1.4  NOU:1; NR:2");// Modif GG correction Civa 2012
+rules.push("8.6.3.1   NOU:1 ; NR:3Q1 ;NR:2 ;NF:3");
 rules.push("8.6.3.2   NR:1   ;NR:2 ;NF:3");
-rules.push("8.6.3.3  NOU:1; NR:2 ");// Modif GG correction Civa 2012
+rules.push("8.6.3.3  NOU:1; NR:2");// Modif GG correction Civa 2012
 
-rules.push("8.6.2.1   NOU:1 ; NR3Q1 ;NR:2 ;NF:3");
+rules.push("8.6.2.1   NOU:1 ; NR:3Q1 ;NR:2 ;NF:3");
 rules.push("8.6.2.4  NOU:1");
-rules.push("8.6.4.1   NOU:1 ; NR3Q1 ;NR:2 ;NF:3");
+rules.push("8.6.4.1   NOU:1 ; NR:3Q1 ;NR:2 ;NF:3");
 rules.push("8.6.4.2  NR:1 ; NR:2 ; NF:3");
 rules.push("8.6.4.3  NOU:1");
 
@@ -898,7 +898,7 @@ rules.push("8.6.8.2   NOU:2; NOU:3; NF:1 ;NH2F3 ; MAX360:2 ; NRPushout");
 
 // ROLLS
 rules.push("9.1.1.1-2");
-rules.push("9.1.1.3           ");//9.1.1.3 (3/4 up) may not be followed by fly-off
+rules.push("9.1.1.3");//9.1.1.3 (3/4 up) may not be followed by fly-off
 rules.push("9.1.2.2");
 rules.push("9.1.2.4");
 rules.push("9.1.3.1-4");
@@ -907,7 +907,7 @@ rules.push("9.1.3.8");
 rules.push("9.1.4.2");
 rules.push("9.1.4.4");
 rules.push("9.1.5.1-2");
-rules.push("9.1.5.3     ");//9.1.5.3 (3/4 down) may not be followed by negative
+rules.push("9.1.5.3");//9.1.5.3 (3/4 down) may not be followed by negative
 
 rules.push("9.2.2.4");
 rules.push("9.2.3.4");
@@ -915,12 +915,12 @@ rules.push("9.2.3.6");
 rules.push("9.2.3.8");
 rules.push("9.2.4.4");
 
-rules.push("9.4.1.2     ");// may not be followed by level fly-off
+rules.push("9.4.1.2");// may not be followed by level fly-off
 rules.push("9.4.2.2");
 rules.push("9.4.2.4");
 rules.push("9.4.3.2-4");
 rules.push("9.4.4.2");
-rules.push("9.4.5.2    ");// may not be followed by negative recovery
+rules.push("9.4.5.2");// may not be followed by negative recovery
 
 rules.push("9.8.1.1");
 rules.push("9.8.2.2");
@@ -983,7 +983,6 @@ rules.push("posnl=30");
 rules.push("group-one=^1\\.2[34]\\.[34]");
 rules.push("group-two=^7\\.8[1-8]");
 
-
 rules.push("snap-maxperfig=1");
 rules.push("snap-min=1");
 rules.push("snap-max=2");
@@ -1035,8 +1034,8 @@ rules.push("why-NRPushout   = negative recovery is not allowed after this roll")
 
 //For Adv rp figures, we convert 3/4 up to 'x' which isnt allowed
 rules.push("conv-advrp=^9\\.(1\\.1\\.3)=x ;  ^9\\.=r; ^0\\.=z");
-rules.push("rule-NR3Q1 =advrp:^x");
-rules.push("why-NR3Q1  =no more than 1/2 roll is allowed for first rolling element position");
+rules.push("rule-NR:3Q1 =advrp:^x");
+rules.push("why-NR:3Q1  =no more than 1/2 roll is allowed for first rolling element position");
 
 //for Adv p figures, we convert any hesitation full roll into 'h' to disallow flick down
 //conv-advp=^9\.[248]\.3=h   ;   ^9\.[1248]\.=r; ^9\.(9|10)=f; ^9\.1[12]=s ; ^0\.=z
@@ -1061,49 +1060,25 @@ rules.push("allow-defrules= Hor10stop");
 // Fin modif GG évolution CIVA 2012
 
 //conversion rules for checking validity
-//replace rolls added to figure with single letter/digit, matched by "rule-"s
-// spin=s flick=f roll=r   no roll=z
-
-rules.push("conv-rfsz=^9\\.[1248]\\.=r; ^9\\.(9|10)\\.=f; ^9\\.1[12]\\.=s; ^0\\.0\\.0\\.0=z");
-
-rules.push("rule-NR1 = rfsz:^[^z]");
-rules.push("rule-NR2 = rfsz:^[^ ]+ [^z]");
-rules.push("rule-NR3 = rfsz:^[^ ]+ [^ ]+ [^z]");
-rules.push("rule-NR4 = rfsz:^[^ ]+ [^ ]+ [^ ]+ [^z]");
-
-rules.push("why-NR1  =no roll allowed for first rolling element ");
-rules.push("why-NR2  =no roll allowed for second rolling element");
-rules.push("why-NR3  =no roll allowed for third rolling element");
-rules.push("why-NR4  =no roll allowed for fourth rolling element");
-
-rules.push("rule-OS1 = rfsz:^[rf]");
-rules.push("rule-OS2 = rfsz:^[^ ]+ [rf]");
-rules.push("rule-OS3 = rfsz:^[^ ]+ [^ ]+ [rf]");
-rules.push("rule-OS4 = rfsz:^[^ ]+ [^ ]+ [^ ]+ [rf]");
-
-rules.push("why-OS1  =only spin allowed for first rolling element ");
-rules.push("why-OS2  =only spin allowed for second rolling element");
-rules.push("why-OS3  =only spin allowed for third rolling element");
-rules.push("why-OS4  =only spin allowed for fourth rolling element");
 
 rules.push("1.1.1.1-4");
 rules.push("1.1.2.1 NOU");
 rules.push("1.1.3.1 NOU");
 rules.push("1.1.3.4 NOU");
-rules.push("1.1.6.3 OS1");
+rules.push("1.1.6.3 OS:1");
 
-rules.push("1.2.1.1 NOU ; NR2");
-rules.push("1.2.1.3 NOU ; NR2");
-rules.push("1.2.2.3 NOU ; NR2");
-rules.push("1.2.3.1 NOU ; NR2");
-rules.push("1.2.3.4 NOU ; NR2");
-rules.push("1.2.4.4 NOU ; NR2");
-rules.push("1.2.5.4 NOU ; NR1");
+rules.push("1.2.1.1 NOU ; NR:2");
+rules.push("1.2.1.3 NOU ; NR:2");
+rules.push("1.2.2.3 NOU ; NR:2");
+rules.push("1.2.3.1 NOU ; NR:2");
+rules.push("1.2.3.4 NOU ; NR:2");
+rules.push("1.2.4.4 NOU ; NR:2");
+rules.push("1.2.5.4 NOU ; NR:1");
 rules.push("1.2.6.1 NOU");
-rules.push("1.2.6.3 NOU ; OS1");
+rules.push("1.2.6.3 NOU ; OS:1");
 rules.push("1.2.7.1 NOU");
-rules.push("1.2.7.4 NOU ; NR1");
-rules.push("1.2.8.3 NOU ; OS1");
+rules.push("1.2.7.4 NOU ; NR:1");
+rules.push("1.2.8.3 NOU ; OS:1");
 
 // rolling circle
 rules.push("2.1.3.1");
@@ -1157,11 +1132,11 @@ rules.push("8.5.8.3 NOU:2");
 
 //rp
 rules.push("8.6.1.1   NR:1 ; NR:2 ;NF:3");
-rules.push("8.6.1.4  NR:1; NR:2 ");
+rules.push("8.6.1.4  NR:1; NR:2");
 rules.push("8.6.2.4  NR:1");
-rules.push("8.6.3.3  OS1; NR:2 ");
+rules.push("8.6.3.3  OS:1; NR:2");
 
-rules.push("8.6.4.3  OS1");
+rules.push("8.6.4.3  OS:1");
 
 // ROLLS
 rules.push("9.1.1.1-2");
@@ -1226,15 +1201,16 @@ rules.push("more=civa advanced known");
 
 rules.push("[civa advanced known]");
 rules.push("demo=~~,24pbb(\"|\"3````)4-~ -isin(``1),4 ~~8'b''2f 2m8,3- 4% [-4,10] -2joi15 h''f. 10% ``+`````````2f```rc24-````````` -o6 m32,6f-`");
-rules.push("basefig-min=9 ");// Modif GG correction Civa 2012
-rules.push("basefig-max=9 ");// Modif GG correction Civa 2012
+rules.push("basefig-min=9");// Modif GG correction Civa 2012
+rules.push("basefig-max=9");// Modif GG correction Civa 2012
 rules.push("poslj=10");
 rules.push("posnl=30");
 rules.push("allow=^([1-8]|9\\.([123489]|1[12]))");
+
 rules.push("[civa unlimited known]");
 rules.push("demo=~~~~'2,2f'zt.''2f;2 2% ,7,3m\"|\"5if,3 [-5,18] 24ip1 >~s,3if.ibpb(``````\"|\"3``)3f\"|\",4.''+``> 'if'h'5f' .8rp(44)9> > 3joi15-~~ ~~~~-.\"|\"4taf''> ,34'pb'''3");
-rules.push("basefig-min=9 ");// Modif GG correction Civa 2012
-rules.push("basefig-max=9 ");// Modif GG correction Civa 2012
+rules.push("basefig-min=9");// Modif GG correction Civa 2012
+rules.push("basefig-max=9");// Modif GG correction Civa 2012
 rules.push("poslj=10");
 rules.push("posnl=60");
 rules.push("allow=^[1-9]");

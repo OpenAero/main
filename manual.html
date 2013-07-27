@@ -1,7 +1,6 @@
-
 <!DOCTYPE html>
 <!--
-  manual.html version 1.3.3
+  manual.html version 1.3.7
   This file is part of OpenAero.
 
   OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -32,11 +31,11 @@
 
 <table border="0" cellspacing="1">
 	<tr>
-		<td colspan="3"><b><font size="6">The OpenAero Manual</font></b></td>
+		<td colspan="3"><h2>The OpenAero Manual</h2></td>
 	</tr>
 	<tr>
 		<td colspan="3"><p><b>
-		<font size="5">General</font></b></p>
+		General</b></p>
 		<p>OpenAero is aerobatic sequence design software available from
 		<a href="http://openaero.net/" target="_blank">OpenAero.net</a> that runs inside your 
 		web browser. This makes it available on practically any computer, tablet 
@@ -67,7 +66,7 @@
 	</tr>
 	<tr>
 		<td colspan="2">
-		<p id="creating_sequences"><b><font size="5">Creating sequences</font></b></p>
+		<p id="creating_sequences"><b>Creating sequences</b></p>
 		<p>Aerobatic sequences can be created within OpenAero in either of two 
 		ways:</p>
 		<ul>
@@ -81,14 +80,14 @@
 		refer to <a href="language.html" target="_blank">OpenAero language <i>Help</i></a>.</p>
 		</td>
 		<td rowspan="2" width="220">
-		<p align="center"><b><font size="5">
-		<img border="0" src="images/OA_SequenceInfoPanel.gif" width="175" height="244" align="right"></font></b></td>
+		<p align="center"><b>
+		<img border="0" src="images/OA_SequenceInfoPanel.gif" width="175" height="244" align="right"></b></td>
 	</tr>
 	<tr>
 		<td colspan="2">
-		<p><b><font size="5">
+		<p><b>
 		Beginning 
-		a sequence</font></b></p>
+		a sequence</b></p>
 		<p>Always start by filling in the Sequence Info panel. The <i>Rules, 
 		Category</i> and <i>Program</i> information will be used for determining sequence 
 		validity. In the Sequence menu you can choose to start the sequence 
@@ -97,7 +96,7 @@
 	</tr>
 	<tr>
 		<td colspan="2">
-		<p id="adding_a_figure"><b><font size="5">Adding a figure</font></b></p>
+		<p id="adding_a_figure"><b>Adding a figure</b></p>
 		<p>
 		<img border="0" src="images/OA_FigureAddPanel.gif" width="174" height="129" align="left">Go 
 		to the <i>Figure editor</i> tab and click on the <i>Click to add figure</i> box. A 
@@ -169,7 +168,7 @@
 	</tr>
 	<tr>
     <td colspan="2">
-      <p id="figure_comments"><b><font size="5">Figure comments</font></b></p>
+      <p id="figure_comments"><b>Figure comments</b></p>
       <p>The comment section can be used te enter information about the 
       figure. Plain text can be used but there is also a variety of
       useful special codes:</p>
@@ -186,7 +185,7 @@
   </tr>
   <tr>
     <td colspan="2">
-      <p><b><font size="5">Automated handling of Free  and Compulsory&nbsp;/&nbsp;Free&nbsp;Unknown sequence figures</font></b></p>
+      <p><b>Automated handling of Free  and Compulsory&nbsp;/&nbsp;Free&nbsp;Unknown sequence figures</b></p>
       <p>When on the Sequence Info panel a combination of Class : Rules : Category : Program 
       is set that requires special handling to meet CIVA regulations, 
       the software will provide the following automated handling:</p>
@@ -212,11 +211,15 @@
   </tr>
 	<tr>
 		<td colspan="2">
-		<p><b><font size="5">Selecting and moving a figure</font></b></p>
+		<p><b>Selecting and moving a figure</b></p>
 		<p>To select a figure, click on the start dot or select it in the 
 		sequence text line. The figure is now magenta and can be edited with the 
 		figure editor. For repositioning it can be dragged anywhere by holding 
 		down the mouse button after clicking the figure start.</p>
+    <p>After moving a figure it's possible to change the straight line 
+    to a curved line by clicking the <i>Curve</i> button. It's also 
+    possible to remove the line, but for clarity only for horizontal moves.
+    This can be done by clicking the <i>Move figure forward</i> button.</p>
     <p><i>TIP</i> : A poorly laid-out sequence that is difficult to 
     follow can be a real problem for judges - time spent creating an 
     easily understood flow of figures can be a good way to help improve 
@@ -226,9 +229,9 @@
 	</tr>
 	<tr>
 		<td width="873">
-		<p><b><font size="5">
+		<p><b>
 		Using 
-		the OpenAero &#39;Queue&#39;</font></b></p>
+		the OpenAero &#39;Queue&#39;</b></p>
 		<p>The queue system provides a way to copy selected figures to a 
 		temporary list, from which they may conveniently be selected for 
 		insertion at other positions in the sequence. This enables the figures 
@@ -239,20 +242,22 @@
 		through the &quot;* Figure Queue&quot; item at the foot of the figure / family 
 		selection drop-list.</p>
 		</td>
-		<td colspan="2" rowspan="2" valign="top"><b><font size="5">
-		<img border="0" src="images/OA_Queue.gif" width="165" height="176" align="right"></font></b></td>
+		<td colspan="2" rowspan="2" valign="top"><b>
+		<img border="0" src="images/OA_Queue.gif" width="165" height="176" align="right"></b></td>
 	</tr>
 	<tr>
 		<td width="873">
-		<p><b><font size="5">Keeping the figures separate</font></b></p>
+		<p><b>Keeping the figures separate</b></p>
 		<p>When figures are overlapping they can be dragged to a new position. 
 		It is also possible to use <i>Separate figures</i> from the <i>Sequence menu</i> to 
-		remove all current sequence formatting.</p>
+		separate all figures from each other.</p>
+    <p>To remove all current sequence formatting choose 
+    <i>Clear positioning</i> from the <i>Sequence menu</i>.</p>
 		</td>
 	</tr>
 	<tr>
 		<td colspan="3">
-		<p><b><font size="5">Checking sequences against the selected Rules</font></b></p>
+		<p><b>Checking sequences against the selected Rules</b></p>
 		<p>Choose <i>Sequence ... Check sequence</i> and your sequence will be checked 
 		against the rules that you have selected in the <i>Sequence Info</i> setup. 
 		Note that any construction errors are shown in the <i>Alerts</i> box below the 
@@ -265,13 +270,13 @@
 	</tr>
 	<tr>
 		<td colspan="3">
-		<p><b><font size="5">Opening, Saving and Printing sequences</font></b></p>
-		<p><u><i><b><font size="4">Opening sequences</font></b></i></u></p>
+		<p><b>Opening, Saving and Printing sequences</b></p>
+		<p><u><i><b>Opening sequences</b></i></u></p>
 		<p>To open an existing sequence, choose <i>Open sequence</i> in the <i>File menu</i> 
 		and navigate to locate and open the required sequence file. Sequence 
 		files always end in &quot;.seq&quot; and may have been created either with 
 		OpenAero or originally in OLAN.</p>
-		<p><u><i><b><font size="4">Saving sequences</font></b></i></u></p>
+		<p><u><i><b>Saving sequences</b></i></u></p>
 		<p>To save the current sequence as a <i>&quot;filename.seq&quot;</i> file, choose 
 		<i>Save 
 		sequence</i> in the <i>File menu</i>. Your computer will bounce the data through 
@@ -284,23 +289,23 @@
 		link</i> in the <i>File menu</i>. It is useful to right-click here and choose 
 		<i>&quot;Copy 
 		Link Address&quot;</i> to transfer this link to your computer&#39;s clipboard.</p>
-		<p><u><i><b><font size="4">Saving the current form (A, B or C) as an 
-		image</font></b></i></u></p>
+		<p><u><i><b>Saving the current form (A, B or C) as an 
+		image</b></i></u></p>
 		<p>To save the current form as an image, choose <i>Save as image</i> in the  
 		<i>File</i> menu. You will then get the option, depending on your browser, to 
 		save the image as a Scalable Graphics Image or view it immediately. 
 		These images can be opened in most browsers and many other applications 
 		- see <a href="http://www.fileinfo.com" target="_blank">www.fileinfo.com</a> for further 
 		advice.</p>
-		<p><u><i><b><font size="4">Saving a sequence's figures as separate
-		images</font></b></i></u></p>
+		<p><u><i><b>Saving a sequence's figures as separate
+		images</b></i></u></p>
 		<p>To save the current sequence figures as separate images, choose <i>Save figs separate</i> in the  
 		<i>File</i> menu. You will then get the option to save a ZIP file that 
 		contains every figure of your sequence as a separate SVG image.<br />
 		The images are oriented according the sequence flow and the form 
 		currently being viewed (B or C).</p>
-		<p><u><i><b><font size="4">Printing sequences<br>
-		</font></b></i></u>To print some or all of the sequence forms, choose <i>Print forms</i> in the 
+		<p><u><i><b>Printing sequences<br>
+		</b></i></u>To print some or all of the sequence forms, choose <i>Print forms</i> in the 
 		<i>File menu</i>, and select the appropriate options. To save the forms as a 
 		PDF file in Windows you will need some software that does this for you, 
 		such as <a href="http://sourceforge.net/projects/pdfcreator" target="_blank">PDFcreator</a> or 
@@ -311,8 +316,8 @@
 	</tr>
 	<tr>
 		<td colspan="3">
-      <p id="grid_system"><b><font size="5">The Figure Grid system for Unknown and Free&nbsp;Unknown operations
-      </font></b></p>
+      <p id="grid_system"><b>The Figure Grid system for Unknown and Free&nbsp;Unknown operations
+      </b></p>
       <p>
         <img border="0" src="images/OA_FigureGrid.gif" width="338" height="278" align="right">
         Either from the very start or from an existing sequence, <i>View ... 
@@ -337,7 +342,7 @@
   </tr>
   <tr>
     <td>
-      <b><font size="5">Importing OpenAero files into ACRO</font></b>
+      <b>Importing OpenAero files into ACRO</b>
       <p>
         OpenAero files that are stored in <i>&quot;filename.seq&quot;</i> format can be 
         directly imported into the ACRO scoring software, thus providing a swift 
@@ -348,6 +353,19 @@
       </p>
     </td>
   </tr>
+	<tr>
+		<td colspan="2">
+      <p id="settings"><b>Settings</b></p>
+      <p>The <i>Settings</i> dialog offers options for changing the look &amp; feel of OpenAero. You can:</p>
+      <ul>
+        <li>Change the number of columns in Grid View</li>
+        <li>Select if figure start numbers should be in a circle or not</li>
+        <li>Change the filename pattern for saving all figures as separate images in a ZIP file. The following
+        replacement patterns are available: %pilot %aircraft %location %date %class %rules %category %program %form %figure</li>
+      </ul>
+      <p>When leaving or reloading OpenAero the settings will be restored to their original value.</p>
+    </td>
+	</tr>
 </table>
 </body>
 </html>

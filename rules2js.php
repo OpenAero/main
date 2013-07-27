@@ -75,7 +75,7 @@ foreach ($lines as $line) {
           } else {
             $out .= createRule ('[' . $rules . ' ' . $matchRules[1] . ']', $comment);
           }
-        } else if (preg_match('/^([0-8]\.)([0-9][0-9]+)(\.[0-9\-]+ .*)$/', $line, $matchRules)) {
+        } else if (preg_match('/^([0-8]\.)([0-9][0-9]+)(\.[0-9\-]+( |$).*)/', $line, $matchRules)) {
           // check match "[0-9].xx[x].y[y] ". This is old OLAN family code
           $mid = substr ($matchRules[2], 0, 1) . '.' . substr ($matchRules[2], 1);
           $out .= createRule ($matchRules[1] . $mid . $matchRules[3], $comment);

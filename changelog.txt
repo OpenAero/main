@@ -1,3 +1,14 @@
+1.3.7
+* fixed Intermediate Free figure repetition rules
+* fixed incorrect tailslide drawing on Y axis
+* added .svg extension to image files saved through "Save figs separate"
+* added option to change the image file name pattern for "Save figs separate"
+* updated and corrected French rules
+* rule checking: corrected total K counting where linking figures are used
+* corrected glider rules for Unknown proposals (unknown0)
+* updated jszip.js to latest version
+* corrected knife edge snap foot up/down determination
+
 1.3.6
 * fixed figure definitions for 8.6.18.x and 8.6.19.x
 * added IOC country codes for flags in Grid view and made IOC default

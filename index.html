@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--
-  index.html version 1.3.6
+  index.html version 1.3.7
   This file is part of OpenAero.
 
   OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -199,6 +199,7 @@
       <span class="boxTitle">
         <script>document.write(userText.settings);</script>
       </span>
+      <div class="info"><a href="manual.html#settings" target="_blank"><img src="buttons/smallInfo.png"></a></div>
       <div>
         <span>
           <select id="gridColumns" onChange="selectForm('Grid');">
@@ -216,6 +217,11 @@
       <div>
         <input type="checkbox" id="numberInCircle" onChange="numberInCircle = (!numberInCircle);draw();">
         <script>document.write(userText.numberInCircle);</script>
+      </div>
+      <hr>
+      <div>
+        <input type="text" id="zipImageFilenamePattern">
+        <script>document.write(userText.zipImageFilenamePattern);</script>
       </div>
       <div class="textButton close" onClick="settingsDialog();">
         <script>document.write(userText.closeIt);</script>
