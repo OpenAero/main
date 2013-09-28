@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--
-  index.html version 1.3.7
+  index.html version 1.3.8
   This file is part of OpenAero.
 
   OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -39,8 +39,10 @@
     <link rel="icon" type="image/png" sizes="114x114" href="favicons/favicon114.png">
     <link rel="icon" type="image/png" sizes="128x128" href="favicons/favicon128.png">
     <link rel="icon" type="image/png" sizes="195x195" href="favicons/favicon195.png">
-    <!-- configuration -->
+    <!-- configuration, must be first js -->
     <script src="config.js" type="text/javascript"></script>
+    <!-- interface languages -->
+    <script src="languages/en.js" type="text/javascript"></script>
     <!-- logos -->
     <script src="logo.js" type="text/javascript"></script>
     <!-- figure definitions -->
@@ -79,152 +81,184 @@
       <div id="alertMessage">
       </div>
       <div class="textButton close" onClick="alertBox();">
-        <script>document.write(userText.closeIt);</script>
+        <span class="userText" id="t_closeIt"></span>
       </div>
     </div>
     <!-- print dialog -->
     <div id="printDialog" class="box noDisplay">
       <span class="boxTitle">
-        <script>document.write(userText.printDialog);</script>
+        <span class="userText" id="t_printDialog"></span>
       </span>
       <div class="clearBoth">
-        <script>document.write(userText.printExplain);</script>
+        <span class="userText" id="t_printExplain"></span>
       </div>
       <div class="main">
         <div>
           <input type="checkbox" id="printFormA" checked="true">
-          <script>document.write(userText.printFormA);</script>
+          <span class="userText" id="t_printFormA"></span>
         </div>
         <div>
           <input type="checkbox" id="printFormB" checked="true">
-          <script>document.write(userText.printFormB);</script>
+          <span class="userText" id="t_printFormB"></span>
         </div>
         <div>
           <input type="checkbox" id="printFormC" checked="true">
-          <script>document.write(userText.printFormC);</script>
+          <span class="userText" id="t_printFormC"></span>
         </div>
         <div>
           <input type="checkbox" id="printFormPilotCards" onChange="setPilotCardForm();">
-          <script>document.write(userText.printPilotCards);</script>
+          <span class="userText" id="t_printPilotCards"></span>
           <input type="radio" name="pilotCardForm" value="B" id="pilotCardFormB" disabled checked>
-          <script>document.write(userText.formB);</script>
+          <span class="userText" id="t_formB"></span>
           <input type="radio" name="pilotCardForm" value="C" id="pilotCardFormC" disabled>
-          <script>document.write(userText.formC);</script>
+          <span class="userText" id="t_formC"></span>
         </div>
         <div>
           <input type="checkbox" id="printFormGrid">
-          <script>document.write(userText.printFormGrid);</script>
+          <span class="userText" id="t_printFormGrid"></span>
         </div>
       </div>
       <div class="sub">
         <div>
           <input type="checkbox" id="printMiniFormAonB" checked="true">
-          <script>document.write(userText.printMiniFormAonB);</script>
+          <span class="userText" id="t_printMiniFormAonB"></span>
         </div>
         <div>
           <input type="checkbox" id="printMiniFormAonC">
-          <script>document.write(userText.printMiniFormAonC);</script>
+          <span class="userText" id="t_printMiniFormAonC"></span>
+        </div>
+        <div>
+          <input type="checkbox" id="printSF" checked="true">
+          <span class="userText" id="t_printSF"></span>
         </div>
         <div>
           <input type="checkbox" id="printString" checked="true">
-          <script>document.write(userText.printString);</script>
+          <span class="userText" id="t_printString"></span>
         </div>
         <div>
           <input type="checkbox" id="printCheck">
-          <script>document.write(userText.printCheck);</script>
+          <span class="userText" id="t_printCheck"></span>
         </div>
         <div>
           <input type="checkbox" id="iacForms">
-          <script>document.write(userText.iacForms);</script>
+          <span class="userText" id="t_iacForms"></span>
         </div>
         <div>
           <input type="checkbox" id="inverseForms">
-          <script>document.write(userText.inverseForms);</script>
+          <span class="userText" id="t_inverseForms"></span>
         </div>
       </div>
       <div class="clearBoth">
         <span class="textButton" onClick="printAllForms();">
-          <script>document.write(userText.print);</script>
+          <span class="userText" id="t_print"></span>
         </span>
         <span class="textButton" onClick="printDialog();">
-          <script>document.write(userText.cancel);</script>
+          <span class="userText" id="t_cancel"></span>
         </span>
       </div>
     </div>
     <!-- check sequence -->
     <div id="checkSequence" class="box noDisplay">
       <span class="boxTitle">
-        <script>document.write(userText.checkSequence);</script>
+        <span class="userText" id="t_checkSequence"></span>
       </span>
       <div id="checkSequenceContent"></div>
       <span class="textButton" onClick="checkSequence();">
-        <script>document.write(userText.ok);</script>
+        <span class="userText" id="t_ok"></span>
       </span>
       <span class="textButton" onClick="checkSequence('log');">
-        <script>document.write(userText.showLog);</script>
+        <span class="userText" id="t_showLog"></span>
       </span>
     </div>
     <!-- check multiple -->
     <div id="checkMulti" class="box noDisplay">
       <span class="boxTitle">
-        <script>document.write(userText.checkMulti);</script>
+        <span class="userText" id="t_checkMulti"></span>
       </span>
       <div>
         <input type="checkbox" id="multiFullLog">
-        <script>document.write(userText.showFullLog);</script>
+        <span class="userText" id="t_showFullLog"></span>
       </div>
       <div>
         <input type="checkbox" id="multiOverrideRules" checked>
-        <script>document.write(userText.multiOverrideRules);</script>
+        <span class="userText" id="t_multiOverrideRules"></span>
         <span id="multiCurrentRules"></span>
       </div>
       <div>
-        <script>document.write(userText.chooseFiles);</script>
+        <span class="userText" id="t_chooseFiles"></span>
         <form id="checkMultiFileForm">
           <input type=file id="checkMultiFiles" multiple onChange="checkMulti();">
         </form>
       </div>
       <div id="fileDrop" class="fileDrop">
         <div>
-          <script>document.write(userText.orFileDrop);</script>
+          <span class="userText" id="t_orFileDrop"></span>
         </div>
       </div>
       <div class="textButton close" onClick="checkMultiDialog();">
-        <script>document.write(userText.closeIt);</script>
+        <span class="userText" id="t_closeIt"></span>
       </div>
     </div>
     <!-- Settings -->
     <div id="settingsDialog" class="box noDisplay">
         
       <span class="boxTitle">
-        <script>document.write(userText.settings);</script>
+        <span class="userText" id="t_settings"></span>
       </span>
+      <div class="tabSelector">
+        <ul>
+          <li id=tab-general class=activeTab><a href="#" onClick="selectTab(this);">General</a></li>
+          <li id=tab-styling class=inactiveTab><a href="#" onClick="selectTab(this);">Styling</a></li>
+        </ul>
+      </div>
       <div class="info"><a href="manual.html#settings" target="_blank"><img src="buttons/smallInfo.png"></a></div>
-      <div>
-        <span>
-          <select id="gridColumns" onChange="selectForm('Grid');">
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4" selected>4</option>
-            <option value="5">5</option>
-            <option value="6">6</option>
-            <option value="7">7</option>
-            <option value="8">8</option>
+      <div class=clearBoth></div>
+      <div id="general">
+        <div class="section">
+          <span class="sectionLabel">Grid view</span><div class="sectionLabelClose">&nbsp;</div>          
+          <span>
+            <select id="gridColumns" onChange="selectForm('Grid');">
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5" selected>5</option>
+              <option value="6">6</option>
+              <option value="7">7</option>
+              <option value="8">8</option>
+            </select>
+          </span>
+          <span>Columns</span>
+        </div>
+        <div class="section">
+          <span class="sectionLabel">Save figs separate</span><div class="sectionLabelClose">&nbsp;</div>          
+          <input type="text" id="zipImageFilenamePattern">
+          <span class="userText" id="t_zipImageFilenamePattern"></span>
+        </div>
+      </div>
+      <div id="styling" style="display:none;">
+        Here you can change various style settings. Please keep in mind that
+        these change the look of <strong>your</strong> version of OpenAero
+        but not how your sequence will look to another user of OpenAero!
+        <div class="section">
+          <input type="checkbox" id="numberInCircle" onChange="numberInCircle = (!numberInCircle);draw();">
+          <span class="userText" id="t_numberInCircle"></span>
+        </div>
+        <div class="section">
+          <span class="sectionLabel">Drawing styles</span><div class="sectionLabelClose">&nbsp;</div>          
+          <p>All drawing styles can be changed here. Some useful ones:
+          <strong>pos</strong>=positive line,
+          <strong>neg</strong>=negative line,
+          <strong>rollText</strong>=roll font (e.g. 2x8).</p>
+          <select id="styles" onChange="getStyle();">
           </select>
-        </span>
-        <span>Columns in grid view</span>
-      </div>
-      <div>
-        <input type="checkbox" id="numberInCircle" onChange="numberInCircle = (!numberInCircle);draw();">
-        <script>document.write(userText.numberInCircle);</script>
-      </div>
-      <hr>
-      <div>
-        <input type="text" id="zipImageFilenamePattern">
-        <script>document.write(userText.zipImageFilenamePattern);</script>
+          <input type="text" id="styleString" size="40" onChange="updateStyle();">
+          <input type="button" value="Change" onMouseDown="updateStyle();">
+          <input type="button" value="Reset" onMouseDown="resetStyle();">
+          <input type="button" value="Reset All" onMouseDown="resetStyle(true);">
+        </div>
       </div>
       <div class="textButton close" onClick="settingsDialog();">
-        <script>document.write(userText.closeIt);</script>
+        <span class="userText" id="t_closeIt"></span>
       </div>
     </div>
 
@@ -289,6 +323,10 @@
             <ul id="queueOptions">
               <li><a href=# onClick="showQueue();">Show queue</a></li>
               <li><a href=# onClick="addToQueue();">Add to queue</a></li>
+              <hr>
+              <li><a href=# onClick="addAllToQueue();">Add all to queue</a></li>
+              <li><a href=# onClick="clearQueue();">Clear queue</a></li>
+              <hr>
               <li class="fileOpening">
                 <div class=openFile>
                   <a href=#>Open queue file</a>
@@ -376,44 +414,74 @@
               </a>
             </div>
             <div id="uploadLogo" class="fileOpening">
-              <script>document.write(userText.logoExplain);</script>
+              <span class="userText" id="t_logoExplain"></span>
               <input type="file" id="logoFile" accept="image/*"
                 onChange="hideLogoChooser(); openFile(document.getElementById('logoFile').files[0], 'Logo')">
             </div>
             <div id="chooseLogo"></div>
           </div>
           <div class=item>
-            <div class="label">Pilot</div>
+            <div class="label userText" id="t_pilot"></div>
             <input type=text name=pilot id=pilot maxlength="30" onChange="changeSequenceInfo()">
           </div>
           <div class=item>
-            <div class="label">A/C type &amp; reg</div>
+            <div class="label userText" id="t_aircraft"></div>
             <input type=text name=aircraft id=aircraft maxlength="30" onChange="changeSequenceInfo()">
           </div>
           <div class=item>
-            <div class="label">Location</div>
+            <div class="label userText" id="t_location"></div>
             <input type=text name=location id=location maxlength="30" onChange="changeSequenceInfo()">
           </div>
           <div class=item>
-            <div class="label">Date</div>
+            <div class="label userText" id="t_date"></div>
             <input type=text name=date id=date maxlength="30" onChange="changeSequenceInfo()">
           </div>
-          <div class=item><div class="label">Class</div>
+          <div class=item>
+            <div class="label userText" id="t_class"></div>
             <select name="class" id="class" onChange="selectPwrdGlider();">
-              <option value="powered">Power</option>
+              <option value="powered" selected>Power</option>
               <option value="glider">Glider</option>
             </select>
           </div>
-          <div class="item combo"><div class="label">Rules</div><input type=text name=rules id=rules maxlength="30"><ul id=rulesList></ul></div>
-          <div class="item combo"><div class="label">Category</div><input type=text name=category id=category maxlength="30"><ul id=categoryList></ul></div>
-          <div class="item combo"><div class="label">Program</div><input type=text name=program id=program maxlength="30"><ul id=programList></ul></div>
-          <div class=item><div class="label">Positioning</div><input type=text name=positioning id=positioning maxlength="4" onChange="changeSequenceInfo()"></div>
-          <div id="harmonyField" class=item style="opacity:0;"><div class="label">Harmony</div><input type=text name=harmony id=harmony maxlength="4" onChange="changeSequenceInfo()"></div>
+          <div class="item combo">
+            <div class="label userText" id="t_rules"></div>
+            <input type=text name=rules id=rules maxlength="30">
+            <ul id=rulesList></ul>
+          </div>
+          <div class="item combo">
+            <div class="label userText" id="t_category"></div>
+            <input type=text name=category id=category maxlength="30">
+            <ul id=categoryList></ul>
+          </div>
+          <div class="item combo">
+            <div class="label userText" id="t_program"></div>
+            <input type=text name=program id=program maxlength="30">
+            <ul id=programList></ul>
+          </div>
+          <div class=item>
+            <div class="label userText" id="t_positioning"></div>
+            <input type=text name=positioning id=positioning maxlength="4" onChange="changeSequenceInfo()">
+          </div>
+          <div id="harmonyField" class=item style="opacity:0;">
+            <div class="label userText" id="t_harmony"></div>
+            <input type=text name=harmony id=harmony maxlength="4" onChange="changeSequenceInfo()">
+          </div>
           <div class="clearBoth"></div>
-          <div class=item><div class="label">Logo<div id=removeLogo></div><input type=hidden id=logo></div><div id="activeLogo"><a href="#" onClick="logoChooser()">Choose logo</a></div></div>
+          <div class=item>
+            <span class="label userText" id="t_logo"></span>
+            <div>
+              <div id=removeLogo></div>
+              <input type=hidden id=logo>
+            </div>
+            <div id="activeLogo"><a href="#" onClick="logoChooser()">Choose logo</a></div>
+          </div>
           <div class="clearSpace"></div>
-          <div class=item><div class="label">Notes</div><textarea name=notes id=notes onChange="changeSequenceInfo()"></textarea></div>
+          <div class=item>
+            <div class="label userText" id="t_notes"></div>
+            <textarea name=notes id=notes onChange="changeSequenceInfo()"></textarea>
+          </div>
           <input type=hidden id="oa_version">
+          <input type=hidden id="default_view">
         </div>
         <!-- Figure Editor -->
         <div id="figureInfo" class=section style="position:absolute;z-index:-1;top:-5000px;">

@@ -1,11 +1,11 @@
-// OpenAero rules13-civa.js file
+// OpenAero rules13-CIVA.js file
 
 // This file is part of OpenAero.
 
 //  OpenAero was originally designed by Ringo Massa and built upon ideas
 //  of Jose Luis Aresti, Michael Golan, Alan Cassidy and many others. 
 
-//  OpenAero is free software: you can redistribute it and/or modify
+//  OpenAero is Free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
 //  the Free Software Foundation, either version 3 of the License, or
 //  (at your option) any later version.
@@ -24,12 +24,12 @@
 //# CIVA 2011, written and updated by Michael Golan, April 2011, based on Section 6 version 2011-1
 //#
 //#
-//# Recopie par GG de rules11-civa avec intégration des régles Civa modifiées pour 2012.
+//# Recopie par GG de rules11-CIVA avec intégration des régles Civa modifiées pour 2012.
 //# Ces modifications sont signalées par "# Modif GG évolution Civa 2012".
 //#
 //# Puis changement de la numerotation en pseudo numerotation 2012
 //#
-//# Modifications 2013 (ajout Prog Q 2013, Suppression Prog free)  V 2013.0.50
+//# Modifications 2013 (ajout Prog Q 2013, Suppression Prog Free)  V 2013.0.50
 //#
 //# Added Yak 52 for 2013
 //# OpenAero 1.3.4:
@@ -37,95 +37,51 @@
 //# OpenAero 1.3.7:
 //# -Corrected Yak52 Free rules for figure repetition
 //# -Moved rules from Intermediate to Yak52 as they are identical
+//# OpenAero 1.3.8
+//# -Added code for flick checking in conv-climbqtrs and others
+//# -Fixed missing "no flick roll on vertical down line after hes..."
+//# -Improved sequence naming and added "Programme1-4"
+//# -Corrected positioning K for 2013 rules
+
+//#######################################################################################
+//#
+//# Define Unlimited programmes. Old references are kept for backward compatibility
+//# "Program" is 2012 and earlier
+//# "Programme" is 2013
+
+rules.push("[CIVA Unlimited Programme1]");
+rules.push("more=CIVA Unlimited Known");
+rules.push("[CIVA Unlimited Programme2]");
+rules.push("more=CIVA Unlimited Free");
+rules.push("[CIVA Unlimited Programme3]");
+rules.push("more=CIVA Unlimited Unknown1");
+rules.push("[CIVA Unlimited Programme4]");
+rules.push("more=CIVA Unlimited Unknown2");
+
+rules.push("(CIVA Unlimited ProgramQ)");
+rules.push("more=CIVA Unlimited Known");
 
 //######################################################################################
-//##### CIVA YAK52 FREE ################################################################
+//##### CIVA UNLIMITED KNOWN ###########################################################
 //######################################################################################
 
-rules.push("[CIVA Yak52 Free]");
-rules.push("posnl=30");
-rules.push("basefig-max=12");
-rules.push("k-max=180");
-
-rules.push("basefig-repeat=1");
-rules.push("roll-repeat=1");
-rules.push("snap-repeat=1");
-rules.push("spin-repeat=1");
-
-rules.push("fam5-min=1");
-rules.push("fam7-min=1");
-rules.push("fam8-min=1");
-rules.push("froll-min=1");
-rules.push("hroll-min=1");
-rules.push("qroll-min=1");
-rules.push("eroll-min=1");
-rules.push("snap-min=1");
-rules.push("spin-min=1");
-
-rules.push("group-roller=^2\\.(1\\.[23]|2\\.[2-6]|3\\.[2-5]|4\\.[2-8])");
-rules.push("roller-name=Rolling turn, family 2.1.2 to 2.1.3, 2.2.2 to 2.2.6, 2.3.2 to 2.3.5, 2.4.2 to 2.4.8");
-rules.push("roller-min=1");
-
-rules.push("emptyline-max=0");
-
-rules.push("opposite-min=1"); //one opposite roll is required!
-
-rules.push("allow=^[1-9]"); //all figures are allowed for the Free program
-
-//######################################################################################
-//##### CIVA INTERMEDIATE FREE #########################################################
-//######################################################################################
-
-rules.push("[CIVA Intermediate Free]");
-rules.push("more=CIVA Yak52 Free");
-
-//######################################################################################
-//##### ADVANCED FREE #################################################################
-//######################################################################################
-
-rules.push("[civa advanced free]");
-rules.push("posnl=30");//no line judges
+rules.push("[CIVA Unlimited Known]");
+rules.push("demo=~~~~'2,2f'zt.''2f;2 2% ,7,3m\"|\"5if,3 [-5,18] 24ip1 >~s,3if.ibpb(``````\"|\"3``)3f\"|\",4.''+``> 'if'h'5f' .8rp(44)9> > 3joi15-~~ ~~~~-.\"|\"4taf''> ,34'pb'''3");
+rules.push("basefig-min=9");// Modif GG correction Civa 2012
+rules.push("basefig-max=9");// Modif GG correction Civa 2012
 rules.push("poslj=10");
-rules.push("k-max=300");
-rules.push("basefig-max=12");
-//for 2006 basefig-max=15
+rules.push("posnl=40");
+rules.push("allow=^[1-9]");
 
-rules.push("basefig-repeat=1");
-rules.push("roll-repeat=1");
-rules.push("snap-repeat=1");
-rules.push("spin-repeat=1");
-
-rules.push("group-roller=^2\\.(1\\.[23]|2\\.[2-6]|3\\.[2-5]|4\\.[2-8])");
-rules.push("roller-name=Rolling turn, family 2.1.2 to 2.1.3, 2.2.2 to 2.2.6, 2.3.2 to 2.3.5, 2.4.2 to 2.4.8");
-
-rules.push("roller-min=1");
-rules.push("fam1-min=1");
-rules.push("fam5-min=1");
-rules.push("fam7-min=1");
-rules.push("fam8-min=1");
-
-rules.push("froll-min=1");
-rules.push("hroll-min=1");
-rules.push("qroll-min=1");
-rules.push("eroll-min=1");
-rules.push("snap-min=2");
-//for 2006 span-min=1
-rules.push("spin-min=1");
-//spin-max=1 # Modif GG évolution Civa 2012
-
-//for 2006: opposite-min=0
-rules.push("opposite-min=1");//one opposite roll is required!
-
-rules.push("allow=^[1-9]");//all figures are allowed for the free program
+rules.push("infocheck=positioning");
 
 //######################################################################################
-//##### UNLIMITED FREE #################################################################
+//##### CIVA UNLIMITED FREE ############################################################
 //######################################################################################
 
-rules.push("[civa unlimited free]");
-rules.push("posnl=60");//assume no line judges
+rules.push("[CIVA Unlimited Free]");
+rules.push("posnl=40");//assume no line judges
 rules.push("poslj=20");
-//for 2006: basefig-max=10
 rules.push("basefig-max=9");
 rules.push("k-max=420");
 
@@ -133,7 +89,6 @@ rules.push("basefig-repeat=1");
 rules.push("roll-repeat=1");
 rules.push("snap-repeat=1");
 rules.push("spin-repeat=1");
-//for 2005: k-maxperfig=99 #starting with 2006 this was removed
 
 //group-roller=^2\.([5-9]|1[0-5]|1[7-9]|20)
 //roller-name=Rolling turn, family 2.5-2.15 or 2.17-2.20
@@ -160,35 +115,38 @@ rules.push("osnap-min=2");
 
 rules.push("opposite-min=1");//one opposite roll is required!
 
-rules.push("allow=^[1-9]");//all figures are allowed for the free program
+rules.push("allow=^[1-9]");//all figures are allowed for the Free Program
+
+// what info should be filled out
+rules.push("infocheck=pilot;aircraft;positioning");
 
 //#######################################################################################
-//###################### UNLIMITED UNKNOWNS #############################################
+//##### CIVA UNLIMITED UNKNOWNS #########################################################
 //#######################################################################################
 
-rules.push("[civa unlimited unknown1]");
-rules.push("more=civa unlimited freeunknown");
-rules.push("(civa unlimited 1stunknown)");
-rules.push("more=civa unlimited freeunknown");
-rules.push("[civa unlimited program2]");
-rules.push("more=civa unlimited freeunknown");
+rules.push("[CIVA Unlimited Unknown1]");
+rules.push("more=CIVA Unlimited FreeUnknown");
+rules.push("(CIVA Unlimited 1stUnknown)");
+rules.push("more=CIVA Unlimited FreeUnknown");
+rules.push("(CIVA Unlimited Program2)");
+rules.push("more=CIVA Unlimited FreeUnknown");
 
-rules.push("[civa unlimited unknown2]");
-rules.push("more=civa unlimited freeunknown");
-rules.push("(civa unlimited 2ndunknown)");
-rules.push("more=civa unlimited freeunknown");
-rules.push("[civa unlimited program3]");
-rules.push("more=civa unlimited freeunknown");
+rules.push("[CIVA Unlimited Unknown2]");
+rules.push("more=CIVA Unlimited FreeUnknown");
+rules.push("(CIVA Unlimited 2ndUnknown)");
+rules.push("more=CIVA Unlimited FreeUnknown");
+rules.push("(CIVA Unlimited Program3)");
+rules.push("more=CIVA Unlimited FreeUnknown");
 
-rules.push("[civa unlimited freeunknown]");
+rules.push("(CIVA Unlimited FreeUnknown)");
 rules.push("connectors=4/24");
-rules.push("unknown-letters=ABCDEFGHIJ");
+rules.push("Unknown-letters=ABCDEFGHIJ");
 
-rules.push("more=civa unlimited unknown");
+rules.push("more=CIVA Unlimited Unknown");
 
-rules.push("[civa unlimited unknown]");
+rules.push("(CIVA Unlimited Unknown)");
 rules.push("poslj=10");
-rules.push("posnl=60");
+rules.push("posnl=40");
 //group-one=^1\.([6-9]|1[01])\.[34]
 //one-name=family 1.6-11 columns 3&4
 //group-two=^8\.([1-4]|1[5-8]|3[1-4])\.[34]
@@ -219,20 +177,20 @@ rules.push("roll-repeat=1");
 rules.push("snap-repeat=1");
 rules.push("spin-repeat=1");
 
-rules.push("more=civa unlimited unknownbase");
+rules.push("more=CIVA Unlimited Unknownbase");
 
-//# a single unknown figure, without sequence requirements
-rules.push("(civa unlimited unknownfigure)");
+//# a single Unknown figure, without sequence requirements
+rules.push("(CIVA Unlimited Unknownfigure)");
 rules.push("snap-maxperfig=1");
 rules.push("k-minperfig=22");
 rules.push("basefig-repeat=1");
 rules.push("roll-repeat=1");
 rules.push("snap-repeat=1");
 rules.push("spin-repeat=1");
-rules.push("more=civa unlimited unknownbase");
+rules.push("more=CIVA Unlimited Unknownbase");
 
 //###################################################################################################
-rules.push("(civa unlimited unknownbase)");
+rules.push("(CIVA Unlimited Unknownbase)");
 
 // Modif GG évolution Civa 2012
 rules.push("conv-horstop=^9\\.(1|9|10)\\.[38]=1 ; ^9\\.2\\.3\\.4 = 2 ;^9\\.2\\.3\\.6 = 3 ;^9\\.2\\.3\\.8 = 4 ;^9\\.4\\.3\\.([1-8]) = $1; ^9\\.8\\.3\\.1 = 2;^9\\.8\\.3\\.2 = 4;^9\\.8\\.3\\.3 = 6;^9\\.8\\.3\\.4 = 8; ^9\\.=r ; ^0\\.=z");
@@ -240,17 +198,18 @@ rules.push("rule-Hor10stop = horstop:<11");
 rules.push("why-Hor10stop  = a maximum of 10 stops are allowed on straight horizontal lines rolls");
 // Fin modif GG évolution Civa 2012
 
-rules.push("conv-climbqtrs=^9\\.([1-9]|10)\\.[1267]\\.([1-8]) = $2 ; ^9\\. = r ; ^0\\.=z");
-rules.push("conv-climbstop=^9\\.(1|9|10)\\.[1267]=1 ; ^9\\.2\\.[12]\\.4 = 2 ;^9\\.2\\.[12]\\.6 = 3 ;^9\\.2\\.[12]\\.8 = 4 ;^9\\.4\\.[12]\\.([1-8]) = $1;^9\\.8\\.[12]\\.1 = 2;^9\\.8\\.[12]\\.2 = 4;^9\\.8\\.[12]\\.3 = 6;^9\\.8\\.[12]\\.4 = 8; ^9\\.=r ; ^0\\.=z");
+// added  "^9\\.(9|10)\\. = f" to next 8 for flick checking
+rules.push("conv-climbqtrs=^9\\.([1-9]|10)\\.[1267]\\.([1-8]) = $2 ; ^9\\.(9|10)\\. = f ; ^9\\. = r ; ^0\\.=z");
+rules.push("conv-climbstop=^9\\.(1|9|10)\\.[1267]=1 ; ^9\\.2\\.[12]\\.4 = 2 ;^9\\.2\\.[12]\\.6 = 3 ;^9\\.2\\.[12]\\.8 = 4 ;^9\\.4\\.[12]\\.([1-8]) = $1;^9\\.8\\.[12]\\.1 = 2;^9\\.8\\.[12]\\.2 = 4;^9\\.8\\.[12]\\.3 = 6;^9\\.8\\.[12]\\.4 = 8 ; ^9\\.(9|10)\\. = f; ^9\\.=r ; ^0\\.=z");
 
-rules.push("conv-upqtrs=^9\\.([1-9]|10)\\.[16]\\.([1-8]) = $2 ; ^9\\. = r ; ^0\\.=z");
-rules.push("conv-upstop=^9\\.(1|9|10)\\.[16]=1 ; ^9\\.2\\.1\\.4 = 2 ;^9\\.2\\.1\\.6 = 3 ;^9\\.2\\.1\\.8 = 4 ;^9\\.4\\.1\\.([1-8]) = $1; ^9\\.8\\.1\\.1 = 2;^9\\.8\\.1\\.2 = 4;^9\\.8\\.1\\.3 = 6;^9\\.8\\.1\\.4 = 8; ^9\\.=r ; ^0\\.=z");
+rules.push("conv-upqtrs=^9\\.([1-9]|10)\\.[16]\\.([1-8]) = $2 ; ^9\\.(9|10)\\. = f ; ^9\\. = r ; ^0\\.=z");
+rules.push("conv-upstop=^9\\.(1|9|10)\\.[16]=1 ; ^9\\.2\\.1\\.4 = 2 ;^9\\.2\\.1\\.6 = 3 ;^9\\.2\\.1\\.8 = 4 ;^9\\.4\\.1\\.([1-8]) = $1; ^9\\.8\\.1\\.1 = 2;^9\\.8\\.1\\.2 = 4;^9\\.8\\.1\\.3 = 6;^9\\.8\\.1\\.4 = 8 ; ^9\\.(9|10)\\. = f; ^9\\.=r ; ^0\\.=z");
 
-rules.push("conv-diagupqtrs=^9\\.([1-9]|10)\\.[27]\\.([1-8]) = $2 ; ^9\\. = r ; ^0\\.=z");
-rules.push("conv-diagupstop=^9\\.1\\.2=1 ;^9\\.(9|10)\\.[27]=2 ; ^9\\.2\\.2\\.4 = 2 ;^9\\.2\\.2\\.6 = 3 ;^9\\.2\\.2\\.8 = 4 ;^9\\.4\\.2\\.([1-8]) = $1; ^9\\.8\\.2\\.1 = 2;^9\\.8\\.2\\.2 = 4;^9\\.8\\.2\\.3 = 6;^9\\.8\\.2\\.4 = 8; ^9\\.=r ; ^0\\.=z");
+rules.push("conv-diagupqtrs=^9\\.([1-9]|10)\\.[27]\\.([1-8]) = $2 ; ^9\\.(9|10)\\. = f ; ^9\\. = r ; ^0\\.=z");
+rules.push("conv-diagupstop=^9\\.1\\.2=1 ;^9\\.(9|10)\\.[27]=2 ; ^9\\.2\\.2\\.4 = 2 ;^9\\.2\\.2\\.6 = 3 ;^9\\.2\\.2\\.8 = 4 ;^9\\.4\\.2\\.([1-8]) = $1; ^9\\.8\\.2\\.1 = 2;^9\\.8\\.2\\.2 = 4;^9\\.8\\.2\\.3 = 6;^9\\.8\\.2\\.4 = 8 ; ^9\\.(9|10)\\. = f; ^9\\.=r ; ^0\\.=z");
 
-rules.push("conv-downqtrs=^9\\.([1-9]|10)\\.(5|10)\\.([1-8]) = $3 ; ^9\\. = r ; ^0\\.=z");
-rules.push("conv-downstop=^9\\.(1|9|10)\\.(5|10)=1 ; ^9\\.2\\.5\\.4 = 2 ;^9\\.2\\.5\\.6 = 3 ;^9\\.2\\.5\\.8 = 4 ;^9\\.4\\.5\\.([1-8]) = $1; ^9\\.8\\.5\\.1 = 2;^9\\.8\\.5\\.2 = 4;^9\\.8\\.5\\.3 = 6;^9\\.8\\.5\\.4 = 8; ^9\\.=r ; ^0\\.=z");
+rules.push("conv-downqtrs=^9\\.([1-9]|10)\\.(5|10)\\.([1-8]) = $3 ; ^9\\.(9|10)\\. = f ; ^9\\. = r ; ^0\\.=z");
+rules.push("conv-downstop=^9\\.(1|9|10)\\.(5|10)=1 ; ^9\\.2\\.5\\.4 = 2 ;^9\\.2\\.5\\.6 = 3 ;^9\\.2\\.5\\.8 = 4 ;^9\\.4\\.5\\.([1-8]) = $1; ^9\\.8\\.5\\.1 = 2;^9\\.8\\.5\\.2 = 4;^9\\.8\\.5\\.3 = 6;^9\\.8\\.5\\.4 = 8 ; ^9\\.(9|10)\\. = f; ^9\\.=r ; ^0\\.=z");
 
 rules.push("rule-VUP450 = upqtrs:<6");
 rules.push("why-VUP450  = a maximum of 450 degrees are allowed on vertical up opposite rolls");
@@ -284,7 +243,7 @@ rules.push("why-UnlimitedNOU  = opposite or unlinked roll/roll (or flick) combin
 rules.push("rule-UnlimitedNOUF  =vdDhfsz: d,F");
 rules.push("why-UnlimitedNOUF  = 45-up roll/flick (\"hard way\") combination is not allowed");
 
-rules.push("rule-NF3TOPH  =roll: (.,.|248) [fF]$");
+rules.push("rule-NF3TOPH  =roll: (.,.|[248]) [fF]$");
 rules.push("why-NF3TOPH  = no flick roll on vertical down line after hesitation in the loop");
 
 rules.push("rule-NF2UP360 = upqtrs: ^([5-8]|,4|4,|2,3|3,[23]) f");
@@ -622,33 +581,106 @@ rules.push("9.10.10.2-4");
 rules.push("9.11.1.4-6");
 rules.push("9.12.1.4-6");
 
+// what info should be filled out
+rules.push("infocheck=positioning");
+
 //#######################################################################################
+//#
+//# Define Advanced programmes. Old references are kept for backward compatibility
+//# "Program" is 2012 and earlier
+//# "Programme" is 2013
 
-rules.push("[civa advanced unknown]");
-rules.push("more=civa advanced unknown1");
-rules.push("(civa advanced 1stunknown)");
-rules.push("more=civa advanced unknown1");
-rules.push("(civa advanced 2ndunknown)");
-rules.push("more=civa advanced unknown2");
-rules.push("[civa advanced program2]");
-rules.push("more=civa advanced unknown1");
-rules.push("[civa advanced program3]");
-rules.push("more=civa advanced unknown2");
+rules.push("[CIVA Advanced Programme1]");
+rules.push("more=CIVA Advanced Known");
+rules.push("[CIVA Advanced Programme2]");
+rules.push("more=CIVA Advanced Free");
+rules.push("[CIVA Advanced Programme3]");
+rules.push("more=CIVA Advanced Unknown1");
+rules.push("[CIVA Advanced Programme4]");
+rules.push("more=CIVA Advanced Unknown2");
 
-rules.push("[civa advanced unknown1]");
+rules.push("(CIVA Advanced Unknown)");
+rules.push("more=CIVA Advanced Unknown1");
+rules.push("(CIVA Advanced 1stUnknown)");
+rules.push("more=CIVA Advanced Unknown1");
+rules.push("(CIVA Advanced 2ndUnknown)");
+rules.push("more=CIVA Advanced Unknown2");
+rules.push("(CIVA Advanced Program2)");
+rules.push("more=CIVA Advanced Unknown1");
+rules.push("(CIVA Advanced Program3)");
+rules.push("more=CIVA Advanced Unknown2");
+rules.push("(CIVA Advanced ProgramQ)");
+rules.push("more=CIVA Advanced Known");
+
+//######################################################################################
+//##### CIVA ADVANCED KNOWN ############################################################
+//######################################################################################
+
+rules.push("[CIVA Advanced Known]");
+rules.push("demo=~~,24pbb(\"|\"3````)4-~ -isin(``1),4 ~~8'b''2f 2m8,3- 4% [-4,10] -2joi15 h''f. 10% ``+`````````2f```rc24-````````` -o6 m32,6f-`");
+rules.push("basefig-min=9");// Modif GG correction Civa 2012
+rules.push("basefig-max=9");// Modif GG correction Civa 2012
+rules.push("poslj=10");
+rules.push("posnl=30");
+rules.push("allow=^([1-8]|9\\.([123489]|1[12]))");
+
+rules.push("infocheck=positioning");
+
+//######################################################################################
+//##### CIVA ADVANCED FREE #############################################################
+//######################################################################################
+
+rules.push("[CIVA Advanced Free]");
+rules.push("posnl=30");//no line judges
+rules.push("poslj=10");
+rules.push("k-max=300");
+rules.push("basefig-max=12");
+
+rules.push("basefig-repeat=1");
+rules.push("roll-repeat=1");
+rules.push("snap-repeat=1");
+rules.push("spin-repeat=1");
+
+rules.push("group-roller=^2\\.(1\\.[23]|2\\.[2-6]|3\\.[2-5]|4\\.[2-8])");
+rules.push("roller-name=Rolling turn, family 2.1.2 to 2.1.3, 2.2.2 to 2.2.6, 2.3.2 to 2.3.5, 2.4.2 to 2.4.8");
+
+rules.push("roller-min=1");
+rules.push("fam1-min=1");
+rules.push("fam5-min=1");
+rules.push("fam7-min=1");
+rules.push("fam8-min=1");
+
+rules.push("froll-min=1");
+rules.push("hroll-min=1");
+rules.push("qroll-min=1");
+rules.push("eroll-min=1");
+rules.push("snap-min=2");
+rules.push("spin-min=1");
+//spin-max=1 # Modif GG évolution Civa 2012
+
+rules.push("opposite-min=1");//one opposite roll is required!
+
+rules.push("allow=^[1-9]");//all figures are allowed for the Free Program
+
+// what info should be filled out
+rules.push("infocheck=pilot;aircraft;positioning");
+
+//######################################################################################
+//##### CIVA ADVANCED UNKNOWN ##########################################################
+//######################################################################################
+
+rules.push("[CIVA Advanced Unknown1]");
 rules.push("k-maxperfig=35");
-rules.push("more=civa advanced unknownboth");
+rules.push("more=CIVA Advanced Unknownboth");
 
-rules.push("[civa advanced unknown2]");
+rules.push("[CIVA Advanced Unknown2]");
 rules.push("k-maxperfig=40");
-rules.push("2.4.5.1-2"); // Only for unknown2
+rules.push("2.4.5.1-2"); // Only for Unknown2
 rules.push("2.4.7.1-2"); //  "    "     "
 
-rules.push("more=civa advanced unknownboth");
+rules.push("more=CIVA Advanced Unknownboth");
 
-//#######################################################################################
-rules.push("(civa advanced unknownboth)");
-//#######################################################################################
+rules.push("(CIVA Advanced Unknownboth)");
 rules.push("poslj=10");
 rules.push("posnl=30");
 
@@ -694,10 +726,10 @@ rules.push("snap-repeat=1");
 rules.push("spin-repeat=1");
 
 rules.push("connectors=4/24");
-rules.push("unknown-letters=ABCDEFGHIJ");
+rules.push("Unknown-letters=ABCDEFGHIJ");
 
-rules.push("more=civa advanced unknownbase");
-rules.push("(civa advanced unknownbase)");
+rules.push("more=CIVA Advanced Unknownbase");
+rules.push("(CIVA Advanced Unknownbase)");
 
 //############################################################
 // extended conv rule version with limited vertical rolls=v(up) =n(down)
@@ -722,10 +754,6 @@ rules.push("why-NRPushout   = negative recovery is not allowed after this roll")
 rules.push("conv-advrp=^9\\.(1\\.1\\.3)=x ;  ^9\\.=r; ^0\\.=z");
 rules.push("rule-NR:3Q1 =advrp:^x");
 rules.push("why-NR:3Q1  =no more than 1/2 roll is allowed for first rolling element position");
-
-//for Adv p figures, we convert any hesitation full roll into 'h' to disallow flick down
-//conv-advp=^9\.[248]\.3=h   ;   ^9\.[1248]\.=r; ^9\.(9|10)=f; ^9\.1[12]=s ; ^0\.=z
-//note since 2006 no roll at all on top of loop...
 
 rules.push("rule-NH2F3 =roll:^[\\w,]+ [1248] (f|\\w,f)");
 rules.push("why-NH2F3 = no flick allowed in third position when 2nd position has a roll");
@@ -779,7 +807,7 @@ rules.push("1.2.8.3 NOU");
 rules.push("2.1.3.2-4");
 rules.push("2.2.5.1-4");
 rules.push("2.3.4.1-4");
-//rules.push("2.4.5.1-2"); // Only for unknown2
+//rules.push("2.4.5.1-2"); // Only for Unknown2
 //rules.push("2.4.7.1-2"); //  "    "     "
 rules.push("2.2.3.1-4");
 
@@ -865,17 +893,17 @@ rules.push("8.5.4.1-2 NOU:1; NF:2");
 rules.push("8.5.4.3-4 NOU:1");
 
 //rp
-rules.push("8.6.1.1   NOU:1 ; NR:3Q1 ;NR:2 ;NF:3");
-rules.push("8.6.1.4  NOU:1; NR:2");// Modif GG correction Civa 2012
-rules.push("8.6.3.1   NOU:1 ; NR:3Q1 ;NR:2 ;NF:3");
-rules.push("8.6.3.2   NR:1   ;NR:2 ;NF:3");
-rules.push("8.6.3.3  NOU:1; NR:2");// Modif GG correction Civa 2012
+rules.push("8.6.1.1 NOU:1 ; NR:3Q1 ;NR:2 ;NF:3");
+rules.push("8.6.1.4 NOU:1; NR:2");// Modif GG correction Civa 2012
+rules.push("8.6.3.1 NOU:1 ; NR:3Q1 ;NR:2 ;NF:3");
+rules.push("8.6.3.2 NR:1   ;NR:2 ;NF:3");
+rules.push("8.6.3.3 NOU:1; NR:2");// Modif GG correction Civa 2012
 
-rules.push("8.6.2.1   NOU:1 ; NR:3Q1 ;NR:2 ;NF:3");
-rules.push("8.6.2.4  NOU:1");
-rules.push("8.6.4.1   NOU:1 ; NR:3Q1 ;NR:2 ;NF:3");
-rules.push("8.6.4.2  NR:1 ; NR:2 ; NF:3");
-rules.push("8.6.4.3  NOU:1");
+rules.push("8.6.2.1 NOU:1 ; NR:3Q1 ;NR:2 ;NF:3");
+rules.push("8.6.2.4 NOU:1");
+rules.push("8.6.4.1 NOU:1 ; NR:3Q1 ;NR:2 ;NF:3");
+rules.push("8.6.4.2 NR:1 ; NR:2 ; NF:3");
+rules.push("8.6.4.3 NOU:1");
 
 //c
 rules.push("8.5.5.1-2 NF:1 ; NOU:2");
@@ -888,13 +916,13 @@ rules.push("8.5.7.3 NOU:2");
 rules.push("8.5.8.3 NOU:2");
 
 //p
-rules.push("8.6.5.1   NOU:2; NOU:3; NF:1 ;NH2F3 ; MAX360:2");
-rules.push("8.6.6.1   NOU:2; NOU:3; NF:1 ;NH2F3 ; MAX360:2 ; NRPushout");
-rules.push("8.6.6.2   NOU:2; NOU:3; NF:1 ;NH2F3 ; MAX360:2");
+rules.push("8.6.5.1 NOU:2; NOU:3; NF:1 ;NH2F3 ; MAX360:2");
+rules.push("8.6.6.1 NOU:2; NOU:3; NF:1 ;NH2F3 ; MAX360:2 ; NRPushout");
+rules.push("8.6.6.2 NOU:2; NOU:3; NF:1 ;NH2F3 ; MAX360:2");
 
-rules.push("8.6.7.2   NOU:2; NOU:3; NF:1 ;NH2F3 ; MAX360:2");
-rules.push("8.6.8.1   NOU:2; NOU:3; NF:1 ;NH2F3 ; MAX360:2");
-rules.push("8.6.8.2   NOU:2; NOU:3; NF:1 ;NH2F3 ; MAX360:2 ; NRPushout");
+rules.push("8.6.7.2 NOU:2; NOU:3; NF:1 ;NH2F3 ; MAX360:2");
+rules.push("8.6.8.1 NOU:2; NOU:3; NF:1 ;NH2F3 ; MAX360:2");
+rules.push("8.6.8.2 NOU:2; NOU:3; NF:1 ;NH2F3 ; MAX360:2 ; NRPushout");
 
 // ROLLS
 rules.push("9.1.1.1-2");
@@ -943,33 +971,122 @@ rules.push("9.9.10.2");
 rules.push("9.11.1.4-6");
 rules.push("9.12.1.4-6");
 
+// what info should be filled out
+rules.push("infocheck=positioning");
+
+//#######################################################################################
+//#
+//# Define Intermediate & Yak52 programmes. Old references are kept for backward compatibility
+//# "Program" is 2012 and earlier
+//# "Programme" is 2013
+
+rules.push("[CIVA Yak52 Programme1]");
+rules.push("more=CIVA Yak52 Known");
+rules.push("[CIVA Yak52 Programme2]");
+rules.push("more=CIVA Yak52 Free");
+rules.push("[CIVA Yak52 Programme3]");
+rules.push("more=CIVA Yak52 Unknown1");
+rules.push("[CIVA Yak52 Programme4]");
+rules.push("more=CIVA Yak52 Unknown2");
+
+rules.push("[CIVA Intermediate Programme1]");
+rules.push("more=CIVA Intermediate Known");
+rules.push("[CIVA Intermediate Programme2]");
+rules.push("more=CIVA Intermediate Free");
+rules.push("[CIVA Intermediate Programme3]");
+rules.push("more=CIVA Intermediate Unknown1");
+rules.push("[CIVA Intermediate Programme4]");
+rules.push("more=CIVA Intermediate Unknown2");
+
+//######################################################################################
+//##### CIVA YAK52 KNOWN ###############################################################
+//######################################################################################
+
+rules.push("[CIVA Yak52 Known]");
+rules.push("basefig-min=9");
+rules.push("basefig-max=9");
+rules.push("poslj=10");
+rules.push("posnl=30");
+rules.push("allow=^([1-8]|9\\.([123489]|1[12]))");
+
+//######################################################################################
+//##### CIVA INTERMEDIATE KNOWN ########################################################
+//######################################################################################
+
+rules.push("[CIVA Intermediate Known]");
+rules.push("more=CIVA Yak52 Known");
+
+//######################################################################################
+//##### CIVA YAK52 FREE ################################################################
+//######################################################################################
+
+rules.push("[CIVA Yak52 Free]");
+rules.push("posnl=30");
+rules.push("basefig-max=12");
+rules.push("k-max=180");
+
+rules.push("basefig-repeat=1");
+rules.push("roll-repeat=1");
+rules.push("snap-repeat=1");
+rules.push("spin-repeat=1");
+
+rules.push("fam5-min=1");
+rules.push("fam7-min=1");
+rules.push("fam8-min=1");
+rules.push("froll-min=1");
+rules.push("hroll-min=1");
+rules.push("qroll-min=1");
+rules.push("eroll-min=1");
+rules.push("snap-min=1");
+rules.push("spin-min=1");
+
+rules.push("group-roller=^2\\.(1\\.[23]|2\\.[2-6]|3\\.[2-5]|4\\.[2-8])");
+rules.push("roller-name=Rolling turn, family 2.1.2 to 2.1.3, 2.2.2 to 2.2.6, 2.3.2 to 2.3.5, 2.4.2 to 2.4.8");
+rules.push("roller-min=1");
+
+rules.push("emptyline-max=0");
+
+rules.push("opposite-min=1"); //one opposite roll is required!
+
+rules.push("allow=^[1-9]"); //all figures are allowed for the Free Program
+
+// what info should be filled out
+rules.push("infocheck=pilot;aircraft;positioning");
+
+//######################################################################################
+//##### CIVA INTERMEDIATE FREE #########################################################
+//######################################################################################
+
+rules.push("[CIVA Intermediate Free]");
+rules.push("more=CIVA Yak52 Free");
+
 //######################################################################################
 //##### CIVA YAK52 UNKNOWN #############################################################
 //######################################################################################
 
-rules.push("[CIVA Yak52 unknown]");
-rules.push("more=CIVA Yak52 unknown1");
-rules.push("(CIVA Yak52 1stunknown)");
-rules.push("more=CIVA Yak52 unknown1");
-rules.push("(CIVA Yak52 2ndunknown)");
-rules.push("more=CIVA Yak52 unknown2");
-rules.push("[CIVA Yak52 program2]");
-rules.push("more=CIVA Yak52 unknown1");
-rules.push("[CIVA Yak52 program3]");
-rules.push("more=CIVA Yak52 unknown2");
+rules.push("(CIVA Yak52 Unknown)");
+rules.push("more=CIVA Yak52 Unknown1");
+rules.push("(CIVA Yak52 1stUnknown)");
+rules.push("more=CIVA Yak52 Unknown1");
+rules.push("(CIVA Yak52 2ndUnknown)");
+rules.push("more=CIVA Yak52 Unknown2");
+rules.push("(CIVA Yak52 Program2)");
+rules.push("more=CIVA Yak52 Unknown1");
+rules.push("(CIVA Yak52 Program3)");
+rules.push("more=CIVA Yak52 Unknown2");
 
-rules.push("[CIVA Yak52 unknown1]");
+rules.push("[CIVA Yak52 Unknown1]");
 rules.push("k-minperfig=12");
 rules.push("k-maxperfig=20");
-rules.push("more=CIVA Yak52 unknownboth");
+rules.push("more=CIVA Yak52 Unknownboth");
 
-rules.push("[CIVA Yak52 unknown2]");
+rules.push("[CIVA Yak52 Unknown2]");
 rules.push("k-minperfig=15");
 rules.push("k-maxperfig=25");
-rules.push("more=CIVA Yak52 unknownboth");
+rules.push("more=CIVA Yak52 Unknownboth");
 
 //#######################################################################################
-rules.push("(CIVA Yak52 unknownboth)");
+rules.push("(CIVA Yak52 Unknownboth)");
 //#######################################################################################
 rules.push("poslj=10");
 rules.push("posnl=30");
@@ -1011,8 +1128,8 @@ rules.push("spin-repeat=1");
 
 rules.push("connectors=4/24");
 
-rules.push("more=CIVA Yak52 unknownbase");
-rules.push("(CIVA Yak52 unknownbase)");
+rules.push("more=CIVA Yak52 Unknownbase");
+rules.push("(CIVA Yak52 Unknownbase)");
 
 //############################################################
 // extended conv rule version with limited vertical rolls=v(up) =n(down)
@@ -1036,10 +1153,6 @@ rules.push("why-NRPushout   = negative recovery is not allowed after this roll")
 rules.push("conv-advrp=^9\\.(1\\.1\\.3)=x ;  ^9\\.=r; ^0\\.=z");
 rules.push("rule-NR:3Q1 =advrp:^x");
 rules.push("why-NR:3Q1  =no more than 1/2 roll is allowed for first rolling element position");
-
-//for Adv p figures, we convert any hesitation full roll into 'h' to disallow flick down
-//conv-advp=^9\.[248]\.3=h   ;   ^9\.[1248]\.=r; ^9\.(9|10)=f; ^9\.1[12]=s ; ^0\.=z
-//note since 2006 no roll at all on top of loop...
 
 rules.push("rule-NH2F3 =roll:^[\\w,]+ [1248] (f|\\w,f)");
 rules.push("why-NH2F3 = no flick allowed in third position when 2nd position has a roll");
@@ -1087,29 +1200,29 @@ rules.push("2.1.3.1");
 rules.push("5.2.1.1 NOU");
 
 // half loops
-rules.push("7.2.1.1  NF:1");
-rules.push("7.2.2.1  NF:1");
+rules.push("7.2.1.1 NF:1");
+rules.push("7.2.2.1 NF:1");
 
-rules.push("7.2.1.4  NF:2");
-rules.push("7.2.3.3  NF:2");
+rules.push("7.2.1.4 NF:2");
+rules.push("7.2.3.3 NF:2");
 
 //goldfish
-rules.push("7.3.2.1   NOU");
-rules.push("7.3.3.3   NOU");
-rules.push("7.3.4.1   NOU");
-rules.push("7.3.4.4   NOU");
+rules.push("7.3.2.1 NOU");
+rules.push("7.3.3.3 NOU");
+rules.push("7.3.4.1 NOU");
+rules.push("7.3.4.4 NOU");
 
 //loops
 rules.push("7.4.1.1 NOU ; MAX360");
 rules.push("7.4.3.1 NR");
 
 //cc
-rules.push("7.8.4.1   NOU ; NF:1");
-rules.push("7.8.8.1   NOU ; NF:3");
-rules.push("7.8.13.1  NOU");
-rules.push("7.8.15.1  NOU");
-rules.push("7.8.16.1  NOU");
-rules.push("7.8.16.4  NOU");
+rules.push("7.8.4.1  NOU ; NF:1");
+rules.push("7.8.8.1  NOU ; NF:3");
+rules.push("7.8.13.1 NOU");
+rules.push("7.8.15.1 NOU");
+rules.push("7.8.16.1 NOU");
+rules.push("7.8.16.4 NOU");
 
 //bumps
 rules.push("8.4.1.1 NOU");
@@ -1131,12 +1244,12 @@ rules.push("8.5.7.3 NOU:2");
 rules.push("8.5.8.3 NOU:2");
 
 //rp
-rules.push("8.6.1.1   NR:1 ; NR:2 ;NF:3");
-rules.push("8.6.1.4  NR:1; NR:2");
-rules.push("8.6.2.4  NR:1");
-rules.push("8.6.3.3  OS:1; NR:2");
+rules.push("8.6.1.1 NR:1 ; NR:2 ;NF:3");
+rules.push("8.6.1.4 NR:1; NR:2");
+rules.push("8.6.2.4 NR:1");
+rules.push("8.6.3.3 OS:1; NR:2");
 
-rules.push("8.6.4.3  OS:1");
+rules.push("8.6.4.3 OS:1");
 
 // ROLLS
 rules.push("9.1.1.1-2");
@@ -1171,46 +1284,26 @@ rules.push("9.9.3.4");
 
 rules.push("9.11.1.4-6");
 
+// what info should be filled out
+rules.push("infocheck=positioning");
+
 //######################################################################################
 //##### CIVA INTERMEDIATE UNKNOWN ######################################################
 //######################################################################################
 
-rules.push("[CIVA Intermediate unknown]");
-rules.push("more=CIVA Yak52 unknown1");
-rules.push("(CIVA Intermediate 1stunknown)");
-rules.push("more=CIVA Yak52 unknown1");
-rules.push("(CIVA Intermediate 2ndunknown)");
-rules.push("more=CIVA Yak52 unknown2");
-rules.push("[CIVA Intermediate program2]");
-rules.push("more=CIVA Yak52 unknown1");
-rules.push("[CIVA Intermediate program3]");
-rules.push("more=CIVA Yak52 unknown2");
+rules.push("(CIVA Intermediate Unknown)");
+rules.push("more=CIVA Yak52 Unknown1");
+rules.push("(CIVA Intermediate 1stUnknown)");
+rules.push("more=CIVA Yak52 Unknown1");
+rules.push("(CIVA Intermediate 2ndUnknown)");
+rules.push("more=CIVA Yak52 Unknown2");
+rules.push("(CIVA Intermediate Program2)");
+rules.push("more=CIVA Yak52 Unknown1");
+rules.push("(CIVA Intermediate Program3)");
+rules.push("more=CIVA Yak52 Unknown2");
 
-rules.push("[CIVA Intermediate unknown1]");
-rules.push("more=CIVA Yak52 unknown1");
+rules.push("[CIVA Intermediate Unknown1]");
+rules.push("more=CIVA Yak52 Unknown1");
 
-rules.push("[CIVA Intermediate unknown2]");
-rules.push("more=CIVA Yak52 unknown2");
-
-//##### MISC - the "known program" has no real verification issues. it is listed here to process position info
-
-rules.push("(civa unlimited programq)");
-rules.push("more=civa unlimited known");
-rules.push("(civa advanced programq)");
-rules.push("more=civa advanced known");
-
-rules.push("[civa advanced known]");
-rules.push("demo=~~,24pbb(\"|\"3````)4-~ -isin(``1),4 ~~8'b''2f 2m8,3- 4% [-4,10] -2joi15 h''f. 10% ``+`````````2f```rc24-````````` -o6 m32,6f-`");
-rules.push("basefig-min=9");// Modif GG correction Civa 2012
-rules.push("basefig-max=9");// Modif GG correction Civa 2012
-rules.push("poslj=10");
-rules.push("posnl=30");
-rules.push("allow=^([1-8]|9\\.([123489]|1[12]))");
-
-rules.push("[civa unlimited known]");
-rules.push("demo=~~~~'2,2f'zt.''2f;2 2% ,7,3m\"|\"5if,3 [-5,18] 24ip1 >~s,3if.ibpb(``````\"|\"3``)3f\"|\",4.''+``> 'if'h'5f' .8rp(44)9> > 3joi15-~~ ~~~~-.\"|\"4taf''> ,34'pb'''3");
-rules.push("basefig-min=9");// Modif GG correction Civa 2012
-rules.push("basefig-max=9");// Modif GG correction Civa 2012
-rules.push("poslj=10");
-rules.push("posnl=60");
-rules.push("allow=^[1-9]");
+rules.push("[CIVA Intermediate Unknown2]");
+rules.push("more=CIVA Yak52 Unknown2");

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--
-  manual.html version 1.3.7
+  manual.html version 1.3.8
   This file is part of OpenAero.
 
   OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -217,9 +217,9 @@
 		figure editor. For repositioning it can be dragged anywhere by holding 
 		down the mouse button after clicking the figure start.</p>
     <p>After moving a figure it's possible to change the straight line 
-    to a curved line by clicking the <i>Curve</i> button. It's also 
-    possible to remove the line, but for clarity only for horizontal moves.
-    This can be done by clicking the <i>Move figure forward</i> button.</p>
+    to a curved line by clicking the <i>Curve</i> button in the Figure editor.
+    It's also possible to remove the line, but for clarity only for horizontal
+    moves. This can be done by clicking the <i>Move figure forward</i> button.</p>
     <p><i>TIP</i> : A poorly laid-out sequence that is difficult to 
     follow can be a real problem for judges - time spent creating an 
     easily understood flow of figures can be a good way to help improve 
@@ -239,8 +239,11 @@
 		you must take care of erect or inverted entry conditions and continue / 
 		reverse / change axis effects. The queue and its figures can also be 
 		saved to disk for later re-use - when re-opened they are accessible 
-		through the &quot;* Figure Queue&quot; item at the foot of the figure / family 
+		through the &quot;* Figure Queue&quot; item at the top of the figure / family 
 		selection drop-list.</p>
+    <p>All figures in a sequence can be added to the queue at once by 
+    clicking <i>Add all to queue</i>. All figures can be removed from
+    the queue with <i>Clear queue</i>.</p>
 		</td>
 		<td colspan="2" rowspan="2" valign="top"><b>
 		<img border="0" src="images/OA_Queue.gif" width="165" height="176" align="right"></b></td>
@@ -304,6 +307,7 @@
 		contains every figure of your sequence as a separate SVG image.<br />
 		The images are oriented according the sequence flow and the form 
 		currently being viewed (B or C).</p>
+    <p>The image naming pattern can be set in <i>Settings</i> in the <i>Tools</i> menu.</p>
 		<p><u><i><b>Printing sequences<br>
 		</b></i></u>To print some or all of the sequence forms, choose <i>Print forms</i> in the 
 		<i>File menu</i>, and select the appropriate options. To save the forms as a 
@@ -359,11 +363,22 @@
       <p>The <i>Settings</i> dialog offers options for changing the look &amp; feel of OpenAero. You can:</p>
       <ul>
         <li>Change the number of columns in Grid View</li>
-        <li>Select if figure start numbers should be in a circle or not</li>
         <li>Change the filename pattern for saving all figures as separate images in a ZIP file. The following
         replacement patterns are available: %pilot %aircraft %location %date %class %rules %category %program %form %figure</li>
+        <li>Select if figure start numbers should be in a circle or not</li>
+        <li>Change all drawing styles, such as:
+        <ul>
+          <li><strong>pos</strong> : positive line</li>
+          <li><strong>neg</strong> : negative line</li>
+          <li><strong>rollText</strong> : roll font (e.g. 2x8, 3/4 etc)</li>
+        </ul>
+        </li>
       </ul>
-      <p>When leaving or reloading OpenAero the settings will be restored to their original value.</p>
+      <p>When leaving or reloading OpenAero the settings will be restored
+      to their original value.</p>
+      <p>Also, please keep in mind that when somebody opens your sequence
+      on another system it will look different from your version if you
+      change these values!</p>
     </td>
 	</tr>
 </table>

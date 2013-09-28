@@ -1,4 +1,4 @@
-// config.js 1.3.7
+// config.js 1.3.8
 
 // This file is part of OpenAero.
 
@@ -34,17 +34,18 @@
 // Define active version number of OpenAero
 // **************
 
-var version = '1.3.7';
+var version = '1.3.8';
 var versionNew = '<strong>OpenAero has been upgraded to version ' +
   version + '</strong><br>New features:<ul>' +
-  '<li>Fixed several bugs</li>' +
-  '<li>Updated Intermediate Free and French rules</li>' +
-  '<li>corrected knife edge snap foot up/down determination</li>' +
+  '<li>Fixed many bugs and some checking errors</li>' +
+  '<li>Removed option for roll in bottom of P and Q loops (illegal)</li>' +
+  '<li>Added option to change fonts and other styles</li>' +
+  '<li>Improved Grid representation and saving/loading</li>' +
   '</ul>' +
   'This may take a few seconds to complete.';
 
 // define the labels (=input field ids) for saving/loading sequences
-var sequenceXMLlabels = ['pilot', 'aircraft', 'category', 'location', 'date', 'class', 'program', 'rules', 'positioning', 'harmony', 'notes', 'sequence_text', 'logo', 'oa_version'];
+var sequenceXMLlabels = ['pilot', 'aircraft', 'category', 'location', 'date', 'class', 'program', 'rules', 'positioning', 'harmony', 'notes', 'sequence_text', 'logo', 'oa_version', 'default_view'];
 
 // **************
 // Define drawing lengths, radiuses etc
@@ -132,7 +133,10 @@ var rollsPerRollElement = 2;
 // *************
 // Define styles and font sizes
 // *************
+// style holds the style objects
 var style = [];
+// styleSave is used for restoring after change by user
+var styleSave = [];
 // Positive line style
 style.pos = 'stroke: black; stroke-width: 1.5px; fill: none;';
 style.chooserPos = 'stroke: black; stroke-width: 3px; fill: none;';
@@ -264,6 +268,8 @@ var regexDrawInstr = /^(\[|\().+(\]|\)$)|([0-9]+\%)|("[^"]*"$)/;
 var regexLongForward = new RegExp ('\\' + userpat.longforward, 'g');
 var regexEntryShorten = /`+\+(.*[a-zA-Z])/;
 var regexExitShorten = /([a-zA-Z].*)\+`+/;
+var regexEntryShortenNeg = /`+(-.*[a-zA-Z])/;
+var regexExitShortenNeg = /([a-zA-Z].*-)`+/;
 var regexFlipYAxis = /^[^\/]*\/[^\/\]]/;
 var regexFlipYAxisReplace = /(^|[^\/])\/([^\/]|$)/g;
 var regexTurn = /[0-9\+\-]j[io0-9\+\-]/;
@@ -373,179 +379,6 @@ var isoCountries = {"AD":"AND","AE":"ARE","AF":"AFG","AG":"ATG",
 // also for key and value reversed
 var isoCountriesReverse = []; 
 for (key in isoCountries) isoCountriesReverse[isoCountries[key]] = key;
-  
-// ****************
-// define texts for user interaction
-// ****************
 
-var userText = [];
-userText.ac = 'A/C';
-userText.addingFigure = 'Add new figure'; 
-userText.autocorrectRoll = ':Added autocorrect roll';
-userText.cancel = 'Cancel';
-userText.category = 'Category';
-userText.checkMulti = 'Check multiple sequences';
-userText.checkSequence = 'Sequence check result';
-userText.checkingRules = 'Sequence checking rules';
-userText.chooseFiles = 'Choose your files here:';
-userText.chooseLogo = 'Choose logo';
-userText.clickAddFigure = 'Click to add figure';
-userText.clickChangeFigure = 'Click to change/add figure';
-userText.closeIt = 'Close';
-userText.confirmLeave = 'You\'re leaving OpenAero. Any sequence that is not saved may be lost.';
-userText.contest = 'Contest';
-userText.date = 'Date';
-userText.desktopVersion = 'Desktop version';
-userText.download = 'Download';
-userText.downloadHTML5 = 'However, you can save your file by choosing a name and clicking download below.';
-userText.downloadLegacy = 'However, you can save your file by choosing a name, right-clicking on download below '+
-  'and choosing "Save File As..." or "Save Link As...".';
-userText.downloadWarning = 'File saving works best through the OpenAero ' +
-  'website (<a href="http://www.openaero.net">www.openaero.net</a>) when ' +
-  'you are online or by running OpenAero on your own server.';
-userText.editingFigure = 'Edit figure ';
-userText.fileOpeningNotSupported = 'File opening is not supported in ' +
-  'this browser. Some functions have been disabled.';
-userText.figSelectorAddAfter = 'Add new figure after active';
-userText.figSelectorAddBefore = 'Add new figure before active';
-userText.figSelectorAddEnd = 'Add new figure at end';
-userText.figSelectorAddStart = 'Add new figure at start';
-userText.figSelectorReplace = 'Replace active figure';
-userText.figureAlreadyInQueue ='This figure is already in the queue';
-userText.figureQueue = 'Figure Queue';
-userText.forElement = ' for element ';
-userText.formB = 'Form B';
-userText.formC = 'Form C';
-userText.getChrome = 'For optimum use of OpenAero, please download the ' +
-  'latest version of the <a href="https://www.google.com/intl/en/chrome/browser/">' +
-  'Google Chrome</a> browser.';
-userText.iacForms = 'Print forms IAC style';
-userText.illegalAtEnd = 'Illegal figure at the end';
-userText.illegalBefore = 'Illegal figure before figure ';
-userText.illegalFig = ' is illegal, try ';
-userText.inverseForms = 'Print forms in inverse color (white on black)';
-userText.loadNewVersion = 'A new version of OpenAero is available. Load it?';
-userText.logoExplain = 'Upload your own logo by clicking on the file ' +
-  'chooser below, or select one of the displayed logos.';
-userText.maxConnectors = 'Maximum connecting figures allowed: ';
-userText.mobileVersion = 'Mobile version';
-userText.noCookies = 'It seems cookies are disabled in your browser. ' +
-  'This means some functions of OpenAero will not work.<br>' +
-  'To enable cookies in the Chrome browser, please copy the following ' +
-  'url to your address bar:<br />' + 
-  'chrome://chrome/settings/content';
-userText.none = 'None';
-userText.noRules = 'No sequence validity checking rules available.';
-userText.notOnFormBC = 'This function is only available when Form ' +
-  'B or C  is being viewed.';
-userText.numberInCircle = 'Figure numbers in circle';
-userText.ok = 'OK';
-// OLANBumpBugWarning can be removed (with asociated code in OpenAero.js)
-// in 2015
-userText.OLANBumpBugWarning = ' has been detected to be a Humpty Bump ' +
-  'from Y to X axis. ';
-userText.OLANBumpBugWarningMulti = ' have been detected to be a Humpty ' +
-  'Bump from Y to X axis. '
-userText.OLANNBugWarning = ' has been detected to be an N figure ' +
-  'with direction change on X axis. ';
-userText.OLANNBugWarningMulti = ' have been detected to be N figures ' +
-  'with direction change on X axis. ';
-userText.OLANBugWarningFooter = '<font color=red>These figures or the ' +
-  'ones following may be drawn differently in OLAN and OpenAero!</font> ' +
-  'Please check correct direction.<br>' +
-  'This message will not be shown for this sequence again.';
-userText.multiOverrideRules = 'Override sequence rules with current rules from Sequence info: ';
-userText.orFileDrop = 'Or drag & drop your files here';
-userText.pilot = 'pilot';
-userText.pilotNo = 'Pilot\'s No.';
-userText.pilotnumberIAC1 = "pilot\'s";
-userText.pilotnumberIAC2 = "number";
-userText.pleaseWaitStartup = 'Please wait while OpenAero is starting up...';
-userText.print = 'Print';
-userText.printCheck = 'Print check result';
-userText.printDialog = 'Print options';
-userText.printExplain = 'You can set the options for printing below.<br>' +
-  'To <i>save</i> your forms, click <strong>Print</strong> and then choose ' +
-  '<i>destination</i> <strong>Save as PDF</strong> in the browser\'s ' +
-  'print menu.';
-userText.printForms = 'OpenAero printing forms...';
-userText.printFormA = 'Print Form A';
-userText.printFormB = 'Print Form B';
-userText.printFormC = 'Print Form C';
-userText.printFormGrid = 'Print Figures in grid';
-userText.printMiniFormAonB = 'Print mini Form A on Form B';
-userText.printMiniFormAonC = 'Print mini Form A on Form C';
-userText.printPilotCards = 'Print pilot cards';
-userText.printString = 'Print sequence string';
-userText.program = 'Program';
-userText.programme = 'Programme';
-userText.queueEmpty = 'There are no figures in the queue to save';
-userText.queueNotSaved = 'The queue figures have NOT been saved';
-userText.queueSaved = 'The queue figures have been saved';
-userText.removeLogo = 'Remove logo';
-userText.rollPos = ['First roll position', 'Second roll position', 'Third roll position', 'Fourth roll position'];
-userText.rulesImported = 'Succesfully imported rules from file. Total lines (excluding comments) : ';
-userText.rulesImportTitle = 'Rules file import';
-userText.rulesNotImported = 'There were no rules imported! Maybe this ' +
-  'is not a valid rules file? Please refer to ' +
-  '<a href="http://code.google.com/p/open-aero/wiki/Developers#Creating_rule_checking_files" '+
-  'target="_blank">Creating rule checking files</a> for more information.';
-userText.runFromFile = 'It seems you are running OpenAero directly from ' +
-  'a file. As of version 1.2.3 (february 2013) this is no longer ' +
-  'recommended as some functions will be unavailable.<br />' +
-  'Please go to <a href="http://openaero.net">openaero.net</a>. ' +
-  'OpenAero will automatically install in your browser and will also ' +
-  'be available offline.';
-userText.saveAsURL = 'The link presented below contains your complete ' +
-  'sequence. You can copy it to email, bookmark it etc...<br />' +
-  'Use right-click and "Copy Link Address".';
-userText.saveAsURLTitle = 'Save sequence as link';
-userText.saveFileAsAlert = 'To download your file, right-click on this ' +
-  'text and choose "Save link as..." or "Save file as...".';
-userText.selectCategoryFirst = 'Select Category first';
-userText.selectRulesFirst = 'Select Rules first';
-userText.separateFigures = 'This will remove all sequence position ' +
-  'formatting. Are you sure you want to continue?';
-userText.sequenceCorrect = 'Sequence is correct';
-userText.sequenceHasErrors = 'Sequence has errors:';
-userText.sequenceTest = 'Check: ';
-userText.sequenceNotSavedWarning = 'Your current sequence has not been ' +
-  'saved.\nAre you sure you want to open a new one?';
-userText.settings = 'Settings';
-userText.setUpright = ':set upright entry';
-userText.setInverted = ':set inverted entry';
-userText.showFullLog = 'Show full log';
-userText.showLog = 'Show log';
-userText.tooltip = [];
-userText.tooltip.connector = 'Make this figure a connector for Unknown sequences';
-userText.tooltip.curvedLine = 'Move figure to a new position with a curved line';
-userText.tooltip.deleteFig = 'Delete active figure';
-// next two disabled. Are disabling minus button
-//userText.tooltip.entryExt = 'Change figure entry line length';
-//userText.tooltip.exitExt = 'Change figure exit line length';
-userText.tooltip.figEntryButton = 'Switch figure entry upright/inverted';
-userText.tooltip.figExitButton = 'Switch figure exit upright/inverted';
-userText.tooltip.magMin = 'Make figure smaller';
-userText.tooltip.magPlus = 'Make figure larger';
-userText.tooltip.moveForward = 'Move figure forward without a line';
-userText.tooltip.straightLine = 'Move figure to a new position with a straight line';
-userText.tooltip.subSequence = 'Start a sub sequence from this figure';
-userText.tooltip.switchFirstRoll = 'Switch first roll direction';
-userText.tooltip.switchX = 'Switch X exit direction';
-userText.tooltip.switchY = 'Switch Y exit direction';
-userText.unknownFileType = 'File opening is not supported in this browser.';
-userText.warningPre = '<p>When you save this sequence again this ' +
-  'warning will not be shown any more.</p>';
-userText.warningPre123 = '<p>The file you just opened was created with an ' +
-  'OpenAero version older than 1.2.3. Please check that all figure exit ' +
-  'directions are correct.</p>';
-userText.warningPre124 = '<p>The file you just opened was created with an ' +
-  'OpenAero version older than 1.2.4. Please check that all double ' +
-  'Humpty Bump directions are correct.</p>'; 
-userText.warningPre137 = '<p>The file you just opened was created with an ' +
-  'OpenAero version older than 1.3.7. Some snap rolls started from knife ' +
-  'edge flight may have had the wrong Aresti number and K. They should be ' +
-  'correct now. Please check.</p>'; 
-userText.wind = 'wind/vent';
-userText.windIAC = 'wind direction';
-userText.zipImageFilenamePattern = 'Separate fig images filename pattern'; 
+// define language object
+var lang = [];

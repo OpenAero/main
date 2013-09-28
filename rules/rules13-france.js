@@ -1,4 +1,4 @@
-// OpenAero rulesYY-France file
+// OpenAero rules13-France file
 
 // This file is part of OpenAero.
 
@@ -1476,13 +1476,13 @@ rules.push("9.12.1.4-6");
 //#######################################################################################
 
 rules.push("[France unlimited connu]");
-rules.push("more=France civa unlimited known");
+rules.push("more=CIVA Unlimited Known");
 
 rules.push("[France unlimited libre]");
-rules.push("more=France civa unlimited free");
+rules.push("more=CIVA Unlimited Free");
 
 rules.push("[France unlimited inconnu]");
-rules.push("more=France civa unlimited unknown");
+rules.push("more=CIVA Unlimited Unknown");
 
 //######################################################################################
 //#####     Fin des modifs et tests de GG      #########################################

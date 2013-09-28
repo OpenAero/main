@@ -178,7 +178,6 @@ rules.push("osnap-name=outside (negative) snap roll");
 rules.push("spin-name=spin family");
 rules.push("uspin-name=upright spin family");
 
-
 rules.push("group-fam1=^1\\..*");
 rules.push("group-fam2=^2\\..*");
 rules.push("group-fam3=^3\\..*");
@@ -235,7 +234,8 @@ rules.push("combined-name=combination figures (base and rolls)");
 //##### UNKNOWNS ALLOWED FIGURES RULES ################################
 //#####################################################################
 
-//conversion rules for checking validity
+// Conversion rules for checking validity
+// These generic rules can be used by different rule sets for checking validity
 //replace rolls added to figure with single letter/digit, matched by "rule-"s
 // 1 continous (no hesitation) roll
 // 2 half roll
@@ -264,6 +264,8 @@ rules.push("why-NOU=no opposite or unlinked rolls allowed");
 rules.push("rule-NR=roll:[^z]");
 rules.push("why-NR=no roll allowed");
 
+rules.push("rule-OS=roll:[1248fF]");
+rules.push("why-OS=only spin allowed");
 
 rules.push("rule-MAX360=qtrs:<5");
 rules.push("why-MAX360=maximum of 360 degrees rotation allowed");

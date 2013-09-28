@@ -5,7 +5,7 @@
 //  OpenAero was originally designed by Ringo Massa and built upon ideas
 //  of Jose Luis Aresti, Michael Golan, Alan Cassidy and many others. 
 
-//  OpenAero is free software: you can redistribute it and/or modify
+//  OpenAero is Free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
 //  the Free Software Foundation, either version 3 of the License, or
 //  (at your option) any later version.
@@ -24,15 +24,20 @@
 // OpenAero 1.3.4
 // -Free Unknown rules
 // -Advanced allowed figures for Known and Free:8.6.17-24.1-2
+// OpenAero 1.3.8
+// -infocheck directive for checking presence of Sequence info
 
 //###################################################################################
 //################################ CIVA GLIDERS FREE ################################
 //###################################################################################
 
 //#######################################################################
-rules.push("[glider-CIVA unlimited known]");// specific rules for the unlimited known program
+rules.push("[glider-CIVA Unlimited Known]");// specific rules for the Unlimited Known program
 //#######################################################################
 rules.push("demo=2ig ita3f-````/ -h4> o,2if- 8% -````````24``rc````- -48 2joi2");
+
+// what info should be filled out
+rules.push("infocheck=positioning;harmony");
 
 // Maximum K-Factor acc. to Ch. 4.3.6
 //===================================
@@ -44,11 +49,14 @@ rules.push("poslj=15+10");// positioning k-factor assuming line judges
 rules.push("posnl=15+10");// positioning k-factor assuming no line judges
 rules.push("poselec=15+10");// positioning k-factor assuming elcetric telemetry
 
-rules.push("more=glider-CIVA unlimited arestibase");
+rules.push("more=glider-CIVA Unlimited arestibase");
 
 //######################################################################
-rules.push("[glider-CIVA unlimited free]");// specific rules for the unlimited free program
+rules.push("[glider-CIVA Unlimited Free]");// specific rules for the Unlimited Free program
 //######################################################################
+
+// what info should be filled out
+rules.push("infocheck=pilot;aircraft;positioning;harmony");
 
 // Repeations of base-figures acc. to CIVA Section 6 part II Ch. 4.3.3.1 (a)
 //==========================================================================
@@ -109,10 +117,10 @@ rules.push("poslj=15+20");// positioning k-factor assuming line judges
 rules.push("posnl=15+20");// positioning k-factor assuming no line judges
 rules.push("poselec=15+20");// positioning k-factor assuming electric telemetry
 
-rules.push("more=glider-CIVA unlimited arestibase");
+rules.push("more=glider-CIVA Unlimited arestibase");
 
 //######################
-rules.push("(glider-CIVA unlimited arestibase)");
+rules.push("(glider-CIVA Unlimited arestibase)");
 //######################
 // Allowed Figures for KNOWN and FREE acc. to Ch. 4.3.2.2 (c) # "acc. to the Aresti-System, Glider Version"
 //=========================================================================================================
@@ -347,16 +355,20 @@ rules.push("9.13.3.4");
 rules.push("9.13.3.6");
 
 //###################
-rules.push("[glider-CIVA unlimited unknown1]");
+rules.push("[glider-CIVA Unlimited Unknown1]");
 //###################
-rules.push("more=glider-CIVA unlimited unknown3");
+rules.push("more=glider-CIVA Unlimited Unknown3");
 
 //######################
-rules.push("[glider-CIVA unlimited freeunknown]");
+rules.push("[glider-CIVA Unlimited FreeUnknown]");
 //######################
+
+// what info should be filled out
+rules.push("infocheck=positioning;harmony");
+
 // Maximum K-Factor and number of figures acc. to CIVA Section 6 part II Ch. 4.3.6
 //================================================================================
-rules.push("unknown-letters=ABCDEFG");
+rules.push("Unknown-letters=ABCDEFG");
 rules.push("k-max=193");// maximum k-factor including maximum floating points
 rules.push("k-min=180");// minimum k-factor
 rules.push("basefig-max=7");// maximum 7 base figures per sequence (+ max 2 links)
@@ -377,15 +389,19 @@ rules.push("isnap-max=1");
 rules.push("osnap-max=1");
 rules.push("spin-max=1");
 
-rules.push("more=glider-CIVA unlimited unknownbase");
+rules.push("more=glider-CIVA Unlimited Unknownbase");
 
 //###################
-rules.push("[glider-CIVA unlimited unknown2]");
+rules.push("[glider-CIVA Unlimited Unknown2]");
 //###################
-rules.push("more=glider-CIVA unlimited unknown3");
+rules.push("more=glider-CIVA Unlimited Unknown3");
 
 //###################
-rules.push("[glider-CIVA unlimited unknown3]");
+rules.push("[glider-CIVA Unlimited Unknown3]");
+
+// what info should be filled out
+rules.push("infocheck=positioning;harmony");
+
 //###################
 // Maximum K-Factor and number of figures acc. to CIVA Section 6 part II Ch. 4.3.6
 //================================================================================
@@ -409,10 +425,10 @@ rules.push("isnap-max=1");
 rules.push("osnap-max=1");
 rules.push("spin-max=1");
 
-rules.push("more=glider-CIVA unlimited unknownbase");
+rules.push("more=glider-CIVA Unlimited Unknownbase");
 
 //###################
-rules.push("[glider-CIVA unlimited unknown0]");
+rules.push("[glider-CIVA Unlimited Unknown0]");
 //###################
 rules.push("basefig-max=28");
 
@@ -422,10 +438,10 @@ rules.push("osnap-repeat=4");// positive snap rolls of same cat-ID may not be re
 rules.push("spin-repeat=4");// spins of same cat-ID may not be repeated in overall figure proposal
 rules.push("sroll-repeat=4");// superslow rolls of same cat-ID may not be repeated in overall figure proposal
 
-rules.push("more=glider-CIVA unlimited unknownbase");
+rules.push("more=glider-CIVA Unlimited Unknownbase");
 
 //##########################################################################
-rules.push("(glider-CIVA unlimited unknownbase)");// specific rules for the unlimited unknown programs
+rules.push("(glider-CIVA Unlimited Unknownbase)");// specific rules for the Unlimited Unknown programs
 //##########################################################################
 rules.push("k-minperfig=15");// minimum K for every figure
 rules.push("k-maxperfig=35");// maximum K for every figure
@@ -463,7 +479,7 @@ rules.push("conv-hnfvd=^9\\.10\\.(5\\.[34]|10\\.[34])=o ; ^9\\.=r ; ^0\\.=z");//
 rules.push("rule-nopushout=hnfvd:o$");
 rules.push("why-nopushout=Rule 9.1.1.24 No inverted exit after more than 1/2 negative flick roll vertically down");
 
-// Allowed figures for all unlimited unknowns (glider)
+// Allowed figures for all Unlimited Unknowns (glider)
 //====================================================
 //## "figures will be chosen from section 9 of sporting code" (acc. to 4.3.4.1)
 
@@ -784,9 +800,12 @@ rules.push("9.13.3.4");
 //########################################################################################
 
 //#######################################################################
-rules.push("[glider-CIVA advanced known]");// specific rules for the advanced known program
+rules.push("[glider-CIVA Advanced Known]");// specific rules for the Advanced Known program
 //#######################################################################
 rules.push("demo=ivs ta4+````/ b'',4> h' o1 c..- 6% -2j- -,24 2t. 6% 2j");
+
+// what info should be filled out
+rules.push("infocheck=positioning;harmony");
 
 // Maximum K-Factor acc. to Ch. 4.3.6
 //===================================
@@ -798,11 +817,14 @@ rules.push("poslj=15+10");// positioning k-factor assuming line judges
 rules.push("posnl=15+10");// positioning k-factor assuming no line judges
 rules.push("poselec=15+10");// positioning k-factor assuming elcetric telemetry
 
-rules.push("more=glider-CIVA advanced arestibase");
+rules.push("more=glider-CIVA Advanced arestibase");
 
 //######################################################################
-rules.push("[glider-CIVA advanced free]");// specific rules for the advanced free program
+rules.push("[glider-CIVA Advanced Free]");// specific rules for the Advanced Free program
 //######################################################################
+
+// what info should be filled out
+rules.push("infocheck=pilot;aircraft;positioning;harmony");
 
 // Repeations of base-figures acc. to CIVA Section 6 part II Ch. 4.3.3.1 (a)
 //==========================================================================
@@ -849,10 +871,10 @@ rules.push("poslj=15+20");// positioning k-factor assuming line judges
 rules.push("posnl=15+20");// positioning k-factor assuming no line judges
 rules.push("poselec=15+20");// positioning k-factor assuming electric telemetry
 
-rules.push("more=glider-CIVA advanced arestibase");
+rules.push("more=glider-CIVA Advanced arestibase");
 
 //#####################
-rules.push("(glider-CIVA advanced arestibase)");
+rules.push("(glider-CIVA Advanced arestibase)");
 //#####################
 // Allowed Figures for KNOWN and FREE acc. to Ch. 4.3.2.2 (c) # "acc. to the Aresti-System, Glider Version"
 //=========================================================================================================
@@ -892,7 +914,7 @@ rules.push("1.3.7.3");
 rules.push("1.3.8.2");
 rules.push("1.3.8.4");
 
-//no rolling turns except 2.1.3.1 in free programs
+//no rolling turns except 2.1.3.1 in Free programs
 rules.push("2.1.1.1-2");
 rules.push("2.1.3.1");
 rules.push("2.2.1.1-2");
@@ -1075,17 +1097,21 @@ rules.push("9.13.3.4");
 rules.push("9.13.3.6");
 
 //###################
-rules.push("[glider-CIVA advanced unknown1]");
+rules.push("[glider-CIVA Advanced Unknown1]");
 //###################
 
-rules.push("more=glider-CIVA advanced unknown3");
+rules.push("more=glider-CIVA Advanced Unknown3");
 
 //######################
-rules.push("[glider-CIVA advanced freeunknown]");
+rules.push("[glider-CIVA Advanced FreeUnknown]");
+
+// what info should be filled out
+rules.push("infocheck=positioning;harmony");
+
 //######################
 // Maximum K-Factor and number of figures acc. to CIVA Section 6 part II Ch. 4.3.6
 //================================================================================
-rules.push("unknown-letters=ABCDEFG");
+rules.push("Unknown-letters=ABCDEFG");
 rules.push("k-max=153");// maximum k-factor including maximum floating points
 rules.push("k-min=140");// minimum k-factor
 rules.push("basefig-max=7");// maximum 7 base figures per sequence (max 2 links)
@@ -1110,15 +1136,19 @@ rules.push("fam5-max=1");
 rules.push("fam6-max=1");
 rules.push("spin-max=1");
 
-rules.push("more=glider-CIVA advanced unknownbase");
+rules.push("more=glider-CIVA Advanced Unknownbase");
 
 //###################
-rules.push("[glider-CIVA advanced unknown2]");
+rules.push("[glider-CIVA Advanced Unknown2]");
 //###################
-rules.push("more=glider-CIVA advanced unknown3");
+rules.push("more=glider-CIVA Advanced Unknown3");
 
 //###################
-rules.push("[glider-CIVA advanced unknown3]");
+rules.push("[glider-CIVA Advanced Unknown3]");
+
+// what info should be filled out
+rules.push("infocheck=positioning;harmony");
+
 //###################
 // Maximum K-Factor and number of figures acc. to CIVA Section 6 part II Ch. 4.3.6
 //================================================================================
@@ -1141,10 +1171,10 @@ rules.push("fam5-max=1");
 rules.push("fam6-max=1");
 rules.push("spin-max=1");
 
-rules.push("more=glider-CIVA advanced unknownbase");
+rules.push("more=glider-CIVA Advanced Unknownbase");
 
 //###################
-rules.push("[glider-CIVA advanced unknown0]");// used to check overall proposals for repetition of base figures and rolls except 9.1
+rules.push("[glider-CIVA Advanced Unknown0]");// used to check overall proposals for repetition of base figures and rolls except 9.1
 //###################
 rules.push("basefig-max=28");
 rules.push("basefig-min=28");
@@ -1158,10 +1188,10 @@ rules.push("group-basefigex1569=^(1\\[12-316]|[2-4]|[7-8])");
 rules.push("basefigex1569-name=base figures except 1.1.1.x, 5.x.x.x, 6.x.x.x and 9.x.x.x");
 rules.push("basefigex1569-repeat=1");// The same catalogue number may only be used once, except of fam. 1.1.1.x, 5, 6 & 9
 
-rules.push("more=glider-CIVA advanced unknownbase");
+rules.push("more=glider-CIVA Advanced Unknownbase");
 
 //##########################################################################
-rules.push("(glider-CIVA advanced unknownbase)");// specific rules for the unlimited unknown programs
+rules.push("(glider-CIVA Advanced Unknownbase)");// specific rules for the Unlimited Unknown programs
 //##########################################################################
 
 rules.push("k-maxperfig=30");// maximum K for every figure
@@ -1178,7 +1208,7 @@ rules.push("connectors=2/10");// max 2 connectors with 10K total
 rules.push("rule-NHR=roll:[248]");//## new rule added ### checked
 rules.push("why-NHR=no hesitation roll allowed");
 
-// Allowed figures for all unlimited unknowns (glider)
+// Allowed figures for all Unlimited Unknowns (glider)
 //====================================================
 //## "figures will be chosen from section 9 of sporting code" (acc. to 4.3.4.1)
 

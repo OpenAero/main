@@ -1,3 +1,29 @@
+1.3.8
+* added VINK rules for Standard Unknown
+* reduced unnecessary 'unsaved file' alerts when leaving OpenAero
+* removed double endline from last figure, and extra circle from first, in Grid view
+* changed default number of grid columns to 5 (logical for Power Unknown)
+* fixed Safari bug where selected figure disappears
+* improved look of Wingover
+* added options for adding all figures to queue and clearing queue
+* created framework for using multiple interface languages
+* removed roll in bottom of loop where illegal; descending P and Q loops
+* fixed missing alerts for Unlimited Unknown sequences
+* added possibility to change drawing styles
+* sequence saved as grid or queue is now opened as grid with correct column count
+* corrected sequence naming in info according CIVA
+* improved CIVA rules file layout
+* fixed bug where incorrect rules were loaded for glider
+* added automatic loading of positioning K when activating rules
+* added checking of presence of certain info (such as Pilot) through infocheck directive in rules
+* corrected Unlimited positioning K for 2013
+* fixed Sequence Text scaling bug
+* fixed reload-after-update bug for same systems where this occurred
+* fixed bug in Forward Move of more than 9 units
+* fixed bug in line shortening of inverted entry or exit line
+* fixed errors in figures.js file that made it impossible to shorten exit for some figures
+* fixed bug in shortening of a non-existing line before or after roll (gap)
+
 1.3.7
 * fixed Intermediate Free figure repetition rules
 * fixed incorrect tailslide drawing on Y axis

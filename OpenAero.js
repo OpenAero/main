@@ -1,4 +1,4 @@
-﻿// OpenAero.js 1.3.7
+﻿// OpenAero.js 1.3.8
 // This file is part of OpenAero.
 
 //  OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -158,15 +158,16 @@ var inFigureXSwitchFig = 9999;
 // seqCheckAvail indicates if sequence checking is available for a rule/cat/seq combination
 var seqCheckAvail = [];
 // variables used for checking sequence validity
-var checkConv = [];
-var checkAllowRegex = [];
-var checkAllowCatId = [];
+var checkConv = [];        // conversions
+var checkAllowRegex = [];  // regexes for allowed figures
+var checkAllowCatId = [];  // Catalogue Numbers for allowed figures
 var checkCatGroup = [];
 var checkFigGroup = [];
 var checkRule = [];
 var figCheckLine = [];
 var defRules = [];
-var rulesActive = false;
+var rulesActive = false;   // Are rules active?
+var infoCheck = [];        // Seq info fields to be filled out when saving or printing
 
 // fig will hold all figures in the catalog in the form
 // fig[i].xxx where xxx is:
@@ -379,6 +380,15 @@ if (objCtr.defineProperty) {
 }
 // * End classlist.js
 
+// encode_utf8 returns a string that can be correctly used by btoa
+function encode_utf8(s) {
+  return unescape(encodeURIComponent(s));
+}
+
+// decode_utf8 returns a string that can be correctly used by btao
+function decode_utf8( s ) {
+  return decodeURIComponent(escape(s));
+}
 
 // **************************************************************
 // *
@@ -387,7 +397,7 @@ if (objCtr.defineProperty) {
 // **************************************************************
 
 /************************************************
- * User interface layout
+ * User interface functions
  ************************************************/
  
 // setMobile sets mobile (true) or desktop (false) layout
@@ -487,7 +497,7 @@ function rebuildSequenceSvg () {
 
   SVGRoot.appendChild(group);
   container.appendChild(SVGRoot);
-  selectFilter(SVGRoot);
+  // selectFilter(SVGRoot);
   
   // these svg points hold x and y values...
   //    very handy, but they do not display on the screen (just so you know)
@@ -503,6 +513,9 @@ function prepareSvg (svg) {
   svg.appendChild(group);
 }
 
+/*
+ * DISABLED in 1.3.8 due problems in Safari. Replaced by updating styles
+ * 
 // selectFilter builds a svg color filter for use with a selected figure
 // White areas (such as inside of pos flick)  will become slightly yellow
 // Black and red will become magenta
@@ -522,7 +535,8 @@ function selectFilter (svg) {
   filter.appendChild(el);
   svg.appendChild(filter);
 }
-  
+*/
+
 // alertBox creates a styled alert box with a 'close' option
 // html contains the HTML text. When false, the box is closed
 function alertBox(html, title) {
@@ -555,13 +569,13 @@ function alertBox(html, title) {
 function printDialog(show) {
   var div = document.getElementById('printDialog');
   if (show) {
+    if (!missingInfoCheck()) return;
+
     document.getElementById('alertBoxOverlay').setAttribute('style', '');
     div.classList.remove ('noDisplay');
-    //div.setAttribute('class', '');
   } else {
     document.getElementById('alertBoxOverlay').setAttribute('style', 'display:none;');
     div.classList.add ('noDisplay');
-    //div.setAttribute('class', 'noDisplay');
   }
 }
 
@@ -629,6 +643,25 @@ function selectTab (e) {
   document.getElementById(li.id.replace('tab-', '')).setAttribute('style', '')
 }
 
+// updateUserTexts updates all userText in the interface as indicated by
+// <span class="userText" id="t_[key]"></span>
+// where [key] is the key in userText, e.g. "addingFigure"
+function updateUserTexts () {
+  var id;
+  var value;
+  var els = document.getElementsByClassName('userText');
+  for (var i = els.length - 1; i >= 0; i--) {
+    id = els[i].id.replace (/^t_/, '');
+    value = userText[id];
+    if (!value) value = '';
+    els[i].innerHTML = value;
+  }
+}
+
+/************************************************
+ * General functions
+ ************************************************/
+
 // roundTwo returns a number rounded to two decimal places
 // Use for all drawing functions to prevent rendering errors and keep SVG file size down
 function roundTwo (nr) {
@@ -661,6 +694,13 @@ function getSuperFamily (aresti, category) {
       }
       if (returnValue) break; // Break loop family
     }
+  }
+  // set "Print Super Family" depending on result
+  var el = document.getElementById('printSF');
+  if (returnValue != '') {
+    el.setAttribute('checked', true);
+  } else {
+    el.removeAttribute('checked');
   }
   return returnValue;
 }
@@ -784,7 +824,7 @@ function makeFigStart (seqNr) {
   var rayon = ref_rayon;
   // draw numbers in circles when numberInCircle set AND seqNr present
   if (numberInCircle && seqNr && (activeForm != 'A')) {
-    if (firstFigure) {
+    if (firstFigure && (activeForm !== 'Grid')) {
       rayon = ref_rayon + 4;
       var ax = roundTwo(rayon * Math.cos(angle - open));
       var ay = -roundTwo(rayon * Math.sin(angle - open));
@@ -804,7 +844,7 @@ function makeFigStart (seqNr) {
     // Make the marker
     pathsArray.push({'path': 'm ' + (-rayon) + ',0 a' + rayon + ',' + rayon + ' 0 1 1 0,0.01', 'style':'pos', 'dx':Math.cos(angle) * 9, 'dy':- Math.sin(angle) * 9});
   } else {
-    if (firstFigure && (activeForm != 'A')) {
+    if (firstFigure && (activeForm !== 'A') && (activeForm !== 'Grid')) {
       pathsArray.push({'path': 'm 3,-6 a7,7 0 1 1 -6,0', 'style':'pos'});
     }
     // Add the figure number, except on Form A
@@ -1233,7 +1273,7 @@ function makeTurn (draw) {
   } else {
     if ((Direction == 0) || (Direction == 180)) {
       // towards viewer X-to-X axis
-      if (((Direction == 0) == (Attitude == 0)) == (activeForm != 'C')) {
+      if (((Direction == 0) == (Attitude < 180)) == (activeForm != 'C')) {
         sign = -sign;
         rollDir = -rollDir;
       }
@@ -1243,7 +1283,7 @@ function makeTurn (draw) {
         sign = -sign;
         rollDir = -rollDir;
       }
-    }  
+    }
   }
   // Check if the exit direction is flipped
   if (draw.charAt(0) == userpat.moveforward) {
@@ -1255,11 +1295,24 @@ function makeTurn (draw) {
   if (regex.test(draw)) var rollDir = -sign; else var rollDir = sign;
   // See if we start inverted, this will also flip the drawing direction
   if (Attitude == 180) rollDir = -rollDir;
+  
+  // use for wingover
+  var newAttitude = Attitude;
+  if (extent == 180) {
+    newAttitude = 360 - Attitude;
+    if (newAttitude == 360) newAttitude = 0;
+  }
 
   // See if direction change is called for by the preparsed draw string
-  var stopRad = dirAttToAngle (Direction + (sign * extent), Attitude);
+  if (newAttitude != Attitude) {
+    // for wingover, HACK
+    var stopRad = dirAttToXYAngle (Direction + (sign * extent), newAttitude);
+    var startRad = dirAttToXYAngle (Direction, Attitude);
+  } else {
+    var stopRad = dirAttToAngle (Direction + (sign * extent), newAttitude);
+    var startRad = dirAttToAngle (Direction, Attitude);
+  }
   if (stopRad < 0) stopRad += Tau;
-  var startRad = dirAttToAngle (Direction, Attitude);
   if (startRad < 0) startRad += Tau;
   startRadSave = startRad;
   var rad = sign * stopRad - sign * startRad;
@@ -1312,6 +1365,8 @@ function makeTurn (draw) {
       var dy = -sign * (Math.cos (stopRad)) * curveRadius * flattenTurn;
       pathsArray.push ({'text':extent + "\u00B0", 'style':'rollText', 'x':dx, 'y':dy, 'text-anchor':'middle'});
       changeDir (sign * extent);
+      // used for wingover
+      Attitude = newAttitude;
     } else {
       pathsArray = makeTurnArc (sign * Math.PI, startRad, startRad + Math.PI, pathsArray);
       changeDir (180);
@@ -1986,83 +2041,93 @@ function drawArestiText(figNr, aresti) {
 
 // doOnLoad is only called on initial loading of the page
 function doOnLoad () {
-  // Add a listener for HTML5 app cache updates
-  addUpdateListener();
-  // show loading overlay and circles
-  var el = document.getElementById('alertBoxOverlay');
-  el.removeAttribute('style');
-  el.innerHTML = '<svg id="loaderSvg" xmlns:svg=' + svgNS + ' xmlns=' + svgNS +
-    ' xmlns:xlink=' + xlinkNS + ' version="1.1" width="100%" height="40%"' +
-    'viewBox="-19 -19 38 38"><defs><circle id="loaderCircle" cx="10" cy="10" r="4"/></defs>' +
-    '<g id="a"><use xlink:href="#loaderCircle"style="fill:#adadad;fill-opacity:0.5;stroke-width:0" />' +
-    '<use xlink:href="#loaderCircle" transform="rotate(45)" style="fill:#adadad;fill-opacity:0.5;" />' +
-    '<use xlink:href="#loaderCircle" transform="rotate(90)" style="fill:#c1c1c1;fill-opacity:0.56862745;" />' +
-    '<use xlink:href="#loaderCircle" transform="rotate(135)" style="fill:#d7d7d7;fill-opacity:0.67843161;" />' +
-    '<use xlink:href="#loaderCircle" transform="rotate(180)" style="fill:#e9e9e9;fill-opacity:0.78431373;" />' +
-    '<use xlink:href="#loaderCircle" transform="rotate(225)" style="fill:#f4f4f4;fill-opacity:0.89019608;" />' +
-    '<use xlink:href="#loaderCircle" transform="rotate(270)" style="fill:#ffffff;fill-opacity:1;" />' +
-    '<use xlink:href="#loaderCircle" transform="rotate(315)" style="fill:#adadad;fill-opacity:0.5;" />' +
-    '<animateTransform attributeName="transform" attributeType="XML" type="rotate" begin="0s" dur="1s" repeatCount="indefinite" calcMode="discrete" values="0  ;  45;  90; 135; 180; 225; 270; 315"  keyTimes="0.0; 0.13; 0.27; 0.40; 0.53; 0.67; 0.80; 0.93" /></g></svg>';
-  // build sequence svg
-  rebuildSequenceSvg();
-  // check browser and capabilities
-  var errors = checkBrowser();
-  // determine if we are running on a mobile browser by screen width
-  if (screen.width < 761) setMobile (true); else setMobile (false);
-  // check if cookies are supported
-  setCookie ('cookieTest', 'dummy', 1);
-  if (getCookie ('cookieTest') == 'dummy') {
-    setCookie ('cookieTest', '', -1);
-  } else cookies = false;
-  // Setup the drag n drop listeners for multi file checking
-  var dropZone = document.getElementById('fileDrop');
-  dropZone.addEventListener('dragover', handleDragOver, false);
-  dropZone.addEventListener('drop', checkMulti, false);
-  // add onresize event for resizing the sequence text window
-  window.onresize = updateSequenceTextHeight;
-  // Parse the figures file
-  parseFiguresFile();
-  // Parse the rules
-  parseRules();
-  // Load sequence cookie (if any). Do this after the rules have been
-  // loaded to make sure rules stay in Sequence info
-  activeSequence.xml = getCookie('sequence');
-  if (activeSequence.xml) {
-    activateXMLsequence (activeSequence.xml);
+  // Use try to prevent bugs in this part from blocking OpenAero startup.
+  // Errors are logged to console.
+  try {
+    // Add a listener for HTML5 app cache updates
+    addUpdateListener();
+    // show loading overlay and circles
+    var el = document.getElementById('alertBoxOverlay');
+    el.removeAttribute('style');
+    el.innerHTML = '<svg id="loaderSvg" xmlns:svg=' + svgNS + ' xmlns=' + svgNS +
+      ' xmlns:xlink=' + xlinkNS + ' version="1.1" width="100%" height="40%"' +
+      'viewBox="-19 -19 38 38"><defs><circle id="loaderCircle" cx="10" cy="10" r="4"/></defs>' +
+      '<g id="a"><use xlink:href="#loaderCircle"style="fill:#adadad;fill-opacity:0.5;stroke-width:0" />' +
+      '<use xlink:href="#loaderCircle" transform="rotate(45)" style="fill:#adadad;fill-opacity:0.5;" />' +
+      '<use xlink:href="#loaderCircle" transform="rotate(90)" style="fill:#c1c1c1;fill-opacity:0.56862745;" />' +
+      '<use xlink:href="#loaderCircle" transform="rotate(135)" style="fill:#d7d7d7;fill-opacity:0.67843161;" />' +
+      '<use xlink:href="#loaderCircle" transform="rotate(180)" style="fill:#e9e9e9;fill-opacity:0.78431373;" />' +
+      '<use xlink:href="#loaderCircle" transform="rotate(225)" style="fill:#f4f4f4;fill-opacity:0.89019608;" />' +
+      '<use xlink:href="#loaderCircle" transform="rotate(270)" style="fill:#ffffff;fill-opacity:1;" />' +
+      '<use xlink:href="#loaderCircle" transform="rotate(315)" style="fill:#adadad;fill-opacity:0.5;" />' +
+      '<animateTransform attributeName="transform" attributeType="XML" type="rotate" begin="0s" dur="1s" repeatCount="indefinite" calcMode="discrete" values="0  ;  45;  90; 135; 180; 225; 270; 315"  keyTimes="0.0; 0.13; 0.27; 0.40; 0.53; 0.67; 0.80; 0.93" /></g></svg>';
+    // build sequence svg
+    rebuildSequenceSvg();
+    // check browser and capabilities
+    var errors = checkBrowser();
+    // set userTexts
+    updateUserTexts();
+    // determine if we are running on a mobile browser by screen width
+    if (screen.width < 761) setMobile (true); else setMobile (false);
+    // check if cookies are supported
+    setCookie ('cookieTest', 'dummy', 1);
+    if (getCookie ('cookieTest') == 'dummy') {
+      setCookie ('cookieTest', '', -1);
+    } else cookies = false;
+    // Setup the drag n drop listeners for multi file checking
+    var dropZone = document.getElementById('fileDrop');
+    dropZone.addEventListener('dragover', handleDragOver, false);
+    dropZone.addEventListener('drop', checkMulti, false);
+    // add onresize event for resizing the sequence text window
+    window.onresize = updateSequenceTextHeight;
+    // Parse the figures file
+    parseFiguresFile();
+    // Parse the rules
+    parseRules();
+    // set default Form to B
+    activeForm = 'B';
+    // Load sequence cookie (if any). Do this after the rules have been
+    // loaded to make sure rules stay in Sequence info
+    activeSequence.xml = getCookie('sequence');
+    if (activeSequence.xml) {
+      activateXMLsequence (activeSequence.xml);
+    }
+    // Activate the first figure selection group
+    changeFigureGroup(document.getElementById('figureGroup'));
+    document.getElementById('figureHeader').innerHTML = '';
+    // Add plus and minus elements such as used in entry/exit line adjustment
+    addPlusMinElements();
+    // build the buttons
+    buildButtons();
+    // prepare figure editor
+    updateFigureEditor();
+    // set correct options and menu items in various places
+    setOptions();
+    // set default Y axis offset and start direction
+    setYAxisOffset (yAxisOffsetDefault);
+    Direction = 0;
+    // set OpenAero version for saving
+    document.getElementById('oa_version').value = version;
+    // load sequence from URL if sequence GET element is set
+    var sURL = window.document.URL.toString();
+    var match = sURL.match(/\?sequence=.+/);
+    if (match) {
+      activateXMLsequence (decodeURI(match[0].replace('?sequence=', '')));
+    }
+    // Add combo box functions for rules/category/program input fields
+    new combo('rules','#cc9','#ffc');
+    changeCombo('rules');
+    // check if the sequence displayed is the one in the input field
+    checkSequenceChanged();
+    // select active Form
+    // need to do this to make sure the sequence is drawn when loaded
+    // from a cookie
+    selectForm(activeForm);
+    if (mobileBrowser) selectTab('tab-sequenceInfo');
+  } catch (e) {
+    console.log(e);
   }
-  // Activate the first figure selection group
-  changeFigureGroup(document.getElementById('figureGroup'));
-  document.getElementById('figureHeader').innerHTML = '';
-  // Add plus and minus elements such as used in entry/exit line adjustment
-  addPlusMinElements();
-  // build the buttons
-  buildButtons();
-  // prepare figure editor
-  updateFigureEditor();
-  // set correct options and menu items in various places
-  setOptions();
-  // set default Y axis offset and start direction
-  setYAxisOffset (yAxisOffsetDefault);
-  Direction = 0;
-  // set OpenAero version for saving
-  document.getElementById('oa_version').value = version;
-  // load sequence from URL if sequence GET element is set
-  var sURL = window.document.URL.toString();
-  var match = sURL.match(/\?sequence=.+/);
-  if (match) {
-    activateXMLsequence (decodeURI(match[0].replace('?sequence=', '')));
-  }
-  // Add combo box functions for rules/category/program input fields
-  new combo('rules','#cc9','#ffc');
-  changeCombo('rules');
-  // check if the sequence displayed is the one in the input field
-  checkSequenceChanged();
-  // select form B
-  // need to do this to make sure the sequence is drawn when loaded
-  // from a cookie
-  selectForm('B');
-  if (mobileBrowser) selectTab('tab-sequenceInfo');
-
+    
   // load (mostly) completed, remove loading icon and status
   el.innerHTML = '';
   el.setAttribute('style', 'display:none;');
@@ -2350,7 +2415,7 @@ function clickButton (e) {
         changeSequenceInfo();
         if (activeSequence.text == sequenceText.value) {
           draw();
-        } else checkSequenceChanged();
+        }/* else checkSequenceChanged();*/
         activeSequence.addUndo = true;
         setUndoRedo();
         // select no figure
@@ -2366,7 +2431,7 @@ function clickButton (e) {
         changeSequenceInfo();
         if (activeSequence.text == sequenceText.value) {
           draw();
-        } else checkSequenceChanged();
+        }/* else checkSequenceChanged();*/
         activeSequence.addUndo = true;
         setUndoRedo();
         // select no figure
@@ -2608,10 +2673,15 @@ function setOptions () {
   var el = document.getElementById('exampleSequences');
   for (key in exampleSequences) {
     var li = document.createElement('li');
-    li.innerHTML = '<a href="#" onClick="var xml=\'' +
+/*    li.innerHTML = '<a href="#" onClick="var xml=\'' +
       escape(exampleSequences[key]) + '\';OLANBumpBugCheck=false;' +
       'activateXMLsequence(unescape(xml));' +
       ' selectFigure (false); checkSequenceChanged();">' +
+      key + '</a>';*/
+    li.innerHTML = '<a href="#" onClick="var xml=\'' +
+      escape(exampleSequences[key]) + '\';OLANBumpBugCheck=false;' +
+      'activateXMLsequence(unescape(xml));' +
+      ' selectFigure (false);">' +
       key + '</a>';
     el.appendChild(li);
   }
@@ -2619,8 +2689,45 @@ function setOptions () {
   document.getElementById ('numberInCircle').setAttribute('value', numberInCircle);
   document.getElementById ('zipImageFilenamePattern').setAttribute('value', zipImageFilenamePattern);
   document.getElementById ('zipImageFilenamePattern').setAttribute('size', zipImageFilenamePattern.length);
+
+  // add styles to settings dialog
+  var el = document.getElementById('styles');
+  for (key in style) {
+    styleSave[key] = style[key];
+    var opt = document.createElement('option');
+    opt.setAttribute('value', key);
+    opt.innerHTML = key;
+    el.appendChild(opt);
+  }
+  getStyle();
 }
 
+// getStyle will retrieve a style and put it's value in the Settings
+// styleString field
+function getStyle() {
+  var key = document.getElementById('styles').value;
+  document.getElementById('styleString').value = style[key];
+}
+
+// updateStyle will change a style after it has been changed in the
+// Settings styleString field
+function updateStyle() {
+  style[document.getElementById('styles').value] = document.getElementById('styleString').value;
+  draw();
+}
+
+// resetStyle resets a style (or all) to the default value
+function resetStyle(all) {
+  if (all) {
+    for (key in style) style[key] = styleSave[key];
+  } else {
+    var key = document.getElementById('styles').value;
+    style[key] = styleSave[key];
+  }
+  getStyle();
+  draw();
+}
+    
 // setPilotCardForm will enable/disable pilot card form radio buttons
 function setPilotCardForm () {
   if (document.getElementById('printFormPilotCards').checked) {
@@ -3211,7 +3318,12 @@ function updateFigure() {
   // set entry extension
   var val = document.getElementById('entryExt-value').value;
   if (val < 0) {
-    pattern = new Array(1 - val).join(userpat.lineshorten) + '+' + pattern;
+    if (pattern[0] == '-') {
+      // don't prepend + for negative entry
+      pattern = new Array(1 - val).join(userpat.lineshorten) + pattern;
+    } else {
+      pattern = new Array(1 - val).join(userpat.lineshorten) + '+' + pattern;
+    }
   } else if (val > 0) {
     val = val / 3;
     if (document.getElementById('figEntryButton').classList.contains ('inverted')) {
@@ -3226,7 +3338,12 @@ function updateFigure() {
   // set exit extension
   val = document.getElementById('exitExt-value').value;
   if (val < 0) {
-    pattern += '+' + new Array(1 - val).join(userpat.lineshorten);
+    if (pattern[pattern.length - 1] == '-') {
+      // don't prepend + for negative exit
+      pattern += new Array(1 - val).join(userpat.lineshorten);
+    } else {
+      pattern += '+' + new Array(1 - val).join(userpat.lineshorten);
+    }
   } else if (val > 0) {
     val = val / 3;
     if (document.getElementById('figExitButton').classList.contains ('inverted')) {
@@ -3329,15 +3446,21 @@ function addUpdateListener () {
       // Browser downloaded a new app cache.
       // Swap it in and reload the page to get the new hotness.
       window.applicationCache.swapCache();
-      // If we're not done loading, just reload
-      if (confirm(userText.loadNewVersion)) {
-        // if we were done loading, only reload after confirmation
+      // only reload after confirmation
+      if (cookies) {
+        var t = userText.loadNewVersion;
+      } else {
+        var t = userText.loadNewVersionNoCookies;
+      }
+      if (confirm(t)) {
         sequenceSaved = true;
         window.onbeforeunload = null;
         // get the URL without any GET attributes
-        var url = window.document.URL.toString().replace(/\?.*/g, '');
-        // reload the page with the active sequence
-        window.location.assign(url + '?sequence=' + encodeURI(activeSequence.xml));
+        //var url = window.document.URL.toString().replace(/\?.*/g, '') +
+          '?sequence=' + encodeURI(activeSequence.xml);
+        //console.log('Redirecting to ' + url);
+        // reload the page, sequence will be provided by cookie
+        window.location.reload(true);
       }
     } else {
       // Manifest didn't change. Nothing new to serve.
@@ -3395,6 +3518,7 @@ function changeSequenceInfo () {
     // unfortunately this will not work in Chrome from a local file
     setCookie ('sequence', activeSequence.xml, 2000);
   }
+  checkInfo();
 }
 
 // buildFigureXML creates a well-formatted XML string that holds all
@@ -3542,6 +3666,10 @@ function changeCombo(id) {
     changeCombo ('program');
   } else if (id === 'program') {
     try {
+      // clear positioning and harmony values
+      document.getElementById('positioning').value = '';
+      document.getElementById('harmony').value = '';
+
       if (seqCheckAvail[ruleName]['cats'][categoryName]['seqs'][programName]) {
         // Load rules, check the sequence and display any alerts
         var log = loadRules(ruleName, categoryName, programName);
@@ -3626,8 +3754,8 @@ function buildLogoSvg(logoImage, x, y, width, height) {
 // and allow for selection of a logo
 function logoChooser() {
 // define logo thumbnail width and height
-  var width = 110;
-  var height = 110;
+  var width = 72;
+  var height = 72;
   // show the logo chooser container
   var container = document.getElementById('logoChooserContainer');
   container.setAttribute('class', 'active');
@@ -3644,6 +3772,7 @@ function logoChooser() {
     var link = document.createElement('a');
     link.setAttribute("href", "#");
     link.setAttribute("onClick", "selectLogo('" + logoName + "')");
+    link.setAttribute("alt", logoName);
     container.appendChild(link);
     link.appendChild(buildLogoSvg(logoImages[logoName], 0, 0, width, height));
   }
@@ -3687,7 +3816,7 @@ function drawActiveLogo() {
     link.setAttribute("href", "#");
     link.setAttribute("onClick", "removeLogo()");
     container.appendChild(link);
-    var text = document.createTextNode(userText.removeLogo);
+    var text = document.createTextNode(userText.remove);
     link.appendChild(text);
   }
 }
@@ -3841,10 +3970,10 @@ function parseRules(start) {
           }
           seqCheckAvail[rnLower] = {'name':ruleName, 'cats':[]};
         }
-        if (!seqCheckAvail[ruleName.toLowerCase()]['cats'][catName.toLowerCase()]) {
-          seqCheckAvail[ruleName.toLowerCase()]['cats'][catName.toLowerCase()] = {'name':catName, 'seqs':[]};
+        if (!seqCheckAvail[rnLower]['cats'][catName.toLowerCase()]) {
+          seqCheckAvail[rnLower]['cats'][catName.toLowerCase()] = {'name':catName, 'seqs':[]};
         }
-        seqCheckAvail[ruleName.toLowerCase()]['cats'][catName.toLowerCase()]['seqs'][seqName.toLowerCase()] = seqName;
+        seqCheckAvail[rnLower]['cats'][catName.toLowerCase()]['seqs'][seqName.toLowerCase()] = seqName;
       }
     }
   }
@@ -3900,6 +4029,7 @@ function loadRules(ruleName, catName, programName) {
   defRules = [];
   checkConv = [];
   connectFig = {'max': 0, 'totalK': 0};
+  infoCheck = [];
   // Find the sections
   for (var i = 0; i < rules.length; i++) {
     if ((rules[i][0] == '[') || (rules[i][0] == '(')) {
@@ -4065,6 +4195,17 @@ function loadRules(ruleName, catName, programName) {
         var match = rules[i].match(regexRulesConnectors);
         connectFig.max = parseInt(match[1]);
         connectFig.totalK = parseInt(match[2]);
+      } else if (rules[i].match(/^posnl/)) {
+        // load positioning and harmony K
+        var pos = rules[i].match(/[0-9+]+/)[0].split('+');
+        var el = document.getElementById('positioning');
+        if (pos[0] > 0) el.value = pos[0];
+        var el = document.getElementById('harmony');
+        if (pos[1] > 0) el.value = pos[1];
+      } else if (rules[i].match(/^infocheck/)) {
+        // define fields that should be checked for not being empty when
+        // saving or printing a sequence
+        infoCheck = rules[i].replace(/ /g, '').match(/=(.*)/)[1].split(';');
       }
     }
   }
@@ -4075,6 +4216,7 @@ function loadRules(ruleName, catName, programName) {
   var log = checkRules();
   displayAlerts ();
   markFigures ();
+  checkInfo ();
   return log;
 }
 
@@ -4635,6 +4777,43 @@ function checkSequence(show) {
     document.getElementById('alertBoxOverlay').setAttribute('style', 'display:none;');
     div.classList.add ('noDisplay');
   }
+}
+
+// checkInfo checks if the required Sequence info is present and
+// highlights any empty info fields with red borders (checkInfo class)
+function checkInfo () {
+  // first clear all red borders
+  var el = document.getElementsByClassName('checkInfo');
+  for (var i = el.length - 1; i >= 0; i--) {
+    el[i].classList.remove ('checkInfo');
+  }
+  // when no rules are active, revert to default: pilot and aircraft
+  if (!rulesActive) infoCheck = ['pilot', 'aircraft'];
+  // add red borders to missing info
+  for (var i = 0; i < infoCheck.length; i++) {
+    el = document.getElementById(infoCheck[i]);
+    if (el) {
+      if (el.value == '') {
+        el.classList.add ('checkInfo');
+      }
+    }
+  }
+}
+
+// missingInfoCheck will show a warning when missing Sequence Info is
+// detected. The dialog offers an option to continue or not.
+// return value is true when continue is selected, or no missing info is
+// detected.
+function missingInfoCheck () {
+  var el = document.getElementsByClassName('checkInfo');
+  
+  if (el.length === 0) return true;
+  
+  var warning = userText.missingInfo;
+  for (var i = 0; i < el.length; i++) {
+    warning += '\n' + userText[el[i].id].replace(/&amp;/g, '&');
+  }
+  return (confirm(warning));
 }
 
 // updateFigureSelectorOptions updates the figure chooser options
@@ -5341,7 +5520,20 @@ function setFigChooser (figNr) {
 function setFigureSelected (figNr) {
   // if any figure was previously selected, remove that filter
   var selFig = SVGRoot.getElementById('figure'+selectedFigure.id);
-  if (selFig) selFig.removeAttribute('filter');
+  if (selFig) { //selFig.removeAttribute('filter');
+    if (selectedFigure.id !== figNr) {
+      var nodes = selFig.childNodes;
+      for (var i = nodes.length - 1; i >= 0; i--) {
+        var s = nodes[i].getAttribute('style');
+        if (s) {
+          s = s.replace (/#ff00a0/g, 'black');
+          s = s.replace (/#ff1090/g, 'red');
+          nodes[i].setAttribute ('style', s);
+        }
+      }
+    }
+  }
+  
   // fill selectedFigure with BBox values
   var selFig = SVGRoot.getElementById('figure'+figNr);
   if (selFig) selectedFigure = selFig.getBBox();
@@ -5356,7 +5548,16 @@ function setFigureSelected (figNr) {
   
     // apply color filter
     var figure = SVGRoot.getElementById('figure'+figNr);
-    figure.setAttribute('filter', 'url(#selectFilter)');
+    var nodes = figure.childNodes;
+    for (var i = nodes.length - 1; i >= 0; i--) {
+      var s = nodes[i].getAttribute('style');
+      if (s) {
+        s = s.replace (/black/g, '#ff00a0');
+        s = s.replace (/red/g, '#ff1090');
+        nodes[i].setAttribute ('style', s);
+      }
+    }
+//    figure.setAttribute('filter', 'url(#selectFilter)');
   }
 }
 
@@ -5586,9 +5787,6 @@ function drawFullFigure (i, draggable, svg) {
 // Create a group for the figure, draw it and apply to the SVG
   var group = document.createElementNS (svgNS, "g");
   group.setAttribute('id', 'figure' + i);
-  if ((selectedFigure.id === i) && draggable) {
-    group.setAttribute('filter', 'url(#selectFilter)');
-  }
   // put the group in the DOM
   svgElement.appendChild(group);
   for (var j = 0; j < paths.length; j++) {
@@ -5596,6 +5794,10 @@ function drawFullFigure (i, draggable, svg) {
   }
   if (draggable) {
     figures[i].bBox = group.getBBox();
+  }
+  if ((selectedFigure.id === i) && draggable) {
+    setFigureSelected (i);
+    //group.setAttribute('filter', 'url(#selectFilter)');
   }
 }
 
@@ -5657,12 +5859,44 @@ function addToQueue () {
   showQueue();
 }
 
+// addAllToQueue adds all figures in sequence to queue
+function addAllToQueue () {
+  var f = selectedFigure.id;
+  for (var i = 0; i < figures.length; i++) {
+    if (figures[i].aresti) {
+      selectFigure(i);
+      addToQueue();
+    }
+  }
+  selectFigure(f);
+}
+
 // removeFromQueue removes a figure from the queue
 function removeFromQueue (e) {
   delete fig[e.id];
   showQueue();
 }
 
+// clearQueue removes all figures from queue
+function clearQueue () {
+  // only do anything when there are actually figures in the queue
+  if (fig[fig.length - 1].group == 0) {
+    showQueue();
+    // confirm removing all
+    if (!confirm (userText.clearQueue)) return;
+    var figLen = fig.length;
+    // start removing figures
+    var i = figLen - 1;
+    while (fig[i]) {
+      if (fig[i].group == 0) {
+        delete fig[i];
+        i--;
+      } else break;
+    }
+    hideFigureSelector();
+  }
+}
+  
 // makeFormA creates Form A from the figures array
 function makeFormA() {
   setYAxisOffset (yAxisOffsetDefault);
@@ -5772,14 +6006,16 @@ function makeFormA() {
               drawText (figK, x + columnWidths[column] / 2, y + rowHeight / 2 - 8, 'FormATextLarge', 'middle');
             } else {
               drawText (figK, x + columnWidths[column] / 2, y + rowHeight / 2, 'FormATextLarge', 'middle');
-            }            
-            if (document.getElementById('class').value == 'glider') {
-              var superFamily = getSuperFamily (aresti, 'glider');
-            } else {
-              var superFamily = getSuperFamily (aresti, document.getElementById('category').value);
             }
-            if (superFamily) {
-              drawText('SF ' + superFamily,  x + columnWidths[column] / 2, y + rowHeight - 10, 'FormAText', 'middle');
+            if (document.getElementById('printSF').checked === true) {        
+              if (document.getElementById('class').value == 'glider') {
+                var superFamily = getSuperFamily (aresti, 'glider');
+              } else {
+                var superFamily = getSuperFamily (aresti, document.getElementById('category').value);
+              }
+              if (superFamily) {
+                drawText('SF ' + superFamily,  x + columnWidths[column] / 2, y + rowHeight - 10, 'FormAText', 'middle');
+              }
             }
             // check if mark as connector or specific unknown figure
             if (figures[i].connector) {
@@ -6122,7 +6358,7 @@ function updateSequenceTextHeight () {
     // add two characters to make sure the text in the clone is always longer    
     cloneDiv.innerHTML = sequenceText.value + '##';
     // when the clone is only a single line, add a break for minimum 2 lines
-    if (cloneDiv.offsetHeight < 20) cloneDiv.innerHTML += '<br>.';
+    if (cloneDiv.offsetHeight < 22) cloneDiv.innerHTML += '<br />.';
     var height = cloneDiv.offsetHeight;
     //if (height < 36) height = 36;
     sequenceText.setAttribute('style', 'height:' + (height + 6) + 'px;');
@@ -6144,11 +6380,23 @@ function checkSequenceChanged (force) {
   // read the sequence string and mark the location of the caret/selection
   var selStart = sequenceText.selectionStart;
   var selectFigureId = false;
+  
+  // Prevent OpenAero from being left unintentionally
+  if (activeSequence.text != sequenceText.value) {
+    sequenceSaved = false;
+    window.onbeforeunload = function(e){return userText.confirmLeave;}
+  }
+
   if ((activeSequence.text != sequenceText.value) || force) {
     // reset sequence entry options
     updateSequenceOptions ('');
     activeSequence.text = sequenceText.value;
     var string = activeSequence.text;
+    // whenever the string is empty, consider it 'saved'
+    if (string === '') {
+      sequenceSaved = true;
+      window.onbeforeunload = null;
+    }
     
     var figure = [];
     var thisFigure = {'string':'', 'stringStart':0, 'stringEnd':0};
@@ -6214,11 +6462,7 @@ function checkSequenceChanged (force) {
     
     // Set the correct scroll position
     SVGRoot.parentNode.scrollTop = scrollPosition;
-    
-    // Prevent OpenAero from being left unintentionally
-    sequenceSaved = false;
-    window.onbeforeunload = function(e){return userText.confirmLeave;}
-        
+            
     // Update figure editor when a figure is being edited
     if (selectedFigure.id !== null) updateFigureEditor();
   } else if (sequenceText === document.activeElement) {
@@ -6241,8 +6485,22 @@ function checkSequenceChanged (force) {
 // select which Form to show
 function selectForm (form) {
   activeForm = form;
+  updateDefaultView();
   draw (form);
   if (mobileBrowser) selectTab('tab-svgContainer');
+}
+
+// updateDefaultView updates the hidden defaultView value
+function updateDefaultView (queue) {
+  var el = document.getElementById('default_view');
+  if (queue) {
+    el.value = 'queue';
+  } else {
+    if (activeForm === 'Grid') {
+      el.value = 'grid:' + document.getElementById('gridColumns').value;
+    } else el.value = '';
+  }
+  changeSequenceInfo();
 }
 
 /******************************************
@@ -6268,6 +6526,7 @@ function clearSequence () {
   }
   // reload sequence
   checkSequenceChanged();
+  sequenceSaved = true;
 }
   
 // openSequence will load a sequence from a .seq file
@@ -6376,7 +6635,7 @@ function finishMulti () {
   document.getElementById('checkMultiFileForm').reset();
   // restore saved sequence
   activateXMLsequence (multi.savedSeq);
-  checkSequenceChanged();
+  //checkSequenceChanged();
 }
 
 // loadedSequenceMulti will be called when a sequence file has been loaded
@@ -6405,7 +6664,7 @@ function loadedSequenceMulti(evt) {
   // make sure no figure is selected
   selectFigure (false);
   // Draw the sequence
-  checkSequenceChanged();
+  //checkSequenceChanged();
 
   // Activate the loading of the checking rules (if any)
   if (document.getElementById('multiOverrideRules').checked) {
@@ -6508,7 +6767,7 @@ function loadedSequence(evt) {
   // make sure no figure is selected
   selectFigure (false);
   // Draw the sequence and change the browser title after loading
-  checkSequenceChanged();
+  //checkSequenceChanged();
   // update the sequence if OLANSequence was true
   if (OLANSequence) {
     OLANSequence = false;
@@ -6536,10 +6795,9 @@ function loadedQueue(evt) {
     // OLAN sequence, transform to XML
     fileString = OLANtoXML (fileString);
   }
-  // save current sequence when the string is not empty
-  if (sequenceText.value != '') {
-    var sequence = activeSequence.xml;
-  }
+  // save current sequence
+  var sequence = activeSequence.xml;
+
   // clear queue
   for (var i = fig.length - 1; i >= 0; i--) {
     if (fig[i]) {
@@ -6550,10 +6808,7 @@ function loadedQueue(evt) {
   }
   // put the figures in the queue
   activateXMLsequence (fileString);
-  // put a subsequence symbol between all figures to make sure no
-  // attitude autocorrect is done
-  sequenceText.value = sequenceText.value.replace(/ /g, ' // ');
-  checkSequenceChanged();
+
   for (var i = 0; i < figures.length; i++) {  
     if (figures[i].aresti) {
       selectedFigure.id = i;
@@ -6562,10 +6817,7 @@ function loadedQueue(evt) {
   }
   selectFigure (false);
   // restore previous sequence or start with empty
-  if (sequence) {
-    activateXMLsequence (sequence);
-  } else sequenceText.value = '';
-  checkSequenceChanged();
+  activateXMLsequence (sequence);
   // show queue
   showQueue();
 }
@@ -6628,6 +6880,17 @@ function activateXMLsequence (xml, noLoadRules) {
       if (e) e.value = myTextArea.value;
     }
   }
+  // check for default_view
+  var view = document.getElementById('default_view').value;
+  if (view) {
+    var view = view.split(':');
+      if (view[0] === 'grid') {
+      document.getElementById('gridColumns').value = view[1];
+      activeForm = 'Grid';
+    } else if (view[0] === 'queue') {
+      activeForm = 'Grid';
+    }
+  }
   logo = document.getElementById('logo').value;
   if (logoImages[logo]) selectLogo(logo);
   checkOpenAeroVersion();
@@ -6638,6 +6901,12 @@ function activateXMLsequence (xml, noLoadRules) {
   } else el.removeAttribute('style');
   // load rules when applicable and update sequence data
   if (!noLoadRules) changeCombo('rules');
+  
+  // update sequence
+  checkSequenceChanged();
+  // sequence was just loaded, so also saved
+  window.onbeforeunload = null;
+  sequenceSaved = true;
 }
 
 // handleDragOver takes care of file dragging
@@ -6780,7 +7049,7 @@ function saveFile(data, name, filter, format, noBounce) {
     // Transform utf8 to base64, otherwise handling in the data URI might not work well
     if (RegExp(';utf8$').test(format)) {
       format = format.replace('utf8', 'base64');
-      data = btoa(data);
+      data = btoa(encode_utf8(data));
     }
     // build HTML for alert box
     var html = '<p>' + userText.downloadWarning + '<br />';
@@ -6798,8 +7067,8 @@ function saveFile(data, name, filter, format, noBounce) {
       'id="dlTextField">' +
       '<div class="textButton"><a download="' + name +
       '" href="data:' + format + ',' + data + '" ' +
-      'id="dlButton">' + userText.download + '</a></div>';
-    alertBox(html);
+      'id="dlButton">' + userText.saveFile + '</a></div>';
+    alertBox(html, userText.saveFileTitle);
   }, waitTime);
 
   if (http) {
@@ -6838,17 +7107,21 @@ function saveFile(data, name, filter, format, noBounce) {
 // saveSequence will save a sequence to a .seq file
 // the .seq file is standard xml, so not OLAN compatible
 function saveSequence () {
+  if (!missingInfoCheck()) return;
+  
   var fileName = document.getElementById('location').value+' '+
     document.getElementById('category').value+' '+
     document.getElementById('program').value+' '+
     document.getElementById('pilot').value;
   fileName = fileName.replace(/^\s+|\s+$/g, '');
   if (fileName === '') fileName = 'sequence';
-  // take the original sequence XML, remove the end tag and add it again
-  // after the figure XML. Then beautify the output.
-  var xml = vkbeautify.xml(activeSequence.xml.replace('</sequence>', '') +
-    buildFigureXML() +
-    '</sequence>');
+  // take the original sequence XML,
+  // remove the end tag, add figure XML and add the end tag again.
+  // Then beautify the output.
+  var xml = activeSequence.xml.replace('</sequence>', '');
+  xml += buildFigureXML();
+  xml += '</sequence>';
+  xml = vkbeautify.xml (xml);
   if (saveFile (xml, fileName + '.seq', {'name':'OpenAero Sequence', 'filter':'*.seq'}, 'text/xhtml+xml;utf8')) {
     sequenceSaved = true;
     window.onbeforeunload = null;
@@ -6877,6 +7150,7 @@ function saveQueue () {
   }
   // put queue figures in sequence for saving
   sequenceText.value = queueFigs.join(' // ');
+  updateDefaultView(true);
   checkSequenceChanged();
   var fileName = document.getElementById('location').value+' '+
     document.getElementById('category').value+' '+
@@ -6884,9 +7158,13 @@ function saveQueue () {
     document.getElementById('pilot').value;
   fileName = fileName.replace(/^\s+|\s+$/g, '');
   fileName += 'QUEUE';
+  // take the original sequence XML,
+  // remove the end tag, add the end tag again.
+  // Then beautify the output.
+  var xml = vkbeautify.xml (activeSequence.xml);
   // prevent "leaving" warning
   window.onbeforeunload = null;
-  if (saveFile (activeSequence.xml, fileName + '.seq', {'name':'OpenAero Queue', 'filter':'*.seq'}, 'text/xhtml+xml;utf8')) {
+  if (saveFile (xml, fileName + '.seq', {'name':'OpenAero Queue', 'filter':'*.seq'}, 'text/xhtml+xml;utf8')) {
     alertBox(userText.queueSaved);
   } else {
     alertBox(userText.queueNotSaved);
@@ -6897,6 +7175,7 @@ function saveQueue () {
   }
   // restore sequence
   sequenceText.value = sequenceString;
+  updateDefaultView();
   checkSequenceChanged();
 }
 
@@ -6931,6 +7210,8 @@ function errorHandler(e) {
 // saveAsURL provides a URL encoded sequence that the user can copy
 // and then email, bookmark or whatever
 function saveAsURL () {
+  if (!missingInfoCheck()) return;
+
   var url = 'http://openaero.net?sequence=' + encodeURI(activeSequence.xml);
   alertBox (userText.saveAsURL + '<br />' +
     '<a href="' + url + '">' + url + '</a>', userText.saveAsURLTitle);
@@ -8134,7 +8415,8 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
       case (userpat.forwardshorten):
         lineSum--;
         break;
-        // When a roll is encountered, continue there for line lengthening and/or shortening
+        // When a roll is encountered, continue there for line
+        // lengthening and/or shortening
       case (figpat.fullroll):
         break;
         // When something else than a roll or line is encountered, build
@@ -8145,12 +8427,13 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
           lineLength = lineLength + lineSum;
           paths = buildShape('Line', Array(lineSum, NegLoad), paths);
         } else {
+                    console.log('here');
           lineLength++;
           paths = buildShape('Line', Array(1, NegLoad), paths);
         }
-        lineSum = 0;
         lineDraw = false;
       }
+      lineSum = 0;
     }
     // Take care of everything but lines
     switch (figureDraw.charAt(i)) {
@@ -8197,15 +8480,18 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
                     rollPaths = buildShape('Line', Array(1, NegLoad), rollPaths);
                   }
                 }
-                lineSum = 0;
                 lineDraw = false;
               }
+              lineSum = 0;
             }  
             switch (roll[rollnr][j]['type']) {
               // Sum line elements
               case ('line'):
-                lineSum = lineSum + roll[rollnr][j]['extent'];
-                lineDraw = true;
+                lineSum += roll[rollnr][j]['extent'];
+                // don't set lineDraw to true for shortenings. This will
+                // prevent drawing a line of minimum length 1 when no
+                // line was present in the figure drawing instructions
+                if (roll[rollnr][j]['extent'] > 0) lineDraw = true;
                 break;
               // Build roll elements
               case ('roll'):
@@ -8948,7 +9234,7 @@ function parseSequence () {
     
     // simplify the string
     
-    // replace `+  by forwardshorten for entry
+    // replace `+ by forwardshorten for entry
     var shorten = figure.match (regexEntryShorten);
     if (shorten) {
       figure = figure.replace (regexEntryShorten, 
@@ -8963,6 +9249,21 @@ function parseSequence () {
         new Array(shorten[0].length - shorten[1].length).join(userpat.forwardshorten));
     }
     
+    // replace `- by forwardshorten for negative entry
+    var shorten = figure.match (regexEntryShortenNeg);
+    if (shorten) {
+      figure = figure.replace (regexEntryShortenNeg, 
+        new Array(shorten[0].length - shorten[1].length + 1).join(userpat.forwardshorten) +
+        shorten[1]);
+    }
+    
+    // replace -` by forwardshorten for negative exit
+    var shorten = figure.match (regexExitShortenNeg);
+    if (shorten) {
+      figure = figure.replace (regexExitShortenNeg, shorten[1] +
+        new Array(shorten[0].length - shorten[1].length + 1).join(userpat.forwardshorten));
+    }
+
     // replace the second '-' and up (in row) by longforward (reverse for speed)
     // e.g. ---h- will be ++-h-
     // don't know a way to do this with regex...
@@ -9005,7 +9306,10 @@ function parseSequence () {
         // Move forward without connecting line
         var moveFwd = figure.match(regexMoveForward)[0];
         if (parseInt (moveFwd)) {
-          buildMoveForward (parseInt(moveFwd) + moveFwd.length - moveFwd.match(/[0-9]*/).length - 1, i);
+          buildMoveForward (parseInt(moveFwd) +
+                            moveFwd.length -
+                            moveFwd.match(/[0-9]*/)[0].length -
+                            1, i);
         } else {
           buildMoveForward (moveFwd.length, i);
         }
@@ -9097,7 +9401,7 @@ function parseSequence () {
             Attitude = 180;
             changeDir(180);
             // don't show warning in Grid view
-            if (activeForm != 'Grid') {
+            if (activeForm !== 'Grid') {
               alertMsgs.push ('Fig ' + seqNr + userText.setUpright);
               // draw circle around figure start
               figures[i].paths = [{'path': 'm -' + (rollcurveRadius * 1.2) +
@@ -9111,7 +9415,7 @@ function parseSequence () {
             Attitude = 0;
             changeDir(180);
             // don't show warning in Grid view
-            if (activeForm != 'Grid') {
+            if (activeForm !== 'Grid') {
               alertMsgs.push ('Fig ' + seqNr + userText.setInverted);
               // draw circle around figure start
               figures[i].paths = [{'path': 'm -' + (rollcurveRadius * 1.2) +
@@ -9122,7 +9426,7 @@ function parseSequence () {
         }
       }
       // Handle turns and rolling turns. They do have numbers in the base
-      if (base.match(/^.j/)) {
+      if (base.match(/^.j[^w]/)) {
         base = figure.replace(/[^a-z0-9\-\+]+/g, '');
         if (base.charAt(0) != '-') base = '+' + base;
         if (base.charAt(base.length - 1) != '-') base = base + '+'
@@ -9272,7 +9576,7 @@ function parseSequence () {
   }
   // Build the last figure stop shape after all's done. This won't
   // work well if 'move' figures are added at the end
-  if (!firstFigure) {
+  if (!firstFigure && !(activeForm == 'Grid')) {
     paths = figures[figures.length - 1].paths;
     // remove space at end of figure
     paths.pop();

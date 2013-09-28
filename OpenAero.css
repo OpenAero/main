@@ -1,5 +1,5 @@
 /*
- OpenAero.css 1.3.6
+ OpenAero.css 1.3.8
  This file is part of OpenAero.
 
   OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -115,6 +115,9 @@ textarea {
 .clearLeft {
   clear: left;
 }
+.clearNone {
+  clear: none;
+}
 .noDisplay {
   display: none;
 }
@@ -153,8 +156,8 @@ textarea {
   position: relative;
   float: left;
   width: 98%;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
+  border-top: 2px solid #fff;
+  border-left: 2px solid #fff;
   border-bottom: 1px solid #aaa;
   border-right: 1px solid #aaa;
   border-radius: 5px;
@@ -207,9 +210,9 @@ textarea {
 .sectionLabel {
   float: left;
   font-size: 14px;
-  color: #000;
-  margin: -10px 0 -8px 10px;
-  border-top: 1px solid #fff;
+  color: #006;
+  margin: -10px 0 -6px 10px;
+  border-top: 2px solid #fff;
   background: #f4f4f4;
   border-radius: 10px;
   padding-left: 3px;
@@ -450,7 +453,6 @@ option.used {
 }
 /*TAB SELECTOR FUNCTIONALITY*/
 .tabSelector {
-  clear: both;
   overflow: hidden;
 }
 .tabSelector ul {
@@ -477,7 +479,7 @@ option.used {
   background: -webkit-linear-gradient(top, #c0c0c8, #e0e0e0);
   background: linear-gradient(top, #c0c0c8, #e0e0e0);
   color: #448;
-  border-bottom:1px solid #888;
+  border-bottom:1px solid #ccc;
 }
 .tabSelector .activeTab {
   background: #f4f4f4;
@@ -680,11 +682,11 @@ option.used {
 #logoChooserContainer {
   position: absolute;
   z-index: 20;
-  width: 240px;
+  width: 248px;
   padding: 6px;
   margin-bottom: 100px;
   left: -320px;
-  top: 8px;
+  top: -30px;
   background: #fff;
   background: -webkit-linear-gradient(top, #f4f4f8, #fff);
   background: linear-gradient(top, #f4f4f8, #fff);
@@ -704,12 +706,15 @@ option.used {
 }
 #logoChooserContainer img {
   float: right;
-  margin: 0 0 4px 4px;
+  margin: 0 0 2px 2px;
+  vertical-align: center;
 }
 
 #logoChooserContainer input {
   float: none;
   clear: both;
+  width: 100%;
+  height: 2em;
 }
 
 /* figure chooser theming */
@@ -845,6 +850,11 @@ table#figureChooserTable td.figureNotAllowed {
 /* Class select box */
 #class {
   background: #ffc;
+}
+
+.checkInfo {
+  border: 2px solid red;
+  border-color: #c00 #f66 #f66 #c00;
 }
 
 /*Combo input box*/
