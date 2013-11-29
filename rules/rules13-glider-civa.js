@@ -34,7 +34,6 @@
 //#######################################################################
 rules.push("[glider-CIVA Unlimited Known]");// specific rules for the Unlimited Known program
 //#######################################################################
-rules.push("demo=2ig ita3f-````/ -h4> o,2if- 8% -````````24``rc````- -48 2joi2");
 
 // what info should be filled out
 rules.push("infocheck=positioning;harmony");
@@ -57,6 +56,9 @@ rules.push("[glider-CIVA Unlimited Free]");// specific rules for the Unlimited F
 
 // what info should be filled out
 rules.push("infocheck=pilot;aircraft;positioning;harmony");
+
+// Super Families
+rules.push("sf=^9\\.11\\.:3;^9\\.12\\.:3;^9\\.9\\.:4;^9\\.10\\.:4;^2\\.:2;^5\\.:5;^6\\.:6;^1\\.:7;^3\\.:7;^7\\.:7;^8\\.:7;^0\\.:7");
 
 // Repeations of base-figures acc. to CIVA Section 6 part II Ch. 4.3.3.1 (a)
 //==========================================================================
@@ -802,7 +804,6 @@ rules.push("9.13.3.4");
 //#######################################################################
 rules.push("[glider-CIVA Advanced Known]");// specific rules for the Advanced Known program
 //#######################################################################
-rules.push("demo=ivs ta4+````/ b'',4> h' o1 c..- 6% -2j- -,24 2t. 6% 2j");
 
 // what info should be filled out
 rules.push("infocheck=positioning;harmony");
@@ -825,6 +826,9 @@ rules.push("[glider-CIVA Advanced Free]");// specific rules for the Advanced Fre
 
 // what info should be filled out
 rules.push("infocheck=pilot;aircraft;positioning;harmony");
+
+// Super Families
+rules.push("sf=^9\\.11\\.:3;^9\\.12\\.:3;^9\\.9\\.:4;^9\\.10\\.:4;^2\\.:2;^5\\.:5;^6\\.:6;^1\\.:7;^3\\.:7;^7\\.:7;^8\\.:7;^0\\.:7");
 
 // Repeations of base-figures acc. to CIVA Section 6 part II Ch. 4.3.3.1 (a)
 //==========================================================================

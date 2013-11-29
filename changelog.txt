@@ -1,3 +1,48 @@
+1.4.0
+* added Belgian Aerobatic Club logo
+* fixed missing flags in Firefox grid view print (Issue #107)
+* added option to hide 'illegal' figures (and whole groups) in Chooser (Issue #102)
+* added option for comment rotation by 90 degrees
+* added roll comments. To prevent mistakes, original roll text (e.g. 3x4) can not be replaced (Issue #34)
+* fixed bug where Unknown Figure Letter could be added to figure when no rules with these letters are active
+* added automatic switching of ^ and > in Free Unknown figures when changing start axis (Issue #51)
+* disabled options for changing figures with a Free Unknown Letter (Issue #71)
+* changed default line style for repositioning figures: Bezier curve
+* moved definition of Free Unknown figure letters to rules file (Issue #84)
+* added warnings for missing figure letters where applicable
+* moved definition of Super Families to rules file (Issue #100)
+* added language chooser to settings
+* added automatic saving of settings in localStorage
+* changed demo menu to show submenu by year
+* added sprintf for formatting output strings
+* added handling of non-standard code 28 for 2x8 roll (Issue #121)
+* added option for creating PNG images in "Save figs separate" (Issue #36)
+* fixed incorrect position (in some cases) of sequence terminator line (Issue #3)
+* changed onClick to eventListener to improve coding and enable Chrome app (work in progress)
+* added pilot card print options
+* added black & white printing/saving
+* added saving sequence as PNG
+* merged print and image save dialogs. Multiple forms can be saved in a single PNG or SVG
+* added Australian Aerobatic Club logo
+* fixed bug where, when opening file, logo was overriden by logo associated with rules
+* added 2014 CIVA sequences
+* fixed bug causing png logo images to use max available width on forms
+* improved file naming consistency (Issue #120)
+* created Chrome app for improved file saving : TO DO : correct manual etc links
+* fixed Firefox bug where some (rolling) turns were tiny in figure chooser
+* replaced use of cookies by localStorage and (for App) chrome.storage
+* added plus and minus to move XY values and remove the values when unused
+* added option for different roll font sizes in settings and changed default to 20px
+* added persistence of rolls when changing figure to similar (Issue #116)
+* fixed roundTwo function (Issue #38)
+* added option to allow non-Aresti rolls. Off by default (Issue #43)
+* added saving of OpenAero settings to .seq file
+* added Sport Aerobatic Club of South Africa logo
+* added Swiss Aerobatic Association logo
+* added International Miniature Aerobatic Club logo
+* disabled server bouncing for files as currently it causes more trouble than it helps
+* added automatic separation of subsequent roll text
+
 1.3.8
 * added VINK rules for Standard Unknown
 * reduced unnecessary 'unsaved file' alerts when leaving OpenAero

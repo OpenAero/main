@@ -1,4 +1,4 @@
-// figures.js file 1.3.8
+// figures.js file 1.4.0
 
 // This file is part of OpenAero.
 
@@ -1749,8 +1749,9 @@ figs.push("+_jw_+ 0.0(8) ~d''_''j2~_~d~"); // was 0.0.0
 
 //Clover leaf (with optional roll in top)
 // we use 0.x based
-figs.push("+oj_+ 0.1(16:13) ~''v=4p!_~"); // was 0.4.1.1
-figs.push("+ioj_+ 0.2(13:10) ~''p!_4v=~");// was 0.4.1.2
+// 1.4.0 : changed glider K to identical with power, were 13 and 10
+figs.push("+oj_+ 0.1(16) ~''v=4p!_~"); // was 0.4.1.1
+figs.push("+ioj_+ 0.2(13) ~''p!_4v=~");// was 0.4.1.2
 
 //Half barrel rolls
 // use 0.2.x.y as equivalent to 7.2.x.y

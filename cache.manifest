@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# OpenAero Appcache version 1.3.8
+# OpenAero Appcache version 1.4.0.18
 about.html
 arestisystem.html
 buttons/figEndInv.png
@@ -36,6 +36,15 @@ buttons/smallFigStartUp.png
 buttons/smallRedo.png
 buttons/smallUndo.png
 buttons/undo.png
+buttons/flipOff.png
+buttons/flipOn.png
+buttons/flipTwoOff.png
+buttons/flipTwoOn.png
+buttons/numberFlipOff.png
+buttons/numberFlipOn.png
+canvg/canvg.js
+canvg/rgbcolor.js
+canvg/StackBlur.js
 config.js
 desktop.css
 examples.js
@@ -71,6 +80,9 @@ images/OA_FigureInfoPanel.gif
 images/OA_FigureSelection.gif
 images/OA_Queue.gif
 images/OA_SequenceInfoPanel.gif
+images/PilotCard2.png
+images/PilotCard4.png
+images/PilotCardPercent.png
 index.html
 jszip.js
 language.html
@@ -87,6 +99,7 @@ rules/rules13-france.js
 rules/rules13-ga.js
 rules/rules13-vink.js
 rules/rules13-glider-civa.js
+sprintf.js
 vkbeautify.js
 NETWORK: 
 openaero.php

@@ -86,7 +86,7 @@ body {
   background: linear-gradient(top, #f4f4f4, #e0e0ff);
 }
 .tabSelector {
-  width: 276px;
+  width: 600px;
 }
 .tabSelector li {
   width: 132px;

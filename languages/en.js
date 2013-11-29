@@ -1,4 +1,4 @@
-// en.js 1.3.8
+// en.js 1.4.0
 // This file is part of OpenAero.
 
 //  OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -27,34 +27,82 @@ lang.en = {
 // Edit keys and values here. Keys are the same for every language.
 // A value can also be an array, such as 'rollPos', or even a sub-array
 // with keys such as 'tooltip'. This must be the same in other languages.
+
+// The first key should be the human-readable form of the language code.
+// Subsequent keys are alphabetical.
+'en' : 'English',
+'about' : 'About',
 'ac' : 'A/C',
+'addAllToQueue' : 'Add all to Queue',
+'addFigureText' : 'Click to add figure',
 'addingFigure' : 'Add new figure',
+'addToQueue' : 'Add to Queue',
 'aircraft' : 'A/C type &amp; reg',
+'alertBoxClose' : 'Close',
+'alerts' : 'Alerts',
+'arestiSystem' : 'Aresti system',
 'autocorrectRoll' : ':Added autocorrect roll',
+'blackWhite' : 'Black & white', 
 'cancel' : 'Cancel',
+'cancelPrint' : 'Cancel',
+'cancelSave' : 'Cancel',
 'category' : 'Category',
-'checkMulti' : 'Check multiple sequences',
-'checkSequence' : 'Sequence check result',
+'changeStyle' : 'Change',
 'checkingRules' : 'Sequence checking rules',
+'checkMulti' : 'Check multiple sequences',
+'checkMultiClose' : 'Close',
+'checkMultipleSeq' : 'Check multiple seq',
+'checkSequence' : 'Check sequence',
+'checkSequenceLog' : 'Show log',
+'checkSequenceOK' : 'OK',
+'checkSequenceResult' : 'Sequence check result',
 'chooseFiles' : 'Choose your files here:',
 'chooseLogo' : 'Choose logo',
 'class' : 'Class',
-'clearQueue' : 'Are you sure you want to remove all figures from queue?',
+'clearPositioning' : 'Clear positioning',
+'clearPositioningConfirm' : 'This will remove all sequence position ' +
+  'formatting. Are you sure you want to continue?',
+'clearQueue' : 'Clear Queue',
+'clearQueueConfirm' : 'Are you sure you want to remove all figures from queue?',
+'clearSequence' : 'Clear sequence',
 'clickAddFigure' : 'Click to add figure',
 'clickChangeFigure' : 'Click to change/add figure',
+'closeAlert' : 'Close',
 'closeIt' : 'Close',
+'columns' : 'Columns',
+'comments' : 'Comments',
+'confirmBoxYes' : 'Yes',
+'confirmBoxNo' : 'No',
 'confirmLeave' : 'You\'re leaving OpenAero. Any sequence that is not saved may be lost.',
 'contest' : 'Contest',
+'convertingFailed' : 'Converting to PNG image failed.<br>If you wish ' +
+  'to report this error to an OpenAero developer, please click the ' +
+  'link below:<br><a href="mailto:openaero.devel@gmail.com?subject=' +
+  'BUG:SVG_to_PNG_conversion&body=%s" target="_blank">Email bug report</a>',
+'convertingToPng' : 'Converting forms to PNG image.<br>This may take ' +
+  'some time. Please wait...',
+'convertingTitle' : 'Converting...',
 'date' : 'Date',
+'demo' : 'Demo',
 'desktopVersion' : 'Desktop version',
 'download' : 'Download',
-'downloadHTML5' : 'However, you can save your file by choosing a name and clicking <i>Save File</i> below.',
-'downloadLegacy' : 'However, you can save your file by choosing a name, right-clicking on <i>Save File</i> below '+
-  'and choosing "Save File As..." or "Save Link As...".',
-'downloadWarning' : 'File saving works best through the OpenAero ' +
-  'website (<a href="http://www.openaero.net">www.openaero.net</a>) when ' +
-  'you are online or by running OpenAero on your own server.',
+'downloadHTML5' : 'You can save your file by choosing a name ' +
+  'and clicking <i>Save File</i> below.<br>A dialog where you can ' +
+  'choose the folder will then pop up.',
+'downloadLegacy' : 'You can save your file by choosing a ' +
+  'name, right-clicking on <i>Save File</i> below '+
+  'and choosing "Save File As..." or "Save Link As...".<br>A dialog ' +
+  'where you can choose the folder will then pop up.',
+'downwindEntry' : 'Downwind entry',
+'drawingStyles' : 'Drawing styles',
+'drawingStylesExplain' : '<p>All drawing styles can be changed here. ' +
+  'Some useful ones: <strong>pos</strong>=positive line, ' +
+  '<strong>neg</strong>=negative line, <strong>rollText</strong>=roll ' +
+  'font (e.g. 2x8).</p>',
 'editingFigure' : 'Edit figure ',
+'entryExitAttExt' : 'Entry/exit attitude & extension',
+'expert' : 'Expert',
+'feedback' : 'Feedback',
 'fileOpeningNotSupported' : 'File opening is not supported in ' +
   'this browser. Some functions have been disabled.',
 'figSelectorAddAfter' : 'Add new figure after active',
@@ -62,36 +110,66 @@ lang.en = {
 'figSelectorAddEnd' : 'Add new figure at end',
 'figSelectorAddStart' : 'Add new figure at start',
 'figSelectorReplace' : 'Replace active figure',
+'figsInGrid' : 'Figs in grid',
 'figureAlreadyInQueue' : 'This figure is already in the queue',
+'figureEditor' : 'Figure&nbsp;editor',
 'figureQueue' : 'Figure Queue',
+'file' : 'File',
+'fileName' : 'File name',
+'flipYAxis' : 'Flip Y-axis',
 'forElement' : ' for element ',
+'formA' : 'Form A',
 'formB' : 'Form B',
 'formC' : 'Form C',
+'freeUnknownFig' : 'Free Unknown fig ',
+'freeUnknownLink' : 'Free unknown Link',
+'FUfigOptionsDisabled' : 'Some options disabled for Free Unknown fig',
+'FUletterMulti' : '(%s) Free Unkn letter %s used multiple times',
+'gaps' : 'Gaps',
+'general' : 'General',
 'getChrome' : 'For optimum use of OpenAero, please download the ' +
   'latest version of the <a href="https://www.google.com/intl/en/chrome/browser/">' +
   'Google Chrome</a> browser.',
+'gridView' : 'Grid view',
 'harmony' : 'Harmony',
-'iacForms' : 'Print forms IAC style',
+'help' : 'Help',
+'hideIllegalFigures' : 'Hide illegal figs (Sequence info Rules)',
+'iacForms' : 'Forms IAC style',
 'illegalAtEnd' : 'Illegal figure at the end',
 'illegalBefore' : 'Illegal figure before figure ',
 'illegalFig' : ' is illegal, try ',
-'inverseForms' : 'Print forms in inverse color (white on black)',
+'imageFormat' : 'Image format',
+'imageHeight' : 'Height',
+'imageSize' : 'Image size',
+'imageWidth' : 'Width',
+'importRulesFile' : 'Import rules file',
+'installation' : 'Installation',
+'inverseForms' : 'Inverse color (white on black)',
+'language' : 'Language',
 'loadNewVersion' : 'A new version of OpenAero is available. Load it?',
 'loadNewVersionNoCookies' : 'A new version of OpenAero is available. ' +
 	'Load it? If you have a sequence open now it will be cleared.',
+'loadNewVersionTitle' : 'New version',
 'location' : 'Location',
 'logo' : 'Logo',
 'logoExplain' : 'Upload your own logo by clicking on the file ' +
   'chooser below, or select one of the displayed logos.',
+'manual' : 'Manual',
 'maxConnectors' : 'Maximum connecting figures allowed: ',
 'missingInfo' : 'There seems to be essential Sequence Info missing. ' +
   'Are you sure you want to save or print the file without:',
+'missingInfoTitle' : 'Sequence info missing',
 'mobileVersion' : 'Mobile version',
+'multiOverrideRules' : 'Override sequence rules with current rules from Sequence info: ',
 'noCookies' : 'It seems cookies are disabled in your browser. ' +
   'This means some functions of OpenAero will not work.<br>' +
   'To enable cookies in the Chrome browser, please copy the following ' +
   'url to your address bar:<br />' + 
-  'chrome://chrome/settings/content',
+  '<strong>chrome://chrome/settings/content</strong><br />' +
+  'and choose <i>Allow local data to be set</i>.',
+'noFigureLetterAssigned' : '(%s) No figure letter assigned',
+'noFreeUnknownFig' : 'No Free Unknown fig',
+'nonArestiRolls' : 'Allow non-Aresti rolls (try sequence text <i>41h 66</i>)',
 'none' : 'None',
 'noRules' : 'No sequence validity checking rules available.',
 'notes' : 'Notes',
@@ -113,38 +191,54 @@ lang.en = {
   'ones following may be drawn differently in OLAN and OpenAero!</font> ' +
   'Please check correct direction.<br>' +
   'This message will not be shown for this sequence again.',
-'multiOverrideRules' : 'Override sequence rules with current rules from Sequence info: ',
+'openaeroLanguage' : 'OpenAero language',
+'openQueueFile' : 'Open queue file',
+'openSequence' : 'Open sequence',
 'orFileDrop' : 'Or drag & drop your files here',
+'pageSpacing' : 'Page spacing',
 'pilot' : 'Pilot',
+'pilotCardFormB' : 'Form B',
+'pilotCardFormC' : 'Form C',
 'pilotNo' : 'Pilot\'s No.',
 'pilotnumberIAC1' : "pilot\'s",
 'pilotnumberIAC2' : "number",
 'pleaseWaitStartup' : 'Please wait while OpenAero is starting up...',
+'png' : 'PNG',
 'positioning' : 'Positioning',
-'print' : 'Print',
-'printCheck' : 'Print check result',
+'print' : 'Print / Save PDF',
+'printCheck' : 'Sequence check result',
 'printDialog' : 'Print options',
 'printExplain' : 'You can set the options for printing below.<br>' +
   'To <i>save</i> your forms, click <strong>Print</strong> and then choose ' +
   '<i>destination</i> <strong>Save as PDF</strong> in the browser\'s ' +
   'print menu.',
 'printForms' : 'OpenAero printing forms...',
-'printFormA' : 'Print Form A',
-'printFormB' : 'Print Form B',
-'printFormC' : 'Print Form C',
-'printFormGrid' : 'Print Figures in grid',
-'printMiniFormAonB' : 'Print mini Form A on Form B',
-'printMiniFormAonC' : 'Print mini Form A on Form C',
-'printPilotCards' : 'Print pilot cards',
-'printSF' : 'Print Super Family numbers',
-'printString' : 'Print sequence string',
+'printFormA' : 'Form A',
+'printFormB' : 'Form B',
+'printFormC' : 'Form C',
+'printFormGrid' : 'Figures in grid',
+'printMiniFormAonB' : 'with mini Form A',
+'printMiniFormAonC' : 'with mini Form A',
+'printNotes' : 'Sequence Notes (top of pages)',
+'printPilotCards' : 'Pilot cards',
+'printSaveForms' : 'Print/save forms',
+'printSF' : 'Super Family numbers',
+'printString' : 'Sequence string',
 'program' : 'Program',
 'programme' : 'Programme',
+'queue' : 'Queue',
 'queueEmpty' : 'There are no figures in the queue to save',
 'queueNotSaved' : 'The queue figures have NOT been saved',
 'queueSaved' : 'The queue figures have been saved',
 'remove' : 'Remove',
+'removeLogo' : 'Remove',
+'resetStyle' : 'Reset',
+'resetStyleAll' : 'Reset All',
+'rollLarge' : 'Large',
+'rollMedium' : 'Medium',
 'rollPos' : ['First roll position', 'Second roll position', 'Third roll position', 'Fourth roll position'],
+'rollSmall' : 'Small',
+'rollTextSize' : 'Roll text size',
 'rules' : 'Rules',
 'rulesImported' : 'Succesfully imported rules from file. Total lines (excluding comments) : ',
 'rulesImportTitle' : 'Rules file import',
@@ -158,28 +252,49 @@ lang.en = {
   'Please go to <a href="http://openaero.net">openaero.net</a>. ' +
   'OpenAero will automatically install in your browser and will also ' +
   'be available offline.',
-'saveFile' : 'Save File',
+'saveAsImage' : 'Save as image',
+'saveAsLink' : 'Save as link',
+'saveAsPNG' : 'Save PNG image',
+'saveAsSVG' : 'Save SVG image',
 'saveAsURL' : 'The link presented below contains your complete ' +
   'sequence. You can copy it to email, bookmark it etc...<br />' +
   'Use right-click and "Copy Link Address".',
 'saveAsURLTitle' : 'Save sequence as link',
+'saveFigsSeparate' : 'Save figs separate',
+'saveFigsSeparateTitle' : 'Save figures separately',
+'saveFile' : 'Save File',
 'saveFileAsAlert' : 'To download your file, right-click on this ' +
   'text and choose "Save link as..." or "Save file as...".',
 'saveFileTitle' : 'Save File',
+'saveImageVariables' : 'Saving PNG or SVG image',
+'saveQueueFile' : 'Save queue file',
+'saveSequence' : 'Save sequence',
 'selectCategoryFirst' : 'Select Category first',
 'selectRulesFirst' : 'Select Rules first',
-'separateFigures' : 'This will remove all sequence position ' +
-  'formatting. Are you sure you want to continue?',
+'separateFigures' : 'Separate figures',
+'sequence' : 'Sequence',
 'sequenceCorrect' : 'Sequence is correct',
 'sequenceHasErrors' : 'Sequence has errors:',
+'sequenceInfo' : 'Sequence&nbsp;info',
+'sequenceTab' : 'Sequence',
 'sequenceTest' : 'Check: ',
 'sequenceNotSavedWarning' : 'Your current sequence has not been ' +
   'saved.\nAre you sure you want to open a new one?',
+'setMobile' : 'Mobile version',
 'settings' : 'Settings',
+'settingsClose' : 'Close',
+'settingsTitle' : 'Settings',
 'setUpright' : ':set upright entry',
 'setInverted' : ':set inverted entry',
 'showFullLog' : 'Show full log',
-'showLog' : 'Show log',
+'showQueue' : 'Show Queue',
+'styleSettingsHeader' : 'Here you can change various style settings. ' +
+  'Please keep in mind that these change the look of ' +
+  '<strong>your</strong> version of OpenAero but not how your sequence ' +
+  'will look to another user of OpenAero!',
+'styling' : 'Styling',
+'svg' : 'SVG',
+'tools' : 'Tools',
 // tooltip forms a sub-array
 'tooltip' : {
   'connector' : 'Make this figure a connector for Unknown sequences',
@@ -200,6 +315,10 @@ lang.en = {
   'switchY' : 'Switch Y exit direction'
 }, // end tooltip sub-array
 'unknownFileType' : 'File opening is not supported in this browser.',
+'unusedFigureLetters' : 'Unused figure letters: %s',
+'upwindEntry' : 'Upwind entry',
+'version' : 'Version: %s',
+'view' : 'View',
 'warningPre' : '<p>When you save this sequence again this ' +
   'warning will not be shown any more.</p>',
 'warningPre123' : '<p>The file you just opened was created with an ' +
@@ -214,9 +333,8 @@ lang.en = {
   'correct now. Please check if applicable.</p>', 
 'wind' : 'wind/vent',
 'windIAC' : 'wind direction',
+'xBoxEntry' : 'X-box entry',
+'xBoxEntryAway' : 'X-box entry away',
 'zipImageFilenamePattern' : 'Separate fig images filename pattern'
 // end of key-value pairs. No comma after last
 };
-
-// set default language to English
-var userText = lang.en;

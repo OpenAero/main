@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--
-  manual.html version 1.3.8
+  manual.html version 1.4.0
   This file is part of OpenAero.
 
   OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -31,11 +31,10 @@
 
 <table border="0" cellspacing="1">
 	<tr>
-		<td colspan="3"><h2>The OpenAero Manual</h2></td>
+		<td colspan="3"><h1>The OpenAero Manual</h1></td>
 	</tr>
 	<tr>
-		<td colspan="3"><p><b>
-		General</b></p>
+		<td colspan="3"><h3>General</h3>
 		<p>OpenAero is aerobatic sequence design software available from
 		<a href="http://openaero.net/" target="_blank">OpenAero.net</a> that runs inside your 
 		web browser. This makes it available on practically any computer, tablet 
@@ -66,7 +65,7 @@
 	</tr>
 	<tr>
 		<td colspan="2">
-		<p id="creating_sequences"><b>Creating sequences</b></p>
+		<h3 id="creating_sequences">Creating sequences</h3>
 		<p>Aerobatic sequences can be created within OpenAero in either of two 
 		ways:</p>
 		<ul>
@@ -85,18 +84,16 @@
 	</tr>
 	<tr>
 		<td colspan="2">
-		<p><b>
-		Beginning 
-		a sequence</b></p>
-		<p>Always start by filling in the Sequence Info panel. The <i>Rules, 
-		Category</i> and <i>Program</i> information will be used for determining sequence 
-		validity. In the Sequence menu you can choose to start the sequence 
-		down-wind or cross-box. This can always be changed at a later stage.</p>
+      <h3>Beginning a sequence</h3>
+      <p>Always start by filling in the Sequence Info panel. The <i>Rules, 
+      Category</i> and <i>Program</i> information will be used for determining sequence 
+      validity. In the Sequence menu you can choose to start the sequence 
+      down-wind or cross-box. This can always be changed at a later stage.</p>
 		</td>
 	</tr>
 	<tr>
 		<td colspan="2">
-		<p id="adding_a_figure"><b>Adding a figure</b></p>
+		<h3 id="adding_a_figure">Adding a figure</h3>
 		<p>
 		<img border="0" src="images/OA_FigureAddPanel.gif" width="174" height="129" align="left">Go 
 		to the <i>Figure editor</i> tab and click on the <i>Click to add figure</i> box. A 
@@ -112,15 +109,18 @@
 		to tell OpenAero where the new figure should be placed. Figures that are eligible 
 		to be placed in the current position (i.e. with the correct entry and/or exit 
 		attitude) are marked by a green line around the top and left sides of 
-		their images.<br>
-		&nbsp;<br>
+		their images.</p>
+    <p>When there are Sequence rules active that prohibit the use of
+    certain base figures, those figures will not be shown. It is
+    possible to show these figures (with a red border) by unselecting
+    <i>Hide illegal figs</i>.</p>
+		<p>
 		When a figure is added or selected it becomes active and is drawn in 
 		magenta in the sequence area. The Form-B table is always updated to display 
 		all the Aresti element codes and K-factors. Base figures and elements that are 
 		not &#39;legal&#39; according to the rules in effect are shown in that table 
-		with zero K.<br>
-&nbsp;<br>
-		The current figure is also shown in the figure editing area where you can:</p>
+		with zero K.</p>
+		<p>The current figure is also shown in the figure editing area where you can:</p>
 		<ul>
 			<li>
 			Switch 
@@ -130,12 +130,17 @@
 			<li>Zoom the figure larger or smaller</li>
 			<li>Move the figure to a different position - with no line, or with 
 			a straight or curved dotted connecting line</li>
-			<li>
-			Add / delete / change rolls, 
-			and flip their left / right orientation to avoid location over other 
-			elements</li>
-			<li>Extend or shorten the entry and exit lines, or the lengths before and after 
-			the rolls</li>
+			<li>Add / delete / change rolls, and:
+        <ul>
+          <li>Flip their left / right orientation to avoid location over
+          other elements</li>
+          <li>Flip the roll fraction number (e.g. 3/4)</li>
+          <li>Add a comment (will be placed after fraction number where
+          applicable)</li>
+        </ul>
+      </li>
+			<li>Extend or shorten the entry and exit lines, or the lengths
+      before and after the rolls</li>
 			<li>Click the figure-start and -end symbols to reverse the current 
 			erect / inverted setting</li>
 			<li>Set the figure as the start of a new sub-sequence for easier 
@@ -144,6 +149,9 @@
 			to J, or as a connecting figure</li>
       <li>Add / delete / change figure comments</li>
 		</ul>
+    <p><strong>Some of these options are not available for figures that
+    have a Free Unknown letter to avoid changing Free Unknown figures.
+    </strong></p>
 		<p>When you have finished editing the figure click in an adjacent space 
 		to deactivate it, then you can add a new figure at the end of the 
 		sequence or optionally at the beginning. If a figure is highlighted when 
@@ -167,25 +175,37 @@
 		</td>
 	</tr>
 	<tr>
-    <td colspan="2">
-      <p id="figure_comments"><b>Figure comments</b></p>
-      <p>The comment section can be used te enter information about the 
+    <td colspan="3">
+      <h3 id="figure_comments">Figure comments</h3>
+      <p>The comment section can be used to enter information about the 
       figure. Plain text can be used but there is also a variety of
       useful special codes:</p>
       <ul>
-        <li><strong>[</strong> : bold-line the comment box on Form B &amp; C</li>
-        <li><strong>[[</strong> : red-line the comment box on Form B &amp; C</li>
-        <li><strong>\</strong> : new line</li>
-        <li><strong>NLD</strong> : use three letter 
-        <a href="http://en.wikipedia.org/wiki/List_of_IOC_country_codes#Current_NOCs" target="_blank">
-        IOC country code</a> in capitals to add the country's flag 
-        to Grid view</li>
+        <li>
+          <strong>[</strong> : bold-line the comment box on Form B &amp; C
+        </li>
+        <li>
+          <strong>[[</strong> : red-line the comment box on Form B &amp; C
+        </li>
+        <li>
+          <strong>\</strong> : new line
+        </li>
+        <li>
+          <strong>^</strong> : rotate the comment box 90 degrees, e.g. for "^BREAK"
+        </li>
+        <li>
+          <strong>NLD</strong> : use three letter 
+          <a href="http://en.wikipedia.org/wiki/List_of_IOC_country_codes#Current_NOCs" target="_blank">
+          IOC country code</a> in capitals to add the country's flag 
+          to Grid view
+        </li>
       </ul>
     </td>
   </tr>
-  <tr>
-    <td colspan="2">
-      <p><b>Automated handling of Free  and Compulsory&nbsp;/&nbsp;Free&nbsp;Unknown sequence figures</b></p>
+  <tr id="free_unknown">
+    <td colspan="3">
+      <h3>Automated handling of Free and Compulsory&nbsp;/&nbsp;Free&nbsp;Unknown
+      sequence figures</h3>
       <p>When on the Sequence Info panel a combination of Class : Rules : Category : Program 
       is set that requires special handling to meet CIVA regulations, 
       the software will provide the following automated handling:</p>
@@ -209,29 +229,28 @@
       </p>
     </td>
   </tr>
-	<tr>
-		<td colspan="2">
-		<p><b>Selecting and moving a figure</b></p>
-		<p>To select a figure, click on the start dot or select it in the 
-		sequence text line. The figure is now magenta and can be edited with the 
-		figure editor. For repositioning it can be dragged anywhere by holding 
-		down the mouse button after clicking the figure start.</p>
-    <p>After moving a figure it's possible to change the straight line 
-    to a curved line by clicking the <i>Curve</i> button in the Figure editor.
-    It's also possible to remove the line, but for clarity only for horizontal
-    moves. This can be done by clicking the <i>Move figure forward</i> button.</p>
-    <p><i>TIP</i> : A poorly laid-out sequence that is difficult to 
-    follow can be a real problem for judges - time spent creating an 
-    easily understood flow of figures can be a good way to help improve 
-    your marks. Make sure to use the straight and curved dotted lines to 
-    show how your figures follow each other.</p>
+	<tr id="selecting_moving">
+		<td colspan="3">
+      <h3>Selecting and moving a figure</h3>
+      <p>To select a figure, click on the start dot or select it in the 
+      sequence text line. The figure is now magenta and can be edited with the 
+      figure editor. For repositioning it can be dragged anywhere by holding 
+      down the mouse button after clicking the figure start.</p>
+      <p>After moving a figure it's possible to change the curved line 
+      to a straight line by clicking the <i>Straight line</i> button in
+      the Figure editor. It's also possible to remove the line, but for
+      clarity only for horizontal moves. This can be done by clicking the
+      <i>Move figure forward</i> button.</p>
+      <p><i>TIP</i> : A poorly laid-out sequence that is difficult to 
+      follow can be a real problem for judges - time spent creating an 
+      easily understood flow of figures can be a good way to help improve 
+      your marks. Make sure to use the straight and curved dotted lines to 
+      show how your figures follow each other.</p>
 		</td>
 	</tr>
 	<tr>
 		<td width="873">
-		<p><b>
-		Using 
-		the OpenAero &#39;Queue&#39;</b></p>
+		<h3>Using the OpenAero &#39;Queue&#39;</h3>
 		<p>The queue system provides a way to copy selected figures to a 
 		temporary list, from which they may conveniently be selected for 
 		insertion at other positions in the sequence. This enables the figures 
@@ -245,22 +264,23 @@
     clicking <i>Add all to queue</i>. All figures can be removed from
     the queue with <i>Clear queue</i>.</p>
 		</td>
-		<td colspan="2" rowspan="2" valign="top"><b>
-		<img border="0" src="images/OA_Queue.gif" width="165" height="176" align="right"></b></td>
+		<td colspan="2" rowspan="2" valign="top">
+      <img border="0" src="images/OA_Queue.gif" width="165" height="176" align="right">
+    </td>
 	</tr>
 	<tr>
-		<td width="873">
-		<p><b>Keeping the figures separate</b></p>
-		<p>When figures are overlapping they can be dragged to a new position. 
-		It is also possible to use <i>Separate figures</i> from the <i>Sequence menu</i> to 
-		separate all figures from each other.</p>
-    <p>To remove all current sequence formatting choose 
-    <i>Clear positioning</i> from the <i>Sequence menu</i>.</p>
+		<td colspan="3">
+      <h3>Keeping the figures separate</h3>
+      <p>When figures are overlapping they can be dragged to a new position. 
+      It is also possible to use <i>Separate figures</i> from the <i>Sequence menu</i> to 
+      separate all figures from each other.</p>
+      <p>To remove all current sequence formatting choose 
+      <i>Clear positioning</i> from the <i>Sequence menu</i>.</p>
 		</td>
 	</tr>
 	<tr>
 		<td colspan="3">
-		<p><b>Checking sequences against the selected Rules</b></p>
+		<h3>Checking sequences against the selected Rules</h3>
 		<p>Choose <i>Sequence ... Check sequence</i> and your sequence will be checked 
 		against the rules that you have selected in the <i>Sequence Info</i> setup. 
 		Note that any construction errors are shown in the <i>Alerts</i> box below the 
@@ -273,55 +293,64 @@
 	</tr>
 	<tr>
 		<td colspan="3">
-		<p><b>Opening, Saving and Printing sequences</b></p>
-		<p><u><i><b>Opening sequences</b></i></u></p>
-		<p>To open an existing sequence, choose <i>Open sequence</i> in the <i>File menu</i> 
-		and navigate to locate and open the required sequence file. Sequence 
-		files always end in &quot;.seq&quot; and may have been created either with 
-		OpenAero or originally in OLAN.</p>
-		<p><u><i><b>Saving sequences</b></i></u></p>
-		<p>To save the current sequence as a <i>&quot;filename.seq&quot;</i> file, choose 
-		<i>Save 
-		sequence</i> in the <i>File menu</i>. Your computer will bounce the data through 
-		the OpenAero server and, depending on how you have set your browser, ask 
-		for a file name to save the sequence; in Chrome be sure to tick <i>&quot;Ask 
-		where to save each file before downloading&quot;</i> on the <i>Advanced Settings</i> 
-		page. Always be sure to give the sequence a file name ending in <i>&quot;.seq&quot; 
-		- </i>these files can subsequently be opened only by OpenAero and not by OLAN.</p>
-		<p>To create a link that holds your complete sequence, choose <i>Save as 
-		link</i> in the <i>File menu</i>. It is useful to right-click here and choose 
-		<i>&quot;Copy 
-		Link Address&quot;</i> to transfer this link to your computer&#39;s clipboard.</p>
-		<p><u><i><b>Saving the current form (A, B or C) as an 
-		image</b></i></u></p>
-		<p>To save the current form as an image, choose <i>Save as image</i> in the  
-		<i>File</i> menu. You will then get the option, depending on your browser, to 
-		save the image as a Scalable Graphics Image or view it immediately. 
-		These images can be opened in most browsers and many other applications 
-		- see <a href="http://www.fileinfo.com" target="_blank">www.fileinfo.com</a> for further 
-		advice.</p>
-		<p><u><i><b>Saving a sequence's figures as separate
-		images</b></i></u></p>
-		<p>To save the current sequence figures as separate images, choose <i>Save figs separate</i> in the  
-		<i>File</i> menu. You will then get the option to save a ZIP file that 
-		contains every figure of your sequence as a separate SVG image.<br />
-		The images are oriented according the sequence flow and the form 
-		currently being viewed (B or C).</p>
-    <p>The image naming pattern can be set in <i>Settings</i> in the <i>Tools</i> menu.</p>
-		<p><u><i><b>Printing sequences<br>
-		</b></i></u>To print some or all of the sequence forms, choose <i>Print forms</i> in the 
-		<i>File menu</i>, and select the appropriate options. To save the forms as a 
-		PDF file in Windows you will need some software that does this for you, 
-		such as <a href="http://sourceforge.net/projects/pdfcreator" target="_blank">PDFcreator</a> or 
-    <a href="http://www.exp-systems.com/pdfredirect/downloads.htm" target="_blank">PDF reDirect v2</a>. 
-    In a Mac OSX or Linux machine you can simply choose to &#39;print to PDF&#39;.<br>
-&nbsp;</p>
+      <h3>Opening, Saving and Printing sequences</h3>
+      <h4>Opening sequences</h4>
+      <p>To open an existing sequence, choose <i>Open sequence</i> in the <i>File menu</i> 
+      and navigate to locate and open the required sequence file. Sequence 
+      files always end in &quot;.seq&quot; and may have been created either with 
+      OpenAero or originally in OLAN.</p>
+      <h4>Saving sequences</h4>
+      <p>To save the current sequence as a <i>&quot;filename.seq&quot;</i>
+      file, choose <i>Save sequence</i> in the <i>File menu</i>. Depending
+      on how you have set your browser, your computer will ask 
+      for a file name to save the sequence; in Chrome be sure to tick <i>&quot;Ask 
+      where to save each file before downloading&quot;</i> on the <i>Advanced Settings</i> 
+      page. Always be sure to give the sequence a file name ending in <i>&quot;.seq&quot; 
+      - </i>these files can subsequently be opened only by OpenAero and not by OLAN.</p>
+      <p>To create a link that holds your complete sequence, choose <i>Save as 
+      link</i> in the <i>File menu</i>. It is useful to right-click here and choose 
+      <i>&quot;Copy Link Address&quot;</i> to transfer this link to your computer&#39;s clipboard.</p>
+      <h4 id="save_print"  >Saving or Printing sequences</h4>
+      <p>To save or print some or all of the sequence forms, choose
+      <i>Print/save forms</i> in the <i>File menu</i>, and select the
+      appropriate options. To save the forms as a PDF file in Windows you
+      will need some software that does this for you, such as
+      <a href="http://sourceforge.net/projects/pdfcreator" target="_blank">PDFcreator</a> or 
+      <a href="http://www.exp-systems.com/pdfredirect/downloads.htm" target="_blank">PDF reDirect v2</a>. 
+      In a Mac OSX or Linux machine you can simply choose to &#39;print to PDF&#39;.</p>
+      <p>You can also save one or multiple forms as as image. Two formats
+      are available:</p>
+      <ul>
+        <li>
+          <strong>PNG</strong> : For saving images that can be viewed by
+          any computer, tablet or smartphone. Make sure to save these images
+          in a large enough resolution (set at <i>Saving PNG or SVG image</i>).
+        </li>
+        <li>
+          <strong>SVG</strong> : For images that will always stay sharp,
+          even when viewed with large magnification. These images can be
+          opened in most browsers and many other applications - see
+          <a href="http://www.fileinfo.com" target="_blank">www.fileinfo.com</a>
+          for further advice.
+        </li>
+      </ul>
+      <h4>Saving a sequence's figures as separate	images</h4>
+      <p>To save the current sequence figures as separate images, choose
+      <i>Save figs separate</i> in the <i>File</i> menu. You will then get
+      the option to save a ZIP file that 
+      contains every figure of your sequence as a separate image.<br />
+      In the <i>Settings</i> menu, you can change the image format (png or
+      svg) and the image size.<br />
+      The images are oriented according the sequence flow and the form 
+      currently being viewed (B or C).</p>
+      <p>The image naming pattern can be set in <i>Settings</i> in the
+      <i>Tools</i> menu.</p>
 		</td>
 	</tr>
 	<tr>
 		<td colspan="3">
-      <p id="grid_system"><b>The Figure Grid system for Unknown and Free&nbsp;Unknown operations
-      </b></p>
+      <h3 id="grid_system">The Figure Grid system for Unknown and Free&nbsp;Unknown operations
+      </h3>
       <p>
         <img border="0" src="images/OA_FigureGrid.gif" width="338" height="278" align="right">
         Either from the very start or from an existing sequence, <i>View ... 
@@ -346,7 +375,7 @@
   </tr>
   <tr>
     <td>
-      <b>Importing OpenAero files into ACRO</b>
+      <h3>Importing OpenAero files into ACRO</h3>
       <p>
         OpenAero files that are stored in <i>&quot;filename.seq&quot;</i> format can be 
         directly imported into the ACRO scoring software, thus providing a swift 
@@ -358,27 +387,47 @@
     </td>
   </tr>
 	<tr>
-		<td colspan="2">
-      <p id="settings"><b>Settings</b></p>
-      <p>The <i>Settings</i> dialog offers options for changing the look &amp; feel of OpenAero. You can:</p>
+		<td colspan="3">
+      <h3 id="settings">Settings</h3>
+      <p>The <i>Settings</i> dialog offers options for changing the look
+      &amp; feel of OpenAero. There are three tabs:</p>
       <ul>
-        <li>Change the number of columns in Grid View</li>
-        <li>Change the filename pattern for saving all figures as separate images in a ZIP file. The following
-        replacement patterns are available: %pilot %aircraft %location %date %class %rules %category %program %form %figure</li>
-        <li>Select if figure start numbers should be in a circle or not</li>
-        <li>Change all drawing styles, such as:
+        <li>General
         <ul>
-          <li><strong>pos</strong> : positive line</li>
-          <li><strong>neg</strong> : negative line</li>
-          <li><strong>rollText</strong> : roll font (e.g. 2x8, 3/4 etc)</li>
+          <li>Change the interface language (currently only English but
+          French expected soon)</li>
+          <li>Change the number of columns in Grid View</li>
+          <li>Change the image format (png or svg) and the image size for
+          saving all figures as separate images in a ZIP file</li>
+          <li>Change the filename pattern for saving all figures as
+          separate images in a ZIP file. The following replacement
+          patterns are available: %pilot %aircraft %location %date %class
+          %rules %category %program %form %figure</li>
+        </ul>
+        </li>
+        <li>Styling
+        <ul>
+          <li>Select if figure start numbers should be in a circle or not</li>
+          <li>Change the roll font size</li>
+        </ul>
+        </li>
+        <li>Expert
+        <ul>
+          <li>Allow non-Aresti rolls. This can be usefull for designing
+          Freestyle or demo sequences</li>
+          <li>Change all drawing styles, such as:
+          <ul>
+            <li><strong>pos</strong> : positive line</li>
+            <li><strong>neg</strong> : negative line</li>
+            <li><strong>rollText</strong> : roll font (e.g. 2x8, 3/4 etc)</li>
+          </ul>
+          </li>
         </ul>
         </li>
       </ul>
-      <p>When leaving or reloading OpenAero the settings will be restored
-      to their original value.</p>
-      <p>Also, please keep in mind that when somebody opens your sequence
+      <p>Please keep in mind that when somebody opens your sequence
       on another system it will look different from your version if you
-      change these values!</p>
+      change some of the styling values!</p>
     </td>
 	</tr>
 </table>

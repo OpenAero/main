@@ -66,7 +66,6 @@ rules.push("more=CIVA Unlimited Known");
 //######################################################################################
 
 rules.push("[CIVA Unlimited Known]");
-rules.push("demo=~~~~'2,2f'zt.''2f;2 2% ,7,3m\"|\"5if,3 [-5,18] 24ip1 >~s,3if.ibpb(``````\"|\"3``)3f\"|\",4.''+``> 'if'h'5f' .8rp(44)9> > 3joi15-~~ ~~~~-.\"|\"4taf''> ,34'pb'''3");
 rules.push("basefig-min=9");// Modif GG correction Civa 2012
 rules.push("basefig-max=9");// Modif GG correction Civa 2012
 rules.push("poslj=10");
@@ -120,6 +119,9 @@ rules.push("allow=^[1-9]");//all figures are allowed for the Free Program
 // what info should be filled out
 rules.push("infocheck=pilot;aircraft;positioning");
 
+// Super Families
+rules.push("sf=^2\\.:2;^5\\.:5;^6\\.:6;^1\\.:7;^3\\.:7;^7\\.:7;^8\\.:7;^0\\.:7");
+
 //#######################################################################################
 //##### CIVA UNLIMITED UNKNOWNS #########################################################
 //#######################################################################################
@@ -140,7 +142,7 @@ rules.push("more=CIVA Unlimited FreeUnknown");
 
 rules.push("(CIVA Unlimited FreeUnknown)");
 rules.push("connectors=4/24");
-rules.push("Unknown-letters=ABCDEFGHIJ");
+rules.push("figure-letters=ABCDEFGHIJ");
 
 rules.push("more=CIVA Unlimited Unknown");
 
@@ -617,7 +619,6 @@ rules.push("more=CIVA Advanced Known");
 //######################################################################################
 
 rules.push("[CIVA Advanced Known]");
-rules.push("demo=~~,24pbb(\"|\"3````)4-~ -isin(``1),4 ~~8'b''2f 2m8,3- 4% [-4,10] -2joi15 h''f. 10% ``+`````````2f```rc24-````````` -o6 m32,6f-`");
 rules.push("basefig-min=9");// Modif GG correction Civa 2012
 rules.push("basefig-max=9");// Modif GG correction Civa 2012
 rules.push("poslj=10");
@@ -664,6 +665,8 @@ rules.push("allow=^[1-9]");//all figures are allowed for the Free Program
 
 // what info should be filled out
 rules.push("infocheck=pilot;aircraft;positioning");
+
+rules.push("more=CIVA AdvYakInt SF");
 
 //######################################################################################
 //##### CIVA ADVANCED UNKNOWN ##########################################################
@@ -726,7 +729,7 @@ rules.push("snap-repeat=1");
 rules.push("spin-repeat=1");
 
 rules.push("connectors=4/24");
-rules.push("Unknown-letters=ABCDEFGHIJ");
+rules.push("figure-letters=ABCDEFGHIJ");
 
 rules.push("more=CIVA Advanced Unknownbase");
 rules.push("(CIVA Advanced Unknownbase)");
@@ -1053,6 +1056,16 @@ rules.push("allow=^[1-9]"); //all figures are allowed for the Free Program
 // what info should be filled out
 rules.push("infocheck=pilot;aircraft;positioning");
 
+rules.push("more=CIVA AdvYakInt SF");
+
+/**********************************************************************
+ *           Advanced, Yak52 and Intermediate Super Families          *
+ **********************************************************************/
+
+rules.push("(CIVA AdvYakInt SF)");
+rules.push("sf=^9\\.11\\.:3;^9\\.12\\.:3;^9\\.9\\.:4;^9\\.10\\.:4;^2\\.:2;^5\\.:5;^6\\.:6;^1\\.:7;^3\\.:7;^7\\.:7;^8\\.:7;^0\\.:7");
+
+//######################################################################################
 //######################################################################################
 //##### CIVA INTERMEDIATE FREE #########################################################
 //######################################################################################
@@ -1127,6 +1140,7 @@ rules.push("snap-repeat=1");
 rules.push("spin-repeat=1");
 
 rules.push("connectors=4/24");
+rules.push("figure-letters=ABCDEFGHIJ");
 
 rules.push("more=CIVA Yak52 Unknownbase");
 rules.push("(CIVA Yak52 Unknownbase)");
@@ -1134,7 +1148,7 @@ rules.push("(CIVA Yak52 Unknownbase)");
 //############################################################
 // extended conv rule version with limited vertical rolls=v(up) =n(down)
 // limited vertical rolls are 3/4 & 2/4 up(v =can't flyoff) or down(n=cant push out)
-// for Yak52 Unknwons only, of course.
+// for Yak52 Unknowns only, of course.
 
 // Modif GG évolution CIVA 2012
 rules.push("conv-horstop=^9\\.(1|9|10)\\.[38]=1 ; ^9\\.2\\.3\\.4 = 2 ;^9\\.2\\.3\\.6 = 3 ;^9\\.2\\.3\\.8 = 4 ;^9\\.4\\.3\\.([1-8]) = $1; ^9\\.8\\.3\\.1 = 2;^9\\.8\\.3\\.2 = 4;^9\\.8\\.3\\.3 = 6;^9\\.8\\.3\\.4 = 8; ^9\\.=r ; ^0\\.=z");

@@ -62,7 +62,7 @@
 
 rules.push("[France espoirs connu]");
 
-rules.push("demo=ed 2g iv''5s..^ -2% m,2 > 3j -3% c''2.'+``` ^ o h'.+ 3> ~+m-~~ 3% 3> -2j- -1-");
+rules.push("demo=ed 2g iv5s..''^ -2% m,2+~ 4> +3j~ -3% c''2''+``` (-2,12) o ``+h.''+ 6> m-~~ ~-2j- (3,7) -1-");
 
 rules.push("k-max=120");
 
@@ -190,7 +190,7 @@ rules.push("9.11.1.4-7");
 
 rules.push("[France desavois connu]");
 
-rules.push("demo=d24- -iv'is'' 2h.- -3% -m 6% > 2j2 -3% 3^2> ``+2,2c2.''+`` ````+,4pb+```` 4k''2. m2 2f-");
+rules.push("demo=d24- -iv'is'' 2h.- -3% -m+~~ 6% 3> 2j2 (2,6) -3% ``+2,2c2...''+`` ````+,4pb+```` 2> +4k.'2' +m2 2f-");
 
 rules.push("k-max=175");
 
@@ -476,12 +476,12 @@ rules.push("9.12.1.4");
 
 rules.push("(France national2 connu_1)");
 
-rules.push("demo=-d1- -iv5is/ ,4h o1 ~+k''2if..'+``` ```+2fg2- 12% [-8,4] ```-2joi2-``` -4,3 ``h4/ ~~8b m2,\"4x4\"44");
+rules.push("demo=-d1- -iv5is/ ,4h o1 2> ~+'k''2if...''+``` ```+2fg``2- (-8,3) 12% ```-2joi2-``` -4,3 /``h4' ~~8b+++ ++m2,44");
 rules.push("more=France national2 connu");
 
 rules.push("(France national2 connu_2)");
 
-rules.push("demo=v'4'/ 7sirp2 ```4,5c''...-`` ``-2dh...+` cc+``` mf;2+`` 3^6> 2joi2 6> ~+```k24..'+``/ ``+o44+`` 5% ```+````````48```rc > ++rp2,24");
+rules.push("demo=v'4'/ 7s''irp2~~ ```4,5c....'-`` ``-2dh...+` cc+``` 2> mf;2+`` (2,13) 3% 2joi2 /~+```k24..'+`` ``+o44+`` 5% ```+````````48```rc > +++rp2,24");
 rules.push("more=France national2 connu");
 
 rules.push("[France national2 connu]");
@@ -821,12 +821,12 @@ rules.push("more=France civa advanced unknownboth");
 
 rules.push("(France doret connu_1)");
 
-rules.push("demo=~~-,fpb`,2'' '',24ita.' n(''.6if..''),\"|\"4'/ ``7s''ik``2f```- 14% ~-48a34,3-``` ````-2ac(2)6f,6-````` -3% ~-3jo3---~/ ~~--''8'h.> ''\"|\"24g2,if'-");
+rules.push("demo=~~-,fpb`,2'' '',24ita.'+````` 8> /n(.''6if..''),\"|\"4' ``7s..ik``2f```- 14% ~-48a34,3-``` `````-2ac(2)6f,6-`````` (-5,13) -3% ~-3jo3---~/ ~~-''8'h'+++> ++``24.'g``2,if'-");
 rules.push("more=France doret connu");
 
 rules.push("(France doret connu_2)");
 
-rules.push("demo=ej 3h`2f'' '8`ta,4.- -2% -',if.rdb''22..+````` ifn(.,2..'')````- -2% -'6is.irp''f,9- -3jio3-~~/ -3% ~---4rp3,5-> ~~---k'f...''+``` -2% `+1,24m88");
+rules.push("demo=ej 3h`2f'' '8`ta,4.- -2% -',if.rdb.'22..''+````` 5> +ifn(.,2....)````- -2% 3> -'6is..irp''f'',9- -3jio3-~~/ (10,14) -3% ~---''4rp3,5---> 4> -------``k..'f.'+``` -1% `+1,24m88");
 rules.push("more=France doret connu");
 
 rules.push("[France doret connu]");

@@ -1,4 +1,4 @@
-// config.js 1.3.8
+// config.js 1.4.0
 
 // This file is part of OpenAero.
 
@@ -34,13 +34,22 @@
 // Define active version number of OpenAero
 // **************
 
-var version = '1.3.8';
+var version = '1.4.0-devel';
 var versionNew = '<strong>OpenAero has been upgraded to version ' +
   version + '</strong><br>New features:<ul>' +
-  '<li>Fixed many bugs and some checking errors</li>' +
-  '<li>Removed option for roll in bottom of P and Q loops (illegal)</li>' +
-  '<li>Added option to change fonts and other styles</li>' +
-  '<li>Improved Grid representation and saving/loading</li>' +
+  '<li>Added option to figure chooser to hide figures that don\'t ' +
+  'comply with the active rules</li>' +
+  '<li>Added new figure, roll and sequence comment options</li>' +
+  '<li>Now possible to save sequences and separate images as PNG, ' +
+  'along with other new print options</li>' +
+  '<li>Improved Free Unknown figure letter handling</li>' +
+  '<li>Disabled some editing of Free Unknown figures to prevent mistakes</li>' +
+  '<li>Increased roll font size, especially for large sequences</li>' +
+  '<li>Figures can now be changed to similar ones (e.g. pull humpty ' +
+  'to push humpty) while keeping rolls</li>' +
+  '<li>Added a bunch of new logos</li>' +
+  '<li>CIVA sequences for 2014</li>' +
+  '<li>Many, many other updates and small bugfixes</li>' +
   '</ul>' +
   'This may take a few seconds to complete.';
 
@@ -80,6 +89,8 @@ var spinElement24 = spinElement * 2.4;
 var spinElement3 = spinElement * 3;
 // define golden ratio
 Math.GR = 1.618;
+// define A4 page ratio
+Math.PageRatio = 1.4143;
 // define the offset for figures in the y axis in degrees
 var yAxisOffsetDefault = 30;
 // define the scale factor on the y axis for perspective drawing
@@ -92,12 +103,29 @@ var scaleLine = {'x':1, 'y':1};
 var numberInCircle = false;
 // define whether to show curves in perspective on Y axis
 var curvePerspective = true;
+
+// define if we show an error when running from file://
+var presentFileError = false;
 // show mini Form A on Form B
 var miniFormA = true;
 // define whether to draw IAC style forms by default
 var iacForms = false;
 // define default pattern for figure images saved in ZIP
-var zipImageFilenamePattern = '%location %category %program %pilot Form %form_fig_%figure.svg';
+var zipImageFilenamePattern = '%location %category %program %pilot Form %form_fig_%figure';
+// define which settings will be saved in cookie
+var saveSettings = [
+  'language',
+  'gridColumns',
+  'saveFigsSeparateWidth',
+  'saveFigsSeparateHeight',
+  'zipImageFilenamePattern',
+  'numberInCircle',
+  'rollFontSize',
+  'nonArestiRolls'];
+// define default language
+var defaultLanguage = 'en';
+// entryOptions are in reverse order of displayed
+var entryOptions = {'eja': 'xBoxEntryAway', 'ej': 'xBoxEntry', 'ed': 'downwindEntry', '': 'upwindEntry'}
 
 // how far apart the starts of figures should at least be
 var minFigStartDist = lineElement * 3;
@@ -107,16 +135,35 @@ var minFigStartDistSq = minFigStartDist * minFigStartDist;
 // For every category the list of SF is defined below. The order MATTERS!
 // The SF will be decided by the first aresti fig nr match
 var superFamilies = [];
-superFamilies.unlimited = {'2.':'2', '5.':'5', '6.':'6', '1.':'7', '3.':'7', '7.':'7', '8.':'7', '0.':'7'};
-superFamilies.advanced = {'9.11.':'3', '9.12.':'3', '9.9.':'4', '9.10.':'4', '2.':'2', '5.':'5', '6.':'6', '1.':'7', '3.':'7', '7.':'7', '8.':'7', '0.':'7'};
+superFamilies.unlimited = [
+  [/^2\./,'2'],
+  [/^5\./,'5'],
+  [/^6\./,'6'],
+  [/^1\./,'7'],
+  [/^3\./,'7'],
+  [/^7\./,'7'],
+  [/^8\./,'7'],
+  [/^0\./,'7']
+  ];
+superFamilies.advanced = [
+  [/^9\.11\./,'3'],
+  [/^9\.12\./,'3'],
+  [/^9\.9\./, '4'],
+  [/^9\.10\./,'4'],
+  [/^2\./,    '2'],
+  [/^5\./,    '5'],
+  [/^6\./,    '6'],
+  [/^1\./,    '7'],
+  [/^3\./,    '7'],
+  [/^7\./,    '7'],
+  [/^8\./,    '7'],
+  [/^0\./,    '7']
+  ];
 superFamilies.yak52 = superFamilies.advanced;
 superFamilies.intermediate = superFamilies.advanced;
 superFamilies.glider = superFamilies.advanced;
 // Total K for Unknown connector figures
 var connectFig = [];
-// Version 1.3.4 : handled in rules
-//connectFig.totalK = {'powered':24, 'glider':10};
-//connectFig.max = {'powered':4, 'glider':2};
 // available rolls
 var rollTypes = [':none','4:1/4','2:1/2','3:3/4','1:1','5:1 1/4','6:1 1/2','7:1 3/4','9:2','22:2x2','32:3x2','42:4x2']
 for (i = 2; i < 9; i++) rollTypes.push(i + '4:' + i + 'x4');
@@ -133,6 +180,7 @@ var rollsPerRollElement = 2;
 // *************
 // Define styles and font sizes
 // *************
+
 // style holds the style objects
 var style = [];
 // styleSave is used for restoring after change by user
@@ -142,6 +190,7 @@ style.pos = 'stroke: black; stroke-width: 1.5px; fill: none;';
 style.chooserPos = 'stroke: black; stroke-width: 3px; fill: none;';
 // Negative line style
 style.neg = 'stroke-dasharray: 5, 3; stroke: red; stroke-width: 1.5px; fill: none;';
+style.negBW = 'stroke-dasharray: 4, 4; stroke: black; stroke-width: 1.5px; fill: none;';
 style.chooserNeg = 'stroke-dasharray: 10, 6; stroke: red; stroke-width: 3px; fill: none;';
 // Black filled path style
 style.blackfill = 'stroke: black; stroke-width: 1px; fill: black;';
@@ -149,6 +198,7 @@ style.blackfill = 'stroke: black; stroke-width: 1px; fill: black;';
 style.posfill = 'stroke: black; stroke-width: 1px; fill: white;';
 // Negative filled path style
 style.negfill = 'stroke: black; stroke-width: 1px; fill: red;';
+style.negfillBW = 'stroke: black; stroke-width: 1px; fill: black;';
 // Dotted path style
 style.dotted = 'stroke-dasharray: 1, 3; stroke: black; stroke-width: 1px; fill: none;';
 // Illegal figure cross style
@@ -159,11 +209,13 @@ style.illegalBox = 'stroke: black; stroke-width: 1px; fill: none;';
 style.corr = 'stroke: red; stroke-width: 2px; fill: none;';
 // Autocorrect filled path style
 style.corrfill = 'stroke: red; stroke-width: 2px; fill: red;';
-// Roll font size
-var rollFontSize = 14;
+// Default roll font size
+var rollFontSize = 20;
+// other sizes
+var rollFont = {'small': 15, 'medium': 20, 'large': 25};
 // Roll text style
-style.rollText = 'font-family: arial, sans; font-size: ' +
-  rollFontSize + 'px; font-weight: bold; fill: red;';
+style.rollText = 'font-family: arial, sans; font-size: ' + rollFontSize +
+  'px; font-weight: bold; fill: red;';
 // Figure Number
 style.figNbr_09 = 'font-family: verdana, helvetica, sans; font-size: 14px; font-weight: bold; fill: black;';
 style.figNbr_10 = 'font-family: verdana, helvetica, sans; font-size: 12px; font-weight: bold; fill: black;';
@@ -177,21 +229,22 @@ style.miniFormA = 'font-family: verdana, helvetica, sans; font-size: 10px; fill:
 style.miniFormASmall = 'font-family: verdana, helvetica, sans; font-size: 8px; fill: black;';
 style.miniFormATotal = 'font-family: verdana, helvetica, sans; font-size: 16px; font-weight: bold; fill: black;';
 // Form A styles
-style.FormAText = 'font-family: verdana, helvetica, sans; font-size: 12px; fill: black;';
-style.FormATextBold = 'font-family: verdana, helvetica, sans; font-size: 12px; font-weight: bold; fill: black;';
-style.FormATextBold8px = 'font-family: verdana, helvetica, sans; font-size: 8px; font-weight: bold; fill: black;';
-style.FormATextBold9px = 'font-family: verdana, helvetica, sans; font-size: 9px; font-weight: bold; fill: black;';
-style.FormATextBold10px = 'font-family: verdana, helvetica, sans; font-size: 10px; font-weight: bold; fill: black;';
-style.FormATextBold11px = 'font-family: verdana, helvetica, sans; font-size: 11px; font-weight: bold; fill: black;';
-style.FormATextBold12px = 'font-family: verdana, helvetica, sans; font-size: 12px; font-weight: bold; fill: black;';
-style.FormATextBold13px = 'font-family: verdana, helvetica, sans; font-size: 13px; font-weight: bold; fill: black;';
-style.FormATextMedium = 'font-family: verdana, helvetica, sans; font-size: 15px; fill: black;';
-style.FormATextLarge = 'font-family: verdana, helvetica, sans; font-size: 18px; fill: black;';
-style.FormATextHuge = 'font-family: verdana, helvetica, sans; font-size: 40px; font-weight: bold; fill: black;';
-style.FormLine = 'stroke: black; stroke-width: 1px; fill: none;';
-style.FormLineBold = 'stroke: black; stroke-width: 4px; fill: none;';
+style.formAText = 'font-family: verdana, helvetica, sans; font-size: 12px; fill: black;';
+style.formATextBold = 'font-family: verdana, helvetica, sans; font-size: 12px; font-weight: bold; fill: black;';
+style.formATextBold8px = 'font-family: verdana, helvetica, sans; font-size: 8px; font-weight: bold; fill: black;';
+style.formATextBold9px = 'font-family: verdana, helvetica, sans; font-size: 9px; font-weight: bold; fill: black;';
+style.formATextBold10px = 'font-family: verdana, helvetica, sans; font-size: 10px; font-weight: bold; fill: black;';
+style.formATextBold11px = 'font-family: verdana, helvetica, sans; font-size: 11px; font-weight: bold; fill: black;';
+style.formATextBold12px = 'font-family: verdana, helvetica, sans; font-size: 12px; font-weight: bold; fill: black;';
+style.formATextBold13px = 'font-family: verdana, helvetica, sans; font-size: 13px; font-weight: bold; fill: black;';
+style.formATextMedium = 'font-family: verdana, helvetica, sans; font-size: 15px; fill: black;';
+style.formATextLarge = 'font-family: verdana, helvetica, sans; font-size: 18px; fill: black;';
+style.formATextHuge = 'font-family: verdana, helvetica, sans; font-size: 40px; font-weight: bold; fill: black;';
+style.formLine = 'stroke: black; stroke-width: 1px; fill: none;';
+style.formLineBold = 'stroke: black; stroke-width: 4px; fill: none;';
 // Print styles
-style.FormBackground = 'fill: white;';
+style.formBackground = 'fill: white;';
+style.printNotes = 'font-family: verdana, helvetica, sans; font-size: 14px; fill: black;';
 style.sequenceString = 'font-family: verdana, helvetica, sans; font-size: 12px; color: blue; fill: blue; word-wrap: break-word;';
 style.windArrow = 'stroke: black; stroke-width: 1.5px; fill: white;';
 
@@ -211,26 +264,29 @@ mask.smalldisable = 'buttons/smallMask-disable.png';
 // Define patterns for the user's OpenAero drawing string
 // ***************
 
+// Never use '#' as a pattern! It is used in various places in OpenAero
+// as a placeholder for switch operations.
 var userpat = [];
+userpat.comment = '"';
+userpat.connector = '=';
+userpat.curveTo = '(';
+userpat.flipNumber = '|';
+userpat.flipYaxis = '/';
 userpat.forward = '~';
-userpat.longforward = '+';
 userpat.forwardshorten = '<';
-userpat.sameroll = ';';
+userpat.lineshorten = '`';
+userpat.longforward = '+';
+userpat.movedown = '^';
+userpat.moveforward = '>';
+userpat.moveto = '[';
 userpat.opproll = ',';
 userpat.rollext = '.';
 userpat.rollextshort = '\'';
-userpat.lineshorten = '`';
-userpat.movedown = '^';
-userpat.moveforward = '>';
+userpat.sameroll = ';';
+userpat.scale = '%';
+userpat.subSequence = '//';
 userpat.switchDirX = '>';
 userpat.switchDirY = '^';
-userpat.text = '"';
-userpat.curveTo = '(';
-userpat.moveto = '[';
-userpat.scale = '%';
-userpat.flipYaxis = '/';
-userpat.connector = '=';
-userpat.subSequence = '//';
 
 // ***************
 // Define patterns for the software figure string
@@ -255,7 +311,10 @@ var rollAttitudes = {'0':'', '45':'d', '90':'v', '135':'d', '180':'', '225':'id'
 // define Regex patterns for drawing and sequence parsing
 // ****************
 
+var regexRollFontSize = /font-size:[ ]*([\d]+)px/;
 var regexChangeDir = new RegExp ('[' + userpat.switchDirX + '\\' + userpat.switchDirY + ']');
+// match all comments
+var regexComments = /"[^"]*"/g;
 var regexSwitchDirX = new RegExp ('\\' + userpat.switchDirX);
 var regexSwitchDirY = new RegExp ('\\' + userpat.switchDirY);
 var regexMoveForward = new RegExp ('^[0-9]*' + userpat.moveforward + '+');
@@ -270,8 +329,9 @@ var regexEntryShorten = /`+\+(.*[a-zA-Z])/;
 var regexExitShorten = /([a-zA-Z].*)\+`+/;
 var regexEntryShortenNeg = /`+(-.*[a-zA-Z])/;
 var regexExitShortenNeg = /([a-zA-Z].*-)`+/;
-var regexFlipYAxis = /^[^\/]*\/[^\/\]]/;
-var regexFlipYAxisReplace = /(^|[^\/])\/([^\/]|$)/g;
+// match the Y axis flip symbol
+var regexFlipYAxis = /(^|[^\/])\/([^\/]|$)/;
+// match (rolling) turns
 var regexTurn = /[0-9\+\-]j[io0-9\+\-]/;
 // regexOLANBumpBug is used to check for the Humpty Bump direction bug
 // in OLAN. Can be removed (incl relevant code in OpenAero.js) in 2015
