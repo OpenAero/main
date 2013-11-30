@@ -24,21 +24,24 @@
   <head>
     <meta charset="UTF-8">
     <!-- set viewport for mobile browsers -->
-    <meta name="viewport" id="viewport" content="width=320, initial-scale=1.0, maximum-scale=2.0, minimum-scale=1.0" />
+    <meta name="viewport" content="width=device-width">
+    <!--<meta name="viewport" id="viewport" content="width=320, initial-scale=1.0, maximum-scale=2.0, minimum-scale=1.0" />-->
+    <!-- set web app capable for Chrome homescreen links -->
+    <meta name="mobile-web-app-capable" content="yes">
     <title>OpenAero</title>
     <!-- stylesheets -->
     <link rel="stylesheet" type="text/css" href="OpenAero.css">
     <link rel="stylesheet" type="text/css" href="desktop.css" id="mobileDesktopCSS">
     <!-- favicons -->
-    <link rel="icon" type="image/png" sizes="16x16" href="favicons/favicon16.png">
-    <link rel="icon" type="image/png" sizes="24x24" href="favicons/favicon24.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="favicons/favicon32.png">
-    <link rel="icon" type="image/png" sizes="57x57" href="favicons/favicon57.png">
-    <link rel="icon" type="image/png" sizes="72x72" href="favicons/favicon72.png">
-    <link rel="icon" type="image/png" sizes="96x96" href="favicons/favicon96.png">
-    <link rel="icon" type="image/png" sizes="114x114" href="favicons/favicon114.png">
-    <link rel="icon" type="image/png" sizes="128x128" href="favicons/favicon128.png">
-    <link rel="icon" type="image/png" sizes="195x195" href="favicons/favicon195.png">
+    <link rel="shortcut icon" type="image/png" sizes="16x16" href="favicons/favicon16.png">
+    <link rel="shortcut icon" type="image/png" sizes="24x24" href="favicons/favicon24.png">
+    <link rel="shortcut icon" type="image/png" sizes="32x32" href="favicons/favicon32.png">
+    <link rel="shortcut icon" type="image/png" sizes="57x57" href="favicons/favicon57.png">
+    <link rel="shortcut icon" type="image/png" sizes="72x72" href="favicons/favicon72.png">
+    <link rel="shortcut icon" type="image/png" sizes="96x96" href="favicons/favicon96.png">
+    <link rel="shortcut icon" type="image/png" sizes="114x114" href="favicons/favicon114.png">
+    <link rel="shortcut icon" type="image/png" sizes="128x128" href="favicons/favicon128.png">
+    <link rel="shortcut icon" type="image/png" sizes="195x195" href="favicons/favicon195.png">
     <!-- configuration, must be first js -->
     <script src="config.js" type="text/javascript"></script>
     <!-- interface languages -->
@@ -127,7 +130,7 @@
         <span class="boxTitle">
           <span class="userText" id="t_printDialog"></span>
         </span>
-          <a href="#" id="save_print" class="info"><img src="buttons/smallInfo.png"></a>
+          <a href="#" id="manual.html_save_print" class="info"><img src="buttons/smallInfo.png"></a>
         <div>
           <span class="userText" id="t_printExplain"></span>
         </div>
@@ -288,7 +291,7 @@
       <div class="box">
         <span class="boxTitle userText" id="t_settingsTitle"></span>
         <span class="info">
-          <a href="manual.html#settings" target="_blank"><img src="buttons/smallInfo.png"></a>
+          <img src="buttons/smallInfo.png" id="manual.html_settings">
         </span>
         <div class="tabSelector">
           <ul>
@@ -630,7 +633,7 @@
           <div class="sectionLabel">
             <span id="figureHeader"></span>
             <span>
-              <a href="manual.html#adding_a_figure" target="_blank"><img src="buttons/smallInfo.png"></a>
+              <img src="buttons/smallInfo.png" id="manual.html_adding_a_figure">
             </span>
           </div>
           <div class="sectionLabelClose">&nbsp;</div>
@@ -696,7 +699,7 @@
             <div class="sectionLabel userText" id="t_comments"></div><div class="sectionLabelClose">&nbsp;</div>
             <textarea name="comments" id="comments"></textarea>
             <input type="button" value="Update">
-            <span class="info"><a href="manual.html#figure_comments" target="_blank"><img src="buttons/smallInfo.png"></a></span>
+            <span class="info"><img src="buttons/smallInfo.png" id="manual.html_figure_comments"></span>
           </div>
         </div>
         <!-- Alerts -->
@@ -712,7 +715,6 @@
       <!-- Figure selector -->
       <div id="figureSelector">
         <div>
-          <a href="manual.html#adding_a_figure" target="_blank" class="info"><img src="buttons/smallInfo.png"></a>
           <div id="figureSelectorClose"><a id="hideFigureSelector" href="#"><img src="buttons/close.png"></a></div>
           <div id="hideIllegalFigures">
             <input type="checkbox" id="hideIllegal" checked="true">

@@ -28,7 +28,6 @@
 * added 2014 CIVA sequences
 * fixed bug causing png logo images to use max available width on forms
 * improved file naming consistency (Issue #120)
-* created Chrome app for improved file saving : TO DO : correct manual etc links
 * fixed Firefox bug where some (rolling) turns were tiny in figure chooser
 * replaced use of cookies by localStorage and (for App) chrome.storage
 * added plus and minus to move XY values and remove the values when unused
@@ -42,6 +41,8 @@
 * added International Miniature Aerobatic Club logo
 * disabled server bouncing for files as currently it causes more trouble than it helps
 * added automatic separation of subsequent roll text
+* created Chrome app for improved file saving
+* added info for "Add to Homescreen" for Android Chrome version 32+
 
 1.3.8
 * added VINK rules for Standard Unknown

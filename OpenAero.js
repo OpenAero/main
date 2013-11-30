@@ -646,12 +646,20 @@ function settingsDialog() {
 
 // helpWindow will display a window with content from url and title
 function helpWindow(url, title) {
-  var w = window.open(url, title, 'menubar=no, scrollbars=yes, status=no, toolbar=no, top=30px, width=900px');
-  // set location again after 1 second to circumvent Chrome bug regarding
-  // anchors later in html
-  setTimeout(function(){
-    w.location = url;
-  }, 1000);
+  if (chromeApp) {
+    var w = chrome.app.window.create (
+      url,
+      {bounds:{width:800}}
+    );
+    w.title = title;
+  } else {    
+    var w = window.open(url, title, 'menubar=no, scrollbars=yes, status=no, toolbar=no, top=30, width=800');
+    // set location again after 2 seconds to circumvent Chrome bug
+    // regarding anchors later in html
+    setTimeout(function(){
+      w.location = url;
+    }, 2000);
+  }
 }
 
 /** End dialogs and windows */
@@ -2634,6 +2642,12 @@ function addEventListeners () {
   document.getElementById('fileName').addEventListener('keyup', updateSaveFilename, false);
     
   // figure editor options
+  document.getElementById('manual.html_adding_a_figure').addEventListener('mousedown', function(){
+    helpWindow('manual.html#adding_a_figure', 'Adding a figure');
+  }, false);
+  document.getElementById('manual.html_figure_comments').addEventListener('mousedown', function(){
+    helpWindow('manual.html#figure_comments', 'Figure comments');
+  }, false);
   document.getElementById('t_addFigureText').addEventListener('mousedown', showFigureSelector, false);
   document.getElementById('subSequence').addEventListener('click', clickButton, false);
   document.getElementById('deleteFig').addEventListener('click', clickButton, false);
@@ -2673,6 +2687,9 @@ function addEventListeners () {
   document.getElementById('t_checkMultiClose').addEventListener('click', function(){checkMultiDialog()}, false);
   
   // settings dialog
+  document.getElementById('manual.html_settings').addEventListener('mousedown', function(){
+    helpWindow('manual.html#settings', 'Settings');
+  }, false);
   document.getElementById('t_general').addEventListener('click', selectTab, false);
   document.getElementById('t_styling').addEventListener('click', selectTab, false);
   document.getElementById('t_expert').addEventListener('click', selectTab, false);
@@ -2704,7 +2721,7 @@ function addEventListeners () {
   document.getElementById('t_cancelSave').addEventListener('mousedown', function(){saveDialog()}, false);
   
   // print/save image dialog
-  document.getElementById('save_print').addEventListener('click', function(){
+  document.getElementById('manual.html_save_print').addEventListener('click', function(){
       helpWindow('manual.html#save_print', 'OpenAero manual');
     }, false);
   document.getElementById('printFormA').addEventListener('change', saveImageSizeAdjust, false);
