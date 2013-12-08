@@ -1,7 +1,7 @@
 {
   "name": "OpenAero",
   "description" : "Aerobatic sequence creation software",
-  "version": "1.4.0",
+  "version": "1.4.0.1",
   "manifest_version": 2,
   "minimum_chrome_version": "26",
 
@@ -10,13 +10,21 @@
     {"fileSystem": ["write"]}
   ],
   
+  "externally_connectable": {
+    "matches": [
+      "http://*.openaero.net/*"
+    ]
+  },
+  
   "app": {
     "background": {
       "scripts": [
         "background.js"
       ]
     }
+
   },
+  
   "icons": {
     "16" : "favicons/favicon16.png",
     "128": "favicons/favicon96in128.png"

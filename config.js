@@ -34,7 +34,7 @@
 // Define active version number of OpenAero
 // **************
 
-var version = '1.4.0-devel';
+var version = '1.4.0';
 var versionNew = '<strong>OpenAero has been upgraded to version ' +
   version + '</strong><br>New features:<ul>' +
   '<li>Added option to figure chooser to hide figures that don\'t ' +
@@ -49,9 +49,17 @@ var versionNew = '<strong>OpenAero has been upgraded to version ' +
   'to push humpty) while keeping rolls</li>' +
   '<li>Added a bunch of new logos</li>' +
   '<li>CIVA sequences for 2014</li>' +
+  '<li>Chrome App available, offers easier access and improved file ' +
+  'saving</li>' +
   '<li>Many, many other updates and small bugfixes</li>' +
   '</ul>' +
   'This may take a few seconds to complete.';
+
+// Define chrome app id. Will be replaced by 'false' if not running as app
+var chromeApp = {
+  'id': 'gadjhgnenmdfihhmnhgpcijlafpahfbi',
+  'active': false
+}
 
 // define the labels (=input field ids) for saving/loading sequences
 var sequenceXMLlabels = ['pilot', 'aircraft', 'category', 'location', 'date', 'class', 'program', 'rules', 'positioning', 'harmony', 'notes', 'sequence_text', 'logo', 'oa_version', 'default_view'];

@@ -23,6 +23,8 @@
 <html manifest="cache.manifest">
   <head>
     <meta charset="UTF-8">
+    <!-- set Google verification tag, essential for installing App from site -->
+    <meta name="google-site-verification" content="19PeFg_VefT13gYXLO6E-IJKXjPbzjF3f_iZ2T8pa9E" />
     <!-- set viewport for mobile browsers -->
     <meta name="viewport" content="width=device-width">
     <!--<meta name="viewport" id="viewport" content="width=320, initial-scale=1.0, maximum-scale=2.0, minimum-scale=1.0" />-->
@@ -94,14 +96,6 @@
         <div id="infoMessage"></div>
       </div>
     </div>
-    <!-- alertBox -->
-    <div id="alertBox" class="boxbg noDisplay">
-      <div class="box">
-        <span class="boxTitle" id="alertTitle"></span>
-        <div id="alertMessage"></div>
-        <span class="textButton userText close" id="t_closeAlert"></span>
-      </div>
-    </div>
     <!-- confirmBox -->
     <div id="confirmBox" class="boxbg noDisplay">
       <div class="box">
@@ -110,6 +104,14 @@
         <span class="textButton userText" id="t_confirmBoxYes"></span>
         <span class="textButton userText" id="t_confirmBoxNo"></span>
         </div>
+    </div>
+    <!-- alertBox, after confirmBox so it's shown on top -->
+    <div id="alertBox" class="boxbg noDisplay">
+      <div class="box">
+        <span class="boxTitle" id="alertTitle"></span>
+        <div id="alertMessage"></div>
+        <span class="textButton userText close" id="t_closeAlert"></span>
+      </div>
     </div>
     <!-- save dialog -->
     <div id="saveDialog" class="boxbg noDisplay">
@@ -482,13 +484,16 @@
               </li>
               <li class="fileOpening">
                 <div class="openFile">
-                  <a class="userText" id="t_importRulesFile" href=#></a>
+                  <a class="userText" id="t_importRulesFile" href="#"></a>
                   <form id="rulesFileForm">
                     <input type="file" id="rulesFile" size=1>
                   </form>
                 </div>
               </li>
               <li><a class="userText" id="t_settings" href="#"></a></li>
+              <li id="installChromeApp" class="noDisplay">
+                <a class="userText" id="t_installChromeAppTitle" href="#"></a>
+              </li>
             </ul>
           </li>
           <!-- Help menu -->

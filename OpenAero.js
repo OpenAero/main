@@ -148,10 +148,6 @@ var browserString = '';
 // start with true to activate the check
 var cookies = true;
 
-// chromeApp is set to true when it is detected OpenAero is running as
-// a Chrome app
-var chromeApp = false;
-
 // loadComplete is true when doOnLoad has completed
 var loadComplete = false;
 
@@ -646,7 +642,7 @@ function settingsDialog() {
 
 // helpWindow will display a window with content from url and title
 function helpWindow(url, title) {
-  if (chromeApp) {
+  if (chromeApp.active) {
     var w = chrome.app.window.create (
       url,
       {bounds:{width:800}}
@@ -2362,7 +2358,7 @@ function drawArestiText(figNr, aresti) {
 }
 
 // #####################################################
-// Functions for interpreting user input and variables
+// Functions for setting up the software
 
 // doOnLoad is only called on initial loading of the page
 function doOnLoad () {
@@ -2374,22 +2370,26 @@ function doOnLoad () {
   try {
     if (chrome) {
       if (chrome.fileSystem) {
-        chromeApp = true;
+        chromeApp.active = true;
         console.log('Running as Chrome app');
       }
     }
   } catch (e) {};
+
+    // check if Chrome App is installed
+    checkForApp();
   
   // Use try to prevent bugs in this part from blocking OpenAero startup.
   // Errors are logged to console.
   try {    
     // Check if cookies are supported. When running as Chrome app, we
     // assume the local storage support is present
-    if (!chromeApp) {
+    if (!chromeApp.active) {
       //document.cookie="cookieTest";
       //cookies = (document.cookie.indexOf("cookieTest")!=-1)? true : false;
       cookies = (typeof(localStorage) != 'undefined')? true : false;
     }
+    
     // set correct options and menu items in various places
     setOptions();
     /** Define the default language and userText now as they are used
@@ -2500,7 +2500,7 @@ function doOnLoad () {
   // Check if an update has just been done
   checkUpdateDone();
   // Check for the latest version every 10 minutes
-  if (!chromeApp) {
+  if (!chromeApp.active) {
     window.setInterval(function(){latestVersion()},600000);
   }
   // check if we are running from a file (DEPRECATED). This will also
@@ -2517,7 +2517,7 @@ function doOnLoad () {
   }
   loadComplete = true;
   // also check for latest version now
-  if (chromeApp) {
+  if (chromeApp.active) {
     document.getElementById('latestVersion').parentNode.classList.add('noDisplay');
   } else {
     latestVersion();
@@ -2591,6 +2591,7 @@ function addEventListeners () {
   document.getElementById('t_checkMultipleSeq').addEventListener('click', function(){checkMultiDialog(true)}, false);
   document.getElementById('rulesFile').addEventListener('change', openRulesFile, false);
   document.getElementById('t_settings').addEventListener('click', settingsDialog, false);
+  document.getElementById('t_installChromeAppTitle').addEventListener ('mousedown', installChromeApp, false);
   
   document.getElementById('menuHelp').addEventListener('mouseover', menuActive, false);
   document.getElementById('menuHelp').addEventListener('mouseout', menuInactive, false);  
@@ -2749,6 +2750,77 @@ function addEventListeners () {
 function myEvent() {
   eval (myEvents[this.id]);
 }
+
+// checkForApp will check if the OpenAero Chrome app is present
+function checkForApp () {
+  // only do something when not running as Chrome app
+  // and
+  // in Chrome browser with extension support
+  if (typeof chrome == "undefined") return;
+  if (!chromeApp.active) {
+    function f (c) {
+      
+      if (!chrome.app.isInstalled) {
+        // App not active
+        // Create <head> link for direct install
+        var head = document.getElementsByTagName ('head')[0];
+        var link = document.createElement ('link');
+        link.rel = 'chrome-webstore-item';
+        link.href = 'https://chrome.google.com/webstore/detail/' + chromeApp.id;
+        head.appendChild (link);
+        // Show link in tools menu
+        document.getElementById('installChromeApp').classList.remove ('noDisplay');
+          
+        // Create a box asking the user if they want to install the
+        // App, unless installChromeAppAsked is present. Also wait until
+        // loadComplete
+        if (!c.installChromeAppAsked) {
+          var id = window.setInterval (function(){
+            if (loadComplete) {
+              window.clearInterval (intervalID.installChromeApp);
+              delete intervalID.installChromeApp;
+              confirmBox (
+                userText.installChromeApp,
+                userText.installChromeAppTitle,
+                installChromeApp
+              );
+            }
+          }, 1000);
+          intervalID.installChromeApp = id;
+          // don't ask again, independent of install result
+          setCookie ('installChromeAppAsked', 'true');
+        };
+      }
+      
+    }
+    
+    getCookie ('installChromeAppAsked', f);
+    
+    // remove cookie for troubleshooting / bugfixing
+    // setTimeout (function(){setCookie ('installChromeAppAsked', '');},100);
+  }
+
+}
+
+// installChromeApp will perform Chrome App installation after called
+function installChromeApp() {
+  chrome.webstore.install (
+    undefined,
+    function() {
+      // install succesfull
+      alertBox (userText.installChromeAppComplete, userText.installChromeAppTitle);
+      // hide menu link
+      document.getElementById('installChromeApp').classList.add ('noDisplay');
+    },
+    function(e) {
+      // install unsuccesfull
+      console.log(e);
+    }
+  );
+}
+
+// #####################################################
+// Functions for interpreting user input and variables
 
 // confirmYes is executed when Yes is clicked in a confirm box. It
 // causes the box to be removed and function confirmFunction to be
@@ -8481,7 +8553,7 @@ function saveFile(data, name, ext, filter, format, noBounce) {
   // 4) Ask user to right-click and "Save as"
 
   // 1) Chrome app saving
-  if (chromeApp) {
+  if (chromeApp.active) {
     // convert base64 to binary
     if (format.match (/;base64$/)) {
       var byteC = atob (data);
@@ -8763,7 +8835,7 @@ function setCookie(c_name, value, exdays) {
   //console.log('setting cookie: ' + c_name);
   if (cookies) {
     //console.log('value: ' + value);
-    if (chromeApp) {
+    if (chromeApp.active) {
       var c = {};
       c[c_name] = value;
       chrome.storage.local.set (c);
@@ -8786,7 +8858,7 @@ function setCookie(c_name, value, exdays) {
 // Function f is the callback to be called when the cookie is loaded
 function getCookie(c_name, f) {
   if (cookies) {
-    if (chromeApp) {
+    if (chromeApp.active) {
       chrome.storage.local.get (c_name, f);
     } else {
       var c = []

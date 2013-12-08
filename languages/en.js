@@ -144,6 +144,16 @@ lang.en = {
 'imageWidth' : 'Width',
 'importRulesFile' : 'Import rules file',
 'installation' : 'Installation',
+'installChromeApp' : 'You can install OpenAero as a Chrome App. This ' +
+  'provides:<ul><li>Improved file saving</li><li>Adding OpenAero to ' +
+  'your desktop to start without opening Chrome browser</li></ul>' +
+  'Do you wish to install the App? If you select <i>No</i> you will ' +
+  'not be asked again but can install it through the <i>Tools</i> ' +
+  'menu at any time.',
+'installChromeAppComplete' : 'Chrome App has been installed. You can ' +
+  'access it by opening a new tab in Chrome. By right-clicking you ' +
+  'add the App to your desktop.',
+'installChromeAppTitle' : 'Install Chrome App',
 'inverseForms' : 'Inverse color (white on black)',
 'language' : 'Language',
 'loadNewVersion' : 'A new version of OpenAero is available. Load it?',

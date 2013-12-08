@@ -18,7 +18,7 @@
 * added handling of non-standard code 28 for 2x8 roll (Issue #121)
 * added option for creating PNG images in "Save figs separate" (Issue #36)
 * fixed incorrect position (in some cases) of sequence terminator line (Issue #3)
-* changed onClick to eventListener to improve coding and enable Chrome app (work in progress)
+* changed onClick to eventListener to improve coding and enable Chrome app
 * added pilot card print options
 * added black & white printing/saving
 * added saving sequence as PNG
@@ -41,7 +41,7 @@
 * added International Miniature Aerobatic Club logo
 * disabled server bouncing for files as currently it causes more trouble than it helps
 * added automatic separation of subsequent roll text
-* created Chrome app for improved file saving
+* created Chrome App and added install options
 * added info for "Add to Homescreen" for Android Chrome version 32+
 
 1.3.8
