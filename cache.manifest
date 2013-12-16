@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# OpenAero Appcache version 1.4.0.1
+# OpenAero Appcache version 1.4.0
 about.html
 arestisystem.html
 buttons/figEndInv.png
@@ -92,13 +92,13 @@ manual.html
 mobile.css
 OpenAero.css
 OpenAero.js
-rules/rules13.js
-rules/rules13-civa.js
+rules/rules14.js
+rules/rules14-civa.js
 rules/rules13-baea.js
-rules/rules13-france.js
+rules/rules14-france.js
 rules/rules13-ga.js
-rules/rules13-vink.js
-rules/rules13-glider-civa.js
+rules/rules14-vink.js
+rules/rules14-glider-civa.js
 sprintf.js
 vkbeautify.js
 NETWORK: 

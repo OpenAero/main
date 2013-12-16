@@ -136,3 +136,69 @@ exampleSequences['2013 CIVA-Glider Adv Known'] = '<sequence>' +
 '<logo>CIVA</logo>' +
 '<oa_version>1.4.0</oa_version>' +
 '</sequence>';
+
+exampleSequences['2013 France Espoirs Connu'] = '<sequence>' +
+'<category>espoirs</category>' +
+'<class>powered</class>' +
+'<program>connu</program>' +
+'<rules>France</rules>' +
+'<positioning>10</positioning>' +
+"<sequence_text>ed 2g iv5s..''^ -2% m,2+~ 4> +3j~ -3% c''2''+``` (-2,12) o ``+h.''+ 6> m-~~ ~-2j- (3,7) -1-</sequence_text>" +
+'<logo>FFAvoltige</logo>' +
+'<oa_version>1.4.0</oa_version>' +
+'</sequence>';
+
+exampleSequences['2013 France Desavois Connu'] = '<sequence>' +
+'<category>desavois</category>' +
+'<class>powered</class>' +
+'<program>connu</program>' +
+'<rules>France</rules>' +
+'<positioning>15</positioning>' +
+"<sequence_text>d24- -iv'is'' 2h.- -3% -m+~~ 6% 3> 2j2 (2,6) -3% ``+2,2c2...''+`` ````+,4pb+```` 2> +4k.'2' +m2 2f-</sequence_text>" +
+'<logo>FFAvoltige</logo>' +
+'<oa_version>1.4.0</oa_version>' +
+'</sequence>';
+
+exampleSequences['2013 France National2 Connu1'] = '<sequence>' +
+'<category>national2</category>' +
+'<class>powered</class>' +
+'<program>connu_1</program>' +
+'<rules>France</rules>' +
+'<positioning>20</positioning>' +
+"<sequence_text>-d1- -iv5is/ ,4h o1 2> ~+'k''2if...''+``` ```+2fg``2- (-8,3) 12% ```-2joi2-``` -4,3 /``h4' ~~8b+++ ++m2,44</sequence_text>" +
+'<logo>FFAvoltige</logo>' +
+'<oa_version>1.4.0</oa_version>' +
+'</sequence>';
+
+exampleSequences['2013 France National2 Connu2'] = '<sequence>' +
+'<category>national2</category>' +
+'<class>powered</class>' +
+'<program>connu_2</program>' +
+'<rules>France</rules>' +
+'<positioning>20</positioning>' +
+"<sequence_text>v'4'/ 7s''irp2~~ ```4,5c....'-`` ``-2dh...+` cc+``` 2> mf;2+`` (2,13) 3% 2joi2 /~+```k24..'+`` ``+o44+`` 5% ```+````````48```rc > +++rp2,24</sequence_text>" +
+'<logo>FFAvoltige</logo>' +
+'<oa_version>1.4.0</oa_version>' +
+'</sequence>';
+
+exampleSequences['2013 France Doret Connu1'] = '<sequence>' +
+'<category>doret</category>' +
+'<class>powered</class>' +
+'<program>connu_1</program>' +
+'<rules>France</rules>' +
+'<positioning>40</positioning>' +
+"<sequence_text>~~-,fpb`,2'' '',24ita.'+````` 8> /n(.''6if..''),"|"4' ``7s..ik``2f```- 14% ~-48a34,3-``` `````-2ac(2)6f,6-`````` (-5,13) -3% ~-3jo3---~/ ~~-''8'h'+++> ++``24.'g``2,if'-</sequence_text>" +
+'<logo>FFAvoltige</logo>' +
+'<oa_version>1.4.0</oa_version>' +
+'</sequence>';
+
+exampleSequences['2013 France Doret Connu2'] = '<sequence>' +
+'<category>doret</category>' +
+'<class>powered</class>' +
+'<program>connu_2</program>' +
+'<rules>France</rules>' +
+'<positioning>40</positioning>' +
+"<sequence_text>ej 3h`2f'' '8`ta,4.- -2% -',if.rdb.'22..''+````` 5> +ifn(.,2....)````- -2% 3> -'6is..irp''f'',9- -3jio3-~~/ (10,14) -3% ~---''4rp3,5---> 4> -------``k..'f.'+``` -1% `+1,24m88</sequence_text>" +
+'<logo>FFAvoltige</logo>' +
+'<oa_version>1.4.0</oa_version>' +
+'</sequence>';

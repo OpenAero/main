@@ -548,7 +548,10 @@ option.used {
 #alertMessage, #confirmMessage {
   padding: 0.5em;
 }
-
+#saveAsURLArea {
+  width: 99%;
+  height: 12em;
+}
 #dlTextField {
   float: left;
   font-size: 1.25em;

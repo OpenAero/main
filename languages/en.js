@@ -269,6 +269,9 @@ lang.en = {
 'saveAsURL' : 'The link presented below contains your complete ' +
   'sequence. You can copy it to email, bookmark it etc...<br />' +
   'Use right-click and "Copy Link Address".',
+'saveAsURLFromApp' : 'The link presented below contains your complete ' +
+  'sequence. You can copy it to email, bookmark it etc...<br />' +
+  'Use right-click to copy to your clipboard.',
 'saveAsURLTitle' : 'Save sequence as link',
 'saveFigsSeparate' : 'Save figs separate',
 'saveFigsSeparateTitle' : 'Save figures separately',

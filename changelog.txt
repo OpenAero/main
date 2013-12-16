@@ -43,6 +43,13 @@
 * added automatic separation of subsequent roll text
 * created Chrome App and added install options
 * added info for "Add to Homescreen" for Android Chrome version 32+
+* updated IAC Form A to 2014 version
+* Updated CIVA rules for 2014
+* fixed "unable to shorten negative entry line" bug
+* added maximum K info to Mini Form A where applicable
+* corrected sequence check date information on form B/C
+* added French rules for 2014
+* updated rule handling to load groups before other rules to better handle rule files
 
 1.3.8
 * added VINK rules for Standard Unknown

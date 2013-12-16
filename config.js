@@ -234,6 +234,7 @@ style.textBlockBorderBold = 'stroke: black; stroke-width: 2px; fill: none;';
 style.textBlockBorderBoldRed = 'stroke: red; stroke-width: 2px; fill: none;';
 // Mini Form A styles
 style.miniFormA = 'font-family: verdana, helvetica, sans; font-size: 10px; fill: black;';
+style.miniFormAMax = 'font-family: verdana, helvetica, sans; font-size: 14px; fill: black;';
 style.miniFormASmall = 'font-family: verdana, helvetica, sans; font-size: 8px; fill: black;';
 style.miniFormATotal = 'font-family: verdana, helvetica, sans; font-size: 16px; font-weight: bold; fill: black;';
 // Form A styles
