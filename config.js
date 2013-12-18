@@ -48,14 +48,15 @@ var versionNew = '<strong>OpenAero has been upgraded to version ' +
   '<li>Figures can now be changed to similar ones (e.g. pull humpty ' +
   'to push humpty) while keeping rolls</li>' +
   '<li>Added a bunch of new logos</li>' +
-  '<li>CIVA sequences for 2014</li>' +
+  '<li>CIVA and French sequences for 2014</li>' +
+  '<li>CIVA and French rules for 2014</li>' +
   '<li>Chrome App available, offers easier access and improved file ' +
   'saving</li>' +
   '<li>Many, many other updates and small bugfixes</li>' +
   '</ul>' +
   'This may take a few seconds to complete.';
 
-// Define chrome app id. Will be replaced by 'false' if not running as app
+// Define chrome app id and if app is active
 var chromeApp = {
   'id': 'gadjhgnenmdfihhmnhgpcijlafpahfbi',
   'active': false
@@ -254,7 +255,7 @@ style.formLineBold = 'stroke: black; stroke-width: 4px; fill: none;';
 // Print styles
 style.formBackground = 'fill: white;';
 style.printNotes = 'font-family: verdana, helvetica, sans; font-size: 14px; fill: black;';
-style.sequenceString = 'font-family: verdana, helvetica, sans; font-size: 12px; color: blue; fill: blue; word-wrap: break-word;';
+style.sequenceString = 'font-family: monospace; font-size: 10px; color: blue; fill: blue; word-wrap: break-word;';
 style.windArrow = 'stroke: black; stroke-width: 1.5px; fill: white;';
 
 // ***************

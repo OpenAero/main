@@ -50,6 +50,8 @@
 * corrected sequence check date information on form B/C
 * added French rules for 2014
 * updated rule handling to load groups before other rules to better handle rule files
+* fixed copying of sequence string from PDF (Issue #125)
+* don't do sequence text highlighting for touch enabled devices to prevent showing keyboard
 
 1.3.8
 * added VINK rules for Standard Unknown

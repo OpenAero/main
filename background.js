@@ -6,13 +6,17 @@ chrome.app.runtime.onLaunched.addListener(function(launchData) {
   }
   if (match) {
     chrome.app.window.create('index.html' + match[0], {
-    }, function(win){
-      win.maximize();
+      'bounds':{
+        'width': 960,
+        'height': 720
+      }
     });
   } else {
     chrome.app.window.create('index.html', {
-    }, function(win){
-      win.maximize();
+      'bounds':{
+        'width': 960,
+        'height': 720
+      }
     });
   }
 });

@@ -469,13 +469,13 @@ function switchMobile () {
   changeFigureGroup();
 }    
 
-// menuActive and menuInactive show and remove top menu's on mouseover
+// menuActive and menuInactive show and remove top menus on mouseover
 function menuActive () {
-  this.setAttribute('class', 'active');
+  this.classList.add ('active');
 }
 
 function menuInactive () {
-  this.removeAttribute('class');
+  this.classList.remove ('active');
 }
 
 // rebuildSequence deletes and recreates the svg that holds the sequence
@@ -627,11 +627,17 @@ function settingsDialog() {
 // helpWindow will display a window with content from url and title
 function helpWindow(url, title) {
   if (chromeApp.active) {
-    var w = chrome.app.window.create (
-      url,
-      {bounds:{width:800}}
-    );
-    w.title = title;
+    chrome.app.window.create (url, {
+      bounds: {
+        width:800,
+        height:600
+      }
+    }, function(w) {
+      var win = w.contentWindow;
+      win.onLoad = function() {
+        win.document.title = title;
+      };
+    });
   } else {    
     var w = window.open(url, title, 'menubar=no, scrollbars=yes, status=no, toolbar=no, top=30, width=800');
     // set location again after 2 seconds to circumvent Chrome bug
@@ -642,6 +648,32 @@ function helpWindow(url, title) {
   }
 }
 
+// newWindow will display a window with content from body and title
+function newWindow (body, title) {
+  if (chromeApp.active) {
+    chrome.app.window.create ('window.html', {
+      bounds: {
+        width:800,
+        height:600
+      }
+    }, function(w) {
+      var win = w.contentWindow;
+      win.onLoad = function() {
+        win.document.title = title;
+        win.document.body = body;
+      };
+    });
+  } else {
+    var w = window.open ('', title);
+    w.close();
+    // open the window and close it. This will clear any previous window
+    var w = window.open ('', title, 'width=800,height=600,top=50,' +
+      'location=no,menubar=no,scrollbars=yes,status=no,toolbar=no');
+    w.document.title = title;
+    w.document.body = body;
+  }
+}
+  
 /** End dialogs and windows */
 
 // Modern Combo Box  Script
@@ -735,10 +767,13 @@ function sanitizeSpaces (line, noLT) {
 // described by an array of Aresti numbers
 function getSuperFamily (aresti, category) {
   var superFamily = [];
-  // set default Super Family
+  // Set default Super Family. First check if a matching category is
+  // active, otherwise use "advanced".
   category = category.toLowerCase();
   if (superFamilies[category]) {
     superFamily = superFamilies[category];
+  } else {
+    superFamily = superFamilies.advanced;
   }
   // set Super Family from rules
   if (rulesActive) {
@@ -2366,7 +2401,7 @@ function doOnLoad () {
     /** userText is now defined, continue */
 
     // Add a listener for HTML5 app cache updates
-    addUpdateListener();
+    if (!chromeApp.active) addUpdateListener();
     // show loading overlay and circles
     /**
     var el = document.getElementById('alertBoxOverlay');
@@ -2738,9 +2773,9 @@ function checkForApp () {
       if (typeof chrome.app == "undefined") return;
       if (!chromeApp.active) {
         // App not active. This also means we are not in OpenAero Stable
-        // (openaero.net or www.openaero.net) as these are automatically
-        // redirected to the App through the url_handlers directive in
-        // manifest.json
+        // (openaero.net or www.openaero.net) with the App installed.
+        // Stable is automatically redirected to the App through the
+        // url_handlers directive in manifest.json
         
         // Create <head> link for direct install
         var head = document.getElementsByTagName ('head')[0];
@@ -5392,11 +5427,16 @@ function loadRules(ruleName, catName, programName) {
         figureLetters = rules[i].replace(/ /g, '').match(/=(.*)/)[1];
       } else if (rules[i].match(/^sf[ ]*=/)) {
         // define Super Families
-        var families = rules[i].replace(/ /g, '').match(/=(.*)/)[1].split(';');
-        for (var j = 0; j < families.length; j++) {
-          var regex = new RegExp (families[j].split(':')[0]);
-          var fam = families[j].split(':')[1];
-          ruleSuperFamily.push ([regex, fam]);
+        var val = rules[i].replace(/ /g, '').match(/=(.*)/)[1];
+        if (superFamilies[val.toLowerCase()]) {
+          ruleSuperFamily = superFamilies[val.toLowerCase()];
+        } else {
+          var families = val.split(';');
+          for (var j = 0; j < families.length; j++) {
+            var regex = new RegExp (families[j].split(':')[0]);
+            var fam = families[j].split(':')[1];
+            ruleSuperFamily.push ([regex, fam]);
+          }
         }
       }
     }
@@ -5963,15 +6003,14 @@ function checkSequence(show) {
     if (show === 'log') {
       // show log page
       var log = checkRules();
-      var myWindow = window.open('',"printForms",'width=900,height=700,top=50' +
-        ',location=no,menubar=no,scrollbars=yes,status=no,toolbar=no');
-      myWindow.document.title = userText.showLog;
-      myWindow.innerHTML = '';
-      myWindow.document.write('<pre>');
+      var body = document.createElement('body');
+
+      var pre = document.createElement('pre');
+      body.appendChild(pre);
       for (var i = 0; i < log.length; i++) {
-        myWindow.document.write(log[i] + '\n');
+        pre.appendChild(document.createTextNode(log[i] + '\n'));
       }
-      myWindow.document.write('</pre>');
+      newWindow (body, userText.sequenceCheckLog);
     } else {
       div.classList.remove ('noDisplay');
       var content = '';
@@ -6599,10 +6638,11 @@ function selectFigure (e, noChooserUpdate) {
       }
     //}
       
-    // select the figure in the sequence text when we were not editing
-    // in the text and we are not in the mobile version. Select all the
+    // Select the figure in the sequence text when we were not editing
+    // in the text and we are not on a touch device, as we assume this
+    // would have a non-physical keyboard popping up. Select all the
     // way back to the previous real figure
-    if (!sequenceText.hasfocus && !mobileBrowser) {
+    if (!sequenceText.hasfocus && !('ontouchstart' in document.documentElement)) {
       var start = figures[selectedFigure.id].stringStart;
       for (var i = selectedFigure.id - 1; i>=0; i--) {
         if (figures[i].aresti) {
@@ -8075,13 +8115,10 @@ function checkMulti (evt) {
   // set counter and limit
   multi.count = 0;
   multi.total = files.length;
-  // open the window and close it. This will clear any previous window
-  var myWindow = window.open('',"Check Multiple Sequences");
-  myWindow.close();
-  // now open for new output
-  myWindow = window.open('',"Check Multiple Sequences",'width=900,height=700,top=50' +
-    ',location=no,menubar=no,scrollbars=yes,status=no,toolbar=no');
-  myWindow.document.title = userText.showLog;
+  if (multi.total > 0) {
+    infoBox (userText.checkMultiWait, userText.checkMulti);
+  }
+  var body = document.createElement('body');
   // go through the selected files
   for (var i = 0, f; f=files[i];i++){
     (function (file) {
@@ -8090,8 +8127,8 @@ function checkMulti (evt) {
       // function will be called
       reader.readAsText(file, "UTF-8");
       reader.file = file;
-      reader.onload = loadedSequenceMulti;
-      reader.onerror = errorMulti;
+      reader.onload = function(e) {loadedSequenceMulti(e, body)};
+      reader.onerror = function(e) {errorMulti(e, body)};
     })(f);
   }
   // hide dialog screen
@@ -8099,7 +8136,11 @@ function checkMulti (evt) {
 }
 
 // finishMulti will be called when all sequences have been checked
-function finishMulti () {
+function finishMulti (body) {
+  // show the check result window
+  newWindow (body, userText.sequenceCheckLog);
+  // clear "wait" message
+  infoBox ();
   // Clear file field to enable loading the same file again
   document.getElementById('checkMultiFileForm').reset();
   // restore saved sequence
@@ -8109,7 +8150,7 @@ function finishMulti () {
 
 // loadedSequenceMulti will be called when a sequence file has been loaded
 // for multiple sequence checking
-function loadedSequenceMulti(evt) {
+function loadedSequenceMulti(evt, body) {
   // check if loadedSequenceMulti is running. If so, set 100ms timeout
   // for next try
   if (multi.processing) {
@@ -8119,8 +8160,6 @@ function loadedSequenceMulti(evt) {
   console.log('Checking: ' + evt.target.file.name);
   // Obtain the read file data  
   var fileString = evt.target.result;
-  // select the window
-  var myWindow = window.open('',"Check Multiple Sequences");
   // Check if we have an OLAN sequence or an OpenAero XML sequence
   // If the sequence file starts with '<', assume it's an XML sequence
   if (fileString.charAt(0) === '<') {
@@ -8144,13 +8183,15 @@ function loadedSequenceMulti(evt) {
     var log = changeCombo('program');
   }
   // write the log to the log window
-  myWindow.document.write('<pre>');
-  myWindow.document.write('File: ' + evt.target.file.name + '\n');
+  var pre = document.createElement('pre');
+  // myWindow.document.body.appendChild (pre);
+  body.appendChild (pre);
+  pre.appendChild(document.createTextNode('File: ' + evt.target.file.name + '\n'));
   if (document.getElementById('multiFullLog').checked) {
     // full expanded log
     
     for (var i = 0; i < log.length; i++) {
-      myWindow.document.write(log[i] + '\n');
+      pre.appendChild(document.createTextNode(log[i] + '\n'));
     }
   } else {
     // concise log
@@ -8164,22 +8205,24 @@ function loadedSequenceMulti(evt) {
     div.removeChild(div.firstChild);
     if (div.innerHTML == '') {
       if (rulesActive) {
-        myWindow.document.write ('Rules: ' + rulesActive + '\n');
-        myWindow.document.write(userText.sequenceCorrect + '\n');
+        pre.appendChild(document.createTextNode('Rules: ' + rulesActive + '\n'));
+        pre.appendChild(document.createTextNode(userText.sequenceCorrect + '\n'));
       } else {
-        myWindow.document.write(userText.noRules + '\n');
+        pre.appendChild(document.createTextNode(userText.noRules + '\n'));
       }
     } else {
       if (rulesActive) {
-        myWindow.document.write ('Rules: ' + rulesActive + '\n');
+        pre.appendChild(document.createTextNode('Rules: ' + rulesActive + '\n'));
       }
-      myWindow.document.write('</pre>');
-      myWindow.document.write(div.innerHTML);
-      myWindow.document.write('<pre>');
+      body.appendChild (div);
+      // myWindow.document.body.appendChild(div);
+      var pre = document.createElement('pre');
+      // myWindow.document.body.appendChild (pre);
+      body.appendChild (pre);
     }
   }
-  myWindow.document.write('--------------------------------------------------------\n');
-  myWindow.document.write('</pre>');
+  pre.appendChild(document.createTextNode('--------------------------------------------------------\n'));
+
   // clear any alert boxes. Errors are shown in the log.
   alertBox();
   // clear alert messages
@@ -8188,11 +8231,11 @@ function loadedSequenceMulti(evt) {
   multi.count++;
   // done processing file
   multi.processing = false;
-  if (multi.count == multi.total) finishMulti();
+  if (multi.count == multi.total) finishMulti(body);
 }
 
 // errorMulti will be called when there is a multi file loading error
-function errorMulti(e) {
+function errorMulti(e, body) {
   var msg = '';
   switch (e.code) {
     case FileError.QUOTA_EXCEEDED_ERR:
@@ -8217,7 +8260,7 @@ function errorMulti(e) {
   console.log('Error: ' + msg);
   // increase multi counter
   multi.count++;
-  if (multi.count == multi.total) finishMulti();
+  if (multi.count == multi.total) finishMulti(body);
 }
 
 // loadedSequence will be called when a sequence file has been loaded
@@ -8956,16 +8999,10 @@ function buildForms (print) {
   printDialog();
 
   if (print) {
-    // Open a new window for the print
-    var myWindow = window.open('',"printForms",'width=900,height=700,top=50' +
-      ',location=no,menubar=no,scrollbars=yes,status=no,toolbar=no');
-    myWindow.document.title = activeFileName();
-    myWindow.document.write('<html><head><title>' +
-      activeFileName() + '</title><style type="text/css"' +
-      'media="print">body {margin: 0px;}' +
-      '.breakAfter {display:block; page-break-after:always;}' +
-      'svg {height: 100%; page-break-inside:avoid;}' +
-      '</style></head><body>');
+    //if (chromeApp.active) {
+      var body = document.createElement('body');
+    //} else {
+    //}
   }
 
   for (var i = 0; i < pages.length; i++) {
@@ -8987,11 +9024,13 @@ function buildForms (print) {
       activeForm = pages[i];
       divClass = (i < (pages.length - 1))? 'breakAfter' : '';
       
-      var formSVG = buildForm (SVGRoot);
+      var formSVG = buildForm (SVGRoot, print);
       
       if (print) {
-        myWindow.document.write('<div class="' + divClass + '">' +
-          formSVG + '</div>');
+        var div = document.createElement('div');
+        div.setAttribute ('class', divClass);
+        div.innerHTML = formSVG;
+        body.appendChild (div);
       } else {
         // remove newlines from SVG to simplify regex matching
         formSVG = formSVG.replace (/[\n\r]/g, '');
@@ -9015,10 +9054,42 @@ function buildForms (print) {
     }
   }
   if (print) {
-    myWindow.document.write('</body></html>');
-    // use setTimeout for printing to prevent blocking and
-    // associated warnings by the browser
-    setTimeout (function(){myWindow.print(); myWindow.close();}, 100);
+    // Print the constructed pages. For the App an asynchronous callback
+    // is used. For the web version we work synchronous but use
+    // setTimeout to prevent browser blocking.
+    if (chromeApp.active) {
+      chrome.app.window.create ('print.html', {
+        bounds: {
+          width: 800,
+          height: 600
+        }
+      }, function(w) {
+        var win = w.contentWindow;
+        win.onLoad = function() {
+          win.document.title = activeFileName();
+          win.document.body = body;
+          console.log(win.document.head);
+          win.print();
+          win.close();
+        };
+      });
+    } else {
+      var win = window.open ('',"printForms",'width=800,height=600,' +
+        'top=50,location=no,menubar=no,scrollbars=yes,status=no,toolbar=no');
+      win.document.body = body;
+      win.document.title = activeFileName();
+      var style = document.createElement ('style');
+      style.type = 'text/css';
+      style.media = 'print';
+      style.innerHTML = 'body {margin: 0px;}' +
+      '.breakAfter {display:block; page-break-after:always;}' +
+      'svg {height: 100%; page-break-inside:avoid;}';
+      win.document.head.appendChild(style);
+
+      // use setTimeout for printing to prevent blocking and
+      // associated warnings by the browser
+      setTimeout (function(){win.print(); win.close();}, 200);
+  }
   } else {
     svg += '</svg>';
     // Update viewBox
@@ -9067,7 +9138,7 @@ function adjustRollFontSize (scale, svg) {
 // buildForm will build a complete SVG string for printing a form
 // from a provided SVG object and activeForm global.
 // The default size of the page is A4, 800x1130
-function buildForm (svg) {
+function buildForm (svg, print) {
 
   // remove all elements that have className figStartCircle from the svg.
   // Otherwise they may show up as big black circles
@@ -9247,58 +9318,64 @@ function buildForm (svg) {
     if ((activeForm === 'B') || (activeForm === 'C')) {
       // add sequence string when checked.
       if (document.getElementById('printString').checked) {
-        var txt = activeSequence.text;
-        var g = document.createElementNS (svgNS, 'g');
-        drawText(txt, 0, 0, 'sequenceString', '', 'start', g);
-        mySVG.appendChild(g);
-
-        var scaleBox = '';
-
-        var box = g.getBBox();
-        if (box.width > 600) {
-          g.removeChild(g.firstChild);
-          // medium to long text
-          // split on last possible space, might create three lines
-          var words = txt.split (' ');
-          var lines = [''];
-          var maxChar = parseInt(txt.length * (600 / box.width));
-          for (var i = 0; i < words.length; i++) {
-            if ((lines[lines.length-1].length + words[i].length) < maxChar) {
-              lines[lines.length-1] += words[i] + ' ';
+        var txt = sanitizeSpaces(activeSequence.text);
+        // When printing a PDF, we prefer textarea as this improves
+        // copy/paste 
+        // When saving as image, we can not use textarea as this will
+        // cause errors in conversion
+        if (print) {
+          // replace spaces by &nbsp; to make sure copy/paste works
+          // correctly
+          drawTextArea (txt.replace (/ /g, '&nbsp;'), 10, 1085,
+            600, 40, 'sequenceString', '', mySVG);
+        } else {
+          var g = document.createElementNS (svgNS, 'g');
+          drawText(txt, 0, 0, 'sequenceString', '', 'start', g);
+          mySVG.appendChild(g);
+  
+          var scaleBox = '';
+  
+          var box = g.getBBox();
+          if (box.width > 600) {
+            g.removeChild(g.firstChild);
+            // medium to long text
+            // split on last possible space, might create three lines
+            var words = txt.split (' ');
+            var lines = [''];
+            var maxChar = parseInt(txt.length * (600 / box.width));
+            for (var i = 0; i < words.length; i++) {
+              if ((lines[lines.length-1].length + words[i].length) < maxChar) {
+                lines[lines.length-1] += words[i] + ' ';
+              } else {
+                lines.push(words[i] + ' ');
+              }
+            }
+  
+            if (lines.length > 3) {
+              // very long text
+              // Split in three equal lines
+              drawText(txt.substring (0,parseInt(txt.length / 3)),
+                0, 0, 'sequenceString', '', 'start', g);
+              drawText(txt.substring (parseInt(txt.length / 3),
+                parseInt((txt.length / 3) * 2)),
+                0, 13, 'sequenceString', '', 'start', g);
+              drawText(txt.substring (parseInt((txt.length / 3) * 2)),
+                0, 26, 'sequenceString', '', 'start', g);
             } else {
-              lines.push(words[i] + ' ');
+              for (var i = 0; i < lines.length; i++) {
+                drawText(lines[i], 0, i * 13, 'sequenceString', '', 'start', g);
+              }
+            }
+            //  adjust X scale if necessary
+            box = g.getBBox();
+            var scaleX = 600 / box.width;
+            if (scaleX < 1) {
+              scaleBox = ' scale (' + scaleX + ',1)';
             }
           }
-
-          if (lines.length > 3) {
-            // very long text
-            // Split in three equal lines
-            drawText(txt.substring (0,parseInt(txt.length / 3)),
-              0, 0, 'sequenceString', '', 'start', g);
-            drawText(txt.substring (parseInt(txt.length / 3),
-              parseInt((txt.length / 3) * 2)),
-              0, 13, 'sequenceString', '', 'start', g);
-            drawText(txt.substring (parseInt((txt.length / 3) * 2)),
-              0, 26, 'sequenceString', '', 'start', g);
-          } else {
-            for (var i = 0; i < lines.length; i++) {
-              drawText(lines[i], 0, i * 13, 'sequenceString', '', 'start', g);
-            }
-          }
-          //  adjust X scale if necessary
-          box = g.getBBox();
-          var scaleX = 600 / box.width;
-          if (scaleX < 1) {
-            scaleBox = ' scale (' + scaleX + ',1)';
-          }
+          g.setAttribute ('transform', 'translate (' + (10 - box.x) +
+            ',' + (1128 - (box.y + box.height)) + ')' + scaleBox);
         }
-        g.setAttribute ('transform', 'translate (' + (10 - box.x) +
-          ',' + (1128 - (box.y + box.height)) + ')' + scaleBox);
-        // put 0-length spaces (u200B) in the string wherever there are
-        // no spaces for ten characters. This will keep the number of
-        // lines down by forcing line breaks
-        //line = line.replace(/([^ \u200B]{5})([^ \u200B]{5})/g, '$1\u200B$2');
-        //drawTextArea (line, 10, 1085, 600, 40, 'sequenceString', '', mySVG);
       }
 
       

@@ -368,10 +368,7 @@ option.used {
   margin-left: 0;
   margin-right: 0;
 }
-  
-#checkSequence {
-  top: 10%;
-}
+
 .textButton {
   display: inline-block;
   background: #55b;
@@ -1064,7 +1061,10 @@ table#figureChooserTable td.figureNotAllowedHidden {
 #menu li:hover {
   background-color:#ddf;
 }
-
+/* special code for installChromeApp item */
+#installChromeApp.noDisplay {
+  display: none;
+}
 /* Class select box */
 #class {
   background: #ffc;

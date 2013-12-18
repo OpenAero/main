@@ -52,6 +52,8 @@ lang.en = {
 'checkMulti' : 'Check multiple sequences',
 'checkMultiClose' : 'Close',
 'checkMultipleSeq' : 'Check multiple seq',
+'checkMultiWait' : 'Checking multiple sequences.<br>This may take ' +
+  'some time. Please wait...',
 'checkSequence' : 'Check sequence',
 'checkSequenceLog' : 'Show log',
 'checkSequenceOK' : 'OK',
@@ -286,6 +288,7 @@ lang.en = {
 'selectRulesFirst' : 'Select Rules first',
 'separateFigures' : 'Separate figures',
 'sequence' : 'Sequence',
+'sequenceCheckLog' : 'OpenAero Sequence check log',
 'sequenceCorrect' : 'Sequence is correct',
 'sequenceHasErrors' : 'Sequence has errors:',
 'sequenceInfo' : 'Sequence&nbsp;info',

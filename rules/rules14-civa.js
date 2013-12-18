@@ -143,13 +143,9 @@ rules.push("more=CIVA Unlimited Unknown");
 rules.push("(CIVA Unlimited Unknown)");
 rules.push("poslj=10");
 rules.push("posnl=40");
-//group-one=^1\.([6-9]|1[01])\.[34]
-//one-name=family 1.6-11 columns 3&4
-//group-two=^8\.([1-4]|1[5-8]|3[1-4])\.[34]
-//two-name=family 8.1-4,15-18,31-34 columns 3&4
-rules.push("group-one=^1\\.(1[6-9]|11[01])\\.[34]");
+rules.push("group-one=^1\\.(1\\.[6-9]|1\\.1[01])\\.[34]");
 rules.push("one-name=family 1.1.6-11 columns 3&4");
-rules.push("group-two=^8\\.(4[1-4]|4[7-9]|410|5[1-2]|6[1-2])\\.[34]");
+rules.push("group-two=^8\\.(4\\.[1-4]|4\\.[7-9]|4\\.10|5\\.[1-2]|6\\.[1-2])\\.[34]");
 rules.push("two-name=family 8.4.1-4,8.4.7-10,8.5.1-2,8.6.1-2 columns 3&4");
 rules.push("group-vsnap=^9\\.(9|10)\\.[16]\\.");
 rules.push("vsnap-name=vertical snap");
@@ -682,14 +678,11 @@ rules.push("posnl=30");
 // limit on figure types (max1 spin etc)
 // limit on snaps (2-4 total), (one max per figure)
 // figures 10-14. Kfactor 15-35.
-// at most one of 1.14.3-4 1.15.3-4 amd one of 7.23-30.*
 
-//group-one=^1\.1[45]\.[34]
-//group-two=^7\.(2[3-9]|30)
-// at most one of 1.2.3.3-4 1.2.4.3-4 amd one of 7.8.1-8.*
+// at most one of 1.2.3-4.3-4 and one of 7.8.1-8.*
 
-rules.push("group-one=^1\\.2[34]\\.[34]");
-rules.push("group-two=^7\\.8[1-8]");
+rules.push("group-one=^1\\.2\\.[34]\.[34]");
+rules.push("group-two=^7\\.8\\.[1-8]");
 
 rules.push("k-minperfig=15");
 
@@ -1094,10 +1087,10 @@ rules.push("posnl=30");
 // limit on figure types (max1 spin etc)
 // limit on snaps (2-4 total), (one max per figure)
 // figures 10-14. Kfactor 15-35.
-// at most one of 1.14.3-4 1.15.3-4 amd one of 7.23-30.*
+// at most one of 1.2.3-4.3-4 and one of 7.8.1-8.*
 
-rules.push("group-one=^1\\.2[34]\\.[34]");
-rules.push("group-two=^7\\.8[1-8]");
+rules.push("group-one=^1\\.2\\.[34]\\.[34]");
+rules.push("group-two=^7\\.8\\.[1-8]");
 
 rules.push("snap-maxperfig=1");
 rules.push("snap-min=1");

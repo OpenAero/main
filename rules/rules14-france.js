@@ -63,7 +63,7 @@
 
 rules.push("[France espoirs connu]");
 
-rules.push("sf = ^9\\.11\\.:3;^9\\.12\\.:3;^9\\.9\\.:4;^9\\.10\\.:4;^2\\.:2;^5\\.:5;^6\\.:6;^1\\.:7;^3\\.:7;^7\\.:7;^8\\.:7;^0\\.:7");// Ajout 2014 for OpenAero
+rules.push("sf = advanced");// Ajout 2014 for OpenAero
 // Openaero sequence  Ajout 2014 for OpenAero
 rules.push("demo = k2 6> ~m2 ivs...'' `2rc (-9,16) m- -'',1''- -2% 6> -3j----~~ > -2' > ~+3j h...~ o");
 // Olan sequence
@@ -197,7 +197,7 @@ rules.push("9.11.1.4-7");
 
 rules.push("[France desavois connu]");
 
-rules.push("sf = ^9\\.11\\.:3;^9\\.12\\.:3;^9\\.9\\.:4;^9\\.10\\.:4;^2\\.:2;^5\\.:5;^6\\.:6;^1\\.:7;^3\\.:7;^7\\.:7;^8\\.:7;^0\\.:7");// Ajout 2014 for OpenAero
+rules.push("sf = advanced");// Ajout 2014 for OpenAero
 // Openaero sequence  Ajout 2014 for OpenAero
 rules.push("demo = ed v- [0,0] -ivis... [-3,1] 2pb...'' 2% 4h4.' [-4,0] -1% mf- [4,13] -2jo2- 1% -`2c''- [3,0] ~-c.....'' [-4,0] m24 2,1-");
 // Olan sequence
@@ -493,7 +493,7 @@ rules.push("9.12.1.4");
 
 rules.push("(France national2 connu_1)");
 
-rules.push("sf = ^9\\.11\\.:3;^9\\.12\\.:3;^9\\.9\\.:4;^9\\.10\\.:4;^2\\.:2;^5\\.:5;^6\\.:6;^1\\.:7;^3\\.:7;^7\\.:7;^8\\.:7;^0\\.:7");// Ajout 2014 for OpenAero
+rules.push("sf = advanced");// Ajout 2014 for OpenAero
 // Openaero sequence  Ajout 2014 for OpenAero
 rules.push("demo = >~~---''1rc 10> m22- -iv5is.. 2> ~~,2pb...,4 `+mf-~~ 10> 12% ````-2jio2-``` -1,2 c,24....''+``` ``+o2-` -4h.4.'' cc(2)2 rp/");
 // Olan sequence
@@ -842,7 +842,7 @@ rules.push("more=CIVA advanced unknownboth");
 
 rules.push("(France doret connu_1)");
 
-rules.push("sf = ^2\\.:2;^5\\.:5;^6\\.:6;^1\\.:7;^3\\.:7;^7\\.:7;^8\\.:7;^0\\.:7");// Ajout 2014 for OpenAero
+rules.push("sf = unlimited");// Ajout 2014 for OpenAero
 // Openaero sequence  Ajout 2014 for OpenAero
 rules.push("demo = ej /-.''24ita8> 'fbb(.''2) -1% ''9s.''irp6f.,6```- 4> -2% -3joi3-~> -8h....2...'> 8> ..''3,8''m48,24'' -2% 2fg2- (-20,22) -iac(2,if) -1% 2,24m1,if-``");
 // Olan sequence
