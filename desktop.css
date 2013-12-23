@@ -72,6 +72,9 @@ body {
   background: #f4f4f4;
   background: -webkit-linear-gradient(top, #f4f4f4, #e8e8e8);
   background: linear-gradient(top, #f4f4f4, #e8e8e8);
+  -moz-box-shadow: 2px 0 2px -2px rgba(0,0,0,0.5);
+  -webkit-box-shadow: 2px 0 2px -2px rgba(0,0,0,0.5);
+  box-shadow: 2px 0 2px -2px rgba(0,0,0,0.5);
   width: 276px;
   height: 99%;
   padding: 4px;
@@ -92,11 +95,15 @@ body {
   width: 132px;
 }
 #svgContainer {
-  position: relative;
+  position: absolute;
+  top: 50px;
+  right: 0px;
+  bottom: 0;
+  left: 286px;
   padding: 10px 10px 20px 10px;
-  height: 95%;
+  /*height: 95%;*/
   background-color:#ffffff;
-  overflow: scroll;
+  overflow: auto;
 }
 #figureSelector {
   position: absolute;

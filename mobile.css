@@ -270,6 +270,17 @@ table#figureChooserTable td.selected {
   padding: 6px 3px 6px 3px;
   border-left: 1px solid #ddd;
 }
+#menu li {
+  width: 46px; /* 320 : 7 */
+  text-align: center;
+  font-size: 14px;
+  letter-spacing: -1px;
+}
+#menu li ul li {
+  width: auto;
+  text-align: left;
+  letter-spacing: 0;
+}
 /* make the right menus float from right edge to left */
 #menu li ul.right {
   min-width: 100px;

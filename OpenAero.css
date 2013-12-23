@@ -170,7 +170,9 @@ textarea {
 .section, .docs table tr {
   position: relative;
   float: left;
-  width: 98%;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  width: 99%;
   border-top: 2px solid #fff;
   border-left: 2px solid #fff;
   border-bottom: 1px solid #aaa;
@@ -327,7 +329,8 @@ option.used {
 #chooseLogo svg {
   margin: 10px 10px 0 0;
 }
-/*alertBox and print dialog styling*/
+
+/* boxes and dialogs */
 .boxbg {
   background: rgba(0,0,0,0.5);
   background: -webkit-linear-gradient(315deg, rgba(0,0,0,0.4), rgba(0,0,0,0.7));
@@ -368,7 +371,6 @@ option.used {
   margin-left: 0;
   margin-right: 0;
 }
-
 .textButton {
   display: inline-block;
   background: #55b;
@@ -612,7 +614,8 @@ option.used {
 .largeButton a:hover {
   text-decoration: none;
 }
-/*TAB SELECTOR FUNCTIONALITY*/
+
+/* tab selector functionality */
 .tabSelector {
   overflow: hidden;
 }
@@ -654,7 +657,7 @@ option.used {
 }
 
 /****************************
- *  Theming figure edit tab *
+ *      Figure edit tab     *
  ****************************/
 
 #figureOptions {
@@ -878,8 +881,7 @@ option.used {
   color: #f00;
 }
 
-/* logo chooser theme */
-
+/* logo chooser */
 #logoChooserContainer {
   position: absolute;
   z-index: 20;
@@ -918,8 +920,7 @@ option.used {
   height: 2em;
 }
 
-/* figure chooser theming */
-
+/* figure chooser */
 #figureChooser {
   margin: 2px;
   width: 340px;
@@ -983,9 +984,9 @@ table#figureChooserTable td.figureNotAllowedHidden {
   left: 0;
   bottom: 0;
 }
-/* main menu theming */
+/* main menu */
 
-/*MENU DROPDOWN FUNCTIONALITY*/
+/* menu dropdown functionality */
 /*set up ul tags*/ 
 #menu, #menu ul{ padding:0; margin:0}
 /*set up a tags*/ 
@@ -1041,7 +1042,7 @@ table#figureChooserTable td.figureNotAllowedHidden {
 #menu li:hover ul li:hover ul{display:block;}
 #menu li.active ul li.active ul{display:block;}
 
-/*DROPDOWN STYLING:*/
+/* dropdown */
 #menu {
   height:25px
 }
@@ -1055,7 +1056,6 @@ table#figureChooserTable td.figureNotAllowedHidden {
 }
 #menu li {
   background-color:#fbfbfb;
-/*  border:solid 1px #CCC; */
   margin-left:-1px;
 }
 #menu li:hover {
@@ -1106,4 +1106,4 @@ table#figureChooserTable td.figureNotAllowedHidden {
   cursor: pointer;
 }
 
-/* printing styles are in OpenAero.js */
+/* printing styles are in OpenAero.js and print.css */

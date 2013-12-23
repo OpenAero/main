@@ -51,9 +51,10 @@ lang.en = {
 'checkingRules' : 'Sequence checking rules',
 'checkMulti' : 'Check multiple sequences',
 'checkMultiClose' : 'Close',
-'checkMultipleSeq' : 'Check multiple seq',
-'checkMultiWait' : 'Checking multiple sequences.<br>This may take ' +
-  'some time. Please wait...',
+'checkMultiCounter' : 'Checking sequence %s of %s<br>%s<br>This may ' +
+  'take some time. Please wait...','checkMultipleSeq' : 'Check multiple seq',
+'checkMultiWait' : 'Checking %s sequences.<br>This may ' +
+  'take some time. Please wait...',
 'checkSequence' : 'Check sequence',
 'checkSequenceLog' : 'Show log',
 'checkSequenceOK' : 'OK',
@@ -187,6 +188,8 @@ lang.en = {
 'notes' : 'Notes',
 'notOnFormBC' : 'This function is only available when Form ' +
   'B or C  is being viewed.',
+'notSequenceFile' : 'This does not appear to be an OpenAero or OLAN ' +
+  'sequence file',
 'numberInCircle' : 'Figure numbers in circle',
 'ok' : 'OK',
 // OLANBumpBugWarning can be removed (with asociated code in OpenAero.js)
@@ -292,6 +295,7 @@ lang.en = {
 'sequenceCorrect' : 'Sequence is correct',
 'sequenceHasErrors' : 'Sequence has errors:',
 'sequenceInfo' : 'Sequence&nbsp;info',
+'sequenceShort' : 'Seq.',
 'sequenceTab' : 'Sequence',
 'sequenceTest' : 'Check: ',
 'sequenceNotSavedWarning' : 'Your current sequence has not been ' +

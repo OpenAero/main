@@ -57,7 +57,7 @@ favicons/favicon96.png
 favicons/favicon114.png
 favicons/favicon128.png
 favicons/favicon195.png
-figures.js
+figures14.js
 flags.js
 gpl_files/print.css
 gpl_files/gplv3-127x51.png
@@ -103,5 +103,6 @@ rules/rules14-vink.js
 rules/rules14-glider-civa.js
 sprintf.js
 vkbeautify.js
+window.html
 NETWORK: 
 openaero.php

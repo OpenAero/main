@@ -185,7 +185,8 @@ var ruleSuperFamily = [];  // Array of rules for determining figure SF
 
 // fig will hold all figures in the catalog in the form
 // fig[i].xxx where xxx is:
-// .base    : the pattern for each figure as it's written in the sequence, with + and - but without any rolls
+// .base    : the pattern for each figure as it's written in the sequence,
+//            with + and - but without any rolls
 // .aresti  : the Aresti number for each figure 
 // .rolls   : shows which roll positions are possible for each figure
 // .kpwrd   : the powered K factor for each figure
@@ -434,6 +435,8 @@ function switchMobile () {
 //      'maximum-scale=2.0, minimum-scale=1.0');
     // set mobile css
     link.setAttribute('href', 'mobile.css');
+    // update Sequence main menu link
+    document.getElementById('t_sequence').innerHTML = userText.sequenceShort;
     // update view menu
     setMobileMenu.innerHTML = userText.desktopVersion;
     // unhide sequence tab
@@ -446,6 +449,8 @@ function switchMobile () {
   } else {
     viewport.setAttribute('content', '');
     link.setAttribute('href', 'desktop.css');
+    // update Sequence main menu link
+    document.getElementById('t_sequence').innerHTML = userText.sequence;
     setMobileMenu.innerHTML = userText.mobileVersion;
     tab.setAttribute('style', 'display:none;');
     svg.removeAttribute('style');
@@ -650,6 +655,7 @@ function helpWindow(url, title) {
 
 // newWindow will display a window with content from body and title
 function newWindow (body, title) {
+  // handling is different for App and web
   if (chromeApp.active) {
     chrome.app.window.create ('window.html', {
       bounds: {
@@ -664,13 +670,17 @@ function newWindow (body, title) {
       };
     });
   } else {
+    // open and close the window to make sure we're not working in an
+    // existing one
     var w = window.open ('', title);
     w.close();
-    // open the window and close it. This will clear any previous window
-    var w = window.open ('', title, 'width=800,height=600,top=50,' +
+    // create data uri
+    var uri = 'data:text/html;base64,' +
+      btoa('<title>' + title + '</title>' +
+      new XMLSerializer().serializeToString(body));
+    // open the window with data uri for contents
+    var w = window.open (uri, title, 'width=800,height=600,top=50,' +
       'location=no,menubar=no,scrollbars=yes,status=no,toolbar=no');
-    w.document.title = title;
-    w.document.body = body;
   }
 }
   
@@ -4182,14 +4192,16 @@ function updateFigure() {
   // get the base
   var base = fig[figNr].base;
   // update the original pattern for entry/exit changes
-  if (document.getElementById('figEntryButton').classList.contains ('inverted')) {
+  var entry = document.getElementById('figEntryButton');
+  var exit = document.getElementById('figExitButton');
+  if (entry.classList.contains ('inverted')) {
     pattern = '-' + pattern.substring(1);
     base = '-' + base.substring(1);
   } else {
     pattern = '+' + pattern.substring(1);
     base = '+' + base.substring(1);
   }
-  if (document.getElementById('figExitButton').classList.contains ('inverted')) {
+  if (exit.classList.contains ('inverted')) {
     pattern = pattern.substring(0, pattern.length - 1) + '-';
     base = base.substring(0, base.length - 1) + '-';
   } else {
@@ -4202,8 +4214,20 @@ function updateFigure() {
     base = fig[figNr].base.replace(/-/g, '#').replace(/\+/g, '-').replace(/#/g, '+');
     if (figBaseLookup [base]) {
       pattern = fig[figNr].pattern.replace(/-/g, '#').replace(/\+/g, '-').replace(/#/g, '+');
+      // set figEntryButton and figExitButton to correct state
+      if (base[0] === '-') {
+        entry.classList.add ('inverted');
+      } else {
+        entry.classList.remove ('inverted');
+      }
+      if (base[base.length - 1] === '-') {
+        exit.classList.add ('inverted');
+      } else {
+        exit.classList.remove ('inverted');
+      }
     } else {
-      // doesn't help. Restore original pattern. No option for changing upright/inverted
+      // Doesn't help. Restore original pattern. No option for changing
+      // upright/inverted
       pattern = fig[figNr].pattern;
     }
   }
@@ -4215,7 +4239,7 @@ function updateFigure() {
   if (!document.getElementById('roll0-0')) rollEl = 1;
   while (pattern.match(/[\^\&\_]/)) {
     var rolls = '';
-    for (var rollNr = 0; rollNr < (rollsPerRollElement + 1); rollNr++) {
+    for (var rollNr = 0; rollNr <= rollsPerRollElement; rollNr++) {
       // apply gaps
       var gap = document.getElementById('roll'+rollEl+'-gap'+rollNr+'-value');
       // only apply when the input element exists
@@ -4257,7 +4281,9 @@ function updateFigure() {
     if (rollEl == 0) {
       // set switchFirstRoll
       var image = document.getElementById('switchFirstRoll').firstChild.firstChild;
-      if (image.getAttribute('src') == mask.on) rolls += ';' + userpat.switchDirX;
+      if (image.getAttribute('src') == mask.on) {
+        rolls += ';' + userpat.switchDirX;
+      }
     } 
     pattern = pattern.replace(/[\^\&\_]/, rolls);
     rollEl++;
@@ -4311,9 +4337,9 @@ function updateFigure() {
     }
   }
   var moveX = document.getElementById('moveX-value').value;
-  if (!moveX) moveX = 0; else moveX = parseInt(moveX);
+  moveX = (moveX)? parseInt(moveX) : 0;
   var moveY = document.getElementById('moveY-value').value;
-  if (!moveY) moveY = 0; else moveY = parseInt(moveY);
+  moveY = (moveY)? parseInt(moveY) : 0;
   var el1 = document.getElementById('moveForward').firstChild.firstChild;
   var el2 = document.getElementById('straightLine').firstChild.firstChild;
   var el3 = document.getElementById('curvedLine').firstChild.firstChild;
@@ -4465,11 +4491,8 @@ function updateFigure() {
   // update comments, including Free Unknown letter
   // keep this at the end to prevent disturbing other items
   var val = document.getElementById('unknownFigure').value;
-  if (val != 0) {
-    var comments = '@' + val;
-  } else {
-    var comments = '';
-  }
+  var comments = (val != 0)? '@' + val : '';
+
   comments += document.getElementById('comments').value;
 
   // retrieve original comments
@@ -6157,9 +6180,9 @@ function availableFigureGroups() {
 
 // changeFigureGroup updates the figure group in the figure chooser
 function changeFigureGroup() {
-  e = document.getElementById('figureGroup');
+  var e = document.getElementById('figureGroup');
   
-  var aresti = [];
+  var arestiDraw = [];
   var figureGroup = e.value;
   var table = document.getElementById('figureChooserTable');
   var container = document.getElementById('figureSvgContainer');
@@ -6186,10 +6209,11 @@ function changeFigureGroup() {
     if (fig[i]) {
       // Only draw figures that are in this group AND have not been
       // drawn before (e.g. 1j and j)
-      if ((fig[i].group == figureGroup) && !inArray(aresti, fig[i].aresti)) {
+      if ((fig[i].group == figureGroup) && !inArray(arestiDraw, (fig[i].aresti+fig[i].draw))) {
         if (!fig[i].svg) {
-          // The figure has not been drawn in this session, go ahead and draw it
-          // first we take the original base and remove + and full/any roll symbols
+          // The figure has not been drawn in this session, go ahead and
+          // draw it. First we take the original base and remove + and
+          // full/any roll symbols
           var figure = fig[i].pattern.replace(/[\+\_\&]/g, '');
           // next we replace half roll symbols by actual half rolls
           figure = figure.replace(RegExp('\\' + figpat.halfroll, 'g'), '2');
@@ -6209,7 +6233,6 @@ function changeFigureGroup() {
             buildFigure ([i], figure, false, -1);
           }
           var paths = figures[-1].paths;
-          var aresti = figures[-1].aresti;
           for (j = paths.length - 1; j >= 0; j--) {
             if (paths[j].style == 'neg') {
               paths[j].style = 'chooserNeg';
@@ -6217,7 +6240,7 @@ function changeFigureGroup() {
               paths[j].style = 'chooserPos';
             }
           }
-          figures[-1] = {'paths': paths, 'aresti': aresti};
+          figures[-1] = {'paths': paths, 'aresti': figures[-1].aresti};
           // clear the svg
           prepareSvg(svg);
           // reset X and Y and clear figureStart to prevent adjusting
@@ -6312,9 +6335,9 @@ function changeFigureGroup() {
         }
          
         
-        // add this figure's Aresti number to aresti variable so it
-        // is not drawn twice
-        aresti.push(fig[i].aresti);
+        // add this figure's Aresti number and pattern to arestiDraw
+        // so it is not drawn twice
+        arestiDraw.push(fig[i].aresti+fig[i].draw);
       }
     }
   }
@@ -6516,9 +6539,9 @@ function selectFigure (e, noChooserUpdate) {
             // change the base figure
             figures[selectedFigure.id].pattern = fig[e.id].pattern;
             figures[selectedFigure.id].figNr = e.id;
-            // update twice as this may be needed for switching from
-            // upright to inverted and vv
-            updateFigure();
+            // Update figure editor to new figure
+            updateFigureOptions(selectedFigure.id);
+            // Update the actual figure according figure editor
             updateFigure();
             // no more work needed, figure has been changed
             return;
@@ -6608,11 +6631,8 @@ function selectFigure (e, noChooserUpdate) {
     // with figure loaded from chooser, remove any unknown figure letters
     // and add queue unknown figure letter if applicable
     if (fromChooser) {
-      if (queueFigure) {
-        var uf = fig[queueFigure].unknownFigureLetter;
-      } else {
-        var uf = false;
-      }
+      var uf = (queueFigure)? fig[queueFigure].unknownFigureLetter : false;
+
       for (var i = selectedFigure.id - 1; i>=0; i--) {
         if (figures[i].aresti) {
           break;
@@ -6914,7 +6934,7 @@ function setFigChooser (figNr) {
 function setFigureSelected (figNr) {
   // if any figure was previously selected, remove that filter
   var selFig = SVGRoot.getElementById('figure'+selectedFigure.id);
-  if (selFig) { //selFig.removeAttribute('filter');
+  if (selFig) {
     if (selectedFigure.id !== figNr) {
       var nodes = selFig.childNodes;
       for (var i = nodes.length - 1; i >= 0; i--) {
@@ -6941,8 +6961,7 @@ function setFigureSelected (figNr) {
     header.innerHTML = userText.editingFigure + figures[figNr].seqNr;
   
     // apply color filter
-    var figure = SVGRoot.getElementById('figure'+figNr);
-    var nodes = figure.childNodes;
+    var nodes = SVGRoot.getElementById('figure'+figNr).childNodes;
     for (var i = nodes.length - 1; i >= 0; i--) {
       var s = nodes[i].getAttribute('style');
       if (s) {
@@ -7030,7 +7049,9 @@ function Drop(evt) {
       //    grab the next element
       DragTarget = null;
    }
-  if (!mobileBrowser) sequenceText.focus();
+  if (!('ontouchstart' in document.documentElement)) {
+    sequenceText.focus();
+  }
 }
 
 /**********************************************************************
@@ -7692,7 +7713,9 @@ function makeFormGrid (cols) {
 // makeFormPilotCard creates pilotcards from the figures array
 function makeFormPilotCard() {  
   for (var i = 0; i < figures.length; i++) {
-    if (figures[i].paths.length) drawFullFigure(i, figures[i]['paths'][0]['figureStart']);
+    if (figures[i].paths.length) {
+      drawFullFigure(i, figures[i]['paths'][0]['figureStart']);
+    }
   }
 }
 
@@ -7710,7 +7733,9 @@ function addFormElements (form) {
     case 'B':
       if (miniFormA) {
         drawWind ((w + x) + 172, y, 1);
-      } else drawWind (w + x, y, 1);
+      } else {
+        drawWind (w + x, y, 1);
+      }
       break;
     case 'C':
       drawWind (x, y, -1);
@@ -7722,15 +7747,14 @@ function addFormElements (form) {
   } else {
     var block = {'width':0, 'height':0};
   }
-  w = w + 20 + block.width;
+  w += 20 + block.width;
   if ((50 + block.height) > h) h = (50 + block.height);
   // Change the viewBox to make the sequence fit
   viewBox = (x - 3) + ' ' + (y - 3) + ' ' + (w + 5) + ' ' + (h + 30);
   SVGRoot.setAttribute("viewBox", viewBox);
   // resize svg if we are on a mobile browser
-  if (mobileBrowser) {
-    var scaleSvg = 312 / (w + 5);
-  } else scaleSvg = 1;
+  var scaleSvg = (mobileBrowser)? 312 / (w + 5) : 1;
+  
   SVGRoot.setAttribute("width",  scaleSvg * (w + 5));
   SVGRoot.setAttribute("height", scaleSvg * (h + 30));
 }
@@ -7813,8 +7837,6 @@ function updateSequenceTextHeight () {
 // when force is set (e.g. after drag & drop) redraw will always be done
 function checkSequenceChanged (force) {
   
-  // console.log ('Run checkSequenceChanged');
-  
   // remove all line breaks from the sequence input field
   sequenceText.value = sequenceText.value.replace (/(\r\n|\n|\r)/gm, '');
   // update height of sequence text box for non-mobile browsers
@@ -7851,8 +7873,10 @@ function checkSequenceChanged (force) {
       if (((string[i] === ' ') || (i === string.length)) && !inText) {
         if (thisFigure.string !== '') {
           var match = thisFigure.string.match (regexMoveForward);
-          // Create a separate 'figure' for moveForward (x>) at the beginning of a figure.
-          // OLAN has it coupled to a figure but OpenAero keeps sequence drawing instructions separate
+          // Create a separate 'figure' for moveForward (x>) at the
+          // beginning of a figure.
+          // OLAN has it coupled to a figure but OpenAero keeps sequence
+          // drawing instructions separate
           if (match) {
             figure.push ({'string':match[0], 'stringStart':thisFigure.stringStart, 'stringEnd':(thisFigure.stringStart + match[0].length)});
             thisFigure.stringStart = thisFigure.stringStart + match[0].length;
@@ -8073,7 +8097,7 @@ function openFile (file, handler) {
         reader.onload = loadedRulesFile;
         break;
     }
-    //reader.onload = eval ('loaded' + handler);
+
     reader.onerror = errorHandler;
   }
 }
@@ -8085,11 +8109,7 @@ function checkMultiDialog(show) {
   if (show) {
     div.classList.remove ('noDisplay');
     var el = document.getElementById('multiCurrentRules');
-    if (rulesActive) {
-      el.innerHTML = rulesActive;
-    } else {
-      el.innerHTML = userText.none;
-    }
+    el.innerHTML = (rulesActive)? rulesActive : userText.none;
   } else {
     div.classList.add ('noDisplay');
   }
@@ -8116,7 +8136,9 @@ function checkMulti (evt) {
   multi.count = 0;
   multi.total = files.length;
   if (multi.total > 0) {
-    infoBox (userText.checkMultiWait, userText.checkMulti);
+    infoBox (
+      sprintf(userText.checkMultiWait, multi.total),
+      userText.checkMulti);
   }
   var body = document.createElement('body');
   // go through the selected files
@@ -8154,81 +8176,96 @@ function loadedSequenceMulti(evt, body) {
   // check if loadedSequenceMulti is running. If so, set 100ms timeout
   // for next try
   if (multi.processing) {
-    setTimeout (loadedSequenceMulti(evt), 100);
+    setTimeout (loadedSequenceMulti(evt, body), 100);
     return;
   } else multi.processing = true;
+  // increase multi counter
+  multi.count++;
+  /** fixme: possible code to show counter. Problem: it requires full
+   *  redraw which maken everything very slow and messy and thus is
+   *  counterproductive. Maybe through separate window?
+   */
+  // document.getElementById ('checkMultiCounter').innerHTML = sprintf(
+  //  userText.checkMultiWait, multi.count, multi.total, evt.target.file.name);
+  
   console.log('Checking: ' + evt.target.file.name);
-  // Obtain the read file data  
-  var fileString = evt.target.result;
-  // Check if we have an OLAN sequence or an OpenAero XML sequence
-  // If the sequence file starts with '<', assume it's an XML sequence
-  if (fileString.charAt(0) === '<') {
-    OLANBumpBugCheck = false;
-  } else {
-    // OLAN sequence, transform to XML
-    fileString = OLANtoXML (fileString);
-  }
-  activateXMLsequence (fileString, true);
-  // make sure no figure is selected
-  selectFigure (false);
-  // Draw the sequence
-  //checkSequenceChanged();
-
-  // Activate the loading of the checking rules (if any)
-  if (document.getElementById('multiOverrideRules').checked) {
-    // use rules currently set
-    var log = checkRules();
-  } else {
-    // use rules from file
-    var log = changeCombo('program');
-  }
-  // write the log to the log window
+  // create log entry
   var pre = document.createElement('pre');
-  // myWindow.document.body.appendChild (pre);
   body.appendChild (pre);
   pre.appendChild(document.createTextNode('File: ' + evt.target.file.name + '\n'));
-  if (document.getElementById('multiFullLog').checked) {
-    // full expanded log
-    
-    for (var i = 0; i < log.length; i++) {
-      pre.appendChild(document.createTextNode(log[i] + '\n'));
-    }
+
+  // Obtain the read file data  
+  var fileString = evt.target.result;
+  // Check if we have an OLAN sequence or an OpenAero XML sequence.
+  // If the sequence file starts with '<', assume it's an XML sequence.
+  // If it starts with '[', assume it's an OLAN sequence.
+  // In all other cases throw an error.
+  if (fileString[0] === '<') {
+    OLANBumpBugCheck = false;
+  } else if (fileString[0] === '[') {
+    // OLAN sequence, transform to XML
+    fileString = OLANtoXML (fileString);
   } else {
-    // concise log
-    
-    // get alerts from alert area
-    var div = document.createElement('div');
-    div.innerHTML = document.getElementById('alerts').innerHTML;
-    // remove label and <br> (first three items)
-    div.removeChild(div.firstChild);
-    div.removeChild(div.firstChild);
-    div.removeChild(div.firstChild);
-    if (div.innerHTML == '') {
-      if (rulesActive) {
-        pre.appendChild(document.createTextNode('Rules: ' + rulesActive + '\n'));
-        pre.appendChild(document.createTextNode(userText.sequenceCorrect + '\n'));
-      } else {
-        pre.appendChild(document.createTextNode(userText.noRules + '\n'));
+    pre.appendChild (document.createTextNode(userText.notSequenceFile + '\n'));
+    console.log('*** ' + userText.notSequenceFile);
+    fileString = false;
+  }
+  
+  if (fileString) {    
+    activateXMLsequence (fileString, true);
+    // make sure no figure is selected
+    selectFigure (false);
+  
+    // Activate the loading of the checking rules (if any)
+    if (document.getElementById('multiOverrideRules').checked) {
+      // use rules currently set
+      var log = checkRules();
+    } else {
+      // use rules from file
+      var log = changeCombo('program');
+    }
+  
+    // clear any alert boxes. Errors are shown in the log.
+    alertBox();
+    // clear alert messages
+    alertMsgs = [];
+  
+    if (document.getElementById('multiFullLog').checked) {
+      // full expanded log
+      
+      for (var i = 0; i < log.length; i++) {
+        pre.appendChild(document.createTextNode(log[i] + '\n'));
       }
     } else {
-      if (rulesActive) {
-        pre.appendChild(document.createTextNode('Rules: ' + rulesActive + '\n'));
+      // concise log
+      
+      // get alerts from alert area
+      var div = document.createElement('div');
+      div.innerHTML = document.getElementById('alerts').innerHTML;
+      // remove label and <br> (first three items)
+      div.removeChild(div.firstChild);
+      div.removeChild(div.firstChild);
+      div.removeChild(div.firstChild);
+      if (div.innerHTML == '') {
+        if (rulesActive) {
+          pre.appendChild(document.createTextNode('Rules: ' + rulesActive + '\n'));
+          pre.appendChild(document.createTextNode(userText.sequenceCorrect + '\n'));
+        } else {
+          pre.appendChild(document.createTextNode(userText.noRules + '\n'));
+        }
+      } else {
+        if (rulesActive) {
+          pre.appendChild(document.createTextNode('Rules: ' + rulesActive + '\n'));
+        }
+        body.appendChild (div);
+        // myWindow.document.body.appendChild(div);
+        var pre = document.createElement('pre');
+        // myWindow.document.body.appendChild (pre);
+        body.appendChild (pre);
       }
-      body.appendChild (div);
-      // myWindow.document.body.appendChild(div);
-      var pre = document.createElement('pre');
-      // myWindow.document.body.appendChild (pre);
-      body.appendChild (pre);
     }
   }
   pre.appendChild(document.createTextNode('--------------------------------------------------------\n'));
-
-  // clear any alert boxes. Errors are shown in the log.
-  alertBox();
-  // clear alert messages
-  alertMsgs = [];
-  // increase multi counter
-  multi.count++;
   // done processing file
   multi.processing = false;
   if (multi.count == multi.total) finishMulti(body);
@@ -11387,7 +11424,7 @@ function updateSequence (figNr, figure, replace, fromFigSel, force) {
   // correct direction changers when new figure is from Figure Selector
   if (fromFigSel) {
     if (replace) var prevFig = figNr - 1; else var prevFig = figNr;
-    if (figures[prevFig] && figure.match(/[a-z]/)) {
+    if (figures[prevFig] && figure.match(/[a-zA-Z]/)) {
       if (figures[prevFig].exitAxis == 'Y') {
         // switch > and ^. Use temporary placeholder #
         figure = figure.replace(/\^/g, '#').replace(/>/g, '^').replace(/#/g, '>');
@@ -11704,7 +11741,7 @@ function parseSequence () {
       // remove any comments inside the figure
       var base = figure.replace(/"[^"]*"/g, '');
       // To determine the base we remove all non-alphabet characters (except -)
-      base = base.replace(/[^a-z\-]+/g, '');
+      base = base.replace(/[^a-zA-Z\-]+/g, '');
       // Replace any x> format to move forward by x times >
       if (regexMoveForward.test(figure)) {
         var moveFwd = fig.match(regexMoveForward)[0];
@@ -11727,7 +11764,7 @@ function parseSequence () {
       base = base.replace(/if|is|f|s/g, '');
       // Handle simple horizontal rolls that change from upright to inverted or vv
       if (base == '-') {
-        if (figure.replace(/[^a-z0-9\-\+]+/g, '').charAt(0) == '-') {
+        if (figure.replace(/[^a-zA-Z0-9\-\+]+/g, '').charAt(0) == '-') {
           base += '+';
         } else {
           base = '+' + base;
@@ -11778,7 +11815,7 @@ function parseSequence () {
       }
       // Handle turns and rolling turns. They do have numbers in the base
       if (base.match(/^.j[^w]/)) {
-        base = figure.replace(/[^a-z0-9\-\+]+/g, '');
+        base = figure.replace(/[^a-zA-Z0-9\-\+]+/g, '');
         if (base.charAt(0) != '-') base = '+' + base;
         if (base.charAt(base.length - 1) != '-') base = base + '+'
       }
