@@ -9126,13 +9126,13 @@ function buildForms (print) {
       // use setTimeout for printing to prevent blocking and
       // associated warnings by the browser
       setTimeout (function(){win.print(); win.close();}, 200);
-  }
+    }
   } else {
     svg += '</svg>';
     // Update viewBox
     // Add some margin to make sure bold lines etc are correctly shown
-    svg = svg.replace (/viewBox="[^"]*"/, 'viewBox="-3 -4 806 ' +
-      (translateY - parseInt(document.getElementById ('pageSpacing').value) + 8) + '"');
+    svg = svg.replace (/viewBox="[^"]*"/, 'viewBox="-5 -5 810 ' +
+      (translateY - parseInt(document.getElementById ('pageSpacing').value) + 10) + '"');
     // replace first width and height. These should be for complete SVG
     svg = svg.replace (/width="[^"]*"/, 'width="' +
       document.getElementById ('imageWidth').value + 'px"');
@@ -9283,7 +9283,7 @@ function buildForm (svg, print) {
       }
     } else {
       // CIVA forms
-      var moveRight = 0;
+      var moveRight = 10;
       // set the maximum scale to two but take the tear-off tab in account
       // for Form C (defined by X + Y = 1620)
       if (!miniFormA) {
@@ -9293,12 +9293,13 @@ function buildForm (svg, print) {
         var maxScale = 2;
       }
       // For form A we need to add the righthand scoring column, so
-      // max width = 620 (580 for IAC)
+      // max width = 620. For Form B and C max width = 790 to always
+      // provide 10px left margin to sequence.
       if (activeForm === 'A') {
-        var scale = 620 / w;
+        var scale = 600 / w;
         var marginTop = 130;
       } else {
-        var scale = 800 / w;
+        var scale = 790 / w;
         var marginTop = 140;
       }
       // check for max height
@@ -9476,7 +9477,7 @@ function buildForm (svg, print) {
       var x = parseInt(bBox.x) - bBox.width * 0.05;
       var h = parseInt(bBox.height) * 1.1;
       var y = parseInt(bBox.y) - bBox.height * 0.05;
-    } else { 
+    } else {
       var w = parseInt(bBox.width);
       var x = parseInt(bBox.x);
       var h = parseInt(bBox.height);
@@ -9573,9 +9574,9 @@ function buildForm (svg, print) {
   
   // Insert rectangle (=background) at the beginning
   var path = document.createElementNS (svgNS, "rect");
-  path.setAttribute('x', '0');
+  path.setAttribute('x', '-5');
   path.setAttribute('y', '0');
-  path.setAttribute('width', '800');
+  path.setAttribute('width', '810');
   path.setAttribute('height', '1130');
   path.setAttribute('style',style.formBackground);
   mySVG.insertBefore(path, mySVG.firstChild);
