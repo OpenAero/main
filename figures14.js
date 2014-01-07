@@ -1,4 +1,4 @@
-// figures.js file 1.4.0
+// figures14.js file 1.4.1
 
 // This file is part of OpenAero.
 
@@ -35,36 +35,37 @@
 
 // First, we define the figs array
 var figs = new Array();
-// OpenAero aerobatics figures information
-//
-//### PATTERNS #####
-//#    +- entry exit
-//#    letters - name of figure
-//#    () middle roll
-//#    _ full roll   
-//#    ^ half roll  
-//#    & anything is allowed
 
-//### Instructions #####
-//  + force positive attitude
-//  - force negative attitude 
-//  ~ forward fly
-//  ' 1/4-lengh forward fly
-//  h add a hammerhead sign
-//  t add a tailslide sign 
-//  T add a wheels-up tailslide sign
-//  u pointed top (non-Aresti)
-//  j a turn (jo=outside, jio=inside-outside, joi=outside-inside)
-//  _ roll location
-//
-//  change angle/draw arc:
-//  45d  90v 135z 180m  225c  270p  315r  360o
-//    D    V    Z    M     C     P   R     O
-//
-//   letter!_  is a looping portion with a roll inside   eg o!_
-//   letter=   means to draw the figure "exact" with actual looping portion (no hard corners, see pp figure)
-//   letter/   means to draw the looping portion half-size (see b figure)
+/**** PATTERNS ****
+ * +- entry exit
+ * letters - name of figure
+ * () middle roll
+ * _ full roll
+ * ^ half roll
+ * & any roll is allowed
 
+ **** Instructions ****
+ * + force positive attitude
+ * - force negative attitude 
+ * ~ forward fly
+ * ' 1/4-lengh forward fly
+ * h add a hammerhead sign
+ * t add a tailslide sign 
+ * T add a wheels-up tailslide sign
+ * u pointed top (non-Aresti)
+ * j a turn (jo=outside, jio=inside-outside, joi=outside-inside)
+ * _ roll location
+
+ change angle/draw arc:
+ 45d  90v 135z 180m  225c  270p  315r  360o
+   D    V    Z    M     C     P   R     O
+
+ letter!_  is a looping portion with a roll inside   eg o!_
+ letter=   means to draw the figure "exact" with actual looping portion (no hard corners, see pp figure)
+ letter/   means to draw the looping portion half-size (see b figure)
+*/
+
+/** OLD OLAN CODE. NOT SURE ABOUT USE
 //diagonal
 //zee
 //shark
@@ -81,7 +82,7 @@ var figs = new Array();
 //ploop qloop revploop revqloop 
 //hammer tailslide  
 //  use @ as "flick" indicator  $ as spin indicator  6$ vertical
-
+*/
 
 //
 // Family 1: Lines and Angles
@@ -1726,7 +1727,7 @@ figs.push("-&bb(&)&- 8.8.8.2(20) -~''V~'_'m/~~''_~m/''_~v''~");
 figs.push("+&ibb(&)&+ 8.8.8.3(19) ~''V~'_'m/~~''_~m/''_~v''~");
 figs.push("-&ipbpb(&)&- 8.8.8.4(25:0) -~''v~'_'M/~~''_~M/''_~V''~");
 
-/** COMMENTED OUT FOR NOW UNTIL AGREEMENT ABOUT CONVENTION
+
 // Double Humpty Bumps with first half loop large (since 2014)
 figs.push("+&Bb(&)&-    8.8.1.1(18)	   ~''v~'_'''m~~'''_~~'''m/~_~v''~");
 figs.push("-&pBpb(&)&+  8.8.1.2(25)	  -~''V~'_'''M~~'''_~~'''M/~_~V''~");
@@ -1808,7 +1809,6 @@ figs.push("+&pbpB(&)&+  8.8.8.1(25)	   ~''v~'_'''M/~~'''_~~'''M~_~V''~");
 figs.push("-&bB(&)&-    8.8.8.2(20)	  -~''V~'_'''m/~~'''_~~'''m~_~v''~");
 figs.push("+&ibB(&)&+   8.8.8.3(19)	   ~''V~'_'''m/~~'''_~~'''m~_~v''~");
 figs.push("-&ipbpB(&)&- 8.8.8.4(25)	  -~''v~'_'''M/~~'''_~~'''M~_~V''~");
-*/
 
 // Family 8.10. Reversing 1.25 Loops
 figs.push('F8.10 Reversing 1 1/4 Loops');

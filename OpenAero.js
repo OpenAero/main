@@ -37,7 +37,7 @@ var svgNS = "http://www.w3.org/2000/svg";
 var xlinkNS = "http://www.w3.org/1999/xlink";
 // Get ellipse perameters for perspective drawing
 var perspective_param = get_ellipse_parameters(yAxisOffsetDefault,yAxisScaleFactor);
-var True_Drawing_Angle
+var True_Drawing_Angle;
 // set y axis offset to the default
 var yAxisOffset = yAxisOffsetDefault;
 // Attitude goes from 0 to 359
@@ -165,7 +165,7 @@ var OLANBumpBugFigs = [];
 var OLANNBugFigs = [];
 // variables for automatic conversion of roll directions in OLAN files
 var OLANSequence = false;
-var inFigureXSwitchFig = 9999;
+var inFigureXSwitchFig = Infinity;
 
 // seqCheckAvail indicates if sequence checking is available for a rule/cat/seq combination
 var seqCheckAvail = [];
@@ -615,6 +615,17 @@ function printDialog(show) {
     });
   } else {
     document.getElementById('printDialog').classList.add ('noDisplay');
+  }
+}
+
+// printDialog shows or hides the print dialog
+// when false, the dialog is closed
+function printMultiDialog(show) {
+  var div = document.getElementById('printMulti');
+  if (show) {
+    div.classList.remove ('noDisplay');
+  } else {
+    div.classList.add ('noDisplay');
   }
 }
 
@@ -2608,7 +2619,8 @@ function addEventListeners () {
 
   document.getElementById('menuTools').addEventListener('mouseover', menuActive, false);
   document.getElementById('menuTools').addEventListener('mouseout', menuInactive, false);
-  document.getElementById('t_checkMultipleSeq').addEventListener('click', function(){checkMultiDialog(true)}, false);
+  document.getElementById('t_checkMultipleSeq').addEventListener('mousedown', function(){checkMultiDialog(true)}, false);
+  // document.getElementById('t_printMultipleSeq').addEventListener('mousedown', function(){printMultiDialog(true)}, false);
   document.getElementById('rulesFile').addEventListener('change', openRulesFile, false);
   document.getElementById('t_settings').addEventListener('click', settingsDialog, false);
   document.getElementById('t_installChromeAppTitle').addEventListener ('mousedown', installChromeApp, false);
@@ -2707,6 +2719,10 @@ function addEventListeners () {
   document.getElementById('checkMultiFiles').addEventListener('change', function(){checkMulti()}, false);
   document.getElementById('t_checkMultiClose').addEventListener('click', function(){checkMultiDialog()}, false);
   
+  // print multiple dialog
+  document.getElementById('printMultiFiles').addEventListener('change', function(){printMulti()}, false);
+  document.getElementById('t_printMultiClose').addEventListener('mousedown', function(){printMultiDialog()}, false);
+
   // settings dialog
   document.getElementById('manual.html_settings').addEventListener('mousedown', function(){
     helpWindow('manual.html#settings', 'Settings');
@@ -2754,8 +2770,8 @@ function addEventListeners () {
   document.getElementById('pilotCard4').addEventListener('click', setPilotCardLayout, false);
   document.getElementById('printFormGrid').addEventListener('change', saveImageSizeAdjust, false);
   /*
-  document.getElementById('pilotCardX').addEventListener('change', function(){setRatio(this, 'pilotCardY', Math.PageRatio)}, false);
-  document.getElementById('pilotCardY').addEventListener('change', function(){setRatio(this, 'pilotCardX', 1/Math.PageRatio)}, false);
+  document.getElementById('pilotCardX').addEventListener('change', function(){setRatio('pilotCardY', this, Math.PageRatio)}, false);
+  document.getElementById('pilotCardY').addEventListener('change', function(){setRatio('pilotCardX', this, 1/Math.PageRatio)}, false);
   document.getElementById('pilotCardUnits').addEventListener('change', setPilotCardUnits, false);*/
   document.getElementById('imageWidth').addEventListener('change', saveImageSizeAdjust, false);
   document.getElementById('imageHeight').addEventListener('change', saveImageSizeAdjust, false);
@@ -3525,16 +3541,13 @@ function setOptions () {
   document.getElementById ('zipImageFilenamePattern').setAttribute('value', zipImageFilenamePattern);
   document.getElementById ('zipImageFilenamePattern').setAttribute('size', zipImageFilenamePattern.length);
 
-  // add roll font sizes
-  var el = document.getElementById('rollFontSize');
+  // set roll font sizes
   for (var key in rollFont) {
-    var opt = document.createElement('option');
+    var opt = document.getElementById('t_roll' + key[0].toUpperCase() + key.slice(1));
     opt.setAttribute('value', rollFont[key]);
-    opt.innerHTML = key;
     if (rollFont[key] == rollFontSize) {
       opt.setAttribute ('selected', 'selected');
     }
-    el.appendChild(opt);
   }
   
   // add styles to settings dialog, sorted alphabetically
@@ -3625,6 +3638,7 @@ function saveSettingsCookie () {
 function changeLanguage () {
   updateUserTexts();
   saveSettingsCookie();
+  checkSequenceChanged(true);
 }
 
 // getStyle will retrieve a style and put it's value in the Settings
@@ -3707,6 +3721,7 @@ function setPilotCardLayout() {
   this.classList.add ('active');
 }
 
+/** DEPRECATED in 1.4.0 as we set the size by percentage
 // setPilotCardUnits changes the values for X and Y when the units change
 function setPilotCardUnits () {
   var el = {'X':document.getElementById('pilotCardX'),
@@ -3722,9 +3737,10 @@ function setPilotCardUnits () {
 
 // setRatio sets the value of element 'id' to
 // (value of element e) * ratio
-function setRatio (e, id, ratio) {
+function setRatio (id, e, ratio) {
   document.getElementById (id).value = roundTwo(e.value * ratio);
 }
+*/
 
 // selectPwrdGlider is activated when powered or glider is chosen
 function selectPwrdGlider () {
@@ -6173,7 +6189,7 @@ function availableFigureGroups() {
   } else {
     // show all options
     for (var i = 1; i < options.length; i++) {
-        options[i].classList.remove ('nodisplay');
+      options[i].classList.remove ('nodisplay');
     }
   }
 }
@@ -6421,7 +6437,7 @@ function markMatchingFigures () {
   if (previousPattern) {
     var regexString = '^[\\' + previousPattern[previousPattern.length - 1] + '].*';
   } else var regexString = '';
-  if (nextPattern) regexString = regexString + '[\\' + nextPattern[0] + ']$';
+  if (nextPattern) regexString += '[\\' + nextPattern[0] + ']$';
   var regex = new RegExp (regexString);
   var table = document.getElementById('figureChooserTable');
   var tr = table.childNodes;
@@ -7114,7 +7130,8 @@ function flipYAxis () {
 }
 
 // updateSequenceOptions updates the sequence options to reflect the
-// active start of the sequence. The active start is NOT displayed as an option
+// active start of the sequence. The active start is NOT displayed as an
+// option
 function updateSequenceOptions (code) {
   el = document.getElementById('sequenceOptions');
   // create a nodeList and remove the items of the nodelist
@@ -8502,11 +8519,17 @@ function checkOpenAeroVersion () {
 // -1 when v1 < v2
 // 1 when v1 > v2
 // 0 when v1 = v2
-// this function assumes a 3-digit version number without letters!
+// No letters can be used but any number of digits. Comparison will
+// continue until all digits of the longest version have been checked,
+// where a 0 will be counted as higher than no number at all.
+// E.g. ("1.4.0.0", "1.4.0") will return 1
 function compVersion (v1, v2) {
   var subV1 = v1.split('.');
   var subV2 = v2.split('.');
-  for (var i = 0; i < 3; i++) {
+  var count = (subV1.length > subV2.length)? subV1.length : subV2.length;
+  for (var i = 0; i < count; i++) {
+    if (i >= subV1.length) return -1;
+    if (i >= subV2.length) return 1;
     if (parseInt(subV1[i]) < parseInt(subV2[i])) return -1;
     if (parseInt(subV1[i]) > parseInt(subV2[i])) return 1;
   }
@@ -8538,9 +8561,12 @@ function loadedRulesFile (evt) {
   // convert file to array
   var lines = evt.target.result.toString().split("\n");
   for (var i = 0; i < lines.length; i++) {
+    // remove any windows linebreaks
     var line = lines[i].replace('\r', '');
     // only keep part inside rules.push
     line = line.replace (/rules\.push[ ]*\("([^"]*).*$/, "$1");
+    // replace all double backslashes by single
+    line = line.replace (/\\\\/g, '\\');
     // do some basic matching to check for correct rule line
     if (line.match (/^([0-9\.]{5}|\[[^\]]+\]|\([^\)]+\))/) || line.match (/^[^#\/][a-zA-Z0-9\-_]+=/)) {
       console.log(line);
@@ -9850,7 +9876,7 @@ function buildScoreColumn (svg) {
     for (var i = 0; i<penalties.length; i++) {
       drawRectangle (620, y, 180, 25, 'formLine', svg);
       drawText (penalties[i], 628, y + 18, 'formAText', 'start', '', svg);
-      y = y + 25;
+      y += 25;
     }
   
     drawRectangle (620, y, 180, 25, 'formLine', svg);
@@ -9981,7 +10007,12 @@ function saveImageSizeAdjust () {
 function saveSVG () {
   // put the svg in var data
   var data = buildForms();
-  saveFile(data, activeFileName(), '.svg', {'name':'SVG file', 'filter':'*.svg'}, 'image/svg+xml;utf8');
+  saveFile(
+    data,
+    activeFileName(),
+    '.svg',
+    {'name':'SVG file', 'filter':'*.svg'},
+    'image/svg+xml;utf8');
   draw();
 }
 
@@ -9996,7 +10027,12 @@ function savePNG () {
     // wrap conversion in try, in case it fails
     try {
       svgToPng (data, function(data){
-        saveFile(data, activeFileName(), '.png', {'name':'PNG file', 'filter':'*.png'}, 'image/png;base64');
+        saveFile(
+          data,
+          activeFileName(),
+          '.png',
+          {'name':'PNG file', 'filter':'*.png'},
+          'image/png;base64');
         infoBox ();
       });
     } catch (err) {
@@ -10060,7 +10096,13 @@ function saveFigs () {
   }
   var data = zip.generate();
 
-  saveFile(data, filename, '.zip', {'name':'ZIP file', 'filter':'*.zip'}, 'application/zip;base64', true);
+  saveFile(
+    data,
+    filename,
+    '.zip',
+    {'name':'ZIP file', 'filter':'*.zip'},
+    'application/zip;base64',
+    true);
   selectedFigure.id = id;
   displaySelectedFigure();
 }  
@@ -10433,7 +10475,7 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
                   switch (rollPattern[j + 1]) {
                     case ('i'):
                       if (rollPattern[j + 2] === 'f') {
-                        j = j + 2;
+                        j += 2;
                         if (!stops) {
                           roll[i].push({
                             'type':'negsnap',
@@ -10446,7 +10488,7 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
                           illegalSnapSpin = rollPattern.substring(j - 1, j + 1);
                         }
                       } else if (rollPattern[j + 2] === 's') {
-                        j = j + 2;
+                        j += 2;
                         if (!stops) {
                           roll[i].push({
                           'type':'negspin',
@@ -10461,7 +10503,7 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
                       } 
                       break;
                     case ('f'):
-                      j++
+                      j++;
                       if (!stops) {
                         roll[i].push({
                           'type':'possnap',
@@ -10819,8 +10861,8 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
               // add ; or , as appropriate for checking
               var k = j - 1;
               while (k > -1) {      
-                if (roll[rollnr][k]['type'] != 'line') {
-                  if ((roll[rollnr][j]['extent'] / roll[rollnr][k]['extent']) > 0) {
+                if (roll[rollnr][k].type != 'line') {
+                  if ((roll[rollnr][j].extent / roll[rollnr][k].extent) > 0) {
                     figCheckLine[seqNr] += ';';
                   } else {
                     figCheckLine[seqNr] += ',';
@@ -10829,7 +10871,7 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
                 }
                 k--;
               }
-              figCheckLine[seqNr] = figCheckLine[seqNr] + rollAresti[rollI];
+              figCheckLine[seqNr] += rollAresti[rollI];
             } else {
               // disable non-Aresti rolls
               if (!document.getElementById('nonArestiRolls').checked) {
@@ -11060,8 +11102,8 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
             }
             paths = buildShape ('Curve', rollTopAngleAfter - topLineAngle, paths);
             // Retrieve the movement by the two curve paths
-            dx = paths[paths.length - 1]['dx'] + paths[paths.length - 3]['dx'];
-            dy = paths[paths.length - 1]['dy'] + paths[paths.length - 3]['dy'];
+            dx = paths[paths.length - 1].dx + paths[paths.length - 3].dx;
+            dy = paths[paths.length - 1].dy + paths[paths.length - 3].dy;
             dxRolls = 0;
             dyRolls = 0;
             // Retrieve the roll path movements
@@ -11094,7 +11136,16 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
         // This is only possible when there was a 1/4, 3/4 etc roll and
         // the attitude is vertical.
         // Only run one X and one Y switch per figure
-        figString = checkQRollSwitch (figString, figStringIndex, fig[figNr].pattern, seqNr, rollSum, figureDraw, i, roll, rollnr);
+        figString = checkQRollSwitch (
+          figString,
+          figStringIndex,
+          fig[figNr].pattern,
+          seqNr,
+          rollSum,
+          figureDraw,
+          i,
+          roll,
+          rollnr);
       
         // The roll drawing has past, so make sure the rollTop variable
         // is set to false
@@ -11104,7 +11155,16 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
       // handle clovers (figures with fixed 1/4 roll up or down)
       case ('4'):
         paths = buildShape ('Roll', Array(90, 0), paths);
-        figString = checkQRollSwitch (figString, figStringIndex, fig[figNr].pattern, seqNr, 90, figureDraw, i, roll, rollnr);
+        figString = checkQRollSwitch (
+          figString,
+          figStringIndex,
+          fig[figNr].pattern,
+          seqNr,
+          90,
+          figureDraw,
+          i,
+          roll,
+          rollnr);
         break;
       // (rolling) turns are handled here. We pass the turn part and any
       // direction changers of the draw string.
@@ -11220,9 +11280,11 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
     figCheckLine[seqNr] = figCheckLine[seqNr].replace(/ $/, ' 0.0.0.0');
   }
   
-  // set inFigureXSwitch (used for OLAN sequence autocorrect) to false
+  // set inFigureXSwitchFig (used for OLAN sequence autocorrect) to false
   // when we exit on X axis
-  if ((Direction == 0) || (Direction == 180)) inFigureXSwitchFig = 9999;
+  if ((Direction == 0) || (Direction == 180)) {
+    inFigureXSwitchFig = Infinity;
+  }
 }
 
 // checkQRollSwitch checks for vertical 1/4 rolls and determines 

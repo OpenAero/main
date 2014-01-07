@@ -1,4 +1,4 @@
-// config.js 1.4.0
+// config.js 1.4.1
 
 // This file is part of OpenAero.
 
@@ -34,25 +34,11 @@
 // Define active version number of OpenAero
 // **************
 
-var version = '1.4.0';
+var version = '1.4.0.1';
 var versionNew = '<strong>OpenAero has been upgraded to version ' +
   version + '</strong><br>New features:<ul>' +
-  '<li>Added option to figure chooser to hide figures that don\'t ' +
-  'comply with the active rules</li>' +
-  '<li>Added new figure, roll and sequence comment options</li>' +
-  '<li>Now possible to save sequences and separate images as PNG, ' +
-  'along with other new print options</li>' +
-  '<li>Improved Free Unknown figure letter handling</li>' +
-  '<li>Disabled some editing of Free Unknown figures to prevent mistakes</li>' +
-  '<li>Increased roll font size, especially for large sequences</li>' +
-  '<li>Figures can now be changed to similar ones (e.g. pull humpty ' +
-  'to push humpty) while keeping rolls</li>' +
-  '<li>Added a bunch of new logos</li>' +
-  '<li>CIVA and French sequences for 2014</li>' +
-  '<li>CIVA and French rules for 2014</li>' +
-  '<li>Chrome App available, offers easier access and improved file ' +
-  'saving</li>' +
-  '<li>Many, many other updates and small bugfixes</li>' +
+  '<li>Added French interface language (change in <i>Settings</i>)</li>' +
+  '<li>Added double humpty bumps with different half loop sizes</li>' +
   '</ul>' +
   'This may take a few seconds to complete.';
 
@@ -63,7 +49,23 @@ var chromeApp = {
 }
 
 // define the labels (=input field ids) for saving/loading sequences
-var sequenceXMLlabels = ['pilot', 'aircraft', 'category', 'location', 'date', 'class', 'program', 'rules', 'positioning', 'harmony', 'notes', 'sequence_text', 'logo', 'oa_version', 'default_view'];
+var sequenceXMLlabels = [
+  'pilot',
+  'aircraft',
+  'category',
+  'location',
+  'date',
+  'class',
+  'program',
+  'rules',
+  'positioning',
+  'harmony',
+  'notes',
+  'sequence_text',
+  'logo',
+  'oa_version',
+  'default_view'
+  ];
 
 // **************
 // Define drawing lengths, radiuses etc
@@ -220,7 +222,8 @@ style.corr = 'stroke: red; stroke-width: 2px; fill: none;';
 style.corrfill = 'stroke: red; stroke-width: 2px; fill: red;';
 // Default roll font size
 var rollFontSize = 20;
-// other sizes
+// Roll sizes. User displayed names are set through index.html and
+// language files
 var rollFont = {'small': 15, 'medium': 20, 'large': 25};
 // Roll text style
 style.rollText = 'font-family: arial, sans; font-size: ' + rollFontSize +

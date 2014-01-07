@@ -1,3 +1,9 @@
+1.4.1
+* restore App window size to previous on subsequent startup (Issue #128)
+* added French user interface
+* improved compVersion function to allow versions with more than 3 numbers
+* added double humpty bumps with different half loop sizes
+
 1.4.0
 * added Belgian Aerobatic Club logo
 * fixed missing flags in Firefox grid view print (Issue #107)

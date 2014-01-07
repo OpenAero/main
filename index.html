@@ -48,6 +48,7 @@
     <script src="config.js" type="text/javascript"></script>
     <!-- interface languages -->
     <script src="languages/en.js" type="text/javascript"></script>
+    <script src="languages/fr.js" type="text/javascript"></script>
     <!-- logos -->
     <script src="logo.js" type="text/javascript"></script>
     <!-- figure definitions -->
@@ -292,6 +293,37 @@
     </div>
     <!-- end check multiple -->
     
+    <!-- print multiple -->
+    <div id="printMulti" class="boxbg noDisplay">
+      <div class="box">
+        <span class="boxTitle">
+          <span class="userText" id="t_printMulti"></span>
+        </span>
+        <div>
+          <input type="checkbox" id="multiFullLog">
+          <span class="userText" id="t_showFullLog"></span>
+        </div>
+        <div>
+          <input type="checkbox" id="multiOverrideRules" checked>
+          <span class="userText" id="t_multiOverrideRules"></span>
+          <span id="multiCurrentRules"></span>
+        </div>
+        <div>
+          <span class="userText" id="t_chooseFilesPrint"></span>
+          <form id="printMultiFileForm">
+            <input type="file" id="printMultiFiles" multiple>
+          </form>
+        </div>
+        <div id="fileDropPrint" class="fileDrop">
+          <div>
+            <span class="userText" id="t_orFileDropPrint"></span>
+          </div>
+        </div>
+        <div class="textButton close userText" id="t_printMultiClose"></div>
+      </div>
+    </div>
+    <!-- end print multiple -->
+    
     <!-- Settings -->
     <div id="settingsDialog" class="boxbg noDisplay">
       <div class="box">
@@ -365,6 +397,9 @@
           <div class="section">
             <div>
               <select id="rollFontSize">
+                <option id="t_rollSmall" class="userText"></option>
+                <option id="t_rollMedium" class="userText"></option>
+                <option id="t_rollLarge" class="userText"></option>
               </select>
               <span class="userText" id="t_rollTextSize"></span>
             </div>
@@ -483,9 +518,14 @@
           <li id="menuTools">
             <a class="userText" id="t_tools" href="#"></a>
             <ul class="right">
-              <li class="fileOpening">
+              <li>
                 <a class="userText" id="t_checkMultipleSeq" href="#"></a>
               </li>
+              <!--
+              <li>
+                <a class="userText" id="t_printMultipleSeq" href="#"></a>
+              </li>
+              -->
               <li class="fileOpening">
                 <div class="openFile">
                   <a class="userText" id="t_importRulesFile" href="#"></a>
@@ -621,7 +661,7 @@
             </span>
             <span id="activeLogo">
               <a href="#" id="logoImage" class="noDisplay"></a>
-              <a id="t_chooseLogo" href="#">Choose logo</a>
+              <a id="t_chooseLogo" class="userText" href="#"></a>
             </span>
           </div>
           <div class="clearSpace"></div>

@@ -52,7 +52,8 @@ lang.en = {
 'checkMulti' : 'Check multiple sequences',
 'checkMultiClose' : 'Close',
 'checkMultiCounter' : 'Checking sequence %s of %s<br>%s<br>This may ' +
-  'take some time. Please wait...','checkMultipleSeq' : 'Check multiple seq',
+  'take some time. Please wait...',
+'checkMultipleSeq' : 'Check multiple seq',
 'checkMultiWait' : 'Checking %s sequences.<br>This may ' +
   'take some time. Please wait...',
 'checkSequence' : 'Check sequence',
@@ -60,6 +61,9 @@ lang.en = {
 'checkSequenceOK' : 'OK',
 'checkSequenceResult' : 'Sequence check result',
 'chooseFiles' : 'Choose your files here:',
+// new for 1.4.1
+'chooseFilesPrint' : 'Choose your files here:',
+// end new
 'chooseLogo' : 'Choose logo',
 'class' : 'Class',
 'clearPositioning' : 'Clear positioning',
@@ -210,6 +214,9 @@ lang.en = {
 'openQueueFile' : 'Open queue file',
 'openSequence' : 'Open sequence',
 'orFileDrop' : 'Or drag & drop your files here',
+// new for 1.4.1
+'orFileDropPrint' : 'Or drag & drop your files here',
+// end new
 'pageSpacing' : 'Page spacing',
 'pilot' : 'Pilot',
 'pilotCardFormB' : 'Form B',
@@ -234,6 +241,13 @@ lang.en = {
 'printFormGrid' : 'Figures in grid',
 'printMiniFormAonB' : 'with mini Form A',
 'printMiniFormAonC' : 'with mini Form A',
+// new for 1.4.1
+'printMulti' : 'Print multiple sequences (NOT FUNCTIONAL YET!)',
+'printMultiClose' : 'Close',
+'printMultipleSeq' : 'Print multiple seq',
+'printMultiWait' : 'Checking %s sequences.<br>This may ' +
+  'take some time. Please wait...',
+// end new
 'printNotes' : 'Sequence Notes (top of pages)',
 'printPilotCards' : 'Pilot cards',
 'printSaveForms' : 'Print/save forms',
@@ -294,7 +308,7 @@ lang.en = {
 'sequenceCheckLog' : 'OpenAero Sequence check log',
 'sequenceCorrect' : 'Sequence is correct',
 'sequenceHasErrors' : 'Sequence has errors:',
-'sequenceInfo' : 'Sequence&nbsp;info',
+'sequenceInfo' : 'Sequence info',
 'sequenceShort' : 'Seq.',
 'sequenceTab' : 'Sequence',
 'sequenceTest' : 'Check: ',

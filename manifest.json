@@ -1,7 +1,7 @@
 {
-  "name": "OpenAero",
+  "name": "OpenAero Beta",
   "description" : "Aerobatic sequence creation software",
-  "version": "1.4.0.8",
+  "version": "1.4.0.9",
   "manifest_version": 2,
   "minimum_chrome_version": "26",
 

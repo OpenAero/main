@@ -32,6 +32,9 @@ span {
   margin: 0;
   padding: 0;
 }
+span.noDisplay {
+  display: none;
+}
 img {
   margin: 0;
 }

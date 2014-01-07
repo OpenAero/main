@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# OpenAero Appcache version 1.4.0
+# OpenAero Appcache version 1.4.0.1
 about.html
 arestisystem.html
 buttons/figEndInv.png
@@ -87,6 +87,7 @@ index.html
 jszip.js
 language.html
 languages/en.js
+languages/fr.js
 logo.js
 manual.html
 mobile.css

@@ -99,16 +99,16 @@ select {
   width: 320px;
 }
 .tabSelector li {
-  padding-top: 7px;
+  padding-top: 4px;
+  line-height: 90%; 
   width: 101px;
   height: 30px;
 }
 .inactiveTab {
-  font-size: 16px;
+  font-size: 17px;
 }
 .activeTab {
   font-size: 16px;
-  letter-spacing: -0.1em;
 }
 #svgContainer {
   position: absolute;

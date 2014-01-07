@@ -6,6 +6,7 @@ chrome.app.runtime.onLaunched.addListener(function(launchData) {
   }
   if (match) {
     chrome.app.window.create('index.html' + match[0], {
+      'id':'OpenAero',
       'bounds':{
         'width': 960,
         'height': 720
@@ -13,6 +14,7 @@ chrome.app.runtime.onLaunched.addListener(function(launchData) {
     });
   } else {
     chrome.app.window.create('index.html', {
+      'id':'OpenAero',
       'bounds':{
         'width': 960,
         'height': 720
