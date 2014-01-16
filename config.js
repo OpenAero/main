@@ -114,6 +114,8 @@ var scaleLine = {'x':1, 'y':1};
 var numberInCircle = false;
 // define whether to show curves in perspective on Y axis
 var curvePerspective = true;
+// newTurnPerspective is a checkbox in settings
+var newTurnPerspective;
 
 // define if we show an error when running from file://
 var presentFileError = false;

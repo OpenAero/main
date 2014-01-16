@@ -1,4 +1,4 @@
-// fr.js 1.4.0
+// fr.js 1.4.0 V gg_1
 // This file is part of OpenAero.
 
 //  OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -19,7 +19,7 @@
 
 /***********************************************************************
  * Language files define texts for user interaction in various languages
- * This file is for French. For other languages, use the same format.
+ * This file is for English. For other languages, use the same format.
  ***********************************************************************/
 
 // lang.xx , where xx is language code
@@ -63,7 +63,7 @@ lang.fr = {
 'clearPositioningConfirm' : 'Ceci supprimera le positionnement des figures.' +
   'Voulez-vous continer ?',
 'clearQueue' : 'Effacer la file',
-'clearQueueConfirm' : 'Etes-vous sure de vouloir effacer toutes les figures de la file ?',
+'clearQueueConfirm' : 'Etes-vous sur de vouloir effacer toutes les figures de la file ?',
 'clearSequence' : 'Effacer le programme',
 'clickAddFigure' : 'Cliquer pour ajouter figure',
 'clickChangeFigure' : 'Cliquer pour changer ou ajouter une figure',
@@ -115,7 +115,7 @@ lang.fr = {
 'figureEditor' : 'Editeur&nbsp;de figure',
 'figureQueue' : 'File / Tampon',
 'file' : 'Fichier',
-'fileName' : 'Nom de fichier',
+'fileName' : 'Nom du fichier',
 'flipYAxis' : 'Changer d\'axe Y',
 'forElement' : ' pour element ',
 'formA' : 'Forme A',
@@ -167,7 +167,7 @@ lang.fr = {
 'manual' : 'Manuel OpenAero',
 'maxConnectors' : 'Maximum de figures de liaison permis :',
 'missingInfo' : 'Des informations essentielles du programme manquent.' +
-  'Etes-vous sûr de vouloir enregistrer ou imprimer le fichier sans celles-ci :',
+  'Etes-vous sur de vouloir enregistrer ou imprimer le fichier sans celles-ci :',
 'missingInfoTitle' : 'Informations du programme manquantes',
 'mobileVersion' : 'Version mobile',
 'multiOverrideRules' : 'Au lieu des regles de chaque programme, utiliser les regles :',
@@ -282,8 +282,8 @@ lang.fr = {
 'saveImageVariables' : 'Enregistrement d\'une image en PNG ou SVG',
 'saveQueueFile' : 'Enregistrer la file',
 'saveSequence' : 'Enregistrer le programme',
-'selectCategoryFirst' : 'Selectionnez d\'abord la Categorie',
-'selectRulesFirst' : 'Selectionnez d\'abord les Regles',
+'selectCategoryFirst' : 'Selectionnez la Categorie',
+'selectRulesFirst' : 'Selectionnez les Regles',
 'separateFigures' : 'Espacer les figures',
 'sequence' : 'Programme',
 'sequenceCorrect' : 'Le programme est correct',
@@ -292,7 +292,7 @@ lang.fr = {
 'sequenceTab' : 'Programme',
 'sequenceTest' : 'Verification :',
 'sequenceNotSavedWarning' : 'Le programme n\'a pas ete Enregistre.\n' +
-  'Etes-vous sûr de vouloir en ouvrir un nouveau ?',
+  'Etes-vous sur de vouloir en ouvrir un nouveau ?',
 'setMobile' : 'Version mobile',
 'settings' : 'Parametrage',
 'settingsClose' : 'Fermer',
@@ -311,17 +311,17 @@ lang.fr = {
 // tooltip forms a sub-array
 'tooltip' : {
   'connector' : 'Fait de cette figure une figure de liaison pour Inconnu-Libre',
-  'curvedLine' : 'Deplace et lie la figure avec un pointille courbe',
+  'curvedLine' : 'Deplace la figure et cree une ligne de liaison courbe',
   'deleteFig' : 'Supprime la figure selectionnee',
   // next two disabled. Are disabling minus button
   // entryExt' : 'Changer la ligne d\'entree',
   // exitExt' : 'Changer la ligne de sortie',
   'figEntryButton' : 'Change l\'entree ventre <=> dos',
   'figExitButton' : 'Change la sortie ventre <=> dos',
-  'magMin' : 'Diminue la figure',
+  'magMin' : 'reduit la taille de la figure',
   'magPlus' : 'Agrandit la figure',
-  'moveForward' : 'Deplace la figure en avant sans ligne de liaison',
-  'straightLine' : 'Deplace la figure avec une ligne de liaison droite',
+  'moveForward' : 'Deplace la figure vers l\'avant sans ligne de liaison',
+  'straightLine' : 'Deplace la figure et cree une ligne de liaison droite',
   'subSequence' : 'Demarre un sous programme a partir de la figure selectionnee',
   'switchFirstRoll' : 'Change le sens de la premiere rotation',
   'switchX' : 'Change le sens de la sortie sur l\'axe X',

@@ -3,6 +3,7 @@
 * added French user interface
 * improved compVersion function to allow versions with more than 3 numbers
 * added double humpty bumps with different half loop sizes
+* added experimental turn perspective feature
 
 1.4.0
 * added Belgian Aerobatic Club logo

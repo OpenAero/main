@@ -178,6 +178,9 @@ lang.en = {
 'missingInfoTitle' : 'Sequence info missing',
 'mobileVersion' : 'Mobile version',
 'multiOverrideRules' : 'Override sequence rules with current rules from Sequence info: ',
+'newTurnPerspective' : 'Realistic-looking perspective for turns ' +
+  '<font color=red>EXPERIMENTAL, DO NOT USE FOR COMPETITION SEQUENCES!' +
+  '</font>',
 'noCookies' : 'It seems cookies are disabled in your browser. ' +
   'This means some functions of OpenAero will not work.<br>' +
   'To enable cookies in the Chrome browser, please copy the following ' +

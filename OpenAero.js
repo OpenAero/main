@@ -35,8 +35,7 @@ var myEvents = [];
 var svgNS = "http://www.w3.org/2000/svg";
 // xlink Name Space for including image in svg
 var xlinkNS = "http://www.w3.org/1999/xlink";
-// Get ellipse perameters for perspective drawing
-var perspective_param = get_ellipse_parameters(yAxisOffsetDefault,yAxisScaleFactor);
+
 var True_Drawing_Angle;
 // set y axis offset to the default
 var yAxisOffset = yAxisOffsetDefault;
@@ -123,6 +122,8 @@ var unknownFigureLetter = false;
 var Tau = Math.PI * 2;
 // degToRad is Pi / 180. Saves calculations for degree to rad conversions
 var degToRad = Math.PI / 180;
+// Get ellipse perameters for perspective drawing
+var perspective_param = getEllipseParameters(yAxisOffsetDefault,yAxisScaleFactor);
 // logoImg holds the active logo image
 var logoImg = false;
 // figureStart holds the start positions (x,y) of all figures
@@ -1124,17 +1125,34 @@ function makeCorner (param) {
   return Array(pathArray);
 }
 
-// get_ellipse_parameters gets the ellipse radius and orientation from
+// getEllipseParameters gets the ellipse radius and orientation from
 // the perspective angle and the Y axis scale factor
-function get_ellipse_parameters(P_Angle,Y_Scale) {
+function getEllipseParameters(P_Angle,Y_Scale) {
   if ((P_Angle == 30) && (Y_Scale == 0.7)) {
-    return {'x_radius': 0.559 , 'y_radius': 1.085 ,'rot_angle': 14.67 };
+    return {
+      'x_radius': 0.559,
+      'y_radius': 1.085,
+      'rot_angle': 14.67,      
+	    'H_x_radius': 1.184,
+      'H_y_radius': 0.296,
+      'H_rot_angle': -9.41
+    };
   }
   if (Y_Scale == 1) {
-    var Rot_axe_Ellipse = (90 - P_Angle) /2;
-    var X_axis_Radius = yAxisScaleFactor * Math.sqrt(1 - Math.sin(P_Angle*degToRad)) ;
-    var Y_axis_Radius = Math.sqrt(1 + Math.sin(P_Angle*degToRad)) ;
-    return {'x_radius': X_axis_Radius , 'y_radius': Y_axis_Radius ,'rot_angle': Rot_axe_Ellipse };
+    var V_orient = (90 - P_Angle) /2;
+    var V_r_min = Math.sqrt(1 - Math.sin(P_Angle*degToRad)) ;
+    var V_r_max = Math.sqrt(1 + Math.sin(P_Angle*degToRad)) ;
+    var H_orient = - P_Angle /2;
+    var H_r_min = Math.sqrt(1 - Math.sin((90-P_Angle)*degToRad)) ;
+    var H_r_max = Math.sqrt(1 + Math.sin((90-P_Angle)*degToRad)) ;
+    return {
+      'x_radius': V_r_min,
+      'y_radius': V_r_max,
+      'rot_angle': V_orient,
+	    'H_x_radius': H_r_max,
+      'H_y_radius': H_r_min,
+      'H_rot_angle': H_orient
+    };
   }
   var A = Y_Scale * Math.cos(P_Angle*degToRad);
   var B = Y_Scale * Math.sin(P_Angle*degToRad);
@@ -1156,10 +1174,17 @@ function get_ellipse_parameters(P_Angle,Y_Scale) {
   theta = theta + Math.PI/2 ;
   var H_r_min = roundTwo(Math.sqrt(Math.pow(Math.cos(theta) +
     A*Math.sin(theta),2) + Math.pow(B*Math.sin(theta),2)));
-  var H_orient = roundTwo(180 * Math.atan((B*Math.sin(theta)) /
+  var H_orient = roundTwo(-90 - 180 * Math.atan((B*Math.sin(theta)) /
     (Math.cos(theta) + A*Math.sin(theta))) / Math.PI);
-// Returns only vertical plane parameters (not the horizontal one, for the moment)
-  return {'x_radius': V_r_min, 'y_radius': V_r_max ,'rot_angle': V_orient}
+// Returns both vertical and horizontal planes parameters
+  return {
+    'x_radius': V_r_min, 
+    'y_radius': V_r_max,
+    'rot_angle': V_orient ,
+    'H_x_radius': H_r_max,
+    'H_y_radius': H_r_min,
+    'H_rot_angle': H_orient
+  };
 }
 
 // dirAttToXYAngle modified from dirAttToAngle to just care about angle in a vertical "plan".
@@ -1191,6 +1216,37 @@ function dirAttToXYAngle (dir, att) {
     }
   }
   True_Drawing_Angle = angle;
+  return angle;
+}
+
+// dirAttToGGAngle modified from dirAttToAngle to neutralize perspective angle adjustments.
+// dirAttToAngle creates an angle to draw from the values for direction and attitude
+// 0 or higher angles mean theta was in the right half, negative angles mean theta was in the left half => necessary for correct looping shapes
+function dirAttToGGAngle (dir, att) {
+  while (dir < 0) dir += 360;
+  while (dir >= 360) dir -= 360;
+// Don't create offset for the Y-axis related to yAxisOffset
+  var theta = dir ;  // Modif GG : perspective neutralisation
+// No Y-axis correction for pure verticals
+  if ((att == 90) || (att == 270)) {
+    theta = ((theta < 90) || (theta > 270))? 0 : 180;
+  }
+// Check for right or left half, calculate angle and make negative for left half
+  if ((theta < 90) || (theta > 270)) {
+    var angle = (theta + att) * degToRad;
+    if (angle > Tau) {
+      angle -= Tau;
+    } else if (angle < 0) {
+      angle += Tau;
+    }
+  } else {
+    var angle = (theta - att) * degToRad;
+    if (angle >= 0) {
+      angle -= Tau;
+    } else if (angle < -Tau) {
+      angle += Tau;
+    }
+  }
   return angle;
 }
 
@@ -1281,34 +1337,58 @@ function makeTurnArc (rad, startRad, stopRad, pathsArray) {
   while (stopRad >= Tau) stopRad -= Tau;
 
   var sign = (rad >= 0)? 1 : -1;
-  // calculate where we are in the ellipse
-  radEllipse = Math.atan (-1 / (Math.tan(startRad) / flattenTurn));
-  // as the atan function only produces angles between -PI/2 and PI/2 we
-  // may have to correct for full ellipse range
-  if ((startRad > Math.PI) && (startRad < Tau)) {
-    radEllipse += Math.PI;
-  }
-  startX = Math.cos (radEllipse) * curveRadius;
-  startY = - (Math.sin (radEllipse) * curveRadius * flattenTurn);
-  // calculate where we go to in the ellipse
-  radEllipse = Math.atan (-1 / (Math.tan(stopRad) / flattenTurn));
-  if ((stopRad > Math.PI) && (stopRad < Tau)) {
-    radEllipse += Math.PI;
-  }
-  stopX = Math.cos (radEllipse) * curveRadius;
-  stopY = - (Math.sin (radEllipse) * curveRadius * flattenTurn);
-  dx = roundTwo(stopX - startX) * sign;
-  dy = roundTwo(stopY - startY) * sign;
-  sweepFlag = (rad > 0)? 0 : 1;
-  longCurve = (Math.abs (rad) < Math.PI)? 0 : 1;
-  if ((Attitude > 90) && (Attitude < 270)) {
-    pathsArray.push({'path':'a ' + curveRadius + ',' +
-      roundTwo(curveRadius * flattenTurn) + ' 0 ' + longCurve + ' ' +
-      sweepFlag + ' ' + dx + ',' + dy, 'style':'neg', 'dx':dx,'dy':dy});
+  
+  if (!newTurnPerspective.checked) {
+    // calculate where we are in the ellipse
+    radEllipse = Math.atan (-1 / (Math.tan(startRad) / flattenTurn));
+    // as the atan function only produces angles between -PI/2 and PI/2 we
+    // may have to correct for full ellipse range
+    if ((startRad > Math.PI) && (startRad < Tau)) {
+      radEllipse += Math.PI;
+    }
+    startX = Math.cos (radEllipse) * curveRadius;
+    startY = - (Math.sin (radEllipse) * curveRadius * flattenTurn);
+    // calculate where we go to in the ellipse
+    radEllipse = Math.atan (-1 / (Math.tan(stopRad) / flattenTurn));
+    if ((stopRad > Math.PI) && (stopRad < Tau)) {
+      radEllipse += Math.PI;
+    }
+    stopX = Math.cos (radEllipse) * curveRadius;
+    stopY = - (Math.sin (radEllipse) * curveRadius * flattenTurn);
+    dx = roundTwo(stopX - startX) * sign;
+    dy = roundTwo(stopY - startY) * sign;
+    sweepFlag = (rad > 0)? 0 : 1;
+    longCurve = (Math.abs (rad) < Math.PI)? 0 : 1;
+    if ((Attitude > 90) && (Attitude < 270)) {
+      pathsArray.push({'path':'a ' + curveRadius + ',' +
+        roundTwo(curveRadius * flattenTurn) + ' 0 ' + longCurve + ' ' +
+        sweepFlag + ' ' + dx + ',' + dy, 'style':'neg', 'dx':dx,'dy':dy});
+    } else {
+      pathsArray.push({'path':'a ' + curveRadius + ',' +
+        roundTwo(curveRadius * flattenTurn) + ' 0 ' + longCurve + ' ' +
+        sweepFlag + ' ' + dx + ',' + dy, 'style':'pos', 'dx':dx,'dy':dy});
+    }
   } else {
-    pathsArray.push({'path':'a ' + curveRadius + ',' +
-      roundTwo(curveRadius * flattenTurn) + ' 0 ' + longCurve + ' ' +
-      sweepFlag + ' ' + dx + ',' + dy, 'style':'pos', 'dx':dx,'dy':dy});
+  // Modif GG Start
+  // Always draw in perspactive (rolling) turns, no matter which is the value of curvePerspective
+    var Rot_axe_Ellipse = (yAxisOffset < 90) ? perspective_param.H_rot_angle : -perspective_param.H_rot_angle;
+    var X_curveRadius = roundTwo(perspective_param.H_x_radius * curveRadius) ;
+    var Y_curveRadius = roundTwo(perspective_param.H_y_radius * curveRadius) ;
+    dy =  yAxisScaleFactor * (Math.cos(stopRad) - Math.cos(startRad)) ;
+    dx =  roundTwo((Math.sin(stopRad) - Math.sin(startRad) - dy * Math.cos(yAxisOffset * degToRad)) * curveRadius) * sign;
+    dy =  roundTwo(dy * Math.sin(yAxisOffset * degToRad) * curveRadius) * sign;
+    sweepFlag = (rad > 0)? 0 : 1;
+    longCurve = (Math.abs (rad) < Math.PI)? 0 : 1;
+    if ((Attitude > 90) && (Attitude < 270)) {
+      pathsArray.push({'path':'a ' + X_curveRadius + ',' +
+        Y_curveRadius + ' ' + Rot_axe_Ellipse + ' ' + longCurve + ' ' +
+        sweepFlag + ' ' + dx + ',' + dy, 'style':'neg', 'dx':dx,'dy':dy});
+    } else {
+      pathsArray.push({'path':'a ' + X_curveRadius + ',' +
+        Y_curveRadius + ' ' + Rot_axe_Ellipse + ' ' + longCurve + ' ' +
+        sweepFlag + ' ' + dx + ',' + dy, 'style':'pos', 'dx':dx,'dy':dy});
+    }
+  // Modif GG End
   }
   return pathsArray;
 }
@@ -1320,35 +1400,60 @@ function makeTurnDots (rad, startRad, stopRad, pathsArray) {
   while (stopRad >= Tau) stopRad = stopRad - Tau;
     
   sign = (rad >= 0)? 1 : -1;
-  // calculate where we are in the ellipse
-  radEllipse = Math.atan (-1 / (Math.tan(startRad) / flattenTurn));
-  // as the atan function only produces angles between -PI/2 and PI/2
-  // we may have to correct for full ellipse range
-  if ((startRad > Math.PI) && (startRad < Tau)) {
-    radEllipse += Math.PI;
+  if (!newTurnPerspective.checked) {
+    // calculate where we are in the ellipse
+    radEllipse = Math.atan (-1 / (Math.tan(startRad) / flattenTurn));
+    // as the atan function only produces angles between -PI/2 and PI/2
+    // we may have to correct for full ellipse range
+    if ((startRad > Math.PI) && (startRad < Tau)) {
+      radEllipse += Math.PI;
+    }
+    startX = Math.cos (radEllipse) * curveRadius;
+    startY = - (Math.sin (radEllipse) * curveRadius * flattenTurn);
+    // calculate where we go to in the ellipse
+    radEllipse = Math.atan (-1 / (Math.tan(stopRad) / flattenTurn));
+    if ((stopRad > Math.PI) && (stopRad < Tau)) {
+      radEllipse += Math.PI;
+    }
+    stopX = Math.cos (radEllipse) * curveRadius;
+    stopY = - (Math.sin (radEllipse) * curveRadius * flattenTurn);
+    dx = (stopX - startX) * sign;
+    dy = (stopY - startY) * sign;
+    sweepFlag = (rad > 0)? 0 : 1;
+    if (Math.abs (rad) < Math.PI) longCurve = 0; else longCurve = 1;
+    pathsArray.push({'path':'a ' + curveRadius + ',' +
+      roundTwo(curveRadius * flattenTurn) + ' 0 ' + longCurve + ' ' +
+      sweepFlag + ' ' + dx + ',' + dy, 'style':'dotted'});
+  } else {
+    // Modif GG Start
+    // Always draw in perspactive (rolling) turns, no matter which is the value of curvePerspective
+    var Rot_axe_Ellipse = (yAxisOffset < 90) ? perspective_param.H_rot_angle : -perspective_param.H_rot_angle;
+    var X_curveRadius = roundTwo(perspective_param.H_x_radius * curveRadius) ;
+    var Y_curveRadius = roundTwo(perspective_param.H_y_radius * curveRadius) ;
+    dy =  yAxisScaleFactor * (Math.cos(stopRad) - Math.cos(startRad)) ;
+    dx =  roundTwo((Math.sin(stopRad) - Math.sin(startRad) - dy * Math.cos(yAxisOffset * degToRad)) * curveRadius) * sign;
+    dy =  roundTwo(dy * Math.sin(yAxisOffset * degToRad) * curveRadius) * sign;
+    sweepFlag = (rad > 0)? 0 : 1;
+    if (Math.abs (rad) < Math.PI) longCurve = 0; else longCurve = 1;
+    pathsArray.push({'path':'a ' + X_curveRadius + ',' +
+      Y_curveRadius + ' ' + Rot_axe_Ellipse + ' ' + longCurve + ' ' +
+      sweepFlag + ' ' + dx + ',' + dy, 'style':'dotted'});
+    // Modif GG End
   }
-  startX = Math.cos (radEllipse) * curveRadius;
-  startY = - (Math.sin (radEllipse) * curveRadius * flattenTurn);
-  // calculate where we go to in the ellipse
-  radEllipse = Math.atan (-1 / (Math.tan(stopRad) / flattenTurn));
-  if ((stopRad > Math.PI) && (stopRad < Tau)) {
-    radEllipse += Math.PI;
-  }
-  stopX = Math.cos (radEllipse) * curveRadius;
-  stopY = - (Math.sin (radEllipse) * curveRadius * flattenTurn);
-  dx = (stopX - startX) * sign;
-  dy = (stopY - startY) * sign;
-  sweepFlag = (rad > 0)? 0 : 1;
-  if (Math.abs (rad) < Math.PI) longCurve = 0; else longCurve = 1;
-  pathsArray.push({'path':'a ' + curveRadius + ',' +
-    roundTwo(curveRadius * flattenTurn) + ' 0 ' + longCurve + ' ' +
-    sweepFlag + ' ' + dx + ',' + dy, 'style':'dotted'});
   return pathsArray;
 }
 
 // makeTurnRoll creates rolls in rolling turns. Basically a minimal version of makeRoll
 // param is the amount of roll degrees
 function makeTurnRoll (param, rad) {
+  if (!!newTurnPerspective.checked) {
+      // Modif GG Start (Define the size of the arrow and its tip)
+    var arrow_tip_width = 5 ;
+    var arrow_tip_length = Math.PI / 4.5 ;
+    var arrow_length = Math.PI / 9 ;
+    var turn_rollcurveRadius = rollcurveRadius * 2 ;
+  // Modif GG End (Define the size of the arrow and its tip)
+  }
   var pathsArray = [];
   var extent = Math.abs(param);
   var sign = param > 0 ? 1 : -1;
@@ -1356,29 +1461,71 @@ function makeTurnRoll (param, rad) {
   // calculate sin and cos for rad once to save calculation time
   var radSin = Math.sin(rad);
   var radCos = Math.cos(rad);
-  // Make the tip shape
-  var radPoint = rad + sign * (Math.PI / 3.5);
-  dxTip = ((Math.cos(radPoint) - radCos) * rollcurveRadius);
-  dyTip = -((Math.sin(radPoint) - radSin) * rollcurveRadius);
-  path = 'm ' + roundTwo(dxTip) + ',' + roundTwo(dyTip) + ' ';
-  var radPoint = rad + sign * (Math.PI / 6);
-  dx = (((Math.cos(radPoint) * (rollcurveRadius + 4)) - (radCos * rollcurveRadius))) - dxTip;
-  dy = -(((Math.sin(radPoint) * (rollcurveRadius + 4)) - (radSin * rollcurveRadius))) - dyTip;
-  path = path + 'l ' + roundTwo(dx) + ',' + roundTwo(dy) + ' ';
-  dx = (((Math.cos(radPoint) * (rollcurveRadius - 4)) - (radCos * rollcurveRadius))) - dx - dxTip;
-  dy = -(((Math.sin(radPoint) * (rollcurveRadius - 4)) - (radSin * rollcurveRadius))) - dy - dyTip;
-  path = path + 'l ' + roundTwo(dx) + ',' + roundTwo(dy) + ' z';
-  pathsArray.push ({'path':path, 'style':'blackfill'});
-
-  // Calculate at which angle the curve starts and stops
-  radPoint = (extent >= 360)? rad - sign * (Math.PI / 6) : rad;
-  var dx = (Math.cos(radPoint) - radCos) * rollcurveRadius - dxTip;
-  var dy = -(Math.sin(radPoint) - radSin) * rollcurveRadius - dyTip;
-  // Make the curved path
-  path = 'm ' + roundTwo(dxTip) + ',' + roundTwo(dyTip) + ' a ' +
-    rollcurveRadius + ',' + rollcurveRadius + ' 0 0 ' + sweepFlag +
-    ' ' + roundTwo(dx) + ',' + roundTwo(dy) + ' ';
-  pathsArray.push ({'path':path, 'style':'pos'});
+  if (!newTurnPerspective.checked) {
+    // Make the tip shape
+    var radPoint = rad + sign * (Math.PI / 3.5);
+    dxTip = ((Math.cos(radPoint) - radCos) * rollcurveRadius);
+    dyTip = -((Math.sin(radPoint) - radSin) * rollcurveRadius);
+    path = 'm ' + roundTwo(dxTip) + ',' + roundTwo(dyTip) + ' ';
+    var radPoint = rad + sign * (Math.PI / 6);
+    dx = (((Math.cos(radPoint) * (rollcurveRadius + 4)) - (radCos * rollcurveRadius))) - dxTip;
+    dy = -(((Math.sin(radPoint) * (rollcurveRadius + 4)) - (radSin * rollcurveRadius))) - dyTip;
+    path = path + 'l ' + roundTwo(dx) + ',' + roundTwo(dy) + ' ';
+    dx = (((Math.cos(radPoint) * (rollcurveRadius - 4)) - (radCos * rollcurveRadius))) - dx - dxTip;
+    dy = -(((Math.sin(radPoint) * (rollcurveRadius - 4)) - (radSin * rollcurveRadius))) - dy - dyTip;
+    path = path + 'l ' + roundTwo(dx) + ',' + roundTwo(dy) + ' z';
+    pathsArray.push ({'path':path, 'style':'blackfill'});
+  
+    // Calculate at which angle the curve starts and stops
+    radPoint = (extent >= 360)? rad - sign * (Math.PI / 6) : rad;
+    var dx = (Math.cos(radPoint) - radCos) * rollcurveRadius - dxTip;
+    var dy = -(Math.sin(radPoint) - radSin) * rollcurveRadius - dyTip;
+    // Make the curved path
+    path = 'm ' + roundTwo(dxTip) + ',' + roundTwo(dyTip) + ' a ' +
+      rollcurveRadius + ',' + rollcurveRadius + ' 0 0 ' + sweepFlag +
+      ' ' + roundTwo(dx) + ',' + roundTwo(dy) + ' ';
+    pathsArray.push ({'path':path, 'style':'pos'});
+  } else {
+    // Modif GG Start
+    var persp_Sin = Math.sin(yAxisOffset * degToRad);
+    var persp_Cos = Math.cos(yAxisOffset * degToRad);
+  // get ellipse parameters
+    var rot_axe_Ellipse = (yAxisOffset < 90) ? perspective_param.H_rot_angle : -perspective_param.H_rot_angle;
+    var X_rollcurveRadius = roundTwo(perspective_param.H_x_radius * turn_rollcurveRadius) ;
+    var Y_rollcurveRadius = roundTwo(perspective_param.H_y_radius * turn_rollcurveRadius) ;
+    // Make the tip shape
+    var radPoint = rad + sign * arrow_tip_length ;
+    dxTip = ((Math.cos(radPoint) - radCos) * turn_rollcurveRadius);
+    dyTip = -((Math.sin(radPoint) - radSin) * turn_rollcurveRadius);
+    var el_dxTip = dxTip - yAxisScaleFactor * dyTip * persp_Cos ; 
+    var el_dyTip = yAxisScaleFactor * dyTip * persp_Sin ; 
+    path = 'm ' + roundTwo(el_dxTip) + ',' + roundTwo(el_dyTip) + ' ';
+    var radPoint = rad + sign * arrow_length ;
+    dx = (((Math.cos(radPoint) * (turn_rollcurveRadius + arrow_tip_width)) - (radCos * turn_rollcurveRadius))) - dxTip;
+    dy = -(((Math.sin(radPoint) * (turn_rollcurveRadius + arrow_tip_width)) - (radSin * turn_rollcurveRadius))) - dyTip;
+    var el_dx = dx - yAxisScaleFactor * dy * persp_Cos ; 
+    var el_dy = yAxisScaleFactor * dy * persp_Sin ; 
+    path = path + 'l ' + roundTwo(el_dx) + ',' + roundTwo(el_dy) + ' ';
+    dx = (((Math.cos(radPoint) * (turn_rollcurveRadius - arrow_tip_width)) - (radCos * turn_rollcurveRadius))) - dx - dxTip;
+    dy = -(((Math.sin(radPoint) * (turn_rollcurveRadius - arrow_tip_width)) - (radSin * turn_rollcurveRadius))) - dy - dyTip;
+    el_dx = dx - yAxisScaleFactor * dy * persp_Cos ; 
+    el_dy = yAxisScaleFactor * dy * persp_Sin ; 
+    path = path + 'l ' + roundTwo(el_dx) + ',' + roundTwo(el_dy) + ' z';
+    pathsArray.push ({'path':path, 'style':'blackfill'});
+  
+    // Calculate at which angle the curve starts and stops
+    radPoint = (extent >= 360)? rad - sign * arrow_length : rad;
+    var dx = (Math.cos(radPoint) - radCos) * turn_rollcurveRadius - dxTip;
+    var dy = -(Math.sin(radPoint) - radSin) * turn_rollcurveRadius - dyTip;
+    el_dx = dx - yAxisScaleFactor * dy * persp_Cos ; 
+    el_dy = yAxisScaleFactor * dy * persp_Sin ; 
+    // Make the curved path
+    path = 'm ' + roundTwo(el_dxTip) + ',' + roundTwo(el_dyTip) + ' a ' +
+      X_rollcurveRadius + ',' + Y_rollcurveRadius + ' ' + rot_axe_Ellipse + ' 0 ' + sweepFlag +
+      ' ' + roundTwo(el_dx) + ',' + roundTwo(el_dy) + ' ';
+    pathsArray.push ({'path':path, 'style':'pos'});
+  // Modif GG End
+  }
   return pathsArray;
 }
 
@@ -1450,8 +1597,15 @@ function makeTurn (draw) {
     var stopRad = dirAttToXYAngle (Direction + (sign * extent), newAttitude);
     var startRad = dirAttToXYAngle (Direction, Attitude);
   } else {
-    var stopRad = dirAttToAngle (Direction + (sign * extent), newAttitude);
-    var startRad = dirAttToAngle (Direction, Attitude);
+    if (!newTurnPerspective.checked) {
+      var stopRad = dirAttToAngle (Direction + (sign * extent), newAttitude);
+      var startRad = dirAttToAngle (Direction, Attitude);
+    } else {
+      // Modif GG Start : dirAttToAngle -> dirAttToGGAngle
+      var stopRad = dirAttToGGAngle (Direction + (sign * extent), newAttitude);
+      var startRad = dirAttToGGAngle (Direction, Attitude);
+      // Modif GG Stop
+    }
   }
   if (stopRad < 0) stopRad += Tau;
   if (startRad < 0) startRad += Tau;
@@ -1502,8 +1656,18 @@ function makeTurn (draw) {
       pathsArray = makeTurnDots (sign * (Tau-rad), stopRad, startRad, pathsArray);
       // build turn extent text with degree sign in unicode
       // not always exactly centered: fixme: improve code
-      var dx = -sign * (Math.sin (stopRad)) * curveRadius;
-      var dy = -sign * (Math.cos (stopRad)) * curveRadius * flattenTurn;
+      if (!newTurnPerspective.checked) {
+        var dx = -sign * (Math.sin (stopRad)) * curveRadius;
+        var dy = -sign * (Math.cos (stopRad)) * curveRadius * flattenTurn;
+      } else {
+        // Modif GG Start 
+        var X_curveRadius = roundTwo(perspective_param.H_x_radius * curveRadius) ;
+        var Y_curveRadius = roundTwo(perspective_param.H_y_radius * curveRadius) ;
+        var dx = -sign * (Math.sin (stopRad)) * X_curveRadius;
+        var dy = -sign * (Math.cos (stopRad)) * Y_curveRadius + rollFontSize / 3;
+        // Modif GG Stop
+      }
+
       pathsArray.push ({
         'text':extent + "\u00B0",
         'style':'rollText',
@@ -2386,6 +2550,7 @@ function doOnLoad () {
   sequenceText = document.getElementById('sequence_text');
   sportingClass = document.getElementById('class');
   fileName = document.getElementById('fileName');
+  newTurnPerspective = document.getElementById('newTurnPerspective');
 
   try {
     if (chrome) {
@@ -2747,6 +2912,7 @@ function addEventListeners () {
   document.getElementById('t_changeStyle').addEventListener('mousedown', updateStyle, false);
   document.getElementById('t_resetStyle').addEventListener('mousedown', function(){resetStyle()}, false);
   document.getElementById('t_resetStyleAll').addEventListener('mousedown', function(){resetStyle(true)}, false);
+  document.getElementById('newTurnPerspective').addEventListener('change', draw, false);
 
   document.getElementById('t_settingsClose').addEventListener('mousedown', settingsDialog, false);
 
@@ -5149,10 +5315,8 @@ function parseRules(start) {
         console.log('Parsing ' + rules[i]);
         // only add square-bracket names to rules
         if (!seqCheckAvail[rnLower]) {
-          // check for glider. If so, remove 'glider-' in display name
-          if (ruleName.match (/^glider-/)) {
-            ruleName = ruleName.replace (/^glider-/, '');
-          }
+          // remove 'glider-' in display name, if present
+          ruleName = ruleName.replace (/^glider-/, '');
           seqCheckAvail[rnLower] = {
             'show': false,
             'name': ruleName,
