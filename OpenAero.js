@@ -511,7 +511,8 @@ function rebuildSequenceSvg () {
   //    having the drag events occur on the mousemove over a backdrop
   //    (instead of the dragged element) prevents the dragged element
   //    from being inadvertantly dropped when the mouse is moved rapidly
-  group.innerHTML = "<rect id='BackDrop' x='-10%' y='-10%' width='110%' height='110%' fill='none' pointer-events='all' />";
+  /** REMOVED in 1.4.1 : CAUSES TROUBLE IN CHROME 32 */
+  //group.innerHTML = "<rect id='BackDrop' x='0' y='0' width='100%' height='100%' fill='none' pointer-events='all' />";
 
   SVGRoot.appendChild(group);
   container.appendChild(SVGRoot);
@@ -2785,7 +2786,7 @@ function addEventListeners () {
   document.getElementById('menuTools').addEventListener('mouseover', menuActive, false);
   document.getElementById('menuTools').addEventListener('mouseout', menuInactive, false);
   document.getElementById('t_checkMultipleSeq').addEventListener('mousedown', function(){checkMultiDialog(true)}, false);
-  // document.getElementById('t_printMultipleSeq').addEventListener('mousedown', function(){printMultiDialog(true)}, false);
+  document.getElementById('t_printMultipleSeq').addEventListener('mousedown', function(){printMultiDialog(true)}, false);
   document.getElementById('rulesFile').addEventListener('change', openRulesFile, false);
   document.getElementById('t_settings').addEventListener('click', settingsDialog, false);
   document.getElementById('t_installChromeAppTitle').addEventListener ('mousedown', installChromeApp, false);
@@ -5036,7 +5037,8 @@ function changeCombo(id) {
   return log;
 }
 
-// createSelection selects part of an input field. This can be used when editing figures
+// createSelection selects part of an input field. This can be used when
+// editing figures
 function createSelection(field, start, end) {
   if( field.createTextRange ) {
     var selRange = field.createTextRange();
@@ -7903,13 +7905,13 @@ function makeFormPilotCard() {
 // addFormElements adds wind & mini form A and adjusts size
 function addFormElements (form) {
   // Find out how big the SVG has become and adjust margins
-  var bBox = SVGRoot.getBBox();
-  x = parseInt(bBox['x']) ;
-  y = parseInt(bBox['y']);
-  w = parseInt(bBox['width']);
-  h = parseInt(bBox['height']);
-  y = y - 40;
-  h = h + 40;
+  var bBox = SVGRoot.getElementById('sequence').getBBox();
+  x = parseInt(bBox.x) ;
+  y = parseInt(bBox.y);
+  w = parseInt(bBox.width);
+  h = parseInt(bBox.height);
+  y -= 40;
+  h += 40;
   switch (form) {
     case 'B':
       if (miniFormA) {
@@ -8254,13 +8256,15 @@ function openRulesFile () {
 }
 
 // openFile is called to open a file
-// file = file object from file input element
-// handler = name of correct handler to execute after loading. Function names are loaded<handler>
+// file    = file object from file input element
+// handler = name of correct handler to execute after loading. Function
+//           names are loaded<handler>
 function openFile (file, handler) {
   if(file){
     var reader = new FileReader();
     reader.readAsBinaryString(file);
-    // Handle success, and errors. With onload the correct loading function will be called
+    // Handle success, and errors. With onload the correct loading
+    // function will be called
     switch (handler) {
       case 'SequenceMulti':
         reader.onload = loadedSequenceMulti;
@@ -8351,8 +8355,8 @@ function finishMulti (body) {
   //checkSequenceChanged();
 }
 
-// loadedSequenceMulti will be called when a sequence file has been loaded
-// for multiple sequence checking
+// loadedSequenceMulti will be called when a sequence file has been
+// loaded for multiple sequence checking
 function loadedSequenceMulti(evt, body) {
   // check if loadedSequenceMulti is running. If so, set 100ms timeout
   // for next try
@@ -11485,7 +11489,7 @@ function checkQRollSwitch (figString, figStringIndex, pattern, seqNr, rollSum, f
         nextRollExtentPrev = nextRollExtent;
         for (var j = 0; j < roll[rollnr].length; j++) {
           if (roll[rollnr][j]['type'] != 'line') {
-            nextRollExtent += parseInt(roll[rollnr][j]['extent']);
+            nextRollExtent += parseInt(roll[rollnr][j].extent);
           }
         }
         // when the next roll is a 1/4 roll there is no need to continue.
@@ -11803,7 +11807,10 @@ function updateXYFlip(m, n) {
       activeSequence.figures[i].string = s;
       text += s + ' ';
     }
-    sequenceText.value = text;
+    // remove last space if this was not present in sequenceText
+    if (sequenceText.value[sequenceText.value.length - 1] !== ' ') {
+      sequenceText.value = text.replace(/ $/, '');
+    }
   }
 }
 

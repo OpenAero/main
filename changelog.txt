@@ -4,6 +4,9 @@
 * improved compVersion function to allow versions with more than 3 numbers
 * added double humpty bumps with different half loop sizes
 * added experimental turn perspective feature
+* fixed bug where sequence text caret would jump to end when text editing double bump
+* cleaned up config.js
+* fixed scaling bug which appeared in Chrome 32
 
 1.4.0
 * added Belgian Aerobatic Club logo

@@ -34,11 +34,12 @@
 // Define active version number of OpenAero
 // **************
 
-var version = '1.4.0.1';
+var version = '1.4.1';
 var versionNew = '<strong>OpenAero has been upgraded to version ' +
   version + '</strong><br>New features:<ul>' +
   '<li>Added French interface language (change in <i>Settings</i>)</li>' +
   '<li>Added double humpty bumps with different half loop sizes</li>' +
+  '<li>Fixed sequence scaling issue in Chrome 32</li>' +
   '</ul>' +
   'This may take a few seconds to complete.';
 
@@ -67,9 +68,13 @@ var sequenceXMLlabels = [
   'default_view'
   ];
 
-// **************
-// Define drawing lengths, radiuses etc
-// **************
+/**********************************************************************
+ * 
+ * Sequence drawing configuration
+ * 
+ * Define lengths, radii etc
+ * 
+ **********************************************************************/
 
 // basic curve size
 var curveRadius = 40;
@@ -116,6 +121,15 @@ var numberInCircle = false;
 var curvePerspective = true;
 // newTurnPerspective is a checkbox in settings
 var newTurnPerspective;
+// how far apart the starts of figures should at least be
+var minFigStartDist = lineElement * 3;
+var minFigStartDistSq = minFigStartDist * minFigStartDist;
+
+/**********************************************************************
+ * 
+ * User interface configuration
+ * 
+ **********************************************************************/
 
 // define if we show an error when running from file://
 var presentFileError = false;
@@ -137,62 +151,27 @@ var saveSettings = [
   'nonArestiRolls'];
 // define default language
 var defaultLanguage = 'en';
+// define language object
+var lang = [];
 // entryOptions are in reverse order of displayed
-var entryOptions = {'eja': 'xBoxEntryAway', 'ej': 'xBoxEntry', 'ed': 'downwindEntry', '': 'upwindEntry'}
-
-// how far apart the starts of figures should at least be
-var minFigStartDist = lineElement * 3;
-var minFigStartDistSq = minFigStartDist * minFigStartDist;
-
-// Superfamily definitions
-// For every category the list of SF is defined below. The order MATTERS!
-// The SF will be decided by the first aresti fig nr match
-var superFamilies = [];
-superFamilies.unlimited = [
-  [/^2\./,'2'],
-  [/^5\./,'5'],
-  [/^6\./,'6'],
-  [/^1\./,'7'],
-  [/^3\./,'7'],
-  [/^7\./,'7'],
-  [/^8\./,'7'],
-  [/^0\./,'7']
-  ];
-superFamilies.advanced = [
-  [/^9\.11\./,'3'],
-  [/^9\.12\./,'3'],
-  [/^9\.9\./, '4'],
-  [/^9\.10\./,'4'],
-  [/^2\./,    '2'],
-  [/^5\./,    '5'],
-  [/^6\./,    '6'],
-  [/^1\./,    '7'],
-  [/^3\./,    '7'],
-  [/^7\./,    '7'],
-  [/^8\./,    '7'],
-  [/^0\./,    '7']
-  ];
-superFamilies.yak52 = superFamilies.advanced;
-superFamilies.intermediate = superFamilies.advanced;
-superFamilies.glider = superFamilies.advanced;
-// Total K for Unknown connector figures
-var connectFig = [];
-// available rolls
-var rollTypes = [':none','4:1/4','2:1/2','3:3/4','1:1','5:1 1/4','6:1 1/2','7:1 3/4','9:2','22:2x2','32:3x2','42:4x2']
-for (i = 2; i < 9; i++) rollTypes.push(i + '4:' + i + 'x4');
-rollTypes.push('8:2x8');
-for (i = 2; i < 9; i++) rollTypes.push((i*2) + '8:' + (i*2) + 'x8');
-var posFlickTypes = ['2f:1/2 pos flick','3f:3/4 pos flick','f:1 pos flick','5f:1 1/4 pos flick','6f:1 1/2 pos flick','7f:1 3/4 pos flick','9f:2 pos flick'];
-var negFlickTypes = ['2if:1/2 neg flick','3if:3/4 neg flick','if:1 neg flick','5if:1 1/4 neg flick','6if:1 1/2 neg flick','7if:1 3/4 neg flick','9if:2 neg flick'];
-var posSpinTypes = ['s:1 pos spin','5s:1 1/4 pos spin','6s:1 1/2 pos spin','7s:1 3/4 pos spin','9s:2 pos spin'];
-var negSpinTypes = ['is:1 neg spin','5is:1 1/4 neg spin','6is:1 1/2 neg spin','7is:1 3/4 neg spin','9is:2 neg spin'];
-var gliderRollTypes = ['33:3x3', '63:6x3', '02:1/2 Slow Roll', '01:1 Slow Roll', '06:1 1/2 Slow Roll'];
+var entryOptions = {
+  'eja': 'xBoxEntryAway',
+  'ej': 'xBoxEntry',
+  'ed': 'downwindEntry',
+  '': 'upwindEntry'
+};
 // how many rolls per roll position
 var rollsPerRollElement = 2;
 
 // *************
 // Define styles and font sizes
 // *************
+
+// Default roll font size
+var rollFontSize = 20;
+// Roll sizes. User displayed names are set through index.html and
+// language files
+var rollFont = {'small': 15, 'medium': 20, 'large': 25};
 
 // style holds the style objects
 var style = [];
@@ -222,11 +201,6 @@ style.illegalBox = 'stroke: black; stroke-width: 1px; fill: none;';
 style.corr = 'stroke: red; stroke-width: 2px; fill: none;';
 // Autocorrect filled path style
 style.corrfill = 'stroke: red; stroke-width: 2px; fill: red;';
-// Default roll font size
-var rollFontSize = 20;
-// Roll sizes. User displayed names are set through index.html and
-// language files
-var rollFont = {'small': 15, 'medium': 20, 'large': 25};
 // Roll text style
 style.rollText = 'font-family: arial, sans; font-size: ' + rollFontSize +
   'px; font-weight: bold; fill: red;';
@@ -275,6 +249,103 @@ mask.smalloff = 'buttons/smallMask.png';
 mask.smallon = 'buttons/smallMask-on.png';
 mask.smalldisable = 'buttons/smallMask-disable.png';
 
+/**********************************************************************
+ * 
+ * Aresti and roll handling configuration
+ * 
+ **********************************************************************/
+
+// Superfamily definitions
+// For every category the list of SF is defined below. The order MATTERS!
+// The SF will be decided by the first aresti fig nr match
+var superFamilies = [];
+superFamilies.unlimited = [
+  [/^2\./,'2'],
+  [/^5\./,'5'],
+  [/^6\./,'6'],
+  [/^1\./,'7'],
+  [/^3\./,'7'],
+  [/^7\./,'7'],
+  [/^8\./,'7'],
+  [/^0\./,'7']
+  ];
+superFamilies.advanced = [
+  [/^9\.11\./,'3'],
+  [/^9\.12\./,'3'],
+  [/^9\.9\./, '4'],
+  [/^9\.10\./,'4'],
+  [/^2\./,    '2'],
+  [/^5\./,    '5'],
+  [/^6\./,    '6'],
+  [/^1\./,    '7'],
+  [/^3\./,    '7'],
+  [/^7\./,    '7'],
+  [/^8\./,    '7'],
+  [/^0\./,    '7']
+  ];
+superFamilies.yak52 = superFamilies.advanced;
+superFamilies.intermediate = superFamilies.advanced;
+superFamilies.glider = superFamilies.advanced;
+// Total K for Unknown connector figures
+var connectFig = [];
+// available rolls
+var rollTypes = [
+  ':none',
+  '4:1/4',
+  '2:1/2',
+  '3:3/4',
+  '1:1',
+  '5:1 1/4',
+  '6:1 1/2',
+  '7:1 3/4',
+  '9:2',
+  '22:2x2',
+  '32:3x2',
+  '42:4x2'];
+for (var i = 2; i < 9; i++) rollTypes.push(i + '4:' + i + 'x4');
+rollTypes.push('8:2x8');
+for (var i = 2; i < 9; i++) rollTypes.push((i*2) + '8:' + (i*2) + 'x8');
+var posFlickTypes = [
+  '2f:1/2 pos flick',
+  '3f:3/4 pos flick',
+  'f:1 pos flick',
+  '5f:1 1/4 pos flick',
+  '6f:1 1/2 pos flick',
+  '7f:1 3/4 pos flick',
+  '9f:2 pos flick'];
+var negFlickTypes = [
+  '2if:1/2 neg flick',
+  '3if:3/4 neg flick',
+  'if:1 neg flick',
+  '5if:1 1/4 neg flick',
+  '6if:1 1/2 neg flick',
+  '7if:1 3/4 neg flick',
+  '9if:2 neg flick'];
+var posSpinTypes = [
+  's:1 pos spin',
+  '5s:1 1/4 pos spin',
+  '6s:1 1/2 pos spin',
+  '7s:1 3/4 pos spin',
+  '9s:2 pos spin'];
+var negSpinTypes = [
+  'is:1 neg spin',
+  '5is:1 1/4 neg spin',
+  '6is:1 1/2 neg spin',
+  '7is:1 3/4 neg spin',
+  '9is:2 neg spin'];
+var gliderRollTypes = [
+  '33:3x3',
+  '63:6x3',
+  '02:1/2 Slow Roll',
+  '01:1 Slow Roll',
+  '06:1 1/2 Slow Roll'];
+
+/**********************************************************************
+ * 
+ * Sequence string configuration
+ * 
+ **********************************************************************/
+ 
 // ***************
 // Define patterns for the user's OpenAero drawing string
 // ***************
@@ -319,8 +390,13 @@ figpat.tailslidecanopy = 't';
 figpat.tailslidewheels = 'T';
 figpat.pointTip = 'u';
 figpat.pushPointTip = 'U';
-var drawAngles = {'d':45, 'v':90, 'z':135, 'm':180, 'c':225, 'p':270, 'r':315, 'o':360, 'D':-45, 'V':-90, 'Z':-135, 'M':-180, 'C':-225, 'P':-270, 'R':-315, 'O':-360};
-var rollAttitudes = {'0':'', '45':'d', '90':'v', '135':'d', '180':'', '225':'id', '270':'iv', '315':'id'};
+var drawAngles = {
+  'd':45, 'v':90, 'z':135, 'm':180,
+  'c':225, 'p':270, 'r':315, 'o':360,
+  'D':-45, 'V':-90, 'Z':-135, 'M':-180,
+  'C':-225, 'P':-270, 'R':-315, 'O':-360};
+var rollAttitudes = {'0':'', '45':'d', '90':'v', '135':'d',
+  '180':'', '225':'id', '270':'iv', '315':'id'};
 
 // ****************
 // define Regex patterns for drawing and sequence parsing
@@ -361,6 +437,12 @@ var regexRulesConnectors = /^connectors=([0-9]+)\/([0-9]+)/;
 var regexSequenceOptions = /^(ed|eu|ej|eja|\/\/)$/;
 var regexTextBlock = /^"[^"]*"$/;
 
+/**********************************************************************
+ * 
+ * Flag configuration
+ * 
+ **********************************************************************/
+ 
 // define IOC (International Olympic Commitee) countries for flags
 var iocCountries = {"AD":"AND","AE":"UAE","AF":"AFG","AG":"ANT",
   "AI":"AIA","AL":"ALB","AM":"ARM","AO":"ANG","AQ":"ATA",
@@ -454,6 +536,3 @@ var isoCountries = {"AD":"AND","AE":"ARE","AF":"AFG","AG":"ATG",
 // also for key and value reversed
 var isoCountriesReverse = []; 
 for (key in isoCountries) isoCountriesReverse[isoCountries[key]] = key;
-
-// define language object
-var lang = [];
