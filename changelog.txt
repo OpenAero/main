@@ -7,6 +7,7 @@
 * fixed bug where sequence text caret would jump to end when text editing double bump
 * cleaned up config.js
 * fixed scaling bug which appeared in Chrome 32
+* fixed Chrome 32 print popup issue
 
 1.4.0
 * added Belgian Aerobatic Club logo

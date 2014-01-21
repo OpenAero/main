@@ -9208,6 +9208,11 @@ function printForms () {
 // print=true, a print is created. Otherwise an SVG holding the forms is
 // returned.
 function buildForms (print) {
+  // open the print window in time to prevent popup blocking
+  if (print && !chromeApp.active) {
+    var win = window.open ('',"printForms",'width=800,height=600,' +
+      'top=50,location=no,menubar=no,scrollbars=yes,status=no,toolbar=no');
+  }
   var pages = ['A', 'B', 'C', 'PilotCards', 'Grid'];
   iacForms = document.getElementById('iacForms').checked;
   var activeFormSave = activeForm;
@@ -9305,8 +9310,6 @@ function buildForms (print) {
         };
       });
     } else {
-      var win = window.open ('',"printForms",'width=800,height=600,' +
-        'top=50,location=no,menubar=no,scrollbars=yes,status=no,toolbar=no');
       win.document.body = body;
       win.document.title = activeFileName();
       var style = document.createElement ('style');
