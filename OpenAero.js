@@ -2786,7 +2786,7 @@ function addEventListeners () {
   document.getElementById('menuTools').addEventListener('mouseover', menuActive, false);
   document.getElementById('menuTools').addEventListener('mouseout', menuInactive, false);
   document.getElementById('t_checkMultipleSeq').addEventListener('mousedown', function(){checkMultiDialog(true)}, false);
-  document.getElementById('t_printMultipleSeq').addEventListener('mousedown', function(){printMultiDialog(true)}, false);
+  //document.getElementById('t_printMultipleSeq').addEventListener('mousedown', function(){printMultiDialog(true)}, false);
   document.getElementById('rulesFile').addEventListener('change', openRulesFile, false);
   document.getElementById('t_settings').addEventListener('click', settingsDialog, false);
   document.getElementById('t_installChromeAppTitle').addEventListener ('mousedown', installChromeApp, false);
