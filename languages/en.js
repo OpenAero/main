@@ -40,6 +40,7 @@ lang.en = {
 'aircraft' : 'A/C type &amp; reg',
 'alertBoxClose' : 'Close',
 'alerts' : 'Alerts',
+'anonymousSequences' : 'Anonymise sequences by removing pilot name etc',
 'arestiSystem' : 'Aresti system',
 'autocorrectRoll' : ':Added autocorrect roll',
 'blackWhite' : 'Black & white', 
@@ -60,6 +61,7 @@ lang.en = {
 'checkSequenceLog' : 'Show log',
 'checkSequenceOK' : 'OK',
 'checkSequenceResult' : 'Sequence check result',
+'checkSequences' : 'Check sequences',
 'chooseFiles' : 'Choose your files here:',
 // new for 1.4.1
 'chooseFilesPrint' : 'Choose your files here:',
@@ -137,6 +139,7 @@ lang.en = {
 'getChrome' : 'For optimum use of OpenAero, please download the ' +
   'latest version of the <a href="https://www.google.com/intl/en/chrome/browser/">' +
   'Google Chrome</a> browser.',
+'glider' : 'Glider',
 'gridView' : 'Grid view',
 'harmony' : 'Harmony',
 'help' : 'Help',
@@ -230,6 +233,7 @@ lang.en = {
 'pleaseWaitStartup' : 'Please wait while OpenAero is starting up...',
 'png' : 'PNG',
 'positioning' : 'Positioning',
+'powered' : 'Power',
 'print' : 'Print / Save PDF',
 'printCheck' : 'Sequence check result',
 'printDialog' : 'Print options',
@@ -247,8 +251,10 @@ lang.en = {
 // new for 1.4.1
 'printMulti' : 'Print multiple sequences (NOT FUNCTIONAL YET!)',
 'printMultiClose' : 'Close',
+'printMultiOverrideRules' : 'Override sequence rules with current ' +
+  'rules from Sequence info: ',
 'printMultipleSeq' : 'Print multiple seq',
-'printMultiWait' : 'Checking %s sequences.<br>This may ' +
+'printMultiWait' : 'Printing %s sequences.<br>This may ' +
   'take some time. Please wait...',
 // end new
 'printNotes' : 'Sequence Notes (top of pages)',
@@ -323,6 +329,7 @@ lang.en = {
 'settingsTitle' : 'Settings',
 'setUpright' : ':set upright entry',
 'setInverted' : ':set inverted entry',
+'showFileName' : 'Show sequence file name',
 'showFullLog' : 'Show full log',
 'showQueue' : 'Show Queue',
 'styleSettingsHeader' : 'Here you can change various style settings. ' +
@@ -353,6 +360,7 @@ lang.en = {
 }, // end tooltip sub-array
 'unknownFileType' : 'File opening is not supported in this browser.',
 'unusedFigureLetters' : 'Unused figure letters: %s',
+'update' : 'Update',
 'upwindEntry' : 'Upwind entry',
 'version' : 'Version: %s',
 'view' : 'View',

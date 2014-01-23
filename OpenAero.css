@@ -100,6 +100,7 @@ textarea {
 /* generic classes */
 
 .fileDrop {
+  position: relative;
   left: 0px;
   right: 0px;
   height: 6em;
@@ -110,6 +111,24 @@ textarea {
   font-size: 2em;
   text-align: center;
   padding: 2em;
+}
+#fileDropFiles {
+  position: absolute;
+  top: 0;
+  left: 1em;
+  color: #000;
+  text-shadow: 2px 0 0 white, 0 2px 0 white, -2px 0 0 white, 0 -2px 0 white;
+  font-size: 16px;
+  text-align: left;
+}
+.fileListFileRemove {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  background-image: url('buttons/close.png');
+  background-repeat: no-repeat;
+  background-size: 16px;
+  margin: 0 5px 0 0;
 }
 .clearBoth {
   clear: both;
@@ -938,7 +957,6 @@ option.used {
   float: right;
 }
 table#figureChooserTable td {
-  position: relative;
   padding: 1px;
   border: 2px solid #eee;
   border-radius: 5px;
@@ -957,6 +975,9 @@ table#figureChooserTable td.figureNotAllowed {
 }
 table#figureChooserTable td.figureNotAllowedHidden {
   display: none;
+}
+table#figureChooserTable div {
+  position: relative;
 }
 .familyA {
   background: #fff;

@@ -91,6 +91,8 @@ var fileName;
 var figureK = 0;
 // userText global
 var userText = [];
+// fileList is used for operations that involve multiple files
+var fileList = [];
 
 // figures is an object that will hold all figure data of the sequence
 // format is: figures[i].xxx where:
@@ -620,7 +622,7 @@ function printDialog(show) {
   }
 }
 
-// printDialog shows or hides the print dialog
+// printMultiDialog shows or hides the print multi dialog
 // when false, the dialog is closed
 function printMultiDialog(show) {
   var div = document.getElementById('printMulti');
@@ -667,9 +669,11 @@ function helpWindow(url, title) {
 }
 
 // newWindow will display a window with content from body and title
+// body can also be a function
 function newWindow (body, title) {
   // handling is different for App and web
   if (chromeApp.active) {
+    if (typeof body === "function") body = body();
     chrome.app.window.create ('window.html', {
       bounds: {
         width:800,
@@ -683,17 +687,18 @@ function newWindow (body, title) {
       };
     });
   } else {
-    // open and close the window to make sure we're not working in an
-    // existing one
-    var w = window.open ('', title);
-    w.close();
-    // create data uri
-    var uri = 'data:text/html;base64,' +
-      btoa('<title>' + title + '</title>' +
-      new XMLSerializer().serializeToString(body));
-    // open the window with data uri for contents
-    var w = window.open (uri, title, 'width=800,height=600,top=50,' +
+    var w = window.open ('', title, 'width=800,height=600,top=50,' +
       'location=no,menubar=no,scrollbars=yes,status=no,toolbar=no');
+    if (typeof body === "function") body = body();
+    if (body) {
+      // create data uri
+      var uri = 'data:text/html;base64,' +
+        btoa('<title>' + title + '</title>' +
+        new XMLSerializer().serializeToString(body));
+      // open the window with data uri for contents
+      w.location.assign(uri);
+    }
+    w.focus();
   }
 }
   
@@ -2619,7 +2624,7 @@ function doOnLoad () {
     // Setup the drag n drop listeners for multi file checking
     var dropZone = document.getElementById('fileDrop');
     dropZone.addEventListener('dragover', handleDragOver, false);
-    dropZone.addEventListener('drop', checkMulti, false);
+    dropZone.addEventListener('drop', updateMulti, false);
     // add onresize event for resizing the sequence text window
     window.onresize = updateSequenceTextHeight;
     // Parse the figures file
@@ -2882,7 +2887,8 @@ function addEventListeners () {
   document.getElementById('t_checkSequenceLog').addEventListener('click', function(){checkSequence('log')}, false);
   
   // check multiple dialog
-  document.getElementById('checkMultiFiles').addEventListener('change', function(){checkMulti()}, false);
+  document.getElementById('checkMultiFiles').addEventListener('change', function(){updateMulti(this)}, false);
+  document.getElementById('t_checkSequences').addEventListener('mousedown', checkMulti, false);
   document.getElementById('t_checkMultiClose').addEventListener('click', function(){checkMultiDialog()}, false);
   
   // print multiple dialog
@@ -6206,16 +6212,18 @@ function checkSequence(show) {
   var div = document.getElementById('checkSequence');
   if (show) {
     if (show === 'log') {
-      // show log page
-      var log = checkRules();
-      var body = document.createElement('body');
-
-      var pre = document.createElement('pre');
-      body.appendChild(pre);
-      for (var i = 0; i < log.length; i++) {
-        pre.appendChild(document.createTextNode(log[i] + '\n'));
-      }
-      newWindow (body, userText.sequenceCheckLog);
+      newWindow (function(){
+        // show log page
+        var log = checkRules();
+        var body = document.createElement('body');
+  
+        var pre = document.createElement('pre');
+        body.appendChild(pre);
+        for (var i = 0; i < log.length; i++) {
+          pre.appendChild(document.createTextNode(log[i] + '\n'));
+        }
+        return body;
+      }, userText.sequenceCheckLog);
     } else {
       div.classList.remove ('noDisplay');
       var content = '';
@@ -6290,7 +6298,9 @@ function missingInfoCheck (f) {
 function updateFigureSelectorOptions (selectedOption) {
   var container = document.getElementById('figureSelectorOptionsDiv');
   // clear container
-  while (container.childNodes.length > 0) container.removeChild (container.lastChild);
+  while (container.childNodes.length > 0) {
+    container.removeChild (container.lastChild);
+  }
   // find first and last (if any) real figures
   var firstFigure = false;
   var lastFigure = false;
@@ -6451,6 +6461,7 @@ function changeFigureGroup() {
           svg.setAttribute('id', 'figureChooserSvg');
           // add the roll Aresti nrs to fig if applicable
           fig[i].rollAresti = [];
+
           for (var j = 1; j < figures[-1].aresti.length; j++) {
             fig[i].rollAresti[j] = rollAresti.indexOf(figures[-1].aresti[j]);
           }
@@ -6465,7 +6476,9 @@ function changeFigureGroup() {
         var td = document.createElement('td');
         tr.appendChild(td);
         td.setAttribute('id', i);
-        td.innerHTML = fig[i].svg;
+        var inner = document.createElement('div');
+        td.appendChild(inner);
+        inner.innerHTML = fig[i].svg;
         td.addEventListener ('mousedown', function(){selectFigure(this)}, false);
         var rollK = 0;
         if (sportingClass.value === 'glider') {
@@ -6496,7 +6509,7 @@ function changeFigureGroup() {
         } else if (rollK < 0) {
           k += '<font color="red">(N/A)</font>';
         }
-        td.innerHTML += 'K:' + k;
+        inner.innerHTML += 'K:' + k;
         
         // extra for figures in queueGroup
         if (fig[i].group == 0) {
@@ -6504,13 +6517,13 @@ function changeFigureGroup() {
           var a = document.createElement('a');
           a.setAttribute('href', '#');
           a.setAttribute('class', 'removeFromQueueButton');
-          a.setAttribute('id', i);
-          a.addEventListener ('mousedown', function(){removeFromQueue(this)}, false);
+          a.setAttribute('id', 'removeFromQueue' + i);
+          a.addEventListener ('mousedown', removeFromQueue, false);
           a.innerHTML = '<img src="buttons/close.png">';
-          td.appendChild(a);
+          inner.appendChild(a);
           // add the unknownFigureLetter where defined
           if (fig[i].unknownFigureLetter) {
-            td.innerHTML += '<div class="UFletterInQueue">' +
+            inner.innerHTML += '<div class="UFletterInQueue">' +
               fig[i].unknownFigureLetter +
               '</div>';
           }
@@ -7468,14 +7481,14 @@ function addToQueue () {
     } else break;
   }
   // append the figure to the fig array
-  fig[figLen] = {'aresti':fig[figNr].aresti,
+  fig[figLen] = {'aresti':aresti,
                 'base':fig[figNr].base,
                 'rolls':fig[figNr].rolls,
                 'draw':fig[figNr].draw,
                 'pattern':fig[figNr].pattern,
                 'kpwrd':fig[figNr].kpwrd,
                 'kglider':fig[figNr].kglider};
-  fig[figLen].aresti = aresti;
+
   // add properties
   fig[figLen].unknownFigureLetter = f.unknownFigureLetter;
   // set queue group nr
@@ -7490,6 +7503,12 @@ function addToQueue () {
   if (f.entryAxis == 'Y') {
     string = string.replace(/\^/g, '#').replace(/>/g, '^').replace(/#/g, '>');
   }
+  // Handle the very special case where there's only an upright or
+  // inverted spin
+  if (string.match (/(\d|)(s|is)/) && !string.match (/iv/)) {
+    string = string.replace (/(\d*)(s|is)/, "iv$1$2");
+  }
+
   fig[figLen].string = string;
   showQueue();
 }
@@ -7512,7 +7531,8 @@ function addAllToQueue () {
 
 // removeFromQueue removes a figure from the queue
 function removeFromQueue (e) {
-  fig.splice(e.id,1);
+  e.stopPropagation();
+  fig.splice(e.target.parentNode.id.replace(/^removeFromQueue/, ''), 1);
   showQueue();
 }
 
@@ -8287,6 +8307,12 @@ function openFile (file, handler) {
   }
 }
 
+// removeFileListFile removes a file from fileList
+function removeFileListFile(el, f) {
+  fileList.splice (el.id.replace(/^removeFileListFile/, ''), 1);
+  f();
+}
+  
 // checkMultiDialog shows or hides the multiple sequence check dialog
 // when false, the dialog is closed
 function checkMultiDialog(show) {
@@ -8296,38 +8322,66 @@ function checkMultiDialog(show) {
     var el = document.getElementById('multiCurrentRules');
     el.innerHTML = (rulesActive)? rulesActive : userText.none;
   } else {
+    // clear fileList
+    fileList = [];
+    var el = document.getElementById('fileDropFiles');
+    while (el.childNodes.length > 0) el.removeChild(el.lastChild);
     div.classList.add ('noDisplay');
   }
 }
 
-// checkMulti is called to open multiple files for checking.
-// files = file object from multi file input element
-function checkMulti (evt) {
-  // check if checkMulti was called from a file drop
+// updateMulti is called after dragging & dropping files to multi field
+function updateMulti (evt) {
   if (evt) {
-    evt.stopPropagation();
-    evt.preventDefault();
-    var files = evt.dataTransfer.files; // FileList object.
-  } else {  
-    // get files from file element
-    var el = document.getElementById('checkMultiFiles');
-    var files = el.files;
-    // clear for next
-    el.files = '';
+    if (evt.dataTransfer) {
+      evt.stopPropagation();
+      evt.preventDefault();
+      var files = evt.dataTransfer.files; // FileList object.
+    } else {  
+      // get files from file element
+      var files = evt.files;
+      // clear for next, after short wait
+      setTimeout(function(){evt.parentNode.reset();}, 400);    
+    }
+    for (var i = 0; i < files.length; i++) {
+      fileList.push (files[i]);
+    }
   }
+  var el = document.getElementById('fileDropFiles');
+  while (el.childNodes.length > 0) el.removeChild(el.lastChild);
+  for (var i = 0; i < fileList.length; i++) {
+    var div = document.createElement ('div');
+    var span = document.createElement ('span');
+    span.classList.add ('fileListFileRemove');
+    span.id = 'removeFileListFile' + i;
+    span.addEventListener ('mousedown', function(){
+      removeFileListFile(this, updateMulti);
+      }, false);
+    div.appendChild (span);
+    var name = document.createTextNode (fileList[i].name);
+    div.appendChild (name);
+    el.appendChild(div);
+  }
+}
+
+// checkMulti is called to open multiple files for checking.
+function checkMulti () {
   // save active sequence
   multi.savedSeq = activeSequence.xml;
   // set counter and limit
   multi.count = 0;
-  multi.total = files.length;
-  if (multi.total > 0) {
-    infoBox (
-      sprintf(userText.checkMultiWait, multi.total),
-      userText.checkMulti);
-  }
+  multi.total = fileList.length;
+  if (multi.total === 0) return;
+  infoBox (
+    sprintf(userText.checkMultiWait, multi.total),
+    userText.checkMulti);
+  if (!chromeApp.active) {
+    // open check window. Must do this early to prevent popup blocking
+    newWindow ('', userText.sequenceCheckLog);
+  }  
   var body = document.createElement('body');
   // go through the selected files
-  for (var i = 0, f; f=files[i];i++){
+  for (var i = 0, f; f=fileList[i];i++){
     (function (file) {
       var reader = new FileReader();
       // Handle success, and errors. With onload the correct loading
@@ -9225,11 +9279,6 @@ function buildForms (print) {
 
   // make sure no figure is selected
   selectFigure (false);
-  
-  // increase roll font size by 2 for inverse forms
-  /*if (document.getElementById('inverseForms').checked) {
-    changeRollFontSize (rollFontSize + 2);
-  }*/
     
   // hide print dialog
   printDialog();
@@ -9337,11 +9386,6 @@ function buildForms (print) {
       document.getElementById ('imageHeight').value + 'px"');      
   }
 
-  // reset roll font size after printing inverse forms
-  /*if (document.getElementById('inverseForms').checked) {
-    changeRollFontSize (rollFontSize - 2);
-  }*/
-
   // Reset the screen to the normal view
   activeForm = activeFormSave;
   miniFormA = (miniFormASave)? true : false;
@@ -9386,7 +9430,8 @@ function buildForm (svg, print) {
   
   // don't change any layout for Grid or pilotCards view
   if ((activeForm !== 'Grid') && (activeForm !== 'PilotCards')) {
-    // Find the size and adjust scaling if necessary, upscaling to a maximum factor of 2
+    // Find the size and adjust scaling if necessary, upscaling to a
+    // maximum factor of 2.
     // The sequence max width=800, height=1000 (Form A) or 950 (Form B & C)
     w = parseInt(bBox.width);
     h = parseInt(bBox.height + 20); // add some margin to the bottom
@@ -9421,6 +9466,7 @@ function buildForm (svg, print) {
         // Insert box containing sequence
         drawRectangle (0, 126, 740, 945, 'formLine', mySVG);
       }
+      if (scale > maxScale) scale = maxScale;
       // check for max height
       if ((maxHeight / h) < scale) {
         scale = maxHeight / h;
@@ -9446,12 +9492,12 @@ function buildForm (svg, print) {
         }
   
         mySVG.getElementById('sequence').setAttribute('transform', 'translate(' +
-          (moveRight - (bBox['x'] * scale)) + ',' + (marginTop - bBox['y']*scale) +
+          (moveRight - (bBox.x * scale)) + ',' + (marginTop - bBox.y * scale) +
           ') scale(' + xScale + ',' + scale + ')');
         mySVG.getElementById('sequence').setAttribute('preserveAspectRatio', 'none');
       } else {
         mySVG.getElementById('sequence').setAttribute('transform', 'translate(' +
-          (moveRight - (bBox['x'] * scale)) + ',' + (marginTop - bBox['y']*scale) +
+          (moveRight - (bBox.x * scale)) + ',' + (marginTop - bBox.y * scale) +
           ') scale(' + scale + ')');
       }
       
@@ -9499,6 +9545,7 @@ function buildForm (svg, print) {
         var scale = 790 / w;
         var marginTop = 140;
       }
+      if (scale > maxScale) scale = maxScale;
       // check for max height
       if ((maxHeight / h) < scale) {
         scale = maxHeight / h;
@@ -9527,11 +9574,11 @@ function buildForm (svg, print) {
         mySVG.getElementById('sequence').setAttribute('preserveAspectRatio', 'none');
   
         mySVG.getElementById('sequence').setAttribute('transform', 'translate(' +
-          (moveRight - (bBox['x'] * scale)) + ',' + (marginTop - bBox['y']*scale) +
+          (moveRight - (bBox.x * scale)) + ',' + (marginTop - bBox.y * scale) +
           ') scale(' + xScale + ',' + scale + ')');
       } else {
         mySVG.getElementById('sequence').setAttribute('transform', 'translate(' +
-          (moveRight - (bBox['x'] * scale)) + ',' + (marginTop - bBox['y']*scale) +
+          (moveRight - (bBox.x * scale)) + ',' + (marginTop - bBox.y * scale) +
           ') scale(' + scale + ')');
       }
         

@@ -285,9 +285,11 @@
         </div>
         <div id="fileDrop" class="fileDrop">
           <div>
-            <span class="userText" id="t_orFileDrop"></span>
+            <div class="userText" id="t_orFileDrop"></div>
+            <div id="fileDropFiles"></div>
           </div>
         </div>
+        <div class="textButton userText" id="t_checkSequences"></div>
         <div class="textButton close userText" id="t_checkMultiClose"></div>
       </div>
     </div>
@@ -631,8 +633,8 @@
           <div class=item>
             <div class="label userText" id="t_class"></div>
             <select name="class" id="class">
-              <option value="powered" selected>Power</option>
-              <option value="glider">Glider</option>
+              <option value="powered" class="userText" id="t_powered" selected></option>
+              <option value="glider" class="userText" id="t_glider"></option>
             </select>
           </div>
           <div class="item combo">
@@ -755,7 +757,7 @@
           <div id="commentSection" class="section">
             <div class="sectionLabel userText" id="t_comments"></div><div class="sectionLabelClose">&nbsp;</div>
             <textarea name="comments" id="comments"></textarea>
-            <input type="button" value="Update">
+            <div class="textButton userText" id="t_update"></div>
             <span class="info"><img src="buttons/smallInfo.png" id="manual.html_figure_comments"></span>
           </div>
         </div>

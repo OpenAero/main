@@ -8,6 +8,11 @@
 * cleaned up config.js
 * fixed scaling bug which appeared in Chrome 32
 * fixed Chrome 32 print popup issue
+* fixed several Firefox issues for the Figure Queue
+* fixed bug where spin only (without "iv") would not show up in queue correctly
+* fixed bug where single-figure sequences do not show up on form C
+* fixed popup blocking issues
+* added file selection in multiple steps for "Check multiple seq"
 
 1.4.0
 * added Belgian Aerobatic Club logo

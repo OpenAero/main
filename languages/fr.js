@@ -1,4 +1,4 @@
-// fr.js 1.4.0 V gg_1
+﻿// fr.js 1.4.0 V gg_1
 // This file is part of OpenAero.
 
 //  OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -30,36 +30,37 @@ lang.fr = {
 
 // The first key should be the human-readable form of the language code.
 // Subsequent keys are alphabetical.
-'fr' : 'Francais',
+'fr' : 'Français',
 'about' : 'A propos',
 'ac' : 'Avion',
-'addAllToQueue' : 'Ajouter tout a la file',
+'addAllToQueue' : 'Ajouter tout à la file',
 'addFigureText' : 'Cliquer pour ajouter figure',
 'addingFigure' : 'Ajouter une nouvelle figure',
-'addToQueue' : 'Ajouter a la file',
+'addToQueue' : 'Ajouter à la file',
 'aircraft' : 'Avion et Immat',
 'alertBoxClose' : 'Fermer',
 'alerts' : 'Alertes',
-'arestiSystem' : 'systeme Aresti',
+'arestiSystem' : 'Système Aresti',
 'autocorrectRoll' : 'Tonneau d\'autocorrection',
 'blackWhite' : 'Noir et Blanc',
 'cancel' : 'Annuler',
 'cancelPrint' : 'Annuler',
 'cancelSave' : 'Annuler',
-'category' : 'Categorie',
+'category' : 'Catégorie',
 'changeStyle' : 'Changer',
-'checkingRules' : 'Regles de verification',
-'checkMulti' : 'Verification de plusieurs programmes',
+'checkingRules' : 'Règles de vérification',
+'checkMulti' : 'Vérification de plusieurs programmes',
 'checkMultiClose' : 'Fermer',
-'checkMultipleSeq' : 'Verification d\'un groupe de programmes',
-'checkSequence' : 'Verification du programme',
-'checkSequenceLog' : 'Voir le detail',
+'checkMultipleSeq' : 'Vérification d\'un groupe de programmes',
+'checkSequence' : 'Vérification du programme',
+'checkSequenceLog' : 'Voir le détail',
 'checkSequenceOK' : 'OK',
-'checkSequenceResult' : 'Resultat de verification',
+'checkSequenceResult' : 'Résultat de vérification',
+'checkSequences' : 'Vérification du programmes',
 'chooseFiles' : 'Choisir les fichiers ici :',
 'chooseLogo' : 'Choisir un logo',
 'class' : 'Type',
-'clearPositioning' : 'Effacer le positionement',
+'clearPositioning' : 'Effacer le positionnement',
 'clearPositioningConfirm' : 'Ceci supprimera le positionnement des figures.' +
   'Voulez-vous continer ?',
 'clearQueue' : 'Effacer la file',
@@ -74,9 +75,9 @@ lang.fr = {
 'confirmBoxYes' : 'Oui',
 'confirmBoxNo' : 'Non',
 'confirmLeave' : 'Vous quittez OpenAero. Les programmes non sauvegardes seront perdus.',
-'contest' : 'Competition',
-'convertingFailed' : 'La convertion in image PNG a echouee.<br>Si vous souhaitez' +
-  'que cette erreur soit transmise aux developpeurs d\'OpenAero, cliquez sur le ' +
+'contest' : 'Compétition',
+'convertingFailed' : 'La conversion in image PNG a échouée.<br>Si vous souhaitez' +
+  'que cette erreur soit transmise aux développeurs d\'OpenAero, cliquez sur le ' +
   'lien ci-dessous :<br><a href="mailto:openaero.devel@gmail.com?subject=' +
   'BUG:SVG_to_PNG_conversion&body=%s" target="_blank">Email bug report</a>',
 'convertingToPng' : 'Conversion en image PNG.<br>Ceci peut prendre' +
@@ -85,17 +86,17 @@ lang.fr = {
 'date' : 'Date',
 'demo' : 'Exemples',
 'desktopVersion' : 'Version ordinateur',
-'download' : 'Telecharger',
+'download' : 'Télécharger',
 'downloadHTML5' : 'Vous pouvez enregistrer en choisissant un nom' +
-  'et en cliquant <i>Enregister fichier</i> ci-dessous.<br>Une fen�tre o� vous pourrez' +
-  'choisir le repertoire apparaitra.',
+  'et en cliquant <i>Enregistrer fichier</i> ci-dessous.<br>Une fenêtre où vous pourrez' +
+  'choisir le répertoire apparaîtra.',
 'downloadLegacy' : 'Vous pouvez enregistrer en choisissant un nom ' +
   'et/ou faire un clic droit sur <i>Enregistrer</i> ci-dessous ' +
-  'et choisir "Enregistrer la cible du lien sous... " ou "Copier l\'adresse du lien".<br>Une fenetre ou vous pourrez ' +
-  'choisir le repertoire apparaitra.',
-'downwindEntry' : 'Debuter vent arriere',
-'drawingStyles' : 'Parametres de dessin',
-'drawingStylesExplain' : '<p>Tous les parametres du dessin peuvent etre changes ici. ' +
+  'et choisir "Enregistrer la cible du lien sous... " ou "Copier l\'adresse du lien".<br>Une fenêtre ou vous pourrez ' +
+  'choisir le répertoire apparaîtra.',
+'downwindEntry' : 'Débuter vent arrière',
+'drawingStyles' : 'Paramètres de dessin',
+'drawingStylesExplain' : '<p>Tous les paramètres du dessin peuvent être changés ici. ' +
   'Exemples : <strong>pos</strong>=ligne positive, ' +
   '<strong>neg</strong>=ligne negative, <strong>rollText</strong>=texte' +
   ' de la rotation (e.g. 2x8).</p>',
@@ -103,58 +104,59 @@ lang.fr = {
 'entryExitAttExt' : 'Attitude de debut/fin et longueur',
 'expert' : 'Expert',
 'feedback' : 'Retour',
-'fileOpeningNotSupported' : 'L\'ouverture de fichier n\'est pas supportee dans ' +
-  'ce navigateur. Certaines fonctions ont ete invalidees.',
-'figSelectorAddAfter' : 'Ajout de figure apres',
+'fileOpeningNotSupported' : 'L\'ouverture de fichier n\'est pas supportée dans ' +
+  'ce navigateur. Certaines fonctions ont été invalidées.',
+'figSelectorAddAfter' : 'Ajout de figure après',
 'figSelectorAddBefore' : 'Ajout de figure avant',
-'figSelectorAddEnd' : 'Ajout de figure a la fin',
-'figSelectorAddStart' : 'Ajout de figure au debut',
-'figSelectorReplace' : 'Remplace la figure en selectionnee ',
+'figSelectorAddEnd' : 'Ajout de figure à la fin',
+'figSelectorAddStart' : 'Ajout de figure au début',
+'figSelectorReplace' : 'Remplace la figure sélectionnée ',
 'figsInGrid' : 'Tableau des figures',
-'figureAlreadyInQueue' : 'Cette figure est deja dans la file',
+'figureAlreadyInQueue' : 'Cette figure est déjà dans la file',
 'figureEditor' : 'Editeur&nbsp;de figure',
 'figureQueue' : 'File / Tampon',
 'file' : 'Fichier',
 'fileName' : 'Nom du fichier',
 'flipYAxis' : 'Changer d\'axe Y',
-'forElement' : ' pour element ',
+'forElement' : ' pour élément ',
 'formA' : 'Forme A',
 'formB' : 'Forme B',
 'formC' : 'Forme C',
 'freeUnknownFig' : 'Figure Inconnu-Libre',
 'freeUnknownLink' : 'Liaison Inconnu-Libre',
-'FUfigOptionsDisabled' : 'Certaines options sont invalidees pour l\'inconnu-libre',
-'FUletterMulti' : '(%s) lettre Inc-Libre %s utilisee plusieurs fois',
+'FUfigOptionsDisabled' : 'Certaines options sont invalidées pour l\'inconnu-libre',
+'FUletterMulti' : '(%s) lettre d\’Inconnu-Libre %s utilisée plusieurs fois',
 'gaps' : 'Espaces',
-'general' : 'General',
-'getChrome' : 'Pour une utilisation optimale d\OpenAero, telechargez la ' +
-  'derniere version du navigateur <a href="https://www.google.com/intl/en/chrome/browser/">' +
+'general' : 'Général',
+'getChrome' : 'Pour une utilisation optimale d\OpenAero, téléchargez la ' +
+  'dernière version du navigateur <a href="https://www.google.com/intl/en/chrome/browser/">' +
   'Google Chrome</a>.',
+'glider' : 'Planeur',
 'gridView' : 'Vue en tableau',
 'harmony' : 'Harmonie',
 'help' : 'Aide',
-'hideIllegalFigures' : 'Masquer les figures non autorisees',
+'hideIllegalFigures' : 'Masquer les figures non autorisées',
 'iacForms' : 'Formulaire style IAC',
-'illegalAtEnd' : 'Figure illegale a la fin',
-'illegalBefore' : 'Figure illegale avant la figure',
+'illegalAtEnd' : 'Figure illégale à la fin',
+'illegalBefore' : 'Figure illégale avant la figure',
 'illegalFig' : ' est interdit, essayez ',
 'imageFormat' : 'Format d\'image',
 'imageHeight' : 'Hauteur',
 'imageSize' : 'Taille d\'image',
 'imageWidth' : 'Largeur',
-'importRulesFile' : 'Importer un fichier de regles',
+'importRulesFile' : 'Importer un fichier de règles',
 'installation' : 'Installation',
 'installChromeApp' : 'Vous pouvez installer OpenAero comme une Application Chrome. Ceci ' +
-  'procure:<ul><li>Une sauvegarde de fichiers amelioree</li><li>Le lancement ' +
+  'procure:<ul><li>Une sauvegarde de fichiers améliorée</li><li>Le lancement ' +
   'd\'OpenAero sans ouvrir le navigateur Chrome</li></ul>' +
   'Voulez-vous installer l\'application? Si vous choisissez <i>Non</i> on ne vous' +
   're-demandera pas, mais vous pourrez l\'installer par le menu <i>Outils</i> ' +
   'a n\'importe quel moment.',
-'installChromeAppComplete' : 'L\'application Chrome a ete installee. Vous pouvez y ' +
-  'acceder en ouvrant une nouvelle rubrique dans Chrome. Par un clic droit ' +
+'installChromeAppComplete' : 'L\'application Chrome a été installée. Vous pouvez y ' +
+  'accéder en ouvrant une nouvelle rubrique dans Chrome. Par un clic droit ' +
   'vous pouvez ajouter l\'application sur votre bureau.',
 'installChromeAppTitle' : 'Installer l\'application Chrome',
-'inverseForms' : 'Inverse video (blanc sur noir)',
+'inverseForms' : 'Inverse vidéo (blanc sur noir)',
 'language' : 'Langue',
 'loadNewVersion' : 'Une nouvelle version d\'OpenAero est disponible. La charger ?',
 'loadNewVersionNoCookies' : 'Une nouvelle version d\'OpenAero est disponible. La charger ?' +
@@ -163,66 +165,67 @@ lang.fr = {
 'location' : 'Lieu',
 'logo' : 'Logo',
 'logoExplain' : 'Chargez votre logo en cliquant sur parcourir..., ' +
-  'ou selectionnez un des logos deja affiches.',
+  'ou sélectionnez un des logos déjà affiches.',
 'manual' : 'Manuel OpenAero',
 'maxConnectors' : 'Maximum de figures de liaison permis :',
 'missingInfo' : 'Des informations essentielles du programme manquent.' +
   'Etes-vous sur de vouloir enregistrer ou imprimer le fichier sans celles-ci :',
 'missingInfoTitle' : 'Informations du programme manquantes',
 'mobileVersion' : 'Version mobile',
-'multiOverrideRules' : 'Au lieu des regles de chaque programme, utiliser les regles :',
-'noCookies' : 'Il semble que les cookies sont invalides dans votre navigateur.' +
+'multiOverrideRules' : 'Au lieu des règles de chaque programme, utiliser les règles :',
+'noCookies' : 'Il semble que les cookies sont invalidés dans votre navigateur.' +
   'Certaines fonctions d\'OpenAero ne marcheront pas.<br>' +
   'Pour autoriser les cookies dans Chrome, copier l\'url ' +
   'suivante dans la barre d\'addresse :<br />' +
   '<strong>chrome://chrome/settings/content</strong><br />' +
-  'et choisissez <i>Autoriser l\'enregistrement de donnees locales</i>',
-'noFigureLetterAssigned' : '(%s) Pas de lettre affectee',
-'noFreeUnknownFig' : 'Pas de figure d\'Inc-Libre',
+  'et choisissez <i>Autoriser l\'enregistrement de données locales</i>',
+'noFigureLetterAssigned' : '(%s) Pas de lettre affectée',
+'noFreeUnknownFig' : 'Pas de figure d\'Inconnu-Libre',
 'nonArestiRolls' : 'Autoriser les rotations non-Aresti (essayer <i>41h66</i>)',
 'none' : 'Aucune',
-'noRules' : 'Pas de regle de verification disponible.',
+'noRules' : 'Pas de règle de vérification disponible.',
 'notes' : 'Notes',
 'notOnFormBC' : 'Cette fonction est seulement disponible lorsque ' +
-  'la forme B ou C est affichee.',
-'numberInCircle' : 'Numeros de figure dans un cercle',
+  'la forme B ou C est affichée.',
+'numberInCircle' : 'Numéros de figure dans un cercle',
 'ok' : 'OK',
 // OLANBumpBugWarning can be removed (with asociated code in OpenAero.js)
 // in 2015
-'OLANBumpBugWarning' : ' a ete detecte comme retournement vertical ' +
+'OLANBumpBugWarning' : ' a été détecté étant un comme retournement vertical ' +
   'de l\'axe X vers l\'axe Y.',
-'OLANBumpBugWarningMulti' : ' ont ete detectes comme retournements verticaux' +
+'OLANBumpBugWarningMulti' : ' ont été détectés comme étant des retournements verticaux' +
   'de l\'axe X vers l\'axe Y.',
-'OLANNBugWarning' : ' a ete detecte comme un N avec  ' +
-  'un changement de direction sur de l\'axe X.',
+'OLANNBugWarning' : ' a été détecté comme étant un N avec  ' +
+  'un changement de direction sur l\'axe X.',
 'OLANNBugWarningMulti' : ' ont ete detectes comme un N avec ' +
-  'un changement de direction sur de l\'axe X.',
+  'un changement de direction sur l\'axe X.',
 'OLANBugWarningFooter' : '<font color=red>Ces figures ou les  ' +
-  'suivantes peuvent �tre dessinees differement dans Olan et OpenAero !</font>' +
-  'Verifiez que la direction de sortie est correcte.<br>' +
+  'suivantes peuvent être dessinées différemment dans Olan et OpenAero !</font>' +
+  'Vérifiez que la direction de sortie est correcte.<br>' +
   'Ce message ne sera plus affiche pour ce programme.',
 'openaeroLanguage' : 'Syntaxe OpenAero',
 'openQueueFile' : 'Ouvrir un fichier file',
 'openSequence' : 'Ouvrir un programme',
-'orFileDrop' : 'Ou glisser/deplacer vos fichiers ici',
+'orFileDrop' : 'Ou glisser/déplacer vos fichiers ici',
 'pageSpacing' : 'Espacement entre pages',
 'pilot' : 'Pilote',
 'pilotCardFormB' : 'Forme B',
 'pilotCardFormC' : 'Forme C',
 'pilotNo' : 'Pilote No.',
 'pilotnumberIAC1' : "pilote",
-'pilotnumberIAC2' : "Numero",
+'pilotnumberIAC2' : "Numéro",
 'pleaseWaitStartup' : 'Patentiez pendant le chargement d\'OpenAero',
 'png' : 'PNG',
 'positioning' : 'Cadre (Coef)',
+'powered' : 'Avion',
 'print' : 'Imprimer / Enregistrer PDF',
-'printCheck' : 'Resultat de la verification',
+'printCheck' : 'Résultat de la vérification',
 'printDialog' : 'Options d\impression',
 'printExplain' : 'Vous pouvez positionner les options d\'impression ci-dessous.<br>' +
   'Pour <i>enregistrer</i>, cliquer <strong>Imprimer</strong> puis choisir ' +
   'comme <i>destination</i> <strong>Enregistrer en PDF</strong> dans le ' +
   'Menu de votre navigateur.',
-'printForms' : 'Impression des Formes�',
+'printForms' : 'Impression des Formes...',
 'printFormA' : 'Forme A',
 'printFormB' : 'Forme B',
 'printFormC' : 'Forme C',
@@ -232,76 +235,76 @@ lang.fr = {
 'printNotes' : 'Annotations (haut de page)',
 'printPilotCards' : 'Fiche pilote',
 'printSaveForms' : 'Imprimer / Enregistrer image',
-'printSF' : 'Numero de Super Famille',
+'printSF' : 'Numéro de Super Famille',
 'printString' : 'Texte du programme',
 'program' : 'Programme',
 'programme' : 'Programme',
 'queue' : 'File/Tampon',
-'queueEmpty' : 'Pas de figure a enregistrer dans la file',
-'queueNotSaved' : 'Les figures de la file ont ete enregistrees',
-'queueSaved' : 'Les figures de la file N\'ONT PAS ete enregistrees',
+'queueEmpty' : 'Pas de figure à enregistrer dans la file',
+'queueNotSaved' : 'Les figures de la file ont été enregistrées',
+'queueSaved' : 'Les figures de la file N\'ONT PAS été enregistrées',
 'remove' : 'Supprimer',
 'removeLogo' : 'Supprimer',
-'resetStyle' : 'Valeur par defaut',
-'resetStyleAll' : 'Valeur par defaut (tous les parametres)',
+'resetStyle' : 'Valeur par défaut',
+'resetStyleAll' : 'Valeur par défaut (tous les paramètres)',
 'rollLarge' : 'Grand',
 'rollMedium' : 'Moyen',
-'rollPos' : ['Premiere serie de rotations','Deuxieme serie de rotations','Troisieme serie de rotations','Quatrieme serie de rotations'],
+'rollPos' : ['Première série de rotations','Deuxième série de rotations','Troisième série de rotations','Quatrième série de rotations'],
 'rollSmall' : 'Petit',
 'rollTextSize' : 'Taille du texte des rotations',
-'rules' : 'Regles',
-'rulesImported' : 'Regles importees du fichier avec succes. Nombre de lignes (hors commentaires) :',
-'rulesImportTitle' : 'Importation du fichier de regles',
-'rulesNotImported' : 'Pas de regles importees ! Ce n\'est peut �tre ' +
-  'pas un fichier de regles ? Consultez ' +
+'rules' : 'Règles',
+'rulesImported' : 'Règles importées du fichier avec succès. Nombre de lignes (hors commentaires) :',
+'rulesImportTitle' : 'Importation du fichier de règles',
+'rulesNotImported' : 'Pas de règles importées ! Ce n\'est peut être ' +
+  'pas un fichier de règles ? Consultez ' +
   '<a href="http://code.google.com/p/open-aero/wiki/Developers#Creating_rule_checking_files"' +
-  'target="_blank">Creation d\'un fichier de regles</a> pour plus d\' information.',
-'runFromFile' : 'Vous avez demarre OpenAero a partir d\'un fichier.' +
-  'Depuis la version 1.2.3 (fevrier 2013) ceci est deconseille ' +
+  'target="_blank">Création d\'un fichier de règles</a> pour plus d\' information.',
+'runFromFile' : 'Vous avez démarré OpenAero à partir d\'un fichier.' +
+  'Depuis la version 1.2.3 (février 2013) ceci est déconseillé ' +
   'car certains fonctions ne sont pas disponibles.<br />' +
-  'Alllez a <a href="http://openaero.net">openaero.net</a>. ' +
+  'Alllez à <a href="http://openaero.net">openaero.net</a>. ' +
   'OpenAero sera automatiquement installe dans votre navigateur et sera egalement ' +
-  'disponible hors connection.',
+  'disponible hors connexion.',
 'saveAsImage' : 'Enregistrer l\'image',
 'saveAsLink' : 'Enregistrer en tant que lien',
 'saveAsPNG' : 'Enregistrer une image PNG',
 'saveAsSVG' : 'Enregistrer une image SVG',
 'saveAsURL' : 'Le lien ci-dessous contient votre programme. ' +
-  'Vous pouvez le copier dans un email, en faire un favori, etc...<br /> ' +
+  'Vous pouvez le copier dans un émail, en faire un favori, etc...<br /> ' +
   'Faire un clic droit et "Enregistrer la cible du lien sous...".',
 'saveAsURLFromApp' : 'Le lien ci-dessous contient votre programme. ' +
-  'Vous pouvez le copier dans un email, en faire un favori, etc...<br /> ' +
+  'Vous pouvez le copier dans un émail, en faire un favori, etc...<br /> ' +
   'Faire un clic droit pour le copier.',
 'saveAsURLTitle' : 'Enregistrement du programme en tant que lien',
 'saveFigsSeparate' : 'Enregistrer chaque figure',
 'saveFigsSeparateTitle' : 'Enregistrement individuel des figures',
 'saveFile' : 'Enregistrer',
 'saveFileAsAlert' : 'Pour enregistrer votre fichier, faire un clic droit sur ' +
-  'ce texte et choisissez "Enregistrer le lien�" ou "Enregistrer le fichier�"',
+  'ce texte et choisissez "Enregistrer le lien…" ou "Enregistrer le fichier…"',
 'saveFileTitle' : 'Enregistrement',
 'saveImageVariables' : 'Enregistrement d\'une image en PNG ou SVG',
 'saveQueueFile' : 'Enregistrer la file',
 'saveSequence' : 'Enregistrer le programme',
-'selectCategoryFirst' : 'Selectionnez la Categorie',
-'selectRulesFirst' : 'Selectionnez les Regles',
+'selectCategoryFirst' : 'Sélectionnez la Catégorie',
+'selectRulesFirst' : 'Sélectionnez les Règles',
 'separateFigures' : 'Espacer les figures',
 'sequence' : 'Programme',
 'sequenceCorrect' : 'Le programme est correct',
 'sequenceHasErrors' : 'Le programme est incorrect :',
-'sequenceInfo' : 'Infos programme',
+'sequenceInfo' : 'Programme',
 'sequenceTab' : 'Programme',
-'sequenceTest' : 'Verification :',
-'sequenceNotSavedWarning' : 'Le programme n\'a pas ete Enregistre.\n' +
+'sequenceTest' : 'Vérification :',
+'sequenceNotSavedWarning' : 'Le programme n\'a pas été Enregistre.\n' +
   'Etes-vous sur de vouloir en ouvrir un nouveau ?',
 'setMobile' : 'Version mobile',
-'settings' : 'Parametrage',
+'settings' : 'Paramétrage',
 'settingsClose' : 'Fermer',
-'settingsTitle' : 'Parametres',
-'setUpright' : ':entree ventre',
-'setInverted' : ':entree dos',
-'showFullLog' : 'Voir le rapport de verification complet',
+'settingsTitle' : 'Paramètres',
+'setUpright' : ':entrée ventre',
+'setInverted' : ':entrée dos',
+'showFullLog' : 'Voir le rapport de vérification complet',
 'showQueue' : 'Voir la file',
-'styleSettingsHeader' : 'Vous pouvez changer ici les parametres de dessin. ' +
+'styleSettingsHeader' : 'Vous pouvez changer ici les paramètres de dessin. ' +
   'Notez bien que ces changements affectent l\'apparence du programme sur ' +
   '<strong>votre<strong> version d\'OpenAero, mais pas ' +
   'celle obtenue sur d\'autres version d\'OpenAero.',
@@ -311,43 +314,44 @@ lang.fr = {
 // tooltip forms a sub-array
 'tooltip' : {
   'connector' : 'Fait de cette figure une figure de liaison pour Inconnu-Libre',
-  'curvedLine' : 'Deplace la figure et cree une ligne de liaison courbe',
-  'deleteFig' : 'Supprime la figure selectionnee',
+  'curvedLine' : 'Déplace la figure et crée une ligne de liaison courbe',
+  'deleteFig' : 'Supprime la figure sélectionnée',
   // next two disabled. Are disabling minus button
-  // entryExt' : 'Changer la ligne d\'entree',
+  // entryExt' : 'Changer la ligne d\'entrée',
   // exitExt' : 'Changer la ligne de sortie',
-  'figEntryButton' : 'Change l\'entree ventre <=> dos',
+  'figEntryButton' : 'Change l\'entrée ventre <=> dos',
   'figExitButton' : 'Change la sortie ventre <=> dos',
-  'magMin' : 'reduit la taille de la figure',
+  'magMin' : 'réduit la taille de la figure',
   'magPlus' : 'Agrandit la figure',
-  'moveForward' : 'Deplace la figure vers l\'avant sans ligne de liaison',
-  'straightLine' : 'Deplace la figure et cree une ligne de liaison droite',
-  'subSequence' : 'Demarre un sous programme a partir de la figure selectionnee',
-  'switchFirstRoll' : 'Change le sens de la premiere rotation',
+  'moveForward' : 'Déplace la figure vers l\'avant sans ligne de liaison',
+  'straightLine' : 'Déplace la figure et crée une ligne de liaison droite',
+  'subSequence' : 'Débute un sous programme à partir de la figure selectionnee',
+  'switchFirstRoll' : 'Change le sens de la première rotation',
   'switchX' : 'Change le sens de la sortie sur l\'axe X',
   'switchY' : 'Change le sens de la sortie sur l\'axe Y'
 }, // end tooltip sub-array
-'unknownFileType' : 'L\'ouverture de ce fichier n\'est pas supportee dans ce navigateur.',
-'unusedFigureLetters' : 'Lettre inutilisee : %s',
-'upwindEntry' : 'Debuter vent de face',
+'unknownFileType' : 'L\'ouverture de ce fichier n\'est pas supportée dans ce navigateur.',
+'unusedFigureLetters' : 'Lettre inutilisée : %s',
+'update' : 'Mise à jour',
+'upwindEntry' : 'Débuter vent de face',
 'version' : 'Version : %s',
 'view' : 'Affichage',
 'warningPre' : '<p> Lors de la prochaine sauvegarde, cet ' +
-  'avertissement \'apparaitra plus.</p>',
+  'avertissement \'apparaîtra plus.</p>',
 'warningPre123' : '<p> Le programme que vous venez d\'ouvrir a ete cree ' +
-  'avec une version d\'OpenAero anterieure a 1.2.3. Verifiez que le sens le sortie de toutes ' +
+  'avec une version d\'OpenAero antérieure à 1.2.3. Vérifiez que le sens le sortie de toutes ' +
   'les figures est correct.</p>',
-'warningPre124' : '<p> Le programme que vous venez d\'ouvrir a ete cree ' +
-  'avec une version d\'OpenAero anterieure a 1.2.3. Verifiez que le sens le sortie de tous ' +
+'warningPre124' : '<p> Le programme que vous venez d\'ouvrir a été crée ' +
+  'avec une version d\'OpenAero antérieure à 1.2.3. Vérifiez que le sens le sortie de tous ' +
   'les doubles retournements verticaux est correct.</p>',
-'warningPre137' : '<p> Le programme que vous venez d\'ouvrir a ete cree ' +
-  'avec une version d\'OpenAero anterieure a 1.3.7. Certains declenches debutes tranche ' +
-  'peuvent avoir un code Aresti et un K incorrect. Ceci devrait �tre corrige maintenant. ' +
-  'verifiez bien, si vous etes dans cette situation.</p>',
+'warningPre137' : '<p> Le programme que vous venez d\'ouvrir a été crée ' +
+  'avec une version d\'OpenAero antérieure à 1.3.7. Certains déclenchés débutés tranche ' +
+  'peuvent avoir un code Aresti et un K incorrect. Ceci devrait être corrigé maintenant. ' +
+  'vérifiez bien, si vous êtes dans cette situation.</p>',
 'wind' : 'V E N T',
 'windIAC' : 'sens du vent',
-'xBoxEntry' : 'Debuter de face',
-'xBoxEntryAway' : 'Debuter de derriere',
-'zipImageFilenamePattern' : 'Chaine de definition des noms des fichiers image'
+'xBoxEntry' : 'Débuter de face',
+'xBoxEntryAway' : 'Débuter de derrière',
+'zipImageFilenamePattern' : 'Chaîne de définition des noms des fichiers image'
 // end of key-value pairs. No comma after last
 };
