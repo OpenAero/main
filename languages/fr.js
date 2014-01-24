@@ -1,4 +1,4 @@
-﻿// fr.js 1.4.0 V gg_1
+﻿// fr.js 1.4.1
 // This file is part of OpenAero.
 
 //  OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -56,7 +56,7 @@ lang.fr = {
 'checkSequenceLog' : 'Voir le détail',
 'checkSequenceOK' : 'OK',
 'checkSequenceResult' : 'Résultat de vérification',
-'checkSequences' : 'Vérification du programmes',
+'checkSequences' : 'Vérification des programmes',
 'chooseFiles' : 'Choisir les fichiers ici :',
 'chooseLogo' : 'Choisir un logo',
 'class' : 'Type',

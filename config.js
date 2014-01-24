@@ -39,7 +39,9 @@ var versionNew = '<strong>OpenAero has been upgraded to version ' +
   version + '</strong><br>New features:<ul>' +
   '<li>Added French interface language (change in <i>Settings</i>)</li>' +
   '<li>Added double humpty bumps with different half loop sizes</li>' +
-  '<li>Fixed sequence scaling issue in Chrome 32</li>' +
+  '<li>Improved file selection in <i>Check multiple sequences</i> tool</li>' +
+  '<li>Other bugfixes and improvements (check <a href="changelog.txt">' +
+  'changelog.txt</a> if interested)</li>' +
   '</ul>' +
   'This may take a few seconds to complete.';
 

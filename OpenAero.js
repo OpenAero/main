@@ -7000,8 +7000,11 @@ function makeMiniFormA (x, y) {
     }
   }
   drawText ('Total K = ' + figureK, blockX + 4, blockY + 17, 'miniFormATotal');
+  // add maximum K (corrected for Floating Point) where applicable
   if (checkCatGroup.k && checkCatGroup.k.max) {
-    drawText ('(max K = ' + checkCatGroup.k.max + ')',
+    var max = checkCatGroup.k.max;
+    if (checkCatGroup.floatingPoint) max -= checkCatGroup.floatingPoint;
+    drawText ('(max K = ' + max + ')',
       blockX + 4, blockY + 32, 'miniFormAMax');
       drawRectangle (blockX, blockY, 152, 40, 'pos');
       blockY += 40;

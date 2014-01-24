@@ -2,17 +2,18 @@
 * restore App window size to previous on subsequent startup (Issue #128)
 * added French user interface
 * improved compVersion function to allow versions with more than 3 numbers
-* added double humpty bumps with different half loop sizes
+* added double humpty bumps with different half loop sizes (Issue #127 and #133)
 * added experimental turn perspective feature
-* fixed bug where sequence text caret would jump to end when text editing double bump
+* fixed bug where sequence text caret would jump to end when text editing double bump (Issue #135)
 * cleaned up config.js
-* fixed scaling bug which appeared in Chrome 32
+* fixed scaling bug which appeared in Chrome 32 (Issue #134)
 * fixed Chrome 32 print popup issue
 * fixed several Firefox issues for the Figure Queue
 * fixed bug where spin only (without "iv") would not show up in queue correctly
 * fixed bug where single-figure sequences do not show up on form C
 * fixed popup blocking issues
 * added file selection in multiple steps for "Check multiple seq"
+* corrected max K in mini Form A for Floating Point where applicable
 
 1.4.0
 * added Belgian Aerobatic Club logo
