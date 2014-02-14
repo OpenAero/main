@@ -1,4 +1,4 @@
-﻿// OpenAero.js 1.4.0
+﻿// OpenAero.js 1.4.1
 // This file is part of OpenAero.
 
 //  OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -2745,11 +2745,40 @@ function launchURL (launchData) {
     activateXMLsequence (decodeURI(match[0].replace(/\?(sequence|s)=/, '')));
   }
 }
+
+// appZoom adds zoom functionality to the app and is called by keydown
+function appZoom (e) {
+  var zoomSteps = ['0.33', '0.5', '0.67', '0.75', '0.9', '1',
+    '1.1', '1.25', '1.5', '1.75', '2', '2.5', '3'];
+  var zoom = document.body.style.zoom ? document.body.style.zoom : '1';
+  if ((e.shiftKey && e.ctrlKey && (e.keyCode == 187)) || (e === 1)) {
+    var zoom = zoomSteps[zoomSteps.indexOf(zoom) + 1];
+  } else if ((!e.shiftKey && e.ctrlKey && (e.keyCode == 189)) || (e === -1)) {
+    var zoom = zoomSteps[zoomSteps.indexOf(zoom) - 1];
+  } else {
+    // no special appZoom key or click, return true to bubble key
+    return true;
+  }
+  // only update zoom when zoom has a valid value
+  if (zoom) {
+    document.body.style.zoom = zoom;
+    document.getElementById('zoom').innerText = parseInt(zoom * 100) + '%';
+  }
+  // don't bubble key
+  return false;
+}
   
 // addEventListeners adds all event listeners for actions.
 // In index.html no actions are specified. It is necessary they are
 // specified as event listeners for Chrome Apps.
 function addEventListeners () {
+  // zoom for Chrome app
+  if (chromeApp.active) {
+    document.addEventListener ('keydown', appZoom, false);
+  } else {
+    document.getElementById('zoomMenu').classList.add('noDisplay');
+  }
+
   // menu
   document.getElementById('menuFile').addEventListener('mouseover', menuActive, false);
   document.getElementById('menuFile').addEventListener('mouseout', menuInactive, false);
@@ -2767,6 +2796,8 @@ function addEventListeners () {
   document.getElementById('t_formB').addEventListener('click', function(){selectForm('B')}, false);
   document.getElementById('t_formC').addEventListener('click', function(){selectForm('C')}, false);
   document.getElementById('t_figsInGrid').addEventListener('click', function(){selectForm('Grid')}, false);
+  document.getElementById('zoomMin').addEventListener('mousedown', function(){appZoom(-1)}, false);
+  document.getElementById('zoomPlus').addEventListener('mousedown', function(){appZoom(1)}, false);
   document.getElementById('t_setMobile').addEventListener('click', switchMobile, false);
   
   document.getElementById('menuSequence').addEventListener('mouseover', menuActive, false);

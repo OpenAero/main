@@ -1,5 +1,5 @@
 /*
- OpenAero.css 1.4.1
+ OpenAero.css 1.4.2
  This file is part of OpenAero.
 
   OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -351,6 +351,13 @@ option.used {
 #chooseLogo svg {
   margin: 10px 10px 0 0;
 }
+#zoom {
+  float: left;
+  margin: 2px;
+}
+#zoom, #zoomMenu span, #zoomMenu a {
+  float: left;
+}
 
 /* boxes and dialogs */
 .boxbg {
@@ -489,7 +496,7 @@ option.used {
   background-image: url('images/PilotCardXY.png');
   text-align: right;
   width: 140px;
-  font-color: #00c;
+  color: #00c;
   font-weight: bold;
 }
 #pilotCardXY div {
@@ -1087,6 +1094,10 @@ table#figureChooserTable div {
 }
 /* special code for installChromeApp item */
 #installChromeApp.noDisplay {
+  display: none;
+}
+/* special code for zoom item */
+#zoomMenu.noDisplay {
   display: none;
 }
 /* Class select box */

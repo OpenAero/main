@@ -380,6 +380,9 @@ lang.en = {
 'windIAC' : 'wind direction',
 'xBoxEntry' : 'X-box entry',
 'xBoxEntryAway' : 'X-box entry away',
-'zipImageFilenamePattern' : 'Separate fig images filename pattern'
+'zipImageFilenamePattern' : 'Separate fig images filename pattern',
+// new in 1.4.2
+'zoom' : 'Zoom'
+// end new
 // end of key-value pairs. No comma after last
 };

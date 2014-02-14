@@ -34,14 +34,12 @@
 // Define active version number of OpenAero
 // **************
 
-var version = '1.4.1';
+var version = '1.4.1.1';
 var versionNew = '<strong>OpenAero has been upgraded to version ' +
   version + '</strong><br>New features:<ul>' +
-  '<li>Added French interface language (change in <i>Settings</i>)</li>' +
-  '<li>Added double humpty bumps with different half loop sizes</li>' +
-  '<li>Improved file selection in <i>Check multiple sequences</i> tool</li>' +
-  '<li>Other bugfixes and improvements (check <a href="changelog.txt">' +
-  'changelog.txt</a> if interested)</li>' +
+  '<li>Added zooming for Chrome App</li>' +
+/*  '<li>Other bugfixes and improvements (check <a href="changelog.txt">' +
+  'changelog.txt</a> if interested)</li>' +*/
   '</ul>' +
   'This may take a few seconds to complete.';
 
