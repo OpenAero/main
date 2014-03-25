@@ -1,4 +1,4 @@
-// config.js 1.4.1
+// config.js 1.4.1.3
 
 // This file is part of OpenAero.
 
@@ -34,10 +34,12 @@
 // Define active version number of OpenAero
 // **************
 
-var version = '1.4.1.1';
+var version = '1.4.1.3';
 var versionNew = '<strong>OpenAero has been upgraded to version ' +
   version + '</strong><br>New features:<ul>' +
   '<li>Added zooming for Chrome App</li>' +
+  '<li>Small layout improvements</li>' +
+  '<li>Fixed incorrect K for flick after roll in top of loop (e.g. o2,2if)</li>' +
 /*  '<li>Other bugfixes and improvements (check <a href="changelog.txt">' +
   'changelog.txt</a> if interested)</li>' +*/
   '</ul>' +

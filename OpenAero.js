@@ -1319,8 +1319,8 @@ function makeCurve (param) {
 function makeRollTopLine () {
   var pathArray = [];
   var angle = dirAttToAngle (Direction, Attitude + 90);
-  var dx = Math.cos(angle) * lineElement075;
-  var dy = - Math.sin(angle) * lineElement075;
+  var dx = roundTwo(Math.cos(angle) * lineElement075);
+  var dy = - roundTwo(Math.sin(angle) * lineElement075);
   pathArray.path = 'l ' + dx + ',' + dy + ' l ' + (-2 * dx) +
     ',' + (-2 * dy);
   pathArray.style = 'pos';
@@ -2365,6 +2365,12 @@ function drawShape(pathArray, svgElement, prev) {
     path.setAttribute('d', 'M ' + roundTwo(X) + ',' + roundTwo(Y) +
       ' ' + pathArray.path);
     path.setAttribute('style', style[pathArray.style]);
+    // option for rotating paths. Not used yet but may become usefull
+    // for fitting rolls and snaps to curve in top or bottom of loop
+    if ('rotate' in pathArray) {
+      path.setAttribute('transform', 'rotate(' + pathArray.rotate +
+        ' ' + X + ' ' + Y + ')');
+    }
     svgElement.appendChild(path);
   } else if (pathArray.text) {
     var text = document.createElementNS (svgNS, "text");
@@ -11217,10 +11223,13 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
                 }
                 rollSum = 0;
                 attChanged = 180 - attChanged;
+                // correct load for half rolls in top of loop
+                if (rollTop) NegLoad = 1 - NegLoad;
               }
-              // check correct load after non-vertical rolls
-              if ((Attitude != 90) && (Attitude != 270)) {
-                NegLoad = ((Attitude > 90) && (Attitude < 270))? 1 : 0;
+              // check correct load after rolls that are not vertical or
+              // in top of loop
+              if ((Attitude != 90) && (Attitude != 270) && (!rollTop)) {
+                NegLoad = (((Attitude > 90) && (Attitude < 270)))? 1 : 0;
               }
             }
           }
@@ -11299,10 +11308,10 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
                 }
               }
             }
-            // Half rolls change direction and attitude
+            // Half rolls change direction, attitude and load
             if (attChanged == 0) {
               Attitude = 180 - Attitude;
-              if (Attitude < 0) Attitude = Attitude + 360;
+              if (Attitude < 0) Attitude += 360;
               changeDir(180);
             }
           } else {
@@ -11346,7 +11355,7 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
             var topLineAngle = (rollTopAngleAfter > 0)? 45 : -45;
             paths = buildShape ('Curve', topLineAngle, paths);
             if (rollPaths.length) {
-              // draw the marker when there was a roll in the top
+              // draw the second marker when there was a roll in the top
               paths = buildShape ('RollTopLine', '', paths);
             } else {
               // no roll, remove first marker
@@ -11363,6 +11372,8 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
               if (rollPaths[k].dx) dxRolls += rollPaths[k].dx;
               if (rollPaths[k].dy) dyRolls += rollPaths[k].dy;
             }
+/** fixme: would be nice to have rolls and snaps follow the curve of the
+ *  loop. No consistent method found yet. */
             paths.push ({
               'path':'',
               'style':'',
@@ -11371,7 +11382,9 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
             });
           }
           // Add all the roll paths
-          for (var k = 0; k < rollPaths.length; k++) paths.push(rollPaths[k]);
+          for (var k = 0; k < rollPaths.length; k++) {
+            paths.push(rollPaths[k]);
+          }
           // Move back to the right place at the end of the curve after
           // a roll in the top
           if (rollTop) {

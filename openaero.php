@@ -71,7 +71,8 @@ function download() {
 function version() {
   $version = '';
   // Get the current latest version from config.js
-  $lines = file ('config.js');
+  ini_set('allow_url_fopen', true);
+  $lines = file ('https://open-aero.googlecode.com/git/config.js');
   foreach ($lines as $line) {
     if (preg_match ('/^var version[^0-9]+([0-9\.]+)/', $line, $matches)) {
       $version = $matches[1];

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--
-  index.html version 1.4.0
+  index.html version 1.4.1.3
   This file is part of OpenAero.
 
   OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -479,20 +479,22 @@
               <li><a class="userText" id="t_formC" href=#></a></li>
               <li><a class="userText" id="t_figsInGrid" href=#></a></li>
               <hr>
-              <li id="zoomMenu">
-                <a class="userText" id="t_zoom" href=#></a>
-                <span>
-                  <span id="zoomMin" class="minButton">
-                    <img src="buttons/smallMask.png">
+              <span id="zoomMenu">
+                <li>
+                  <a class="userText" id="t_zoom" href=#></a>
+                  <span>
+                    <span id="zoomMin" class="minButton">
+                      <img src="buttons/smallMask.png">
+                    </span>
+                    <span id="zoom">100%</span>
+                    <span id="zoomPlus" class="plusButton">
+                      <img src="buttons/smallMask.png">
+                    </span>
                   </span>
-                  <span id="zoom">100%</span>
-                  <span id="zoomPlus" class="plusButton">
-                    <img src="buttons/smallMask.png">
-                  </span>
-                </span>
-              </li>
-              <div class="clearBoth"></div>
-              <hr>
+                </li>
+                <div class="clearBoth"></div>
+                <hr>
+              </span>
               <li><a class="userText" id="t_setMobile" href=#></a></li>
             </ul>
           </li>
@@ -579,7 +581,7 @@
         </ul>
         <!-- Current version -->
         <div class="version">
-          <a href="http://code.google.com/p/open-aero/downloads/list?can=3" target="_blank"><img id="latestVersion" src=""></img></a>
+          <a href="https://code.google.com/p/open-aero/source/browse/" target="_blank"><img id="latestVersion" src=""></img></a>
           <span id="version"></span>
         </div>
       </div>
