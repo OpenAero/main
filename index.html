@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--
-  index.html version 1.4.1.3
+  index.html version 1.4.2
   This file is part of OpenAero.
 
   OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -374,6 +374,17 @@
             </div>
           </div>
           <div class="section">
+            <span class="sectionLabel userText" id="t_queueLabel"></span>
+            <div>
+              <select id="queueColumns">
+                <option value="2">2</option>
+                <option value="3" selected>3</option>
+                <option value="4">4</option>
+              </select>
+              <span class="userText" id="t_queueColumns"></span>
+            </div>
+          </div>
+          <div class="section">
             <span class="sectionLabel userText" id="t_saveFigsSeparateTitle"></span>
             <div>
               <span class="userText" id="t_imageFormat"></span>
@@ -462,6 +473,7 @@
               </li>
               <li><a class="userText" id="t_clearSequence" href="#"></a></li>
               <li><a class="userText" id="t_saveSequence" href="#"></a></li>
+              <li><a class="userText" id="t_emailSequence" target="_blank" href="#"></a></li>
               <hr>
               <li><a class="userText" id="t_saveAsLink" href="#"></a></li>
               <li><a class="userText" id="t_saveAsImage" href="#"></a></li>
@@ -712,6 +724,18 @@
             </span>
           </div>
           <div class="sectionLabelClose">&nbsp;</div>
+          <!-- sub sequence direction -->
+          <div id="subSequenceDirection" class="section noDisplay">
+            <div class="sectionLabel userText" id="t_subSequenceDirection"></div><div class="sectionLabelClose">&nbsp;</div>
+            <select id="subSequenceDirections">
+              <option class="userText" value="//" id="t_sameAsBefore"></option>
+              <option class="userText" value="eu" id="t_upwind"></option>
+              <option class="userText" value="ed" id="t_downwind"></option>
+              <option class="userText" value="ej" id="t_xBox"></option>
+              <option class="userText" value="eja" id="t_xBoxAway"></option>
+            </select>
+          </div>
+          <!-- figure box and option buttons -->
           <div id="FUfigOptionsDisabled"><span class="userText" id="t_FUfigOptionsDisabled"></span></div>
           <div id="figureOptions">
             <div>

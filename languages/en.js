@@ -1,4 +1,4 @@
-// en.js 1.4.0
+// en.js 1.4.2
 // This file is part of OpenAero.
 
 //  OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -34,6 +34,8 @@ lang.en = {
 'about' : 'About',
 'ac' : 'A/C',
 'addAllToQueue' : 'Add all to Queue',
+'addAllToQueueWait' : 'Adding all figures in sequence to queue. This ' +
+  'may take a while. Please wait...',
 'addFigureText' : 'Click to add figure',
 'addingFigure' : 'Add new figure',
 'addToQueue' : 'Add to Queue',
@@ -63,9 +65,9 @@ lang.en = {
 'checkSequenceResult' : 'Sequence check result',
 'checkSequences' : 'Check sequences',
 'chooseFiles' : 'Choose your files here:',
-// new for 1.4.1
+// new 1.4.1
 'chooseFilesPrint' : 'Choose your files here:',
-// end new
+//
 'chooseLogo' : 'Choose logo',
 'class' : 'Class',
 'clearPositioning' : 'Clear positioning',
@@ -95,13 +97,22 @@ lang.en = {
 'demo' : 'Demo',
 'desktopVersion' : 'Desktop version',
 'download' : 'Download',
+// updated 1.4.2
 'downloadHTML5' : 'You can save your file by choosing a name ' +
   'and clicking <i>Save File</i> below.<br>A dialog where you can ' +
-  'choose the folder will then pop up.',
+  'choose the folder will then pop up.' +
+  '<p class="chromeHint">Chrome hint: The standard Chrome browser will ' +
+  'save the file to your default Download folder. To change this, go ' +
+  'to the <b>advanced</b> Settings (access via the Chrome ≡ button) ' +
+  'and tick checkbox "Ask where to save ..."</p>',
+//
 'downloadLegacy' : 'You can save your file by choosing a ' +
   'name, right-clicking on <i>Save File</i> below '+
   'and choosing "Save File As..." or "Save Link As...".<br>A dialog ' +
   'where you can choose the folder will then pop up.',
+// new 1.4.2
+'downwind' : 'Downwind',
+//
 'downwindEntry' : 'Downwind entry',
 'drawingStyles' : 'Drawing styles',
 'drawingStylesExplain' : '<p>All drawing styles can be changed here. ' +
@@ -109,6 +120,12 @@ lang.en = {
   '<strong>neg</strong>=negative line, <strong>rollText</strong>=roll ' +
   'font (e.g. 2x8).</p>',
 'editingFigure' : 'Edit figure ',
+// new 1.4.2
+'emailHeader' : 'Click the link below to open the sequence in OpenAero. ' +
+  'Or, if clicking doesn\'t work, copy and paste it (completely!) in ' +
+  'your browser address bar.',
+'emailSequence' : 'Email sequence',
+//
 'entryExitAttExt' : 'Entry/exit attitude & extension',
 'expert' : 'Expert',
 'feedback' : 'Feedback',
@@ -220,9 +237,9 @@ lang.en = {
 'openQueueFile' : 'Open queue file',
 'openSequence' : 'Open sequence',
 'orFileDrop' : 'Or drag & drop your files here',
-// new for 1.4.1
+// new 1.4.1
 'orFileDropPrint' : 'Or drag & drop your files here',
-// end new
+//
 'pageSpacing' : 'Page spacing',
 'pilot' : 'Pilot',
 'pilotCardFormB' : 'Form B',
@@ -248,7 +265,7 @@ lang.en = {
 'printFormGrid' : 'Figures in grid',
 'printMiniFormAonB' : 'with mini Form A',
 'printMiniFormAonC' : 'with mini Form A',
-// new for 1.4.1
+// new 1.4.1
 'printMulti' : 'Print multiple sequences (NOT FUNCTIONAL YET!)',
 'printMultiClose' : 'Close',
 'printMultiOverrideRules' : 'Override sequence rules with current ' +
@@ -256,7 +273,7 @@ lang.en = {
 'printMultipleSeq' : 'Print multiple seq',
 'printMultiWait' : 'Printing %s sequences.<br>This may ' +
   'take some time. Please wait...',
-// end new
+//
 'printNotes' : 'Sequence Notes (top of pages)',
 'printPilotCards' : 'Pilot cards',
 'printSaveForms' : 'Print/save forms',
@@ -265,7 +282,13 @@ lang.en = {
 'program' : 'Program',
 'programme' : 'Programme',
 'queue' : 'Queue',
+// new in 1.4.2
+'queueColumns' : 'Columns',
+//
 'queueEmpty' : 'There are no figures in the queue to save',
+// new in 1.4.2
+'queueLabel' : 'Queue',
+//
 'queueNotSaved' : 'The queue figures have NOT been saved',
 'queueSaved' : 'The queue figures have been saved',
 'remove' : 'Remove',
@@ -290,6 +313,9 @@ lang.en = {
   'Please go to <a href="http://openaero.net">openaero.net</a>. ' +
   'OpenAero will automatically install in your browser and will also ' +
   'be available offline.',
+// new in 1.4.2
+'sameAsBefore' : 'Same as before',
+//
 'saveAsImage' : 'Save as image',
 'saveAsLink' : 'Save as link',
 'saveAsPNG' : 'Save PNG image',
@@ -337,6 +363,9 @@ lang.en = {
   '<strong>your</strong> version of OpenAero but not how your sequence ' +
   'will look to another user of OpenAero!',
 'styling' : 'Styling',
+// new in 1.4.2
+'subSequenceDirection' : 'Sub sequence entry direction',
+//
 'svg' : 'SVG',
 'tools' : 'Tools',
 // tooltip forms a sub-array
@@ -361,6 +390,9 @@ lang.en = {
 'unknownFileType' : 'File opening is not supported in this browser.',
 'unusedFigureLetters' : 'Unused figure letters: %s',
 'update' : 'Update',
+// new 1.4.2
+'upwind' : 'Upwind',
+//
 'upwindEntry' : 'Upwind entry',
 'version' : 'Version: %s',
 'view' : 'View',
@@ -378,11 +410,15 @@ lang.en = {
   'correct now. Please check if applicable.</p>', 
 'wind' : 'wind/vent',
 'windIAC' : 'wind direction',
+// new 1.4.2
+'xBox' : 'X-Box',
+'xBoxAway' : 'X-Box away',
+//
 'xBoxEntry' : 'X-box entry',
 'xBoxEntryAway' : 'X-box entry away',
 'zipImageFilenamePattern' : 'Separate fig images filename pattern',
-// new in 1.4.2
+// new 1.4.2
 'zoom' : 'Zoom'
-// end new
+//
 // end of key-value pairs. No comma after last
 };

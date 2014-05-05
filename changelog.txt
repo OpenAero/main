@@ -1,3 +1,15 @@
+1.4.2
+* corrected width of Class select field
+* fixed correct saving of numberInCircle and nonArestiRolls in seq file
+* added option to Email the sequence
+* fixed bug in using queue figures with a spin on complex base figures (Issue #139)
+* added option for 2-4 queue columns, changed default to 3 (Issue #140)
+* when a figure from the queue is in the sequence, it's background now turns grey (Issue #141)
+* added info box when adding all figures to queue as this may take a while
+* moved addEventListeners to the beginning of doOnLoad to prevent blocking in case of errors
+* added options in figure editor for setting start direction of sub sequences (Issue #81 and #137)
+* added console warnings for missing language keys to improve translation
+
 1.4.1.3
 * fixed incorrect K for flick after roll in top of loop (e.g. o2,2if) (Issue #138)
 * added roundTwo calculation for lines around top of loop roll

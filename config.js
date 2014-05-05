@@ -1,4 +1,4 @@
-// config.js 1.4.1.3
+// config.js 1.4.2
 
 // This file is part of OpenAero.
 
@@ -34,14 +34,14 @@
 // Define active version number of OpenAero
 // **************
 
-var version = '1.4.1.3';
+var version = '1.4.1.5';
 var versionNew = '<strong>OpenAero has been upgraded to version ' +
   version + '</strong><br>New features:<ul>' +
-  '<li>Added zooming for Chrome App</li>' +
-  '<li>Small layout improvements</li>' +
-  '<li>Fixed incorrect K for flick after roll in top of loop (e.g. o2,2if)</li>' +
-/*  '<li>Other bugfixes and improvements (check <a href="changelog.txt">' +
-  'changelog.txt</a> if interested)</li>' +*/
+  '<li>Added option to Email the sequence</li>' +
+  '<li>Several changes to improve use of the figure queue</li>' +
+  '<li>Improved sub sequence handling</li>' +
+  '<li>Other bugfixes and improvements (check <a href="changelog.txt">' +
+  'changelog.txt</a> if interested)</li>' +
   '</ul>' +
   'This may take a few seconds to complete.';
 
@@ -145,6 +145,7 @@ var zipImageFilenamePattern = '%location %category %program %pilot Form %form_fi
 var saveSettings = [
   'language',
   'gridColumns',
+  'queueColumns',
   'saveFigsSeparateWidth',
   'saveFigsSeparateHeight',
   'zipImageFilenamePattern',

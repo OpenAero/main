@@ -1,4 +1,4 @@
-﻿// fr.js 1.4.1
+// fr.js 1.4.2
 // This file is part of OpenAero.
 
 //  OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -240,7 +240,13 @@ lang.fr = {
 'program' : 'Programme',
 'programme' : 'Programme',
 'queue' : 'File/Tampon',
+// new in 1.4.2
+'queueColumns' : 'Colonnes',
+//
 'queueEmpty' : 'Pas de figure à enregistrer dans la file',
+// new in 1.4.2
+'queueLabel' : 'File/Tampon',
+//
 'queueNotSaved' : 'Les figures de la file ont été enregistrées',
 'queueSaved' : 'Les figures de la file N\'ONT PAS été enregistrées',
 'remove' : 'Supprimer',
