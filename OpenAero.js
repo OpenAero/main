@@ -147,9 +147,9 @@ var mobileBrowser = false;
 // browserString identifies the browser
 var browserString = '';
 
-// cookies is true when cookies are enabled (checked by doOnLoad)
+// storage is true when localStorage is enabled (checked by doOnLoad)
 // start with true to activate the check
-var cookies = true;
+var storage = true;
 
 // loadComplete is true when doOnLoad has completed
 var loadComplete = false;
@@ -2590,6 +2590,8 @@ function doOnLoad () {
   // add all listeners for clicks, keyup etc
   addEventListeners();
 
+  var errors = [];
+  
   try {
     if (chrome) {
       if (chrome.fileSystem) {
@@ -2601,16 +2603,14 @@ function doOnLoad () {
   
   // Use try to prevent bugs in this part from blocking OpenAero startup.
   // Errors are logged to console.
-  try {    
+//  try {    
     // check if Chrome App is installed
     checkForApp();
 
-    // Check if cookies are supported. When running as Chrome app, we
+    // Check if localStorage is supported. When running as Chrome app, we
     // assume the local storage support is present
     if (!chromeApp.active) {
-      //document.cookie="cookieTest";
-      //cookies = (document.cookie.indexOf("cookieTest")!=-1)? true : false;
-      cookies = (typeof(localStorage) != 'undefined')? true : false;
+      storage = (typeof(localStorage) != 'undefined')? true : false;
     }
     
     // set correct options and menu items in various places
@@ -2619,13 +2619,15 @@ function doOnLoad () {
      *  In other functions during load
      */
     updateUserTexts();
-    // load settings from cookie
-    loadSettingsCookie();
+    // load settings from storage
+    loadSettingsStorage();
     
     /** userText is now defined, continue */
 
     // Add a listener for HTML5 app cache updates
-    if (!chromeApp.active) addUpdateListener();
+    if (!chromeApp.active && window.applicationCache) {
+      addUpdateListener();
+    }
     // show loading overlay and circles
     /**
     var el = document.getElementById('alertBoxOverlay');
@@ -2649,7 +2651,7 @@ function doOnLoad () {
     if (screen.width < 761) {
       switchMobile ();
     }
-    var errors = [];
+
     // check browser and capabilities
     var err = checkBrowser();
     if (err) errors.push (err);
@@ -2685,16 +2687,15 @@ function doOnLoad () {
     // Load sequence from URL if sequence GET element is set.
     launchURL ({'url': window.document.URL});
     
-    // When no sequence is active yet, load sequence cookie (if any).
+    // When no sequence is active yet, load sequence storage (if any).
     // Do this after the rules have been loaded to make sure rules stay
     // in Sequence info
     if (!activeSequence.xml) {
-      // async cookie
       function f(c) {
         activeSequence.xml = c.sequence;
         activateXMLsequence (activeSequence.xml);
       }
-      getCookie('sequence', f);
+      getLocal('sequence', f);
     }
       
     // Add combo box functions for rules/category/program input fields
@@ -2704,12 +2705,12 @@ function doOnLoad () {
     checkSequenceChanged();
     // select active Form
     // need to do this to make sure the sequence is drawn when loaded
-    // from a cookie or url
+    // from localStorage or url
     selectForm(activeForm);
     if (mobileBrowser) selectTab('tab-sequenceInfo');
-  } catch (e) {
-    console.log(e);
-  }
+//  } catch (e) {
+//    console.log(e);
+//  }
   
   /**
   // load (mostly) completed, remove loading icon and status
@@ -2723,13 +2724,12 @@ function doOnLoad () {
   if (!chromeApp.active) {
     window.setInterval(function(){latestVersion()},600000);
   }
-  // check if we are running from a file (DEPRECATED). This will also
-  // mean cookies are disabled
+  // check if we are running from a file (DEPRECATED)
   if (window.location.protocol === 'file:') {
     if (presentFileError) errors.push (userText.runFromFile);
   } else {
-    // set alert if cookies are disabled
-    if (!cookies) errors.push (userText.noCookies);
+    // set alert if localStorage is disabled
+    if (!storage) errors.push (userText.noCookies);
   }
   // show alert box for any alerts
   if (errors.length) {
@@ -2968,11 +2968,11 @@ function addEventListeners () {
   document.getElementById('language').addEventListener('change', changeLanguage, false);
   document.getElementById('gridColumns').addEventListener('change', updateGridColumns, false);
   document.getElementById('queueColumns').addEventListener('change', changeQueueColumns, false);
-  document.getElementById('imageFormatPNG').addEventListener('change', saveSettingsCookie, false);
-  document.getElementById('imageFormatSVG').addEventListener('change', saveSettingsCookie, false);
-  document.getElementById('saveFigsSeparateWidth').addEventListener('change', saveSettingsCookie, false);
-  document.getElementById('saveFigsSeparateHeight').addEventListener('change', saveSettingsCookie, false);
-  document.getElementById('zipImageFilenamePattern').addEventListener('change', saveSettingsCookie, false);
+  document.getElementById('imageFormatPNG').addEventListener('change', saveSettingsStorage, false);
+  document.getElementById('imageFormatSVG').addEventListener('change', saveSettingsStorage, false);
+  document.getElementById('saveFigsSeparateWidth').addEventListener('change', saveSettingsStorage, false);
+  document.getElementById('saveFigsSeparateHeight').addEventListener('change', saveSettingsStorage, false);
+  document.getElementById('zipImageFilenamePattern').addEventListener('change', saveSettingsStorage, false);
 
   document.getElementById('numberInCircle').addEventListener('change', updateNumberInCircle, false);
   document.getElementById('rollFontSize').addEventListener('change', updateRollFontSize, false);
@@ -2984,7 +2984,8 @@ function addEventListeners () {
   document.getElementById('t_resetStyle').addEventListener('mousedown', function(){resetStyle()}, false);
   document.getElementById('t_resetStyleAll').addEventListener('mousedown', function(){resetStyle(true)}, false);
   document.getElementById('newTurnPerspective').addEventListener('change', draw, false);
-
+  document.getElementById('t_restoreDefaultSettings').addEventListener('mousedown', restoreDefaultSettings, false);
+  
   document.getElementById('t_settingsClose').addEventListener('mousedown', settingsDialog, false);
 
   // save dialog
@@ -3066,16 +3067,14 @@ function checkForApp () {
           }, 1000);
           intervalID.installChromeApp = id;
           // don't ask again, independent of install result
-          setCookie ('installChromeAppAsked', 'true');
+          storeLocal ('installChromeAppAsked', 'true');
         };
       }
       
     }
     
-    getCookie ('installChromeAppAsked', f);
+    getLocal ('installChromeAppAsked', f);
     
-    // remove cookie for troubleshooting / bugfixing
-    // setTimeout (function(){setCookie ('installChromeAppAsked', '');},100);
   }
 
 }
@@ -3261,16 +3260,22 @@ function checkBrowser () {
     return userText.fileOpeningNotSupported + '<br>' + userText.getChrome;
   }
   // Present a warning if the browser is not Chrome and the warning was
-  // not displayed for four weeks. Use cookie for keeping time
+  // not displayed for four weeks. Use store value for setting the
+  // expiry time
   if (BrowserDetect.browser != 'Chrome') {
     function f(c) {
+      if (c.noChromeWarned) {
+        if (c.noChromeWarned < (Date().getTime())) {
+          c.noChromeWarned = false;
+        }
+      }
       if (!c.noChromeWarned) {
-        setCookie ('noChromeWarned', 'true', 28);
+        storeLocal ('noChromeWarned', (Date().getTime() + 2419200000));
         alertBox (['Your browser has been detected as: ' + browserString +
         '.<br>' + userText.getChrome]);
       }
     }
-    getCookie ('noChromeWarned', f);
+    getLocal ('noChromeWarned', f);
   }
 }
 
@@ -3804,8 +3809,8 @@ function setOptions () {
   getStyle();
 }
 
-// loadSettingsCookie will load the settings from cookie 'settings'
-function loadSettingsCookie () {
+// loadSettingsStorage will load the settings from storage 'settings'
+function loadSettingsStorage () {
   function f (c) {
     var settings = c.settings;
     if (settings) {
@@ -3847,14 +3852,12 @@ function loadSettingsCookie () {
       changeRollFontSize (document.getElementById('rollFontSize').value);
     }
   }
-  if (cookies) {
-    getCookie ('settings', f);
-  }
+  if (storage) getLocal ('settings', f);
 }
 
-// saveSettingsCookie will save the settings to cookie 'settings'
-function saveSettingsCookie () {
-  if (cookies) {
+// saveSettingsStorage will save the settings to storage 'settings'
+function saveSettingsStorage () {
+  if (storage) {
     var settings = [];
     for (var i = saveSettings.length - 1; i >=0; i--) {
       var el = document.getElementById(saveSettings[i]);
@@ -3870,14 +3873,14 @@ function saveSettingsCookie () {
       }
       settings.push (el.id + '=' + value);
     }
-    setCookie ('settings', settings.join('|'), 2000);
+    storeLocal ('settings', settings.join('|'));
   }
 }
 
 // changeLanguage will change the interface language
 function changeLanguage () {
   updateUserTexts();
-  saveSettingsCookie();
+  saveSettingsStorage();
   checkSequenceChanged(true);
 }
 
@@ -3912,17 +3915,33 @@ function resetStyle(all) {
   draw();
 }
 
+// restoreDefaultSettings restores all settings to their default values
+function restoreDefaultSettings () {
+  // close settings dialog
+  settingsDialog ();
+  confirmBox (
+    userText.restoreDefaultSettingsConfirm,
+    userText.restoreDefaultSettings,
+    function(){
+      storeLocal ('settings', '');
+      window.document.removeEventListener('beforeunload', preventUnload);
+      // reload the page, sequence will be provided by localStorage
+      window.location.reload(true);
+    }
+  );
+}
+ 
 // updateNonArestiRolls is called when "non-Aresti rolls" is changed in
 // settings
 function updateNonArestiRolls() {
-  saveSettingsCookie();
+  saveSettingsStorage();
   draw();
 }
 
 // updateNumberInCircle is called when "number in circle" is changed in
 // settings
 function updateNumberInCircle() {
-  saveSettingsCookie();
+  saveSettingsStorage();
   numberInCircle = (!numberInCircle);
   draw();
 }
@@ -3930,14 +3949,14 @@ function updateNumberInCircle() {
 // updateRollFontSize is called when "roll font size" is changed in
 // settings
 function updateRollFontSize() {
-  saveSettingsCookie();
+  saveSettingsStorage();
   changeRollFontSize(this.value);
   draw();
 }
 
 // updateGridColumns is called when "Grid columns" is changed in settings
 function updateGridColumns() {
-  saveSettingsCookie();
+  saveSettingsStorage();
   selectForm('Grid');
 }
 
@@ -4850,7 +4869,7 @@ function addUpdateListener () {
       // Swap it in and reload the page to get the new hotness.
       window.applicationCache.swapCache();
       // only reload after confirmation
-      if (cookies) {
+      if (storage) {
         var t = userText.loadNewVersion;
       } else {
         var t = userText.loadNewVersionNoCookies;
@@ -4858,7 +4877,7 @@ function addUpdateListener () {
       confirmBox (t, userText.loadNewVersionTitle, function(){
         sequenceSaved = true;
         window.document.removeEventListener('beforeunload', preventUnload);
-        // reload the page, sequence will be provided by cookie
+        // reload the page, sequence will be provided by localStorage
         window.location.reload(true);
       });
     } else {
@@ -4874,18 +4893,11 @@ function checkUpdateDone() {
     var oldVersion = c.version;
     if (oldVersion !== version) {
       alertBox (versionNew);
-      setCookie ('version', version, 2000);
+      storeLocal ('version', version);
     }
   }   
-  // this only works when cookies are enabled
-  if (cookies) {
-/**    var oldVersion = getCookie('version');
-    if (oldVersion !== version) {
-      alertBox (versionNew);
-      setCookie ('version', version, 2000);
-    }*/
-    getCookie ('version', f);
-  }
+  // this only works when storage is enabled
+  if (storage) getLocal ('version', f);
 }
 
 // changeSequenceInfo is called whenever any part of the sequence info
@@ -4925,9 +4937,8 @@ function changeSequenceInfo () {
     }
     // put everything in activeSequence.xml object
     activeSequence.xml = xml;
-    // save activeSequence.xml in cookie 'sequence' for 6 years
-    // unfortunately this will not work in Chrome from a local file
-    setCookie ('sequence', activeSequence.xml, 2000);
+    // save activeSequence.xml in storage 'sequence'
+    storeLocal ('sequence', activeSequence.xml);
   }
   checkInfo();
 }
@@ -7574,7 +7585,7 @@ function showQueue () {
 
 // chnageQueueColumns changes the amount of columns in queue
 function changeQueueColumns () {
-  saveSettingsCookie();
+  saveSettingsStorage();
   // clear queue figure SVGs first, to allow resizing
   for (var i = fig.length - 1; i >= 0; i--) {
     if (fig[i]) {
@@ -8255,7 +8266,7 @@ function checkSequenceChanged (force) {
     // Get current scroll position of the sequence
     var scrollPosition = SVGRoot.parentNode.scrollTop;
     
-    // Update activeSequence.xml and cookie
+    // Update activeSequence.xml and storage
     changeSequenceInfo();
 
     // Redraw sequence
@@ -9336,24 +9347,19 @@ function emailSequence () {
 }
 
 /********************************
- * Functions for handling cookies
+ * Functions for handling storage
  */
  
-// setCookie sets a cookie. If cookies are not supported it returns false
-function setCookie(c_name, value, exdays) {
-  //console.log('setting cookie: ' + c_name);
-  if (cookies) {
-    //console.log('value: ' + value);
+// storeLocal uses localStorage to save data. If this is not supported
+// it returns false
+function storeLocal(name, value) {
+  if (storage) {
     if (chromeApp.active) {
       var c = {};
-      c[c_name] = value;
+      c[name] = value;
       chrome.storage.local.set (c);
     } else {
-      localStorage.setItem (c_name, value);
-      /*var exdate=new Date();
-      exdate.setDate(exdate.getDate() + exdays);
-      var c_value=escape(value) + ((exdays === null) ? "" : "; expires="+exdate.toUTCString());
-      document.cookie=c_name + "=" + c_value;*/
+      localStorage.setItem (name, value);
     }
     return true;
   } else {
@@ -9361,27 +9367,18 @@ function setCookie(c_name, value, exdays) {
   }
 }
 
-// getCookie gets a cookie and returns the value. If cookies are not
-// supported it returns false
+// getLocal gets a value from localStorage and returns it. If
+// localStorage is not supported it returns false
 // To also support chrome.storage (for apps) it works asynchronous.
-// Function f is the callback to be called when the cookie is loaded
-function getCookie(c_name, f) {
-  if (cookies) {
+// Function f is the callback to be called when the storage is loaded
+function getLocal(name, f) {
+  if (storage) {
     if (chromeApp.active) {
-      chrome.storage.local.get (c_name, f);
+      chrome.storage.local.get (name, f);
     } else {
-      var c = []
-      c[c_name] = localStorage.getItem (c_name);
+      var c = [];
+      c[name] = localStorage.getItem (name);
       f (c);
-      /*var i,x,y,ARRcookies=document.cookie.split(";");
-      for (i=0;i<ARRcookies.length;i++) {
-        x=ARRcookies[i].substr(0,ARRcookies[i].indexOf("="));
-        y=ARRcookies[i].substr(ARRcookies[i].indexOf("=")+1);
-        x=x.replace(/^\s+|\s+$/g,"");
-        if (x === c_name) {
-          f({c_name:unescape(y)});
-        }
-      }*/
     }
   } else {
     return false;

@@ -88,12 +88,16 @@ lang.fr = {
 'desktopVersion' : 'Version ordinateur',
 'download' : 'Télécharger',
 'downloadHTML5' : 'Vous pouvez enregistrer en choisissant un nom' +
-  'et en cliquant <i>Enregistrer fichier</i> ci-dessous.<br>Une fenêtre où vous pourrez' +
-  'choisir le répertoire apparaîtra.',
+  'et en cliquant <i>Enregistrer fichier</i> ci-dessous.<br>Une ' +
+  'fenêtre où vous pourrez choisir le répertoire apparaîtra.',
 'downloadLegacy' : 'Vous pouvez enregistrer en choisissant un nom ' +
   'et/ou faire un clic droit sur <i>Enregistrer</i> ci-dessous ' +
-  'et choisir "Enregistrer la cible du lien sous... " ou "Copier l\'adresse du lien".<br>Une fenêtre ou vous pourrez ' +
+  'et choisir "Enregistrer la cible du lien sous... " ou "Copier ' +
+  'l\'adresse du lien".<br>Une fenêtre ou vous pourrez ' +
   'choisir le répertoire apparaîtra.',
+// nouveau 1.4.2
+'downwind' : 'vent arrière',
+//
 'downwindEntry' : 'Débuter vent arrière',
 'drawingStyles' : 'Paramètres de dessin',
 'drawingStylesExplain' : '<p>Tous les paramètres du dessin peuvent être changés ici. ' +
@@ -242,9 +246,7 @@ lang.fr = {
 'queue' : 'File/Tampon',
 // new in 1.4.2
 'queueColumns' : 'Colonnes',
-//
 'queueEmpty' : 'Pas de figure à enregistrer dans la file',
-// new in 1.4.2
 'queueLabel' : 'File/Tampon',
 //
 'queueNotSaved' : 'Les figures de la file ont été enregistrées',
@@ -298,6 +300,9 @@ lang.fr = {
 'sequenceCorrect' : 'Le programme est correct',
 'sequenceHasErrors' : 'Le programme est incorrect :',
 'sequenceInfo' : 'Programme',
+// nouveau 1.4.2
+'sequenceShort' : 'Prog.',
+//
 'sequenceTab' : 'Programme',
 'sequenceTest' : 'Vérification :',
 'sequenceNotSavedWarning' : 'Le programme n\'a pas été Enregistre.\n' +
@@ -339,6 +344,9 @@ lang.fr = {
 'unknownFileType' : 'L\'ouverture de ce fichier n\'est pas supportée dans ce navigateur.',
 'unusedFigureLetters' : 'Lettre inutilisée : %s',
 'update' : 'Mise à jour',
+// nouveau 1.4.2
+'upwind' : 'Vent de face',
+//
 'upwindEntry' : 'Débuter vent de face',
 'version' : 'Version : %s',
 'view' : 'Affichage',
@@ -356,8 +364,15 @@ lang.fr = {
   'vérifiez bien, si vous êtes dans cette situation.</p>',
 'wind' : 'V E N T',
 'windIAC' : 'sens du vent',
+// nouveau 1.4.2
+'xBox' : 'De face',
+'xBoxAway' : 'De derrière',
+//
 'xBoxEntry' : 'Débuter de face',
 'xBoxEntryAway' : 'Débuter de derrière',
-'zipImageFilenamePattern' : 'Chaîne de définition des noms des fichiers image'
+'zipImageFilenamePattern' : 'Chaîne de définition des noms des fichiers image',
+// nouveau 1.4.2
+'zoom' : 'Zoom'
+//
 // end of key-value pairs. No comma after last
 };

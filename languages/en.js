@@ -295,6 +295,12 @@ lang.en = {
 'removeLogo' : 'Remove',
 'resetStyle' : 'Reset',
 'resetStyleAll' : 'Reset All',
+// new 1.4.2
+'restoreDefaultSettings' : 'Restore all settings to their default ' +
+  'values',
+'restoreDefaultSettingsConfirm' : 'All your OpenAero settings will be ' +
+  'restored to their default settings. Do you want to continue?',
+//
 'rollLarge' : 'Large',
 'rollMedium' : 'Medium',
 'rollPos' : ['First roll position', 'Second roll position', 'Third roll position', 'Fourth roll position'],

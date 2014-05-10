@@ -9,6 +9,11 @@
 * moved addEventListeners to the beginning of doOnLoad to prevent blocking in case of errors
 * added options in figure editor for setting start direction of sub sequences (Issue #81 and #137)
 * added console warnings for missing language keys to improve translation
+* added option in Expert settings to restore all settings to default
+* converted all use of term Cookie to localStorage, except some userTexts
+* added option to print dialog to set maximum small sequence scaling (Issue #129)
+* corrected glider rules for 8.6.1-8 column 3&4. Were incorrect because of mistake in assuming rolls in bottom
+* corrected conv-roll in rules14.js to account for superslow glider roll
 
 1.4.1.3
 * fixed incorrect K for flick after roll in top of loop (e.g. o2,2if) (Issue #138)
