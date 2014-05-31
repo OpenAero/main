@@ -536,6 +536,11 @@ option.used {
   float: left;
   border-left: 1px solid #ccc;
 }
+#maxScaling {
+  width: 4em;
+}
+/* end print dialog */
+
 .close {
   float: right;
   margin: 0.5em;

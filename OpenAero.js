@@ -398,6 +398,13 @@ if (objCtr.defineProperty) {
 }
 // * End classlist.js
 
+// add getElementsByClassName for older browsers
+if(!document.getElementsByClassName) {
+  document.getElementsByClassName = function(className) {
+    return this.querySelectorAll("." + className);
+  };
+}
+  
 // encode_utf8 returns a string that can be correctly used by btoa
 function encode_utf8(s) {
   return unescape(encodeURIComponent(s));
@@ -2625,7 +2632,7 @@ function doOnLoad () {
     /** userText is now defined, continue */
 
     // Add a listener for HTML5 app cache updates
-    if (!chromeApp.active && window.applicationCache) {
+    if (!chromeApp.active) {
       addUpdateListener();
     }
     // show loading overlay and circles
@@ -3249,8 +3256,8 @@ function checkBrowser () {
   if (!document.getElementById('selectedFigureSvg').getBBox()) fatalError = true;
   if (fatalError) {
     document.getElementsByTagName('body')[0].innerHTML = '<h2><center>' +
-      'Your browser (' + browserString + ') is not capable ' +
-      'of running OpenAero.<br>' + userText.getChrome +
+      sprintf (userText.oldBrowser, browserString) +
+      userText.getChrome +
       '</center></h2>';
     throw new Error('Browser not capable of running OpenAero');
   }
@@ -3264,15 +3271,17 @@ function checkBrowser () {
   // expiry time
   if (BrowserDetect.browser != 'Chrome') {
     function f(c) {
+      var d = new Date();
+      var t = parseInt(d.getTime());
       if (c.noChromeWarned) {
-        if (c.noChromeWarned < (Date().getTime())) {
+        if (c.noChromeWarned < t) {
           c.noChromeWarned = false;
         }
       }
       if (!c.noChromeWarned) {
-        storeLocal ('noChromeWarned', (Date().getTime() + 2419200000));
-        alertBox (['Your browser has been detected as: ' + browserString +
-        '.<br>' + userText.getChrome]);
+        storeLocal ('noChromeWarned', t + 2419200000);
+        alertBox (sprintf (userText.browserDetect, browserString) +
+          userText.getChrome);
       }
     }
     getLocal ('noChromeWarned', f);
@@ -4842,7 +4851,7 @@ function latestVersion() {
   
   if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
     // Check for appcache when using http
-    window.applicationCache.update();
+    if (window.applicationCache) window.applicationCache.update();
     img.parentNode.classList.add('noDisplay');
   } else {
     
@@ -4863,27 +4872,29 @@ function preventUnload () {
 // addUpdateListener adds an event listener that checks if a new app
 // cache update is available
 function addUpdateListener () {
-  window.applicationCache.addEventListener('updateready', function(e) {
-    if (window.applicationCache.status == window.applicationCache.UPDATEREADY) {
-      // Browser downloaded a new app cache.
-      // Swap it in and reload the page to get the new hotness.
-      window.applicationCache.swapCache();
-      // only reload after confirmation
-      if (storage) {
-        var t = userText.loadNewVersion;
+  if (window.applicationCache) {
+    window.applicationCache.addEventListener('updateready', function(e) {
+      if (window.applicationCache.status == window.applicationCache.UPDATEREADY) {
+        // Browser downloaded a new app cache.
+        // Swap it in and reload the page to get the new hotness.
+        window.applicationCache.swapCache();
+        // only reload after confirmation
+        if (storage) {
+          var t = userText.loadNewVersion;
+        } else {
+          var t = userText.loadNewVersionNoCookies;
+        }
+        confirmBox (t, userText.loadNewVersionTitle, function(){
+          sequenceSaved = true;
+          window.document.removeEventListener('beforeunload', preventUnload);
+          // reload the page, sequence will be provided by localStorage
+          window.location.reload(true);
+        });
       } else {
-        var t = userText.loadNewVersionNoCookies;
+        // Manifest didn't change. Nothing new to serve.
       }
-      confirmBox (t, userText.loadNewVersionTitle, function(){
-        sequenceSaved = true;
-        window.document.removeEventListener('beforeunload', preventUnload);
-        // reload the page, sequence will be provided by localStorage
-        window.location.reload(true);
-      });
-    } else {
-      // Manifest didn't change. Nothing new to serve.
-    }
-  }, false)
+    }, false);
+  }
 }
 
 // checkUpdateDone checks if an update was just done. If so, it presents
@@ -6935,6 +6946,11 @@ function selectFigure (e, noChooserUpdate) {
     // chosen figure in case the figure selector is shown again
     if (mobileBrowser) hideFigureSelector ();
     var table = document.getElementById('figureChooserTable');
+    // needed for old browsers that don't support getElementsByClassName
+    if (!table.getElementsByClassName) {
+      table.prototype.getElementsByClassName = document.getElementsByClassName;
+    }
+    //
     var selected = table.getElementsByClassName('selected');
     // remove selected class for all
     for (var i = 0; i < selected.length; i++) {
@@ -7438,6 +7454,12 @@ function flipYAxis () {
 // option
 function updateSequenceOptions (code) {
   el = document.getElementById('sequenceOptions');
+  // needed for old browsers that don't support getElementsByClassName
+  if (!el.getElementsByClassName) {
+    el.prototype.getElementsByClassName = document.getElementsByClassName;
+  }
+  //
+
   // create a nodeList and remove the items of the nodelist
   var options = el.getElementsByClassName('entryOption');
   while (options[0]) el.removeChild(options[0]);
@@ -9572,10 +9594,15 @@ function adjustRollFontSize (scale, svg) {
 // from a provided SVG object and activeForm global.
 // The default size of the page is A4, 800x1130
 function buildForm (svg, print) {
+  if (svg.getElementsByClassName) {
+    var el = svg.getElementsByClassName('figStartCircle');
+  } else {
+    // needed for old browsers that don't support getElementsByClassName
+    var el = svg.querySelectorAll('figStartCircle');
+  }
 
   // remove all elements that have className figStartCircle from the svg.
   // Otherwise they may show up as big black circles
-  var el = svg.getElementsByClassName('figStartCircle');
   var count = el.length;
   for (var i = 0; i < count; i++) el[0].parentNode.removeChild(el[0]);
 
@@ -9603,8 +9630,8 @@ function buildForm (svg, print) {
     if (iacForms) {
       // IAC forms
       var moveRight = 15;
-      // set the maximum scale to three
-      var maxScale = 3;
+      // check maximum scale from print dialog
+      var maxScale = document.getElementById ('maxScaling').value / 100;
   
       // remove wind arrow
       var el = mySVG.getElementById('windArrow');
@@ -9682,14 +9709,16 @@ function buildForm (svg, print) {
     } else {
       // CIVA forms
       var moveRight = 10;
-      // set the maximum scale to two but take the tear-off tab in account
-      // for Form C (defined by X + Y = 1620)
+
+      // set maximum scale from print dialog
+      var maxScale = document.getElementById ('maxScaling').value / 100;
+      
+      // take the tear-off tab into account with no miniFormA
+      // (defined by X + Y = 1620)
       if (!miniFormA) {
-        var maxScale = 1620 / (w+h);
-        if (maxScale > 2) maxScale = 2;
-      } else {
-        var maxScale = 2;
+        if ((1620 / (w+h)) < maxScale) maxScale = 1620 / (w+h);
       }
+
       // For form A we need to add the righthand scoring column, so
       // max width = 620. For Form B and C max width = 790 to always
       // provide 10px left margin to sequence.

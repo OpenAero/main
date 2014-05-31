@@ -28,6 +28,8 @@
 // -infocheck directive for checking presence of Sequence info
 // OpenAero 1.4.0
 // -updated rules for 2014
+// OpenAero 1.4.2
+// -corrected rules for 8.6.1-8 column 3&4
 
 //###################################################################################
 //################################ CIVA GLIDERS FREE ################################
@@ -714,23 +716,23 @@ rules.push("rule-NFALHR=roll: (.,.|[248]) [fFS]$");//## new rule added ### check
 rules.push("why-NFALHR=no flick roll on vertical down line after hesitation roll in loop segment");
 
 rules.push("8.6.1.1  nossr:2 ; NLRAULR ; NOU:1 ; NOU:2 ; nfpf:3");
-rules.push("8.6.1.4  NR:2 ; NOU:1  ; nfpf:3");
+rules.push("8.6.1.4  NOU:1  ; nfpf:3");
 rules.push("8.6.2.1  NR:1 ; NR:2  ; nhfonl");
-rules.push("8.6.2.4  NR:2 ; NOU:1");
+rules.push("8.6.2.4  NOU:1");
 rules.push("8.6.3.1  nossr:2 ; NLRAULR  ; NOU:1 ; NOU:2 ; nfpf:3");
-rules.push("8.6.3.3  NR:2 ; NOU:1  ; nfpf:3");
+rules.push("8.6.3.3  NOU:1  ; nfpf:3");
 rules.push("8.6.4.1  NR:1 ; NR:2  ; nhfonl");
-rules.push("8.6.4.3  NR:2 ; NOU:1  ; nhfonl");
+rules.push("8.6.4.3  NOU:1  ; nhfonl");
 rules.push("8.6.5.1  nossr:2 ; NFALHR  ; NOU:2 ; NOU:3 ; nfpf:1");
-rules.push("8.6.5.4  NR:2 ; NOU:3  ; nfpf:1");
+rules.push("8.6.5.4  NOU:2  ; nfpf:1");
 rules.push("8.6.6.1  nossr:2 ; NFALHR  ; NOU:2 ; NOU:3 ; nfpf:1 ; nopushout");
 rules.push("8.6.6.2  nossr:2 ; NFALHR  ; NOU:2 ; NOU:3 ; nfpf:1");
-rules.push("8.6.6.4  NR:2 ; NOU:3  ; nfpf:1");
+rules.push("8.6.6.4  NOU:2  ; nfpf:1");
 rules.push("8.6.7.2  nossr:2 ; NFALHR  ; NOU:2 ; NOU:3 ; nhfonl");
-rules.push("8.6.7.3  NR:2 ; NOU:3  ; nhfonl");
+rules.push("8.6.7.3  NOU:2  ; nhfonl");
 rules.push("8.6.8.1  nossr:2 ; NFALHR  ; NOU:2 ; NOU:3 ; nhfonl");
 rules.push("8.6.8.2  nossr:2 ; NFALHR  ; NOU:2 ; NOU:3 ; nhfonl ; nopushout");
-rules.push("8.6.8.3  NR:2 ; NOU:3  ; nhfonl");
+rules.push("8.6.8.3  NOU:2  ; nhfonl");
 
 // "reversing P-Loops" or Porpoise
 //--------------------------------
@@ -1209,7 +1211,7 @@ rules.push("basefigex569-repeat=1");// The same catalogue number may only be use
 rules.push("more=glider-CIVA Advanced Unknownbase");
 
 //##########################################################################
-rules.push("(glider-CIVA Advanced Unknownbase)");// specific rules for the Unlimited Unknown programs
+rules.push("(glider-CIVA Advanced Unknownbase)");// specific rules for the Advanced Unknown programs
 //##########################################################################
 
 // rules.push("k-maxperfig=30");// maximum K for every figure
@@ -1367,17 +1369,17 @@ rules.push("8.5.8.2-3 NOU:2");
 // no superslow rolls in the top of 8.6.5-8.1-2    ### acc. to 9.1.1.19
 
 rules.push("8.6.1.1  NR:1 ; NR:2");
-rules.push("8.6.1.4  NR:2 ; NOU:1");
+rules.push("8.6.1.4  NOU:1");
 rules.push("8.6.2.1  NR:1 ; NR:2");
-rules.push("8.6.2.4  NR:1 ; NR:2");
-rules.push("8.6.3.3  NR:2 ; NOU:1");
-rules.push("8.6.4.3  NR:2 ; NOU:1");
+rules.push("8.6.2.4  NR:1");
+rules.push("8.6.3.3  NOU:1");
+rules.push("8.6.4.3  NOU:1");
 rules.push("8.6.5.1  nossr:2 ; NOU:2 ; NOU:3");
-rules.push("8.6.5.4  NR:2 ; NR:3");
-rules.push("8.6.6.4  NR:2 ; NR:3");
+rules.push("8.6.5.4  NR:2");
+rules.push("8.6.6.4  NR:2");
 rules.push("8.6.7.2  nossr:2 ; NOU:2 ; NOU:3");
-rules.push("8.6.7.3  NR:2 ; NR:3");
-rules.push("8.6.8.3  NR:2 ; NR:3");
+rules.push("8.6.7.3  NR:2");
+rules.push("8.6.8.3  NR:2");
 
 // "reversing P-Loops" or Porpoise
 //--------------------------------

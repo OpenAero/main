@@ -1,4 +1,4 @@
-// rules14.js version 1.4.0
+// rules14.js version 1.4.2
 
 // This file is part of OpenAero.
 
@@ -265,7 +265,7 @@ rules.push("combined-name=combination figures (base and rolls)");
 // F flick "hard way" flick
 // z no roll(zero)
 
-rules.push("conv-roll=^9\\.([1248])\\.=$1; ^9\\.(9|10)\\.([6-9]|10)=F; ^9\\.(9|10)=f; ^9\\.1[12]=s ; ^0\\.=z");
+rules.push("conv-roll=^9\\.([1248])\\.=$1; ^9\\.(9|10)\\.([6-9]|10)=F; ^9\\.(9|10)=f; ^9\\.1[12]=s ; ^9\\.13=t ; ^0\\.=z");
 
 //replace rolls added to figure with single digit 1-8 for # of qtrs
 rules.push("conv-qtrs=^9\\.\\d+\\.\\d.([1-8])=$1; ^0\\.=0");

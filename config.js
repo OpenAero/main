@@ -34,12 +34,13 @@
 // Define active version number of OpenAero
 // **************
 
-var version = '1.4.1.5';
+var version = '1.4.2';
 var versionNew = '<strong>OpenAero has been upgraded to version ' +
   version + '</strong><br>New features:<ul>' +
   '<li>Added option to Email the sequence</li>' +
-  '<li>Several changes to improve use of the figure queue</li>' +
+  '<li>Several changes and bugfixes to improve use of the figure queue</li>' +
   '<li>Improved sub sequence handling</li>' +
+  '<li>Bugfixes for Glider rules</li>' +
   '<li>Other bugfixes and improvements (check <a href="changelog.txt">' +
   'changelog.txt</a> if interested)</li>' +
   '</ul>' +
