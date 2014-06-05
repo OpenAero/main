@@ -1,3 +1,6 @@
+1.4.2.1
+* restored zooming in Chrome app
+
 1.4.2
 * corrected width of Class select field
 * fixed correct saving of numberInCircle and nonArestiRolls in seq file

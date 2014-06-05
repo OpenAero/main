@@ -2594,9 +2594,6 @@ function doOnLoad () {
   fileName = document.getElementById('fileName');
   newTurnPerspective = document.getElementById('newTurnPerspective');
 
-  // add all listeners for clicks, keyup etc
-  addEventListeners();
-
   var errors = [];
   
   try {
@@ -2608,6 +2605,9 @@ function doOnLoad () {
     }
   } catch (e) {};
   
+  // add all listeners for clicks, keyup etc
+  addEventListeners();
+
   // Use try to prevent bugs in this part from blocking OpenAero startup.
   // Errors are logged to console.
 //  try {    
