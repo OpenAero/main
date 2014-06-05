@@ -1,5 +1,6 @@
 1.4.2.1
 * restored zooming in Chrome app
+* fixed invalid showing of alerts after clearing sequence
 
 1.4.2
 * corrected width of Class select field
