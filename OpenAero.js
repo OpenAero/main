@@ -1,4 +1,4 @@
-﻿// OpenAero.js 1.4.2
+﻿// OpenAero.js 1.4.3
 // This file is part of OpenAero.
 
 //  OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -489,8 +489,12 @@ function menuActive () {
   this.classList.add ('active');
 }
 
-function menuInactive () {
-  this.classList.remove ('active');
+function menuInactive (el) {
+  if (el.classList) {
+    el.classList.remove ('active');
+  } else {
+    this.classList.remove ('active');
+  }
 }
 
 // rebuildSequence deletes and recreates the svg that holds the sequence
@@ -1143,10 +1147,14 @@ function makeMove (Params) {
 // makeCorner creates sharp corners. Actually it only changes direction,
 // no lines are created
 function makeCorner (param) {
+  // make sure param is an Integer
+  param = parseInt (param);
   var Extent = Math.abs(param);
-  var PullPush = param > 0 ? 0 : param == 0 ? 0 : 1;
+  var PullPush = (param >= 0)? 0 : 1;
   var pathArray = [];
-  changeAtt(Extent - (PullPush * 2 * Extent));
+  // changed in 1.4.3
+  //changeAtt(Extent - (PullPush * 2 * Extent));
+  changeAtt (param);
   pathArray.path = '';
   NegLoad = PullPush;
   pathArray.style = (NegLoad == 0)? 'pos' : 'neg';
@@ -1292,8 +1300,10 @@ function dirAttToGGAngle (dir, att) {
 function makeCurve (param) {
   // Define some variables
   var pathArray = [];
+  // make sure param is an Integer
+  param = parseInt (param);
   var Extent = Math.abs(param);
-  var PullPush = param > 0 ? 0 : param == 0 ? 0 : 1;
+  var PullPush = (param >= 0)? 0 : 1;
   NegLoad = PullPush;
   pathArray.style = (NegLoad == 0)? 'pos' : 'neg';
   var Radius = curveRadius;
@@ -1303,7 +1313,10 @@ function makeCurve (param) {
   var radStartXY = dirAttToXYAngle (Direction, Attitude);
   //  var start_Att = Attitude;
   // Change direction and make sure Attitude stays in [0,359]
-  if (PullPush == 0) changeAtt(Extent); else changeAtt(-Extent);
+  // changed in 1.4.3
+  //if (PullPush == 0) changeAtt(Extent); else changeAtt(-Extent);
+  changeAtt (param);
+  
   // Calculate at which angle the curve stops
   var radStop = dirAttToAngle (Direction, Attitude);
   var radStopXY = dirAttToXYAngle (Direction, Attitude);
@@ -2501,6 +2514,7 @@ function drawShape(pathArray, svgElement, prev) {
     circle.setAttribute('r', minFigStartDist / 2);
     circle.setAttribute('stroke', 'none');
     circle.setAttribute('fill', 'transparent');
+    circle.setAttribute('fill-opacity', '0.0');
     circle.setAttribute('class', 'figStartCircle');
     svgElement.appendChild (circle);
   }
@@ -2619,7 +2633,7 @@ function doOnLoad () {
     if (!chromeApp.active) {
       storage = (typeof(localStorage) != 'undefined')? true : false;
     }
-    
+
     // set correct options and menu items in various places
     setOptions();
     /** Define the default language and userText now as they are used
@@ -2691,6 +2705,7 @@ function doOnLoad () {
     Direction = 0;
     // set OpenAero version for saving
     document.getElementById('oa_version').value = version;
+
     // Load sequence from URL if sequence GET element is set.
     launchURL ({'url': window.document.URL});
     
@@ -2706,8 +2721,10 @@ function doOnLoad () {
     }
       
     // Add combo box functions for rules/category/program input fields
+    // but make sure we don't change the logo (true)
     new combo('rules','#cc9','#ffc');
-    changeCombo('rules');
+    changeCombo('rules', true);
+
     // check if the sequence displayed is the one in the input field
     checkSequenceChanged();
     // select active Form
@@ -2751,6 +2768,8 @@ function doOnLoad () {
   } else {
     latestVersion();
   }
+  // activate addtohomescreen for iOS
+  addToHomescreen();
 }
 
 /** Use of function getElementsByAttribute is DEPRECATED in 1.4.0
@@ -2819,6 +2838,7 @@ function addEventListeners () {
   // menu
   document.getElementById('menuFile').addEventListener('mouseover', menuActive, false);
   document.getElementById('menuFile').addEventListener('mouseout', menuInactive, false);
+  document.getElementById('file').addEventListener('mousedown', function(){menuInactive(document.getElementById('menuFile'))}, false);  
   document.getElementById('file').addEventListener('change', openSequence, false);
   document.getElementById('t_clearSequence').addEventListener('click', clearSequence, false);
   document.getElementById('t_saveSequence').addEventListener('click', saveSequence, false);
@@ -2884,9 +2904,6 @@ function addEventListeners () {
   document.getElementById('undo').addEventListener('click', clickButton, false);
   document.getElementById('redo').addEventListener('click', clickButton, false);
   document.getElementById('sequence_text').addEventListener('input', checkSequenceChanged, false);
-  // "input" should cover the next two
-  //document.getElementById('sequence_text').addEventListener('keyup', checkSequenceChanged, false);
-  //document.getElementById('sequence_text').addEventListener('mouseup', checkSequenceChanged, false);
   document.getElementById('sequence_text').addEventListener('focus', function(){this.hasfocus=true}, false);
   document.getElementById('sequence_text').addEventListener('blur', function(){this.hasfocus=false}, false);
   document.getElementById('sequence_text').addEventListener('paste', function(){OLANBumpBugCheck=true}, false);
@@ -5044,7 +5061,8 @@ function buildSettingsXML () {
 }
 
 // changeCombo is executed when a combo box value is changed
-function changeCombo(id) {
+// When noLogo is true, the logo is not changed
+function changeCombo(id, noLogo) {
   var rules = document.getElementById('rules');
   var ruleName = rules.value.toLowerCase();
   // prepend glider- for glider
@@ -5075,7 +5093,7 @@ function changeCombo(id) {
         }
       }
       new combo('category','#cc9','#ffc');
-      if (rulesLogo[ruleName]) {
+      if (rulesLogo[ruleName] && !noLogo) {
         selectLogo(rulesLogo[ruleName]);
       }
     } else {
@@ -5296,8 +5314,10 @@ function removeLogo() {
   // Remove 'remove logo' link and logo image
   document.getElementById('t_removeLogo').classList.add ('noDisplay');
   document.getElementById('logoImage').classList.add ('noDisplay');
+  document.getElementById('logo').value = '';
   // Add choose logo option
   document.getElementById('t_chooseLogo').classList.remove ('noDisplay');
+  changeSequenceInfo();
 }
   
 // parseFiguresFile parses the figures file and stores it in several
@@ -5518,6 +5538,7 @@ function rulesYear (ruleName) {
 // loadRules loads the rules for the active sequence and stores it in
 // several arrays for fast retrieval
 function loadRules(ruleName, catName, programName) {
+
   var year = rulesYear (ruleName);
 
   // Set parseSection to true to match the global rules
@@ -5786,7 +5807,7 @@ function unloadRules () {
 // and produce alerts where necessary.
 // The Aresti list according description in allowed.js is in the array figCheckLine
 // A log array is returned
-function checkRules () {
+function checkRules () {  
   var figNr = 0;
   var figureK = 0;
   var connectors = 0;
@@ -8090,10 +8111,10 @@ function makeFormPilotCard() {
 function addFormElements (form) {
   // Find out how big the SVG has become and adjust margins
   var bBox = SVGRoot.getElementById('sequence').getBBox();
-  x = parseInt(bBox.x) ;
-  y = parseInt(bBox.y);
-  w = parseInt(bBox.width);
-  h = parseInt(bBox.height);
+  var x = parseInt(bBox.x) ;
+  var y = parseInt(bBox.y);
+  var w = parseInt(bBox.width);
+  var h = parseInt(bBox.height);
   y -= 40;
   h += 40;
   switch (form) {
@@ -8117,8 +8138,8 @@ function addFormElements (form) {
   w += 20 + block.width;
   if ((50 + block.height) > h) h = (50 + block.height);
   // Change the viewBox to make the sequence fit
-  viewBox = (x - 3) + ' ' + (y - 3) + ' ' + (w + 5) + ' ' + (h + 30);
-  SVGRoot.setAttribute("viewBox", viewBox);
+  SVGRoot.setAttribute("viewBox",
+    (x - 3) + ' ' + (y - 3) + ' ' + (w + 5) + ' ' + (h + 30));
   // resize svg if we are on a mobile browser
   var scaleSvg = (mobileBrowser)? 312 / (w + 5) : 1;
   
@@ -8131,7 +8152,7 @@ function displayAlerts () {
   var container = document.getElementById("alerts");
   // Clear any previous messages but make sure we don't remove the label (2 nodes)
   while (container.childNodes.length > 2) {
-      container.removeChild(container.lastChild);
+    container.removeChild(container.lastChild);
   }
   // Display messages, start with a break to stay clear from the label
   for (var i = 0; i < alertMsgs.length; i++) {
@@ -8149,11 +8170,12 @@ function displayAlerts () {
 // do some kind of draw
 function draw () {
   rebuildSequenceSvg ();
+  // reset all drawing variables to default values
   firstFigure = true;
   Attitude = 0;
   X = 0;
   Y = 0;
-  var content = ''
+  var content = '';
   if (activeForm === 'C') {
     goRight = false;
     setYAxisOffset (180 - yAxisOffsetDefault);
@@ -8199,9 +8221,9 @@ function updateSequenceTextHeight () {
   }
 }
 
-// checkSequenceChanged is called by onInput or onKeyUp on the
-// sequence input field to check if it has to be redrawn
-// when force is set (e.g. after drag & drop) redraw will always be done
+// checkSequenceChanged is called by onInput on the
+// sequence input field to check if it has to be redrawn.
+// When force is set (e.g. after drag & drop) redraw will always be done
 function checkSequenceChanged (force) {
   
   // remove all line breaks from the sequence input field
@@ -8231,7 +8253,7 @@ function checkSequenceChanged (force) {
       sequenceSaved = true;
       window.document.removeEventListener('beforeunload', preventUnload);
     }
-    
+
     var figure = [];
     var thisFigure = {'string':'', 'stringStart':0, 'stringEnd':0};
     var inText = false;
@@ -8245,20 +8267,29 @@ function checkSequenceChanged (force) {
           // OLAN has it coupled to a figure but OpenAero keeps sequence
           // drawing instructions separate
           if (match) {
-            figure.push ({'string':match[0], 'stringStart':thisFigure.stringStart, 'stringEnd':(thisFigure.stringStart + match[0].length)});
+            figure.push ({
+              'string':match[0],
+              'stringStart':thisFigure.stringStart,
+              'stringEnd':(thisFigure.stringStart + match[0].length)});
             thisFigure.stringStart = thisFigure.stringStart + match[0].length;
             thisFigure.string = thisFigure.string.replace(regexMoveForward, '');
           }
           // do the same for moveDown (x^)
           var match = thisFigure.string.match (regexMoveDown);
           if (match) {
-            figure.push ({'string':match[0], 'stringStart':thisFigure.stringStart, 'stringEnd':(thisFigure.stringStart + match[0].length)});
+            figure.push ({
+              'string':match[0],
+              'stringStart':thisFigure.stringStart,
+              'stringEnd':(thisFigure.stringStart + match[0].length)});
             thisFigure.stringStart = thisFigure.stringStart + match[0].length;
             thisFigure.string = thisFigure.string.replace(regexMoveDown, '');
           }          
           // only add figures that are not empty
           if (thisFigure.string != '') {
-            figure.push ({'string':thisFigure.string, 'stringStart':thisFigure.stringStart, 'stringEnd':i});
+            figure.push ({
+              'string':thisFigure.string,
+              'stringStart':thisFigure.stringStart,
+              'stringEnd':i});
             thisFigure.string = '';
             // make the selected figure the same as the one selected in
             // the string, when the string has focus
@@ -8301,10 +8332,10 @@ function checkSequenceChanged (force) {
     
     // Set the correct scroll position
     SVGRoot.parentNode.scrollTop = scrollPosition;
-            
+          
     // Update figure editor when a figure is being edited
     if (selectedFigure.id !== null) updateFigureEditor();
-    
+
     // Update marking of figures in figure selector when active
     if (document.getElementById('figureSelector').classList.contains ('active')) {
       markFigures ();
@@ -8368,6 +8399,7 @@ function clearSequence () {
     }
     // reload sequence
     checkSequenceChanged();
+    displayAlerts();
     sequenceSaved = true;
   }
   
@@ -8450,6 +8482,7 @@ function openRulesFile () {
 //           names are loaded<handler>
 function openFile (file, handler) {
   if(file){
+    console.log('Reading file: ' + file.name);
     var reader = new FileReader();
     reader.readAsBinaryString(file);
     // Handle success, and errors. With onload the correct loading
@@ -8608,9 +8641,9 @@ function loadedSequenceMulti(evt, body) {
   // If the sequence file starts with '<', assume it's an XML sequence.
   // If it starts with '[', assume it's an OLAN sequence.
   // In all other cases throw an error.
-  if (fileString[0] === '<') {
+  if (fileString.charAt(0) === '<') {
     OLANBumpBugCheck = false;
-  } else if (fileString[0] === '[') {
+  } else if (fileString.charAt(0) === '[') {
     // OLAN sequence, transform to XML
     fileString = OLANtoXML (fileString);
   } else {
@@ -8714,12 +8747,19 @@ function loadedSequence(evt) {
   var fileString = evt.target.result;
   // Check if we have an OLAN sequence or an OpenAero XML sequence
   // If the sequence file starts with '<', assume it's an XML sequence
+  // If it starts with '[', assume it's an OLAN sequence
+  // In other cases, throw an error
   if (fileString.charAt(0) === '<') {
     OLANBumpBugCheck = false;
-  } else {
+  } else if (fileString.charAt(0) === '[') {
     // OLAN sequence, transform to XML
     fileString = OLANtoXML (fileString);
+  } else {
+    alertBox(userText.notSequenceFile);
+    console.log('*** ' + userText.notSequenceFile);
+    return;
   }
+
   activateXMLsequence (fileString, true);
   // make sure no figure is selected
   selectFigure (false);
@@ -8780,34 +8820,34 @@ function loadedQueue(evt) {
   
 // OLANtoXML transforms an OLAN file to OpenAero XML
 function OLANtoXML (string) {
-    OLANSequence = true;
-    var activeKey = false;
-    var lines = string.split('\n');
-    string = '<sequence>';
-    for (var i = 0; i < lines.length; i++) {
-      // remove Windows linebreak
-      lines[i] = lines[i].replace('\r', '');
-      // check for key match
-      if (lines[i].match(/^\[[a-zA-Z]+\]$/)) {
-        var key = lines[i].toLowerCase().replace(/[^a-z]/g, '');
-        if (key === 'sequence') {
-          key = 'sequence_text';
-        }
-        if (activeKey) {
-          string += '</' + activeKey + '>';
-          activeKey = false;
-        }
-        if (inArray(sequenceXMLlabels, key)) {
-          string += '<' + key + '>';
-          activeKey = key;
-        } else activeKey = false;
-      } else if (activeKey) string += lines[i];
-    }
-    if (activeKey) string += '</' + activeKey + '>';
-    // end with current oa_version to prevent some error messages
-    string += '<oa_version>' + version + '</oa_version></sequence>';
-    OLANBumpBugCheck = true;
-    return string;
+  OLANSequence = true;
+  var activeKey = false;
+  var lines = string.split('\n');
+  string = '<sequence>';
+  for (var i = 0; i < lines.length; i++) {
+    // remove Windows linebreak
+    lines[i] = lines[i].replace('\r', '');
+    // check for key match
+    if (lines[i].match(/^\[[a-zA-Z]+\]$/)) {
+      var key = lines[i].toLowerCase().replace(/[^a-z]/g, '');
+      if (key === 'sequence') {
+        key = 'sequence_text';
+      }
+      if (activeKey) {
+        string += '</' + activeKey + '>';
+        activeKey = false;
+      }
+      if (inArray(sequenceXMLlabels, key)) {
+        string += '<' + key + '>';
+        activeKey = key;
+      } else activeKey = false;
+    } else if (activeKey) string += lines[i];
+  }
+  if (activeKey) string += '</' + activeKey + '>';
+  // end with current oa_version to prevent some error messages
+  string += '<oa_version>' + version + '</oa_version></sequence>';
+  OLANBumpBugCheck = true;
+  return string;
 }
 
 // activateXMLsequence will make a sequence provided as XML active
@@ -8848,8 +8888,12 @@ function activateXMLsequence (xml, noLoadRules) {
         activeForm = 'Grid';
       }
     }
-    logo = document.getElementById('logo').value;
+    var logo = document.getElementById('logo').value;
     if (logoImages[logo]) selectLogo(logo);
+
+    //logo = document.getElementById('logo').value;
+    //if (logoImages[logo]) selectLogo(logo);
+
     checkOpenAeroVersion();
   }
   // hide Harmony field for powered
@@ -8857,11 +8901,13 @@ function activateXMLsequence (xml, noLoadRules) {
   if (sportingClass.value === 'powered') {
     el.setAttribute('style', 'opacity:0;');
   } else el.removeAttribute('style');
-  // load rules when applicable and update sequence data
-  if (!noLoadRules) changeCombo('rules');
+  // Load rules when applicable and update sequence data
+  // Don't change the logo
+  if (!noLoadRules) changeCombo('rules', true);
   
   // update sequence
   checkSequenceChanged();
+
   // sequence was just loaded, so also saved
   window.document.removeEventListener('beforeunload', preventUnload);
   sequenceSaved = true;
@@ -9329,7 +9375,10 @@ function errorHandler(e) {
 // and then email, bookmark or whatever
 function saveAsURL () {
   function save () {
-    var url = 'http://openaero.net?s=' + encodeURI(activeSequence.xml);
+    // also replace single ticks (') as they may break the link
+    var url = 'http://openaero.net?s=' +
+      encodeURI(activeSequence.xml).replace (/'/g, '%27');
+    
     if (chromeApp.active) {
       alertBox ('<p>' + userText.saveAsURLFromApp +
         '</p><textarea id="saveAsURLArea"></textarea>',
@@ -9353,8 +9402,10 @@ function emailSequence () {
   
   function email() {
     // create body with descriptive text, newlines and sequence URL
+    // also replace single ticks (') as they may break the link
     var body = userText.emailHeader + '\n\n' + 
-      'http://openaero.net?s=' + encodeURI(activeSequence.xml);
+      'http://openaero.net?s=' + 
+      encodeURI(activeSequence.xml).replace (/'/g, '%27');
     var subject =  activeFileName();
     if (subject === '') subject = 'Sequence';
     el.setAttribute('href', 'mailto:%20?subject=' + encodeURI(subject) +
@@ -9632,11 +9683,7 @@ function buildForm (svg, print) {
       var moveRight = 15;
       // check maximum scale from print dialog
       var maxScale = document.getElementById ('maxScaling').value / 100;
-  
-      // remove wind arrow
-      var el = mySVG.getElementById('windArrow');
-      if (el) el.parentNode.removeChild(el);
-      
+        
       // For form A we need to add the righthand scoring column, so
       // max width = 580
       if (activeForm === 'A') {
@@ -9645,8 +9692,6 @@ function buildForm (svg, print) {
       } else {
         var scale = 700 / w;
         var marginTop = 120;
-        // Insert box containing sequence
-        drawRectangle (0, 126, 740, 945, 'formLine', mySVG);
       }
       if (scale > maxScale) scale = maxScale;
       // check for max height
@@ -9660,7 +9705,15 @@ function buildForm (svg, print) {
         scale = maxScale;
       }
       
-      mySVG = adjustRollFontSize (scale);
+      // Check if roll font size should be enlarged because of downscaling.
+      // Do this before adding wind and box around sequence as sequence
+      // may be redrawn!
+      mySVG = adjustRollFontSize (scale, mySVG);
+      
+      // remove wind arrow
+      var el = mySVG.getElementById('windArrow');
+      if (el) el.parentNode.removeChild(el);
+      
       if (activeForm === 'A') {
         // check if the columns should be stretched
         var maxStretch = 1.2;
@@ -9678,6 +9731,9 @@ function buildForm (svg, print) {
           ') scale(' + xScale + ',' + scale + ')');
         mySVG.getElementById('sequence').setAttribute('preserveAspectRatio', 'none');
       } else {
+        // Insert box containing sequence
+        drawRectangle (0, 126, 740, 945, 'formLine', mySVG);
+
         mySVG.getElementById('sequence').setAttribute('transform', 'translate(' +
           (moveRight - (bBox.x * scale)) + ',' + (marginTop - bBox.y * scale) +
           ') scale(' + scale + ')');
@@ -11609,7 +11665,7 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
         if (figureDraw.charAt(i) in drawAngles) {
           var angle = parseInt(drawAngles[figureDraw.charAt(i)]);
           // Draw sharp angles for corners less than 180 unless
-          // specifically told to make a curve by 'fi=' symbol
+          // specifically told to make a curve by '=' symbol
           if ((Math.abs(angle) < 180) && (figureDraw.charAt(i + 1) != '=')) {
             paths = buildShape ('Corner', angle, paths);
           } else {
@@ -12301,7 +12357,7 @@ function parseSequence () {
       if (base.match(/^.j[^w]/)) {
         base = figure.replace(/[^a-zA-Z0-9\-\+]+/g, '');
         if (base.charAt(0) != '-') base = '+' + base;
-        if (base.charAt(base.length - 1) != '-') base = base + '+'
+        if (base.charAt(base.length - 1) != '-') base = base + '+';
       }
       // Retrieve the figNrs (if any) from array figBaseLookup
       figNrs = figBaseLookup[base];
@@ -12352,6 +12408,7 @@ function parseSequence () {
         }
         // Crossbox entry 'figure'
       } else if (base == '+ej+') {
+        Attitude = 0;
         Direction = 270;
         if (firstFigure) {
           updateSequenceOptions ('ej');
@@ -12362,6 +12419,7 @@ function parseSequence () {
         }
         // Crossbox away entry 'figure'
       } else if (base == '+eja+') {
+        Attitude = 0;
         Direction = 90;
         if (firstFigure) {
           updateSequenceOptions ('eja');
@@ -12372,6 +12430,7 @@ function parseSequence () {
         }
         // Downwind entry 'figure'
       } else if (base == '+ed+') {
+        Attitude = 0;
         if (activeForm == 'C') {
           Direction = 0;
           goRight = true;
@@ -12388,6 +12447,7 @@ function parseSequence () {
         }
         // Upwind entry 'figure'
       } else if (base == '+eu+') {
+        Attitude = 0;
         if (activeForm == 'C') {
           Direction = 180;
           goRight = false;

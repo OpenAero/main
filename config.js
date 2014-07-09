@@ -1,4 +1,4 @@
-// config.js 1.4.2
+// config.js 1.4.3
 
 // This file is part of OpenAero.
 
@@ -34,13 +34,12 @@
 // Define active version number of OpenAero
 // **************
 
-var version = '1.4.2';
+var version = '1.4.3';
 var versionNew = '<strong>OpenAero has been upgraded to version ' +
   version + '</strong><br>New features:<ul>' +
-  '<li>Added option to Email the sequence</li>' +
-  '<li>Several changes and bugfixes to improve use of the figure queue</li>' +
-  '<li>Improved sub sequence handling</li>' +
-  '<li>Bugfixes for Glider rules</li>' +
+  '<li>Added Apple iOS web app capability (for e.g. iPad)</li>' +
+  '<li>Corrected some CIVA Power rules</li>' +
+  '<li>Fixed several bugs in logo handling when (re)loading sequences</li>' +
   '<li>Other bugfixes and improvements (check <a href="changelog.txt">' +
   'changelog.txt</a> if interested)</li>' +
   '</ul>' +
@@ -432,11 +431,14 @@ var regexTurn = /[0-9\+\-]j[io0-9\+\-]/;
 // in OLAN. Can be removed (incl relevant code in OpenAero.js) in 2015
 var regexOLANBumpBug = /(\&b)|(\&ipb)/;
 var regexOLANNBug = /n/;
+// regexRegistration is used to parse out aircraft registration from the
+// combined A/C type & reg field
 var regexRegistration = [];
 regexRegistration.push (/N[1-9][0-9A-Z]+/);
 regexRegistration.push (/(C|C-|G|G-|D|D-|F|F-)[A-Z]{4}/);
 regexRegistration.push (/(PH|PH-)[A-Z]{3}/);
 regexRegistration.push (/X(A|A-|B|B-|C|C-)[A-Z]{3}/);
+
 var regexRulesConnectors = /^connectors=([0-9]+)\/([0-9]+)/;
 var regexSequenceOptions = /^(ed|eu|ej|eja|\/\/)$/;
 var regexTextBlock = /^"[^"]*"$/;

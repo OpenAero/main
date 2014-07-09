@@ -1,6 +1,8 @@
 CACHE MANIFEST
-# OpenAero version 1.4.2
+# OpenAero version 1.4.3
 about.html
+addtohomescreen/addtohomescreen.css
+addtohomescreen/addtohomescreen.min.js
 arestisystem.html
 buttons/figEndInv.png
 buttons/figEndUp.png
@@ -107,3 +109,4 @@ vkbeautify.js
 window.html
 NETWORK: 
 openaero.php
+http://jsconsole.com/remote.js

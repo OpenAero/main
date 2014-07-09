@@ -43,6 +43,9 @@
 * -Corrected positioning K for 2013 rules
 * OpenAero 1.4.0
 * -Updated checks for 8.5.1.4 for 2014 rules 
+* OpenAero 1.4.3
+* -corrected rules for 8.6.1-8 column 3&4
+* -corrected conv-downstop to allow 9.8.5.2 (4x8) in Unlimited Unknown
 */
 
 //#######################################################################################
@@ -199,7 +202,10 @@ rules.push("conv-diagupqtrs=^9\\.([1-9]|10)\\.[27]\\.([1-8]) = $2 ; ^9\\.(9|10)\
 rules.push("conv-diagupstop=^9\\.1\\.2=1 ;^9\\.(9|10)\\.[27]=2 ; ^9\\.2\\.2\\.4 = 2 ;^9\\.2\\.2\\.6 = 3 ;^9\\.2\\.2\\.8 = 4 ;^9\\.4\\.2\\.([1-8]) = $1; ^9\\.8\\.2\\.1 = 2;^9\\.8\\.2\\.2 = 4;^9\\.8\\.2\\.3 = 6;^9\\.8\\.2\\.4 = 8 ; ^9\\.(9|10)\\. = f; ^9\\.=r ; ^0\\.=z");
 
 rules.push("conv-downqtrs=^9\\.([1-9]|10)\\.(5|10)\\.([1-8]) = $3 ; ^9\\.(9|10)\\. = f ; ^9\\. = r ; ^0\\.=z");
-rules.push("conv-downstop=^9\\.(1|9|10)\\.(5|10)=1 ; ^9\\.2\\.5\\.4 = 2 ;^9\\.2\\.5\\.6 = 3 ;^9\\.2\\.5\\.8 = 4 ;^9\\.4\\.5\\.([1-8]) = $1; ^9\\.8\\.5\\.1 = 2;^9\\.8\\.5\\.2 = 4;^9\\.8\\.5\\.3 = 6;^9\\.8\\.5\\.4 = 8 ; ^9\\.(9|10)\\. = f; ^9\\.=r ; ^0\\.=z");
+// Changed in 1.4.3
+// 9.8.5.2 (4x8) is converted to 3, to assure allowing it when it exists
+// alone, but not combined with other rolls
+rules.push("conv-downstop=^9\\.(1|9|10)\\.(5|10)=1 ; ^9\\.2\\.5\\.4 = 2 ;^9\\.2\\.5\\.6 = 3 ;^9\\.2\\.5\\.8 = 4 ;^9\\.4\\.5\\.([1-8]) = $1; ^9\\.8\\.5\\.1 = 2;^9\\.8\\.5\\.2 = 3;^9\\.8\\.5\\.3 = 6;^9\\.8\\.5\\.4 = 8 ; ^9\\.(9|10)\\. = f; ^9\\.=r ; ^0\\.=z");
 
 rules.push("rule-VUP450 = upqtrs:<6");
 rules.push("why-VUP450  = a maximum of 450 degrees are allowed on vertical up opposite rolls");
@@ -876,10 +882,12 @@ rules.push("8.5.4.3-4 NOU:1");
 
 //rp
 rules.push("8.6.1.1 NOU:1 ; NR:3Q1 ;NR:2 ;NF:3");
-rules.push("8.6.1.4 NOU:1; NR:2");
+// Changed in 1.4.3
+rules.push("8.6.1.4 NOU:1");
 rules.push("8.6.3.1 NOU:1 ; NR:3Q1 ;NR:2 ;NF:3");
 rules.push("8.6.3.2 NR:1   ;NR:2 ;NF:3");
-rules.push("8.6.3.3 NOU:1; NR:2");
+// Changed in 1.4.3
+rules.push("8.6.3.3 NOU:1");
 
 rules.push("8.6.2.1 NOU:1 ; NR:3Q1 ;NR:2 ;NF:3");
 rules.push("8.6.2.4 NOU:1");
@@ -1232,10 +1240,11 @@ rules.push("8.5.8.3 NOU:2");
 
 //rp
 rules.push("8.6.1.1 NR:1 ; NR:2 ;NF:3");
-rules.push("8.6.1.4 NR:1; NR:2");
+// Changed in 1.4.3
+rules.push("8.6.1.4 NR:1");
 rules.push("8.6.2.4 NR:1");
-rules.push("8.6.3.3 OS:1; NR:2");
-
+// Changed in 1.4.3
+rules.push("8.6.3.3 OS:1");
 rules.push("8.6.4.3 OS:1");
 
 // ROLLS
