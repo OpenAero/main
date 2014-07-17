@@ -1,15 +1,18 @@
-1.4.3
+1.4.3.1
 * fixed issue with subsequence after inverted exit figure (Issue #143)
 * added code in index.html to enable iOS web app
 * corrected power rules for 8.6.1-8 column 3&4. See 1.4.2 fix for glider
 * fixed double wind arrow on IAC forms of large sequences (Issue #148)
 * fixed large figure start circles in Opera browser
-* fixed automatic capitalizing of first letter of sequence_text on some browsers
+* disabled automatic capitalizing of first letter of sequence_text on some browsers
 * fixed Email sequence URL breaking because of single tick characters
 * removed 'id' in background.js to enable launching multiple instances of app
 * fixed several bugs in logo handling when (re)loading sequences
 * added some detection of incorrect file format when opening sequences
-* Unlimited Unknown rules corrected to allow 9.8.5.2 (4x8 vertical down)
+* Power Unlimited Unknown rules corrected to allow 9.8.5.2 (4x8 vertical down)
+* corrected several rules for glider (see rules14-glider-civa.js)
+* added seqcheck-XXX rule directive handling
+* fixed changelog.txt popup not working in app (Issue #150)
 
 1.4.2.1
 * restored zooming in Chrome app

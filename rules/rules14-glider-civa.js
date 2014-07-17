@@ -1,9 +1,9 @@
-// OpenAero rules14-glider-civa.js file 
+// OpenAero rules14-glider-civa.js file
 
 // This file is part of OpenAero.
 
 //  OpenAero was originally designed by Ringo Massa and built upon ideas
-//  of Jose Luis Aresti, Michael Golan, Alan Cassidy and many others. 
+//  of Jose Luis Aresti, Michael Golan, Alan Cassidy and many others.
 
 //  OpenAero is Free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -30,6 +30,19 @@
 // -updated rules for 2014
 // OpenAero 1.4.2
 // -corrected rules for 8.6.1-8 column 3&4
+// OpenAero 1.4.3.1
+// -corrected civa-glider-rules:
+//	*corrected Kmax of Free Unknown and Unknowns
+//	*Section 6 part II 4.3.4.2 implemented
+//	*connectors are down- or upgraded in FREE UNKNOWN only
+//	*wrong alert "no roll on 1st element" for 4b3if corrected
+//	*wrong alert for repitition of 1.1.1.x corrected
+//	*in each Unknown and Free Unknown it is allowed to fly more than one
+//	 rolling circle / tailslide / stall-turn / spin / pos. flick / neg. flick /
+//	 hes roll / superslow roll as long as catIDs of these figures are not repeated
+//	*floating points in Free and Unknowns, but not in Free Unknown
+//  *improved detection of upright exit for seqcheck-upend
+
 
 //###################################################################################
 //################################ CIVA GLIDERS FREE ################################
@@ -66,7 +79,7 @@ rules.push("sf=^9\\.11\\.:3;^9\\.12\\.:3;^9\\.9\\.:4;^9\\.10\\.:4;^2\\.:2;^5\\.:
 
 // Repeations of base-figures acc. to CIVA Section 6 part II Ch. 4.3.3.1 (a)
 //==========================================================================
-rules.push("basefigex11-repeat=1");// base figures except of 1.1.1. and 9.1  ### Checken!!!
+rules.push("basefigex11-repeat=1");// base figures except of 1.1.1. and 9.1
 // may not be repeated in sequence
 //##hesroll-repeat=1 # hesitation roll elements may not be repeated in sequence
 //##spin-repeat=1 # spin elements may not be repeated in sequence
@@ -74,9 +87,9 @@ rules.push("basefigex11-repeat=1");// base figures except of 1.1.1. and 9.1  ###
 
 // Maximum K-Factor and number of figures acc. to CIVA Section 6 part II Ch. 4.3.3.1 (b)
 //======================================================================================
-rules.push("k-max=233");// maximum k-factor including maximum floating points
-rules.push("basefig-max=10");// maximum 10 base figures per sequence
-rules.push("floating-point=3");// 3 points may be reduced
+rules.push("k-max=233");	// maximum k-factor including maximum floating points
+rules.push("basefig-max=10");	// maximum 10 base figures per sequence
+rules.push("floating-point=3");	// 3 points may be reduced
 
 // Versatility acc. to CIVA Section 6 part II Ch. 4.3.3.2
 //=======================================================
@@ -109,7 +122,7 @@ rules.push("osnap-min=1");// minimum one outside snap roll element
 
 // Sequence entry and exit attitudes acc. to Ch. 4.3.3.4
 //======================================================
-rules.push("seqcheck-upend=[\\da-z][~+]*>?\\s*$");// Sequence exit must be in positive attitude
+rules.push("seqcheck-upend=[\\da-z][~+`'()\"]*>?\\s*$");// Sequence exit must be in positive attitude
 rules.push("upend-name=Sequence must end flying upright");
 
 // Positioning and Harmony k-factors acc. to Ch. 4.3.6
@@ -370,12 +383,11 @@ rules.push("infocheck=positioning;harmony");
 // Maximum K-Factor and number of figures acc. to CIVA Section 6 part II Ch. 4.3.6
 //================================================================================
 rules.push("Unknown-letters=ABCDEFG");
-// rules.push("k-max=193");// maximum k-factor including maximum floating points
-// rules.push("k-min=180");// minimum k-factor
-rules.push("k-max=190");// 2014 : maximum k-factor
-rules.push("k-min=170");// 2014 : minimum k-factor
-rules.push("basefig-max=7");// maximum 7 base figures per sequence (+ max 2 links)
-// rules.push("floating-point=3");// Removed in 2014 : 3 points may be reduced
+rules.push("k-max=200");	// 2014 : maximum k-factor + 3 floating points
+rules.push("k-min=180");	// 2014 : minimum k-factor
+rules.push("basefig-max=7");	// max. 7 base figures per sequence (+ max 2 links)
+//rules.push("floating-point=3");	// 3 points may be reduced (4.3.4.6 last sentence -applies to P3,5 and 6 only)
+rules.push("connectors=2/10"); 	// max 2 connectors with 10K total
 
 // Positioning and Harmony k-factors acc. to Ch. 4.3.6
 //====================================================
@@ -385,12 +397,12 @@ rules.push("poselec=15+20");// positioning k-factor assuming electric telemetry
 
 // Maximum number of each family
 //==============================
-rules.push("fam2-max=1");
-rules.push("fam5-max=1");
-rules.push("fam6-max=1");
-rules.push("isnap-max=1");
-rules.push("osnap-max=1");
-rules.push("spin-max=1");
+//rules.push("fam2-max=1");	outlined in 2014
+//rules.push("fam5-max=1");
+//rules.push("fam6-max=1");
+//rules.push("isnap-max=1");
+//rules.push("osnap-max=1");
+//rules.push("spin-max=1");
 
 rules.push("more=glider-CIVA Unlimited Unknownbase");
 
@@ -408,25 +420,25 @@ rules.push("infocheck=positioning;harmony");
 //###################
 // Maximum K-Factor and number of figures acc. to CIVA Section 6 part II Ch. 4.3.6
 //================================================================================
-rules.push("k-max=193");// maximum k-factor including maximum floating points
-rules.push("k-min=175");// minimum k-factor
-rules.push("basefig-max=9");// maximum 9 base figures per sequence (7 chosen + max 2 additional)
-rules.push("floating-point=3");// 3 points may be reduced
+rules.push("k-max=193");		// maximum k-factor + maximum floating points
+rules.push("k-min=175");		// minimum k-factor
+rules.push("basefig-max=9");		// maximum 9 base figures per sequence (7 chosen + max 2 additional)
+rules.push("floating-point = 3");	// maximum floating points (4.3.4.6 last sentence)
 
 // Positioning and Harmony k-factors acc. to Ch. 4.3.6
 //====================================================
-rules.push("poslj=15+10");// positioning k-factor assuming line judges
-rules.push("posnl=15+10");// positioning k-factor assuming no line judges
-rules.push("poselec=15+10");// positioning k-factor assuming electric telemetry
+rules.push("poslj=15+10");	// positioning k-factor assuming line judges
+rules.push("posnl=15+10");	// positioning k-factor assuming no line judges
+rules.push("poselec=15+10");	// positioning k-factor assuming electric telemetry
 
 // Maximum number of each family
 //==============================
-rules.push("fam2-max=1");
-rules.push("fam5-max=1");
-rules.push("fam6-max=1");
-rules.push("isnap-max=1");
-rules.push("osnap-max=1");
-rules.push("spin-max=1");
+//rules.push("fam2-max=1");	outlined in 2014
+//rules.push("fam5-max=1");
+//rules.push("fam6-max=1");
+//rules.push("isnap-max=1");
+//rules.push("osnap-max=1");
+//rules.push("spin-max=1");
 
 rules.push("more=glider-CIVA Unlimited Unknownbase");
 
@@ -435,31 +447,41 @@ rules.push("[glider-CIVA Unlimited Unknown0]");
 //###################
 rules.push("basefig-max=28");
 
-rules.push("hesroll-repeat=4");// hesitation rolls of same cat-ID may not be repeated in overall figure proposal
-rules.push("isnap-repeat=4");// negative snap rolls of same cat-ID may not be repeated in overall figure proposal
-rules.push("osnap-repeat=4");// positive snap rolls of same cat-ID may not be repeated in overall figure proposal
-rules.push("spin-repeat=4");// spins of same cat-ID may not be repeated in overall figure proposal
-rules.push("sroll-repeat=4");// superslow rolls of same cat-ID may not be repeated in overall figure proposal
+// 4.3.4.2 Sentence 1:
+// "Four figures maximum can be chosen in each of Families 2, 5, 6, 9.9, 9.10 and 9.11/12."
+
+rules.push("fam2-max = 4");
+rules.push("fam5-max = 4");
+rules.push("fam6-max = 4");
+rules.push("isnap-max = 4");
+rules.push("osnap-max = 4");
+rules.push("spin-max = 4");
+
+// 4.3.4.2. a) In Unlimited, the minimum acceptable K per figure is 15
+
+rules.push("k-minperfig=15");// 2014 : minimum K for every figure
+
+// 4.3.4.2. b) No figure may be selected with a K higher than 40 (AG 35)
+
+rules.push("k-maxperfig=40");// 2014 : maximum K for every figure
+
+// 4.3.4.2. c) In the case of teams which select two or more figures, one must be a reversing figure
+//		and the sum of coefficients of the figures proposed by a NAC must not exceed:
+//		60 (AG 55) for two figures
+//		80 (AG 70) for three figures
+//		95 (AG 85) for four figures
+
+// --- unable to implement ---
+
+// 4.3.4.2 d) The same catalogue number may only be used once, except of fam. 9
+
+rules.push("basefig-repeat=1");
 
 rules.push("more=glider-CIVA Unlimited Unknownbase");
 
 //##########################################################################
 rules.push("(glider-CIVA Unlimited Unknownbase)");// specific rules for the Unlimited Unknown programs
 //##########################################################################
-rules.push("k-minperfig=15");// minimum K for every figure
-// rules.push("k-maxperfig=35");// maximum K for every figure
-rules.push("k-maxperfig=40");// 2014 : maximum K for every figure
-
-// rules.push("basefigex11-repeat=1");// The same catalogue number may only be used once, except of fam. 1.1.1. & 9
-rules.push("basefig-repeat=1");// 2014 : The same catalogue number may only be used once, except of fam. 9
-
-// 2014 : 4.3.4.6 minimum inclusion of 1 figure of the following
-rules.push("fam2-min=1");
-rules.push("fam5-min=1");
-rules.push("fam6-min=1");
-rules.push("snap-min=1");
-
-rules.push("connectors=2/10");// max 2 connectors with 10K total
 
 // Definition of global rules
 //===========================
@@ -647,10 +669,10 @@ rules.push("7.8.16.4 NOU");
 
 // Humpty-Bumps
 //-------------
-rules.push("8.4.1.1 NOU ; NR:1");             // 2014 : upward roll not allowed
-rules.push("8.4.1.2 NOU ; NR:1 ; nopushout"); // 2014 : upward roll not allowed
+rules.push("8.4.1.1 NOU");
+rules.push("8.4.1.2 NOU ; NR:1 ; nopushout"); 	// 2014 : upward roll not allowed
 rules.push("8.4.2.1 NOU ; nopushout");
-rules.push("8.4.2.2 NOU");
+rules.push("8.4.2.2 NOU ; NR:1");		// 2014 : upward roll not allowed
 rules.push("8.4.3.1 NOU");
 rules.push("8.4.3.2 NOU ; nopushout");
 rules.push("8.4.4.1 NOU ; nopushout");
@@ -846,10 +868,9 @@ rules.push("basefigex11-repeat=1");// base figures except of 1.1.1. and 9.1  ###
 
 // Maximum K-Factor and number of figures acc. to CIVA Section 6 part II Ch. 4.3.3.1 (b)
 //======================================================================================
-//rules.push("k-max=163");// maximum k-factor including maximum floating points
-rules.push("k-max=178");// 2014 : maximum k-factor including maximum floating points
-rules.push("basefig-max=10");// maximum 10 base figures per sequence
-rules.push("floating-point=3");// 3 points may be reduced
+rules.push("k-max=178");	// 2014 : maximum k-factor + maximum floating points
+rules.push("basefig-max=10");	// maximum 10 base figures per sequence
+rules.push("floating-point=3");	// 3 points may be reduced
 
 // Versatility acc. to CIVA Section 6 part II Ch. 4.3.3.3
 //=======================================================
@@ -877,7 +898,7 @@ rules.push("hesroll-min=1");// a hesitation roll of any extent
 
 // Sequence entry and exit attitudes acc. to Ch. 4.3.3.4
 //======================================================
-rules.push("seqcheck-upend=[\\da-z][~+]*>?\\s*$");// Sequence exit must be in positive attitude
+rules.push("seqcheck-upend=[\\da-z][~+`'()\"]*>?\\s*$");// Sequence exit must be in positive attitude
 rules.push("upend-name=Sequence must end flying upright (Section 6, Ch. 4.3.3.4)");
 
 // Positioning and Harmony k-factors acc. to Ch. 4.3.6
@@ -1127,13 +1148,11 @@ rules.push("infocheck=positioning;harmony");
 // Maximum K-Factor and number of figures acc. to CIVA Section 6 part II Ch. 4.3.6
 //================================================================================
 rules.push("Unknown-letters=ABCDEFG");
-// rules.push("k-max=153");// maximum k-factor including maximum floating points
-// rules.push("k-min=140");// minimum k-factor
-rules.push("k-max=150");// 2014 : maximum k-factor
-rules.push("k-min=130");// 2014 : minimum k-factor
-rules.push("basefig-max=7");// maximum 7 base figures per sequence (max 2 links)
-rules.push("basefigex11-repeat=1");// The same catalogue number may only be used once, except of fam. 1.1.1. & 9
-// rules.push("floating-point=3");// 2014 removed 3 points may be reduced
+rules.push("k-max=160");		// 2014 : maximum k-factor without maximum floating points
+rules.push("k-min=140");		// 2014 : minimum k-factor
+rules.push("basefig-max=7");		// maximum 7 base figures per sequence (max 2 links)
+//rules.push("floating-point=3");	// 2014: 3 points may be reduced (4.3.4.6 last sentence - applies on P3,5 and 6 only)
+rules.push("connectors=2/10");		// max 2 connectors with 10K total
 
 // Positioning and Harmony k-factors acc. to Ch. 4.3.6
 //====================================================
@@ -1143,15 +1162,9 @@ rules.push("poselec=15+20");// positioning k-factor assuming electric telemetry
 
 // Sequence exit must be positive upright acc. to Ch. 4.3.4.8
 //===========================================================
-rules.push("seqcheck-upend=[\\da-z][~+]*>?\\s*$");// Sequence exit must be in positive attitude
+rules.push("seqcheck-upend=[\\da-z][~+`'()\"]*>?\\s*$");// Sequence exit must be in positive attitude
 rules.push("upend-name=Sequence must end flying upright (Section 6, Ch. 4.3.4.8)");
 
-// Maximum number of each family and minimum figure K acc. to Ch. 4.3.4.1
-//=======================================================================
-rules.push("fam2-max=1");
-rules.push("fam5-max=1");
-rules.push("fam6-max=1");
-rules.push("spin-max=1");
 
 rules.push("more=glider-CIVA Advanced Unknownbase");
 
@@ -1169,55 +1182,48 @@ rules.push("infocheck=positioning;harmony");
 //###################
 // Maximum K-Factor and number of figures acc. to CIVA Section 6 part II Ch. 4.3.6
 //================================================================================
-rules.push("k-max=148");// maximum k-factor including maximum floating points
-rules.push("k-min=130");// minimum k-factor
-rules.push("basefig-max=9");// maximum 9 base figures per sequence (7 chosen + max 2 additional)
-rules.push("basefigex11-repeat=1");// The same catalogue number may only be used once, except of fam. 1.1.1. & 9
-rules.push("floating-point=3");// 3 points may be reduced
+rules.push("k-max=148");		// maximum k-factor including maximum floating points
+rules.push("k-min=130");		// minimum k-factor
+rules.push("basefig-max=9");		// maximum 9 base figures per sequence (7 chosen + max 2 additional)
+rules.push("floating-point=3");		// 3 points may be reduced
 
 // Positioning and Harmony k-factors acc. to Ch. 4.3.6
 //====================================================
-rules.push("poslj=15+10");// positioning k-factor assuming line judges
-rules.push("posnl=15+10");// positioning k-factor assuming no line judges
-rules.push("poselec=15+10");// positioning k-factor assuming electric telemetry
-
-// Maximum number of each family and minimum figure K acc. to Ch. 4.3.4.1
-//=======================================================================
-rules.push("fam2-max=1");
-rules.push("fam5-max=1");
-rules.push("fam6-max=1");
-rules.push("spin-max=1");
+rules.push("poslj=15+10");	// positioning k-factor assuming line judges
+rules.push("posnl=15+10");	// positioning k-factor assuming no line judges
+rules.push("poselec=15+10");	// positioning k-factor assuming electric telemetry
 
 rules.push("more=glider-CIVA Advanced Unknownbase");
 
 //###################
-rules.push("[glider-CIVA Advanced Unknown0]");// used to check overall proposals for repetition of base figures and rolls except 9.1
+rules.push("[glider-CIVA Advanced Unknown0]");
 //###################
 rules.push("basefig-max=28");
 rules.push("basefig-min=28");
 
-rules.push("hesroll-repeat=4");// hesitation rolls of same cat-ID may not be repeated in overall figure proposal
-rules.push("snap-repeat=4");// snap rolls of same cat-ID may not be repeated in overall figure proposal
-rules.push("spin-repeat=4");// spins of same cat-ID may not be repeated in overall figure proposal
-rules.push("sroll-repeat=4");// superslow rolls of same cat-ID may not be repeated in overall figure proposal
+// 4.3.4.2 Four figures maximum can be chosen in each of Families 2,5,6,9.9,9.10,9.11/12
 
-// rules.push("group-basefigex1569=^(1\\[12-316]|[2-4]|[7-8])");
-// rules.push("basefigex1569-name=base figures except 1.1.1.x, 5.x.x.x, 6.x.x.x and 9.x.x.x");
-// rules.push("basefigex1569-repeat=1");// The same catalogue number may only be used once, except of fam. 1.1.1.x, 5, 6 & 9
+rules.push("fam2-max=4");	// max 4 of fam 2
+rules.push("fam5-max=4");	// max 4 of fam 5
+rules.push("fam6-max=4");	// max 4 of fam 6
+rules.push("spin-max=4");	// max 4 of spins
+
+// 4.3.4.2 b) No figure may be selected with a K higher than 40 (AG 35).
+
+rules.push("k-maxperfig=35");
+
+// 4.3.4.2 d) The same catalogue number cannot be chosen again except for Family 9 ("AG"
+//		Families 5, 6 and 9)
+
 rules.push("group-basefigex569=^([1-4]|[7-8])");
-rules.push("basefigex569-name=base figures except 1.1.1.x, 5.x.x.x, 6.x.x.x and 9.x.x.x");
-rules.push("basefigex569-repeat=1");// The same catalogue number may only be used once, except of fam. 5, 6 & 9
+rules.push("basefigex569-name=base figures except, fam 5, 6 and 9");
+rules.push("basefigex569-repeat=1");
 
 rules.push("more=glider-CIVA Advanced Unknownbase");
 
 //##########################################################################
 rules.push("(glider-CIVA Advanced Unknownbase)");// specific rules for the Advanced Unknown programs
 //##########################################################################
-
-// rules.push("k-maxperfig=30");// maximum K for every figure
-rules.push("k-maxperfig=35");// 2014 : maximum K for every figure
-
-rules.push("connectors=2/10");// max 2 connectors with 10K total
 
 // Definition of global rules
 //===========================

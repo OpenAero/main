@@ -1,4 +1,4 @@
-﻿// OpenAero.js 1.4.3
+﻿// OpenAero.js 1.4.3.1
 // This file is part of OpenAero.
 
 //  OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -185,6 +185,7 @@ var rulesActive = false;   // Are rules active?
 var infoCheck = [];        // Seq info fields to be filled out when saving or printing
 var figureLetters = '';    // Letters that can be assigned to individual figures
 var ruleSuperFamily = [];  // Array of rules for determining figure SF
+var ruleSeqCheck = [];     // rules for checking complete OpenAero seq string
 
 // fig will hold all figures in the catalog in the form
 // fig[i].xxx where xxx is:
@@ -3255,7 +3256,12 @@ function checkBrowser () {
            string: navigator.userAgent,
            subString: "iPhone",
            identity: "iPhone/iPod"
-        },
+      },
+      {
+        string: navigator.platform,
+        subString: 'iPad',
+        identity:  'iPad'
+      },
       {
         string: navigator.platform,
         subString: "Linux",
@@ -3268,6 +3274,9 @@ function checkBrowser () {
   var fatalError = false;
   browserString = BrowserDetect.browser + ' Version ' +
     BrowserDetect.version + ', running on ' + BrowserDetect.OS;
+  // following line can be used for finding browser keys
+  // for (key in navigator) console.log (key + ' : ' + navigator[key]);
+  console.log ('Browser: ' + browserString);
   // Check for essential methods, OpenAero will not function without these!
   // use the selectedFigureSvg to check for SVG and getBBox support
   if (!document.getElementById('selectedFigureSvg').getBBox()) fatalError = true;
@@ -4921,6 +4930,11 @@ function checkUpdateDone() {
     var oldVersion = c.version;
     if (oldVersion !== version) {
       alertBox (versionNew);
+      // create link for changelog
+      document.getElementById('changelog').addEventListener (
+        'mousedown',
+        function() {helpWindow ('changelog.txt', 'changelog.txt');}
+      );
       storeLocal ('version', version);
     }
   }   
@@ -5560,6 +5574,7 @@ function loadRules(ruleName, catName, programName) {
   infoCheck = [];
   figureLetters = '';
   ruleSuperFamily = [];
+  ruleSeqCheck = [];
   // Find the sections
   for (var i = 0; i < rules.length; i++) {
     if ((rules[i][0] == '[') || (rules[i][0] == '(')) {
@@ -5702,10 +5717,11 @@ function loadRules(ruleName, catName, programName) {
         if (checkCatGroup[group[0]]) checkCatGroup[group[0]].maxperfig = parseInt(group[1]);
         if (checkFigGroup[group[0]]) checkFigGroup[group[0]].maxperfig = parseInt(group[1]);
       } else if (rules[i].match(/[^-]+-name=.+$/)) {
-      // Apply [group]-name rules
+      // Apply [group]-name and seqcheck-name rules
         var group = rules[i].replace(/-name/, '').split('=');
         if (checkCatGroup[group[0]]) checkCatGroup[group[0]].name = group[1];
         if (checkFigGroup[group[0]]) checkFigGroup[group[0]].name = group[1];
+        if (ruleSeqCheck[group[0]]) ruleSeqCheck[group[0]].name = group[1];
       } else if (rules[i].match(/^conv-[^=]+=.+/)) {
 // Apply conv-x rules
 // DEPRECATED
@@ -5777,6 +5793,10 @@ function loadRules(ruleName, catName, programName) {
             ruleSuperFamily.push ([regex, fam]);
           }
         }
+      } else if (rules[i].match(/^seqcheck-/)) {
+        var newRuleName = rules[i].split('=')[0].replace(/^seqcheck-/, '');
+        var regex = new RegExp (rules[i].split('=')[1]);
+        ruleSeqCheck[newRuleName] = {'regex' : regex};
       }
     }
   }
@@ -6223,6 +6243,17 @@ function checkRules () {
     }
   }
   
+  // Check complete sequence string on seqcheck directives
+  // When there is NO match for any of the directives, an alert is created
+  
+  if (ruleSeqCheck !== []) {
+    for (var name in ruleSeqCheck) {
+      if (!ruleSeqCheck[name].regex.test(activeSequence.text)) {
+        checkAlert (ruleSeqCheck[name].name);
+      }
+    }
+  }
+  
   // check for multiple use of the same free unknown figure, except L(ink)
   // Also check if all figures have been assigned a Free Unknown letter
   // or link when applicable
@@ -6328,6 +6359,9 @@ function checkAlert (value, type, figNr) {
       break;
     case 'notAllowed':
       alertMsgs.push(alertFig + value + ' is not allowed in this sequence');
+      break;
+    default:
+      alertMsgs.push(value);
   }
 }
 
