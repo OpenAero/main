@@ -382,7 +382,7 @@ rules.push("infocheck=positioning;harmony");
 
 // Maximum K-Factor and number of figures acc. to CIVA Section 6 part II Ch. 4.3.6
 //================================================================================
-rules.push("Unknown-letters=ABCDEFG");
+rules.push("figure-letters=ABCDEFG");
 rules.push("k-max=200");	// 2014 : maximum k-factor + 3 floating points
 rules.push("k-min=180");	// 2014 : minimum k-factor
 rules.push("basefig-max=7");	// max. 7 base figures per sequence (+ max 2 links)
@@ -1147,7 +1147,7 @@ rules.push("infocheck=positioning;harmony");
 //######################
 // Maximum K-Factor and number of figures acc. to CIVA Section 6 part II Ch. 4.3.6
 //================================================================================
-rules.push("Unknown-letters=ABCDEFG");
+rules.push("figure-letters=ABCDEFG");
 rules.push("k-max=160");		// 2014 : maximum k-factor without maximum floating points
 rules.push("k-min=140");		// 2014 : minimum k-factor
 rules.push("basefig-max=7");		// maximum 7 base figures per sequence (max 2 links)
