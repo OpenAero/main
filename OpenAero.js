@@ -5620,7 +5620,7 @@ function loadRules(ruleName, catName, programName) {
         // Apply 'Group' rules => full figure (multiple catalog id) match
         var newGroup = rules[i].replace(/^Group-/, '').split('=');
         checkFigGroup[newGroup[0]] = [];
-        checkFigGroup[newGroup[0]]['regex'] = RegExp(newGroup[1] + '[0-9\.]*', 'g');
+        checkFigGroup[newGroup[0]]['regex'] = RegExp(newGroup[1] + '[0-9\. ]*', 'g');
       }
     }
   }

@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# OpenAero version 1.4.3.1v2
+# OpenAero version 1.4.4
 about.html
 addtohomescreen/addtohomescreen.css
 addtohomescreen/addtohomescreen.min.js
@@ -104,6 +104,7 @@ rules/rules14-france.js
 rules/rules13-ga.js
 rules/rules14-vink.js
 rules/rules14-glider-civa.js
+rules/rules14-nzac.js
 sprintf.js
 vkbeautify.js
 window.html

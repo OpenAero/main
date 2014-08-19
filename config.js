@@ -1,4 +1,4 @@
-// config.js 1.4.3.1
+// config.js 1.4.4
 
 // This file is part of OpenAero.
 
@@ -34,11 +34,9 @@
 // Define active version number of OpenAero
 // **************
 
-var version = '1.4.3.1';
+var version = '1.4.4';
 var versionNew = '<strong>OpenAero has been upgraded to version ' +
   version + '</strong><br>New features:<ul>' +
-  '<li>Corrected various CIVA Power and Glider rules</li>' +
-  '<li>Fixed several bugs in logo handling when (re)loading sequences</li>' +
   '<li>Other bugfixes and improvements (check <a id="changelog">' +
   'changelog.txt</a> if interested)</li>' +
   '</ul>' +

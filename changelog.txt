@@ -1,3 +1,7 @@
+1.4.4
+* fixed bug in rule Group matching causing only base figures to be matched
+* added New Zealand Aerobatic Club rules
+
 1.4.3.1
 * fixed issue with subsequence after inverted exit figure (Issue #143)
 * added code in index.html to enable iOS web app
