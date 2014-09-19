@@ -37,6 +37,9 @@
 var version = '1.4.4';
 var versionNew = '<strong>OpenAero has been upgraded to version ' +
   version + '</strong><br>New features:<ul>' +
+  '<li>Added NZAC rules</li>' +
+  '<li>Added several alerts for Aresti Catalogue compliance</li>' +
+  '<li>Several improvements for tablets</li>' +
   '<li>Other bugfixes and improvements (check <a id="changelog">' +
   'changelog.txt</a> if interested)</li>' +
   '</ul>' +
@@ -439,6 +442,7 @@ regexRegistration.push (/X(A|A-|B|B-|C|C-)[A-Z]{3}/);
 var regexRulesConnectors = /^connectors=([0-9]+)\/([0-9]+)/;
 var regexSequenceOptions = /^(ed|eu|ej|eja|\/\/)$/;
 var regexTextBlock = /^"[^"]*"$/;
+var regexUnlinkedRolls = /[,; ](9\.[1-8]\.[0-9.]*;9\.[1-8]\.)|(9\.(9|10)\.[0-9.]*;9\.(9|10))|(9\.1[12]\.[0-9.]*;9\.1[12])/;
 
 /**********************************************************************
  * 

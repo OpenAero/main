@@ -440,12 +440,12 @@ function switchMobile () {
   var svg = document.getElementById('svgContainer');
   if (mobileBrowser) {
     // set view to device width
-    viewport.setAttribute('content', 'width=device-width');
+    viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, user-scalable=no');
     // set view to width 320
 //    viewport.setAttribute('content', 'width=320, initial-scale=1.0, ' +
 //      'maximum-scale=2.0, minimum-scale=1.0');
     // set mobile css
-    link.setAttribute('href', 'mobile.css');
+    link.setAttribute('href', 'css/mobile.css');
     // update Sequence main menu link
     document.getElementById('t_sequence').innerHTML = userText.sequenceShort;
     // update view menu
@@ -459,7 +459,7 @@ function switchMobile () {
     document.getElementById('main').removeAttribute('style');
   } else {
     viewport.setAttribute('content', '');
-    link.setAttribute('href', 'desktop.css');
+    link.setAttribute('href', 'css/desktop.css');
     // update Sequence main menu link
     document.getElementById('t_sequence').innerHTML = userText.sequence;
     setMobileMenu.innerHTML = userText.mobileVersion;
@@ -495,6 +495,15 @@ function menuInactive (el) {
     el.classList.remove ('active');
   } else {
     this.classList.remove ('active');
+  }
+}
+
+// menuInactiveAll hides all active menus
+function menuInactiveAll () {
+  var menu = document.getElementById('menu');
+  var el = menu.getElementsByClassName ('active');
+  for (var i = el.length - 1; i >= 0; i--) {
+    el[i].classList.remove ('active');
   }
 }
 
@@ -551,6 +560,9 @@ function prepareSvg (svg) {
 // infoBox creates a styled box without any options.
 // html contains the HTML text. When false, the box is closed
 function infoBox(html, title) {
+  // hide all menus
+  menuInactiveAll();
+  
   var div = document.getElementById('infoBox');
   if (html) {
     // show box
@@ -567,6 +579,9 @@ function infoBox(html, title) {
 // alertBox creates a styled alert box with a 'close' option
 // html contains the HTML text. When false, the box is closed
 function alertBox(html, title) {
+  // hide all menus
+  menuInactiveAll();
+  
   var div = document.getElementById('alertBox');
   if (html) {
     // show box
@@ -584,6 +599,9 @@ function alertBox(html, title) {
 // html contains the HTML text. When false, the box is closed
 // f is a function to be executed after confirm
 function confirmBox(html, title, f) {
+  // hide all menus
+  menuInactiveAll();
+  
   var div = document.getElementById('confirmBox');
   if (html) {
     // show box
@@ -601,6 +619,9 @@ function confirmBox(html, title, f) {
 // saveDialog shows or hides the save dialog
 // when message is false, the dialog is closed
 function saveDialog (message, name, ext) {
+  // hide all menus
+  menuInactiveAll();
+  
   if (message) {
     document.getElementById('saveDialog').classList.remove ('noDisplay');
     document.getElementById('saveFileMessage').innerHTML = message;
@@ -614,6 +635,9 @@ function saveDialog (message, name, ext) {
 // printDialog shows or hides the print dialog
 // when false, the dialog is closed
 function printDialog(show) {
+  // hide all menus
+  menuInactiveAll();
+  
   if (show) {
     missingInfoCheck(function(){
 
@@ -637,6 +661,9 @@ function printDialog(show) {
 // printMultiDialog shows or hides the print multi dialog
 // when false, the dialog is closed
 function printMultiDialog(show) {
+  // hide all menus
+  menuInactiveAll();
+  
   var div = document.getElementById('printMulti');
   if (show) {
     div.classList.remove ('noDisplay');
@@ -648,6 +675,9 @@ function printMultiDialog(show) {
 // settingsDialog shows or hides the settings dialog
 // when false, the dialog is closed
 function settingsDialog() {
+  // hide all menus
+  menuInactiveAll();
+  
   var div = document.getElementById('settingsDialog');
   if (this.id === 't_settings') {
     div.classList.remove ('noDisplay');
@@ -2625,7 +2655,7 @@ function doOnLoad () {
 
   // Use try to prevent bugs in this part from blocking OpenAero startup.
   // Errors are logged to console.
-//  try {    
+  try {    
     // check if Chrome App is installed
     checkForApp();
 
@@ -2682,7 +2712,7 @@ function doOnLoad () {
     dropZone.addEventListener('dragover', handleDragOver, false);
     dropZone.addEventListener('drop', updateMulti, false);
     // add onresize event for resizing the sequence text window
-    window.onresize = updateSequenceTextHeight;
+    window.onresize = windowResize;
     // Parse the figures file
     parseFiguresFile();
     // Parse the rules
@@ -2733,9 +2763,13 @@ function doOnLoad () {
     // from localStorage or url
     selectForm(activeForm);
     if (mobileBrowser) selectTab('tab-sequenceInfo');
-//  } catch (e) {
-//    console.log(e);
-//  }
+    
+    // add submenu showing/hiding
+    addMenuEventListeners();
+    
+  } catch (e) {
+    console.log(e);
+  }
   
   /**
   // load (mostly) completed, remove loading icon and status
@@ -2795,11 +2829,12 @@ function getElementsByAttribute(oElm, strTagName, strAttributeName, strAttribute
 */
 
 // launchURL is run during doOnLoad (web) or on event onLaunched (App)
-// and retrieves sequence from URL (if any)
+// and retrieves sequence from URL (if any).
+// Make sure to decode %2B to + character
 function launchURL (launchData) {
   var match = launchData.url.toString().match(/\?(sequence|s)=.+/);
   if (match) {
-    activateXMLsequence (decodeURI(match[0].replace(/\?(sequence|s)=/, '')));
+    activateXMLsequence (decodeURI(match[0].replace(/\?(sequence|s)=/, '').replace(/\%2B/g, '+')));
   }
 }
 
@@ -2837,9 +2872,9 @@ function addEventListeners () {
   }
 
   // menu
-  document.getElementById('menuFile').addEventListener('mouseover', menuActive, false);
-  document.getElementById('menuFile').addEventListener('mouseout', menuInactive, false);
-  document.getElementById('file').addEventListener('mousedown', function(){menuInactive(document.getElementById('menuFile'))}, false);  
+  document.getElementById('file').addEventListener('mousedown', function(){
+    setTimeout(menuInactiveAll, 100);
+    }, true);  
   document.getElementById('file').addEventListener('change', openSequence, false);
   document.getElementById('t_clearSequence').addEventListener('click', clearSequence, false);
   document.getElementById('t_saveSequence').addEventListener('click', saveSequence, false);
@@ -2849,8 +2884,6 @@ function addEventListeners () {
   document.getElementById('t_saveFigsSeparate').addEventListener('click', saveFigs, false);
   document.getElementById('t_printSaveForms').addEventListener('click', function(){printDialog(true)}, false);
   
-  document.getElementById('menuView').addEventListener('mouseover', menuActive, false);
-  document.getElementById('menuView').addEventListener('mouseout', menuInactive, false);
   document.getElementById('t_formA').addEventListener('click', function(){selectForm('A')}, false);
   document.getElementById('t_formB').addEventListener('click', function(){selectForm('B')}, false);
   document.getElementById('t_formC').addEventListener('click', function(){selectForm('C')}, false);
@@ -2859,15 +2892,11 @@ function addEventListeners () {
   document.getElementById('zoomPlus').addEventListener('mousedown', function(){appZoom(1)}, false);
   document.getElementById('t_setMobile').addEventListener('click', switchMobile, false);
   
-  document.getElementById('menuSequence').addEventListener('mouseover', menuActive, false);
-  document.getElementById('menuSequence').addEventListener('mouseout', menuInactive, false);
   document.getElementById('t_flipYAxis').addEventListener('click', flipYAxis, false);
   document.getElementById('t_clearPositioning').addEventListener('click', clearPositioningOption, false);
   document.getElementById('t_separateFigures').addEventListener('click', separateFigures, false);
   document.getElementById('t_checkSequence').addEventListener('click', function(){checkSequence(true)}, false);
   
-  document.getElementById('menuQueue').addEventListener('mouseover', menuActive, false);
-  document.getElementById('menuQueue').addEventListener('mouseout', menuInactive, false);
   document.getElementById('t_showQueue').addEventListener('click', showQueue, false);
   document.getElementById('t_addToQueue').addEventListener('click', addToQueue, false);
   document.getElementById('t_addAllToQueue').addEventListener('click', addAllToQueue, false);
@@ -2875,19 +2904,12 @@ function addEventListeners () {
   document.getElementById('queue').addEventListener('change', openQueue, false);
   document.getElementById('t_saveQueueFile').addEventListener('click', saveQueue, false);
   
-  document.getElementById('menuDemo').addEventListener('mouseover', menuActive, false);
-  document.getElementById('menuDemo').addEventListener('mouseout', menuInactive, false);
-
-  document.getElementById('menuTools').addEventListener('mouseover', menuActive, false);
-  document.getElementById('menuTools').addEventListener('mouseout', menuInactive, false);
   document.getElementById('t_checkMultipleSeq').addEventListener('mousedown', function(){checkMultiDialog(true)}, false);
   //document.getElementById('t_printMultipleSeq').addEventListener('mousedown', function(){printMultiDialog(true)}, false);
   document.getElementById('rulesFile').addEventListener('change', openRulesFile, false);
   document.getElementById('t_settings').addEventListener('click', settingsDialog, false);
   document.getElementById('t_installChromeAppTitle').addEventListener ('mousedown', installChromeApp, false);
   
-  document.getElementById('menuHelp').addEventListener('mouseover', menuActive, false);
-  document.getElementById('menuHelp').addEventListener('mouseout', menuInactive, false);  
   document.getElementById('t_manual').addEventListener('click', function(){
       helpWindow('manual.html', 'OpenAero manual');
     }, false);
@@ -2900,14 +2922,18 @@ function addEventListeners () {
   document.getElementById('t_about').addEventListener('click', function(){
       helpWindow('about.html', 'About');
     }, false);
-    
+  
   // sequence string
   document.getElementById('undo').addEventListener('click', clickButton, false);
   document.getElementById('redo').addEventListener('click', clickButton, false);
   document.getElementById('sequence_text').addEventListener('input', checkSequenceChanged, false);
-  document.getElementById('sequence_text').addEventListener('focus', function(){this.hasfocus=true}, false);
-  document.getElementById('sequence_text').addEventListener('blur', function(){this.hasfocus=false}, false);
+  document.getElementById('sequence_text').addEventListener('focus', showHideVirtualKeyboard, false);
+  document.getElementById('sequence_text').addEventListener('blur', showHideVirtualKeyboard, false);
   document.getElementById('sequence_text').addEventListener('paste', function(){OLANBumpBugCheck=true}, false);
+  
+  // virtual keyboard
+  document.getElementById('virtualKeyboard').addEventListener('mousedown', clickVirtualKeyboard, false);
+  document.getElementById('virtualKeyboard').addEventListener('mouseup', releaseVirtualKeyboard, false);
   
   // left block tabs
   document.getElementById('t_sequenceInfo').addEventListener('click', selectTab, false);
@@ -3046,8 +3072,32 @@ function addEventListeners () {
   
 }
 
+// addMenuEventListeners adds event listeners for showing and hiding 
+// submenus to all menus
+function addMenuEventListeners() {
+  // menu showing and hiding. Recursively add listeners to menus
+  function addListeners(e) {
+    var li = e.getElementsByTagName ('li');
+    for (var i = 0; i < li.length; i++) {
+      // add listeners
+      li[i].addEventListener('mouseover', menuActive, false);
+      li[i].addEventListener('mouseout', menuInactive, false);
+    }
+  }
+  
+  var menu = document.getElementById ('menu');
+  addListeners(menu);
+}
+
 function myEvent() {
   eval (myEvents[this.id]);
+}
+
+// isTouchDevice returns true when running on a touch device
+function isTouchDevice () {
+  return (('ontouchstart' in window)
+    || (navigator.maxTouchPoints > 0)
+    || (navigator.msMaxTouchPoints > 0));
 }
 
 // checkForApp will check if the OpenAero Chrome app is present
@@ -3565,12 +3615,14 @@ function buildButtons () {
   for (var i = el.length - 1; i >=0; i--) {
     el[i].innerHTML = '<a><img src="buttons/mask.png"><div></div></a>';
   }
-  // add tooltips
-  for (key in userText.tooltip) {
-    var el = document.getElementById(key);
-    if (el) {
-      el.firstChild.classList.add ('tooltip');
-      el.firstChild.lastChild.innerHTML = userText.tooltip[key];
+  // add tooltips, but not on touchscreen
+  if (!isTouchDevice()) {
+    for (key in userText.tooltip) {
+      var el = document.getElementById(key);
+      if (el) {
+        el.firstChild.classList.add ('tooltip');
+        el.firstChild.lastChild.innerHTML = userText.tooltip[key];
+      }
     }
   }
 }
@@ -5169,6 +5221,7 @@ function changeCombo(id, noLogo) {
         }
       }
     } catch (error) {
+      console.log(error);
       if (rulesActive) {
         unloadRules ();
       }
@@ -5620,7 +5673,13 @@ function loadRules(ruleName, catName, programName) {
         // Apply 'Group' rules => full figure (multiple catalog id) match
         var newGroup = rules[i].replace(/^Group-/, '').split('=');
         checkFigGroup[newGroup[0]] = [];
-        checkFigGroup[newGroup[0]]['regex'] = RegExp(newGroup[1] + '[0-9\. ]*', 'g');
+        // when regex ends with $, assume it's fully formatted.
+        // Otherwise, add catch all
+        if (newGroup[1].slice(-1) === '$') {
+          checkFigGroup[newGroup[0]]['regex'] = RegExp(newGroup[1], 'g');
+        } else {
+          checkFigGroup[newGroup[0]]['regex'] = RegExp(newGroup[1] + '[0-9\. ]*', 'g');
+        }
       }
     }
   }
@@ -5838,6 +5897,33 @@ function checkRules () {
   var logLine = '';
   var errFigs;
   log.push ('Testing sequence:' + activeSequence.text);
+  
+  // first we check for rules that are ALWAYS valid, i.e. Aresti
+  // Catalogue rules
+  for (var i = 0; i < figures.length; i++) {
+    var seqNr = figures[i].seqNr;
+    if (seqNr) {
+      // some alerts are disabled when nonArestiRolls is checked
+      if (!document.getElementById('nonArestiRolls').checked) {
+        // check for more than two roll elements on a roll position
+        // Aresti Catalogue Part I - 17
+        if (figCheckLine[seqNr].replace(/[^,; ]/g, '').match(/[,;][,;]/)) {
+          checkAlert (userText.alert.maxTwoRotationElements, false, seqNr);
+        }
+        // check for same direction same type unlinked rolls
+        // Aresti Catalogue Part I - 19
+        if (regexUnlinkedRolls.test(figCheckLine[seqNr])) {
+          checkAlert (userText.alert.unlinkedSameNotAllowed, false, seqNr);
+        }
+      }
+      // check if there is a roll on family 1.1.1
+      // Aresti Catalogue 7.2
+      if (figCheckLine[seqNr].match(/^1\.1\.1[^0]+0\.0\.0\.0$/)) {
+        checkAlert (userText.alert.family111RollMissing, false, seqNr);
+      }
+    }
+  }
+  
   // see if there are active rules. If not, return
   if (rulesActive) {
     log.push ('Rules: ' + rulesActive);
@@ -6106,12 +6192,12 @@ function checkRules () {
             }
           }
         }
-        if (checkCatGroup['k']['minperfig']) {
+        if ('minperfig' in checkCatGroup.k) {
           if (figK < checkCatGroup['k']['minperfig']) {
             checkAlert('k', 'minperfig', figNr);
           }
         }
-        if (checkCatGroup['k']['maxperfig']) {
+        if ('maxperfig' in checkCatGroup.k) {
           if (figK > checkCatGroup['k']['maxperfig']) {
             checkAlert('k', 'maxperfig', figNr);
           }
@@ -6125,12 +6211,12 @@ function checkRules () {
     figureK += connectFig.totalK;
   }
   // check for total min/max K
-  if (checkCatGroup['k']['min']) {
+  if ('min' in checkCatGroup.k) {
     if (figureK < checkCatGroup['k']['min']) {
       checkAlert('k', 'min');
     }
   }
-  if (checkCatGroup['k']['max']) {
+  if ('max' in checkCatGroup.k) {
     if (figureK > checkCatGroup['k']['max']) {
       checkAlert('k', 'max');
     }
@@ -6145,7 +6231,7 @@ function checkRules () {
       //console.log('* Match');
       //console.log(checkCatGroup[group]);
       // Check for max and min occurrences of the group
-      if (checkCatGroup[group]['max']) {
+      if ('max' in checkCatGroup[group]) {
         log.push ('testing group ' + group + '-max=' +
           checkCatGroup[group]['max'] + ' val=' + groupMatch[group].length);
         if (groupMatch[group].length > checkCatGroup[group]['max']) {
@@ -6155,7 +6241,7 @@ function checkRules () {
             ' of group ' + group + '(' + errFigs + ')');
         }
       }
-      if (checkCatGroup[group]['min']) {
+      if ('min' in checkCatGroup[group]) {
         log.push ('testing group ' + group + '-min=' +
           checkCatGroup[group]['min'] + ' val=' + groupMatch[group].length);
         if (groupMatch[group].length < checkCatGroup[group]['min']) {
@@ -6165,7 +6251,7 @@ function checkRules () {
         }
       }
       // Check for repeats of the exact same catalog id when necessary
-      if (checkCatGroup[group]['repeat']) {
+      if ('repeat' in checkCatGroup[group]) {
         //console.log('Check repeat');
         var matches = [];
         for (var j = 0; j < groupMatch[group].length; j++) {
@@ -6178,7 +6264,7 @@ function checkRules () {
           }
         }
         for (match in matches) {
-          if (checkCatGroup[group]['repeat'] && (matches[match].length > checkCatGroup[group]['repeat'])) {
+          if (('repeat' in checkCatGroup[group]) && (matches[match].length > checkCatGroup[group]['repeat'])) {
             errFigs = figureNumbers (matches[match]);
             checkAlert(group, 'repeat', errFigs);
             log.push ('*** Error: Repeat ' + checkCatGroup[group]['repeat'] +
@@ -6188,7 +6274,7 @@ function checkRules () {
       }
     } else {
       // No occurrences of this group, was there a minimum?
-      if (checkCatGroup[group]['min'] && (group != 'k')) {
+      if ((group != 'k') && (checkCatGroup[group].min)) {
         checkAlert(group, 'min');
         log.push ('*** Error: Minimum ' + checkCatGroup[group]['min'] +
           ' of group ' + group);
@@ -6201,19 +6287,19 @@ function checkRules () {
     // Did we have a match on this group?
     if (groupMatch[group]) {
       // Check for max and min occurrences of the group
-      if (checkFigGroup[group]['max'] && (groupMatch[group].length > checkFigGroup[group]['max'])) {
+      if (('max' in checkFigGroup[group]) && (groupMatch[group].length > checkFigGroup[group]['max'])) {
         errFigs = figureNumbers (groupMatch[group]);
         checkAlert(group, 'figmax', errFigs);
         log.push ('*** Error: Maximum ' + checkFigGroup[group]['max'] +
           ' of group ' + group + '(' + errFigs + ')');
       }
-      if (checkFigGroup[group]['min'] && (groupMatch[group].length < checkFigGroup[group]['min'])) {
+      if (('min' in checkFigGroup[group]) && (groupMatch[group].length < checkFigGroup[group]['min'])) {
         checkAlert(group, 'figmin');
         log.push ('*** Error: Minimum ' + checkFigGroup[group]['min'] +
           ' of group ' + group);
       }
       // Check for repeats of the exact same figure when necessary
-      if (checkFigGroup[group]['repeat']) {
+      if ('repeat' in checkFigGroup[group]) {
         var matches = [];
         for (var j = 0; j < groupMatch[group].length; j++) {
           var thisMatch = groupMatch[group][j];
@@ -6235,7 +6321,7 @@ function checkRules () {
       }
     } else {
       // No occurrences of this group, was there a minimum?
-      if (checkFigGroup[group]['min']) {
+      if ('min' in checkFigGroup[group]) {
         checkAlert(group, 'figmin');
         log.push ('*** Error: Minimum ' + checkFigGroup[group]['min'] +
           ' of group ' + group);
@@ -6361,7 +6447,7 @@ function checkAlert (value, type, figNr) {
       alertMsgs.push(alertFig + value + ' is not allowed in this sequence');
       break;
     default:
-      alertMsgs.push(value);
+      alertMsgs.push(alertFig + value);
   }
 }
 
@@ -7216,12 +7302,16 @@ function makeMiniFormA (x, y) {
  
 // grabFigure will select a figure and allow dragging
 function grabFigure(evt) {
+  // put the coordinates of object evt in TrueCoords global
+  TrueCoords.x = evt.clientX;
+  TrueCoords.y = evt.clientY;
+   
   DragTarget = null;
   // find out which element we moused down on
   var targetElement = evt.target.parentNode;
   // only drag real sequence figures
   if (targetElement.id.match(/^figure[0-9]/)) {
-    if ( figures[targetElement.id.replace('figure', '')].draggable ) {
+    if (figures[targetElement.id.replace('figure', '')].draggable) {
       //set the item moused down on as the element to be dragged
       DragTarget = targetElement;
     }
@@ -7239,22 +7329,20 @@ function grabFigure(evt) {
     var margin = 5 * scale;
     GrabPoint.x = TrueCoords.x;
     GrabPoint.y = TrueCoords.y;
-    var x = (GrabPoint.x - svgRect.left) / scale + parseInt(viewBox[0]);
-    var y = (GrabPoint.y - svgRect.top) / scale + parseInt(viewBox[1]);
+    var x = TrueCoords.x;
+    var y = TrueCoords.y;
 
-    //GrabPoint.x = ((evt.clientX - svgRect.left) / scale) + parseInt(viewBox[0]);
-    //GrabPoint.y = ((evt.clientY - svgRect.top) / scale) + parseInt(viewBox[1]);
     var closest = false;
     var minDistSq = Infinity;
     for (var i = figures.length - 1; i >= 0; i--) {
      if (figures[i].draggable) {
-       var bBox = svg.getElementById('figure'+i).getBBox();
+       var bBox = svg.getElementById('figure'+i).getBoundingClientRect();
        // clicked well within bBox (>margin units within border)?
-       if ((x > (bBox.x + margin)) && (x < (bBox.x + bBox.width - margin))) {
-         if ((y > (bBox.y + margin)) && (y < (bBox.y + bBox.height - margin))) {
+       if ((x > (bBox.left + margin)) && (x < (bBox.right - margin))) {
+         if ((y > (bBox.top + margin)) && (y < (bBox.bottom - margin))) {
            // calculate distance squared to bBox centre
-           var distSq = Math.pow(x - (bBox.x + (bBox.width / 2)), 2) +
-             Math.pow(y - (bBox.y + (bBox.height / 2)), 2);
+           var distSq = Math.pow(x - (bBox.left + (bBox.width / 2)), 2) +
+             Math.pow(y - (bBox.top + (bBox.height / 2)), 2);
            if (distSq < minDistSq) {
              minDistSq = distSq;
              closest = i;
@@ -8237,6 +8325,13 @@ function draw () {
   displayAlerts ();
 }
 
+// windowResize gets called whenever the window is resized
+function windowResize () {
+  updateSequenceTextHeight();
+}
+
+// updateSequenceTextHeight updates the height of the sequence text when
+// necessary
 function updateSequenceTextHeight () {
   var cloneDiv = document.getElementById('sequenceTextClone');
   if (!mobileBrowser) {
@@ -8253,6 +8348,57 @@ function updateSequenceTextHeight () {
   } else {
     cloneDiv.innerHTML = '';
   }
+}
+
+// showHideVirtualKeyboard shows or hides the virtual keyboard for
+// special keys for touch devices
+function showHideVirtualKeyboard (e) {
+  if (document.activeElement.id === 'sequence_text') {
+    e.hasfocus = true;
+  } else {
+    e.hasfocus = false;
+  }
+  //if (isTouchDevice()) {
+    var el = document.getElementById('virtualKeyboard');
+    if (document.activeElement.id === 'sequence_text') {
+      el.classList.remove ('noDisplay');
+    } else {
+      el.classList.add ('noDisplay');
+    }
+  //}
+}
+
+// clickVirtualKeyboard is called when one of the virtual keys is
+// clicked
+function clickVirtualKeyboard(e) {
+  var seqText = document.getElementById('sequence_text');
+  // remove blur handler until clicking complete
+  seqText.removeEventListener ('blur', showHideVirtualKeyboard);
+
+  var key = e.srcElement.innerText;
+  if (key.length === 1) {
+    e.srcElement.classList.add ('clicked');
+    var selStart = seqText.selectionStart;
+    var selEnd = seqText.selectionEnd;
+    seqText.value = seqText.value.substring (0, selStart) +
+      key + seqText.value.substring (selEnd);
+    checkSequenceChanged();
+  seqText.selectionStart = selStart + 1;
+  seqText.selectionEnd = seqText.selectionStart;
+  }
+}
+
+// releaseVirtualKeyboard is called when the virtual keyboard key is
+// released
+function releaseVirtualKeyboard(e) {
+  var seqText = document.getElementById('sequence_text');
+  // restore blur handler
+  seqText.addEventListener (
+    'blur',
+    showHideVirtualKeyboard,
+    false);
+  seqText.focus();
+  e.srcElement.classList.remove ('clicked');
 }
 
 // checkSequenceChanged is called by onInput on the
@@ -8482,8 +8628,11 @@ function openSequence () {
     form.appendChild(el2);
     form.reset();
 
-    // add event listener to new element
-    el2.addEventListener('change', openSequence, false);
+    // add event listeners to new element
+    el2.addEventListener('change', openSequence, true);
+    el2.addEventListener('mousedown', function(){
+      setTimeout(menuInactiveAll, 100);
+    }, false);  
   }
 
   // Check if the current sequence was saved. If not, present a dialog
@@ -8552,6 +8701,9 @@ function removeFileListFile(el, f) {
 // checkMultiDialog shows or hides the multiple sequence check dialog
 // when false, the dialog is closed
 function checkMultiDialog(show) {
+  // hide all menus
+  menuInactiveAll();
+  
   var div = document.getElementById('checkMulti');
   if (show) {
     div.classList.remove ('noDisplay');
@@ -9405,13 +9557,18 @@ function errorHandler(e) {
   console.log('Error: ' + msg);
 }
 
+// uriEncode expands encodeURI by also replace single ticks (') and + as
+// they may break links in email
+function uriEncode (t) {
+  return encodeURI(t).replace (/'/g, '%27').replace(/\+/g, '%2B');
+}
+
 // saveAsURL provides a URL encoded sequence that the user can copy
 // and then email, bookmark or whatever
 function saveAsURL () {
   function save () {
-    // also replace single ticks (') as they may break the link
-    var url = 'http://openaero.net?s=' +
-      encodeURI(activeSequence.xml).replace (/'/g, '%27');
+    // also replace single ticks (') and + as they may break the link
+    var url = 'http://openaero.net?s=' + uriEncode(activeSequence.xml);
     
     if (chromeApp.active) {
       alertBox ('<p>' + userText.saveAsURLFromApp +
@@ -9436,10 +9593,9 @@ function emailSequence () {
   
   function email() {
     // create body with descriptive text, newlines and sequence URL
-    // also replace single ticks (') as they may break the link
+    // also replace single ticks (') and + as they may break the link
     var body = userText.emailHeader + '\n\n' + 
-      'http://openaero.net?s=' + 
-      encodeURI(activeSequence.xml).replace (/'/g, '%27');
+      'http://openaero.net?s=' + uriEncode(activeSequence.xml);
     var subject =  activeFileName();
     if (subject === '') subject = 'Sequence';
     el.setAttribute('href', 'mailto:%20?subject=' + encodeURI(subject) +
@@ -11355,7 +11511,12 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
                 kFactors.push (rollKPwrd[rollI]);
               }
               // Check if there was a roll before the current one and
-              // add ; or , as appropriate for checking
+              // - add ; or , as appropriate for checking
+              // - when the roll type is the same and not opposite,
+              //   check if nonArestiRolls is checked. Otherwise,
+              //   present warning
+              // - check if there are not more than two subsequent rolls
+              //   when nonArestiRolls is not checked
               var k = j - 1;
               while (k > -1) {      
                 if (roll[rollnr][k].type != 'line') {
@@ -11783,7 +11944,7 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
     figCheckLine[seqNr] = figCheckLine[seqNr].replace('  ', ' 0.0.0.0 ');
     figCheckLine[seqNr] = figCheckLine[seqNr].replace(/ $/, ' 0.0.0.0');
   }
-  
+    
   // set inFigureXSwitchFig (used for OLAN sequence autocorrect) to false
   // when we exit on X axis
   if ((Direction == 0) || (Direction == 180)) {
@@ -12523,7 +12684,7 @@ function parseSequence () {
   // check for floating point correction
   checkFloatingPoint();
   // Check the sequence against the correct rules
-  if (rulesActive) checkRules ();
+  checkRules ();
   // check for any OLAN Humpty Bump bug messages
   if (OLANBumpBugCheck) {
     var warning = '';

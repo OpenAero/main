@@ -1,0 +1,302 @@
+/*
+ mobile.css 1.4.4
+ This file is part of OpenAero.
+
+  OpenAero was originally designed by Ringo Massa and built upon ideas
+  of Jose Luis Aresti, Michael Golan, Alan Cassidy and many others. 
+
+  OpenAero is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  OpenAero is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with OpenAero.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/* This file defines all the css styles for the mobile version
+ * They will override any equivalent css styles in OpenAero.css */
+
+body {
+  width: 320px;
+  overflow-x: hidden;
+  font-size: 1.25em;
+}
+select {
+  background-color: #fff;
+}
+#topBlock {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  background: #fafafa;
+  background: -webkit-linear-gradient(top, #ffffff, #f0f0f0);
+  border-bottom: 1px solid #888;
+  -moz-box-shadow: 0px 1px 2px rgba(0,0,0,0.5);
+  -webkit-box-shadow: 0px 1px 2px rgba(0,0,0,0.5);
+  box-shadow: 0px 1px 2px rgba(0,0,0,0.5);
+  width: 320px;
+  height: 86px;
+  padding: 0 0 2px 0;
+  z-index: 10;
+}
+#openAeroLogo {
+  display: none;
+}
+.version {
+  display: none;
+}
+#sequenceTextContainer {
+  position: relative;
+  margin-right: 24px;
+  left: 34px;
+}
+#sequence_text {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  /* 16px is minimum size to prevent auto-zoom */
+  font-size: 16px;
+  width: 280px;
+  height: 58px;
+  resize: none;
+  /* OpenAero text as SVG background */
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.2" width="320" height="54"><text x="143" y="46" text-anchor="middle" font-family="Verdana" font-size="46" style="fill:#ffebb0;stroke:#ffebb0;letter-spacing:6px;">OpenAero</text></svg>');
+}
+#main {
+	position: absolute;
+  left: 0px;
+  right: 0px;
+  top: 88px;
+  width: 320px;
+}
+#leftBlock {
+  position: absolute;
+  top: 2px;
+  left: 0px;
+  background: #f4f4f4;
+  width: 320px;
+  padding: 0;
+  z-index: 1;
+}
+#sequenceInfo {
+  background: -webkit-linear-gradient(top, #f4f4f4, #e0e0ff);
+  font-size: 14px;
+}
+#sequenceInfo input {
+  width: 200px;
+  font-size: 16px;
+}
+#sequenceInfo select {
+  width: 200px;
+  font-size: 16px;
+}
+#figureInfo {
+  background: -webkit-linear-gradient(top, #f4f4f4, #e0e0ff);
+}
+/* virtual keyboard */
+#virtualKeyboard {
+  top: 44px;
+  left: 4px;
+}
+.tabSelector {
+  width: 320px;
+}
+.tabSelector li {
+  padding-top: 4px;
+  line-height: 90%; 
+  width: 101px;
+  height: 30px;
+}
+.inactiveTab {
+  font-size: 17px;
+}
+.activeTab {
+  font-size: 16px;
+}
+#svgContainer {
+  position: absolute;
+  top: 44px;
+  left: 0px;
+  width: 312px;
+  background-color:#ffffff;
+  /*background: -webkit-linear-gradient(top, #f4f4f4, #ffffff);*/
+  padding: 4px;
+  z-index: 2;
+}
+#figureSelector {
+  position: absolute;
+  overflow: hidden;
+  top: 4px;
+  left: -320px;
+  -moz-transition: 0.2s left;
+  -o-transition: 0.2s left;
+  -webkit-transition: 0.2s left;
+  transition: 0.2s left;
+  width: 320px;
+  padding: 0px;
+  background: #f4f4f4;
+  background: -webkit-linear-gradient(top, #f4f4f4, #e0e0ff);
+  z-index: 2;
+}
+#figureSelector.active {
+  left:0;
+}
+.button {
+  margin-left: 5px;
+  margin-right: 5px;
+}
+.smallButton {
+  width: 32px;
+  height: 32px;
+  margin: 1px;
+  /* scale background */
+  background-size: 32px 32px;
+}
+.undoRedoButton {
+  float: left;
+  width: 32px;
+  height: 32px;
+  margin: 0;
+}
+.minButton {
+	background-image: url('../buttons/minus.png');
+	height: 32px;
+  width: 32px;
+}
+.plusButton {
+	background-image: url('../buttons/plus.png');
+	height: 32px;
+  width: 32px;
+}
+.plusMinText {
+  font-size: 24px;
+  height: 32px;
+}
+#undo {
+  background-image: url('../buttons/undo.png');
+}
+#redo {
+  background-image: url('../buttons/redo.png');
+}
+#figEntryButton {
+  background-image: url('../buttons/figStartUp.png');
+}
+#figExitButton {
+  background-image: url('../buttons/figEndUp.png');
+}
+#figEntryButton.inverted {
+  background-image: url('../buttons/figStartInv.png');
+}
+#figExitButton.inverted {
+  background-image: url('../buttons/figEndInv.png');
+}
+#figEntryButton.button {
+  margin-right: 6px;
+}
+#figExitButton.button {
+  margin-left: 6px;
+}
+.rollComment {
+  font-size: 2em;
+  float:right;
+  margin-right: 5px;
+  width: 48px;
+}
+.rollComment:focus {
+  margin-left: -260px;
+  width:290px;
+}
+#scale {
+  margin-left: 6px;
+  margin-right: 6px;
+}
+#moveX,#moveY {
+  margin-left: 6px;
+  margin-right: 6px;
+}
+.rollSelect {
+  font-size: 2em;
+}
+#comments {
+  width: 296px;
+  height: 4em;
+}
+
+/* logo chooser */
+#activeLogo {
+  float: right;
+}
+#logoChooserContainer.active {
+  left: 30px;
+}
+/* figure chooser */
+
+#figureChooser {
+  margin: 2px;
+  width: 318px;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.7);
+  overflow: auto;
+}
+table#figureChooserTable td {
+  padding: 1px;
+  border: 1px solid #eee;
+  border-radius: 5px;
+}
+table#figureChooserTable td.selected {
+  border: 1px solid magenta;
+}
+#figureSelectorOptionsDiv select,#figureSelectorGroupDiv select {
+  font-size: 16px;
+}
+#figureSelectorClose {
+  margin: 5px;
+}
+
+/* message and other boxes */
+.box {
+  top: 1%;
+  left: 1%;
+  width: 95%;
+}
+.box .tabSelector {
+  width: auto;
+}
+.box .tabSelector li {
+  padding-left: 10px;
+  padding-right: 10px;
+  width: auto;
+}
+
+/* menu */
+#menu a {
+  padding: 6px 3px 6px 3px;
+  border-left: 1px solid #ddd;
+}
+#menu li {
+  width: 46px; /* 320 : 7 */
+  text-align: center;
+  font-size: 14px;
+  letter-spacing: -1px;
+}
+#menu li ul li {
+  width: auto;
+  text-align: left;
+  letter-spacing: 0;
+}
+/* make the right menus float from right edge to left */
+#menu li ul.right {
+  min-width: 100px;
+  right: 3px;
+}
+
+/* settings */
+#zipImageFilenamePattern, #styleString {
+  width: 280px;
+}

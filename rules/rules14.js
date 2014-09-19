@@ -240,10 +240,9 @@ rules.push("Group-opposite=(^| )9\\.([1-9]|10)\\.[\\d()\\.]+,");
 rules.push("opposite-name=opposite rolls");
 
 //used to avoid a line-only figure (0 and -0-)
-//Group-emptyline=^\s*1\.1\.[1-4]\(\d+\)\s*0\.0\.0\.0\(0\)\s*$
-//emptyline-name=lines(1.1.1-1.1.4) without rolls
-rules.push("Group-emptyline=^\\s*1\\.11\\.[1-4]\\(\\d+\\)\\s*0\\.0\\.0\\.0\\(0\\)\\s*$");
-rules.push("emptyline-name=lines(1.1.1.1-1.1.1.4) without rolls");
+//rules.push("Group-emptyline=^1\\.1\\.1\\.[1-4] 0\\.0\\.0\\.0\\s*$");
+//rules.push("emptyline-name=lines (1.1.1.1-1.1.1.4) without rolls");
+//rules.push("emptyline-max=0");
 
 //used to allow k2 and k24 but not k2 twice, etc for glider int. indicate repeations of complete figures
 rules.push("Group-combined=^");

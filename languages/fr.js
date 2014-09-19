@@ -1,4 +1,4 @@
-// fr.js 1.4.2
+// fr.js 1.4.4
 // This file is part of OpenAero.
 
 //  OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -185,7 +185,9 @@ lang.fr = {
   'et choisissez <i>Autoriser l\'enregistrement de données locales</i>',
 'noFigureLetterAssigned' : '(%s) Pas de lettre affectée',
 'noFreeUnknownFig' : 'Pas de figure d\'Inconnu-Libre',
-'nonArestiRolls' : 'Autoriser les rotations non-Aresti (essayer <i>41h66</i>)',
+// change 1.4.4
+'nonArestiRolls' : 'Autoriser les rotations et combinations ' +
+  'non-Aresti (essayer <i>41h4,f,4 66</i>)',
 'none' : 'Aucune',
 'noRules' : 'Pas de règle de vérification disponible.',
 'notes' : 'Notes',
@@ -225,10 +227,12 @@ lang.fr = {
 'print' : 'Imprimer / Enregistrer PDF',
 'printCheck' : 'Résultat de la vérification',
 'printDialog' : 'Options d\impression',
+// updated 1.4.2
 'printExplain' : 'Vous pouvez positionner les options d\'impression ci-dessous.<br>' +
-  'Pour <i>enregistrer</i>, cliquer <strong>Imprimer</strong> puis choisir ' +
+  'Pour <i>enregistrer</i> PDF, cliquer <strong>Imprimer</strong> puis choisir ' +
   'comme <i>destination</i> <strong>Enregistrer en PDF</strong> dans le ' +
   'Menu de votre navigateur.',
+//
 'printForms' : 'Impression des Formes...',
 'printFormA' : 'Forme A',
 'printFormB' : 'Forme B',

@@ -40,12 +40,24 @@ lang.en = {
 'addingFigure' : 'Add new figure',
 'addToQueue' : 'Add to Queue',
 'aircraft' : 'A/C type &amp; reg',
+// new 1.4.4
+// alert forms a sub-array
+'alert': {
+  'family111RollMissing' : 'Family 1.1.1 without roll not allowed',
+  'maxTwoRotationElements' : 'Maximum two combined rotation ' +
+    'elements allowed',
+  'unlinkedSameNotAllowed' : 'Unlinked rolls of the same type and ' +
+    'the same direction are not allowed'
+}, // end alert array
 'alertBoxClose' : 'Close',
 'alerts' : 'Alerts',
 'anonymousSequences' : 'Anonymise sequences by removing pilot name etc',
 'arestiSystem' : 'Aresti system',
 'autocorrectRoll' : ':Added autocorrect roll',
-'blackWhite' : 'Black & white', 
+'blackWhite' : 'Black & white',
+// new 1.4.2
+'browserDetect' : 'Your browser has been detected as: %s.<br>',
+//
 'cancel' : 'Cancel',
 'cancelPrint' : 'Cancel',
 'cancelSave' : 'Cancel',
@@ -193,6 +205,7 @@ lang.en = {
   'chooser below, or select one of the displayed logos.',
 'manual' : 'Manual',
 'maxConnectors' : 'Maximum connecting figures allowed: ',
+'maxScaling' : 'Max small seq. scaling',
 'missingInfo' : 'There seems to be essential Sequence Info missing. ' +
   'Are you sure you want to save or print the file without:',
 'missingInfoTitle' : 'Sequence info missing',
@@ -209,7 +222,9 @@ lang.en = {
   'and choose <i>Allow local data to be set</i>.',
 'noFigureLetterAssigned' : '(%s) No figure letter assigned',
 'noFreeUnknownFig' : 'No Free Unknown fig',
-'nonArestiRolls' : 'Allow non-Aresti rolls (try sequence text <i>41h 66</i>)',
+// changed 1.4.4
+'nonArestiRolls' : 'Allow non-Aresti rolls and combinations (try ' + 
+  'sequence text <i>41h4,f,4 66</i>)',
 'none' : 'None',
 'noRules' : 'No sequence validity checking rules available.',
 'notes' : 'Notes',
@@ -233,6 +248,9 @@ lang.en = {
   'ones following may be drawn differently in OLAN and OpenAero!</font> ' +
   'Please check correct direction.<br>' +
   'This message will not be shown for this sequence again.',
+// new 1.4.2
+'oldBrowser' : 'Your browser (%s) is not capable of running OpenAero.<br>',
+//
 'openaeroLanguage' : 'OpenAero language',
 'openQueueFile' : 'Open queue file',
 'openSequence' : 'Open sequence',
@@ -254,10 +272,12 @@ lang.en = {
 'print' : 'Print / Save PDF',
 'printCheck' : 'Sequence check result',
 'printDialog' : 'Print options',
+// updated 1.4.2
 'printExplain' : 'You can set the options for printing below.<br>' +
-  'To <i>save</i> your forms, click <strong>Print</strong> and then choose ' +
-  '<i>destination</i> <strong>Save as PDF</strong> in the browser\'s ' +
-  'print menu.',
+  'To <i>save</i> your forms as PDF, click <strong>Print</strong> and ' +
+  'then choose <i>destination</i> <strong>Save as PDF</strong> in the ' +
+  'browser\'s print menu.',
+//
 'printForms' : 'OpenAero printing forms...',
 'printFormA' : 'Form A',
 'printFormB' : 'Form B',

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--
-  index.html version 1.4.3
+  index.html version 1.4.4
   This file is part of OpenAero.
 
   OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -26,7 +26,7 @@
     <!-- set Google verification tag, essential for installing App from site -->
     <meta name="google-site-verification" content="19PeFg_VefT13gYXLO6E-IJKXjPbzjF3f_iZ2T8pa9E" />
     <!-- set viewport for mobile browsers -->
-    <meta name="viewport" id="viewport" content="width=device-width">
+    <meta name="viewport" id="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <!-- <meta name="viewport" id="viewport" content="width=320, initial-scale=1.0, maximum-scale=2.0, minimum-scale=1.0" /> -->
     <!-- set web app capable for Chrome homescreen links -->
     <meta name="mobile-web-app-capable" content="yes">
@@ -35,8 +35,8 @@
     <meta name="apple-mobile-web-app-title" content="OpenAero" />
     <title>OpenAero</title>
     <!-- stylesheets -->
-    <link rel="stylesheet" type="text/css" href="OpenAero.css">
-    <link rel="stylesheet" type="text/css" href="desktop.css" id="mobileDesktopCSS">
+    <link rel="stylesheet" type="text/css" href="css/general.css">
+    <link rel="stylesheet" type="text/css" href="css/desktop.css" id="mobileDesktopCSS">
     <link rel="stylesheet" type="text/css" href="addtohomescreen/addtohomescreen.css">
     <!-- favicons -->
     <link rel="shortcut icon" type="image/png" sizes="16x16" href="favicons/favicon16.png">
@@ -66,7 +66,7 @@
     <script src="rules/rules13-baea.js" type="text/javascript"></script>
     <script src="rules/rules14-france.js" type="text/javascript"></script>
     <script src="rules/rules13-ga.js" type="text/javascript"></script>
-    <script src="rules/rules14-vink.js" type="text/javascript"></script>
+    <script src="rules/rules15-vink.js" type="text/javascript"></script>
     <script src="rules/rules14-glider-civa.js" type="text/javascript"></script>
     <script src="rules/rules14-nzac.js" type="text/javascript"></script>
     <!-- example sequences -->
@@ -828,6 +828,24 @@
         </div>
         <div class="clearBoth"></div>
         <div id="design"><span>Software & design by Ringo Massa</span></div>
+      </div>
+      <!-- Virtual keyboard for special characters -->
+      <div id="virtualKeyboard" class="noDisplay">
+        <table>
+          <tr>
+            <td>`</td>
+            <td>'</td>
+            <td>.</td>
+            <td>~</td>
+            <td>+</td>
+            <td>-</td>
+            <td>[</td>
+            <td>]</td>
+            <td>&lt;</td>
+            <td>&gt;</td>
+            <td>^</td>
+          </tr>
+        </table>
       </div>
       <!-- Container for the sequence svg -->
       <div id="svgContainer">

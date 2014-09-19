@@ -1,6 +1,18 @@
 1.4.4
 * fixed bug in rule Group matching causing only base figures to be matched
+* fixed bug in rule matching causing min/max/repeat of 0 to be ignored
 * added New Zealand Aerobatic Club rules
+* added encoding of + character in URL to prevent link breaking
+* corrected VINK Standard Unknown K to 15
+* added warning for same direction same type unlinked rolls (Issue #153)
+* added warning for more than two roll elements on the same position
+* added warning for no rolls on family 1.1.1 figures
+* improved menu system (Issue #147)
+* increased menu height bij 3px to improve tablet experience
+* disabled tooltips for touchscreen
+* improved figure selection in grid view
+* added special keys when editing sequence string on touch device (Issue #151)
+* organised css files into single directory
 
 1.4.3.1
 * fixed issue with subsequence after inverted exit figure (Issue #143)
