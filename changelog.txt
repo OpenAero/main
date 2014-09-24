@@ -13,6 +13,7 @@
 * improved figure selection in grid view
 * added special keys when editing sequence string on touch device (Issue #151)
 * organised css files into single directory
+* changed rule selection behaviour to only use valid Category/Program when selecting new Rules
 
 1.4.3.1
 * fixed issue with subsequence after inverted exit figure (Issue #143)

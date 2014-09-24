@@ -149,10 +149,10 @@ exampleSequences['2013 BAeA Int Known'] = '<sequence>' +
 '</sequence>';
 
 exampleSequences['2013 FRA Espoirs Connu'] = '<sequence>' +
-'<category>espoirs</category>' +
 '<class>powered</class>' +
-'<program>connu</program>' +
 '<rules>France</rules>' +
+'<category>espoirs</category>' +
+'<program>connu</program>' +
 '<positioning>10</positioning>' +
 "<sequence_text>ed 2g iv5s..''^ -2% m,2+~ 4> +3j~ -3% c''2''+``` (-2,12) o ``+h.''+ 6> m-~~ ~-2j- (3,7) -1-</sequence_text>" +
 '<logo>FFAvoltige</logo>' +
@@ -171,10 +171,10 @@ exampleSequences['2013 FRA Desavois Connu'] = '<sequence>' +
 '</sequence>';
 
 exampleSequences['2013 FRA National2 Connu1'] = '<sequence>' +
-'<category>national2</category>' +
 '<class>powered</class>' +
-'<program>connu_1</program>' +
 '<rules>France</rules>' +
+'<category>national2</category>' +
+'<program>connu_1</program>' +
 '<positioning>20</positioning>' +
 "<sequence_text>-d1- -iv5is/ ,4h o1 2> ~+'k''2if...''+``` ```+2fg``2- (-8,3) 12% ```-2joi2-``` -4,3 /``h4' ~~8b+++ ++m2,44</sequence_text>" +
 '<logo>FFAvoltige</logo>' +

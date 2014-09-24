@@ -88,6 +88,10 @@ images/OA_SequenceInfoPanel.gif
 images/PilotCard2.png
 images/PilotCard4.png
 images/PilotCardPercent.png
+images/startup.jpg
+images/startup_ipad_landscape.jpg
+images/startup_ipad_portrait.jpg
+images/startup_retina.jpg
 index.html
 jszip.js
 language.html
@@ -99,12 +103,12 @@ OpenAero.js
 print.html
 rules/rules14.js
 rules/rules14-civa.js
-rules/rules13-baea.js
+rules/rules14-baea.js
 rules/rules14-france.js
 rules/rules13-ga.js
 rules/rules15-vink.js
 rules/rules14-glider-civa.js
-rules/rules14-nzac.js
+rules/rules15-nzac.js
 sprintf.js
 vkbeautify.js
 window.html

@@ -27,6 +27,9 @@ body {
   overflow-x: hidden;
   font-size: 1.25em;
 }
+#leftBlock {
+  overflow-x: hidden;
+}
 select {
   background-color: #fff;
 }
@@ -83,6 +86,7 @@ select {
   width: 320px;
   padding: 0;
   z-index: 1;
+  overflow: hidden;
 }
 #sequenceInfo {
   background: -webkit-linear-gradient(top, #f4f4f4, #e0e0ff);

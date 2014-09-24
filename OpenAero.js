@@ -1,4 +1,4 @@
-﻿// OpenAero.js 1.4.3.1
+﻿// OpenAero.js 1.4.4
 // This file is part of OpenAero.
 
 //  OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -35,6 +35,9 @@ var myEvents = [];
 var svgNS = "http://www.w3.org/2000/svg";
 // xlink Name Space for including image in svg
 var xlinkNS = "http://www.w3.org/1999/xlink";
+
+// debug holds the div for debug messages
+var debug;
 
 var True_Drawing_Angle;
 // set y axis offset to the default
@@ -453,7 +456,8 @@ function switchMobile () {
     // unhide sequence tab
     tab.removeAttribute('style');
     // hide sequence svg
-    svg.setAttribute('style', 'position:absolute;z-index:-1;top:-5000px;');
+    svg.classList.add('hidden');
+    //svg.setAttribute('style', 'position:absolute;z-index:-1;top:-5000px;');
     // remove any vertical displacement done by updateSequenceTextHeight
     document.getElementById('sequence_text').removeAttribute('style');
     document.getElementById('main').removeAttribute('style');
@@ -465,6 +469,7 @@ function switchMobile () {
     setMobileMenu.innerHTML = userText.mobileVersion;
     tab.setAttribute('style', 'display:none;');
     svg.removeAttribute('style');
+    svg.classList.remove('hidden');
     checkSequenceChanged();    
   }
   // set correct sequence text height
@@ -506,7 +511,7 @@ function menuInactiveAll () {
     el[i].classList.remove ('active');
   }
 }
-
+  
 // rebuildSequence deletes and recreates the svg that holds the sequence
 // SVGRoot is a global SVG object
 function rebuildSequenceSvg () {
@@ -784,13 +789,15 @@ function selectTab (e) {
     // only do something when the tab is not hidden
     if (list[i].getAttribute('style') != 'display:none;') {
       list[i].setAttribute('class', 'inactiveTab');
-      // hide the tab by lowering z-index and setting top to -5000px
+      // hide the tab by using display:hidden
       // so any data is still accessible
-      document.getElementById(list[i].id.replace('tab-', '')).setAttribute('style', 'position:absolute;z-index:-1;top:-5000px;')
+      document.getElementById(list[i].id.replace('tab-', '')).classList.add('hidden');
+      //document.getElementById(list[i].id.replace('tab-', '')).setAttribute('style', 'position:absolute;z-index:-1;top:-5000px;');
     }
   }
   li.setAttribute('class', 'activeTab');
-  document.getElementById(li.id.replace('tab-', '')).setAttribute('style', '')
+  document.getElementById(li.id.replace('tab-', '')).classList.remove('hidden');
+  //document.getElementById(li.id.replace('tab-', '')).setAttribute('style', '');
 }
 
 // updateUserTexts updates all userText in the interface as indicated by
@@ -2638,6 +2645,7 @@ function doOnLoad () {
   sportingClass = document.getElementById('class');
   fileName = document.getElementById('fileName');
   newTurnPerspective = document.getElementById('newTurnPerspective');
+  debug = document.getElementById('debug');
 
   var errors = [];
   
@@ -2655,7 +2663,7 @@ function doOnLoad () {
 
   // Use try to prevent bugs in this part from blocking OpenAero startup.
   // Errors are logged to console.
-  try {    
+  //try {    
     // check if Chrome App is installed
     checkForApp();
 
@@ -2767,9 +2775,9 @@ function doOnLoad () {
     // add submenu showing/hiding
     addMenuEventListeners();
     
-  } catch (e) {
-    console.log(e);
-  }
+  //} catch (e) {
+  //  console.log(e);
+  //}
   
   /**
   // load (mostly) completed, remove loading icon and status
@@ -5150,13 +5158,18 @@ function changeCombo(id, noLogo) {
       category.removeAttribute ('disabled');
       // Populate category list
       if (seqCheckAvail[ruleName]) {
-        for (n in seqCheckAvail[ruleName]['cats']) {
+        // clear category value if not available in rules
+        var clear = true;
+        for (n in seqCheckAvail[ruleName].cats) {
           if (seqCheckAvail[ruleName].cats[n].show) {
             var listItem = document.createElement('li');
-            listItem.appendChild(document.createTextNode(seqCheckAvail[ruleName]['cats'][n]['name']));
+            var name = seqCheckAvail[ruleName].cats[n].name;
+            listItem.appendChild (document.createTextNode (name));
+            if (category.value === name) clear = false;
             categoryList.appendChild(listItem);
           }
         }
+        if (clear) category.value = '';
       }
       new combo('category','#cc9','#ffc');
       if (rulesLogo[ruleName] && !noLogo) {
@@ -5186,15 +5199,20 @@ function changeCombo(id, noLogo) {
       program.placeholder = '';
       program.removeAttribute ('disabled');
       // Populate program list
+      // clear program value if not available in category
+      var clear = true;
       if (seqCheckAvail[ruleName]) {
         if (seqCheckAvail[ruleName]['cats'][categoryName]) {
           for (n in seqCheckAvail[ruleName]['cats'][categoryName]['seqs']) {
             if (seqCheckAvail[ruleName].cats[categoryName].seqs[n][0] != '*') {
+              var name = seqCheckAvail[ruleName].cats[categoryName].seqs[n];
               var listItem = document.createElement('li');
-              listItem.appendChild(document.createTextNode(seqCheckAvail[ruleName]['cats'][categoryName]['seqs'][n]));
+              listItem.appendChild(document.createTextNode(name));
+              if (program.value === name) clear = false;
               programList.appendChild(listItem);
             }
           }
+          if (clear) program.value = '';
         }
       }
     } else {
@@ -5886,7 +5904,7 @@ function unloadRules () {
 // and produce alerts where necessary.
 // The Aresti list according description in allowed.js is in the array figCheckLine
 // A log array is returned
-function checkRules () {  
+function checkRules () {
   var figNr = 0;
   var figureK = 0;
   var connectors = 0;
@@ -8290,7 +8308,12 @@ function displayAlerts () {
 }
 
 // do some kind of draw
+// console.log values for debugging
 function draw () {
+
+  //debug.appendChild(document.createTextNode(Date.now()));
+  //debug.appendChild(document.createTextNode('Rebuilding sequence svg'));
+
   rebuildSequenceSvg ();
   // reset all drawing variables to default values
   firstFigure = true;
@@ -8307,9 +8330,13 @@ function draw () {
     setYAxisOffset (yAxisOffsetDefault);
     Direction = 0;
   }
-  
+
+  //debug.appendChild(document.createTextNode('Parsing sequence'));
+    
   parseSequence();
 
+  //debug.appendChild(document.createTextNode('Making Form'));
+  
   if (activeForm === 'A') {
     makeFormA();
   } else if (activeForm === 'B') {
@@ -8319,6 +8346,9 @@ function draw () {
   } else {
     makeFormGrid(document.getElementById('gridColumns').value);
   }
+  
+  //debug.appendChild(document.createTextNode('Form complete'));
+  
   // check if selectedFigure.id is still valid
   if (!figures[selectedFigure.id]) selectFigure(false);
   // display all alerts
@@ -8358,14 +8388,14 @@ function showHideVirtualKeyboard (e) {
   } else {
     e.hasfocus = false;
   }
-  //if (isTouchDevice()) {
+  if (isTouchDevice()) {
     var el = document.getElementById('virtualKeyboard');
     if (document.activeElement.id === 'sequence_text') {
       el.classList.remove ('noDisplay');
     } else {
       el.classList.add ('noDisplay');
     }
-  //}
+  }
 }
 
 // clickVirtualKeyboard is called when one of the virtual keys is
@@ -8378,13 +8408,17 @@ function clickVirtualKeyboard(e) {
   var key = e.srcElement.innerText;
   if (key.length === 1) {
     e.srcElement.classList.add ('clicked');
+    // always remove highlight after a second
+    setTimeout(function(){
+      e.srcElement.classList.remove ('clicked');
+      }, 1000);
     var selStart = seqText.selectionStart;
     var selEnd = seqText.selectionEnd;
     seqText.value = seqText.value.substring (0, selStart) +
       key + seqText.value.substring (selEnd);
     checkSequenceChanged();
-  seqText.selectionStart = selStart + 1;
-  seqText.selectionEnd = seqText.selectionStart;
+    seqText.selectionStart = selStart + 1;
+    seqText.selectionEnd = seqText.selectionStart;
   }
 }
 
@@ -8602,6 +8636,8 @@ function exampleSequence () {
   var key = this.id.replace(/^example-/, '');
   OLANBumpBugCheck = false;
   fileName.value = '';
+  // Reloading as possible solution for iPad crashing? Doesn't seem to help...
+  // window.location.href = ('http://devel.openaero.net?s=' + uriEncode(exampleSequences[key]));
   activateXMLsequence(exampleSequences[key]);
   selectFigure (false);
 }
@@ -8794,7 +8830,6 @@ function finishMulti (body) {
   document.getElementById('checkMultiFileForm').reset();
   // restore saved sequence
   activateXMLsequence (multi.savedSeq);
-  //checkSequenceChanged();
 }
 
 // loadedSequenceMulti will be called when a sequence file has been
@@ -9038,6 +9073,16 @@ function OLANtoXML (string) {
 
 // activateXMLsequence will make a sequence provided as XML active
 function activateXMLsequence (xml, noLoadRules) {
+  
+  // first rebuild the svg container to free up memory
+  rebuildSequenceSvg();
+  
+  /** debugging, clear debug element first */
+  //while (debug.firstChild) debug.removeChild(debug.firstChild);
+  //debug.appendChild(document.createTextNode(Date.now() + ': Activating XML sequence'));
+  
+  //debug.appendChild(document.createTextNode('Clearing values'));
+  
   // clear previous values
   for (var i = 0; i < sequenceXMLlabels.length; i++) {
     document.getElementById(sequenceXMLlabels[i]).value = '';
@@ -9045,6 +9090,9 @@ function activateXMLsequence (xml, noLoadRules) {
   // set 'class' to powered by default to provide compatibility with OLAN
   // and older OpenAero versions
   document.getElementById('class').value = 'powered';
+  
+  //debug.appendChild(document.createTextNode('Inserting values'));
+  
   if (xml) {
     // myElement will hold every entry as a node
     var myElement = document.createElement('div');
@@ -9082,6 +9130,7 @@ function activateXMLsequence (xml, noLoadRules) {
 
     checkOpenAeroVersion();
   }
+  
   // hide Harmony field for powered
   var el = document.getElementById ('harmonyField');
   if (sportingClass.value === 'powered') {
@@ -9091,12 +9140,16 @@ function activateXMLsequence (xml, noLoadRules) {
   // Don't change the logo
   if (!noLoadRules) changeCombo('rules', true);
   
+  // debug.appendChild(document.createTextNode('Check sequence changed'));
+    
   // update sequence
   checkSequenceChanged();
 
   // sequence was just loaded, so also saved
   window.document.removeEventListener('beforeunload', preventUnload);
   sequenceSaved = true;
+  
+  // debug.appendChild(document.createTextNode('ActivateXMLsequence ready'));
 }
 
 // handleDragOver takes care of file dragging

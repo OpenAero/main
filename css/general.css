@@ -146,6 +146,10 @@ textarea {
 .noDisplay {
   display: none;
 }
+.hidden {
+  height: 0;
+  visibility: hidden;
+}
 .displayMenu {
   display: block;
 }
