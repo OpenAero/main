@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--
-  index.html version 1.4.4
+  index.html version 1.4.4.2
   This file is part of OpenAero.
 
   OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -407,6 +407,14 @@
               <span class="userText" id="t_queueColumns"></span>
             </div>
           </div>
+          <!-- hidden until activated -->
+          <div class="section hidden">
+            <span class="sectionLabel userText" id="t_figurePositioning"></span>
+            <div>
+              <input type="checkbox" id="positionClearAuto">
+              <span class="userText" id="t_positionClearAuto"></span>
+            </div>
+          </div>
           <div class="section">
             <span class="sectionLabel userText" id="t_saveFigsSeparateTitle"></span>
             <div>
@@ -428,7 +436,7 @@
           </div>
         </div>
         <!-- Styling settings -->
-        <div id="styling" style="display:none;">
+        <div id="styling" class="hidden">
           <span class="userText" id="t_styleSettingsHeader"></span>
           <div class="section">
             <input type="checkbox" id="numberInCircle">
@@ -446,7 +454,7 @@
           </div>
         </div>
         <!-- Expert settings -->
-        <div id="expert" style="display:none;">
+        <div id="expert" class="hidden">
           <div class="section">
             <input type="checkbox" id="nonArestiRolls">
             <span class="userText" id="t_nonArestiRolls"></span>

@@ -1,3 +1,7 @@
+1.4.4.2
+* corrected print.css location in print.html for app
+* fixed missing Styling and Expert Settings in 1.4.4
+
 1.4.4
 * fixed bug in rule Group matching causing only base figures to be matched
 * fixed bug in rule matching causing min/max/repeat of 0 to be ignored

@@ -151,6 +151,9 @@ lang.en = {
 'figsInGrid' : 'Figs in grid',
 'figureAlreadyInQueue' : 'This figure is already in the queue',
 'figureEditor' : 'Figure&nbsp;editor',
+// new in 1.4.4.2
+'figurePositioning' : 'Figure positioning',
+//
 'figureQueue' : 'Figure Queue',
 'file' : 'File',
 'fileName' : 'File name',
@@ -267,6 +270,10 @@ lang.en = {
 'pilotnumberIAC2' : "number",
 'pleaseWaitStartup' : 'Please wait while OpenAero is starting up...',
 'png' : 'PNG',
+// new 1.4.4.2
+'positionClearAuto' : 'Automatically position new/changed figures ' +
+  'clear of others',
+//
 'positioning' : 'Positioning',
 'powered' : 'Power',
 'print' : 'Print / Save PDF',

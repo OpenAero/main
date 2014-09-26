@@ -1,4 +1,4 @@
-// config.js 1.4.4
+// config.js 1.4.4.2
 
 // This file is part of OpenAero.
 
@@ -34,7 +34,7 @@
 // Define active version number of OpenAero
 // **************
 
-var version = '1.4.4';
+var version = '1.4.4.2';
 var versionNew = '<strong>OpenAero has been upgraded to version ' +
   version + '</strong><br>New features:<ul>' +
   '<li>Added NZAC rules</li>' +
@@ -141,7 +141,7 @@ var miniFormA = true;
 var iacForms = false;
 // define default pattern for figure images saved in ZIP
 var zipImageFilenamePattern = '%location %category %program %pilot Form %form_fig_%figure';
-// define which settings will be saved in cookie
+// define which settings will be saved in localStorage
 var saveSettings = [
   'language',
   'gridColumns',
@@ -150,6 +150,7 @@ var saveSettings = [
   'saveFigsSeparateHeight',
   'zipImageFilenamePattern',
   'numberInCircle',
+  'positionClearAuto',
   'rollFontSize',
   'nonArestiRolls'];
 // define default language

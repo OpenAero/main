@@ -1,4 +1,4 @@
-﻿// OpenAero.js 1.4.4
+﻿// OpenAero.js 1.4.4.2
 // This file is part of OpenAero.
 
 //  OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -3027,6 +3027,7 @@ function addEventListeners () {
   document.getElementById('language').addEventListener('change', changeLanguage, false);
   document.getElementById('gridColumns').addEventListener('change', updateGridColumns, false);
   document.getElementById('queueColumns').addEventListener('change', changeQueueColumns, false);
+  document.getElementById('positionClearAuto').addEventListener('change', saveSettingsStorage, false);
   document.getElementById('imageFormatPNG').addEventListener('change', saveSettingsStorage, false);
   document.getElementById('imageFormatSVG').addEventListener('change', saveSettingsStorage, false);
   document.getElementById('saveFigsSeparateWidth').addEventListener('change', saveSettingsStorage, false);
@@ -4940,10 +4941,11 @@ function latestVersion() {
     if (window.applicationCache) window.applicationCache.update();
     img.parentNode.classList.add('noDisplay');
   } else {
-    
     img.removeAttribute('onerror');
     // Apply latest version img src
-    img.setAttribute('src', 'http://openaero.net/openaero.php?f=version&version=' + version);
+    var url = 'http://openaero.net/openaero.php?f=version&version=' + version;
+    console.log ('Check version, get:' + url);
+    img.setAttribute('src', url);
     // Hide the image on error (e.g. no internet connection)
     img.setAttribute('onerror', "this.style.display = 'none';");
   }
@@ -5905,6 +5907,9 @@ function unloadRules () {
 // The Aresti list according description in allowed.js is in the array figCheckLine
 // A log array is returned
 function checkRules () {
+  
+  //var t = Date.now(); // used for checking execution time
+  
   var figNr = 0;
   var figureK = 0;
   var connectors = 0;
@@ -6397,6 +6402,8 @@ function checkRules () {
     alertMsgs.push (msg);
     log.push ('*** Error: ' + msg);
   }
+
+  //console.log(Date.now() - t); //log execution time
 
   return log;
 }
@@ -7665,6 +7672,41 @@ function clearPositioning () {
   }
 }
 
+// separateFigure will make sure figures are separated from previous and
+// next figures when:
+// - newly created, or
+// - base figure changed
+function separateFigure (id) {
+  if (figures[id]) {
+    // remove any previous move 'figure'
+    var i = id - 1;
+    if (figures[i]) {
+      if (figures[i].moveTo || figures[i].curveTo || figures[i].moveForward) {
+        updateSequence (i, '', true);
+        i--;
+      }
+    }
+    //i++;
+    // separate the figure itself
+    if (moveClear (i)) {
+      selectFigure (i+1);
+    }
+    // find the next real figure and separate that one
+    i++;
+    while (figures[i]) {
+      if (figures[i].aresti) {
+        moveClear (i);
+        break;
+      } else if (figures[i].moveTo || figures[i].curveTo || figures[i].moveForward) {
+        // remove move 'figures'
+        updateSequence (i, '', true);
+        i--;
+      }
+      i++;
+    }
+  }
+}
+
 // separateFigures separates all the figures from each other. This is
 // done vertically with a curveTo
 function separateFigures () {
@@ -7682,41 +7724,7 @@ function separateFigures () {
         var i = 1;
         // start going through the figures from the second figure
         while ((i < figures.length) && !breakLoop) {
-          // get the bBox set for the figure
-          var bBox = figures[i].bBox;
-          // only real (draggable) figures have a bBox
-          if (bBox && figures[i].aresti) {
-            var moveDown = 0;
-            var boxTop = bBox.y;
-            var boxBottom = bBox.y + bBox.height;
-            var boxLeft = bBox.x;
-            var boxRight = bBox.x + bBox.width;
-            do {
-              var repeat = false;
-              for (var j = i - 1; j >= 0; j--) {
-                var bBoxJ = figures[j].bBox;
-                if (bBoxJ && figures[j].aresti) {
-                  if ((boxRight > bBoxJ.x) && (boxLeft < (bBoxJ.x + bBoxJ.width))) {
-                    if (((boxBottom + moveDown) > bBoxJ.y) && ((boxTop + moveDown) < (bBoxJ.y + bBoxJ.height))) {
-                      moveDown += bBoxJ.y + bBoxJ.height - (boxTop + moveDown);
-                      repeat = true;
-                      break;
-                    }
-                  }
-                }
-              }
-            } while (repeat);
-            if (moveDown > 0) {
-              moveDown = Math.ceil(moveDown/lineElement);
-              // No longer necessary because we redraw every time. This code could be
-              // quicker but needs extra work. Keep it here just in case...
-              //        for (j = i; j < figures.length; j++) {
-              //          if (figures[j].bBox) figures[j].bBox.y = figures[j].bBox.y + (moveDown * lineElement)
-              //        }
-              updateSequence(i - 1, '(0,' + moveDown + ')', false);
-              breakLoop = true;
-            }
-          }
+          moveClear (i);
           i++;
         }
       } while (breakLoop);
@@ -7724,6 +7732,47 @@ function separateFigures () {
     });
   } else {
     alertBox (userText.notOnFormBC);
+  }
+}
+
+// moveClear will move figure i clear from all previous figures
+function moveClear (i) {
+  // get the bBox set for the figure
+  var bBox = figures[i].bBox;
+  // only real (draggable) figures have a bBox. Only do something if
+  // this is true
+  if (bBox && figures[i].aresti) {
+    var moveDown = 0;
+    var boxTop = bBox.y;
+    var boxBottom = bBox.y + bBox.height;
+    var boxLeft = bBox.x;
+    var boxRight = bBox.x + bBox.width;
+    do {
+      var repeat = false;
+      for (var j = i - 1; j >= 0; j--) {
+        var bBoxJ = figures[j].bBox;
+        if (bBoxJ && figures[j].aresti) {
+          if ((boxRight > bBoxJ.x) && (boxLeft < (bBoxJ.x + bBoxJ.width))) {
+            if (((boxBottom + moveDown) > bBoxJ.y) && ((boxTop + moveDown) < (bBoxJ.y + bBoxJ.height))) {
+              moveDown += bBoxJ.y + bBoxJ.height - (boxTop + moveDown);
+              repeat = true;
+              break;
+            }
+          }
+        }
+      }
+    } while (repeat);
+    if (moveDown > 0) {
+      moveDown = Math.ceil(moveDown/lineElement);
+      // No longer necessary because we redraw every time. This code could be
+      // quicker but needs extra work. Keep it here just in case...
+      //        for (j = i; j < figures.length; j++) {
+      //          if (figures[j].bBox) figures[j].bBox.y = figures[j].bBox.y + (moveDown * lineElement)
+      //        }
+      updateSequence(i - 1, '(0,' + moveDown + ')', false);
+      breakLoop = true;
+      return true;
+    }
   }
 }
 
@@ -12202,9 +12251,10 @@ function OLANXSwitch (figStringIndex) {
 // when force is true, update will be done even when it seems no change is made
 function updateSequence (figNr, figure, replace, fromFigSel, force) {
 
-  // correct direction changers when new figure is from Figure Selector
+  // check if figure is from Figure Selector and correct direction changers
   if (fromFigSel) {
     if (replace) var prevFig = figNr - 1; else var prevFig = figNr;
+    // correct direction changers
     if (figures[prevFig] && figure.match(/[a-zA-Z]/)) {
       if (figures[prevFig].exitAxis == 'Y') {
         // switch > and ^. Use temporary placeholder #
@@ -12310,9 +12360,17 @@ function updateSequence (figNr, figure, replace, fromFigSel, force) {
 
   // check for sequence changes
   checkSequenceChanged(force);
+
+  if (fromFigSel) {
+    // use automatic positioning if checked
+    if (document.getElementById('positionClearAuto').checked) {
+      separateFigure (figNr + 1);
+    }
+  }
   
   // reselect correct figure
   if (selectedFigure.id !== null) selectFigure (selectedFigure.id, true);
+  
 }
 
 // comparePreviousSequence returns the old and new figure numbers that
