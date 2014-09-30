@@ -1,4 +1,4 @@
-// en.js 1.4.2
+// en.js 1.4.5
 // This file is part of OpenAero.
 
 //  OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -32,6 +32,43 @@ lang.en = {
 // Subsequent keys are alphabetical.
 'en' : 'English',
 'about' : 'About',
+// new 1.4.5
+'aboutNewer' : 'You are running a newer version than Stable. You have ' +
+  'all the latest features but may run into more bugs. If you do, ' +
+  'you can help OpenAero development by adding them to ' +
+  '<a href="https://code.google.com/p/open-aero/issues/list">the ' +
+  'Issues list</a>.',
+'aboutOlder' : '<font color="red">You are running an outdated version. ' +
+  '</font>If you are running from a local file, please check instructions at ' +
+  '<a href="https://code.google.com/p/open-aero/wiki/Installation">' +
+  'the Installation wiki</a>.<br>If you are using openaero.net on ' +
+  'Google Chrome it may help to clear the appCache. Enter ' +
+  '<strong>chrome://appcache-internals</strong> in your address bar ' +
+  'and <strong>Remove</strong> all entries that contain OpenAero.',
+'aboutUnknown' : 'Unable to determine Stable version. You are ' +
+  'probably offline.',
+'aboutText' : '<div class="section">' +
+  '<p>This&nbsp;version:<strong>%s</strong> &nbsp; ' +
+  'Stable&nbsp;version:<strong>%s</strong></p>%s</div>' +
+  '<div class="section">' +
+  '<p>OpenAero is aerobatic sequence design software that ' +
+  'runs inside your web browser.</p><p>OpenAero is free software: you ' +
+  'can redistribute it and/or modify it under the terms of the ' +
+  '<a href="gpl.htm">GNU General Public License</a> as published by ' +
+  'the Free Software Foundation, either version 3 of the License, or ' +
+  '(at your option) any later version.</p><p>OpenAero is distributed ' +
+  'in the hope that it will be useful, but WITHOUT ANY WARRANTY; ' +
+  'without even the implied warranty of MERCHANTABILITY or FITNESS ' +
+  'FOR A PARTICULAR PURPOSE. See the GNU General Public License for ' +
+  'more details.</p></div><div class="section">' +
+  'OpenAero is designed, built and maintained by ' +
+  '<strong>Ringo Massa</strong>, using <strong>Michael Golan</strong>\'s ' +
+  'OLAN sequence coding.<br>Many people have contributed, including:' +
+  '<table><tr><td>' +
+  '<strong>Wouter Liefting</strong></td><td>Figure and rule coding</td></tr>' +
+  '<tr><td><strong>Gilles Guillemard</strong></td><td>Figure, rule ' +
+  'and software coding</td></tr></table></div>',
+// end new
 'ac' : 'A/C',
 'addAllToQueue' : 'Add all to Queue',
 'addAllToQueueWait' : 'Adding all figures in sequence to queue. This ' +
@@ -151,7 +188,7 @@ lang.en = {
 'figsInGrid' : 'Figs in grid',
 'figureAlreadyInQueue' : 'This figure is already in the queue',
 'figureEditor' : 'Figure&nbsp;editor',
-// new in 1.4.4.2
+// new 1.4.5
 'figurePositioning' : 'Figure positioning',
 //
 'figureQueue' : 'Figure Queue',
@@ -270,7 +307,7 @@ lang.en = {
 'pilotnumberIAC2' : "number",
 'pleaseWaitStartup' : 'Please wait while OpenAero is starting up...',
 'png' : 'PNG',
-// new 1.4.4.2
+// new 1.4.5
 'positionClearAuto' : 'Automatically position new/changed figures ' +
   'clear of others',
 //
@@ -309,11 +346,11 @@ lang.en = {
 'program' : 'Program',
 'programme' : 'Programme',
 'queue' : 'Queue',
-// new in 1.4.2
+// new 1.4.2
 'queueColumns' : 'Columns',
 //
 'queueEmpty' : 'There are no figures in the queue to save',
-// new in 1.4.2
+// new 1.4.2
 'queueLabel' : 'Queue',
 //
 'queueNotSaved' : 'The queue figures have NOT been saved',
@@ -346,7 +383,7 @@ lang.en = {
   'Please go to <a href="http://openaero.net">openaero.net</a>. ' +
   'OpenAero will automatically install in your browser and will also ' +
   'be available offline.',
-// new in 1.4.2
+// new 1.4.2
 'sameAsBefore' : 'Same as before',
 //
 'saveAsImage' : 'Save as image',
@@ -396,7 +433,7 @@ lang.en = {
   '<strong>your</strong> version of OpenAero but not how your sequence ' +
   'will look to another user of OpenAero!',
 'styling' : 'Styling',
-// new in 1.4.2
+// new 1.4.2
 'subSequenceDirection' : 'Sub sequence entry direction',
 //
 'svg' : 'SVG',

@@ -1,4 +1,4 @@
-﻿// OpenAero.js 1.4.4.2
+﻿// OpenAero.js 1.4.5
 // This file is part of OpenAero.
 
 //  OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -694,6 +694,7 @@ function settingsDialog() {
 // helpWindow will display a window with content from url and title
 function helpWindow(url, title) {
   if (chromeApp.active) {
+    // use chrome.app.window.create for desktop Chrome app
     chrome.app.window.create (url, {
       bounds: {
         width:800,
@@ -705,7 +706,11 @@ function helpWindow(url, title) {
         win.document.title = title;
       };
     });
-  } else {    
+  } else if (window.navigator.standalone) {
+    // return true to follow href and open Safari window for standalone iOS app
+    return true;
+  } else {
+    // open new window for all others
     var w = window.open(url, title, 'menubar=no, scrollbars=yes, status=no, toolbar=no, top=30, width=800');
     // set location again after 2 seconds to circumvent Chrome bug
     // regarding anchors later in html
@@ -748,7 +753,49 @@ function newWindow (body, title) {
     w.focus();
   }
 }
+
+// aboutDialog will build a complete 'about' dialog. This includes
+// version checking
+function aboutDialog () {
+  function show (stableVersion) {
+    var compText = '';
+    if (stableVersion === '-') {
+      compText = userText.aboutUnknown;
+    } else {
+      switch (compVersion (version, stableVersion)) {
+        case -1:
+          compText = userText.aboutOlder;
+          break;
+        case 1:
+          compText = userText.aboutNewer;
+      }
+    }
+    alertBox (
+      sprintf(userText.aboutText, version, stableVersion, compText),
+      userText.about);
+  }
   
+  // We use a workaround to obtain the latest version.
+  // openaero.php will return an image with size aacc x bbdd, where
+  // version is aa.bb.cc.dd
+  var img = document.createElement('img');
+  img.src = 'http://openaero.net/openaero.php?f=v';
+  img.onload = function() {
+    var v1 = parseInt(this.width / 100);
+    var v2 = parseInt(this.height / 100);
+    var v3 = this.width - (v1 * 100);
+    var v4 = this.height - (v2 * 100);
+    var stableVersion = v1 + '.' + v2 + '.' + v3 + '.' + v4;
+    // remove trailing zeroes
+    stableVersion = stableVersion.replace (/(\.0)+$/, '');
+    show (stableVersion);
+  }
+  // onerror will be triggered when offline
+  img.onerror = function() {
+    show ('-');
+  }
+}
+
 /** End dialogs and windows */
 
 // Modern Combo Box  Script
@@ -963,10 +1010,28 @@ function changeRollFontSize (s) {
   style.rollText = style.rollText.replace(regex,'font-size: ' + rollFontSize + 'px;');
 }
 
-// *******************************************************************************
-// Define the low level shapes
-// The function names are of the format makeXXX where XXX is the name to be called
-// *******************************************************************************
+// myGetBBox accepts an element and returns the bBox for the element and
+// bBoxes for it's child elements
+function myGetBBox (e) {
+  var bBox = e.getBBox();
+  // add right, bottom and nodes
+  bBox.right = bBox.x + bBox.width;
+  bBox.bottom = bBox.y + bBox.height;
+  bBox.nodes = [];
+  var nodes = e.childNodes;
+  for (var i = 0; i < nodes.length; i++) {
+    bBox.nodes[i] = nodes[i].getBBox();
+    // add right and bottom
+    bBox.nodes[i].right = bBox.nodes[i].x + bBox.nodes[i].width;
+    bBox.nodes[i].bottom = bBox.nodes[i].y + bBox.nodes[i].height;
+  }
+  return bBox;
+}
+
+/*******************************************************************************
+ Define the low level shapes
+ The function names are of the format makeXXX where XXX is the name to be called
+ *******************************************************************************/
 
 // drawWind draws the wind arrow and text
 // x and y represent the corner of the rectangle bounding the arrow at the top downwind side
@@ -2881,7 +2946,7 @@ function addEventListeners () {
 
   // menu
   document.getElementById('file').addEventListener('mousedown', function(){
-    setTimeout(menuInactiveAll, 100);
+    setTimeout(menuInactiveAll, 1000);
     }, true);  
   document.getElementById('file').addEventListener('change', openSequence, false);
   document.getElementById('t_clearSequence').addEventListener('click', clearSequence, false);
@@ -2918,19 +2983,25 @@ function addEventListeners () {
   document.getElementById('t_settings').addEventListener('click', settingsDialog, false);
   document.getElementById('t_installChromeAppTitle').addEventListener ('mousedown', installChromeApp, false);
   
-  document.getElementById('t_manual').addEventListener('click', function(){
-      helpWindow('manual.html', 'OpenAero manual');
-    }, false);
-  document.getElementById('t_openaeroLanguage').addEventListener('click', function(){
-      helpWindow('language.html', 'OpenAero language');
-    }, false);
-  document.getElementById('t_arestiSystem').addEventListener('click', function(){
-      helpWindow('arestisystem.html', 'The Aresti aerocryptographic system');
-    }, false);
-  document.getElementById('t_about').addEventListener('click', function(){
-      helpWindow('about.html', 'About');
-    }, false);
-  
+  // use href for iOS standalone app, this will open the manuals in Safari
+  if (window.navigator.standalone) {
+    document.getElementById('t_manual').href = 'manual.html';
+    document.getElementById('t_openaeroLanguage').href = 'language.html';
+    document.getElementById('t_arestiSystem').href = 'arestisystem.html';
+  } else {
+    document.getElementById('t_manual').addEventListener('click', function(){
+        helpWindow('manual.html', 'OpenAero manual');
+      }, false);
+    document.getElementById('t_openaeroLanguage').addEventListener('click', function(){
+        helpWindow('language.html', 'OpenAero language');
+      }, false);
+    document.getElementById('t_arestiSystem').addEventListener('click', function(){
+        helpWindow('arestisystem.html', 'The Aresti aerocryptographic system');
+      }, false);
+    }
+  document.getElementById('t_about').addEventListener('mousedown',
+    aboutDialog, false);
+      
   // sequence string
   document.getElementById('undo').addEventListener('click', clickButton, false);
   document.getElementById('redo').addEventListener('click', clickButton, false);
@@ -7678,19 +7749,26 @@ function clearPositioning () {
 // - base figure changed
 function separateFigure (id) {
   if (figures[id]) {
+    var selectFig = selectedFigure.id;
     // remove any previous move 'figure'
     var i = id - 1;
     if (figures[i]) {
       if (figures[i].moveTo || figures[i].curveTo || figures[i].moveForward) {
+        selectFig--;
         updateSequence (i, '', true);
         i--;
       }
     }
-    //i++;
+    i++;
+    // need to define bBox here
+    figures[i].bBox = myGetBBox(document.getElementById('figure' + i));
     // separate the figure itself
     if (moveClear (i)) {
-      selectFigure (i+1);
+      i++;
+      selectFig++;
     }
+    // select correct figure
+    setFigureSelected (selectFig);
     // find the next real figure and separate that one
     i++;
     while (figures[i]) {
@@ -7700,9 +7778,9 @@ function separateFigure (id) {
       } else if (figures[i].moveTo || figures[i].curveTo || figures[i].moveForward) {
         // remove move 'figures'
         updateSequence (i, '', true);
-        i--;
+      } else {
+        i++;
       }
-      i++;
     }
   }
 }
@@ -7736,29 +7814,42 @@ function separateFigures () {
 }
 
 // moveClear will move figure i clear from all previous figures
+// The return value is true when the figure is moved
 function moveClear (i) {
+  // put separateMargin in m
+  var m = separateMargin;
   // get the bBox set for the figure
-  var bBox = figures[i].bBox;
-  // only real (draggable) figures have a bBox. Only do something if
-  // this is true
-  if (bBox && figures[i].aresti) {
+  var bBoxI = figures[i].bBox;
+  // only do something for real Aresti figures
+  if (bBoxI && figures[i].aresti) {
     var moveDown = 0;
-    var boxTop = bBox.y;
-    var boxBottom = bBox.y + bBox.height;
-    var boxLeft = bBox.x;
-    var boxRight = bBox.x + bBox.width;
+    // loop through all nodes of relevant figures. Whenever we encounter
+    // an overlap the figure will be moved down and tests run anew.
     do {
       var repeat = false;
+      // go through all previous figures
       for (var j = i - 1; j >= 0; j--) {
         var bBoxJ = figures[j].bBox;
         if (bBoxJ && figures[j].aresti) {
-          if ((boxRight > bBoxJ.x) && (boxLeft < (bBoxJ.x + bBoxJ.width))) {
-            if (((boxBottom + moveDown) > bBoxJ.y) && ((boxTop + moveDown) < (bBoxJ.y + bBoxJ.height))) {
-              moveDown += bBoxJ.y + bBoxJ.height - (boxTop + moveDown);
-              repeat = true;
-              break;
+          // go through all nodes of previous figures
+          for (var k = 0; k < bBoxJ.nodes.length; k++) {
+            var bBoxK = bBoxJ.nodes[k];
+            // go through all nodes of this figure
+            for (var l = 0; l < bBoxI.nodes.length; l++) {
+              // set 
+              var bBox = bBoxI.nodes[l];
+              // check if we have overlap. If so, adjust movedown
+              if (((bBox.right + m) > bBoxK.x) && ((bBox.x - m) < (bBoxK.x + bBoxK.width))) {
+                if (((bBox.bottom + moveDown + m) > bBoxK.y) && ((bBox.y + moveDown - m) < (bBoxK.y + bBoxK.height))) {
+                  moveDown += bBoxK.y + bBoxK.height - (bBox.y + moveDown) + m;
+                  repeat = true;
+                }
+              }
+              if (repeat) break;
             }
+            if (repeat) break;
           }
+          if (repeat) break;
         }
       }
     } while (repeat);
@@ -7774,6 +7865,7 @@ function moveClear (i) {
       return true;
     }
   }
+  return false;
 }
 
 // drawFullFigure draws a complete Aresti figure in the sequenceSvg
@@ -7788,7 +7880,7 @@ function drawFullFigure (i, draggable, svg) {
   var paths = figures[i].paths;
   // return for no-draw figures
   if (!paths) return;
-// Create a group for the figure, draw it and apply to the SVG
+  // Create a group for the figure, draw it and apply to the SVG
   var group = document.createElementNS (svgNS, "g");
   group.setAttribute('id', 'figure' + i);
   // put the group in the DOM
@@ -7798,9 +7890,10 @@ function drawFullFigure (i, draggable, svg) {
     var box = drawShape (paths[j], group, bBox);
     if (box) bBox = box;
   }
-//  if (draggable) {
-    figures[i].bBox = group.getBBox();
-//  }
+
+  //figures[i].bBox = group.getBBox();
+  figures[i].bBox = myGetBBox (group);
+
   if ((selectedFigure.id === i) && draggable) {
     setFigureSelected (i);
   }
@@ -9246,12 +9339,16 @@ function checkOpenAeroVersion () {
 // 0 when v1 = v2
 // No letters can be used but any number of digits. Comparison will
 // continue until all digits of the longest version have been checked,
-// where a 0 will be counted as higher than no number at all.
-// E.g. ("1.4.0.0", "1.4.0") will return 1
+// where a 0 will be counted the same as no number at all.
+// E.g. ("1.4.0.0", "1.4.0") will return 0
 function compVersion (v1, v2) {
   var subV1 = v1.split('.');
   var subV2 = v2.split('.');
   var count = (subV1.length > subV2.length)? subV1.length : subV2.length;
+  // pad zeroes
+  while (subV1.length < count) subV1.push(0);
+  while (subV2.length < count) subV2.push(0);
+  
   for (var i = 0; i < count; i++) {
     if (i >= subV1.length) return -1;
     if (i >= subV2.length) return 1;
@@ -12251,6 +12348,8 @@ function OLANXSwitch (figStringIndex) {
 // when force is true, update will be done even when it seems no change is made
 function updateSequence (figNr, figure, replace, fromFigSel, force) {
 
+  // make sure figNr is handled as integer
+  figNr = parseInt(figNr);
   // check if figure is from Figure Selector and correct direction changers
   if (fromFigSel) {
     if (replace) var prevFig = figNr - 1; else var prevFig = figNr;
@@ -12364,13 +12463,19 @@ function updateSequence (figNr, figure, replace, fromFigSel, force) {
   if (fromFigSel) {
     // use automatic positioning if checked
     if (document.getElementById('positionClearAuto').checked) {
-      separateFigure (figNr + 1);
+      if (replace) {
+        // need to get bBox as it hasn't been loaded yet
+        figures[figNr].bBox = myGetBBox(document.getElementById('figure' + figNr));
+        separateFigure (figNr);
+      } else {
+        separateFigure (figNr + 1);
+      }
     }
   }
   
   // reselect correct figure
   if (selectedFigure.id !== null) selectFigure (selectedFigure.id, true);
-  
+
 }
 
 // comparePreviousSequence returns the old and new figure numbers that
@@ -12421,7 +12526,6 @@ function updateXYFlip(m, n) {
     }
   }
 }
-
 
 // parseSequence parses the sequence character string
 function parseSequence () {

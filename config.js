@@ -1,4 +1,4 @@
-// config.js 1.4.4.2
+// config.js 1.4.5
 
 // This file is part of OpenAero.
 
@@ -34,12 +34,14 @@
 // Define active version number of OpenAero
 // **************
 
-var version = '1.4.4.2';
+var version = '1.4.5';
 var versionNew = '<strong>OpenAero has been upgraded to version ' +
   version + '</strong><br>New features:<ul>' +
-  '<li>Added NZAC rules</li>' +
-  '<li>Added several alerts for Aresti Catalogue compliance</li>' +
-  '<li>Several improvements for tablets</li>' +
+  '<li>Added option to automatically keep new or changed figure ' +
+  'separate from others. This will only be done when the figure is ' +
+  'completely new or not similar to a replaced figure and only when ' +
+  'selected from the figure chooser. The option can be disabled in ' +
+  'Settings</li>' +
   '<li>Other bugfixes and improvements (check <a id="changelog">' +
   'changelog.txt</a> if interested)</li>' +
   '</ul>' +
@@ -126,6 +128,8 @@ var newTurnPerspective;
 // how far apart the starts of figures should at least be
 var minFigStartDist = lineElement * 3;
 var minFigStartDistSq = minFigStartDist * minFigStartDist;
+// how much margin to use when automatically separating figures
+var separateMargin = 2;
 
 /**********************************************************************
  * 

@@ -1,3 +1,14 @@
+1.4.5
+* removed close button from help pages. Forcing iOS app to open Safari for help pages
+* corrected bug that prevented sequence file opening on Windows
+
+1.4.4.3
+* improved algoritm for separating figures from each other
+* added option to automatically keep new or changed figure separate from others (Issue #126)
+* added close button to various help pages when using iOS app (Issue #156)
+* integrated "About" page into dialog
+* added version checking and info to "About" dialog
+
 1.4.4.2
 * corrected print.css location in print.html for app
 * fixed missing Styling and Expert Settings in 1.4.4

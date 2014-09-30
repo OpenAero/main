@@ -1,5 +1,5 @@
 /*
- general.css 1.4.4.2
+ general.css 1.4.4.3
  This file is part of OpenAero.
 
   OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -227,6 +227,8 @@ textarea {
   height: 25px;
   font-size: 14px;
 }
+
+/* sections and documentation */
 .section, .docs table tr {
   position: relative;
   float: left;
@@ -272,6 +274,18 @@ textarea {
   margin-left: auto;
   margin-right: auto;
 }
+.closeDocs {
+  position: fixed;
+  z-index: 999;
+  top: 1em;
+  right: 1em;
+  width: 3em;
+  height: 3em;
+  background: url('../buttons/close.png');
+  background-size: 3em 3em;
+  background-repeat: no-repeat;
+}
+
 #sequenceInfo {
   font-size: 12px;
 }
