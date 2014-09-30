@@ -2949,6 +2949,7 @@ function addEventListeners () {
     setTimeout(menuInactiveAll, 1000);
     }, true);  
   document.getElementById('file').addEventListener('change', openSequence, false);
+  document.getElementById('t_openSequence').addEventListener('mousedown', document.getElementById('file').click, false);
   document.getElementById('t_clearSequence').addEventListener('click', clearSequence, false);
   document.getElementById('t_saveSequence').addEventListener('click', saveSequence, false);
   document.getElementById('t_emailSequence').addEventListener('mousedown', emailSequence, false);
@@ -8809,7 +8810,7 @@ function openSequence () {
     // add event listeners to new element
     el2.addEventListener('change', openSequence, true);
     el2.addEventListener('mousedown', function(){
-      setTimeout(menuInactiveAll, 100);
+      setTimeout(menuInactiveAll, 1000);
     }, false);  
   }
 
