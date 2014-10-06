@@ -1,4 +1,4 @@
-﻿// OpenAero.js 1.4.5
+﻿// OpenAero.js 1.4.6
 // This file is part of OpenAero.
 
 //  OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -874,6 +874,8 @@ function updateUserTexts () {
     if (!value) value = '';
     els[i].innerHTML = value;
   }
+  // rebuild buttons and tooltips
+  buildButtons();
 }
 
 /************************************************
@@ -3690,7 +3692,8 @@ function addPlusMinElements () {
   }
 }
 
-// buildButtons builds the buttons on startup
+// buildButtons builds the buttons on startup, or after being called by
+// updateUserTexts
 function buildButtons () {
   var el = document.getElementsByClassName('button');
   for (var i = el.length - 1; i >=0; i--) {
@@ -5857,6 +5860,11 @@ function loadRules(ruleName, catName, programName) {
         var group = rules[i].replace(/-repeat/, '').split('=');
         if (checkCatGroup[group[0]]) checkCatGroup[group[0]].repeat = parseInt(group[1]);
         if (checkFigGroup[group[0]]) checkFigGroup[group[0]].repeat = parseInt(group[1]);
+      } else if (rules[i].match(/[^-]+-totrepeat=\d+$/)) {
+      // Apply [group]-totrepeat rules
+        var group = rules[i].replace(/-totrepeat/, '').split('=');
+        if (checkCatGroup[group[0]]) checkCatGroup[group[0]].totrepeat = parseInt(group[1]);
+        if (checkFigGroup[group[0]]) checkFigGroup[group[0]].totrepeat = parseInt(group[1]);
       } else if (rules[i].match(/[^-]+-minperfig=\d+$/)) {
       // Apply [group]-minperfig rules
         var group = rules[i].replace(/-minperfig/, '').split('=');
@@ -6009,6 +6017,11 @@ function checkRules () {
         // Aresti Catalogue Part I - 19
         if (regexUnlinkedRolls.test(figCheckLine[seqNr])) {
           checkAlert (userText.alert.unlinkedSameNotAllowed, false, seqNr);
+        }
+        // check if a spin is preceded by another roll element
+        // Aresti Catalogue 27
+        if (figCheckLine[seqNr].match(/[,;]9\.1[12]\./)) {
+          checkAlert (userText.alert.spinFirst, false, seqNr);
         }
       }
       // check if there is a roll on family 1.1.1
@@ -6346,7 +6359,8 @@ function checkRules () {
         }
       }
       // Check for repeats of the exact same catalog id when necessary
-      if ('repeat' in checkCatGroup[group]) {
+      if (('repeat' in checkCatGroup[group]) ||
+        ('totrepeat' in checkCatGroup[group])) {
         //console.log('Check repeat');
         var matches = [];
         for (var j = 0; j < groupMatch[group].length; j++) {
@@ -6358,14 +6372,28 @@ function checkRules () {
               [{'match':thisMatch.match, 'fig':thisMatch.fig}];
           }
         }
-        for (match in matches) {
-          if (('repeat' in checkCatGroup[group]) && (matches[match].length > checkCatGroup[group]['repeat'])) {
-            errFigs = figureNumbers (matches[match]);
-            checkAlert(group, 'repeat', errFigs);
-            log.push ('*** Error: Repeat ' + checkCatGroup[group]['repeat'] +
-              ' of group ' + group + '(' + errFigs + ')');
+        if ('repeat' in checkCatGroup[group]) {
+          for (match in matches) {
+            if (('repeat' in checkCatGroup[group]) && (matches[match].length > checkCatGroup[group]['repeat'])) {
+              errFigs = figureNumbers (matches[match]);
+              checkAlert(group, 'repeat', errFigs);
+              log.push ('*** Error: Repeat ' + checkCatGroup[group]['repeat'] +
+                ' of group ' + group + '(' + errFigs + ')');
+            }
           }
         }
+        if ('totrepeat' in checkCatGroup[group]) {
+          var count = 0;
+          for (match in matches) {
+            if (matches[match].length > 1) count++;
+          }
+          if (count > checkCatGroup[group].totrepeat) {
+            errFigs = figureNumbers (matches[match]);
+            checkAlert(group, 'totrepeat', errFigs);
+            log.push ('*** Error: Total Repeat ' + checkCatGroup[group].totrepeat +
+              ' of group ' + group + '(' + errFigs + ')');
+          }
+        }        
       }
     } else {
       // No occurrences of this group, was there a minimum?
@@ -6521,6 +6549,11 @@ function checkAlert (value, type, figNr) {
       alertMsgs.push(alertFig + 'Not more than ' +
         checkCatGroup[value]['repeat'] + ' exact repetitions of ' +
         checkCatGroup[value]['name'] + ' allowed');
+      break;
+    case 'totrepeat':
+      alertMsgs.push(alertFig + 'Not more than ' +
+        checkCatGroup[value].totrepeat + ' instances of exact repetitions of ' +
+        checkCatGroup[value].name + ' allowed');
       break;
     case 'figmax':
       alertMsgs.push(alertFig + 'Not more than ' +
@@ -11701,6 +11734,15 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
             // set lowKFlick to true after anything but a line
             if (roll[rollnr][j].type !== 'line') {
               lowKFlick = true;
+            }
+            // Check if posspin and negspin are on correctly loaded line
+            // Crossover spins will create alert when nonArestiRolls is
+            // not checked (Aresti Catalogue item 26)
+            if (!document.getElementById('nonArestiRolls').checked) {
+              if (((roll[rollnr][j].type == 'posspin') && !NegLoad) ||
+                ((roll[rollnr][j].type == 'negspin') && NegLoad)) {
+                checkAlert (userText.alert.noCrossoverSpin, false, seqNr);
+              }
             }
             var rollI = rollBase.indexOf(rollAtt + roll[rollnr][j].pattern);
             if (rollI >= 0) {

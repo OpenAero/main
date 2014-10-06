@@ -46,6 +46,8 @@
 * OpenAero 1.4.3
 * -corrected rules for 8.6.1-8 column 3&4
 * -corrected conv-downstop to allow 9.8.5.2 (4x8) in Unlimited Unknown
+* OpenAero 1.4.6
+* -corrected 7.8.15.1 to 7.8.15.3 in Intermediate Unknown
 */
 
 //#######################################################################################
@@ -1215,7 +1217,7 @@ rules.push("7.4.3.1 NR");
 rules.push("7.8.4.1  NOU ; NF:1");
 rules.push("7.8.8.1  NOU ; NF:3");
 rules.push("7.8.13.1 NOU");
-rules.push("7.8.15.1 NOU");
+rules.push("7.8.15.3 NOU");
 rules.push("7.8.16.1 NOU");
 rules.push("7.8.16.4 NOU");
 

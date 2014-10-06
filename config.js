@@ -1,4 +1,4 @@
-// config.js 1.4.5
+// config.js 1.4.6
 
 // This file is part of OpenAero.
 
@@ -34,14 +34,11 @@
 // Define active version number of OpenAero
 // **************
 
-var version = '1.4.5';
+var version = '1.4.6';
 var versionNew = '<strong>OpenAero has been upgraded to version ' +
   version + '</strong><br>New features:<ul>' +
-  '<li>Added option to automatically keep new or changed figure ' +
-  'separate from others. This will only be done when the figure is ' +
-  'completely new or not similar to a replaced figure and only when ' +
-  'selected from the figure chooser. The option can be disabled in ' +
-  'Settings</li>' +
+  '<li>Added NZAC logo</li>' +
+  '<li>Added alerts for illegal spins</li>' +
   '<li>Other bugfixes and improvements (check <a id="changelog">' +
   'changelog.txt</a> if interested)</li>' +
   '</ul>' +

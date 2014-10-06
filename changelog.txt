@@ -1,3 +1,11 @@
+1.4.6
+* corrected 7.8.15.1 to 7.8.15.3 in CIVA Intermediate Unknown rules
+* added NZAC logo
+* several updates and improvements to manual.html
+* added alerts for crossover spin and roll before spin
+* fixed issue that caused tooltips not to be changed when changing language
+* added 'totrepeat' directive to rule parsing (was also in OLAN)
+
 1.4.5
 * removed close button from help pages. Forcing iOS app to open Safari for help pages
 * corrected bug that prevented sequence file opening on Windows

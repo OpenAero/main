@@ -83,6 +83,8 @@ lang.en = {
   'family111RollMissing' : 'Family 1.1.1 without roll not allowed',
   'maxTwoRotationElements' : 'Maximum two combined rotation ' +
     'elements allowed',
+  'noCrossoverSpin' : 'Crossover spins are not allowed',
+  'spinFirst' : 'No roll allowed before spin on same line',
   'unlinkedSameNotAllowed' : 'Unlinked rolls of the same type and ' +
     'the same direction are not allowed'
 }, // end alert array
