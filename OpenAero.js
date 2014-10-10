@@ -24,8 +24,12 @@
 // **************************************************************
 
 // Define window objects for saving files
-if (!window.BlobBuilder && window.WebKitBlobBuilder) window.BlobBuilder = window.WebKitBlobBuilder;
-if (!window.requestFileSystem && window.webkitRequestFileSystem) window.requestFileSystem = window.webkitRequestFileSystem;
+if (!window.BlobBuilder && window.WebKitBlobBuilder) {
+  window.BlobBuilder = window.WebKitBlobBuilder;
+}
+if (!window.requestFileSystem && window.webkitRequestFileSystem) {
+  window.requestFileSystem = window.webkitRequestFileSystem;
+}
 var savefile = [];
 // interval id
 var intervalID = [];
@@ -638,7 +642,7 @@ function saveDialog (message, name, ext) {
 }
 
 // printDialog shows or hides the print dialog
-// when false, the dialog is closed
+// When false, the dialog is closed
 function printDialog(show) {
   // hide all menus
   menuInactiveAll();
@@ -647,6 +651,11 @@ function printDialog(show) {
     missingInfoCheck(function(){
 
       document.getElementById('printDialog').classList.remove ('noDisplay');
+      document.getElementById('printMulti').classList.add ('noDisplay');
+      document.getElementById('printForms').classList.add ('section2cols');
+      document.getElementById('printForms').classList.remove ('section3cols');
+      document.getElementById('printOptions').classList.add ('section2cols');
+      document.getElementById('printOptions').classList.remove ('section3cols');
   
       // by default, disable "Print Super Family"
       var el = document.getElementById('printSF');
@@ -659,22 +668,32 @@ function printDialog(show) {
       }
     });
   } else {
+    // clear fileList in case we were in printMultiDialog
+    fileList = [];
+
     document.getElementById('printDialog').classList.add ('noDisplay');
   }
 }
 
-// printMultiDialog shows or hides the print multi dialog
-// when false, the dialog is closed
-function printMultiDialog(show) {
+// printMultiDialog shows the print multi file dialog
+// Closing is done by printDialog
+function printMultiDialog() {
   // hide all menus
   menuInactiveAll();
+
+  // clear the file list
+  fileList = [];
+  clearFileListContainer (document.getElementById('fileDropPrintFiles'));
+
+  var el = document.getElementById('printMultiCurrentRules');
+  el.innerHTML = (rulesActive)? rulesActive : userText.none;
   
-  var div = document.getElementById('printMulti');
-  if (show) {
-    div.classList.remove ('noDisplay');
-  } else {
-    div.classList.add ('noDisplay');
-  }
+  document.getElementById('printDialog').classList.remove ('noDisplay');
+  document.getElementById('printMulti').classList.remove ('noDisplay');
+  document.getElementById('printForms').classList.add ('section3cols');
+  document.getElementById('printForms').classList.remove ('section2cols');
+  document.getElementById('printOptions').classList.add ('section3cols');
+  document.getElementById('printOptions').classList.remove ('section2cols');
 }
 
 // settingsDialog shows or hides the settings dialog
@@ -2785,7 +2804,11 @@ function doOnLoad () {
     // Setup the drag n drop listeners for multi file checking
     var dropZone = document.getElementById('fileDrop');
     dropZone.addEventListener('dragover', handleDragOver, false);
-    dropZone.addEventListener('drop', updateMulti, false);
+    dropZone.addEventListener('drop', updateCheckMulti, false);
+    // Setup the drag n drop listeners for multi file printing
+    var dropZone = document.getElementById('fileDropPrint');
+    dropZone.addEventListener('dragover', handleDragOver, false);
+    dropZone.addEventListener('drop', updatePrintMulti, false);
     // add onresize event for resizing the sequence text window
     window.onresize = windowResize;
     // Parse the figures file
@@ -2820,7 +2843,7 @@ function doOnLoad () {
     // in Sequence info
     if (!activeSequence.xml) {
       function f(c) {
-        activeSequence.xml = c.sequence;
+        activeSequence.xml = c;
         activateXMLsequence (activeSequence.xml);
       }
       getLocal('sequence', f);
@@ -2981,7 +3004,7 @@ function addEventListeners () {
   document.getElementById('t_saveQueueFile').addEventListener('click', saveQueue, false);
   
   document.getElementById('t_checkMultipleSeq').addEventListener('mousedown', function(){checkMultiDialog(true)}, false);
-  //document.getElementById('t_printMultipleSeq').addEventListener('mousedown', function(){printMultiDialog(true)}, false);
+  document.getElementById('t_printMultipleSeq').addEventListener('mousedown', printMultiDialog, false);
   document.getElementById('rulesFile').addEventListener('change', openRulesFile, false);
   document.getElementById('t_settings').addEventListener('click', settingsDialog, false);
   document.getElementById('t_installChromeAppTitle').addEventListener ('mousedown', installChromeApp, false);
@@ -3083,13 +3106,12 @@ function addEventListeners () {
   document.getElementById('t_checkSequenceLog').addEventListener('click', function(){checkSequence('log')}, false);
   
   // check multiple dialog
-  document.getElementById('checkMultiFiles').addEventListener('change', function(){updateMulti(this)}, false);
+  document.getElementById('checkMultiFiles').addEventListener('change', function(){updateCheckMulti(this)}, false);
   document.getElementById('t_checkSequences').addEventListener('mousedown', checkMulti, false);
   document.getElementById('t_checkMultiClose').addEventListener('click', function(){checkMultiDialog()}, false);
   
   // print multiple dialog
-  document.getElementById('printMultiFiles').addEventListener('change', function(){printMulti()}, false);
-  document.getElementById('t_printMultiClose').addEventListener('mousedown', function(){printMultiDialog()}, false);
+  document.getElementById('printMultiFiles').addEventListener('change', function(){updatePrintMulti(this)}, false);
 
   // settings dialog
   document.getElementById('manual.html_settings').addEventListener('mousedown', function(){
@@ -3211,7 +3233,7 @@ function checkForApp () {
         // Create a box asking the user if they want to install the
         // App, unless installChromeAppAsked is present. Also wait until
         // loadComplete
-        if (!c.installChromeAppAsked) {
+        if (!c) {
           var id = window.setInterval (function(){
             if (loadComplete) {
               window.clearInterval (intervalID.installChromeApp);
@@ -3432,12 +3454,12 @@ function checkBrowser () {
     function f(c) {
       var d = new Date();
       var t = parseInt(d.getTime());
-      if (c.noChromeWarned) {
-        if (c.noChromeWarned < t) {
-          c.noChromeWarned = false;
+      if (c) {
+        if (c < t) {
+          c = false;
         }
       }
-      if (!c.noChromeWarned) {
+      if (!c) {
         storeLocal ('noChromeWarned', t + 2419200000);
         alertBox (sprintf (userText.browserDetect, browserString) +
           userText.getChrome);
@@ -3561,11 +3583,9 @@ function clickButton () {
         changeSequenceInfo();
         if (activeSequence.text == sequenceText.value) {
           draw();
-        }/* else checkSequenceChanged();*/
+        }
         activeSequence.addUndo = true;
         setUndoRedo();
-        // select no figure
-        selectFigure (false);
       }      
       // don't continue. Not a figure function
       return;
@@ -3577,11 +3597,9 @@ function clickButton () {
         changeSequenceInfo();
         if (activeSequence.text == sequenceText.value) {
           draw();
-        }/* else checkSequenceChanged();*/
+        }
         activeSequence.addUndo = true;
         setUndoRedo();
-        // select no figure
-        selectFigure (false);
       }
       // don't continue. Not a figure function
       return;
@@ -3980,10 +3998,58 @@ function setOptions () {
   getStyle();
 }
 
-// loadSettingsStorage will load the settings from storage 'settings'
-function loadSettingsStorage () {
-  function f (c) {
-    var settings = c.settings;
+// loadSettingsXML will load the settings from provided XML data
+// The function returns an object containing the loaded settings, or
+// false if no settings were loaded
+function loadSettingsXML (xml) {
+  var s = {};
+  if (xml) {
+    // myElement will hold every entry as a node
+    var myElement = document.createElement('div');
+    // myTextArea will translate HTML escape characters to regular ones
+    var myTextArea = document.createElement('textarea');
+    myElement.innerHTML = xml;
+    var rootNode = myElement.getElementsByTagName("sequence")[0];
+    if (!rootNode) return false;
+    var settings = rootNode.getElementsByTagName("settings")[0];
+    if (!settings) return false;
+    var nodes = settings.getElementsByTagName("setting");
+    // Put every element in the correct field
+    for (var i = 0; i < nodes.length; i++) {
+      var key = nodes[i].getElementsByTagName("key")[0].innerText;
+      var val = nodes[i].getElementsByTagName("value")[0].innerHTML;
+      // only adjust settings that are in loadSettings (config.js)
+      if (loadSettings.indexOf(key) != -1) {
+        if (val) {
+          // translate escape characters by browser through myTextArea
+          myTextArea.innerHTML = val;
+          // e will be the field, only put a value when it exists
+          var e = document.getElementById(key);
+          if (e) {
+            if (e.type === 'checkbox') {
+              if (val === 'true') {
+                e.checked = 'checked';
+              } else {
+                e.removeAttribute ('checked');
+              }
+            } else {
+              e.value = myTextArea.value;
+            }
+            s[key] = myTextArea.value;
+          }
+        }
+      }
+    }
+  }
+  if (s != {}) return s; else return false;
+}
+  
+// loadSettingsStorage will load the settings from storage
+// When location is not set it will default to 'settings'
+function loadSettingsStorage (location) {
+  if (!location) location = 'settings';
+  
+  function f (settings) {
     if (settings) {
       settings = settings.split('|');
       for (var i = settings.length - 1; i >= 0; i--) {
@@ -4023,11 +4089,14 @@ function loadSettingsStorage () {
       changeRollFontSize (document.getElementById('rollFontSize').value);
     }
   }
-  if (storage) getLocal ('settings', f);
+  
+  if (storage) getLocal (location, f);
 }
 
-// saveSettingsStorage will save the settings to storage 'settings'
-function saveSettingsStorage () {
+// saveSettingsStorage will save the settings to storage
+// When location is not set it will default to 'settings'
+function saveSettingsStorage (location) {
+  if (!location) location = 'settings';
   if (storage) {
     var settings = [];
     for (var i = saveSettings.length - 1; i >=0; i--) {
@@ -4044,7 +4113,7 @@ function saveSettingsStorage () {
       }
       settings.push (el.id + '=' + value);
     }
-    storeLocal ('settings', settings.join('|'));
+    storeLocal (location, settings.join('|'));
   }
 }
 
@@ -5063,8 +5132,7 @@ function addUpdateListener () {
 // checkUpdateDone checks if an update was just done. If so, it presents
 // a dialog to the user
 function checkUpdateDone() {
- function f (c) {
-    var oldVersion = c.version;
+ function f (oldVersion) {
     if (oldVersion !== version) {
       alertBox (versionNew);
       // create link for changelog
@@ -5431,9 +5499,6 @@ function logoChooser() {
     link.addEventListener ('click', selectLogo, false);
     div.appendChild(link);
     link.appendChild(buildLogoSvg(logoImages[logoName], 0, 0, width, height));
-/*    link.setAttribute('style', 'margin-top:' + 
-      parseInt((height - link.firstChild.getBBox().height) / 2) + 'px;');
-    console.log(link.getAttribute('style'));*/
   }
 }
 
@@ -6374,10 +6439,10 @@ function checkRules () {
         }
         if ('repeat' in checkCatGroup[group]) {
           for (match in matches) {
-            if (('repeat' in checkCatGroup[group]) && (matches[match].length > checkCatGroup[group]['repeat'])) {
+            if (matches[match].length > checkCatGroup[group].repeat) {
               errFigs = figureNumbers (matches[match]);
               checkAlert(group, 'repeat', errFigs);
-              log.push ('*** Error: Repeat ' + checkCatGroup[group]['repeat'] +
+              log.push ('*** Error: Repeat ' + checkCatGroup[group].repeat +
                 ' of group ' + group + '(' + errFigs + ')');
             }
           }
@@ -6385,10 +6450,18 @@ function checkRules () {
         if ('totrepeat' in checkCatGroup[group]) {
           var count = 0;
           for (match in matches) {
-            if (matches[match].length > 1) count++;
+            if (matches[match].length > 1) {
+              count++;
+            } else delete matches[match];
           }
           if (count > checkCatGroup[group].totrepeat) {
-            errFigs = figureNumbers (matches[match]);
+            errFigs = [];
+            for (match in matches) {
+              for (var i = 0; i < matches[match].length; i++) {
+                errFigs.push (matches[match][i]);
+              }
+            }
+            errFigs = figureNumbers (errFigs);
             checkAlert(group, 'totrepeat', errFigs);
             log.push ('*** Error: Total Repeat ' + checkCatGroup[group].totrepeat +
               ' of group ' + group + '(' + errFigs + ')');
@@ -6510,11 +6583,11 @@ function checkRules () {
 
 // figureNumbers is called by checkRules. It takes a match array with
 // i items {'match':xxx, 'fig':xxx} and returns the fig numbers as a
-// comma-separated line
+// comma-separated line. Do not add the same number multiple times.
 function figureNumbers (match) {
   var figs = [];
   for (var i = 0; i < match.length; i++) {
-    figs.push (match[i].fig);
+    if (figs.indexOf (match[i].fig) === -1) figs.push (match[i].fig);
   }
   return figs.join(',');
 }
@@ -8506,6 +8579,9 @@ function draw () {
     setYAxisOffset (yAxisOffsetDefault);
     Direction = 0;
   }
+  // get current rollFontSize and numberInCircle settings
+  changeRollFontSize (document.getElementById('rollFontSize').value);
+  numberInCircle = (document.getElementById('numberInCircle').checked)? true : false;
 
   //debug.appendChild(document.createTextNode('Parsing sequence'));
     
@@ -8788,6 +8864,7 @@ function clearSequence () {
       fields[length].value = '';
     }
     // reload sequence
+    unloadRules();
     checkSequenceChanged();
     displayAlerts();
     sequenceSaved = true;
@@ -8815,7 +8892,6 @@ function exampleSequence () {
   // Reloading as possible solution for iPad crashing? Doesn't seem to help...
   // window.location.href = ('http://devel.openaero.net?s=' + uriEncode(exampleSequences[key]));
   activateXMLsequence(exampleSequences[key]);
-  selectFigure (false);
 }
 
 // openSequence will load a sequence from a .seq file
@@ -8875,7 +8951,8 @@ function openRulesFile () {
 // file    = file object from file input element
 // handler = name of correct handler to execute after loading. Function
 //           names are loaded<handler>
-function openFile (file, handler) {
+// params  = parameters, if any
+function openFile (file, handler, params) {
   if(file){
     console.log('Reading file: ' + file.name);
     var reader = new FileReader();
@@ -8883,6 +8960,9 @@ function openFile (file, handler) {
     // Handle success, and errors. With onload the correct loading
     // function will be called
     switch (handler) {
+      case 'FileList':
+        reader.onload = function(e){loadedFileList (e, params)};
+        break;
       case 'SequenceMulti':
         reader.onload = loadedSequenceMulti;
         break;
@@ -8905,9 +8985,16 @@ function openFile (file, handler) {
 }
 
 // removeFileListFile removes a file from fileList
-function removeFileListFile(el, f) {
-  fileList.splice (el.id.replace(/^removeFileListFile/, ''), 1);
-  f();
+function removeFileListFile(el) {
+  var id = el.id.replace(/^removeFileListFile/, '');
+  var container = el.parentNode.parentNode;
+  console.log ('Removing file:' + fileList[id].name);
+  fileList.splice (id, 1);
+  // we need to rebuild because splice changes the indexes
+  clearFileListContainer (container);
+  for (var i = 0; i < fileList.length; i++) {
+    addToFileList (i, container);
+  }
 }
   
 // checkMultiDialog shows or hides the multiple sequence check dialog
@@ -8915,6 +9002,10 @@ function removeFileListFile(el, f) {
 function checkMultiDialog(show) {
   // hide all menus
   menuInactiveAll();
+  
+  // clear the file list
+  fileList = [];
+  clearFileListContainer (document.getElementById('fileDropFiles'));
   
   var div = document.getElementById('checkMulti');
   if (show) {
@@ -8924,14 +9015,30 @@ function checkMultiDialog(show) {
   } else {
     // clear fileList
     fileList = [];
-    var el = document.getElementById('fileDropFiles');
-    while (el.childNodes.length > 0) el.removeChild(el.lastChild);
     div.classList.add ('noDisplay');
   }
 }
 
-// updateMulti is called after dragging & dropping files to multi field
-function updateMulti (evt) {
+// clearFileListContainer is called to clear file list containers
+function clearFileListContainer (container) {
+  while (container.childNodes.length > 0) {
+    container.removeChild(container.lastChild);
+  }
+  // make sure we remove all els with fileListFileRemove class
+  var removeClass = 'fileListFileRemove';
+  var e = document.getElementsByClassName (removeClass);
+  for (var i = e.length - 1; i >= 0; i--) {
+    e[i].parentNode.removeChild (e[i]);
+  }
+  // show orFileDrop text
+  container.parentNode.firstChild.classList.remove ('noDisplay');
+}
+  
+// updateFileList is called by updateCheckMulti and updatePrintMulti to
+// update the fileList object
+// - evt defines where the files come from
+// - el is the element that holds the file list
+function updateFileList (evt, el) {
   if (evt) {
     if (evt.dataTransfer) {
       evt.stopPropagation();
@@ -8944,24 +9051,75 @@ function updateMulti (evt) {
       setTimeout(function(){evt.parentNode.reset();}, 400);    
     }
     for (var i = 0; i < files.length; i++) {
-      fileList.push (files[i]);
+      // check if the file is not already in fileList
+      for (var j = 0; j < fileList.length; j++) {
+        // check for lastModfiedDate, name and size as full path is not
+        // available
+        if ((files[i].lastModifiedDate.toString() === fileList[j].lastModifiedDate.toString()) &&
+          (files[i].name === fileList[j].name) &&
+          (files[i].size === fileList[j].size)) {
+          console.log('Duplicate, not adding: ' + fileList[j].name);
+          j = fileList.length + 1;
+        }
+      }
+      if (j <= fileList.length) {
+        openFile (
+          files[i],
+          'FileList',
+          { 'container' : el,
+            'file' : files[i]
+          }
+        );
+      }
     }
   }
-  var el = document.getElementById('fileDropFiles');
-  while (el.childNodes.length > 0) el.removeChild(el.lastChild);
-  for (var i = 0; i < fileList.length; i++) {
-    var div = document.createElement ('div');
-    var span = document.createElement ('span');
-    span.classList.add ('fileListFileRemove');
-    span.id = 'removeFileListFile' + i;
-    span.addEventListener ('mousedown', function(){
-      removeFileListFile(this, updateMulti);
-      }, false);
-    div.appendChild (span);
-    var name = document.createTextNode (fileList[i].name);
-    div.appendChild (name);
-    el.appendChild(div);
+}
+
+// loadedFileList is called when a file for fileList is loaded
+function loadedFileList (e, params) {
+  var sequence = loadSequence (e.target.result);
+  // only add to fileList when a valid sequence was detected
+  if (sequence) {
+    params.file.sequence = sequence;
+    fileList.push (params.file);
+    addToFileList (fileList.length - 1, params.container);
+  } else {
+    alertBox (userText.multiNoSequence);
   }
+}
+
+// addToFileList is called to add a file to a file list
+// id        = id of fileList element
+// container = where the div will be put
+function addToFileList (id, container) {
+  // hide the orFileDrop div
+  container.parentNode.firstChild.classList.add ('noDisplay');
+  // build and add div
+  var div = document.createElement ('div');
+  var span = document.createElement ('span');
+  span.classList.add ('fileListFileRemove');
+  span.id = 'removeFileListFile' + id;
+  span.addEventListener ('mousedown', function(){
+    removeFileListFile(this);
+    }, false);
+  div.appendChild (span);
+  var name = document.createTextNode (fileList[id].name);
+  div.appendChild (name);
+  container.appendChild(div);
+  // adjust image size for saving
+  saveImageSizeAdjust();
+}
+
+// updateCheckMulti is called after dragging & dropping files to check
+// multi field or adding files with file chooser
+function updateCheckMulti (evt) {  
+  updateFileList (evt, document.getElementById('fileDropFiles'));
+}
+
+// updatePrintMulti is called after dragging & dropping files to print
+// multi field or adding files with file chooser
+function updatePrintMulti (evt) {
+  updateFileList (evt, document.getElementById('fileDropPrintFiles'));
 }
 
 // checkMulti is called to open multiple files for checking.
@@ -9033,26 +9191,13 @@ function loadedSequenceMulti(evt, body) {
   pre.appendChild(document.createTextNode('File: ' + evt.target.file.name + '\n'));
 
   // Obtain the read file data  
-  var fileString = evt.target.result;
-  // Check if we have an OLAN sequence or an OpenAero XML sequence.
-  // If the sequence file starts with '<', assume it's an XML sequence.
-  // If it starts with '[', assume it's an OLAN sequence.
-  // In all other cases throw an error.
-  if (fileString.charAt(0) === '<') {
-    OLANBumpBugCheck = false;
-  } else if (fileString.charAt(0) === '[') {
-    // OLAN sequence, transform to XML
-    fileString = OLANtoXML (fileString);
-  } else {
+  var fileString = loadSequence (evt.target.result);
+  if (fileString === false) {
     pre.appendChild (document.createTextNode(userText.notSequenceFile + '\n'));
-    console.log('*** ' + userText.notSequenceFile);
-    fileString = false;
   }
   
-  if (fileString) {    
+  if (fileString) { 
     activateXMLsequence (fileString, true);
-    // make sure no figure is selected
-    selectFigure (false);
   
     // Activate the loading of the checking rules (if any)
     if (document.getElementById('multiOverrideRules').checked) {
@@ -9138,28 +9283,22 @@ function errorMulti(e, body) {
   if (multi.count == multi.total) finishMulti(body);
 }
 
+/***********************************************************************
+ * 
+ * Sequence file handling
+ * 
+ **********************************************************************/
+ 
 // loadedSequence will be called when a sequence file has been loaded
 function loadedSequence(evt) {
   // Obtain the read file data  
-  var fileString = evt.target.result;
-  // Check if we have an OLAN sequence or an OpenAero XML sequence
-  // If the sequence file starts with '<', assume it's an XML sequence
-  // If it starts with '[', assume it's an OLAN sequence
-  // In other cases, throw an error
-  if (fileString.charAt(0) === '<') {
-    OLANBumpBugCheck = false;
-  } else if (fileString.charAt(0) === '[') {
-    // OLAN sequence, transform to XML
-    fileString = OLANtoXML (fileString);
-  } else {
+  var fileString = loadSequence (evt.target.result);
+  if (fileString === false) {
     alertBox(userText.notSequenceFile);
-    console.log('*** ' + userText.notSequenceFile);
     return;
   }
 
   activateXMLsequence (fileString, true);
-  // make sure no figure is selected
-  selectFigure (false);
 
   // update the sequence if OLANSequence was true
   if (OLANSequence) {
@@ -9179,15 +9318,9 @@ function loadedSequence(evt) {
 // loadedQueue will be called when a queue file has been loaded
 function loadedQueue(evt) {
   // Obtain the read file data  
-  var fileString = evt.target.result;
-  // Check if we have an OLAN sequence or an OpenAero XML sequence
-  // If the sequence file starts with '<', assume it's an XML sequence
-  if (fileString.charAt(0) === '<') {
-    OLANBumpBugCheck = false;
-  } else {
-    // OLAN sequence, transform to XML
-    fileString = OLANtoXML (fileString);
-  }
+  var fileString = loadSequence (evt.target.result);
+  if (fileString === false) return;
+  
   // save current sequence
   var sequence = activeSequence.xml;
 
@@ -9208,13 +9341,34 @@ function loadedQueue(evt) {
       addToQueue();
     }
   }
-  selectFigure (false);
+
   // restore previous sequence or start with empty
   activateXMLsequence (sequence);
   // show queue
   showQueue();
 }
-  
+
+// loadSequence loads a sequence file and does some checks. The
+// return value is an XML sequence or false
+function loadSequence (fileString) {
+  // Check if we have an OLAN sequence or an OpenAero XML sequence.
+  // If the sequence file starts with '<sequence', assume it's an XML
+  // sequence.
+  // If it starts with '[', assume it's an OLAN sequence.
+  // In all other cases throw an error.
+  if (fileString.match (/^<sequence/)) {
+    // this is an OpenAero sequence, no need to do OLAN checks
+    OLANBumpBugCheck = false;
+  } else if (fileString.charAt(0) === '[') {
+    // OLAN sequence, transform to XML
+    fileString = OLANtoXML (fileString);
+  } else {
+    console.log('*** ' + userText.notSequenceFile);
+    fileString = false;
+  }
+  return fileString;
+}
+
 // OLANtoXML transforms an OLAN file to OpenAero XML
 function OLANtoXML (string) {
   OLANSequence = true;
@@ -9252,6 +9406,9 @@ function activateXMLsequence (xml, noLoadRules) {
   
   // first rebuild the svg container to free up memory
   rebuildSequenceSvg();
+  
+  // make sure no figure is selected
+  selectFigure (false);
   
   /** debugging, clear debug element first */
   //while (debug.firstChild) debug.removeChild(debug.firstChild);
@@ -9300,9 +9457,6 @@ function activateXMLsequence (xml, noLoadRules) {
     }
     var logo = document.getElementById('logo').value;
     if (logoImages[logo]) selectLogo(logo);
-
-    //logo = document.getElementById('logo').value;
-    //if (logoImages[logo]) selectLogo(logo);
 
     checkOpenAeroVersion();
   }
@@ -9872,9 +10026,7 @@ function getLocal(name, f) {
     if (chromeApp.active) {
       chrome.storage.local.get (name, f);
     } else {
-      var c = [];
-      c[name] = localStorage.getItem (name);
-      f (c);
+      f (localStorage.getItem (name));
     }
   } else {
     return false;
@@ -9906,90 +10058,23 @@ function parseAircraft (t) {
 
 // printForms will print selected forms
 function printForms () {
-  buildForms (true);
-}
-
-// buildForms will format selected forms for print or save. When
-// print=true, a print is created. Otherwise an SVG holding the forms is
-// returned.
-function buildForms (print) {
   // open the print window in time to prevent popup blocking
-  if (print && !chromeApp.active) {
+  if (!chromeApp.active) {
     var win = window.open ('',"printForms",'width=800,height=600,' +
       'top=50,location=no,menubar=no,scrollbars=yes,status=no,toolbar=no');
   }
-  var pages = ['A', 'B', 'C', 'PilotCards', 'Grid'];
-  iacForms = document.getElementById('iacForms').checked;
-  var activeFormSave = activeForm;
-  var svg = '';
-  var translateY = 0;
-  // save the miniFormA value and set miniFormA depending on checkbox
-  var miniFormASave = (miniFormA)? true : false;
-  var filename = activeFileName();
-  if (filename === '') filename = 'sequence';
-
-  // make sure no figure is selected
-  selectFigure (false);
-    
-  // hide print dialog
-  printDialog();
-
-  if (print) {
-    //if (chromeApp.active) {
-      var body = document.createElement('body');
-    //} else {
-    //}
+  // set a short default wait
+  var wait = 50;
+  if (fileList.length > 0) {
+    infoBox (
+      sprintf(userText.printMultiWait, fileList.length),
+      userText.printMulti);
+    // set wait to 1 second when printing multi to build infoBox
+    wait = 1000;
   }
 
-  for (var i = 0; i < pages.length; i++) {
-    if (document.getElementById('printForm' + pages[i]).checked) {
-      activeForm = pages[i];
-      if ((activeForm == 'B') && document.getElementById('printMiniFormAonB').checked) {
-        miniFormA = true;
-      } else if ((activeForm == 'C') && document.getElementById('printMiniFormAonC').checked) {
-        miniFormA = true;
-      } else {
-        miniFormA = false;
-      }
-      // set correct drawing Form for pilot cards
-      if (activeForm == 'PilotCards') {
-        activeForm = (document.getElementById('pilotCardFormB').checked)? 'B' : 'C';
-      }
-      draw ();
-      // reset activeForm for buildForm
-      activeForm = pages[i];
-      divClass = (i < (pages.length - 1))? 'breakAfter' : '';
-      
-      var formSVG = buildForm (SVGRoot, print);
-      
-      if (print) {
-        var div = document.createElement('div');
-        div.setAttribute ('class', divClass);
-        div.innerHTML = formSVG;
-        body.appendChild (div);
-      } else {
-        // remove newlines from SVG to simplify regex matching
-        formSVG = formSVG.replace (/[\n\r]/g, '');
-        // remove end tag from all SVGs
-        formSVG = formSVG.replace (/<\/svg>$/, '');
-        if (svg === '') {
-          // use first SVG start tag and adjust width
-          svg = formSVG.replace (/(<svg[^>]*width=")([^"]*)/, '$1' +
-            document.getElementById ('imageWidth').value);
-        } else {
-          // remove subsequent SVGs start tags
-          formSVG = formSVG.replace (/^.*?<svg[^>]*>/, '');
-          // remove xml declarations
-          formSVG = formSVG.replace (/<\?xml[^>]*>/, '');
-          // add translated group with formSVG
-          svg += '<g transform="translate (0,' + translateY + ')">' +
-            formSVG + '</g>';
-        }
-        translateY += 1130 + parseInt(document.getElementById ('pageSpacing').value);
-      }
-    }
-  }
-  if (print) {
+  // give the wait infoBox some time to be drawn
+  setTimeout (function(){
     // Print the constructed pages. For the App an asynchronous callback
     // is used. For the web version we work synchronous but use
     // setTimeout to prevent browser blocking.
@@ -10003,14 +10088,14 @@ function buildForms (print) {
         var win = w.contentWindow;
         win.onLoad = function() {
           win.document.title = activeFileName();
-          win.document.body = body;
+          win.document.body = buildForms (true);
           console.log(win.document.head);
           win.print();
           win.close();
         };
       });
     } else {
-      win.document.body = body;
+      win.document.body = buildForms (true);
       win.document.title = activeFileName();
       var style = document.createElement ('style');
       style.type = 'text/css';
@@ -10019,12 +10104,162 @@ function buildForms (print) {
       '.breakAfter {display:block; page-break-after:always;}' +
       'svg {height: 100%; page-break-inside:avoid;}';
       win.document.head.appendChild(style);
-
+  
       // use setTimeout for printing to prevent blocking and
       // associated warnings by the browser
       setTimeout (function(){win.print(); win.close();}, 200);
     }
-  } else {
+  }, wait);
+}
+
+// buildForms will format selected forms for print or save. When
+// print=true, a body is created and returned.
+// Otherwise an SVG holding the forms is returned.
+function buildForms (print) {
+  var pages = ['A', 'B', 'C', 'PilotCards', 'Grid'];
+  iacForms = document.getElementById('iacForms').checked;
+  var activeFormSave = activeForm;
+  var svg = '';
+  var translateY = 0;
+  // save the miniFormA value and set miniFormA depending on checkbox
+  var miniFormASave = (miniFormA)? true : false;
+  // save the Sequence Notes check
+  var sequenceNotesSave = document.getElementById('printNotes').checked;
+  // save the current logo
+  var logoSave = document.getElementById('logo').value;
+  
+  var filename = activeFileName();
+  if (filename === '') filename = 'sequence';
+
+  // make sure no figure is selected
+  selectFigure (false);
+    
+  if (print) {
+    var body = document.createElement('body');
+  }
+  
+  // set multi to true if we have a fileList
+  var multi = (fileList.length > 0);
+
+  if (multi) {
+    // save active sequence and settings
+    var savedSeq = activeSequence.xml;
+    saveSettingsStorage ('tempSavedSettings');
+  }
+  
+  // Do at least once. If the fileList is populated by printMulti,
+  // every sequence in it will be loaded
+  do {
+
+    if (multi) {
+      var file = fileList.shift();
+      // set previous settings for default values
+      loadSettingsStorage ('tempSavedSettings');
+      // load settings from sequence
+      loadSettingsXML (file.sequence);
+        
+      activateXMLsequence (file.sequence, true);
+      
+      // Add sequence file name if checked
+      // Do this by putting it in the Notes area. If the 'Sequence Notes'
+      // box is already ticked, add it before any existing Notes
+      if (document.getElementById('showFileName').checked) {
+        var e = document.getElementById('printNotes');
+        var t = document.getElementById('notes').value;
+        if ((t != '') && e.checked) {
+          t = file.name + ' - ' + t;
+        } else {
+          t = file.name;
+        }
+        document.getElementById('notes').value = t;
+        e.setAttribute('checked', true);
+      }
+
+      // anonymize sequence if checked
+      if (document.getElementById('anonymousSequences').checked) {
+        document.getElementById('pilot').value = '';
+        document.getElementById('aircraft').value = '';
+      }
+      
+      // select correct logo
+      switch (document.getElementById('multiLogo').value) {
+        case 'remove':
+          removeLogo ();
+          break;
+        case 'active':
+          selectLogo (logoSave);
+      }
+
+      // Activate the loading of the checking rules (if any)
+      if (document.getElementById('printMultiOverrideRules').checked) {
+        // use rules currently set
+        var log = checkRules();
+      } else {
+        // use rules from file
+        var log = changeCombo('program');
+      }
+      
+    }
+    
+    // go through the pages
+    for (var i = 0; i < pages.length; i++) {
+      if (document.getElementById('printForm' + pages[i]).checked) {
+        activeForm = pages[i];
+        if ((activeForm == 'B') && document.getElementById('printMiniFormAonB').checked) {
+          miniFormA = true;
+        } else if ((activeForm == 'C') && document.getElementById('printMiniFormAonC').checked) {
+          miniFormA = true;
+        } else {
+          miniFormA = false;
+        }
+        // set correct drawing Form for pilot cards
+        if (activeForm == 'PilotCards') {
+          activeForm = (document.getElementById('pilotCardFormB').checked)? 'B' : 'C';
+        }
+        draw ();
+        // reset activeForm for buildForm
+        activeForm = pages[i];
+        divClass = (i < (pages.length - 1))? 'breakAfter' : '';
+        
+        var formSVG = buildForm (SVGRoot, print);
+        
+        if (print) {
+          var div = document.createElement('div');
+          div.setAttribute ('class', divClass);
+          div.innerHTML = formSVG;
+          body.appendChild (div);
+        } else {
+          // remove newlines from SVG to simplify regex matching
+          formSVG = formSVG.replace (/[\n\r]/g, '');
+          // remove end tag from all SVGs
+          formSVG = formSVG.replace (/<\/svg>$/, '');
+          if (svg === '') {
+            // use first SVG start tag and adjust width
+            svg = formSVG.replace (/(<svg[^>]*width=")([^"]*)/, '$1' +
+              document.getElementById ('imageWidth').value);
+          } else {
+            // remove subsequent SVGs start tags
+            formSVG = formSVG.replace (/^.*?<svg[^>]*>/, '');
+            // remove xml declarations
+            formSVG = formSVG.replace (/<\?xml[^>]*>/, '');
+            // add translated group with formSVG
+            svg += '<g transform="translate (0,' + translateY + ')">' +
+              formSVG + '</g>';
+          }
+          translateY += 1130 + parseInt(document.getElementById ('pageSpacing').value);
+        }
+      }
+    }
+    // continue until fileList is empty
+  } while (fileList.length);
+
+  // hide print dialog, do this after we are done as fileList will
+  // also be cleared
+  printDialog();
+  
+  infoBox();
+
+  if (!print) {
     svg += '</svg>';
     // Update viewBox
     // Add some margin to make sure bold lines etc are correctly shown
@@ -10037,13 +10272,25 @@ function buildForms (print) {
       document.getElementById ('imageHeight').value + 'px"');      
   }
 
+  if (multi) {
+    // restore previous settings and sequence
+    loadSettingsStorage ('tempSavedSettings');
+    activateXMLsequence (savedSeq);
+    // restore the Sequence Notes check
+    document.getElementById('printNotes').checked = sequenceNotesSave;
+  }
+
   // Reset the screen to the normal view
   activeForm = activeFormSave;
   miniFormA = (miniFormASave)? true : false;
 
   draw ();
   
-  return svg;
+  if (print) {
+    return body;
+  } else {
+    return svg;
+  }
 }
 
 // adjustRollFontSize will adjust the rollFontSize to compensate for
@@ -10869,6 +11116,9 @@ function saveImageSizeAdjust () {
       count++;
     }
   }
+  // multiply this if doing printMulti
+  if (fileList.length > 1) count = count * fileList.length;
+  
   // don't do anything if no pages marked
   if (count === 0) return;
   // calculate ratio (Y / X) in base units

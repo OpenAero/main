@@ -99,37 +99,6 @@ textarea {
 
 /* generic classes */
 
-.fileDrop {
-  position: relative;
-  left: 0px;
-  right: 0px;
-  height: 6em;
-  border: 5px dashed #aaa;
-  border-radius: 20px;
-  background-color: #fff;
-  color: #aaa;
-  font-size: 2em;
-  text-align: center;
-  padding: 2em;
-}
-#fileDropFiles {
-  position: absolute;
-  top: 0;
-  left: 1em;
-  color: #000;
-  text-shadow: 2px 0 0 white, 0 2px 0 white, -2px 0 0 white, 0 -2px 0 white;
-  font-size: 16px;
-  text-align: left;
-}
-.fileListFileRemove {
-  display: inline-block;
-  width: 16px;
-  height: 16px;
-  background-image: url('../buttons/close.png');
-  background-repeat: no-repeat;
-  background-size: 16px;
-  margin: 0 5px 0 0;
-}
 .clearBoth {
   clear: both;
 }
@@ -229,12 +198,11 @@ textarea {
 }
 
 /* sections and documentation */
-.section, .docs table tr {
+.section, .section2cols, .section3cols, .docs table tr {
   position: relative;
   float: left;
   box-sizing: border-box;
   -moz-box-sizing: border-box;
-  width: 99%;
   border-top: 2px solid #fff;
   border-left: 2px solid #fff;
   border-bottom: 1px solid #aaa;
@@ -242,6 +210,15 @@ textarea {
   border-radius: 5px;
   margin: 10px 1px 1px 1px;
   background: #f4f4f4;
+}
+.section3cols {
+  width: 31%;
+}
+.section2cols {
+  width: 48%;
+}
+.section, .docs table tr {
+  width: 99%;
 }
 .docs table tr td {
   padding: 1em;
@@ -587,6 +564,41 @@ option.used {
 #maxScaling {
   width: 4em;
 }
+.fileDrop {
+  overflow: auto !important;
+  position: relative;
+  left: 0px;
+  right: 0px;
+  height: 6em;
+  border: 5px dashed #aaa;
+  border-radius: 20px;
+  background-color: #fff;
+  color: #aaa;
+  font-size: 2em;
+  text-align: center;
+  padding: 2em;
+}
+#printMultiFiles {
+  width: 15em;
+}
+#fileDropFiles, #fileDropPrintFiles {
+  margin-left: 0.5em;
+  color: #000;
+  font-size: 16px;
+  text-align: left;
+}
+#fileDropFiles div, #fileDropPrintFiles div {
+  margin: 0;
+}
+.fileListFileRemove {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  background-image: url('../buttons/close.png');
+  background-repeat: no-repeat;
+  background-size: 16px;
+  margin: 0 5px 0 0;
+}
 /* end print dialog */
 
 .close {
@@ -650,7 +662,7 @@ option.used {
 }
 
 /* checkMulti dialog */
-#multiCurrentRules {
+#multiCurrentRules, #printMultiCurrentRules {
   font-weight: bold;
 }
 

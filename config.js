@@ -37,6 +37,8 @@
 var version = '1.4.6';
 var versionNew = '<strong>OpenAero has been upgraded to version ' +
   version + '</strong><br>New features:<ul>' +
+  '<li>Printing and image saving of multiple sequences at once; ' +
+  'Tools -> Print multiple seq</li>' +
   '<li>Added NZAC logo</li>' +
   '<li>Added alerts for illegal spins</li>' +
   '<li>Other bugfixes and improvements (check <a id="changelog">' +
@@ -154,6 +156,10 @@ var saveSettings = [
   'positionClearAuto',
   'rollFontSize',
   'nonArestiRolls'];
+// define which settings will be loaded from sequence
+var loadSettings = [
+  'numberInCircle',
+  'rollFontSize'];
 // define default language
 var defaultLanguage = 'en';
 // define language object

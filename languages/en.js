@@ -1,4 +1,4 @@
-// en.js 1.4.5
+// en.js 1.4.6
 // This file is part of OpenAero.
 
 //  OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -90,7 +90,8 @@ lang.en = {
 }, // end alert array
 'alertBoxClose' : 'Close',
 'alerts' : 'Alerts',
-'anonymousSequences' : 'Anonymise sequences by removing pilot name etc',
+'anonymousSequences' : 'Anonymise sequences by removing pilot name ' +
+  'and aircraft',
 'arestiSystem' : 'Aresti system',
 'autocorrectRoll' : ':Added autocorrect roll',
 'blackWhite' : 'Black & white',
@@ -252,7 +253,17 @@ lang.en = {
   'Are you sure you want to save or print the file without:',
 'missingInfoTitle' : 'Sequence info missing',
 'mobileVersion' : 'Mobile version',
-'multiOverrideRules' : 'Override sequence rules with current rules from Sequence info: ',
+// new 1.4.6
+'multiNoSequence' : 'One or more files do not appear to be OpenAero ' +
+  'or OLAN sequence files. They have not been added to the list',
+// end new
+'multiOverrideRules' : 'Override sequence rules with current rules ' +
+  'from Sequence info: ',
+// new 1.4.6
+'multiActiveLogo' : 'Use logo from active sequence',
+'multiRemoveLogo' : 'Remove logo',
+'multiOriginalLogo' : 'Use original logo',
+// end new
 'newTurnPerspective' : 'Realistic-looking perspective for turns ' +
   '<font color=red>EXPERIMENTAL, DO NOT USE FOR COMPETITION SEQUENCES!' +
   '</font>',
@@ -331,8 +342,8 @@ lang.en = {
 'printFormGrid' : 'Figures in grid',
 'printMiniFormAonB' : 'with mini Form A',
 'printMiniFormAonC' : 'with mini Form A',
-// new 1.4.1
-'printMulti' : 'Print multiple sequences (NOT FUNCTIONAL YET!)',
+// changed 1.4.6
+'printMulti' : 'Print multiple sequences',
 'printMultiClose' : 'Close',
 'printMultiOverrideRules' : 'Override sequence rules with current ' +
   'rules from Sequence info: ',
@@ -427,7 +438,9 @@ lang.en = {
 'settingsTitle' : 'Settings',
 'setUpright' : ':set upright entry',
 'setInverted' : ':set inverted entry',
-'showFileName' : 'Show sequence file name',
+// changed 1.4.6
+'showFileName' : 'Add sequence file name',
+// end changed
 'showFullLog' : 'Show full log',
 'showQueue' : 'Show Queue',
 'styleSettingsHeader' : 'Here you can change various style settings. ' +
