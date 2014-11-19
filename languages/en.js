@@ -64,13 +64,21 @@ lang.en = {
   'OpenAero is designed, built and maintained by ' +
   '<strong>Ringo Massa</strong>, using <strong>Michael Golan</strong>\'s ' +
   'OLAN sequence coding.<br>Many people have contributed, including:' +
-  '<table><tr><td>' +
-  '<strong>Wouter Liefting</strong></td><td>Figure and rule coding</td></tr>' +
-  '<tr><td><strong>Gilles Guillemard</strong></td><td>Figure, rule ' +
-  'and software coding</td></tr></table></div>',
+  '<table>' +
+  '<tr><td><strong>Wouter Liefting</strong></td>' +
+  '<td>Figure and rule coding</td></tr>' +
+  '<tr><td><strong>Gilles Guillemard</strong></td>' +
+  '<td>Figure, rule and software coding</td></tr>' +
+  '<tr><td><strong>Christian Falck</strong></td>' +
+  '<td>Rule coding</td></tr>' +
+  '</table></div>',
 // end new
 'ac' : 'A/C',
 'addAllToQueue' : 'Add all to Queue',
+// new 1.5.0
+'addAllToQueueNoFigures' : 'There are no figures in the sequence, so ' +
+  'no figures to add to queue',
+// end new
 'addAllToQueueWait' : 'Adding all figures in sequence to queue. This ' +
   'may take a while. Please wait...',
 'addFigureText' : 'Click to add figure',
@@ -149,7 +157,6 @@ lang.en = {
 'demo' : 'Demo',
 'desktopVersion' : 'Desktop version',
 'download' : 'Download',
-// updated 1.4.2
 'downloadHTML5' : 'You can save your file by choosing a name ' +
   'and clicking <i>Save File</i> below.<br>A dialog where you can ' +
   'choose the folder will then pop up.' +
@@ -157,14 +164,11 @@ lang.en = {
   'save the file to your default Download folder. To change this, go ' +
   'to the <b>advanced</b> Settings (access via the Chrome ≡ button) ' +
   'and tick checkbox "Ask where to save ..."</p>',
-//
 'downloadLegacy' : 'You can save your file by choosing a ' +
   'name, right-clicking on <i>Save File</i> below '+
   'and choosing "Save File As..." or "Save Link As...".<br>A dialog ' +
   'where you can choose the folder will then pop up.',
-// new 1.4.2
 'downwind' : 'Downwind',
-//
 'downwindEntry' : 'Downwind entry',
 'drawingStyles' : 'Drawing styles',
 'drawingStylesExplain' : '<p>All drawing styles can be changed here. ' +
@@ -172,11 +176,12 @@ lang.en = {
   '<strong>neg</strong>=negative line, <strong>rollText</strong>=roll ' +
   'font (e.g. 2x8).</p>',
 'editingFigure' : 'Edit figure ',
-// new 1.4.2
 'emailHeader' : 'Click the link below to open the sequence in OpenAero. ' +
   'Or, if clicking doesn\'t work, copy and paste it (completely!) in ' +
   'your browser address bar.',
 'emailSequence' : 'Email sequence',
+// new 1.5.0
+'END' : 'END',
 //
 'entryExitAttExt' : 'Entry/exit attitude & extension',
 'expert' : 'Expert',
@@ -191,21 +196,46 @@ lang.en = {
 'figsInGrid' : 'Figs in grid',
 'figureAlreadyInQueue' : 'This figure is already in the queue',
 'figureEditor' : 'Figure&nbsp;editor',
-// new 1.4.5
 'figurePositioning' : 'Figure positioning',
-//
 'figureQueue' : 'Figure Queue',
 'file' : 'File',
 'fileName' : 'File name',
+// new 1.4.6
+'finalizeSequence' : 'Finalize sequence & exit Free Unknown Designer',
+//
 'flipYAxis' : 'Flip Y-axis',
 'forElement' : ' for element ',
 'formA' : 'Form A',
 'formB' : 'Form B',
 'formC' : 'Form C',
+// new 1.5.0
 'freeUnknownFig' : 'Free Unknown fig ',
 'freeUnknownLink' : 'Free unknown Link',
+'FUconfirmExit' : 'The Free Unknown designer may not restart ' +
+  'succesfully in this situation without re-opening the sequence. ' +
+  'Confirm you want to exit the Free Unknown designer',
+'fuDesigner' : 'Free Unknown Designer',
+'fuFiguresTab' : 'Figures',
 'FUfigOptionsDisabled' : 'Some options disabled for Free Unknown fig',
+'FUDesignletterMulti' : 'Free Unknown letter %s used multiple times. ' +
+  'Unable to start Free Unknown Designer',
+'FUDesignMissingLetters' : 'Free Unknown letter(s) <strong>%s</strong> ' +
+  'are missing. Unable to start Free Unknown Designer',
+'FUDesignNotFreeUnknown' : 'Sequence rules are not set for Free ' +
+  'Unknown. Unable to start Free Unknown Designer',
+'FUerrorsDetected' : 'Error(s) in sequence detected, as shown below:',
+'FUfinalizing' : 'Finalizing sequence. This may take a while. Please ' +
+  'wait...',
 'FUletterMulti' : '(%s) Free Unkn letter %s used multiple times',
+'FUmultipleSubsequences' : 'The sequence has %s subsequences. There ' +
+  'should be only one',
+'fuSelectFigureFirst' : 'Click a figure on one of the subsequences ' +
+  'to edit it. You can drag & drop figures and links from the ' +
+  '<i>Figures</i> tab to the subsequence(s).',
+'FUstartOnLoad' : 'The sequence appears to be a figures file for Free ' +
+  'Unknown. Do you want to start the Free Unknown designer?',
+'FUexitEntryMatch' : 'Some figure exit / entry attitudes do not match',
+//
 'gaps' : 'Gaps',
 'general' : 'General',
 'getChrome' : 'For optimum use of OpenAero, please download the ' +
@@ -238,6 +268,9 @@ lang.en = {
 'installChromeAppTitle' : 'Install Chrome App',
 'inverseForms' : 'Inverse color (white on black)',
 'language' : 'Language',
+// new 1.5.0
+'LINK' : 'LINK',
+//
 'loadNewVersion' : 'A new version of OpenAero is available. Load it?',
 'loadNewVersionNoCookies' : 'A new version of OpenAero is available. ' +
 	'Load it? If you have a sequence open now it will be cleared.',
@@ -264,6 +297,9 @@ lang.en = {
 'multiRemoveLogo' : 'Remove logo',
 'multiOriginalLogo' : 'Use original logo',
 // end new
+// new 1.5.0
+'newCopySubsequence' : 'New / copy subsequence',
+//
 'newTurnPerspective' : 'Realistic-looking perspective for turns ' +
   '<font color=red>EXPERIMENTAL, DO NOT USE FOR COMPETITION SEQUENCES!' +
   '</font>',
@@ -275,7 +311,6 @@ lang.en = {
   'and choose <i>Allow local data to be set</i>.',
 'noFigureLetterAssigned' : '(%s) No figure letter assigned',
 'noFreeUnknownFig' : 'No Free Unknown fig',
-// changed 1.4.4
 'nonArestiRolls' : 'Allow non-Aresti rolls and combinations (try ' + 
   'sequence text <i>41h4,f,4 66</i>)',
 'none' : 'None',

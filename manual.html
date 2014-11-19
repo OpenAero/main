@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--
-  manual.html version 1.4.5
+  manual.html version 1.5.0
   This file is part of OpenAero.
 
   OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -31,10 +31,22 @@
 
 <table border="0" cellspacing="1">
 	<tr>
-		<td colspan="3"><h1>The OpenAero Manual</h1></td>
+		<td colspan="3">
+      <h1>The OpenAero Manual</h1>
+      <ol>
+        <li><a href="#general">General</a></li>
+        <li><a href="#creating_sequences">Creating sequences</a></li>
+        <li><a href="#free_unknown">Automated handling of Free sequence figures</a></li>
+        <li><a href="#free_unknown_designer">The Free Unknown designer</a></li>
+        <li><a href="#opening_saving">Opening, Saving and Printing sequences</a></li>
+        <li><a href="#grid_system">The Figure Grid system for Unknown and Free Unknown operations</a></li>
+        <li><a href="#importing_into_acro">Importing OpenAero files into ACRO</a></li>
+        <li><a href="#settings">Settings</a></li>
+      </ol>
+    </td>
 	</tr>
 	<tr>
-		<td colspan="3"><h3>General</h3>
+		<td colspan="3" id="general"><h3>General</h3>
 		<p>OpenAero is aerobatic sequence design software available from
 		<a href="http://openaero.net/" target="_blank">OpenAero.net</a> that
     runs inside your web browser. This makes it available on practically
@@ -312,8 +324,64 @@
 		multiple seq</i>.</p>
 		</td>
 	</tr>
+  <tr>
+    <td colspan="3" id="free_unknown_designer">
+      <h2>The Free Unknown designer</h2>
+      This is the most efficient way to design a Free Unknown sequence
+      from a list of submitted Unknown figures. It can be found under
+      the <i>Tools</i> menu. Because of required screen size it is not
+      available in the mobile layout.
+      <h3>Getting started</h3>
+      Open a sequence file containing the Free Unknown figures from the
+      <i>File</i> menu, or by clicking a link holding the sequence that
+      has been provided to you. If the sequence is correctly formatted
+      (correct rules, all figure letters assigned, no other figures)
+      OpenAero should automatically start the Free Unknown designer.<br />
+      Otherwise, you can start it from the <i>Tools</i> menu.<br />
+      If OpenAero detects it is just a figures file you will start with
+      an empty sequence. Otherwise, the current sequence will be shown.
+      <p><image src="images/OA_FreeUnknownDesignerMain.png" align="right"></image>
+      <h3>Sequence layout</h3>
+      The purpose of the designer is to quickly create a sequence. For
+      this reason, layout is schematic and fully automated. There are no
+      options for changing this.<br />
+      Multiple subsequences can be used, joined and copied in the design
+      environment.<br />
+      When the sequence is complete, click the <i>Finalize sequence &amp;
+      exit Free Unknown Designer</i> button to change the layout of the
+      sequence.
+      <h3>Adding and changing figures in a subsequence</h3>
+      All submitted Free Unknown figures are visible on the lefthand
+      <i>Figures</i> tab. They can be dragged and dropped into a
+      subsequence and will be placed before the figure over which they
+      are dropped. To create a new subsequence, drag the figure to
+      <i>New / copy subsequence</i>.<br />
+      To remove a figure, click the cross in the righthand upper
+      corner.<br />
+      Linking figures can be added by dropping the 'LINK' block. After
+      this has been done the linking figure can be changed after
+      selecting it by clicking.<br />
+      The submitted figures also have some options that can be changed
+      when selected.<br />
+      </p>
+      <h3>Manipulating subsequences</h3>
+      The entry direction of each subsequence can be chosen by selecting
+      the first figure of it and setting <i>Sub sequence entry
+      direction</i>.<br />
+      Subsequences can be dragged as a whole into another subsequence.
+      The whole subsequence will then be inserted before the figure over
+      which it is dragged. Dragging a subsequence to <i>New /copy
+      subsequence</i> will create a copy of the subsequence.
+      <h3>Finalizing the sequence</h3>
+      When the sequence is complete, with all submitted figures and
+      required links, it can be finalized by clicking <i>Finalize
+      sequence & exit Free Unknown Designer</i>. Any errors will be
+      reported. You will then be returned to the regular sequence editor
+      where you can adjust layout.
+    </td>
+  </tr>
 	<tr>
-		<td colspan="3">
+		<td colspan="3" id="opening_saving">
       <h3>Opening, Saving and Printing sequences</h3>
       <h4>Opening sequences</h4>
       <p>To open an existing sequence, choose <i>Open sequence</i> in the <i>File menu</i> 
@@ -357,6 +425,10 @@
           for further advice.
         </li>
       </ul>
+      <h4>Printing multiple sequences</h4>
+      Multiple sequences can be printed without opening each sequence
+      separately. This option can be found in the <i>Tools</i> menu.<br />
+      This is especially usefull for contest organisers.
       <h4>Saving a sequence's figures as separate	images</h4>
       <p>To save the current sequence figures as separate images, choose
       <i>Save figs separate</i> in the <i>File</i> menu. You will then get
@@ -397,7 +469,7 @@
     </td>
   </tr>
   <tr>
-    <td>
+    <td id="importing_into_acro">
       <h3>Importing OpenAero files into ACRO</h3>
       <p>
         OpenAero files that are stored in <i>&quot;filename.seq&quot;</i> format can be 
@@ -450,6 +522,8 @@
             <li><strong>rollText</strong> : roll font (e.g. 2x8, 3/4 etc)</li>
           </ul>
           </li>
+          <li>Set realistic-looking perspective for turns</li>
+          <li>Restore all settings to their default values</li>
         </ul>
         </li>
       </ul>

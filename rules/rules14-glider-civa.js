@@ -42,7 +42,8 @@
 //	 hes roll / superslow roll as long as catIDs of these figures are not repeated
 //	*floating points in Free and Unknowns, but not in Free Unknown
 //  *improved detection of upright exit for seqcheck-upend
-
+// OpenAero 1.5.0
+// -added figures 2.2.7.1-4 to CIVA Glider rules for Known
 
 //###################################################################################
 //################################ CIVA GLIDERS FREE ################################
@@ -176,6 +177,9 @@ rules.push("2.2.3.1-4");
 rules.push("2.2.4.1-4");
 rules.push("2.2.5.1-4");
 rules.push("2.2.6.1-4");
+// new 1.5.0
+rules.push("2.2.7.1-4");
+//
 rules.push("2.3.1.1-2");
 rules.push("2.3.2.1-4");
 rules.push("2.3.3.1-4");

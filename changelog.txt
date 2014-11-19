@@ -1,4 +1,4 @@
-1.4.6
+1.5.0
 * corrected 7.8.15.1 to 7.8.15.3 in CIVA Intermediate Unknown rules
 * added NZAC logo
 * several updates and improvements to manual.html
@@ -10,6 +10,14 @@
 * added printing of multiple sequences (Issue #122)
 * fixed unloading of rules when clearing sequence (Issue #160)
 * updated French translations
+* improved combo box and rule loading system
+* added figures 2.2.7.1-4 to CIVA Glider rules for Known
+* added alert when trying to "Add all to queue" with no figures in sequence
+* removed hidden startCircle from figures. Was deprecated with improved grabbing
+* added IAC rules for Free and partially for Unknown
+* updated CIVA rules for 2015
+* added CIVA power and glider Known sequences for 2015
+* added Free Unknown Designer - Major Update !
 
 1.4.5
 * removed close button from help pages. Forcing iOS app to open Safari for help pages

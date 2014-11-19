@@ -1,4 +1,4 @@
-// logo.js 1.4.6
+// logo.js 1.5.0
 
 // This file is part of OpenAero.
 

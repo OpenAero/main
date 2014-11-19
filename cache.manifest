@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# OpenAero version 1.4.6.2
+# OpenAero version 1.5.0
 addtohomescreen/addtohomescreen.css
 addtohomescreen/addtohomescreen.min.js
 arestisystem.html
@@ -69,6 +69,11 @@ gpl_files/layout.css
 gpl_files/mini.css
 gpl_files/combo.css
 gpl.htm
+images/arrow_blue_left.png
+images/arrow_blue_left_down.png
+images/arrow_blue_down.png
+images/arrow_blue_right_down.png
+images/arrow_blue_right.png
 images/spinrolls.png
 images/ee_ext-figure.png
 images/bg-dot.png
@@ -101,10 +106,11 @@ manual.html
 OpenAero.js
 print.html
 rules/rules14.js
-rules/rules14-civa.js
+rules/rules15-civa.js
 rules/rules14-baea.js
 rules/rules14-france.js
 rules/rules13-ga.js
+rules/rules15-iac.js
 rules/rules15-vink.js
 rules/rules14-glider-civa.js
 rules/rules15-nzac.js

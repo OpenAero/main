@@ -32,9 +32,6 @@ span {
   margin: 0;
   padding: 0;
 }
-span.noDisplay {
-  display: none;
-}
 img {
   margin: 0;
 }
@@ -113,10 +110,11 @@ textarea {
   clear: none;
 }
 .noDisplay {
-  display: none;
+  display: none !important;
 }
 .hidden {
-  height: 0;
+  height: 0 !important;
+  margin: 0 !important;
   visibility: hidden;
 }
 .displayMenu {
@@ -143,7 +141,7 @@ textarea {
   position: absolute;
   font-size: 24px;
   text-shadow:-1px -1px white, 1px 1px #ccc;
-  z-index: 999;
+  z-index: 5;
 }
 #virtualKeyboard td {
   border-left: 1px solid #fff;
@@ -450,10 +448,6 @@ option.used {
 .textButton:hover {
   background: #77d;
   text-decoration: none;
-  -moz-transition: border 0.5s, color 0.5s;
-  -o-transition: border 0.5s, color 0.5s;
-  -webkit-transition: border 0.5s, color 0.5s;
-  transition: border 0.5s, color 0.5s;
 }
 .textButton:active {
   color: #ddd;
@@ -464,10 +458,6 @@ option.used {
   border-right: 2px solid #def;
   border-bottom: 2px solid #def;
   border-left: 2px solid #89c;
-  -moz-transition: border, color;
-  -o-transition: border, color;
-  -webkit-transition: border, color;
-  transition: border, color;
 }
 
 #fileExt {
@@ -783,9 +773,6 @@ option.used {
 .display {
   display: block;
 }
-.nodisplay {
-  display: none;
-}
 .hoverdisplay div {
   display: none;
 }
@@ -1061,16 +1048,17 @@ table#figureChooserTable div {
 .familyB {
   background: #f8f8f8;
 }
-.removeFromQueueButton {
-  position: absolute;
+.removeFigureButton {
+  position: absolute !important;
   right: 0px;
   top: 0px;
   opacity: 0.3;
   transition: opacity .1s ease-in-out;
   -moz-transition: opacity .1s ease-in-out;
   -webkit-transition: opacity .1s ease-in-out;
+  z-index: 9;
 }
-.removeFromQueueButton:hover {
+.removeFigureButton:hover {
   opacity: 1;
 }
 #t_hideIllegalFigures {
@@ -1079,6 +1067,7 @@ table#figureChooserTable div {
 .UFletterInQueue {
   position: absolute; /* relative to container */
   color: #048;
+  text-shadow:-1px -1px white, 1px 1px white;
   font-size: 1.4em;
   margin-left: 0.5em;
   left: 0;
@@ -1156,7 +1145,8 @@ table#figureChooserTable div {
 
 /* dropdown */
 #menu {
-  height:28px
+  height:28px;
+  z-index: 10;
 }
 #menu a {
   color:#00f;
@@ -1167,19 +1157,11 @@ table#figureChooserTable div {
   color:#03f;
 }
 #menu li {
-  background-color:#fbfbfb;
+  background:transparent;
   margin-left:-1px;
 }
 #menu li.active {
   background-color:#ddf;
-}
-/* special code for installChromeApp item */
-#installChromeApp.noDisplay {
-  display: none;
-}
-/* special code for zoom item */
-#zoomMenu.noDisplay {
-  display: none;
 }
 /* Class select box */
 #class {

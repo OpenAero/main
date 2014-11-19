@@ -1,4 +1,4 @@
-// examples.js 1.4.1
+// examples.js 1.5.0
 
 // This file is part of OpenAero.
 
@@ -22,6 +22,74 @@
 // in menu Demo
 
 var exampleSequences = [];
+
+exampleSequences['2015 CIVA Unl Known'] = '<sequence>' +
+'<category>Unlimited</category>' +
+'<class>powered</class>' +
+'<program>Known</program>' +
+'<rules>CIVA</rules>' +
+'<positioning>40</positioning>' +
+"<sequence_text>,3,3if''dh..3if,3.++++ ',24,2ita.6...++ `4,3if`ry...',22.+++++ +fbb(3.')5--> -is,1.irp,2f,`6- ~----3joi15++++++++++++ +,4b..f..++++> 1% ~++++3,7m9if- --1c3f;5</sequence_text>" +
+'<logo>CIVA</logo>' +
+'<oa_version>1.5.0</oa_version>' +
+'</sequence>';
+
+exampleSequences['2015 CIVA Adv Known'] = '<sequence>' +
+'<category>Advanced</category>' +
+'<class>powered</class>' +
+'<program>Known</program>' +
+'<rules>CIVA</rules>' +
+'<positioning>30</positioning>' +
+"<sequence_text>2dh(4)3f.+++ ,24''b1..++++ ++f.rdb.6.... +++n(,24'),2-------- 6> -iv,5is....' ++.4'rp,9----- -----,8h..3...++++ 1% ++++1m6,6f- -3j3-</sequence_text>" +
+'<logo>CIVA</logo>' +
+'<oa_version>1.5.0</oa_version>' +
+'</sequence>';
+
+exampleSequences['2015 CIVA Yak 52 Known'] = '<sequence>' +
+'<category>Yak52</category>' +
+'<class>powered</class>' +
+'<program>Known</program>' +
+'<rules>CIVA</rules>' +
+'<positioning>30</positioning>' +
+"<sequence_text>/of +++k.,24....+ m,2,22++++ 6> +2fa+~ (-11,12) ++`,4b.'+`` h`,8''~~ 'rp1 1% 2> ``+````2f.g``````,22.'+` (-1,17) 1j5-</sequence_text>" +
+'<logo>CIVA</logo>' +
+'<oa_version>1.5.0</oa_version>' +
+'</sequence>';
+
+exampleSequences['2015 CIVA Int Known'] = '<sequence>' +
+'<category>Intermediate</category>' +
+'<class>powered</class>' +
+'<program>Known</program>' +
+'<rules>CIVA</rules>' +
+'<positioning>30</positioning>' +
+"<sequence_text>/of +++k.,24....+ m,2,22++++ 6> +2fa+~ (-11,12) ++`,4b.'+`` h`,8''~~ 'rp1 1% 2> ``+````2f.g``````,22.'+` (-1,17) 1j5-</sequence_text>" +
+'<logo>CIVA</logo>' +
+'<oa_version>1.5.0</oa_version>' +
+'</sequence>';
+
+exampleSequences['2015 CIVA-Glider Unl Known'] = '<sequence>' +
+'<class>glider</class>' +
+'<rules>CIVA</rules>' +
+'<category>Unlimited</category>' +
+'<program>Known</program>' +
+'<positioning>15</positioning>' +
+'<harmony>10</harmony>' +
+"<sequence_text>/2fic.2-- --a6-- (3,10) -ita``4. ~+,4pb o2if- 3% ``-2joi51+`` (5,4) c.',24</sequence_text>" +
+'<logo>CIVA</logo>' +
+'<oa_version>1.5.0</oa_version>' +
+'</sequence>';
+
+exampleSequences['2015 CIVA-Glider Adv Known'] = '<sequence>' +
+'<class>glider</class>' +
+'<rules>CIVA</rules>' +
+'<category>Advanced</category>' +
+'<program>Known</program>' +
+'<positioning>15</positioning>' +
+'<harmony>10</harmony>' +
+"<sequence_text>``s.irp--- --2j-- (0,8) -1- -t...'+ o,44 ita``,4. h4.+~ ++b```+ 3% +2j> d</sequence_text>" +
+'<logo>CIVA</logo>' +
+'<oa_version>1.5.0</oa_version>' +
+'</sequence>';
 
 exampleSequences['2014 CIVA Unl Known'] = '<sequence>' +
 '<category>Unlimited</category>' +

@@ -1,5 +1,5 @@
 /*
- desktop.css 1.4.4
+ desktop.css 1.5.0
  This file is part of OpenAero.
 
   OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -67,8 +67,14 @@ body {
 }
 #leftBlock {
   float: left;
-  overflow: auto;
   overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
   background: #f4f4f4;
   background: -webkit-linear-gradient(top, #f4f4f4, #e8e8e8);
   background: linear-gradient(top, #f4f4f4, #e8e8e8);
@@ -208,3 +214,151 @@ body {
   width: 246px;
   height: 1.5em;
 }
+
+/* Free Unknown Designer */
+#fuFiguresTable td {
+  position: relative;
+  border: 1px solid #aaa;
+  border-radius: 10px;
+  background: #fff;
+  text-align: center;
+  font-size: 1.5em;
+  font-weight: strong;
+}
+#fuSequence {
+  height: 99%;
+	overflow-y: auto;
+}
+#fuSequence table {
+  position: relative;
+  float: left;
+  margin: 3px;
+  border: 1px solid blue;
+  border-radius: 10px;
+}
+#fuSequence table td {
+  position: relative;
+  width: 120px;
+  height: 100px;
+  border-radius: 10px;
+  margin: 1px;
+  text-align: center;
+  font-size: 1.5em;
+  font-weight: bold;
+}
+#fuSequence table td.hover {
+  border: 2px dashed magenta !important;
+}
+#fuSequence table td.active {
+  border: 2px solid magenta !important;
+}
+#fuSequence .linkFigure {
+  border: 2px solid #9090ff;
+}
+#fuSequence .fuFigure {
+  border: 2px solid #90ff90;
+}
+#fuSequence .endBlock {
+  border: 2px solid #c0c0c0;
+}
+#fuSequence .fuNewSub {
+  border: 2px solid #ffffff;
+}
+#t_fuSelectFigureFirst {
+  font-size: 1.3em;
+}
+#t_finalizeSequence {
+  margin-top: 1px;
+}
+#fuSequence td::before {
+  z-index: 1;
+  position: absolute;
+}
+#fuSequence .prevRight::before {
+  right: -15px;
+  top: 41px;
+	content: url('../images/arrow_blue_left.png');
+}
+#fuSequence .prevRightTop::before {
+  right: -15px;
+  top: -15px;
+	content: url('../images/arrow_blue_left_down.png');
+}
+#fuSequence .prevTop::before {
+  right: -51px;
+  top: -15px;
+	content: url('../images/arrow_blue_down.png');
+}
+#fuSequence .prevLeftTop::before {
+  left: -15px;
+  top: -15px;
+	content: url('../images/arrow_blue_right_down.png');
+}
+#fuSequence .prevLeft::before {
+  left: -15px;
+  top: 41px;
+	content: url('../images/arrow_blue_right.png');
+}
+
+/*
+#fuSequence .flipXAxisButton {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 32px;
+  height: 32px;
+  background-image: url('../buttons/switchX.png');
+}
+#fuSequence .flipYAxisButton {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 32px;
+  height: 32px;
+  background-image: url('../buttons/switchY.png');
+}
+#fuSequence .subEntryEuButton {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 32px;
+  height: 32px;
+  background-image: url('../buttons/button-eu.png');
+}
+#fuSequence .subEntryEjButton {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 32px;
+  height: 32px;
+  background-image: url('../buttons/button-ej.png');
+}
+#fuSequence .subEntryEdButton {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 32px;
+  height: 32px;
+  background-image: url('../buttons/button-ed.png');
+}
+#fuSequence .subEntryEjaButton {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 32px;
+  height: 32px;
+  background-image: url('../buttons/button-eja.png');
+}
+#fuSequence .topBorder {
+  border-top: 1px solid blue !important;
+}
+#fuSequence .rightBorder {
+  border-right: 1px solid blue !important;
+}
+#fuSequence .bottomBorder {
+  border-bottom: 1px solid blue !important;
+}
+#fuSequence .leftBorder {
+  border-left: 1px solid blue !important;
+}
+*/

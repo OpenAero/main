@@ -1,4 +1,4 @@
-// config.js 1.4.6
+// config.js 1.5.0
 
 // This file is part of OpenAero.
 
@@ -34,9 +34,11 @@
 // Define active version number of OpenAero
 // **************
 
-var version = '1.4.6';
+var version = '1.5.0';
 var versionNew = '<strong>OpenAero has been upgraded to version ' +
   version + '</strong><br>New features:<ul>' +
+  '<li><b>Free Unknown designer!</b> Create Free Unknown sequences efficiently</li>' +
+  '<li>IAC rules for Free and (partially) Unknown</li>' +
   '<li>Printing and image saving of multiple sequences at once; ' +
   'Tools -> Print multiple seq</li>' +
   '<li>Added NZAC logo</li>' +
@@ -144,7 +146,7 @@ var miniFormA = true;
 var iacForms = false;
 // define default pattern for figure images saved in ZIP
 var zipImageFilenamePattern = '%location %category %program %pilot Form %form_fig_%figure';
-// define which settings will be saved in localStorage
+// define which settings will be saved in localStorage and sequence XML
 var saveSettings = [
   'language',
   'gridColumns',
@@ -159,7 +161,8 @@ var saveSettings = [
 // define which settings will be loaded from sequence
 var loadSettings = [
   'numberInCircle',
-  'rollFontSize'];
+  'rollFontSize',
+  'nonArestiRolls'];
 // define default language
 var defaultLanguage = 'en';
 // define language object
@@ -184,81 +187,84 @@ var rollFontSize = 20;
 // language files
 var rollFont = {'small': 15, 'medium': 20, 'large': 25};
 
-// style holds the style objects
-var style = [];
 // styleSave is used for restoring after change by user
 var styleSave = [];
-// Positive line style
-style.pos = 'stroke: black; stroke-width: 1.5px; fill: none;';
-style.chooserPos = 'stroke: black; stroke-width: 3px; fill: none;';
-// Negative line style
-style.neg = 'stroke-dasharray: 5, 3; stroke: red; stroke-width: 1.5px; fill: none;';
-style.negBW = 'stroke-dasharray: 4, 4; stroke: black; stroke-width: 1.5px; fill: none;';
-style.chooserNeg = 'stroke-dasharray: 10, 6; stroke: red; stroke-width: 3px; fill: none;';
-// Black filled path style
-style.blackfill = 'stroke: black; stroke-width: 1px; fill: black;';
-// Positive filled path style
-style.posfill = 'stroke: black; stroke-width: 1px; fill: white;';
-// Negative filled path style
-style.negfill = 'stroke: black; stroke-width: 1px; fill: red;';
-style.negfillBW = 'stroke: black; stroke-width: 1px; fill: black;';
-// Dotted path style
-style.dotted = 'stroke-dasharray: 1, 3; stroke: black; stroke-width: 1px; fill: none;';
-// Illegal figure cross style
-style.illegalCross = 'stroke: red; stroke-width: 3px; fill: none;';
-// Illegal figure box style
-style.illegalBox = 'stroke: black; stroke-width: 1px; fill: none;';
-// Autocorrect path style
-style.corr = 'stroke: red; stroke-width: 2px; fill: none;';
-// Autocorrect filled path style
-style.corrfill = 'stroke: red; stroke-width: 2px; fill: red;';
-// Roll text style
-style.rollText = 'font-family: arial, sans; font-size: ' + rollFontSize +
-  'px; font-weight: bold; fill: red;';
-// Figure Number
-style.figNbr_09 = 'font-family: verdana, helvetica, sans; font-size: 14px; font-weight: bold; fill: black;';
-style.figNbr_10 = 'font-family: verdana, helvetica, sans; font-size: 12px; font-weight: bold; fill: black;';
-// Text block style
-style.textBlock = 'font-family: verdana, helvetica, sans; font-size: 14px; fill: black;';
-style.textBlockBorder = 'stroke: black; stroke-width: 1px; fill: none;';
-style.textBlockBorderBold = 'stroke: black; stroke-width: 2px; fill: none;';
-style.textBlockBorderBoldRed = 'stroke: red; stroke-width: 2px; fill: none;';
-// Mini Form A styles
-style.miniFormA = 'font-family: verdana, helvetica, sans; font-size: 10px; fill: black;';
-style.miniFormAMax = 'font-family: verdana, helvetica, sans; font-size: 14px; fill: black;';
-style.miniFormASmall = 'font-family: verdana, helvetica, sans; font-size: 8px; fill: black;';
-style.miniFormATotal = 'font-family: verdana, helvetica, sans; font-size: 16px; font-weight: bold; fill: black;';
-// Form A styles
-style.formAText = 'font-family: verdana, helvetica, sans; font-size: 12px; fill: black;';
-style.formATextBold = 'font-family: verdana, helvetica, sans; font-size: 12px; font-weight: bold; fill: black;';
-style.formATextBold8px = 'font-family: verdana, helvetica, sans; font-size: 8px; font-weight: bold; fill: black;';
-style.formATextBold9px = 'font-family: verdana, helvetica, sans; font-size: 9px; font-weight: bold; fill: black;';
-style.formATextBold10px = 'font-family: verdana, helvetica, sans; font-size: 10px; font-weight: bold; fill: black;';
-style.formATextBold11px = 'font-family: verdana, helvetica, sans; font-size: 11px; font-weight: bold; fill: black;';
-style.formATextBold12px = 'font-family: verdana, helvetica, sans; font-size: 12px; font-weight: bold; fill: black;';
-style.formATextBold13px = 'font-family: verdana, helvetica, sans; font-size: 13px; font-weight: bold; fill: black;';
-style.formATextMedium = 'font-family: verdana, helvetica, sans; font-size: 15px; fill: black;';
-style.formATextLarge = 'font-family: verdana, helvetica, sans; font-size: 18px; fill: black;';
-style.formATextHuge = 'font-family: verdana, helvetica, sans; font-size: 40px; font-weight: bold; fill: black;';
-style.formLine = 'stroke: black; stroke-width: 1px; fill: none;';
-style.formLineBold = 'stroke: black; stroke-width: 4px; fill: none;';
-// Print styles
-style.formBackground = 'fill: white;';
-style.printNotes = 'font-family: verdana, helvetica, sans; font-size: 14px; fill: black;';
-style.sequenceString = 'font-family: monospace; font-size: 10px; color: blue; fill: blue; word-wrap: break-word;';
-style.windArrow = 'stroke: black; stroke-width: 1.5px; fill: white;';
+
+// style holds the style objects
+var style = {
+  // Positive line style
+  'pos' : 'stroke: black; stroke-width: 1.5px; fill: none;',
+  'chooserPos' : 'stroke: black; stroke-width: 3px; fill: none;',
+  // Negative line style
+  'neg' : 'stroke-dasharray: 5, 3; stroke: red; stroke-width: 1.5px; fill: none;',
+  'negBW' : 'stroke-dasharray: 4, 4; stroke: black; stroke-width: 1.5px; fill: none;',
+  'chooserNeg' : 'stroke-dasharray: 10, 6; stroke: red; stroke-width: 3px; fill: none;',
+  // Black filled path style
+  'blackfill' : 'stroke: black; stroke-width: 1px; fill: black;',
+  // Positive filled path style
+  'posfill' : 'stroke: black; stroke-width: 1px; fill: white;',
+  // Negative filled path style
+  'negfill' : 'stroke: black; stroke-width: 1px; fill: red;',
+  'negfillBW' : 'stroke: black; stroke-width: 1px; fill: black;',
+  // Dotted path style
+  'dotted' : 'stroke-dasharray: 1, 3; stroke: black; stroke-width: 1px; fill: none;',
+  // Illegal figure cross style
+  'illegalCross' : 'stroke: red; stroke-width: 3px; fill: none;',
+  // Illegal figure box style
+  'illegalBox' : 'stroke: black; stroke-width: 1px; fill: none;',
+  // Autocorrect path style
+  'corr' : 'stroke: red; stroke-width: 2px; fill: none;',
+  // Autocorrect filled path style
+  'corrfill' : 'stroke: red; stroke-width: 2px; fill: red;',
+  // Roll text style
+  'rollText' : 'font-family: arial, sans; font-size: ' + rollFontSize +
+    'px; font-weight: bold; fill: red;',
+  // Figure Number
+  'figNbr_09' : 'font-family: verdana, helvetica, sans; font-size: 14px; font-weight: bold; fill: black;',
+  'figNbr_10' : 'font-family: verdana, helvetica, sans; font-size: 12px; font-weight: bold; fill: black;',
+  // Text block style
+  'textBlock' : 'font-family: verdana, helvetica, sans; font-size: 14px; fill: black;',
+  'textBlockBorder' : 'stroke: black; stroke-width: 1px; fill: none;',
+  'textBlockBorderBold' : 'stroke: black; stroke-width: 2px; fill: none;',
+  'textBlockBorderBoldRed' : 'stroke: red; stroke-width: 2px; fill: none;',
+  // Mini Form A styles
+  'miniFormA' : 'font-family: verdana, helvetica, sans; font-size: 10px; fill: black;',
+  'miniFormAMax' : 'font-family: verdana, helvetica, sans; font-size: 14px; fill: black;',
+  'miniFormASmall' : 'font-family: verdana, helvetica, sans; font-size: 8px; fill: black;',
+  'miniFormATotal' : 'font-family: verdana, helvetica, sans; font-size: 16px; font-weight: bold; fill: black;',
+  // Form A styles
+  'formAText' : 'font-family: verdana, helvetica, sans; font-size: 12px; fill: black;',
+  'formATextBold' : 'font-family: verdana, helvetica, sans; font-size: 12px; font-weight: bold; fill: black;',
+  'formATextBold8px' : 'font-family: verdana, helvetica, sans; font-size: 8px; font-weight: bold; fill: black;',
+  'formATextBold9px' : 'font-family: verdana, helvetica, sans; font-size: 9px; font-weight: bold; fill: black;',
+  'formATextBold10px' : 'font-family: verdana, helvetica, sans; font-size: 10px; font-weight: bold; fill: black;',
+  'formATextBold11px' : 'font-family: verdana, helvetica, sans; font-size: 11px; font-weight: bold; fill: black;',
+  'formATextBold12px' : 'font-family: verdana, helvetica, sans; font-size: 12px; font-weight: bold; fill: black;',
+  'formATextBold13px' : 'font-family: verdana, helvetica, sans; font-size: 13px; font-weight: bold; fill: black;',
+  'formATextMedium' : 'font-family: verdana, helvetica, sans; font-size: 15px; fill: black;',
+  'formATextLarge' : 'font-family: verdana, helvetica, sans; font-size: 18px; fill: black;',
+  'formATextHuge' : 'font-family: verdana, helvetica, sans; font-size: 40px; font-weight: bold; fill: black;',
+  'formLine' : 'stroke: black; stroke-width: 1px; fill: none;',
+  'formLineBold' : 'stroke: black; stroke-width: 4px; fill: none;',
+  // Print styles
+  'formBackground' : 'fill: white;',
+  'printNotes' : 'font-family: verdana, helvetica, sans; font-size: 14px; fill: black;',
+  'sequenceString' : 'font-family: monospace; font-size: 10px; color: blue; fill: blue; word-wrap: break-word;',
+  'windArrow' : 'stroke: black; stroke-width: 1.5px; fill: white;'
+}
 
 // ***************
 // Set png masks for buttons
 // ***************
 
-var mask = [];
-mask.off = 'buttons/mask.png';
-mask.on = 'buttons/mask-on.png';
-mask.disable = 'buttons/mask-disable.png';
-mask.smalloff = 'buttons/smallMask.png';
-mask.smallon = 'buttons/smallMask-on.png';
-mask.smalldisable = 'buttons/smallMask-disable.png';
+var mask = {
+  'off' : 'buttons/mask.png',
+  'on' : 'buttons/mask-on.png',
+  'disable' : 'buttons/mask-disable.png',
+  'smalloff' : 'buttons/smallMask.png',
+  'smallon' : 'buttons/smallMask-on.png',
+  'smalldisable' : 'buttons/smallMask-disable.png'
+}
 
 /**********************************************************************
  * 
@@ -313,9 +319,13 @@ var rollTypes = [
   '22:2x2',
   '32:3x2',
   '42:4x2'];
-for (var i = 2; i < 9; i++) rollTypes.push(i + '4:' + i + 'x4');
+for (var i = 2; i < 9; i++) {
+  rollTypes.push(i + '4:' + i + 'x4');
+}
 rollTypes.push('8:2x8');
-for (var i = 2; i < 9; i++) rollTypes.push((i*2) + '8:' + (i*2) + 'x8');
+for (var i = 2; i < 9; i++) {
+  rollTypes.push((i*2) + '8:' + (i*2) + 'x8');
+}
 var posFlickTypes = [
   '2f:1/2 pos flick',
   '3f:3/4 pos flick',
@@ -363,49 +373,54 @@ var gliderRollTypes = [
 
 // Never use '#' as a pattern! It is used in various places in OpenAero
 // as a placeholder for switch operations.
-var userpat = [];
-userpat.comment = '"';
-userpat.connector = '=';
-userpat.curveTo = '(';
-userpat.flipNumber = '|';
-userpat.flipYaxis = '/';
-userpat.forward = '~';
-userpat.forwardshorten = '<';
-userpat.lineshorten = '`';
-userpat.longforward = '+';
-userpat.movedown = '^';
-userpat.moveforward = '>';
-userpat.moveto = '[';
-userpat.opproll = ',';
-userpat.rollext = '.';
-userpat.rollextshort = '\'';
-userpat.sameroll = ';';
-userpat.scale = '%';
-userpat.subSequence = '//';
-userpat.switchDirX = '>';
-userpat.switchDirY = '^';
+var userpat = {
+  'comment' : '"',
+  'connector' : '=',
+  'curveTo' : '(',
+  'flipNumber' : '|',
+  'flipYaxis' : '/',
+  'forward' : '~',
+  'forwardshorten' : '<',
+  'lineshorten' : '`',
+  'longforward' : '+',
+  'movedown' : '^',
+  'moveforward' : '>',
+  'moveto' : '[',
+  'opproll' : ',',
+  'rollext' : '.',
+  'rollextshort' : '\'',
+  'sameroll' : ';',
+  'scale' : '%',
+  'subSequence' : '//',
+  'switchDirX' : '>',
+  'switchDirY' : '^'
+}
 
 // ***************
 // Define patterns for the software figure string
 // ***************
 
-var figpat = [];
-figpat.forward = '\'';
-figpat.longforward = '~';
-figpat.fullroll = '_';
-figpat.halfroll = '^';
-figpat.anyroll = '&';
-figpat.hammer = 'h';
-figpat.pushhammer = 'H';
-figpat.tailslidecanopy = 't';
-figpat.tailslidewheels = 'T';
-figpat.pointTip = 'u';
-figpat.pushPointTip = 'U';
+var figpat = {
+  'forward' : '\'',
+  'longforward' : '~',
+  'fullroll' : '_',
+  'halfroll' : '^',
+  'anyroll' : '&',
+  'hammer' : 'h',
+  'pushhammer' : 'H',
+  'tailslidecanopy' : 't',
+  'tailslidewheels' : 'T',
+  'pointTip' : 'u',
+  'pushPointTip' : 'U'
+}
+
 var drawAngles = {
   'd':45, 'v':90, 'z':135, 'm':180,
   'c':225, 'p':270, 'r':315, 'o':360,
   'D':-45, 'V':-90, 'Z':-135, 'M':-180,
-  'C':-225, 'P':-270, 'R':-315, 'O':-360};
+  'C':-225, 'P':-270, 'R':-315, 'O':-360
+};
+
 var rollAttitudes = {'0':'', '45':'d', '90':'v', '135':'d',
   '180':'', '225':'id', '270':'iv', '315':'id'};
 
@@ -433,6 +448,8 @@ var regexEntryShortenNeg = /`+(-.*[a-zA-Z])/;
 var regexExitShortenNeg = /([a-zA-Z].*-)`+/;
 // match the Y axis flip symbol
 var regexFlipYAxis = /(^|[^\/])\/([^\/]|$)/;
+// match a Free Unknown figure number
+var regexFuFigNr = /\bfuFig(\d+)\b/;
 // match (rolling) turns
 var regexTurn = /[0-9\+\-]j[io0-9\+\-]/;
 // regexOLANBumpBug is used to check for the Humpty Bump direction bug
