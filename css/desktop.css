@@ -123,20 +123,27 @@ body {
   background: -webkit-linear-gradient(top, #f4f4f4, #e8e8e8);
   background: linear-gradient(top, #f4f4f4, #e8e8e8);
   top: 50px;
-  right: -340px;
-  -moz-transition: 0.2s right;
-  -o-transition: 0.2s right;
-  -webkit-transition: 0.2s right;
-  transition: 0.2s right;
-  width: 340px;
+  right: -300px;
+  -moz-transition: 0.3s;
+  -o-transition: 0.3s;
+  -webkit-transition: 0.3s;
+  transition: 0.3s;
+  width: 300px;
   height: 95%;
   padding: 0px;
   z-index: 2;
 }
 #figureSelector.active {
-  right:0;
+  right: 0;
 }
-
+#figureSelector.left {
+  right: auto;
+  left: -300px;
+}
+#figureSelector.leftActive {
+  right: auto;
+  left: 0;
+}
 /* button tooltips */
 .tooltip {outline:none; }
 .tooltip strong {line-height:30px;}
@@ -218,25 +225,35 @@ body {
 /* Free Unknown Designer */
 #fuFiguresTable td {
   position: relative;
-  border: 1px solid #aaa;
+  border: 2px solid #aaa;
   border-radius: 10px;
   background: #fff;
   text-align: center;
   font-size: 1.5em;
   font-weight: strong;
 }
+#fuFiguresTable td.figUsed {
+  border-color: #00d000;
+  background: #ecffec;
+}
+#fuFiguresTable td.figUsedMulti {
+  border-color: #d0a000;
+  background: #fbffe0;
+}
 #fuSequence {
+  margin-left: 300px;
   height: 99%;
 	overflow-y: auto;
+  z-index: -1;
 }
-#fuSequence table {
+.fuSequence table {
   position: relative;
   float: left;
   margin: 3px;
   border: 1px solid blue;
   border-radius: 10px;
 }
-#fuSequence table td {
+.fuSequence table td {
   position: relative;
   width: 120px;
   height: 100px;
@@ -246,22 +263,23 @@ body {
   font-size: 1.5em;
   font-weight: bold;
 }
-#fuSequence table td.hover {
-  border: 2px dashed magenta !important;
-}
-#fuSequence table td.active {
+/* the order of the following two matters ! */
+.fuSequence table td.active {
   border: 2px solid magenta !important;
 }
-#fuSequence .linkFigure {
+.fuSequence table td.hover {
+  border: 2px dashed magenta !important;
+}
+.fuSequence .linkFigure {
   border: 2px solid #9090ff;
 }
-#fuSequence .fuFigure {
+.fuSequence .fuFigure {
   border: 2px solid #90ff90;
 }
-#fuSequence .endBlock {
+.fuSequence .endBlock {
   border: 2px solid #c0c0c0;
 }
-#fuSequence .fuNewSub {
+.fuSequence .fuNewSub {
   border: 2px solid #ffffff;
 }
 #t_fuSelectFigureFirst {
@@ -285,7 +303,7 @@ body {
 	content: url('../images/arrow_blue_left_down.png');
 }
 #fuSequence .prevTop::before {
-  right: -51px;
+  right: 51px;
   top: -15px;
 	content: url('../images/arrow_blue_down.png');
 }

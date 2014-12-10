@@ -18,6 +18,11 @@
 * updated CIVA rules for 2015
 * added CIVA power and glider Known sequences for 2015
 * added Free Unknown Designer - Major Update !
+* added drag & drop support for iOS through shim by Tim Ruffles
+* improved language.html language reference
+* changed link saving to URL safe base64 to prevent breaks and shorten links
+* added translation options for sequence rule check alerts
+* fixed sequence menu highlighting after entry direction change
 
 1.4.5
 * removed close button from help pages. Forcing iOS app to open Safari for help pages

@@ -38,11 +38,13 @@ var version = '1.5.0';
 var versionNew = '<strong>OpenAero has been upgraded to version ' +
   version + '</strong><br>New features:<ul>' +
   '<li><b>Free Unknown designer!</b> Create Free Unknown sequences efficiently</li>' +
-  '<li>IAC rules for Free and (partially) Unknown</li>' +
+  '<li>CIVA rules and sequences for 2015</li>' +
+  '<li>IAC rules for Free sequences and limited checking for Unknown sequences</li>' +
   '<li>Printing and image saving of multiple sequences at once; ' +
   'Tools -> Print multiple seq</li>' +
   '<li>Added NZAC logo</li>' +
   '<li>Added alerts for illegal spins</li>' +
+  '<li>Added French translations for sequence alerts</li>' +
   '<li>Other bugfixes and improvements (check <a id="changelog">' +
   'changelog.txt</a> if interested)</li>' +
   '</ul>' +
@@ -68,6 +70,7 @@ var sequenceXMLlabels = [
   'harmony',
   'notes',
   'sequence_text',
+  'fu_figures',
   'logo',
   'oa_version',
   'default_view'

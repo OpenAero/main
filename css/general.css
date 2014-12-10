@@ -209,6 +209,18 @@ textarea {
   margin: 10px 1px 1px 1px;
   background: #f4f4f4;
 }
+.docs table.regularTable tr {
+	border: 0;
+  margin: 2px;
+  background: transparent;
+  float: none;
+  box-sizing: content-box;
+  -moz-box-sizing: content-box;
+}
+.docs table.regularTable td {
+  padding: 0;
+  padding-right: 1em;
+}
 .section3cols {
   width: 31%;
 }
@@ -1008,7 +1020,7 @@ option.used {
 /* figure chooser */
 #figureChooser {
   margin: 2px;
-  width: 340px;
+  width: 300px;
   height: 85%;
   background: rgba(255, 255, 255, 0.7);
   overflow: auto;
@@ -1052,7 +1064,7 @@ table#figureChooserTable div {
   position: absolute !important;
   right: 0px;
   top: 0px;
-  opacity: 0.3;
+  opacity: 0.5;
   transition: opacity .1s ease-in-out;
   -moz-transition: opacity .1s ease-in-out;
   -webkit-transition: opacity .1s ease-in-out;

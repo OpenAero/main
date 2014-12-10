@@ -111,6 +111,22 @@ lang.en = {
 'cancelSave' : 'Cancel',
 'category' : 'Category',
 'changeStyle' : 'Change',
+// new 1.5.0
+// checkAlert forms a sub-array
+'checkAlert' : {
+  'maxperfig' : 'Not more than %s of %s per figure',
+  'minperfig' : 'At least %s of %s per figure',
+  'max'       : 'Not more than %s of %s allowed',
+  'min'       : 'At least %s of %s required',
+  'repeat'    : 'Not more than %s exact repetitions of %s allowed',
+  'totrepeat' : 'Not more than %s instances of exact repetitions of ' +
+    '%s allowed',
+  'figmax'    : 'Not more than %s of %s allowed',
+  'figmin'    : 'At least %s of %s required',
+  'figrepeat' : 'Not more than %s exact repetitions of %s allowed',
+  'notAllowed': '%s is not allowed in this sequence'
+}, // end checkAlert
+//
 'checkingRules' : 'Sequence checking rules',
 'checkMulti' : 'Check multiple sequences',
 'checkMultiClose' : 'Close',
@@ -232,6 +248,8 @@ lang.en = {
 'fuSelectFigureFirst' : 'Click a figure on one of the subsequences ' +
   'to edit it. You can drag & drop figures and links from the ' +
   '<i>Figures</i> tab to the subsequence(s).',
+'FUstarting' : 'Starting Free Unknown designer. This may take a while. ' +
+  'Please wait...',
 'FUstartOnLoad' : 'The sequence appears to be a figures file for Free ' +
   'Unknown. Do you want to start the Free Unknown designer?',
 'FUexitEntryMatch' : 'Some figure exit / entry attitudes do not match',

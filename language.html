@@ -1,6 +1,6 @@
 ﻿<!DOCTYPE html>
 <!--
-  language.html version 1.4.5
+  language.html version 1.5.0
   This file is part of OpenAero.
 
   OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -63,7 +63,7 @@ Most of the common base figures contain two rolling elements. The first element 
 </p>
 <p>
 With some highly-complex figures such as "N figure" the middle rolling element is specified in parentheses after the base figure and before the last (3rd) rolling element, e.g. "<b>2n(24)1</b>" is an N figure
-within a single digit. Note that since the Olan software "knows" the flying direction, you specify a vertical roll going up and a horizontal roll in the exact same fashion: "<b>1</b>".
+within a single digit. Note that since the OpenAero software "knows" the flying direction, you specify a vertical roll going up and a horizontal roll in the exact same fashion: "<b>1</b>".
 </p>
 <p>
 There are even figures with four possible rolls, such as a hammerhead with a diagonal exit and entry. In these figures the middle rolls are also specified in parentheses, where empty parantheses may be necessary to specify the correct rolls, e.g. "<b>1dhd(2)(1)1</b>" or "<b>dhd(2)()</b>". 
@@ -341,30 +341,74 @@ You may also use "74" and "84" to indicate 1 3/4 roll and two full rolls in quar
 </div>
 
 <div class="section documentation">
-<a name="drawing"></a>
-<H2>OpenAero drawing instructions reference guide</H2>
-<p style="margin-bottom:0px;">
-<b>ed</b> Downwind entry (only at the beginning of the sequence)
-<br><b>ej</b> Crosswind entry (only at the beginning of the sequence)
-<br><b>eja</b> Crosswind entry away from viewer (only at the beginning of the sequence)
-<br><b>[x,y]</b> Move x to the right and y down (negative for moving left or up) before starting the next figure
-<br><b>(x,y)</b> Just as previous, but with a curved line
-<br><b>></b> Has two different functions:</p>
-<ul>
-<li>When placed after a figure: Switch upwind/downwind exit direction in figures with 1/4, 3/4 etc roll up or down or (rolling) turns
-<li>When placed separately: Move forward by a small amount without connecting line. A number can be placed in front (e.g. <b>5></b> to move forward 5 units). 
-</ul>
-<p style="margin-top:0px;">
-<b>^</b> Switch away/toward crosswind exit direction in figures with 1/4, 3/4 etc roll up or down or (rolling) turns
-<br><b>x%</b> Increase (positive x) or decrease (negative x) the size of the next figure
-<br><b>/</b> Change the direction in which the Y-axis is drawn (only for the complete sequence)
-<br><b>~</b> Increase the length of the line at the beginning or end of a figure
-<br><b>+</b> Increase the length of the line at the beginning or end of a figure by three steps
-<br><b>//</b> Start new sub-sequence
-<br><b>"text"</b> Add comment before figure
-<br><b>"@A"</b> to <b>"@J"</b> For CIVA Free Unknowns: mark subsequent figure as figure A-J
-<br><b>"@L"</b> For CIVA Free Unknowns: mark subsequent figure as link (=connector)
-</p>
+  <a name="drawing"></a>
+  <H2>OpenAero drawing instructions reference guide</H2>
+  <table class="regularTable">
+    <tr>
+      <td><b>ed</b></td><td>Downwind entry</td>
+    </tr>
+    <tr>
+      <td><b>ej</b></td><td>Crosswind entry</td>
+    </tr>
+    <tr>
+      <td><b>eja</b></td><td>Crosswind entry away from viewer</td>
+    </tr>
+    <tr>
+      <td><b>eu</b></td><td>Upwind entry for subsequence</td>
+    </tr>
+    <tr>
+      <td><b>//</b></td><td>Subsequence, keep previous flight direction</td>
+    </tr>
+    <tr>
+      <td><b>[x,y]</b></td><td>Move x to the right and y down (negative
+      for moving left or up) before starting the next figure</td>
+    </tr>
+    <tr>
+      <td><b>(x,y)</b></td><td>Just as previous, but with a curved line</td>
+    </tr>
+    <tr>
+      <td><b>></b></td><td>Has two different functions:    </tr>
+    <tr>
+      <td></td><td>When placed after a figure: Switch upwind/downwind exit
+      direction in figures with 1/4, 3/4 etc roll up or down or (rolling) turns</td>
+    </tr>
+    <tr>
+      <td></td><td>When placed separately: Move forward by a small amount
+      without connecting line. A number can be placed in front (e.g.
+      <b>5></b> to move forward 5 units).</td>
+    </tr>
+    <tr>
+      <td><b>^</b></td><td>Switch away/toward crosswind exit direction
+      in figures with 1/4, 3/4 etc roll up or down or (rolling) turns</td>
+    </tr>
+    <tr>
+      <td><b>x%</b></td><td>Increase (positive x) or decrease (negative x)
+      the size of the next figure</td>
+    </tr>
+    <tr>
+      <td><b>/</b></td><td>Change the direction in which the Y-axis is
+      drawn (only for the complete sequence)</td>
+    </tr>
+    <tr>
+      <td><b>~</b></td><td>Increase the length of the line at the
+      beginning or end of a figure</td>
+    </tr>
+    <tr>
+      <td><b>+</b></td><td>Increase the length of the line at the
+      beginning or end of a figure by three steps</td>
+    </tr>
+    <tr>
+      <td><b>"text"</b></td><td>Add comment before figure</td>
+    </tr>
+    <tr>
+      <td><b>"@A"</b></td><td>to <b>"@J"</b> For CIVA Free Unknowns:
+      mark subsequent figure as figure A-J</td>
+    </tr>
+    <tr>
+      <td><b>"@L"</b></td><td>For CIVA Free Unknowns: mark subsequent
+      figure as link (=connector)</td>
+    </tr>
+  </table>
 </div>
   </BODY>
 </HTML>

@@ -40,7 +40,7 @@ exampleSequences['2015 CIVA Adv Known'] = '<sequence>' +
 '<program>Known</program>' +
 '<rules>CIVA</rules>' +
 '<positioning>30</positioning>' +
-"<sequence_text>2dh(4)3f.+++ ,24''b1..++++ ++f.rdb.6.... +++n(,24'),2-------- 6> -iv,5is....' ++.4'rp,9----- -----,8h..3...++++ 1% ++++1m6,6f- -3j3-</sequence_text>" +
+"<sequence_text>2dh(4)3f.+++ ,24''b1..+++ ~+f.rdb.6....+``````` +++n(,24'),2------ 6> -iv,5is....' ++.4'rp,9----- ----,8h..3...++++ 1% ++++1m6,6f- -3j3-</sequence_text>" +
 '<logo>CIVA</logo>' +
 '<oa_version>1.5.0</oa_version>' +
 '</sequence>';
