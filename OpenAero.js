@@ -620,14 +620,16 @@ var iosDragDropShim = { enableEnterLeave: true,
       dropEvt.preventDefault = function() {
         // https://www.w3.org/Bugs/Public/show_bug.cgi?id=14638 - if we
         // don't cancel it, we'll snap back
-        if (this.copy) {
-          this.copy.style["z-index"] = "";
-          this.copy.style["pointer-events"] = "auto";
+        if (iosDragDropShim.copy) {
+          if (this.copy) {
+            this.copy.style["z-index"] = "";
+            this.copy.style["pointer-events"] = "auto";
+          }
         } else {
           this.el.style["z-index"] = "";
           this.el.style["pointer-events"] = "auto";
+          writeTransform(this.el, 0, 0);
         }
-        if (!this.copy) writeTransform(this.el, 0, 0);
       }.bind(this);
 
       once(doc, "drop", function() {
@@ -697,9 +699,11 @@ var iosDragDropShim = { enableEnterLeave: true,
     },
     snapBack: function() {
       log ('Snap back');
-      if (this.copy) {
-        doc.body.removeChild (this.copy);
-        this.copy = null;
+      if (iosDragDropShim.copy) {
+        if (this.copy) {
+          doc.body.removeChild (this.copy);
+          this.copy = null;
+        }
       } else if (this.el) {
         this.el.style["pointer-events"] = "auto";
         this.el.style["-webkit-transition"] = "none";
@@ -4449,9 +4453,25 @@ function addExampleSequenceToMenu (key) {
       var ul = li.lastChild;
     }
     var subli = document.createElement('li');
-    subli.innerHTML = '<a href="#">' + key.replace(/^[\d]+[ ]*/, '') + '</a>';
-    subli.setAttribute ('id', 'example-' + key);
-    subli.addEventListener ('click', exampleSequence, false);
+    if (key.match (/^[\d]+ CIVA(-Glider|)/)) {
+      subli.innerHTML = '<a href="#">' + key.replace(/^[\d]+[ ]*/, '') + '</a>';
+      subli.setAttribute ('id', 'example-' + key);
+      subli.addEventListener ('click', exampleSequence, false);
+    } else {
+      var group = key.match (/^[\d]+ ([^ ]+)/)[1];
+      var subul = document.getElementById(year + ' ' + group);
+      if (!subul) {
+        subli.innerHTML = '<a href="#">' + group + '</a>';
+        subul = document.createElement ('ul');
+        subul.id = year + ' ' + group;
+        subli.appendChild (subul);
+      }
+      var subsubli = document.createElement('li');
+      subsubli.innerHTML = '<a href="#">' + key.replace(/^[\d]+ [^ ]+[ ]*/, '') + '</a>';
+      subsubli.setAttribute ('id', 'example-' + key);
+      subsubli.addEventListener ('click', exampleSequence, false);
+      subul.appendChild (subsubli);
+    }
     ul.appendChild(subli);
   } else {
     var li = document.createElement('li');
@@ -6543,6 +6563,18 @@ function loadRules() {
         if (checkCatGroup[group[0]]) checkCatGroup[group[0]].name = group[1];
         if (checkFigGroup[group[0]]) checkFigGroup[group[0]].name = group[1];
         if (ruleSeqCheck[group[0]]) ruleSeqCheck[group[0]].name = group[1];
+      } else if (rules[i].match(/[^-]+-name_[a-z]{2}=.+$/)) {
+      // Apply [group]-name and seqcheck-name rules
+        var group = rules[i].replace(/-name_[a-z]{2}/, '').split('=');
+        if (checkCatGroup[group[0]]) {
+          checkCatGroup[group[0]][rules[i].match(/name_[a-z]{2}/)[0]] = group[1];
+        }
+        if (checkFigGroup[group[0]]) {
+          checkFigGroup[group[0]][rules[i].match(/name_[a-z]{2}/)[0]] = group[1];
+        }
+        if (ruleSeqCheck[group[0]]) {
+          ruleSeqCheck[group[0]][rules[i].match(/name_[a-z]{2}/)[0]] = group[1];
+        }
       } else if (rules[i].match(/^conv-[^=]+=.+/)) {
 // Apply conv-x rules
 // DEPRECATED
@@ -6651,10 +6683,10 @@ function unloadRules () {
 // A log array is returned
 function checkRules () {
   
-  // why creates the correct 'why' string. Priority is:
-  // 1) current language
-  // 2) no language
-  // 3) English
+  /* why creates the correct 'why' string. Priority is:
+   1) current language
+   2) no language
+   3) English */
   function why (rule) {
     var language = document.getElementById('language').value;
     if (checkRule[rule]['why_' + language]) {
@@ -6793,11 +6825,11 @@ function checkRules () {
                     ' Elem count=' + elemCount[aresti[j]]);
                   if (checkCatGroup[group]['maxperfig'] && (groupFigMatch[group].length > checkCatGroup[group]['maxperfig'])) {
                     checkAlert(group, 'maxperfig', figNr);
-                    log.push('Maximum of ' + checkCatGroup[group]['maxperfig'] + ' elements of this group exceeded');
+                    log.push('Maximum of ' + checkCatGroup[group].maxperfig + ' elements of this group exceeded');
                   }
                   if (checkCatGroup[group]['minperfig'] && (groupFigMatch[group].length < checkCatGroup[group]['minperfig'])) {
                     checkAlert(group, 'minperfig', figNr);
-                    log.push('Minimum of ' + checkCatGroup[group]['minperfig'] + ' elements of this group not reached');
+                    log.push('Minimum of ' + checkCatGroup[group].minperfig + ' elements of this group not reached');
                   }
                 }
               }
@@ -7144,7 +7176,7 @@ function checkRules () {
   if (ruleSeqCheck !== []) {
     for (var name in ruleSeqCheck) {
       if (!ruleSeqCheck[name].regex.test(activeSequence.text)) {
-        checkAlert (ruleSeqCheck[name].name);
+        checkAlert (checkName(ruleSeqCheck[name]));
       }
     }
   }
@@ -7205,6 +7237,21 @@ function figureNumbers (match) {
   return figs.join(',');
 }
 
+// checkName creates the correct 'name' string. Priority is:
+// 1) current language
+// 2) no language
+// 3) English
+function checkName (obj) {
+  var language = document.getElementById('language').value;
+  if (obj['name_' + language]) {
+    return obj['name_' + language];
+  } else if (obj.name) {
+    return obj.name;
+  } else if (obj.why_en) {
+    return obj.name_en;
+  } else return '';
+}
+
 // checkAlert adds an alert resulting from sequence checking
 // 'value' represents a value for processing
 // 'type' represents the type of checking error
@@ -7213,39 +7260,39 @@ function checkAlert (value, type, figNr) {
   switch (type) {
     case 'maxperfig':
       alertMsgs.push(alertFig + sprintf (userText.checkAlert.maxperfig,
-        checkCatGroup[value].maxperfig, checkCatGroup[value].name));
+        checkCatGroup[value].maxperfig, checkName(checkCatGroup[value])));
       break;
     case 'minperfig':
       alertMsgs.push(alertFig + sprintf (userText.checkAlert.minperfig,
-        checkCatGroup[value].minperfig, checkCatGroup[value].name));
+        checkCatGroup[value].minperfig, checkName(checkCatGroup[value])));
       break   
     case 'max':
       alertMsgs.push(alertFig + sprintf (userText.checkAlert.max,
-        checkCatGroup[value].max, checkCatGroup[value].name));
+        checkCatGroup[value].max, checkName(checkCatGroup[value])));
       break;
     case 'min':
       alertMsgs.push(alertFig + sprintf (userText.checkAlert.min,
-        checkCatGroup[value].min, checkCatGroup[value].name));
+        checkCatGroup[value].min, checkName(checkCatGroup[value])));
       break;
     case 'repeat':
       alertMsgs.push(alertFig + sprintf (userText.checkAlert.repeat,
-        checkCatGroup[value].repeat, checkCatGroup[value].name));
+        checkCatGroup[value].repeat, checkName(checkCatGroup[value])));
       break;
     case 'totrepeat':
       alertMsgs.push(alertFig + sprintf (userText.checkAlert.totrepeat,
-        checkCatGroup[value].totrepeat, checkCatGroup[value].name));
+        checkCatGroup[value].totrepeat, checkName(checkCatGroup[value])));
       break;
     case 'figmax':
       alertMsgs.push(alertFig + sprintf (userText.checkAlert.figmax,
-        checkFigGroup[value].max, checkFigGroup[value].name));
+        checkFigGroup[value].max, checkName(checkFigGroup[value])));
       break;
     case 'figmin':
       alertMsgs.push(alertFig + sprintf (userText.checkAlert.figmin,
-        checkFigGroup[value].min, checkFigGroup[value].name));
+        checkFigGroup[value].min, checkName(checkFigGroup[value])));
       break;
     case 'figrepeat':
       alertMsgs.push(alertFig + sprintf (userText.checkAlert.figrepeat,
-        checkFigGroup[value].repeat, checkFigGroup[value].name));
+        checkFigGroup[value].repeat, checkName(checkFigGroup[value])));
       break;
     case 'notAllowed':
       alertMsgs.push(alertFig + sprintf (userText.checkAlert.notAllowed,
@@ -8927,12 +8974,12 @@ function startFuDesigner(dontConfirm) {
 
 // exitFuDesigner is called to exit the Free Unknown designer. Several
 // checks are done and warnings presented if necessary.
-function exitFuDesigner () {
+// newSequence is true when we are exiting because of loading of new
+// sequence
+function exitFuDesigner (newSequence) {
   
   function exitFu () {
-    infoBox (userText.FUfinalizing, userText.finalizeSequence);
-    
-    setTimeout (function(){
+    if (newSequence) {
       // hide finalize button
       document.getElementById ('t_finalizeSequence').classList.add ('noDisplay');
       
@@ -8942,15 +8989,7 @@ function exitFuDesigner () {
       
       // switch sequence view
       document.getElementById ('fuSequence').classList.add ('noDisplay');
-      
-      sequenceText.value = sequenceText.value.trim().replace(/ e(u|d|j|ja)$/, '');
-      sequenceText.value = sequenceText.value.replace(/^eu /, '');
-      document.getElementById('fu_figures').value = '';
-        
-      selectFigure (false);
-      selectForm ('B');
-      separateFigures (true);
-      
+
       checkSequenceChanged ();
   
       // restore the tabs
@@ -8961,39 +9000,76 @@ function exitFuDesigner () {
       selectTab ('tab-sequenceInfo');
       document.getElementById ('figureSelector').classList.remove ('left');
       availableFigureGroups();
-      
-      infoBox();
-    }, 100);
-  }
+    } else {
+      infoBox (userText.FUfinalizing, userText.finalizeSequence);
+      setTimeout (function(){
+        // hide finalize button
+        document.getElementById ('t_finalizeSequence').classList.add ('noDisplay');
+        
+        // delete stylesheet rule 0 to show all elements with class
+        // disableFUdesigner
+        document.styleSheets[0].deleteRule(0);
+        
+        // switch sequence view
+        document.getElementById ('fuSequence').classList.add ('noDisplay');
+        
+        sequenceText.value = sequenceText.value.trim().replace(/ e(u|d|j|ja)$/, '');
+        sequenceText.value = sequenceText.value.replace(/^eu /, '');
+        document.getElementById('fu_figures').value = '';
+          
+        selectFigure (false);
+        selectForm ('B');
+        separateFigures (true);
+        
+        checkSequenceChanged ();
     
-  // get alerts from alert area
-  var div = document.createElement('div');
-  div.innerHTML = document.getElementById('alerts').innerHTML;
-  // remove label and <br> (first three items)
-  div.removeChild(div.firstChild);
-  div.removeChild(div.firstChild);
-  div.removeChild(div.firstChild);
-  
-  var myAlerts = div.innerHTML;
-  
-  for (var i = 0; i < figures.length; i++) {
-    if (figures[i].aresti) var sub = figures[i].subSeq;
-  }
-  if (sub > 1) {
-    myAlerts += '<br />' + sprintf (userText.FUmultipleSubsequences, sub);
-  }
-
-  if (myAlerts.match (RegExp('(' + userText.setUpright + ')|(' +
-    userText.setInverted + ')'))) {
-    myAlerts += '<br />' + userText.FUexitEntryMatch;  
+        // restore the tabs
+        document.getElementById ('tab-fuFigures').classList.add ('noDisplay');
+        document.getElementById ('fuFigures').classList.add ('hidden');
+        document.getElementById ('tab-sequenceInfo').classList.remove ('noDisplay');
+        selectTab ('tab-figureInfo');
+        selectTab ('tab-sequenceInfo');
+        document.getElementById ('figureSelector').classList.remove ('left');
+        availableFigureGroups();
+        
+        infoBox();
+      }, 100);
+    }
+    
   }
   
-  if (myAlerts !== '') {  
-    var confirmText = '<p>' + userText.FUerrorsDetected + '</p><p>' +
-    myAlerts + '</p><p>' + userText.FUconfirmExit + '</p>';
-    confirmBox (confirmText, userText.finalizeSequence, exitFu);
-  } else {
+  if (newSequence) {
     exitFu();
+  } else {
+    // get alerts from alert area
+    var div = document.createElement('div');
+    div.innerHTML = document.getElementById('alerts').innerHTML;
+    // remove label and <br> (first three items)
+    div.removeChild(div.firstChild);
+    div.removeChild(div.firstChild);
+    div.removeChild(div.firstChild);
+    
+    var myAlerts = div.innerHTML;
+    
+    for (var i = 0; i < figures.length; i++) {
+      if (figures[i].aresti) var sub = figures[i].subSeq;
+    }
+    if (sub > 1) {
+      myAlerts += '<br />' + sprintf (userText.FUmultipleSubsequences, sub);
+    }
+    
+    if (myAlerts.match (RegExp('(' + userText.setUpright + ')|(' +
+      userText.setInverted + ')'))) {
+      myAlerts += '<br />' + userText.FUexitEntryMatch;  
+    }
+    
+    if (myAlerts !== '') {  
+      var confirmText = '<p>' + userText.FUerrorsDetected + '</p><p>' +
+      myAlerts + '</p><p>' + userText.FUconfirmExit + '</p>';
+      confirmBox (confirmText, userText.finalizeSequence, exitFu);
+    } else {
+      exitFu();
+    }
   }
 }
 
@@ -9129,7 +9205,7 @@ function handleFuDrop (e) {
       }
     } else {
       // single figure
-      updateSequence (figNr - 1 - previous, string);
+      updateSequence (figNr - 1 - previous, string, false, true);
       // when dropping LINK, select and open figure editor
       if (string.match (/\@L/)) {
         selectFigureFu (figNr + 1 - previous);
@@ -11061,7 +11137,7 @@ function activateXMLsequence (xml, noLoadRules) {
   if ((activeForm === 'FU') && (prevForm !== 'FU')) {
     startFuDesigner(true);
   } else if ((activeForm !== 'FU') && (prevForm === 'FU')) {
-    exitFuDesigner();
+    exitFuDesigner(true);
   } else { 
     // update sequence
     checkSequenceChanged();
@@ -14451,15 +14527,18 @@ function comparePreviousSequence () {
 // whole sequences may occur.
 // When doing this, the Figure Letters will be identical by definition,
 // as the sequence is checked identical as of 'n'.
-function updateXYFlip(m, n) {
+function updateXYFlip (m, n) {
+  var sub = false;
   var dmn = m - n;
   if (activeSequence.figures[n]) {
     var text = activeSequence.text.substring(0, activeSequence.figures[n].stringStart);
     for (var i = n; i < activeSequence.figures.length; i++) {
       var s = activeSequence.figures[i].string;
+      if (s.match (/^e(u|d|j|ja)$/)) sub = true;
       // Only act on figures that previously had an unknownFigureLetter.
       // This will also prevent matching moves, such as "12>", ">", "^^"
-      if (activeSequence.previousFigures[i + dmn].unknownFigureLetter) {
+      // Also, do not flip XY in new subsequences
+      if (activeSequence.previousFigures[i + dmn].unknownFigureLetter && !sub) {
         // switch > and ^. Use temporary placeholder #
         s = s.replace(/[\^]/g, '#').replace(/\>/g, '^').replace(/#/g, '>');
       }

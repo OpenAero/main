@@ -1154,6 +1154,34 @@ table#figureChooserTable div {
 #menu li.active ul li.active ul {
   display:block;
 }
+/*undo previous style for level 4 links*/
+#menu li ul li ul li ul li {
+  float:none;
+}
+/*position level 4 links vertically and hide*/ 
+#menu li ul li ul li ul {
+  display:none;
+  position:absolute;
+  left:175px;
+  width:180px;
+  z-index:10;
+  -webkit-transform-style: preserve-3d;
+  margin-top: -24px;
+  border-right: 1px solid #aaa;
+  border-bottom: 1px solid #aaa
+}
+/*don't unhide level 4 links on li.active from level 1*/
+#menu li.active ul li ul li ul {
+  display:none;
+}
+/*don't unhide level 4 links on li.active from level 2*/
+#menu li.active ul li.active ul li ul {
+  display:none;
+}
+/*unhide level 4 links on li.active from level 3*/
+#menu li.active ul li.active ul li.active ul {
+  display:block;
+}
 
 /* dropdown */
 #menu {

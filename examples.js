@@ -159,6 +159,72 @@ exampleSequences['2014 CIVA-Glider Adv Known'] = '<sequence>' +
 '<oa_version>1.4.1</oa_version>' +
 '</sequence>';
 
+exampleSequences['2014 France Espoirs Connu'] = '<sequence>' +
+'<class>powered</class>' +
+'<rules>France</rules>' +
+'<category>espoirs</category>' +
+'<program>connu</program>' +
+'<positioning>10</positioning>' +
+"<sequence_text>k2 6> ~m2 ivs...'' `2rc (-9,16) m- -'',1''- -2% 6> -3j----~~ > -2' > ~+3j h...~ o</sequence_text>" +
+'<logo>FFAvoltige</logo>' +
+'<oa_version>1.5.0</oa_version>' +
+'</sequence>';
+
+exampleSequences['2014 France Desavois Connu'] = '<sequence>' +
+'<category>desavois</category>' +
+'<class>powered</class>' +
+'<program>connu</program>' +
+'<rules>France</rules>' +
+'<positioning>15</positioning>' +
+"<sequence_text>ed v- [0,0] -ivis... [-3,1] 2pb...'' 2% 4h4.' [-4,0] -1% mf- [4,13] -2jo2- 1% -`2c''- [3,0] ~-c.....'' [-4,0] m24 2,1-</sequence_text>" +
+'<logo>FFAvoltige</logo>' +
+'<oa_version>1.5.0</oa_version>' +
+'</sequence>';
+
+exampleSequences['2014 France National2 Connu1'] = '<sequence>' +
+'<class>powered</class>' +
+'<rules>France</rules>' +
+'<category>national2</category>' +
+'<program>connu_1</program>' +
+'<positioning>20</positioning>' +
+"<sequence_text>>~~---''1rc 10> m22- -iv5is.. 2> ~~,2pb...,4 `+mf-~~ 10> 12% ````-2jio2-``` -1,2 c,24....''+``` ``+o2-` -4h.4.'' cc(2)2 rp/</sequence_text>" +
+'<logo>FFAvoltige</logo>' +
+'<oa_version>1.5.0</oa_version>' +
+'</sequence>';
+
+exampleSequences['2014 France National2 Connu2'] = '<sequence>' +
+'<category>national2</category>' +
+'<class>powered</class>' +
+'<program>connu_2</program>' +
+'<rules>France</rules>' +
+'<positioning>20</positioning>' +
+"<sequence_text>ed 2% 22g1- 5% `-iv.is.'~ 2% 5> mf,1- (0,19) ``-2c2.'' 24pb4.''+`` ~~8'h...'-~~> 2> -o2 5% 2> m-` -`2if,1+`` -2% ``+3jio3</sequence_text>" +
+'<logo>FFAvoltige</logo>' +
+'<oa_version>1.5.0</oa_version>' +
+'</sequence>';
+
+exampleSequences['2014 France Doret Connu1'] = '<sequence>' +
+'<category>doret</category>' +
+'<class>powered</class>' +
+'<program>connu_1</program>' +
+'<rules>France</rules>' +
+'<positioning>40</positioning>' +
+"<sequence_text>ej /-.''24ita8> 'fbb(.''2) -1% ''9s.''irp6f.,6```- 4> -2% -3joi3-~> -8h....2...'> 8> ..''3,8''m48,24'' -2% 2fg2- (-20,22) -iac(2,if) -1% 2,24m1,if-``</sequence_text>" +
+'<logo>FFAvoltige</logo>' +
+'<oa_version>1.5.0</oa_version>' +
+'</sequence>';
+
+exampleSequences['2014 France Doret Connu2'] = '<sequence>' +
+'<category>doret</category>' +
+'<class>powered</class>' +
+'<program>connu_2</program>' +
+'<rules>France</rules>' +
+'<positioning>40</positioning>' +
+"<sequence_text>ej /.,3ta-```> 6> -2kif,2. 6> ~ifn(...''2....)4- 5> --``,7is.'ibb(`````,2)....''> 17> m2f,1+`` -2% ``+3j15- -h,4.> (-30,13) ````+2rcc(`1`,2f`) ```,24.'g``f</sequence_text>" +
+'<logo>FFAvoltige</logo>' +
+'<oa_version>1.5.0</oa_version>' +
+'</sequence>';
+
 exampleSequences['2013 CIVA Adv Known'] = '<sequence>' +
 '<class>powered</class>' +
 '<rules>CIVA</rules>' +
@@ -216,7 +282,7 @@ exampleSequences['2013 BAeA Int Known'] = '<sequence>' +
 '<oa_version>1.4.1</oa_version>' +
 '</sequence>';
 
-exampleSequences['2013 FRA Espoirs Connu'] = '<sequence>' +
+exampleSequences['2013 France Espoirs Connu'] = '<sequence>' +
 '<class>powered</class>' +
 '<rules>France</rules>' +
 '<category>espoirs</category>' +
@@ -227,7 +293,7 @@ exampleSequences['2013 FRA Espoirs Connu'] = '<sequence>' +
 '<oa_version>1.4.1</oa_version>' +
 '</sequence>';
 
-exampleSequences['2013 FRA Desavois Connu'] = '<sequence>' +
+exampleSequences['2013 France Desavois Connu'] = '<sequence>' +
 '<category>desavois</category>' +
 '<class>powered</class>' +
 '<program>connu</program>' +
@@ -238,7 +304,7 @@ exampleSequences['2013 FRA Desavois Connu'] = '<sequence>' +
 '<oa_version>1.4.1</oa_version>' +
 '</sequence>';
 
-exampleSequences['2013 FRA National2 Connu1'] = '<sequence>' +
+exampleSequences['2013 France National2 Connu1'] = '<sequence>' +
 '<class>powered</class>' +
 '<rules>France</rules>' +
 '<category>national2</category>' +
@@ -249,7 +315,7 @@ exampleSequences['2013 FRA National2 Connu1'] = '<sequence>' +
 '<oa_version>1.4.1</oa_version>' +
 '</sequence>';
 
-exampleSequences['2013 FRA National2 Connu2'] = '<sequence>' +
+exampleSequences['2013 France National2 Connu2'] = '<sequence>' +
 '<category>national2</category>' +
 '<class>powered</class>' +
 '<program>connu_2</program>' +
@@ -260,7 +326,7 @@ exampleSequences['2013 FRA National2 Connu2'] = '<sequence>' +
 '<oa_version>1.4.1</oa_version>' +
 '</sequence>';
 
-exampleSequences['2013 FRA Doret Connu1'] = '<sequence>' +
+exampleSequences['2013 France Doret Connu1'] = '<sequence>' +
 '<category>doret</category>' +
 '<class>powered</class>' +
 '<program>connu_1</program>' +
@@ -271,7 +337,7 @@ exampleSequences['2013 FRA Doret Connu1'] = '<sequence>' +
 '<oa_version>1.4.1</oa_version>' +
 '</sequence>';
 
-exampleSequences['2013 FRA Doret Connu2'] = '<sequence>' +
+exampleSequences['2013 France Doret Connu2'] = '<sequence>' +
 '<category>doret</category>' +
 '<class>powered</class>' +
 '<program>connu_2</program>' +

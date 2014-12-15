@@ -146,6 +146,7 @@
  * x-maxperfig    specify a max that applies per figure
  * group-k        is special, count is the K factor total
  * x-name         specify group name for x, for displaying errors
+ * x-name_xx      the same, but for language xx
  * 
  * allow=regex    specify a regex to match catalog ids to allow them to be used
  * 1.2.4  A;B ..  explictly allow BASE figure id. Rules A B etc are checked
