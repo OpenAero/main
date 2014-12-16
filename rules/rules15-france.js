@@ -1,4 +1,4 @@
-// OpenAero rulesYY-France file
+﻿// OpenAero rulesYY-France file
 
 // This file is part of OpenAero.
 
@@ -21,23 +21,23 @@
 // This file defines year (YY) and rule type specific rules
 
 //######################################################################################
-//#####      Regles France 2015      Espoirs � Doret 2015  Olan 6.0  ###################
-//#####      Regles France 2015      Version 2015_PN.1.01            ###################
+//#####      Regles France 2015      Espoirs à Doret 2015  Olan 6.0  ###################
+//#####      Regles France 2015      Version 2015_PN.1.02            ###################
 //######################################################################################
 //######################################################################################
 //#####                                                              ###################
 //#####      Modifications et corrections 2013 pseudo numerotation   ###################
 //#####      Modifications mineures (commentaires) et connus 2014    ###################
-//#####      Modifications espoirs 2015 et connus 2015               ###################
+//#####      Corrections, modifications espoirs 2015, connus 2015    ###################
 //#####                                                              ###################
 //######################################################################################
 //#####                                                              ###################
-//#####      R�gles de l'inconnu Doret prises en compte, � affiner.  ###################
+//#####      Régles de l'inconnu Doret prises en compte, à affiner.  ###################
 //#####                                                              ###################
 //######################################################################################
 // prog 2015 : Espoirs, Desavois, National2, Doret 
 
-//##### (Une partie des) Regles specifiques � la France.
+//##### (Une partie des) Regles specifiques à la France.
 
 //conv-vertqtrs=^9\.([1-9]|10)\.([156]|10)\.([1-8]) = $3 ; ^9\. = r ; ^0\.=z
 //conv-vertupqtrs=^9\.([1-9]|10)\.([16])\.([1-8]) = $3 ; ^9\. = r ; ^0\.=z
@@ -51,20 +51,20 @@
 //rule-Spin_ou_rien=roll:^[^sz]
 //why-Spin_ou_rien=Figure seule ou avec vrille uniquement sur la verticale
 
-// Pas de declench� dans les rotations compos�es. # Niveau Desavois
+// Pas de déclenché dans les rotations composées. # Niveau Desavois
 //rule-NFC=roll:(\w,[fF])|([fF],\w)
-//why-NFC=pas de declenche dans les rotations composees
+//why-NFC=pas de déclenché dans les rotations composées
 
-// Pas de declench� en 2eme element d'une rotation compos�e. # Niveau CF2
+// Pas de déclenché en 2eme élément d'une rotation composée. # Niveau CF2
 //rule-NSF=roll:(\w,[fF])
-//why-NSF=pas de declenche en 2eme element dans une rotation composee
+//why-NSF=pas de déclenché en 2eme élément dans une rotation composée
 
-//##### Fin des regles specifiques � la France.
+//##### Fin des regles specifiques à la France.
 
 
 rules.push("[France espoirs connu]");
 
-// Openaero sequence : Mise a jour connu 2015 pour OpenAero
+// Openaero sequence : Mise à jour connu 2015 pour OpenAero
 rules.push("demo = d iv'6s..'+++ +h.. o ~m- (0,13) -22- 2% -2j- -2 6% 2j~ ~+c2...'+`` 3% ```+```````2``rc``````+~ 6> m2");
 
 rules.push("k-max=120");
@@ -117,16 +117,16 @@ rules.push("rule-SPIN=roll:^[^s]");
 rules.push("why-SPIN=Figure avec vrille uniquement");
 
 // Modif 2013 (ou correction)
-// Regle PG : Rotations altern�es autoris�es uniquement sur les figures 1.1.1.1-4 et limit�es 720� maximum.
-// R�alis� par la superposition des 3 r�gles suivantes.
+// Regle PG : Rotations alternées autorisées uniquement sur les figures 1.1.1.1-4 et limitées à 720° maximum.
+// Réalisé par la superposition des 3 règles suivantes.
 rules.push("conv-rot_alt = ^9\\.\\d+\\.3\\.([1-8]) = $1 ;^9\\.\\d+\\.[1245]\\.[1-8] = x ; ^9\\. = y ; ^0\\.=z");
 rules.push("rule-No_alt_45 = rot_alt: x,");
-rules.push("why-No_alt_45 = Rotation alternee interdite sur les lignes a 45 degres");
+//rules.push("why-No_alt_45 = Rotation alternée interdite sur les lignes à 45°");
 rules.push("rule-No_alt_hor = rot_alt: ,");
-rules.push("why-No_alt_hor = Rotation alternee interdite");
-// Rotations compos�es horizontales limit�es � 720�
+rules.push("why-No_alt_hor = Rotation alternée interdite");
+// Rotations composées horizontales limitées à 720°
 rules.push("rule-Max_alt_720 = rot_alt: (8,|,8|6,6|6,4|4,6)");
-rules.push("why-Max_alt_720 = Rotation alternee limitee a 720 degres");
+rules.push("why-Max_alt_720 = Rotation alternée limitée à 720°");
 
 rules.push("allow-defrules = No_alt_45");
 
@@ -200,7 +200,7 @@ rules.push("9.11.1.4-7");
 
 rules.push("[France desavois connu]");
 
-// Openaero sequence  : Mise a jour connu 2015 pour OpenAero
+// Openaero sequence  : Mise à jour connu 2015 pour OpenAero
 rules.push("demo = ed ircf- -iv.'is. 4> 24h.''- ``-c'',2''-`` 2> -pb.. 6> 8b...+``` > `+`,4k`2`+``` 2% `+m2,1+`` -4% ``+1jo1");
 // Olan sequence
 //demo = ed v- -ivis.'' 2pb..' 2% 4h4. mf- 10% > ``-2jo2-`` 5>3^-`2c'-  ~-c...'' m24 2,1-
@@ -254,7 +254,7 @@ rules.push("group-turnpos=^2\\.[1-4]\\.1\\.1");
 rules.push("turnpos-name= virages ventre");
 
 rules.push("group-vrot=^9\\.[14]\\.1\\.2");
-rules.push("vrot-name= rotation verticale montante de 180 degres");
+rules.push("vrot-name= rotation verticale montante de 180°");
 
 // Openaero Tag (4 field Aresti number)  Ajout 2014 pour OpenAero
 rules.push("group-roller=^2\\.(2\\.[56]|3\\.4)\\.");
@@ -262,15 +262,15 @@ rules.push("group-roller=^2\\.(2\\.[56]|3\\.4)\\.");
 //group-roller=^2\.(2[56]|34)\.
 rules.push("roller-name= tonneaux en virage");
 
-// Pas de declench� dans les rotations compos�es.
+// Pas de déclenché dans les rotations composées.
 //rule-NSF=rfsz:(\w,f)|(f,\w)
-//why-NSF=pas de declenche dans les rotations composees
+//why-NSF=pas de déclenché dans les rotations composées
 //rule-NSF1=rfsz:^(\w,f)|^(f,\w)
 //rule-NSF2=rfsz:^[\w,]+ (\w,f)
 //rule-NSF3=rfsz:^[\w,]+ [\w,]+ (f|\w,f)
-//why-NSF1=pas de declenche en 2eme element de rotation composee # Sur la 1ere rotation
-//why-NSF2=pas de declenche en 2eme element de rotation composee # Sur la 2eme rotation
-//why-NSF3=pas de declenche en 2eme element de rotation composee # Sur la 3eme rotation
+//why-NSF1=pas de déclenché en 2eme élément de rotation composée # Sur la 1ere rotation
+//why-NSF2=pas de déclenché en 2eme élément de rotation composée # Sur la 2eme rotation
+//why-NSF3=pas de déclenché en 2eme élément de rotation composée # Sur la 3eme rotation
 
 // Figures avec vrille seulement # Niveaux Espoirs,Desavois et CF2
 rules.push("rule-SPIN=roll:^[^s]");
@@ -280,59 +280,59 @@ rules.push("why-SPIN=Figure avec vrille uniquement");
 rules.push("rule-Spin_ou_rien=roll:^[^sz]");
 rules.push("why-Spin_ou_rien=Figure seule ou avec vrille uniquement sur la verticale");
 
-// Pas de declench� dans les rotations compos�es. # Niveau Desavois
+// Pas de déclenché dans les rotations composées. # Niveau Desavois
 rules.push("rule-NFC=roll:(\\w,[fF])|([fF],\\w)");
-rules.push("why-NFC=pas de declenche dans les rotations composees");
+rules.push("why-NFC=pas de déclenché dans les rotations composées");
 
-// Pas de rotation verticale de plus de 180�
+// Pas de rotation verticale de plus de 180°
 rules.push("conv-vertqtrs=^9\\.([1-9]|10)\\.([156]|10)\\.([1-8]) = $3 ; ^9\\. = r ; ^0\\.=z");
 rules.push("rule-V180 = vertqtrs:<3");
-rules.push("why-V180  = Pas de rotation superieure a 180 sur les verticales");
+rules.push("why-V180  = Pas de rotation superieure à 180° sur les verticales");
 
-// Rotations limit�es � 90�
+// Rotations limitées à 90°
 rules.push("rule-Max90 = vertqtrs:<2");
-rules.push("why-Max90  = Pas de rotation superieure a 90 sur ces verticales");
+rules.push("why-Max90  = Pas de rotation superieure à 90° sur ces verticales");
 
 rules.push("conv-vertupqtrs=^9\\.([1-9]|10)\\.([16])\\.([1-8]) = $3 ; ^9\\. = r ; ^0\\.=z");
 rules.push("rule-Max90up = vertupqtrs:<2");
-rules.push("why-Max90up  = Pas de rotation superieure a 90 sur la verticale montante");
+rules.push("why-Max90up  = Pas de rotation superieure à 90° sur la verticale montante");
 
 rules.push("conv-vertdoqtrs=^9\\.([1-9]|10)\\.(5|10)\\.([1-8]) = $3 ; ^9\\. = r ; ^0\\.=z");
 rules.push("rule-Max90do = vertdoqtrs:<2");
-rules.push("why-Max90do  = Pas de rotation superieure a 90 sur la verticale descendante");
+rules.push("why-Max90do  = Pas de rotation superieure à 90° sur la verticale descendante");
 
-// Pas de sortie pouss�e apres certaines vrilles
+// Pas de sortie poussée après certaines vrilles
 rules.push("conv-nopush=^9\\.1[12]\\.1\\.[5-8]=n ; ^9\\.[1248]\\.=r; ^9.(9|10)=f; ^9.1[12]=s ; ^0\\.=z");
 rules.push("rule-NSPushout  =nopush:n$");
-rules.push("why-NSPushout   = Pas de sortie pouss�e apres la vrille");
+rules.push("why-NSPushout   = Pas de sortie poussée après la vrille");
 
 // figures negatives
 //Group-neg=^(1\.2\.[24]|1\.[37]\.[23]|1\.6\.4|1\.1[3579]\.2|1\.16\.[12]|2\.[3-8]\.|2\.11\.|5\.[12]\.[234]|5\.3\.|7\.[1256]\.2|7.[346]\.1|7\.19\.|7\.2[3479]\.|7\.20\.[234]|7\.2[18]\.[124]|7\.2[26]\.[23]|7\.25\.[12]|7\.30\.[23]|8\.[13]\.2|8\.[24]\.|8\.13\.|8\.3[17]\.[124]|8\.3[28]\.[23]|8\.34\.1|8\.4[17]\.[12]|8\.4[24]\.2|8\.4[08]\.1|8\.52\.1)|9\.1[02]\.
-//neg-name=5 figures considerees comme negatives
+//neg-name=5 figures considérées comme négatives
 //
 // figures negatives pour Desavois V0
 // Openaero Tag (4 field Aresti number)  Ajout 2014 pour OpenAero
 rules.push("Group-neg=^(1\\.1\\.2\\.[24]|1\\.1\\.[37]\\.[23]|1\\.1\\.6\\.4|1\\.2\\.[2468]\\.2|1\\.2\\.5\\.[12]|2\\.1\\.3\\.|2\\.2\\.[256]\\.|2\\.3\\.[4]\\.|2\\.4\\.[23]\\.|5\\.[23]\\.1\\.[234]|5\\.3\\.2\\.|7\\.[24]\\.[12]\\.2|7\\.2\\.[34]\\.1|7\\.4\\.2\\.1|7\\.3\\.1\\.|7\\.8\\.[1257]\\.|7\\.3\\.2\\.[234]|7\\.3\\.3\\.[124]|7\\.8\\.6\\.[124]|7\\.[38]\\.4\\.[23]|7\\.8\\.3\\.[12]|7\\.8\\.8\\.[23]|8\\.4\\.[13]\\.2|8\\.4\\.[24]\\.|8\\.4\\.13\\.1|8\\.5\\.[13]\\.[124]|8\\.5\\.[24]\\.[23]|8\\.6\\.[348]\\.1|8\\.5\\.8\\.1|8\\.5\\.[57]\\.[12]|8\\.[56]\\.6\\.2)|9\\.1[02]\\.");
 // Olan Tag (3 field Aresti number)
 //Group-neg=^(1\.12\.[24]|1\.1[37]\.[23]|1\.16\.4|1\.2[2468]\.2|1\.25\.[12]|2\.13\.|2\.2[256]\.|2\.3[4]\.|2\.4[23]\.|5\.[23]1\.[234]|5\.32\.|7\.[24][12]\.2|7\.2[34]\.1|7\.42\.1|7\.31\.|7\.8[1257]\.|7\.32\.[234]|7\.33\.[124]|7\.86\.[124]|7\.[38]4\.[23]|7\.83\.[12]|7\.88\.[23]|8\.4[13]\.2|8\.4[24]\.|8\.413\.1|8\.5[13]\.[124]|8\.5[24]\.[23]|8\.6[348]\.1|8\.58\.1|8\.5[57]\.[12]|8\.[56]6\.2)|9\.1[02]\.
-rules.push("neg-name=5 figures considerees comme negatives");
+rules.push("neg-name=5 figures considérées comme négatives");
 
-// Modif 2013 ajout des regles suivantes (limitation des rotations) D�but
+// Modif 2013 ajout des regles suivantes (limitation des rotations) Début
 //
-// Rotations compos�es horizontales limit�es � 720�
+// Rotations composées horizontales limitées à 720°
 rules.push("conv-Horqtrs=^9\\.\\d+\\.[38]\\.([1-8])=$1; ^9\\.=0 ; ^0\\.=0");
 rules.push("rule-Max720Hor =Horqtrs:<9");
-rules.push("why-Max720Hor  = Pas de rotation composee horizontale superieure a 720 degres");
+rules.push("why-Max720Hor  = Pas de rotation composée horizontale superieure à 720°");
 
-// Rotations compos�es 45� montantes limit�es � 360�
+// Rotations composées 45° montantes limitées à 360°
 rules.push("conv-Up45qtrs=^9\\.\\d+\\.[27]\\.([1-8])=$1; ^9\\.=0 ; ^0\\.=0");
 rules.push("rule-Max360Up45 =Up45qtrs:<5");
-rules.push("why-Max360Up45  = Pas de rotation composee sous 45 montant superieure a 360 degres");
+rules.push("why-Max360Up45  = Pas de rotation composée sous 45° montant superieure à 360°");
 
-// Rotations compos�es 45� descendantes limit�es � 180�
+// Rotations composées 45° descendantes limitées à 180°
 rules.push("conv-Do45qtrs=^9\\.\\d+\\.[49]\\.([1-8])=$1; ^9\\.=0 ; ^0\\.=0");
 rules.push("rule-Max180Do45 =Do45qtrs:<3");
-rules.push("why-Max180Do45  = Pas de rotation composee sous 45 descendant superieure a 180 degres");
+rules.push("why-Max180Do45  = Pas de rotation composée sous 45° descendant superieure à 180°");
 //
 // Modif 2013 ajout des regles suivantes (limitation des rotations) Fin
 
@@ -497,7 +497,7 @@ rules.push("9.12.1.4");
 
 rules.push("(France national2 connu_1)");
 
-// Openaero sequence : Mise a jour connu 2015 pour OpenAero
+// Openaero sequence : Mise à jour connu 2015 pour OpenAero
 rules.push("demo = d2,24 ``+ivs.'- (-11,7) -k2- -``4b.' 24h4 .'mf- (-5,13) -`8,5-` 2% ``-2jio15+`` -2% 5> ``+44c'',2.'+`` (-1,7) ,4pb'' 3> .,4''rp22~>");
 // Olan sequence
 //demo = ``-'1rc 10>m22- > -iv5is ~~~2pb''..,4 `+mf-~~ 4> 14% ```-2jio2-``` -1,2 c,24..+``` ``+o2-` -4h.4'' cc(2)2 rp
@@ -505,7 +505,7 @@ rules.push("more=France national2 connu");
 
 rules.push("(France national2 connu_2)");
 
-// Openaero sequence : Mise a jour connu 2015 pour OpenAero
+// Openaero sequence : Mise à jour connu 2015 pour OpenAero
 rules.push("demo = ej '24'h'4.> ~v'4'-- --iv.5is.'~ o22 '2'dh....''--- 15> -m2- ``-....'irc+`` 4,3- 6% ````-2joi15+``` 5% > ```+````````2f```rc`+`````` 2> ~~+```k.'',24'+`` `+d24,2");
 // Olan sequence
 //demo = ed 22g1- `-iv.is..~ 5> mf,1- ``-2c2' 24pb4+`` ~~8'h.'-~~> 2> -o2 5% 2> m-` -`2if,1+`` -2% ``+3jio3
@@ -558,13 +558,13 @@ rules.push("posnl=20");
 rules.push("floating-point=0");
 
 rules.push("group-vrot=^9\\.[14]\\.1\\.2");
-rules.push("vrot-name= rotation verticale montante de 180 degres");
+rules.push("vrot-name= rotation verticale montante de 180°");
 
 // Openaero Tag (4 field Aresti number)  Ajout 2014 pour OpenAero
 rules.push("group-roller=^2\\.4\\.[5-8]\\.");
 // Olan Tag (3 field Aresti number)
 //group-roller=^2\.4[5-8]\.
-rules.push("roller-name=tonneau en virage de 360 degres");
+rules.push("roller-name=tonneau en virage de 360°");
 
 // Figures avec vrille seulement # Niveaux Espoirs,Desavois et CF2
 rules.push("rule-SPIN=roll:^[^s]");
@@ -574,65 +574,65 @@ rules.push("why-SPIN=Figure avec vrille uniquement");
 rules.push("rule-Spin_ou_rien=roll:^[^sz]");
 rules.push("why-Spin_ou_rien=Figure seule ou avec vrille uniquement sur la verticale");
 
-// Pas de declench� en 2eme element d'une rotation compos�e. # Niveau CF2
+// Pas de déclenché en 2eme élément d'une rotation composée. # Niveau CF2
 rules.push("rule-NSF=roll:(\\w,[fF])");
-rules.push("why-NSF=pas de declenche en 2eme element dans une rotation composee");
+rules.push("why-NSF=pas de déclenché en 2eme élément dans une rotation composée");
 
-// Pas de rotation verticale de plus de 180�
+// Pas de rotation verticale de plus de 180°
 rules.push("conv-vertqtrs=^9\\.([1-9]|10)\\.([156]|10)\\.([1-8]) = $3 ; ^9\\. = r ; ^0\\.=z");
 rules.push("rule-V180 = vertqtrs:<3");
-rules.push("why-V180  = Pas de rotation superieure a 180 sur les verticales");
+rules.push("why-V180  = Pas de rotation superieure à 180° sur les verticales");
 
-// Rotations limit�es � 90�
+// Rotations limitées à 90°
 rules.push("rule-Max90 = vertqtrs:<2");
-rules.push("why-Max90  = Pas de rotation superieure a 90 sur ces verticales");
+rules.push("why-Max90  = Pas de rotation superieure à 90° sur ces verticales");
 
 rules.push("conv-vertupqtrs=^9\\.([1-9]|10)\\.([16])\\.([1-8]) = $3 ; ^9\\. = r ; ^0\\.=z");
 rules.push("rule-Max90up = vertupqtrs:<2");
-rules.push("why-Max90up  = Pas de rotation superieure a 90 sur la verticale montante");
+rules.push("why-Max90up  = Pas de rotation superieure à 90° sur la verticale montante");
 
 rules.push("conv-vertdoqtrs=^9\\.([1-9]|10)\\.(5|10)\\.([1-8]) = $3 ; ^9\\. = r ; ^0\\.=z");
 rules.push("rule-Max90do = vertdoqtrs:<2");
-rules.push("why-Max90do  = Pas de rotation superieure a 90 sur la verticale descendante");
+rules.push("why-Max90do  = Pas de rotation superieure à 90° sur la verticale descendante");
 
-// Pas de sortie pouss�e apres certaines vrilles
+// Pas de sortie poussée après certaines vrilles
 rules.push("conv-nopush=^9\\.1[12]\\.1\\.[5-8]=n ; ^9\\.[1248]\\.=r; ^9.(9|10)=f; ^9.1[12]=s ; ^0\\.=z");
 rules.push("rule-NSPushout  =nopush:n$");
-rules.push("why-NSPushout   = Pas de sortie pouss�e apres la vrille");
+rules.push("why-NSPushout   = Pas de sortie poussée après la vrille");
 
-// Modif 2013 ajout des regles suivantes (limitation des rotations) D�but
+// Modif 2013 ajout des regles suivantes (limitation des rotations) Début
 //
-// Rotations compos�es horizontales limit�es � 720�
+// Rotations composées horizontales limitées à 720°
 rules.push("conv-Horqtrs=^9\\.\\d+\\.[38]\\.([1-8])=$1; ^9\\.=0 ; ^0\\.=0");
 rules.push("rule-Max720Hor =Horqtrs:<9");
-rules.push("why-Max720Hor  = Pas de rotation composee horizontale superieure a 720 degres");
+rules.push("why-Max720Hor  = Pas de rotation composée horizontale superieure à 720°");
 
-// Rotations compos�es 45� montantes limit�es � 540�
+// Rotations composées 45° montantes limitées à 540°
 rules.push("conv-Up45qtrs=^9\\.\\d+\\.[27]\\.([1-8])=$1; ^9\\.=0 ; ^0\\.=0");
 rules.push("rule-Max540Up45 =Up45qtrs:<7");
-rules.push("why-Max540Up45  = Pas de rotation composee sous 45 montant superieure a 540 degres");
+rules.push("why-Max540Up45  = Pas de rotation composée sous 45° montant superieure à 540°");
 
-// Rotations compos�es 45� descendantes limit�es � 180�
+// Rotations composées 45° descendantes limitées à 180°
 rules.push("conv-Do45qtrs=^9\\.\\d+\\.[49]\\.([1-8])=$1; ^9\\.=0 ; ^0\\.=0");
 rules.push("rule-Max180Do45 =Do45qtrs:<3");
-rules.push("why-Max180Do45  = Pas de rotation composee sous 45 descendant superieure a 180 degres");
+rules.push("why-Max180Do45  = Pas de rotation composée sous 45° descendant superieure à 180°");
 //
 // Modif 2013 ajout des regles suivantes (limitation des rotations) Fin
 
 
 // figures negatives
 //Group-neg=^(1\.2\.[24]|1\.[37]\.[23]|1\.6\.4|1\.1[2478]\.2|1\.1[3569]\.[12]|2\.[3-9]\.|2\.1[0-9]\.|5\.[12]\.[234]|5\.3\.|7\.[15]\.[23]|7\.[34]\.1|7\.5\.[23]|7\.6\.[12]|7\.19\.|7\.2[3479]\.|7\.20\.[234]|7\.2[18]\.[124]|7\.2[26]\.[23]|7\.25\.[123]|7\.3[1246]\.|7\.3[08]\.[23]|7\.35\.[123]|7\.37\.[124]|8\.[13]\.2|8\.[24]\.|8\.[12][0379]\.[12]|8\.3[17]\.[124]|8\.3[28]\.[23]|8\.34\.18\.41\.[123]|8\.42\.[23]|8\.4[048]\.1|8\.47\.[12]|8\.52\.1|8\.66\.2)|9\.1[02]\.
-//neg-name=6 figures considerees comme negatives
+//neg-name=6 figures considérées comme négatives
 //
 // figures negatives National 2 Num 2012 V1
 //Group-neg=^(1\.12\.[24]|1\.1[37]\.[23]|1\.16\.4|1\.2[1367]\.2|1\.2[2458]\.[12]|2\.13\.|2\.2[2-6]\.|2\.3[245]\.|2\.4[2-8]\.|5\.[23]1\.[234]|5\.32\.|7\.2[12]\.[23]|7\.41\.[23]|7\.2[34]\.1|7\.42\.[12]|7\.31\.|7\.8[1257]\.|7\.32\.[234]|7\.33\.[124]|7\.86\.[124]|7\.[38]4\.[23]|7\.8(3|13)\.[123]|7\.8(9|1[0124])\.|7\.8(8|16)\.[23]|7\.815\.[124]|8\.4[13]\.2|8\.4[24]\.|8\.4(1[0379]|2[037])\.[12]|8\.71\.[12]|8\.5[13]\.[124]|8\.5[24]\.[23]|8\.55\.[123]|8\.56\.[23]|8\.6[3468]\.1|8\.5[78]\.1|8\.5(7|19)\.2)|9\.1[02]\.
 //
-// figures negatives National 2 Num 2012 V1 modifi� 2013 en fonction des figures ajout�es en 2013 (7.5.[1247].[12]
+// figures negatives National 2 Num 2012 V1 modifié 2013 en fonction des figures ajoutées en 2013 (7.5.[1247].[12]
 // Openaero Tag (4 field Aresti number)  Ajout 2014 pour OpenAero
 rules.push("Group-neg=^(1\\.1\\.2\\.[24]|1\\.1\\.[37]\\.[23]|1\\.1\\.6\\.4|1\\.2\\.[1367]\\.2|1\\.2\\.[2458]\\.[12]|2\\.1\\.3\\.|2\\.2\\.[2-6]\\.|2\\.3\\.[245]\\.|2\\.4\\.[2-8]\\.|5\\.[23]\\.1\\.[234]|5\\.3\\.2\\.|7\\.2\\.[12]\\.[23]|7\\.4\\.1\\.[23]|7\\.2\\.[34]\\.1|7\\.4\\.2\\.[12]|7\\.3\\.1\\.|7\\.8\\.[12579]\\.|7\\.3\\.2\\.[234]|7\\.3\\.3\\.[124]|7\\.8\\.6\\.[124]|7\\.[38]\\.4\\.[23]|7\\.5\\.[14]\\.|7\\.5\\.[27]\\.2|7\\.8\\.(3|13)\\.[123]|7\\.8\\.1[0124]\\.|7\\.8\\.(8|16)\\.[23]|7\\.8\\.15\\.[124]|8\\.4\\.[13]\\.2|8\\.4\\.[24]\\.|8\\.4\\.(1[0379]|2[037])\\.[12]|8\\.7\\.1\\.[12]|8\\.5\\.[13]\\.[124]|8\\.5\\.[24]\\.[23]|8\\.5\\.5\\.[123]|8\\.5\\.6\\.[23]|8\\.6\\.[3468]\\.1|8\\.5\\.[78]\\.1|8\\.5\\.(7|19)\\.2)|9\\.1[02]\\.");
 // Olan Tag (3 field Aresti number)
 //Group-neg=^(1\.12\.[24]|1\.1[37]\.[23]|1\.16\.4|1\.2[1367]\.2|1\.2[2458]\.[12]|2\.13\.|2\.2[2-6]\.|2\.3[245]\.|2\.4[2-8]\.|5\.[23]1\.[234]|5\.32\.|7\.2[12]\.[23]|7\.41\.[23]|7\.2[34]\.1|7\.42\.[12]|7\.31\.|7\.8[1257]\.|7\.32\.[234]|7\.33\.[124]|7\.86\.[124]|7\.[38]4\.[23]|7\.5[14]\.|7\.5[27]\.2|7\.8(3|13)\.[123]|7\.8(9|1[0124])\.|7\.8(8|16)\.[23]|7\.815\.[124]|8\.4[13]\.2|8\.4[24]\.|8\.4(1[0379]|2[037])\.[12]|8\.71\.[12]|8\.5[13]\.[124]|8\.5[24]\.[23]|8\.55\.[123]|8\.56\.[23]|8\.6[3468]\.1|8\.5[78]\.1|8\.5(7|19)\.2)|9\.1[02]\.
-rules.push("neg-name=6 figures considerees comme negatives");
+rules.push("neg-name=6 figures considérées comme négatives");
 
 rules.push("allow-defrules = NSF; V180; Max720Hor; Max540Up45; Max180Do45");//  Modif 2013 ajout des 3 regles Max...
 
@@ -786,7 +786,7 @@ rules.push("8.5.3.3-4 NR:1");
 rules.push("8.5.4.1-2 NF:2");
 rules.push("8.5.4.3-4");
 rules.push("8.6.2.1 Max90up; NF:3");
-rules.push("8.6.4.1 Max90up; NR:2; NF:3");
+rules.push("8.6.4.1 Max90up; NR:2; N:3");
 rules.push("8.6.4.3 Spin_ou_rien");
 rules.push("8.5.5.1 NF:1; NR:2");
 rules.push("8.5.5.2 NR:1; NR:2");
@@ -841,13 +841,13 @@ rules.push("more=CIVA advanced free");
 rules.push("[France advanced inconnu]");
 rules.push("k-maxperfig=45");
 // correction de l'oubli dans Civa
-//8.61.4  NOU:1; NR:2 # Modif GG correction 2012 report� dans Civa
-//8.63.3  NOU:1; NR:2 # Modif GG correction 2012 report� dans Civa
+//8.61.4  NOU:1; NR:2 # Modif GG correction 2012 reporté dans Civa
+//8.63.3  NOU:1; NR:2 # Modif GG correction 2012 reporté dans Civa
 rules.push("more=CIVA advanced unknownboth");
 
 rules.push("(France doret connu_1)");
 
-// Openaero sequence : Mise a jour connu 2015 pour OpenAero
+// Openaero sequence : Mise à jour connu 2015 pour OpenAero
 rules.push("demo = -ita``,24+```` 34h'3if''~~ 10> fbb(`,4'')3-> -2% -is'irp6if+`` -2% ++3jo15------~ 9> ~---pb.'',8+````> `+cc(1)f+````` ``+,4',2''b...''4. ``+1,2frc3,34");
 // Olan sequence
 //demo = ej -.''24ita8>/ 'fbb(''2````)  ''9s.''irp6f.,6```- -2% -3joi3-^ -8h'.....'' 9>''3,8''m48,24 -2% 2fg2- [-10,17] -iac(2,if) -1% ~~''2,24m''1,if-
@@ -855,7 +855,7 @@ rules.push("more=France doret connu");
 
 rules.push("(France doret connu_2)");
 
-// Openaero sequence : Mise a jour connu 2015 pour OpenAero
+// Openaero sequence : Mise à jour connu 2015 pour OpenAero
 rules.push("demo = ej .',3ta1'' ifb..24.'+``` 4> ~~1n(.48....''),8+ 3> ```7s`ik```24```-`` ```-,2a4,3+`` (-3,13) ```+ac(2)6f,6-````````` (-6,16) ````-3joi3---~ 3> ~--4h2if.' ,48g,f");
 // Olan sequence
 //demo = ej .,3''ta->/ -2kif,2.+``` ifn(.''2.'')4- >-``,7is'ibb(````,2````````)...+````> 12>m2f,1+`` -2% ```+3j15-``` -h4''> [-20,11] ```+2rcc(``1,2f) ,24`gf
@@ -884,8 +884,8 @@ rules.push("basefig-min=9");
 //basefig-max=13
 
 //  min 2 rotation verticales montantes
-//group-vuprot=^9\.([12489]|10)\.[16]\.  # attention valide aussi une seule rotation compos�e
-rules.push("Group-vuprot=9\\.([12489]|10)\\.[16]\\.");// attention ne valide pas deux rotations dans la m�me figure (N)
+//group-vuprot=^9\.([12489]|10)\.[16]\.  # attention valide aussi une seule rotation composée
+rules.push("Group-vuprot=9\\.([12489]|10)\\.[16]\\.");// attention ne valide pas deux rotations dans la même figure (N)
 rules.push("vuprot-name=rotations verticales montantes");
 rules.push("vuprot-min=2");
 
@@ -899,7 +899,8 @@ rules.push("spin-repeat=1");
 rules.push("group-roller=^2\\.(2\\.[3-6]|3\\.[2-5]|4\\.[2-8])\\.");
 // Olan Tag (3 field Aresti number)
 //group-roller=^2\.(2[3-6]|3[2-5]|4[2-8])\.
-rules.push("roller-name=Rolling turn, family 2.2.3-2.2.6 ou 2.3.2-2.3.5 ou 2.4.2-2.4.8");
+rules.push("roller-name=Tonneaux en virage, famille 2.2.3 à 2.2.6 ou 2.3.2 à 2.3.5 ou 2.4.2 à 2.4.8");
+//rules.push("roller-name=Rolling turn, family 2.2.3-2.2.6 ou 2.3.2-2.3.5 ou 2.4.2-2.4.8");
 //group-humpty=^8\.[1-4]\.
 //humpty-name=family 8.1-8.4 (humpty bumps)
 
@@ -932,10 +933,10 @@ rules.push("k-max=350");
 
 //###################################################################################################
 //##
-//## en cours de  r�alisation sur la base ci-dessous (unlimited unknown) en adaptant la liste des figures
-//## Liste des rotations autoris�es amend�e avec ajout du commentaire : # Modif GG
-//## Reste � v�rifier la regle R4 (prise en compte des possibles rotations apr�s la vrille si necessaire)
-//## La regle R6 genere systematiquement une erreur. Ne pas en tenir compte avec les figures indiqu�e comme valides
+//## en cours de  réalisation sur la base ci-dessous (unlimited unknown) en adaptant la liste des figures
+//## Liste des rotations autorisées amendée avec ajout du commentaire : # Modif GG
+//## Reste à vérifier la regle R4 (prise en compte des possibles rotations aprés la vrille si necessaire)
+//## La regle R6 genere systematiquement une erreur. Ne pas en tenir compte avec les figures indiquée comme valides
 //##
 //###################################################################################################
 
@@ -946,30 +947,31 @@ rules.push("why-Interdite   = Figure de base interdite");
 // Modif Civa 2012
 rules.push("conv-horstop=^9\\.(1|9|10)\\.[38]=1 ; ^9\\.2\\.3\\.4 = 2 ;^9\\.2\\.3\\.6 = 3 ;^9\\.2\\.3\\.8 = 4 ;^9\\.4\\.3\\.([1-8]) = $1; ^9\\.8\\.3\\.1 = 2;^9\\.8\\.3\\.2 = 4;^9\\.8\\.3\\.3 = 6;^9\\.8\\.3\\.4 = 8; ^9\\.=r ; ^0\\.=z");
 rules.push("rule-Hor10stop = horstop:<11");
-rules.push("why-Hor10stop  = a maximum of 10 stops are allowed on straight horizontal lines rolls");
+rules.push("why-Hor10stop  = un maximum de 10 arrets est autorisé dans les rotations des lignes droites horizontales");
+rules.push("why_en-Hor10stop  = a maximum of 10 stops are allowed on straight horizontal lines rolls");
 // Modif Civa 2012
 
-//1.11.1-4 # etait supprim�e dans la liste unlimited ci-dessous car consid�r�e comme connectors. puis Modif 2013 Suppression CIVA 2013
+//1.11.1-4 # etait supprimée dans la liste unlimited ci-dessous car considérée comme connectors. puis Modif 2013 Suppression CIVA 2013
 
-//### r�gle R1
+//### régle R1
 
 rules.push("2.1.2.1-4");// 17 et 18 deja dans la liste unlimited ci-dessous.
 
-//### r�gle R2
+//### régle R2
 
-// Supprim�es dans la liste des figures autoris�es ci-dessous
+// Supprimées dans la liste des figures autorisées ci-dessous
 
-//### r�gle R3  NOU:1 existait d�ja comme r�gle Unlimited.
+//### régle R3  NOU:1 existait déja comme régle Unlimited.
 
 rules.push("7.4.1.2 NF:1; NOU:1");
 rules.push("7.4.2.2 NF:1; NOU:1");
 
-//### r�gle R4
+//### régle R4
 
 rules.push("conv-roll_R4=^9\\.4\\.1\\.2=A; ^9\\.1\\.1\\.[1-4]=A; ^9\\.([1248])\\.=$1; ^9\\.(9|10)\\.([6-9]|10)=F; ^9\\.(9|10)=f; ^9\\.1[12]=s ; ^0\\.=z");
-//rule-R4 = roll_R4:^s [^Az]  # les possibilit�s de rotations altern�es ou apr�s la vrille ne sont pas prises en compte.
-rules.push("rule-R4 = roll_R4:^s ([^Az]|\\w,)");// Prise en compte des possibilit�s de rotations altern�es montantes mais pas apr�s la vrille.
-rules.push("why-R4 = pas de declenche ou pas cette rotation dans la branche montante avec une vrille dans la branche descendante.");
+//rule-R4 = roll_R4:^s [^Az]  # les possibilités de rotations alternées ou aprés la vrille ne sont pas prises en compte.
+rules.push("rule-R4 = roll_R4:^s ([^Az]|\\w,)");// Prise en compte des possibilités de rotations alternées montantes mais pas aprés la vrille.
+rules.push("why-R4 = pas de déclenché ou pas cette rotation dans la branche montante avec une vrille dans la branche descendante.");
 
 rules.push("8.4.1.1");
 rules.push("8.4.1.2 No_depart_dos; No_sortie_dos");
@@ -984,31 +986,31 @@ rules.push("8.4.2.3-4 R4");
 rules.push("8.4.3.3-4 R4");
 rules.push("8.4.4.3-4 R4");
 
-//### r�gle R5
+//### régle R5
 
-rules.push("8.6.5.3-4 NF:3");
-rules.push("8.6.6.3-4 NF:3");
+rules.push("8.6.5.3-4 NF:2"); // Correction 2015 (NF:3 -> NF:2) suite aux modifs Openaero 1.4.3 vues dans rules15-civa
+rules.push("8.6.6.3-4 NF:2"); // Correction 2015 (NF:3 -> NF:2) suite aux modifs Openaero 1.4.3 vues dans rules15-civa
 
-//### r�gle R6
+//### régle R6
 
 rules.push("conv-roll_R6=^9\\.10\\.8\\.2=X; ^9\\.([1248])\\.=$1; ^9\\.(9|10)\\.([6-9]|10)=F; ^9\\.(9|10)=f; ^9\\.1[12]=s ; ^0\\.=z");
 rules.push("rule-R6 = roll_R6:X");
-rules.push("why-R6 = ce declenche est interdit. Sauf sur les figures 7.2.2.1, 7.2.4.2, 8.5.3.3, 8.5.4.4, 8.6.2.4 et 8.6.4.3.");
-// Correction 2013 : 8.5.3.4 remplac� par 8.5.4.4 dans la ligne ci-dessus.
+rules.push("why-R6 = ce déclenché est interdit. Sauf sur les figures 7.2.2.1, 7.2.4.2, 8.5.3.3, 8.5.4.4, 8.6.2.4 et 8.6.4.3.");
+// Correction 2013 : 8.5.3.4 remplacé par 8.5.4.4 dans la ligne ci-dessus.
 
-// R6 rajout�e dans le "allow-defrules" ci-dessous.
+// R6 rajoutée dans le "allow-defrules" ci-dessous.
 
-//### r�gle R7  les autres r�gles existaient d�ja comme r�gles Unlimited.
+//### régle R7  les autres régles existaient déja comme régles Unlimited.
 
 rules.push("7.4.1.3-4 NR:1; NOU:1 ; NF:1 ; N88");
 rules.push("7.4.5.4  NR:1; NR:2; NF:2");
 
-//### r�gle R8 et R9 NORF:2 existait d�ja comme r�gle Unlimited.
+//### régle R8 et R9 NORF:2 existait déja comme régle Unlimited.
 
 rules.push("rule-VDOWN180 = downqtrs:<3");
-rules.push("why-VDOWN180  = un maximum 180 degres de rotation est permis.");
+rules.push("why-VDOWN180  = un maximum de 180° de rotation est permis.");
 rules.push("rule-VDOWN270 = downqtrs:<4");
-rules.push("why-VDOWN270  = un maximum 270 degres de rotation est permis.");
+rules.push("why-VDOWN270  = un maximum de 270° de rotation est permis.");
 rules.push("rule-VDOWN1S = downstop:<2");// Si l'on conprend : pas 9.4.5.2 (pas de facettes).
 rules.push("why-VDOWN1S  = pas de facette permise.");
 
@@ -1029,10 +1031,10 @@ rules.push("1.2.7.4 NF; VDOWN270; VDOWN1S");
 rules.push("1.2.8.3 NF; VDOWN270; VDOWN1S");
 rules.push("1.2.8.4 NORF:2; NF; VDOWN180; VDOWN1S");
 
-//### r�gle R10 NORF existait d�ja comme r�gle Unlimited.
+//### régle R10 NORF existait déja comme régle Unlimited.
 
-rules.push("rule-R10 = roll:^((\\w,[fF])|[fF]|([fF],\\w)) [1248]");// les possibilit�s de rotations altern�es sont prises en compte.
-rules.push("why-R10 = pas de rotation dans la branche descendante avec un declenche dans la branche montante.");
+rules.push("rule-R10 = roll:^((\\w,[fF])|[fF]|([fF],\\w)) [1248]");// les possibilités de rotations alternées sont prises en compte.
+rules.push("why-R10 = pas de rotation dans la branche descendante avec un déclenché dans la branche montante.");
 
 rules.push("8.4.15.1 R10");
 rules.push("8.4.15.2 R10; NORF");
@@ -1048,12 +1050,12 @@ rules.push("8.4.18.1");
 rules.push("8.4.18.2 R10; NORF");
 rules.push("8.4.18.3-4 NORF");
 
-//### r�gle R11 et R12 les autres r�gles existaient d�ja comme r�gles Unlimited.
+//### régle R11 et R12 les autres régles existaient déja comme régles Unlimited.
 
 rules.push("conv-roll_R11=^9\\.1\\.1\\.[12]=A; ^9\\.([1248])\\.=$1; ^9\\.(9|10)\\.([6-9]|10)=F; ^9\\.(9|10)=f ; ^9\\.1[12]=s ; ^0\\.=z;");
-// les possibilit�s de rotations altern�es ne sont pas forcement toutes prises en compte.
+// les possibilités de rotations alternées ne sont pas forcement toutes prises en compte.
 //rule-R11 = roll_R11:(^[fF] [1248])|(^[1248] [1248])|(^[A1248] [fF])
-// les possibilit�s de rotations altern�es sont prises en compte.
+// les possibilités de rotations alternées sont prises en compte.
 rules.push("rule-R11 = roll_R11:(^((\\w,[A1248fF])|[1248fF]|([A1248fF],\\w)) [1248])|(^[^zA]+ [1248])|(^[^z]+ [fF])");
 rules.push("why-R11 = cette combinaison de rotation montante et sommitale est interdite.");
 
@@ -1062,10 +1064,10 @@ rules.push("8.6.1.2  NOU:2; NF:3; NF2UP360; NF2UP2STOP; R11; No_depart_dos");
 rules.push("8.6.3.1  NOU:2; NF:3; NF2UP360; NF2UP2STOP; R11");
 rules.push("8.6.3.2  NOU:2; NF:3; NF2UP360; NF2UP2STOP; R11; No_depart_dos");
 
-//### r�gle R13 et R14  les autres r�gles existaient d�ja comme r�gles Unlimited.
+//### régle R13 et R14  les autres régles existaient déja comme régles Unlimited.
 
 rules.push("conv-roll_R14=^9\\.1\\.5\\.[123]=A; ^9\\.([1248])\\.=$1; ^9\\.(9|10)\\.([6-9]|10)=F; ^9\\.(9|10)=f; ^9\\.1[12]=s ; ^0\\.=z");
-rules.push("rule-R14 = roll_R14:^[\\w,]+ ([^z]|(\\w,\\w)) ([^Az]|(\\w,))");// les possibilit�s de rotations altern�es sont prises en compte.
+rules.push("rule-R14 = roll_R14:^[\\w,]+ ([^z]|(\\w,\\w)) ([^Az]|(\\w,))");// les possibilités de rotations alternées sont prises en compte.
 rules.push("why-R14 = cette rotation descendante est interdite en presence d'une rotation au sommet.");
 
 rules.push("8.6.5.1  NOU:2 ; NF:1 ; NF3TOPH; R14");
@@ -1073,23 +1075,23 @@ rules.push("8.6.5.2  NOU:2 ; NF:1 ; NF3TOPH; VDOWN180; VDOWN1S; No_sortie_dos");
 rules.push("8.6.6.1  NOU:2 ; NF:1 ; NF3TOPH; VDOWN180; VDOWN1S; No_sortie_dos");// Si l'on conprend : pas 9.4.5.2 (pas de facettes).
 rules.push("8.6.6.2  NOU:2 ; NF:1 ; NF3TOPH; R14");
 
-//### r�gle R15 et R16
+//### régle R15 et R16
 
 rules.push("conv-roll_R15=^9\\.1\\.5\\.[1-2]=A; ^9\\.([1248])\\.=X; ^9\\.(9|10)\\.([6-9]|10)=F; ^9\\.(9|10)=f; ^9\\.1[12]=s ; ^0\\.=z");
 rules.push("rule-R15 = roll:s,[fFX]");
-rules.push("why-R15 = pas de declenche ou cette rotation apres une vrille.");
+rules.push("why-R15 = pas de déclenché ou cette rotation après une vrille.");
 
-// R15 rajout�e dans le "allow-defrules" ci-dessous.
+// R15 rajoutée dans le "allow-defrules" ci-dessous.
 
-//### r�gles entr�e dos (v) et sortie dos (n) interdite
+//### régles entrée dos (v) et sortie dos (n) interdite
 
 rules.push("conv-doret_dos=^9\\.1\\.1\\.[5-8]=v; ^9\\.4\\.1\\.[4-8]=v; ^9\\.8\\.1\\.[2-8]=v; ^9\\.[12]\\.5\\.[4-8]=n; ^9\\.[48]\\.5\\.[3-8]=n; ^9\\.(9|10)\\.(5|10)\\.=n; ^9\\.([1248])\\.=r; ^9\\.(9|10)=f; ^9\\.1[12]=s ; ^0\\.=z");
 rules.push("rule-No_depart_dos = doret_dos:^v");
-rules.push("why-No_depart_dos = pas de depart dos avec cette rotation verticale.");
+rules.push("why-No_depart_dos = pas de départ dos avec cette rotation verticale.");
 rules.push("rule-No_sortie_dos = doret_dos:n$");
 rules.push("why-No_sortie_dos = pas de sortie dos avec cette rotation verticale.");
 
-// Regles ci-dessus sont rajout�es sur les figures appropri�es ci-dessous.
+// Regles ci-dessus sont rajoutées sur les figures appropriées ci-dessous.
 
 //###################################################################################################
 //#####     debut de Recopie et de modification des regles civa 2011 unlimited unknown      #########
@@ -1106,54 +1108,73 @@ rules.push("conv-diagupqtrs=^9\\.([1-9]|10)\\.[27]\\.([1-8]) = $2 ; ^9\\. = r ; 
 rules.push("conv-diagupstop=^9\\.1\\.2=1 ;^9\\.(9|10)\\.[27]=2 ; ^9\\.2\\.2\\.4 = 2 ;^9\\.2\\.2\\.6 = 3 ;^9\\.2\\.2\\.8 = 4 ;^9\\.4\\.2\\.([1-8]) = $1; ^9\\.8\\.2\\.1 = 2;^9\\.8\\.2\\.2 = 4;^9\\.8\\.2\\.3 = 6;^9\\.8\\.2\\.4 = 8; ^9\\.=r ; ^0\\.=z");
 
 rules.push("conv-downqtrs=^9\\.([1-9]|10)\\.(5|10)\\.([1-8]) = $3 ; ^9\\. = r ; ^0\\.=z");
-rules.push("conv-downstop=^9\\.(1|9|10)\\.(5|10)=1 ; ^9\\.2\\.5\\.4 = 2 ;^9\\.2\\.5\\.6 = 3 ;^9\\.2\\.5\\.8 = 4 ;^9\\.4\\.5\\.([1-8]) = $1; ^9\\.8\\.5\\.1 = 2;^9\\.8\\.5\\.2 = 4;^9\\.8\\.5\\.3 = 6;^9\\.8\\.5\\.4 = 8; ^9\\.=r ; ^0\\.=z");
+// Changed in 1.4.3
+// 9.8.5.2 (4x8) is converted to 3, to assure allowing it when it exists
+// alone, but not combined with other rolls Correction GG 2015
+rules.push("conv-downstop=^9\\.(1|9|10)\\.(5|10)=1 ; ^9\\.2\\.5\\.4 = 2 ;^9\\.2\\.5\\.6 = 3 ;^9\\.2\\.5\\.8 = 4 ;^9\\.4\\.5\\.([1-8]) = $1; ^9\\.8\\.5\\.1 = 2;^9\\.8\\.5\\.2 = 3;^9\\.8\\.5\\.3 = 6;^9\\.8\\.5\\.4 = 8 ; ^9\\.(9|10)\\. = f; ^9\\.=r ; ^0\\.=z");
+//rules.push("conv-downstop=^9\\.(1|9|10)\\.(5|10)=1 ; ^9\\.2\\.5\\.4 = 2 ;^9\\.2\\.5\\.6 = 3 ;^9\\.2\\.5\\.8 = 4 ;^9\\.4\\.5\\.([1-8]) = $1; ^9\\.8\\.5\\.1 = 2;^9\\.8\\.5\\.2 = 4;^9\\.8\\.5\\.3 = 6;^9\\.8\\.5\\.4 = 8; ^9\\.=r ; ^0\\.=z");
 
 rules.push("rule-VUP450 = upqtrs:<6");
-rules.push("why-VUP450  = a maximum of 450 degrees are allowed on vertical up opposite rolls");
+rules.push("why-VUP450  = un maximum de 450° est permis sur les rotations alternées verticales montantes");
+rules.push("why_en-VUP450  = a maximum of 450° are allowed on vertical up opposite rolls");
 
 rules.push("rule-DIAGUP540 = diagupqtrs:<7");
-rules.push("why-DIAGUP540  = a maximum of 540 degrees are allowed on diagonal up opposite rolls");
+rules.push("why-DIAGUP540  = un maximum de 540° est permis sur les rotations alternées à 45° montant");
+rules.push("why_en-DIAGUP540  = a maximum of 540° are allowed on diagonal up opposite rolls");
 
 rules.push("rule-VUP4S = upstop:<5");
-rules.push("why-VUP4S  = a maximum of 4 stops are allowed on vertical up opposite rolls");
+rules.push("why-VUP4S  = un maximum de 4 arrets est permis sur les rotations alternées verticales montantes");
+rules.push("why_en-VUP4S  = a maximum of 4 stops are allowed on vertical up opposite rolls");
 
 rules.push("rule-DIAGUP4S = diagupstop:<5");
-rules.push("why-DIAGUP4S  = a maximum of 4 stops (3 if snap) are allowed on diagonal up opposite rolls");
+rules.push("why-DIAGUP4S  = un maximum de 4 arrets (3 si déclenché) est permis sur les rotations combinées à 45° montant");
+rules.push("why_en-DIAGUP4S  = a maximum of 4 stops (3 if snap) are allowed on diagonal up opposite rolls");
 
 //note +<6 indicates the total count is less than 6 ... all climbing rolls combined
 rules.push("rule-CLIMB450 = climbqtrs:+<6");
-rules.push("why-CLIMB450  = a maximum of 450 degrees are allowed on climbing rolls");
+rules.push("why-CLIMB450  = un maximum de 450° est permis sur l\'ensemble des rotations montantes");
+rules.push("why_en-CLIMB450  = a maximum of 450° are allowed on climbing rolls");
 
 rules.push("rule-CLIMB4S = climbstop:+<5");
-rules.push("why-CLIMB4S  = a maximum of 4 stops are allowed on climbing olls");
+rules.push("why-CLIMB4S  = un maximum de 4 arrets est permis sur l\'ensemble des rotations montantes");
+rules.push("why_en-CLIMB4S  = a maximum of 4 stops are allowed on climbing rolls");
 
 rules.push("rule-VDOWN360 = downqtrs:<5");
-rules.push("why-VDOWN360  = a maximum of 360 degrees are allowed on vertical down opposite rolls");
+rules.push("why-VDOWN360  = un maximum de 360° est permis sur les rotations alternées verticales descendantes");
+rules.push("why_en-VDOWN360  = a maximum of 360° are allowed on vertical down opposite rolls");
 
 rules.push("rule-VDOWN3S = downstop:<4");
-rules.push("why-VDOWN3S  = a maximum of 3 stops are allowed on vertical down opposite rolls");
+rules.push("why-VDOWN3S  = un maximum de 3 arrets est permis sur les rotations alternées verticales descendantes");
+rules.push("why_en-VDOWN3S  = a maximum of 3 stops are allowed on vertical down opposite rolls");
 
 rules.push("conv-vdDhfsz=^9\\.[1248]\\.[15]=v;^9\\.[1248]\\.2=d;^9\\.[1248]\\.4=D; ^9\\.[1248]\\.=h; ^9\\.(9|10)\\.[1-5]=f;^9\\.(9|10)\\.=F; ^9\\.1[12]=s ; ^0\\.=z");
 rules.push("rule-UnlimitedNOU  =vdDhfsz: D,|,D|v,[fF]|[Ff],v|[Ff],d");
-rules.push("why-UnlimitedNOU  = opposite or unlinked roll/roll (or flick) combination is not allowed");
+rules.push("why-UnlimitedNOU  = rotations combinées interdites");
+rules.push("why_en-UnlimitedNOU  = opposite or unlinked roll/roll (or flick) combination is not allowed");
 
 rules.push("rule-UnlimitedNOUF  =vdDhfsz: d,F");
-rules.push("why-UnlimitedNOUF  = 45-up roll/flick (\"hard way\") combination is not allowed");
+rules.push("why-UnlimitedNOUF  = sous 45° montant rotation combinée tonneau/déclenché \"gros K\" interdite");
+rules.push("why_en-UnlimitedNOUF  = 45-up roll/flick (\"hard way\") combination is not allowed");
 
 rules.push("rule-NF3TOPH  =roll: (.,.|248) [fF]$");
-rules.push("why-NF3TOPH  = no flick roll on vertical down line after hesitation in the loop");
+rules.push("why-NF3TOPH  = pas de déclenché sur la verticale descendante aprés des facettes dans la boucle");
+rules.push("why_en-NF3TOPH  = no flick roll on vertical down line after hesitation in the loop");
 
 rules.push("rule-NF2UP360 = upqtrs: ^([5-8]|,4|4,|2,3|3,[23]) f");
-rules.push("why-NF2UP360  = no flick roll on loop top after more than 360 roll going up");
+rules.push("why-NF2UP360  = pas de déclenché en haut de boucle si plus de 360° de rotation verticale montante");
+rules.push("why_en-NF2UP360  = no flick roll on loop top after more than 360° roll going up");
 
 rules.push("rule-NF2UP2STOP = upstop: ^([3-9]|,2|2,) f");
-rules.push("why-NF2UP2STOP  = no flick roll on loop top after more than 2 stops going up");
+rules.push("why-NF2UP2STOP  = pas de déclenché en haut de boucle si plus de 2 arrets en verticale montante");
+rules.push("why_en-NF2UP2STOP  = no flick roll on loop top after more than 2 stops going up");
 
 rules.push("rule-N88 = roll: 8");
-rules.push("why-N88     = 8 point roll is not allowed");
+rules.push("why-N88     = 8 facettes interdit");
+rules.push("why_en-N88     = 8 point roll is not allowed");
 
 rules.push("rule-NORF   = roll: [1248],f");
-rules.push("why-NORF    = roll,flick combination not allowed");
+rules.push("why-NORF    = combinaison tonneau,déclenché interdite");
+rules.push("why_en-NORF    = roll,flick combination not allowed");
 
 
 rules.push("allow-defrules= UnlimitedNOU ; UnlimitedNOUF; VUP450; VUP4S ; VDOWN360 ; VDOWN3S ;DIAGUP540 ; DIAGUP4S; R6 ; R15; Hor10stop");
@@ -1521,4 +1542,4 @@ rules.push("more=CIVA unlimited free");
 rules.push("[France unlimited inconnu]");
 rules.push("more=CIVA Unlimited FreeUnknown");	// Modif 2015 Unknown -> FreeUnknown pour reconnaissance par le freeunknown designer. 
 
-//######################################################################################
+//#####################################################################################

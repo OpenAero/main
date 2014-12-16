@@ -1,4 +1,4 @@
-// rules15.js version 1.5.0
+﻿// rules15.js version 1.5.0
 
 // This file is part of OpenAero.
 
@@ -226,6 +226,16 @@ rules.push("osnap-name=outside (negative) snap roll");
 rules.push("spin-name=spin family");
 rules.push("uspin-name=upright spin family");
 
+rules.push("k-name_fr=Coef K");//special, counts actual K instead of figures count
+rules.push("basefig-name_fr=figures de base");
+rules.push("basefigex11-name_fr=figures de base sauf 1.1.1.x");
+rules.push("roll-name_fr=tonneau(x)");
+rules.push("snap-name_fr=déclenché(s)");
+rules.push("isnap-name_fr=déclenché(s) positif(s)");
+rules.push("osnap-name_fr=déclenché(s) negatif(s)");
+rules.push("spin-name_fr=vrille(s)");
+rules.push("uspin-name_fr=vrille(s) positive(s)");
+
 rules.push("group-fam1=^1\\..*");
 rules.push("group-fam2=^2\\..*");
 rules.push("group-fam3=^3\\..*");
@@ -246,6 +256,16 @@ rules.push("fam7-name=Family 7");
 rules.push("fam8-name=Family 8");
 rules.push("fam9-name=Family 9");
 
+rules.push("fam1-name_fr=Famille 1");
+rules.push("fam2-name_fr=Famille 2");
+rules.push("fam3-name_fr=Famille 3");
+rules.push("fam4-name_fr=Famille 4");
+rules.push("fam5-name_fr=Famille 5");
+rules.push("fam6-name_fr=Famille 6");
+rules.push("fam7-name_fr=Famille 7");
+rules.push("fam8-name_fr=Famille 8");
+rules.push("fam9-name_fr=Famille 9");
+
 rules.push("group-froll=^9\\.1\\.");
 rules.push("group-hroll=^9\\.2");
 rules.push("group-troll=^9\\.3");
@@ -254,13 +274,21 @@ rules.push("group-eroll=^9\\.8");
 rules.push("group-sroll=^9\\.13");
 rules.push("group-hesroll=^9\\.[2-8]");
 
-rules.push("froll-name=family 9.1 (no-hesitation roll)");
-rules.push("hroll-name=family 9.2 (half roll hesitations)");
+rules.push("froll-name=Family 9.1 (no-hesitation roll)");
+rules.push("hroll-name=Family 9.2 (half roll hesitations)");
 rules.push("troll-name=1/3 roll");
 rules.push("qroll-name=family 9.4 (quarter roll hesitations)");
 rules.push("eroll-name=1/8's roll");
 rules.push("sroll-name=super slow roll");
 rules.push("hesroll-name=hesitation roll");
+
+rules.push("froll-name_fr=Famille 9.1 (tonneaux sans facette)");
+rules.push("hroll-name_fr=Famille 9.2 (tonneaux à 2 facettes)");
+rules.push("troll-name_fr=Famille 9.3 (tonneaux à 3 facettes)");
+rules.push("qroll-name_fr=Famille 9.4 (tonneaux à 4 facettes)");
+rules.push("eroll-name_fr=Famille 9.8 (tonneaux à 8 facettes)");
+rules.push("sroll-name_fr=tonneaux super lents");
+rules.push("hesroll-name_fr=tonneaux à facettes");
 
 // super groups ("G") are matched the full catalog info. this one
 // indicates real opposite rolls (spin-roll is not!)
@@ -269,11 +297,13 @@ rules.push("hesroll-name=hesitation roll");
 
 rules.push("Group-opposite=(^| )9\\.([1-9]|10)\\.[\\d()\\.]+,");
 rules.push("opposite-name=opposite rolls");
+rules.push("opposite-name_fr=rotation(s) alternée(s)");
 
 // used to allow k2 and k24 but not k2 twice, etc for glider int.
 // indicate repetitions of complete figures
 rules.push("Group-combined=^");
 rules.push("combined-name=combination figures (base and rolls)");
+rules.push("combined-name_fr=figures complétes (base et rotations)");
 
 //#####################################################################
 //##### UNKNOWNS ALLOWED FIGURES RULES ################################
@@ -302,18 +332,24 @@ rules.push("conv-qtrs=^9\\.\\d+\\.\\d.([1-8])=$1; ^0\\.=0");
 
 rules.push("rule-NF=roll:[fF]");
 rules.push("why-NF=no flick allowed");
+rules.push("why_fr-NF=déclenché interdit");
 
 rules.push("rule-NOU=roll:[,;]");
 rules.push("why-NOU=no opposite or unlinked rolls allowed");
+rules.push("why_fr-NOU=rotations combinées interdites");
 
 rules.push("rule-NR=roll:[^z]");
 rules.push("why-NR=no roll allowed");
+rules.push("why_fr-NR=rotation interdite");
 
 rules.push("rule-OS=roll:[1248fF]");
 rules.push("why-OS=only spin allowed");
+rules.push("why_fr-OS=seule vrille autorisée");
 
 rules.push("rule-MAX360=qtrs:<5");
 rules.push("why-MAX360=maximum of 360 degrees rotation allowed");
+rules.push("why_fr-MAX360=maximum de 360° de rotation permis");
 
 rules.push("rule-FAM91=roll:[^1z]");
 rules.push("why-FAM91=only family 1 roll allowed");
+rules.push("why_fr-FAM91=uniquement tonneau sans facette permis");

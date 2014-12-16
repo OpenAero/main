@@ -862,10 +862,8 @@ function switchMobile () {
   var svg = document.getElementById('svgContainer');
   if (mobileBrowser) {
     // set view to device width
-    viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, user-scalable=no');
-    // set view to width 320
-//    viewport.setAttribute('content', 'width=320, initial-scale=1.0, ' +
-//      'maximum-scale=2.0, minimum-scale=1.0');
+    viewport.setAttribute('content', 'initial-scale=' +
+      roundTwo(screen.width / 320) + ', user-scalable=no');
     // hide Free Unknown designer menu item
     document.getElementById('t_fuDesigner').classList.add ('noDisplay');
     // set mobile css
@@ -1366,7 +1364,7 @@ function updateUserTexts () {
   var language = lang[document.getElementById('language').value];
   // add a warning to the console for every missing key. Helps in
   // creating new translations
-  for (var key in lang['en']) {
+  for (var key in lang.en) {
     if (!(key in language) && (key != 'en')) {
       console.log ('Key "' + key + '" missing in language "' +
         document.getElementById('language').value + '"');
@@ -1666,17 +1664,17 @@ function makeFigStop (lastFig) {
     var angle2 = dirAttToAngle (Direction, Attitude);
     var dx2 = roundTwo(Math.cos(angle2) * lineElement);
     var dy2 = - roundTwo(Math.sin(angle2) * lineElement);
-    pathArray['path'] = 'm ' + (dx2 + dx * 2) + ',' + (dy2 + dy * 2) +
+    pathArray.path = 'm ' + (dx2 + dx * 2) + ',' + (dy2 + dy * 2) +
       ' l ' + (-4 * dx) + ',' + (-4 * dy);
-    pathArray['style'] = 'pos';
-    pathArray['dx'] = dx2;
-    pathArray['dy'] = dy2;
+    pathArray.style = 'pos';
+    pathArray.dx = dx2;
+    pathArray.dy = dy2;
   } else {
-    pathArray['path'] = 'l ' + dx + ',' + dy + ' l ' + (-2 * dx) +
+    pathArray.path = 'l ' + dx + ',' + dy + ' l ' + (-2 * dx) +
       ',' + (-2 * dy);
-    pathArray['style'] = 'pos';
-    pathArray['dx'] = 0;
-    pathArray['dy'] = 0;
+    pathArray.style = 'pos';
+    pathArray.dx = 0;
+    pathArray.dy = 0;
   }
   return Array(pathArray);
 }
@@ -1688,10 +1686,10 @@ function makeFigSpace (extent) {
   var angle = dirAttToAngle (Direction, Attitude);
   var dx = Math.cos(angle) * (lineElement / scale) * extent;
   var dy = - Math.sin(angle) * (lineElement / scale) * extent;
-  pathArray['path'] = '';
-  pathArray['style'] = 'neg';
-  pathArray['dx'] = roundTwo(dx);
-  pathArray['dy'] = roundTwo(dy);
+  pathArray.path = '';
+  pathArray.style = 'neg';
+  pathArray.dx = roundTwo(dx);
+  pathArray.dy = roundTwo(dy);
   return Array(pathArray);
 }
 
@@ -1699,10 +1697,10 @@ function makeFigSpace (extent) {
 // scaling should not affect movement, so divide by scale
 function makeVertSpace (extent) {
   var pathArray = [];
-  pathArray['path'] = '';
-  pathArray['style'] = 'neg';
-  pathArray['dx'] = 0;
-  pathArray['dy'] = (lineElement / scale) * extent;
+  pathArray.path = '';
+  pathArray.style = 'neg';
+  pathArray.dx = 0;
+  pathArray.dy = (lineElement / scale) * extent;
   return Array(pathArray);
 }
 
@@ -1957,15 +1955,15 @@ function makeCurve (param) {
     var Y_axis_Radius = perspective_param.y_radius * Radius;
     dy = dy - dx * Math.sin(yAxisOffset * degToRad);
     dx = dx * Math.cos(yAxisOffset * degToRad);
-    pathArray['path'] = 'a' + roundTwo(X_axis_Radius) + ',' +
+    pathArray.path = 'a' + roundTwo(X_axis_Radius) + ',' +
       roundTwo(Y_axis_Radius) + ' ' + Rot_axe_Ellipse + ' ' + longCurve +
       ' ' + sweepFlag + ' ' + roundTwo(dx) + ',' + roundTwo(dy);
   } else {
-    pathArray['path'] = 'a' + Radius + ',' + Radius + ' 0 ' + longCurve +
+    pathArray.path = 'a' + Radius + ',' + Radius + ' 0 ' + longCurve +
       ' ' + sweepFlag + ' ' + roundTwo(dx) + ',' + roundTwo(dy);
   }
-  pathArray['dx'] = dx;
-  pathArray['dy'] = dy;
+  pathArray.dx = dx;
+  pathArray.dy = dy;
   return Array(pathArray);
 }
 
@@ -2588,8 +2586,8 @@ function makeSnap (params) {
       }
       NegLoad = saveLoad;
       // Get the relative movement by the line and use this to build the tip connector line
-      dx = pathsArray[pathsArray.length - 1]['dx'] + radCos * snapElement2;
-      dy = pathsArray[pathsArray.length - 1]['dy'] - radSin * snapElement2;
+      dx = pathsArray[pathsArray.length - 1].dx + radCos * snapElement2;
+      dy = pathsArray[pathsArray.length - 1].dy - radSin * snapElement2;
       dxTip = -radSin * snapElement24 * sign + radCos * snapElement;
       dyTip = -radCos * snapElement24 * sign - radSin * snapElement;
       path = 'm ' + roundTwo(dxTip) + ',' + roundTwo(dyTip) + ' l ' +
@@ -2687,16 +2685,16 @@ function makeHammer (extent) {
   pathArray = [];
   Attitude = 270;
   changeDir(180);
-  pathArray['style'] = 'pos';
+  pathArray.style = 'pos';
   if ((Direction == 90) || (Direction == 270)) {
     dy = roundTwo((1 - scaleLine.y) * lineElement);
     dx = roundTwo(scaleLine.x * lineElement);
-    pathArray['path'] = "l " + (dx) + "," + (dy);
+    pathArray.path = "l " + (dx) + "," + (dy);
   } else {
-    pathArray['path'] = "l " + (lineElement) + "," + (lineElement);
+    pathArray.path = "l " + (lineElement) + "," + (lineElement);
   }
-  pathArray['dx'] = 0;
-  pathArray['dy'] = lineElement * extent;
+  pathArray.dx = 0;
+  pathArray.dy = lineElement * extent;
   return Array(pathArray);
 }
 
@@ -2710,8 +2708,8 @@ function makeTailslide (param) {
   if (param == figpat.tailslidewheels) angle = -angle;
   if (angle > 0) sweepFlag = 1; else sweepFlag = 0;
   if (param == figpat.tailslidecanopy) {
-    pathsArray[0]['style'] = 'pos';
-  } else pathsArray[0]['style'] = 'neg';
+    pathsArray[0].style = 'pos';
+  } else pathsArray[0].style = 'neg';
   var Radius = curveRadius;
   if (angle > 0) dx = -Radius; else dx = Radius;
   dy = Radius;
@@ -2725,11 +2723,11 @@ function makeTailslide (param) {
     if (yAxisOffset > 90) {
       dx = -dx;
     }
-    pathsArray[0]['path'] = 'a' + roundTwo(X_axis_Radius) + ',' +
+    pathsArray[0].path = 'a' + roundTwo(X_axis_Radius) + ',' +
       roundTwo(Y_axis_Radius) + ' ' + Rot_axe_Ellipse + ' 0 ' +
       sweepFlag + ' ' + roundTwo(dx) + ',' + roundTwo(dy);
   } else {
-    pathsArray[0]['path'] = 'a' + Radius + ',' + Radius + ' 0 0 ' +
+    pathsArray[0].path = 'a' + Radius + ',' + Radius + ' 0 0 ' +
       sweepFlag + ' ' + dx + ',' + dy;
   }
   pathsArray[0].dx = dx;
@@ -2767,10 +2765,10 @@ function makePointTip (extent) {
   pathArray = [];
   changeAtt(180);
   changeDir(180);
-  pathArray['path'] = '';
-  pathArray['style'] = 'pos';
-  pathArray['dx'] = 0;
-  pathArray['dy'] = lineElement * extent;
+  pathArray.path = '';
+  pathArray.style = 'pos';
+  pathArray.dx = 0;
+  pathArray.dy = lineElement * extent;
   return Array(pathArray);
 }
 
@@ -3345,11 +3343,11 @@ function doOnLoad () {
     changeCombo('program');
 
     // check if the sequence displayed is the one in the input field
-    //checkSequenceChanged();
+    checkSequenceChanged();
     // select active Form
     // need to do this to make sure the sequence is drawn when loaded
     // from localStorage or url
-    //selectForm(activeForm);
+    selectForm(activeForm);
     if (mobileBrowser) selectTab('tab-sequenceInfo');
     
     // add submenu showing/hiding
@@ -3391,7 +3389,7 @@ function doOnLoad () {
   } else {
     latestVersion();
   }
-  // activate addtohomescreen for iOS
+  // activate addtohomescreen for mobile devices
   addToHomescreen();
 }
 
@@ -3507,7 +3505,7 @@ function addEventListeners () {
   document.getElementById('t_settings').addEventListener('click', settingsDialog, false);
   document.getElementById('t_installChromeAppTitle').addEventListener ('mousedown', installChromeApp, false);
   
-  document.getElementById('t_finalizeSequence').addEventListener ('mousedown', exitFuDesigner);
+  document.getElementById('t_finalizeSequence').addEventListener ('mousedown', function(){exitFuDesigner(false)});
   
   // use href for iOS standalone app, this will open the manuals in Safari
   if (window.navigator.standalone) {
@@ -5248,23 +5246,23 @@ function setUndoRedo (e, clear) {
     activeSequence[e] = [];
   }
   if (mobileBrowser) {
-    if (activeSequence['undo'].length) {
+    if (activeSequence.undo.length) {
       document.getElementById('undo').firstChild.firstChild.setAttribute('src', mask.off);
     } else {
       document.getElementById('undo').firstChild.firstChild.setAttribute('src', mask.disable);
     }
-    if (activeSequence['redo'].length) {
+    if (activeSequence.redo.length) {
       document.getElementById('redo').firstChild.firstChild.setAttribute('src', mask.off);
     } else {
       document.getElementById('redo').firstChild.firstChild.setAttribute('src', mask.disable);
     }
   } else {
-    if (activeSequence['undo'].length) {
+    if (activeSequence.undo.length) {
       document.getElementById('undo').firstChild.firstChild.setAttribute('src', mask.smalloff);
     } else {
       document.getElementById('undo').firstChild.firstChild.setAttribute('src', mask.smalldisable);
     }
-    if (activeSequence['redo'].length) {
+    if (activeSequence.redo.length) {
       document.getElementById('redo').firstChild.firstChild.setAttribute('src', mask.smalloff);
     } else {
       document.getElementById('redo').firstChild.firstChild.setAttribute('src', mask.smalldisable);
@@ -6065,7 +6063,7 @@ function selectLogo(logo) {
 
 // uploadLogo is used to upload a logo
 function uploadLogo (file) {
-  logoImages['mylogo'] = file;
+  logoImages.mylogo = file;
   selectLogo ('mylogo');
 }
 
@@ -6240,19 +6238,19 @@ function parseRules(start) {
             'cats':[]
           };
         }
-        if (!seqCheckAvail[rnLower]['cats'][catName.toLowerCase()]) {
-          seqCheckAvail[rnLower]['cats'][catName.toLowerCase()] = {
+        if (!seqCheckAvail[rnLower].cats[catName.toLowerCase()]) {
+          seqCheckAvail[rnLower].cats[catName.toLowerCase()] = {
             'show': false,
             'name': catName,
             'seqs':[]
           };
         }
         if (rules[i][0] == '[') {
-          seqCheckAvail[rnLower]['cats'][catName.toLowerCase()]['seqs'][seqName.toLowerCase()] = seqName;
+          seqCheckAvail[rnLower].cats[catName.toLowerCase()].seqs[seqName.toLowerCase()] = seqName;
           seqCheckAvail[rnLower].show = true;
-          seqCheckAvail[rnLower]['cats'][catName.toLowerCase()].show = true;
+          seqCheckAvail[rnLower].cats[catName.toLowerCase()].show = true;
         } else {
-          seqCheckAvail[rnLower]['cats'][catName.toLowerCase()]['seqs'][seqName.toLowerCase()] = '*' + seqName;
+          seqCheckAvail[rnLower].cats[catName.toLowerCase()].seqs[seqName.toLowerCase()] = '*' + seqName;
         }
       }
     } else if (rules[i].match (/^demo[\s]*=/)) {
@@ -6445,7 +6443,7 @@ function loadRules() {
         // Apply 'group' rules => single catalog id match
         var newGroup = rules[i].replace(/^group-/, '').split('=');
         checkCatGroup[newGroup[0]] = [];
-        checkCatGroup[newGroup[0]]['regex'] = RegExp(newGroup[1] + '[0-9\.]*', '');
+        checkCatGroup[newGroup[0]].regex = RegExp(newGroup[1] + '[0-9\.]*', '');
       } else if (rules[i].match(/^Group-/)) {
         // Apply 'Group' rules => full figure (multiple catalog id) match
         var newGroup = rules[i].replace(/^Group-/, '').split('=');
@@ -6453,9 +6451,9 @@ function loadRules() {
         // when regex ends with $, assume it's fully formatted.
         // Otherwise, add catch all
         if (newGroup[1].slice(-1) === '$') {
-          checkFigGroup[newGroup[0]]['regex'] = RegExp(newGroup[1], 'g');
+          checkFigGroup[newGroup[0]].regex = RegExp(newGroup[1], 'g');
         } else {
-          checkFigGroup[newGroup[0]]['regex'] = RegExp(newGroup[1] + '[0-9\. ]*', 'g');
+          checkFigGroup[newGroup[0]].regex = RegExp(newGroup[1] + '[0-9\. ]*', 'g');
         }
       }
     }
@@ -6823,11 +6821,11 @@ function checkRules () {
                   log.push ('group-' + checkCatGroup[group].name +
                     ': Count=' + groupFigMatch[group].length +
                     ' Elem count=' + elemCount[aresti[j]]);
-                  if (checkCatGroup[group]['maxperfig'] && (groupFigMatch[group].length > checkCatGroup[group]['maxperfig'])) {
+                  if (checkCatGroup[group].maxperfig && (groupFigMatch[group].length > checkCatGroup[group].maxperfig)) {
                     checkAlert(group, 'maxperfig', figNr);
                     log.push('Maximum of ' + checkCatGroup[group].maxperfig + ' elements of this group exceeded');
                   }
-                  if (checkCatGroup[group]['minperfig'] && (groupFigMatch[group].length < checkCatGroup[group]['minperfig'])) {
+                  if (checkCatGroup[group].minperfig && (groupFigMatch[group].length < checkCatGroup[group].minperfig)) {
                     checkAlert(group, 'minperfig', figNr);
                     log.push('Minimum of ' + checkCatGroup[group].minperfig + ' elements of this group not reached');
                   }
@@ -7030,12 +7028,12 @@ function checkRules () {
   }
   // check for total min/max K
   if ('min' in checkCatGroup.k) {
-    if (figureK < checkCatGroup['k']['min']) {
+    if (figureK < checkCatGroup.k.min) {
       checkAlert('k', 'min');
     }
   }
   if ('max' in checkCatGroup.k) {
-    if (figureK > checkCatGroup['k']['max']) {
+    if (figureK > checkCatGroup.k.max) {
       checkAlert('k', 'max');
     }
   }
@@ -7051,20 +7049,20 @@ function checkRules () {
       // Check for max and min occurrences of the group
       if ('max' in checkCatGroup[group]) {
         log.push ('testing group ' + group + '-max=' +
-          checkCatGroup[group]['max'] + ' val=' + groupMatch[group].length);
-        if (groupMatch[group].length > checkCatGroup[group]['max']) {
+          checkCatGroup[group].max + ' val=' + groupMatch[group].length);
+        if (groupMatch[group].length > checkCatGroup[group].max) {
           errFigs = figureNumbers (groupMatch[group]);
           checkAlert(group, 'max', errFigs);
-          log.push ('*** Error: Maximum ' + checkCatGroup[group]['max'] +
+          log.push ('*** Error: Maximum ' + checkCatGroup[group].max +
             ' of group ' + group + '(' + errFigs + ')');
         }
       }
       if ('min' in checkCatGroup[group]) {
         log.push ('testing group ' + group + '-min=' +
-          checkCatGroup[group]['min'] + ' val=' + groupMatch[group].length);
-        if (groupMatch[group].length < checkCatGroup[group]['min']) {
+          checkCatGroup[group].min + ' val=' + groupMatch[group].length);
+        if (groupMatch[group].length < checkCatGroup[group].min) {
           checkAlert(group, 'min');
-          log.push ('*** Error: Minimum ' + checkCatGroup[group]['min'] +
+          log.push ('*** Error: Minimum ' + checkCatGroup[group].min +
             ' of group ' + group);
         }
       }
@@ -7117,7 +7115,7 @@ function checkRules () {
       // No occurrences of this group, was there a minimum?
       if ((group != 'k') && (checkCatGroup[group].min)) {
         checkAlert(group, 'min');
-        log.push ('*** Error: Minimum ' + checkCatGroup[group]['min'] +
+        log.push ('*** Error: Minimum ' + checkCatGroup[group].min +
           ' of group ' + group);
       }
     }
@@ -7128,15 +7126,15 @@ function checkRules () {
     // Did we have a match on this group?
     if (groupMatch[group]) {
       // Check for max and min occurrences of the group
-      if (('max' in checkFigGroup[group]) && (groupMatch[group].length > checkFigGroup[group]['max'])) {
+      if (('max' in checkFigGroup[group]) && (groupMatch[group].length > checkFigGroup[group].max)) {
         errFigs = figureNumbers (groupMatch[group]);
         checkAlert(group, 'figmax', errFigs);
-        log.push ('*** Error: Maximum ' + checkFigGroup[group]['max'] +
+        log.push ('*** Error: Maximum ' + checkFigGroup[group].max +
           ' of group ' + group + '(' + errFigs + ')');
       }
-      if (('min' in checkFigGroup[group]) && (groupMatch[group].length < checkFigGroup[group]['min'])) {
+      if (('min' in checkFigGroup[group]) && (groupMatch[group].length < checkFigGroup[group].min)) {
         checkAlert(group, 'figmin');
-        log.push ('*** Error: Minimum ' + checkFigGroup[group]['min'] +
+        log.push ('*** Error: Minimum ' + checkFigGroup[group].min +
           ' of group ' + group);
       }
       // Check for repeats of the exact same figure when necessary
@@ -7152,10 +7150,10 @@ function checkRules () {
           }
         }
         for (match in matches) {
-          if (checkFigGroup[group]['repeat'] && (matches[match].length > checkFigGroup[group]['repeat'])) {
+          if (checkFigGroup[group].repeat && (matches[match].length > checkFigGroup[group].repeat)) {
             errFigs = figureNumbers (matches[match]);
             checkAlert(group, 'figrepeat', errFigs);
-            log.push ('*** Error: Repeat ' + checkFigGroup[group]['repeat'] +
+            log.push ('*** Error: Repeat ' + checkFigGroup[group].repeat +
               ' of group ' + group + '(' + errFigs + ')');
           }
         }
@@ -7164,7 +7162,7 @@ function checkRules () {
       // No occurrences of this group, was there a minimum?
       if ('min' in checkFigGroup[group]) {
         checkAlert(group, 'figmin');
-        log.push ('*** Error: Minimum ' + checkFigGroup[group]['min'] +
+        log.push ('*** Error: Minimum ' + checkFigGroup[group].min +
           ' of group ' + group);
       }
     }
@@ -8894,14 +8892,15 @@ function startFuDesigner(dontConfirm) {
     return;
   }
   if (!buildFuFiguresTab()) {
-    console.log('error');
+    console.log('Unable to start Free Unknown Designer');
     return;
   }
   
   function f () {
     infoBox (userText.FUstarting, userText.fuDesigner);
     
-    setTimeout (function() {
+    // disabled setTimeout as it causes issues
+    //setTimeout (function() {
       selectFigure (false);
       clearPositioning ();
       
@@ -8961,8 +8960,7 @@ function startFuDesigner(dontConfirm) {
       availableFigureGroups();
       
       infoBox();
-    },
-    100);
+//    }, 100);
   }
   
   if (dontConfirm) {
@@ -8979,7 +8977,7 @@ function startFuDesigner(dontConfirm) {
 function exitFuDesigner (newSequence) {
   
   function exitFu () {
-    if (newSequence) {
+    if (newSequence === true) {
       // hide finalize button
       document.getElementById ('t_finalizeSequence').classList.add ('noDisplay');
       
@@ -8989,6 +8987,8 @@ function exitFuDesigner (newSequence) {
       
       // switch sequence view
       document.getElementById ('fuSequence').classList.add ('noDisplay');
+
+      document.getElementById('fu_figures').value = '';
 
       checkSequenceChanged ();
   
@@ -9002,7 +9002,7 @@ function exitFuDesigner (newSequence) {
       availableFigureGroups();
     } else {
       infoBox (userText.FUfinalizing, userText.finalizeSequence);
-      setTimeout (function(){
+      //setTimeout (function(){
         // hide finalize button
         document.getElementById ('t_finalizeSequence').classList.add ('noDisplay');
         
@@ -9013,13 +9013,12 @@ function exitFuDesigner (newSequence) {
         // switch sequence view
         document.getElementById ('fuSequence').classList.add ('noDisplay');
         
-        sequenceText.value = sequenceText.value.trim().replace(/ e(u|d|j|ja)$/, '');
-        sequenceText.value = sequenceText.value.replace(/^eu /, '');
         document.getElementById('fu_figures').value = '';
           
         selectFigure (false);
         selectForm ('B');
         separateFigures (true);
+        sequenceText.value = sequenceText.value.trim().replace(/ e(u|d|j|ja)$/, '').replace(/^eu /, '');
         
         checkSequenceChanged ();
     
@@ -9033,7 +9032,7 @@ function exitFuDesigner (newSequence) {
         availableFigureGroups();
         
         infoBox();
-      }, 100);
+      //}, 100);
     }
     
   }
@@ -10575,6 +10574,8 @@ function clearSequence () {
     while (length--) {
       fields[length].value = '';
     }
+    document.getElementById ('fu_figures').value = '';
+    document.getElementById ('default_view').value = '';
     // reload sequence
     unloadRules();
     checkSequenceChanged();
@@ -13760,7 +13761,7 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
             switch (roll[rollnr][j].type) {
               // Sum line elements
               case ('line'):
-                lineSum += roll[rollnr][j]['extent'];
+                lineSum += roll[rollnr][j].extent;
                 // don't set lineDraw to true for shortenings. This will
                 // prevent drawing a line of minimum length 1 when no
                 // line was present in the figure drawing instructions
@@ -14206,7 +14207,7 @@ function checkQRollSwitch (figString, figStringIndex, pattern, seqNr, rollSum, f
         rollnr++;
         nextRollExtentPrev = nextRollExtent;
         for (var j = 0; j < roll[rollnr].length; j++) {
-          if (roll[rollnr][j]['type'] != 'line') {
+          if (roll[rollnr][j].type != 'line') {
             nextRollExtent += parseInt(roll[rollnr][j].extent);
           }
         }
@@ -14482,16 +14483,16 @@ function updateSequence (figNr, figure, replace, fromFigSel, force) {
   // check for sequence changes
   checkSequenceChanged(force);
 
-  if (fromFigSel) {
-    // use automatic positioning if checked
-    if (document.getElementById('positionClearAuto').checked) {
-      if (replace) {
-        // need to get bBox as it hasn't been loaded yet
-        figures[figNr].bBox = myGetBBox(document.getElementById('figure' + figNr));
-        separateFigure (figNr);
-      } else {
-        separateFigure (figNr + 1);
-      }
+  // use automatic positioning if checked
+  if (fromFigSel &&
+    document.getElementById('positionClearAuto').checked &&
+    (activeForm !== 'FU')) {
+    if (replace) {
+      // need to get bBox as it hasn't been loaded yet
+      figures[figNr].bBox = myGetBBox(document.getElementById('figure' + figNr));
+      separateFigure (figNr);
+    } else {
+      separateFigure (figNr + 1);
     }
   }
   
