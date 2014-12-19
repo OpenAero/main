@@ -24,6 +24,9 @@
 * added translation options for sequence rule check alerts
 * fixed sequence menu highlighting after entry direction change
 * added 2015 France rules and sequences
+* updated several helper scripts
+* added BAeA, IAC, NZAC and VINK Known sequences
+* improved iOS saving and printing (Issue #164)
 
 1.4.5
 * removed close button from help pages. Forcing iOS app to open Safari for help pages

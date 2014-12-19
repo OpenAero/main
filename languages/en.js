@@ -285,6 +285,21 @@ lang.en = {
   'add the App to your desktop.',
 'installChromeAppTitle' : 'Install Chrome App',
 'inverseForms' : 'Inverse color (white on black)',
+// new 1.5.0
+'iOScancelSave' : 'Cancel',
+'iOSprintExplain' : 'Select what you would like to print or save, then ' +
+  'tap <strong>Save PNG image</strong>',
+'iOSsaveFile' : 'Show sequence image',
+'iOSsaveFileMessage' : '<p>By clicking the <i>Show sequence image</i> ' +
+  'button a new window or browser tab will be opened. In Safari, you ' +
+  'can then tap the <span class="iOSsaveIcon"></span> button to save ' +
+  'or print the image. In Chrome, you can print from the ≡ menu.</p>' +
+  '<p>Tips: If the image quality is not sufficient, you can increase ' +
+  'the resolution in the Print dialog under "Saving PNG or SVG image". ' +
+  'If you only get a blank page, try saving each sequence Form ' +
+  'separately.',
+'iOSsaveFileTitle' : 'Save File',
+//
 'language' : 'Language',
 // new 1.5.0
 'LINK' : 'LINK',

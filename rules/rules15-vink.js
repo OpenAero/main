@@ -24,22 +24,25 @@
 // - added Standard Unknown
 // 1.4.4
 // - corrected Standard Unknown K to 15
+// 1.5.0
+// - added Beginners & Standard Known
+// - changed display order
 
 //###############################################################################
-//##### VINK INTERMEDIATE FREE ##################################################
+//##### VINK BEGINNERS KNOWN ####################################################
 //###############################################################################
 
-rules.push("[VINK Intermediate Free]");
-rules.push("more=civa yak52 free");
+rules.push("[VINK Beginners Known]");
+rules.push("posnl=10");
+rules.push("demo=/id o `+c.,2.++ ~+++h... 3% oj 1");
 
 //###############################################################################
-//##### VINK INTERMEDIATE UNKNOWN ###############################################
+//##### VINK STANDARD KNOWN #####################################################
 //###############################################################################
 
-rules.push("[VINK Intermediate Unknown1]");
-rules.push("more=CIVA Yak52 Unknown1");
-rules.push("[VINK Intermediate Unknown2]");
-rules.push("more=CIVA Yak52 Unknown2");
+rules.push("[VINK Standard Known]");
+rules.push("posnl=15");
+rules.push("demo=ed ++,2rc d iv```6s...++++ +c.2` (-3,7) o h``4' ~~+oj+ 4> ~~+++m2 id... 1");
 
 //###############################################################################
 //##### VINK STANDARD UNKNOWN ###################################################
@@ -100,3 +103,19 @@ rules.push("9.4.3.4");
 rules.push("9.11.1.4");
 rules.push("9.11.1.5");
 rules.push("9.11.1.6");
+
+//###############################################################################
+//##### VINK INTERMEDIATE FREE ##################################################
+//###############################################################################
+
+rules.push("[VINK Intermediate Free]");
+rules.push("more=civa yak52 free");
+
+//###############################################################################
+//##### VINK INTERMEDIATE UNKNOWN ###############################################
+//###############################################################################
+
+rules.push("[VINK Intermediate Unknown1]");
+rules.push("more=CIVA Yak52 Unknown1");
+rules.push("[VINK Intermediate Unknown2]");
+rules.push("more=CIVA Yak52 Unknown2");

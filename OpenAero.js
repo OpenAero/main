@@ -2543,13 +2543,13 @@ function makeSnap (params) {
     path += 'l ' + roundTwo(dx) + ',' + roundTwo(dy) + ' ';
     pathsArray.push ({'path':path, 'style':'pos'});
     path = 'm ' + roundTwo(dxTip) + ',' + roundTwo(dyTip) + ' ';
-    if (extent >= 360) {
+    if (extent >= 360) { // full snap symbol
       dx = (radCos * snapElement12) + (radSin * snapElement3 * sign);
       dy = (- radSin * snapElement12) + (radCos * snapElement3 * sign);
       path = path + 'l ' + roundTwo(dx) + ',' + roundTwo(dy) + ' ';
       dx = (- radCos) * snapElement24;
       dy = radSin * snapElement24;
-    } else {
+    } else { // half snap symbol
       dx = (radCos * snapElement) + (radSin * snapElement2 * sign);
       dy = (- radSin * snapElement) + (radCos * snapElement2 * sign);
       path = path + 'l ' + roundTwo(dx) + ',' + roundTwo(dy) + ' ';
@@ -3389,8 +3389,19 @@ function doOnLoad () {
   } else {
     latestVersion();
   }
+  
   // activate addtohomescreen for mobile devices
   addToHomescreen();
+  
+  // disable or change some items for iOS
+  if (/i(Pad|Phone|Pod)/i.test (navigator.userAgent)) {
+    document.getElementById('t_openSequence').parentNode.classList.add ('noDisplay');
+    document.getElementById('t_saveSequence').parentNode.classList.add ('noDisplay');
+    document.getElementById('t_saveFigsSeparate').parentNode.classList.add ('noDisplay');
+    document.getElementById('t_printExplain').innerHTML = userText.iOSprintExplain;
+    document.getElementById('t_print').classList.add ('noDisplay');
+    document.getElementById('t_saveAsSVG').classList.add ('noDisplay');    
+  }
 }
 
 /** Use of function getElementsByAttribute is DEPRECATED in 1.4.0
@@ -3646,9 +3657,19 @@ function addEventListeners () {
   // save dialog
   document.getElementById('dlTextField').addEventListener('keyup', updateSaveFilename, true);
   document.getElementById('t_saveFile').addEventListener('click',function(){
-    window.setTimeout(function(){saveDialog()},100);
+    window.setTimeout(function(){saveDialog()}, 200);
     }, false);
   document.getElementById('t_cancelSave').addEventListener('mousedown', function(){saveDialog()}, false);
+  
+  // iOS save dialog
+  document.getElementById('t_iOSsaveFile').addEventListener('click', function(){
+    window.setTimeout(function(){
+        document.getElementById('iOSsaveDialog').classList.add ('noDisplay');
+      }, 200);
+    }, false);
+  document.getElementById('t_iOScancelSave').addEventListener('mousedown', function(){
+      document.getElementById('iOSsaveDialog').classList.add ('noDisplay');
+    }, false);
   
   // print/save image dialog
   document.getElementById('manual.html_save_print').addEventListener('click', function(){
@@ -8829,7 +8850,7 @@ function addAllToQueue () {
   }
   
   infoBox (userText.addAllToQueueWait, userText.addAllToQueue);
-  setTimeout(function(){
+  //setTimeout(function(){
     var f = selectedFigure.id;
     for (var i = 0; i < figures.length; i++) {
       if (figures[i].aresti) {
@@ -8844,7 +8865,7 @@ function addAllToQueue () {
     // set the figure chooser to the queue group
     document.getElementById ('figureGroup').value = '0';
     changeFigureGroup();
-  }, 100);
+  //}, 100);
 }
 
 // removeFromQueue removes a figure from the queue
@@ -11439,8 +11460,17 @@ function saveFile(data, name, ext, filter, format, noBounce) {
   var fileURL = 'data:' + format + ',' + data;
 
   var a = document.createElement('a');
-  if (typeof a.download != "undefined") {
-    // 2) use "download" attribute
+  if (/i(Pad|Phone|Pod)/i.test (navigator.userAgent)) {
+    // 2a) iOS
+    
+    console.log('Save for iOS');
+    document.getElementById('iOSsaveDialog').classList.remove ('noDisplay');
+    var el = document.getElementById ('t_iOSsaveFile');
+    el.href = 'iOSsave.html#data:' + format + ',' + data;
+    // use a random target string to make sure a new tab is created
+    el.target = btoa (Math.random());
+  } else if (typeof a.download != "undefined") {
+    // 2b) use "download" attribute
     // Present an alert box with a download link for the file
     
     console.log('Save with download attribute');
@@ -11448,10 +11478,10 @@ function saveFile(data, name, ext, filter, format, noBounce) {
     document.getElementById('t_saveFile').innerHTML =
       '<a download="' + name + ext + '" href="data:' + format + ',' +
       data + '" id="dlButton">' + userText.saveFile + '</a>';
-
-  } else {
-    if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
   
+  } else {
+    if (window.location.protocol === 'http:' ||
+      window.location.protocol === 'https:') {  
       var http = true;
     } else {
       var http = false;
@@ -11480,7 +11510,7 @@ function saveFile(data, name, ext, filter, format, noBounce) {
       console.log('Save with right-click');
       saveDialog (userText.downloadLegacy, name, ext);
       document.getElementById('t_saveFile').innerHTML =
-        '<a download="' + name + ext + '" href="data:' + format + ',' +
+        '<a href="data:' + format + ',' +
         data + '" id="dlButton" target="_blank">' + userText.saveFile +
         '</a>';
     }, waitTime);
@@ -11503,9 +11533,9 @@ function saveFile(data, name, ext, filter, format, noBounce) {
           el.addEventListener ('mousedown', bounceFile, false);
           // populate bounce form
           var form = document.getElementById("saveFileForm");
-          form.elements["data"].value = data;
-          form.elements["name"].value = document.getElementById('dlTextField').value + ext;
-          form.elements["format"].value = format;
+          form.elements.data.value = data;
+          form.elements.name.value = document.getElementById('dlTextField').value + ext;
+          form.elements.format.value = format;
         }
       }
       
@@ -11822,10 +11852,16 @@ function printForms () {
       '.breakAfter {display:block; page-break-after:always;}' +
       'svg {height: 100%; page-break-inside:avoid;}';
       win.document.head.appendChild(style);
-  
-      // use setTimeout for printing to prevent blocking and
-      // associated warnings by the browser
-      setTimeout (function(){win.print(); win.close();}, 200);
+      
+      // no print on Android, leave it to the user
+      if (/Android/i.test(navigator.userAgent)) {
+        // use setTimeout for printing to prevent blocking and
+        // associated warnings by the browser
+        setTimeout (function(){
+          win.print();
+          win.close();
+        }, 200);
+      }
     }
   }, wait);
 }

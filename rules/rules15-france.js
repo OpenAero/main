@@ -22,7 +22,7 @@
 
 //######################################################################################
 //#####      Regles France 2015      Espoirs à Doret 2015  Olan 6.0  ###################
-//#####      Regles France 2015      Version 2015_PN.1.02            ###################
+//#####      Regles France 2015      Version 2015_PN.1.03            ###################
 //######################################################################################
 //######################################################################################
 //#####                                                              ###################
@@ -786,7 +786,7 @@ rules.push("8.5.3.3-4 NR:1");
 rules.push("8.5.4.1-2 NF:2");
 rules.push("8.5.4.3-4");
 rules.push("8.6.2.1 Max90up; NF:3");
-rules.push("8.6.4.1 Max90up; NR:2; N:3");
+rules.push("8.6.4.1 Max90up; NR:2; NF:3");
 rules.push("8.6.4.3 Spin_ou_rien");
 rules.push("8.5.5.1 NF:1; NR:2");
 rules.push("8.5.5.2 NR:1; NR:2");
@@ -1542,4 +1542,4 @@ rules.push("more=CIVA unlimited free");
 rules.push("[France unlimited inconnu]");
 rules.push("more=CIVA Unlimited FreeUnknown");	// Modif 2015 Unknown -> FreeUnknown pour reconnaissance par le freeunknown designer. 
 
-//#####################################################################################
+//#######################################################################################

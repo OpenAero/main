@@ -45,6 +45,7 @@ var versionNew = '<strong>OpenAero has been upgraded to version ' +
   '<li>Added NZAC logo</li>' +
   '<li>Added alerts for illegal spins</li>' +
   '<li>Added French translations for sequence alerts</li>' +
+  '<li>Many national sequences for 2015</li>' +
   '<li>Other bugfixes and improvements (check <a id="changelog">' +
   'changelog.txt</a> if interested)</li>' +
   '</ul>' +
