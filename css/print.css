@@ -1,0 +1,11 @@
+body {
+	margin: 0;
+}
+.breakAfter {
+  display:block;
+  page-break-after:always;
+}
+svg {
+  height: 99.5%;
+  page-break-inside:avoid;
+}

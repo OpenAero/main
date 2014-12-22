@@ -1,0 +1,398 @@
+1.5.0
+* corrected 7.8.15.1 to 7.8.15.3 in CIVA Intermediate Unknown rules
+* added NZAC logo
+* several updates and improvements to manual.html
+* added alerts for crossover spin and roll before spin
+* fixed issue that caused tooltips not to be changed when changing language
+* added 'totrepeat' directive to rule parsing
+* improved and corrected explanation in rulesYY.js
+* improved fileList handling (for e.g. check multiple sequences)
+* added printing of multiple sequences (Issue #122)
+* fixed unloading of rules when clearing sequence (Issue #160)
+* updated French translations
+* improved combo box and rule loading system
+* added figures 2.2.7.1-4 to CIVA Glider rules for Known
+* added alert when trying to "Add all to queue" with no figures in sequence
+* removed hidden startCircle from figures. Was deprecated with improved grabbing
+* added IAC rules for Free and partially for Unknown
+* updated CIVA rules for 2015
+* added CIVA power and glider Known sequences for 2015
+* added Free Unknown Designer - Major Update !
+* added drag & drop support for iOS through shim by Tim Ruffles
+* improved language.html language reference
+* changed link saving to URL safe base64 to prevent breaks and shorten links
+* added translation options for sequence rule check alerts
+* fixed sequence menu highlighting after entry direction change
+* added 2015 France rules and sequences
+* updated several helper scripts
+* added BAeA, IAC, NZAC and VINK Known sequences
+* improved iOS saving and printing (Issue #164)
+
+1.4.5
+* removed close button from help pages. Forcing iOS app to open Safari for help pages
+* corrected bug that prevented sequence file opening on Windows
+
+1.4.4.3
+* improved algoritm for separating figures from each other
+* added option to automatically keep new or changed figure separate from others (Issue #126)
+* added close button to various help pages when using iOS app (Issue #156)
+* integrated "About" page into dialog
+* added version checking and info to "About" dialog
+
+1.4.4.2
+* corrected print.css location in print.html for app
+* fixed missing Styling and Expert Settings in 1.4.4
+
+1.4.4
+* fixed bug in rule Group matching causing only base figures to be matched
+* fixed bug in rule matching causing min/max/repeat of 0 to be ignored
+* added New Zealand Aerobatic Club rules
+* added encoding of + character in URL to prevent link breaking
+* corrected VINK Standard Unknown K to 15
+* added warning for same direction same type unlinked rolls (Issue #153)
+* added warning for more than two roll elements on the same position
+* added warning for no rolls on family 1.1.1 figures
+* improved menu system (Issue #147)
+* increased menu height bij 3px to improve tablet experience
+* disabled tooltips for touchscreen
+* improved figure selection in grid view
+* added special keys when editing sequence string on touch device (Issue #151)
+* organised css files into single directory
+* changed rule selection behaviour to only use valid Category/Program when selecting new Rules
+
+1.4.3.1
+* fixed issue with subsequence after inverted exit figure (Issue #143)
+* added code in index.html to enable iOS web app
+* corrected power rules for 8.6.1-8 column 3&4. See 1.4.2 fix for glider
+* fixed double wind arrow on IAC forms of large sequences (Issue #148)
+* fixed large figure start circles in Opera browser
+* disabled automatic capitalizing of first letter of sequence_text on some browsers
+* fixed Email sequence URL breaking because of single tick characters
+* removed 'id' in background.js to enable launching multiple instances of app
+* fixed several bugs in logo handling when (re)loading sequences
+* added some detection of incorrect file format when opening sequences
+* Power Unlimited Unknown rules corrected to allow 9.8.5.2 (4x8 vertical down)
+* corrected several rules for glider (see rules14-glider-civa.js)
+* added seqcheck-XXX rule directive handling
+* fixed changelog.txt popup not working in app (Issue #150)
+
+1.4.2.1
+* restored zooming in Chrome app
+* fixed invalid showing of alerts after clearing sequence
+
+1.4.2
+* corrected width of Class select field
+* fixed correct saving of numberInCircle and nonArestiRolls in seq file
+* added option to Email the sequence
+* fixed bug in using queue figures with a spin on complex base figures (Issue #139)
+* added option for 2-4 queue columns, changed default to 3 (Issue #140)
+* when a figure from the queue is in the sequence, it's background now turns grey (Issue #141)
+* added info box when adding all figures to queue as this may take a while
+* moved addEventListeners to the beginning of doOnLoad to prevent blocking in case of errors
+* added options in figure editor for setting start direction of sub sequences (Issue #81 and #137)
+* added console warnings for missing language keys to improve translation
+* added option in Expert settings to restore all settings to default
+* converted all use of term Cookie to localStorage, except some userTexts
+* added option to print dialog to set maximum small sequence scaling (Issue #129)
+* corrected glider rules for 8.6.1-8 column 3&4. Were incorrect because of mistake in assuming rolls in bottom
+* corrected conv-roll in rules14.js to account for superslow glider roll
+* added userTexts for browser detection
+
+1.4.1.3
+* fixed incorrect K for flick after roll in top of loop (e.g. o2,2if) (Issue #138)
+* added roundTwo calculation for lines around top of loop roll
+* updated openaero.php and index.html to use latest version from GIT
+
+1.4.1.2
+* increased size of plus/min value boxes (e.g. in "gaps")
+
+1.4.1.1
+* added zoom (ctrl +/- and menu entry) to Chrome app
+
+1.4.1
+* restore App window size to previous on subsequent startup (Issue #128)
+* added French user interface
+* improved compVersion function to allow versions with more than 3 numbers
+* added double humpty bumps with different half loop sizes (Issue #127 and #133)
+* added experimental turn perspective feature
+* fixed bug where sequence text caret would jump to end when text editing double bump (Issue #135)
+* cleaned up config.js
+* fixed scaling bug which appeared in Chrome 32 (Issue #134)
+* fixed Chrome 32 print popup issue
+* fixed several Firefox issues for the Figure Queue
+* fixed bug where spin only (without "iv") would not show up in queue correctly
+* fixed bug where single-figure sequences do not show up on form C
+* fixed popup blocking issues
+* added file selection in multiple steps for "Check multiple seq"
+* corrected max K in mini Form A for Floating Point where applicable
+
+1.4.0
+* added Belgian Aerobatic Club logo
+* fixed missing flags in Firefox grid view print (Issue #107)
+* added option to hide 'illegal' figures (and whole groups) in Chooser (Issue #102)
+* added option for comment rotation by 90 degrees
+* added roll comments. To prevent mistakes, original roll text (e.g. 3x4) can not be replaced (Issue #34)
+* fixed bug where Unknown Figure Letter could be added to figure when no rules with these letters are active
+* added automatic switching of ^ and > in Free Unknown figures when changing start axis (Issue #51)
+* disabled options for changing figures with a Free Unknown Letter (Issue #71)
+* changed default line style for repositioning figures: Bezier curve
+* moved definition of Free Unknown figure letters to rules file (Issue #84)
+* added warnings for missing figure letters where applicable
+* moved definition of Super Families to rules file (Issue #100)
+* added language chooser to settings
+* added automatic saving of settings in localStorage
+* changed demo menu to show submenu by year
+* added sprintf for formatting output strings
+* added handling of non-standard code 28 for 2x8 roll (Issue #121)
+* added option for creating PNG images in "Save figs separate" (Issue #36)
+* fixed incorrect position (in some cases) of sequence terminator line (Issue #3)
+* changed onClick to eventListener to improve coding and enable Chrome app
+* added pilot card print options
+* added black & white printing/saving
+* added saving sequence as PNG
+* merged print and image save dialogs. Multiple forms can be saved in a single PNG or SVG
+* added Australian Aerobatic Club logo
+* fixed bug where, when opening file, logo was overriden by logo associated with rules
+* added 2014 CIVA sequences
+* fixed bug causing png logo images to use max available width on forms
+* improved file naming consistency (Issue #120)
+* fixed Firefox bug where some (rolling) turns were tiny in figure chooser
+* replaced use of cookies by localStorage and (for App) chrome.storage
+* added plus and minus to move XY values and remove the values when unused
+* added option for different roll font sizes in settings and changed default to 20px
+* added persistence of rolls when changing figure to similar (Issue #116)
+* fixed roundTwo function (Issue #38)
+* added option to allow non-Aresti rolls. Off by default (Issue #43)
+* added saving of OpenAero settings to .seq file
+* added Sport Aerobatic Club of South Africa logo
+* added Swiss Aerobatic Association logo
+* added International Miniature Aerobatic Club logo
+* disabled server bouncing for files as currently it causes more trouble than it helps
+* added automatic separation of subsequent roll text
+* created Chrome App and added install options
+* added info for "Add to Homescreen" for Android Chrome version 32+
+* updated IAC Form A to 2014 version
+* Updated CIVA rules for 2014
+* fixed "unable to shorten negative entry line" bug
+* added maximum K info to Mini Form A where applicable
+* corrected sequence check date information on form B/C
+* added French rules for 2014
+* updated rule handling to load groups before other rules to better handle rule files
+* fixed copying of sequence string from PDF (Issue #125)
+* don't do sequence text highlighting for touch enabled devices to prevent showing keyboard
+* fixed sequence check log not displaying on iPad by using dataURI (Issue #130)
+* added valid sequence file check and warning to "check multiple sequences"
+* fixed bug in switching entry/exit attitude for (rolling) turns with entry/exit extension (Issue #131)
+
+1.3.8
+* added VINK rules for Standard Unknown
+* reduced unnecessary 'unsaved file' alerts when leaving OpenAero
+* removed double endline from last figure, and extra circle from first, in Grid view
+* changed default number of grid columns to 5 (logical for Power Unknown)
+* fixed Safari bug where selected figure disappears
+* improved look of Wingover
+* added options for adding all figures to queue and clearing queue
+* created framework for using multiple interface languages
+* removed roll in bottom of loop where illegal; descending P and Q loops
+* fixed missing alerts for Unlimited Unknown sequences
+* added possibility to change drawing styles
+* sequence saved as grid or queue is now opened as grid with correct column count
+* corrected sequence naming in info according CIVA
+* improved CIVA rules file layout
+* fixed bug where incorrect rules were loaded for glider
+* added automatic loading of positioning K when activating rules
+* added checking of presence of certain info (such as Pilot) through infocheck directive in rules
+* corrected Unlimited positioning K for 2013
+* fixed Sequence Text scaling bug
+* fixed reload-after-update bug for same systems where this occurred
+* fixed bug in Forward Move of more than 9 units
+* fixed bug in line shortening of inverted entry or exit line
+* fixed errors in figures.js file that made it impossible to shorten exit for some figures
+* fixed bug in shortening of a non-existing line before or after roll (gap)
+
+1.3.7
+* fixed Intermediate Free figure repetition rules
+* fixed incorrect tailslide drawing on Y axis
+* added .svg extension to image files saved through "Save figs separate"
+* added option to change the image file name pattern for "Save figs separate"
+* updated and corrected French rules
+* rule checking: corrected total K counting where linking figures are used
+* corrected glider rules for Unknown proposals (unknown0)
+* updated jszip.js to latest version
+* corrected knife edge snap foot up/down determination
+
+1.3.6
+* fixed figure definitions for 8.6.18.x and 8.6.19.x
+* added IOC country codes for flags in Grid view and made IOC default
+* added grid flag scaling for large number of columns
+* fixed iPad figure editor layout
+* fixed Aresti NR for Glider Super Slow Rolls
+
+1.3.5
+* fixed bug causing sequence checking rules for specific rolls in figures to be ignored
+
+1.3.4
+* added saving of all figures in a sequence as separate images in a single zip file
+* added automatic a/c registration parsing for IAC Forms
+* changed look of push hammers (-h, 2dh etc) to be according catalog
+* improved manual for Free Unknown creation
+* added import of rules file
+* improved handling and position (top of list) of figure queue
+* added flags to Grid view
+* improved figure grabbing
+* added correct glider super families
+* added Harmony in total K on Form A
+* added P-loops 8.6.17-24.1.2 to rules13-glider-civa for ADV Known and Free
+* disabled non-Chrome browser warning for four weeks after being shown
+* fixed small drag&drop offsets
+* fixed "switch X/Y exit" bug for figures with exit extension 
+* fixed "multiple move" bug for figures with other prefixed attributes (scale etc)
+* fixed bug where scaling was also applied to dotted move lines
+* added 'un-selection' of figure after undo/redo as results are unpredictable
+* fixed several other bugs
+
+1.3.3
+* added buttons for setting upright/inverted entry and exit of figures
+* added display of figure comments to Grid view
+* added sequence check line(s) on print
+* many new print options
+* floating point support (a.o. for glider free)
+* added pilot card print
+* improved multiple sequence checking
+* added information to figure chooser: K factor(s) and legality in sequence
+* improved manual
+* added click & point figure comments editing
+* added German-Aerobatics Sportsman and Intermediate Free rules
+* many bug fixes
+
+1.3.2
+* added option to clear all figure positioning on Forms B & C
+* added figures in grid view
+* figure now retains figure letter when moved to and from queue
+* deleting a figure now removes all positioning and other info for that figure
+* inv/upright start is no longer autocorrected. A warning and red circle are presented
+* Corrected/added many K's for Glider and some for Powered 
+* fixed bug in flick K on vertical after roll in top
+* added option for inverse (white on black) printing of forms
+* added SuperFamily 7 for non-aresti (fam 0) figures
+* changed K factors and Aresti numbers for 1/4 clovers
+* added undo/redo functionality
+* added CIVA rules for Glider
+
+1.3.1
+* Quick bugfix to correct form C for Y-to-Y axis 180 turns
+
+1.3.0
+* updated connector and Free Unknown Figure handling
+* added figure queue functions
+* added print dialog with several options and improved print scaling
+* improved Form A layout, removed fig start numbers
+* added (optional) sequence string to Form B and C print
+* added option to remove Mini Form A from form B
+* fixed 90/270 turn direction bug on Form C
+* added Check Sequence window with logging
+* added full support for IAC style forms
+* added checking of multiple sequences at a time
+* added browser version and compatibility checking
+* added figures information to .seq file for export to Acro etc.
+* improved rules/category/program selection handling
+* added fig nrs to sequence check reporting and logging for min/max/repeat
+* improved handling of multiple drag & drop of same figure
+* added French rules and extended rule parsing options
+
+1.2.4
+* removed several bugs
+* improved OLAN compatibility and figure direction logic
+* added automatic update of OLAN string to OpenAero string
+
+1.2.3
+* changed drawing logic concerning roll direction to be in line with OLAN
+* added HTML5 appcache functionality to make OpenAero available offline wihout manual installation and improve update handling
+* added green highlights of 'fitting' figures in chooser
+* added 'Save as link' option
+* moved OpenAero.html to index.html
+* added several logos
+* added 'Harmony' for glider
+* corrected flick K counting on vertical down hammer/tailslide and after rolls
+* removed mini Form A from Form C
+* added function for specifying Unknown seq figure letter on Form A
+* several bugfixes and small additions
+  
+1.2.2
+* fixed several bugs that were created in version 1.2.1
+* improved css layout for large sequences
+
+1.2.1
+* solved bug in "Separate figures" option
+* added options to make a figure a connector and/or start of sub sequence
+* added tooltips for the buttons
+* added mobile layout
+* added example sequences
+* added curved lines for moving a figure
+* multiple small bugfixes
+* added support for some non-Aresti figures
+
+1.2.0
+* added new figures for 2013
+* added graphical modification of figures with rolls, gaps, size etc.
+* added selection of figures by going through figure text
+* changed base figure chooser
+* added powered/glider K factor selection
+* improved download link with suggested filename for Chrome browser
+* fixed some N figure bugs
+* added automatic logo selection when selecting rules
+* added latest version checking (only active online ofcourse)
+* added saving current sequence as cookie
+* added warning when leaving OpenAero without saving sequence
+* many small bugfixes and code cleanups
+
+1.1.0
+* added point & click selection of base figures
+* cleaned up code, joined separate variables into objects
+
+1.0.3
+* made sure correct entry options are also displayed after manual sequence editing
+* added Aresti Family 3 to SF definitions
+* corrected Yak52 Free max K
+* changed file saving when offline because previous method is no longer supported by Firefox or Chrome
+* fixed error in determining direction with multiple rolls on vertical
+* changed in-figure direction switching to > for X axis and ^ for Y axis to cover all (current) possibilities
+* corrected determination of foot-up/down for negative snaps from knife edge
+
+1.0.2
+* removed autocorrection of sequence text
+* added 'sequence' menu
+* added sequence entry options to 'sequence' menu
+* added option to separate all figures from each other
+* fixed bug where it was impossible to reload a sequence file
+
+1.0.1
+* added automatic separation of the starts of figures for sequence clarity
+* added drag & drop repositioning of figures
+
+1.0.0
+* complete sequence checking for CIVA Advanced & Unlimited 2012
+* complete sequence checking for BAeA/VINK Intermediate 2012
+* modified allowed.js for sequence checking
+* added version number in menu bar
+* added function for cleaning up tabs and space characters
+
+0.9.5
+* added SF for Intermediate
+* corrected handling for line length in hammer with rolls up
+
+0.9.4
+* partially implemented sequence validity checking
+
+0.9.3
+* removed bug where figures like 1 1/2 spin weren't handled correctly from e.g. '6s'
+* made some improvements to language.html
+* fixed bug where figures were added by having a character after > at the end of a figure
+
+0.9.2
+* added/updated logos
+* added subsequence handling
+* added selection of rules/category/program (in preparation for sequence checking)
+* added allowed.js file (in preparation for sequence checking)
+
+0.9.1 First release
