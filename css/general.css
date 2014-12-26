@@ -1007,10 +1007,10 @@ option.used {
   -moz-box-shadow: 5px 5px 8px rgba(0, 0, 0, 0.5);
   -webkit-box-shadow: 5px 5px 8px rgba(0, 0, 0, 0.5);
   box-shadow: 5px 5px 8px rgba(0, 0, 0, 0.5);
-  -moz-transition: 0.2s blur;
-  -o-transition: 0.2s left;
-  -webkit-transition: 0.2s left;
-  transition: 0.2s left;
+  -moz-transition: 0.3s blur;
+  -o-transition: 0.3s left;
+  -webkit-transition: 0.3s left;
+  transition: 0.3s left;
 }
 #logoChooserContainer.active {
   left: 2px;

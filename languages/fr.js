@@ -178,7 +178,7 @@ lang.fr = {
   'fenêtre où vous pourrez choisir le répertoire apparaîtra.' +
   '<p class="chromeHint">Chrome hint: Par défaut, le navigateur Chrome sauvegardera ' +
   'le fichier dans votre répertoire Téléchargement. Pour changer ceci, allez ' +
-  'dans paramétrage <b>avancé</b>  (accessible via le bouton Chrome â‰¡) ' +
+  'dans paramétrage <b>avancé</b>  (accessible via le bouton Chrome ≡) ' +
   'et cochez la case "Demander où sauvegarder ..."</p>',
 //
 'downloadLegacy' : 'Vous pouvez enregistrer en choisissant un nom ' +
@@ -302,7 +302,7 @@ lang.fr = {
 'iOSsaveFileMessage' : '<p>En cliquant sur le bouton <i>Voir l\'image du programme</i> ' +
   'une nouvelle fenêtre ou un onglet s\'ouvrira. Dans Safari, vous ' +
   'pouvez alors cliquer sur le bouton <span class="iOSsaveIcon"></span> pour ' +
-  'sauvegarder ou imprimer l\'image. Dans Chrome, vous pouvez imprimer à partir du menu &#137;¡.</p>' +
+  'sauvegarder ou imprimer l\'image. Dans Chrome, vous pouvez imprimer à partir du menu ≡.</p>' +
   '<p>Astuce : Si la qualité de l\'image est insuffisante, vous pouvez augmenter ' +
   'la résolution dans la boite de dialogue Imprimer de "Enregistrement d\'une image en PNG ou SVG". ' +
   'Si vous obtenez une page blanche, essayer de sauvegarder chaque programme ' +
