@@ -1,3 +1,6 @@
+1.5.0.1
+* moved DOMContentLoaded from index.html to OpenAero.js as it stopped Chrome app
+
 1.5.0
 * corrected 7.8.15.1 to 7.8.15.3 in CIVA Intermediate Unknown rules
 * added NZAC logo

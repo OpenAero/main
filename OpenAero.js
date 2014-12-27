@@ -15068,3 +15068,6 @@ function parseSequence () {
     }
   }
 }
+
+// do initialization when all DOM content has been loaded
+document.addEventListener("DOMContentLoaded", doOnLoad, false);

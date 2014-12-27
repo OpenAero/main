@@ -1,5 +1,5 @@
 <?php
-// openaero.php 1.2.3
+// openaero.php 1.5.0
 
 // This file is part of OpenAero.
 
@@ -38,6 +38,9 @@ switch ($_REQUEST['f']) {
   case 'version':
     version();
     break;
+  case 'v':
+    versionNew();
+    break;
   default:
     header( 'Content-Type:' );
 }
@@ -70,9 +73,9 @@ function download() {
 // If not, it will display the latest version in an svg image
 function version() {
   $version = '';
-  // Get the current latest version from config.js
+  // Get the current stable version from config.js
   ini_set('allow_url_fopen', true);
-  $lines = file ('https://open-aero.googlecode.com/git/config.js');
+  $lines = file ('http://openaero.net/config.js');
   foreach ($lines as $line) {
     if (preg_match ('/^var version[^0-9]+([0-9\.]+)/', $line, $matches)) {
       $version = $matches[1];
@@ -88,6 +91,30 @@ function version() {
   echo '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.2" width="200" height="18">';
   echo '<rect width="100%" height="100%" fill="#ff8000"></rect>';
   echo '<text x="195" y="15" text-anchor="end" font-family="Verdana" font-size="13" fill="#4040ff">Download version '.$version.'</text>';
+  echo '</svg>';
+}
+
+// versionNew will return the stable version number. It is encoded in
+// width and height of an SVG image as follows:
+// Version aa.bb.cc.dd
+// Encoded size aacc x bbdd
+function versionNew() {
+  $version = '';
+  // Get the current stable version from config.js
+  ini_set('allow_url_fopen', true);
+  $lines = file ('http://openaero.net/config.js');
+  foreach ($lines as $line) {
+    if (preg_match ('/^var version[^0-9]+([0-9\.]+)/', $line, $matches)) {
+      $version = explode('.', $matches[1]);
+      break;
+    }
+  }
+  $w = $version[0] * 100 + $version[2];
+  $h = $version[1] * 100 + $version[3];
+  // Build svg image
+  header('Content-Type: image/svg+xml');
+  echo "<?xml version=\"1.0\" standalone=\"no\"?>\n<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">";
+  echo '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.2" width="'.$w.'" height="'.$h.'">';
   echo '</svg>';
 }
 ?>
