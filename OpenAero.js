@@ -3393,7 +3393,7 @@ function doOnLoad () {
   }
   
   // activate addtohomescreen for mobile devices
-  addToHomescreen();
+  if (!chromeApp.active) addToHomescreen();
   
   // disable or change some items for iOS
   if (/i(Pad|Phone|Pod)/i.test (navigator.userAgent)) {
@@ -5738,7 +5738,7 @@ function addUpdateListener () {
 // checkUpdateDone checks if an update was just done. If so, it presents
 // a dialog to the user
 function checkUpdateDone() {
- function f (oldVersion) {
+  function f (oldVersion) {
     if (oldVersion !== version) {
       alertBox (versionNew);
       // create link for changelog
@@ -11833,7 +11833,10 @@ function storeLocal(name, value) {
 function getLocal(name, f) {
   if (storage) {
     if (chromeApp.active) {
-      chrome.storage.local.get (name, f);
+      function ff (value) {
+        f (value[name]);
+      }
+      chrome.storage.local.get (name, ff);
     } else {
       f (localStorage.getItem (name));
     }
