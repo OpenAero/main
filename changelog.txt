@@ -1,3 +1,15 @@
+1.5.0.4
+* fixed "Show log" bug on iOS standalone (Issue #167)
+* added steganography to encode/decode sequence in PNG image (Issue #168)
+* removed "Save as image" as it is a duplicate of "Print/save forms"
+* improved system for version update messages
+* fixed bug causing printing to be disabled on all but Android
+* changed loading of all files to readAsDataURL
+* added sequence link opening by dialog box
+
+1.5.0.3
+* fixed version checking for Chrome app
+
 1.5.0.2
 * fixed issues with chrome.storage.local for Chrome app
 

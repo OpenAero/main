@@ -34,21 +34,32 @@
 // Define active version number of OpenAero
 // **************
 
-var version = '1.5.0';
-var versionNew = '<strong>OpenAero has been upgraded to version ' +
-  version + '</strong><br>New features:<ul>' +
-  '<li><b>Free Unknown designer!</b> Create Free Unknown sequences efficiently</li>' +
-  '<li>CIVA rules and sequences for 2015</li>' +
-  '<li>IAC rules for Free sequences and limited checking for Unknown sequences</li>' +
-  '<li>Printing and image saving of multiple sequences at once; ' +
-  'Tools -> Print multiple seq</li>' +
-  '<li>Added alerts for illegal spins</li>' +
-  '<li>Added French translations for sequence alerts</li>' +
-  '<li>Many national sequences for 2015</li>' +
-  '<li>Other bugfixes and improvements (check <a id="changelog">' +
-  'changelog.txt</a> if interested)</li>' +
-  '</ul>' +
-  'This may take a few seconds to complete.';
+var version = '1.5.0.4';
+// versionNew is an object that contains version update information
+// The structure is {vvv : [[ttt, n], [ttt, n], ...]} , where
+// vvv = version number
+// ttt = update text
+// n   = importance (higher = more important)
+var versionNew = {
+  '1.5.0.4' : [
+    ['Sequences can be embedded in PNG image, for easy opening and ' +
+      'saving on iOS', 3]
+  ],
+  '1.5.0'   : [
+    ['<b>Free Unknown designer!</b> Create Free Unknown sequences ' +
+      'efficiently', 5],
+    ['CIVA rules and sequences for 2015', 4],
+    ['IAC rules for Free sequences and limited checking for Unknown ' +
+      'sequences', 3],
+    ['Printing and image saving of multiple sequences at once; ' +
+      'Tools -> Print multiple seq', 2],
+    ['Added alerts for illegal spins', 2],
+    ['Added French translations for sequence alerts', 2],
+    ['Many national sequences for 2015', 2]
+  ]
+}
+// versionNewMax defines the maximum updates to show when upgrading
+var versionNewMax = 10;
 
 // Define chrome app id and if app is active
 var chromeApp = {

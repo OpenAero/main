@@ -1,4 +1,4 @@
-// en.js 1.4.6
+// en.js 1.5.0.4
 // This file is part of OpenAero.
 
 //  OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -376,6 +376,18 @@ lang.en = {
 'openaeroLanguage' : 'OpenAero language',
 'openQueueFile' : 'Open queue file',
 'openSequence' : 'Open sequence',
+// new 1.5.0.4
+'openSequenceLink' : 'Open sequence link',
+'openSequenceLinkCancel' : 'Cancel',
+'openSequenceLinkError' : '<p>There was an error opening the sequence ' +
+  'link. This was the link you provided:<br>%s</p><p>Please check you ' +
+  'have copied the <strong>entire</strong> link',
+'openSequenceLinkMessage' : 'To open a sequence that has been provided ' +
+  'to you as a link (e.g. through email), copy it completely. Then ' +
+  'paste it in the box below',
+'openSequenceLinkOpen' : 'Open',
+'openSequenceLinkTitle' : 'Open sequence from link',
+//
 'orFileDrop' : 'Or drag & drop your files here',
 // new 1.4.1
 'orFileDropPrint' : 'Or drag & drop your files here',
@@ -468,7 +480,8 @@ lang.en = {
 // new 1.4.2
 'sameAsBefore' : 'Same as before',
 //
-'saveAsImage' : 'Save as image',
+// removed 1.5.0.4
+// 'saveAsImage' : 'Save as image',
 'saveAsLink' : 'Save as link',
 'saveAsPNG' : 'Save PNG image',
 'saveAsSVG' : 'Save SVG image',
@@ -551,6 +564,14 @@ lang.en = {
 //
 'upwindEntry' : 'Upwind entry',
 'version' : 'Version: %s',
+// new 1.5.0.4
+'versionNew' : '<strong>OpenAero has been upgraded from version %s to %s' +
+  '</strong><br>New features:<ul>%s' +
+  '<li>Other bugfixes and improvements (check <a id="changelog">' +
+  'changelog.txt</a> if interested)</li>' +
+  '</ul>' +
+  'This may take a few seconds to complete.',
+//
 'view' : 'View',
 'warningPre' : '<p>When you save this sequence again this ' +
   'warning will not be shown any more.</p>',

@@ -419,6 +419,296 @@ if(!document.getElementsByClassName) {
   };
 }
 
+/* 
+ * steganography.js v1.0.1
+ * 
+ * Copyright (C) 2012, Peter Eigenschink (http://www.peter-eigenschink.at/)
+ * Dual-licensed under the MIT (http://www.opensource.org/licenses/mit-license.php)
+ * and the Beerware (http://en.wikipedia.org/wiki/Beerware) license.
+ */
+(function(g) {
+  var util = {
+    "isPrime" : function(n) {
+      if (isNaN(n) || !isFinite(n) || n%1 || n<2) return false;
+      if (n%2==0) return (n==2);
+      if (n%3==0) return (n==3);
+      var m=Math.sqrt(n);
+      for (var i=5;i<=m;i+=6) {
+        if (n%i==0) return false;
+        if (n%(i+2)==0) return false;
+      }
+      return true;
+    },
+    "findNextPrime" : function(n) {
+      for(var i=n; true; i+=1)
+        if(util.isPrime(i)) return i;
+    },
+    "sum" : function(func, end, options) {
+      var sum = 0;
+      options = options || {};
+      for(var i = options.start || 0; i < end; i+=(options.inc||1))
+        sum += func(i) || 0;
+
+      return (sum === 0 && options.defValue ? options.defValue : sum);
+    },
+    "product" : function(func, end, options) {
+      var prod = 1;
+      options = options || {};
+      for(var i = options.start || 0; i < end; i+=(options.inc||1))
+        prod *= func(i) || 1;
+
+      return (prod === 1 && options.defValue ? options.defValue : prod);
+    },
+    "createArrayFromArgs" : function(args,index,threshold) {
+      var ret = new Array(threshold-1);
+      for(var i = 0; i < threshold; i+=1)
+        ret[i] = args(i >= index ? i+1:i);
+
+      return ret;
+    }
+  };
+  
+  function Cover() {};
+
+  Cover.prototype = {
+    "config": {
+      "t": 3,
+      "threshold": 1,
+      "codeUnitSize": 16,
+      "args": function(i) { return i+1; },
+      "messageDelimiter": function(modMessage,threshold) {
+                var delimiter = new Array(threshold*3);
+                for(var i = 0; i < delimiter.length; i+=1)
+                  delimiter[i] = 255;
+                
+                return delimiter;
+              },
+      "messageCompleted": function(data, i, threshold) {
+                var done = true;
+                for(var j = 0; j < 16 && done; j+=1) {
+                  done = done && (data[i+j*4] === 255);
+                }
+                return done;
+              }
+    },
+    "encode": function(message, image, options) {
+      options = options || {};
+      var config = this.config;
+
+      var shadowCanvas = document.createElement('canvas'),
+        shadowCtx = shadowCanvas.getContext('2d');
+
+      shadowCanvas.style.display = 'none';
+
+      if(image.length) {
+        var dataURL = image;
+        image = new Image();
+        image.src = dataURL;
+      }
+      shadowCanvas.width = options.width || image.width;
+      shadowCanvas.height = options.height || image.height;
+      if(options.height && options.width) {
+        shadowCtx.drawImage(image, 0, 0, options.width, options.height );
+      } else {
+        shadowCtx.drawImage(image, 0, 0);
+      }
+      
+      var imageData = shadowCtx.getImageData(0, 0, shadowCanvas.width, shadowCanvas.height),
+        data = imageData.data;
+      // bundlesPerChar ... Count of full t-bit-sized bundles per Character
+      // overlapping ... Count of bits of the currently handled character which are not handled during each run
+      var t = options.t || config.t,
+        threshold = options.threshold || config.threshold,
+        codeUnitSize = options.codeUnitSize || config.codeUnitSize,
+        bundlesPerChar = codeUnitSize/t >> 0,
+        overlapping = codeUnitSize%t,
+        messageDelimiter = options.messageDelimiter || config.messageDelimiter,
+        args = options.args || config.args,
+        prime = util.findNextPrime(Math.pow(2,t)),
+        decM, oldDec, oldMask, modMessage = [], left, right;
+
+      for(var i=0; i<=message.length; i+=1) {
+        // dec ... UTF-16 Unicode of the i-th character of the message
+        // curOverlapping ... The count of the bits of the previous character not handled in the previous run
+        // mask ... The raw initial bitmask, will be changed every run and if bits are overlapping
+        var dec = message.charCodeAt(i) || 0, curOverlapping = (overlapping*i)%t, mask;
+        if(curOverlapping > 0 && oldDec) {
+          mask = Math.pow(2,t-curOverlapping) - 1;
+          oldMask = Math.pow(2, codeUnitSize) * (1 - Math.pow(2, -curOverlapping));
+          left = (dec & mask) << curOverlapping;
+          right = (oldDec & oldMask) >> (codeUnitSize - curOverlapping);
+          modMessage.push(left+right);
+
+          if(i<message.length) {
+            mask = Math.pow(2,2*t-curOverlapping) * (1 - Math.pow(2, -t));
+            for(var j=1; j<bundlesPerChar; j+=1) {
+              decM = dec & mask;
+              modMessage.push(decM >> (((j-1)*t)+(t-curOverlapping)));
+              mask <<= t;
+            }
+            if((overlapping*(i+1))%t === 0) {
+              mask = Math.pow(2, codeUnitSize) * (1 - Math.pow(2,-t));
+              decM = dec & mask;
+              modMessage.push(decM >> (codeUnitSize-t));
+            }
+            else if(((((overlapping*(i+1))%t) + (t-curOverlapping)) <= t)) {
+              decM = dec & mask;
+              modMessage.push(decM >> (((bundlesPerChar-1)*t)+(t-curOverlapping)));
+            }
+          }
+        }
+        else if(i<message.length) {
+          mask = Math.pow(2,t) - 1;
+          for(var j=0; j<bundlesPerChar; j+=1) {
+            decM = dec & mask;
+            modMessage.push(decM >> (j*t));
+            mask <<= t;
+          }
+        }
+        oldDec = dec;
+      }
+
+      // Write Data
+      var offset, index, subOffset, delimiter = messageDelimiter(modMessage,threshold);
+      for(offset = 0; (offset+threshold)*4 <= data.length && (offset+threshold) <= modMessage.length; offset += threshold) {
+        var q, qS=[];
+        for(var i=0; i<threshold && i+offset < modMessage.length; i+=1) {
+          q = 0;
+          for(var j=offset; j<threshold+offset && j<modMessage.length; j+=1)
+            q+=modMessage[j]*Math.pow(args(i),j-offset);
+          qS[i] = (255-prime+1)+(q%prime);
+        }
+        for(var i=offset*4; i<(offset+qS.length)*4 && i<data.length; i+=4)
+          data[i+3] = qS[(i/4)%threshold];
+        
+        subOffset = qS.length;
+      }
+      // Write message-delimiter
+      for(index = (offset+subOffset); index-(offset+subOffset)<delimiter.length && (offset+delimiter.length)*4<data.length; index+=1)
+        data[(index*4)+3]=delimiter[index-(offset+subOffset)];
+      // Clear remaining data
+      for(var i=((index+1)*4)+3; i<data.length; i+=4) data[i] = 255;
+
+      imageData.data = data;
+      shadowCtx.putImageData(imageData, 0, 0);
+
+      return shadowCanvas.toDataURL();
+    },
+    "decode": function(image, options) {
+      options = options || {};
+      var config = this.config;
+      
+      var t = options.t || config.t, threshold = options.threshold || config.threshold,
+        codeUnitSize = options.codeUnitSize || config.codeUnitSize, prime = util.findNextPrime(Math.pow(2, t)),
+        imageData, data, q, args = options.args || config.args, modMessage = [], 
+        messageCompleted = options.messageCompleted || config.messageCompleted;
+
+      if(!t || (t < 1 && t > 7)) throw "Error: Parameter t = " + t + " is not valid: 0 < t < 8";
+        
+      var shadowCanvas = document.createElement('canvas'),
+        shadowCtx = shadowCanvas.getContext('2d');
+
+      shadowCanvas.style.display = 'none';
+      document.body.appendChild(shadowCanvas);
+
+      if(image.length) {
+        var dataURL = image;
+        image = new Image();
+        image.src = dataURL;
+      }
+      shadowCanvas.width = options.width || image.width;
+      shadowCanvas.height = options.width || image.height;
+      if(options.height && options.width) {
+        shadowCtx.drawImage(image, 0, 0, options.width, options.height );
+      } else {
+        shadowCtx.drawImage(image, 0, 0);
+      }
+
+      imageData = shadowCtx.getImageData(0, 0, shadowCanvas.width, shadowCanvas.height);
+      data = imageData.data;
+
+      if (threshold === 1) {
+        for(var i=3, done=false; !done && i<data.length && !done; i+=4) {
+          done = messageCompleted(data, i, threshold);
+          if(!done) modMessage.push(data[i]-(255-prime+1));
+        }
+      } else {
+        for(var k = 0, done=false; !done; k+=1) {
+          q = [];
+          for(var i=(k*threshold*4)+3; i<(k+1)*threshold*4 && i<data.length && !done; i+=4) {
+            done = messageCompleted(data,i,threshold);
+            if(!done) q.push(data[i]-(255-prime+1)); // at Array index (i-((k*threshold*4)+3))/4
+          }
+          if(q.length === 0) continue;
+          // Calculate the coefficients which are the same for any order of the variable, but different for each argument
+          // i.e. for args[0] coeff=q[0]*(args[1]-args[2])*(args[1]-args[3])*...(args[1]-args[threshold-1])*...*(args[threshold-1]-args[1])*...*(args[threshold-1]-args[threshold-2])
+          var variableCoefficients = (function(i) {
+            if(i >= q.length) return [];
+            return [q[i]*
+            util.product(function(j) {
+            if(j != i) {
+              return util.product(function(l) {
+              if(l != j) return (args(j) - args(l));
+              }, q.length);
+            }
+            }, q.length)].concat(arguments.callee(i+1));
+          }(0));
+          // Calculate the coefficients which are different for each order of the variable and for each argument
+          // i.e. for order=0 and args[0] coeff=args[1]*args[2]*...*args[threshold-1]
+          var orderVariableCoefficients = function(order, varIndex) {
+            var workingArgs = util.createArrayFromArgs(args,varIndex,q.length), maxRec = q.length - (order+1);
+            return (function(startIndex, endIndex, recDepth) {
+            var recall = arguments.callee;
+            return util.sum(function(i) {
+              if(recDepth < maxRec)
+              return workingArgs[i]*recall(i+1,startIndex+order+2,recDepth+1);
+            }, endIndex, {"start": startIndex, "defValue": 1});
+            }(0,order+1,0));
+          };
+          // Calculate the common denominator of the whole term
+          var commonDenominator = util.product(function(i) {
+            return util.product(function(j) {
+            if(j != i) return (args(i) - args(j));
+            }, q.length);
+          }, q.length);
+
+          for(var i = 0; i < q.length; i+=1) {
+            modMessage.push((((Math.pow(-1,q.length-(i+1))*util.sum(function(j) {
+            return orderVariableCoefficients(i,j)*
+            variableCoefficients[j];
+            }, q.length))%prime)+prime)%prime); // ?divide by commonDenominator?
+          }
+        }
+      }
+
+      var message = "", charCode = 0, bitCount = 0, mask = Math.pow(2, codeUnitSize)-1;
+      for(var i = 0; i < modMessage.length; i+=1) {
+        charCode += modMessage[i] << bitCount;
+        bitCount += t;
+        if(bitCount >= codeUnitSize) {
+          message += String.fromCharCode(charCode & mask);
+          bitCount %= codeUnitSize;
+          charCode = modMessage[i] >> (t-bitCount);
+        }
+      }
+      if(charCode !== 0) message += String.fromCharCode(charCode & mask);
+
+      return message;
+    },
+    "getHidingCapacity" : function(image, options) {
+      options = options || {};
+      var config = this.config;
+    
+      var width = options.width || image.width,
+        height = options.height || image.height,
+        t = options.t || config.t,
+        codeUnitSize = options.codeUnitSize || config.codeUnitSize;
+      return t*width*height/codeUnitSize >> 0;
+    }
+  };
+  g.steganography = g.steg = new Cover();
+})(window);
+
 /* iOS drag & drop support */
 /*Copyright (c) 2013 Tim Ruffles
 
@@ -446,7 +736,7 @@ var iosDragDropShim = { enableEnterLeave: true,
 
 (function(doc) {
 
-  //log = noop; // noOp, remove this line to enable debugging
+  log = noop; // noOp, remove this line to enable debugging
 
   var coordinateSystemForElementFromPoint;
 
@@ -791,7 +1081,7 @@ var iosDragDropShim = { enableEnterLeave: true,
   }
 
   function onEvt(el, event, handler, context) {
-    if(context) handler = handler.bind(context);
+    if (context) handler = handler.bind(context);
     el.addEventListener(event, handler);
     return {
       off: function() {
@@ -801,7 +1091,7 @@ var iosDragDropShim = { enableEnterLeave: true,
   }
 
   function once(el, event, handler, context) {
-    if(context) handler = handler.bind(context);
+    if (context) handler = handler.bind(context);
     function listener(evt) {
       handler(evt);
       return el.removeEventListener(event,listener);
@@ -1163,9 +1453,10 @@ function helpWindow(url, title) {
 // newWindow will display a window with content from body and title
 // body can also be a function
 function newWindow (body, title) {
-  // handling is different for App and web
+  if (typeof body === "function") body = body();
+  if (!body) return;
+  // handling is different for App, touchdevice and web
   if (chromeApp.active) {
-    if (typeof body === "function") body = body();
     chrome.app.window.create ('window.html', {
       bounds: {
         width:800,
@@ -1178,18 +1469,18 @@ function newWindow (body, title) {
         win.document.body = body;
       };
     });
+  } else if (isTouchDevice()) {
+    alertBox ('<textarea id="newWindow" readonly></textarea>', title)
+    document.getElementById('newWindow').innerText = body.innerText;
   } else {
     var w = window.open ('', title, 'width=800,height=600,top=50,' +
-      'location=no,menubar=no,scrollbars=yes,status=no,toolbar=no');
-    if (typeof body === "function") body = body();
-    if (body) {
-      // create data uri
-      var uri = 'data:text/html;base64,' +
-        btoa('<title>' + title + '</title>' +
-        new XMLSerializer().serializeToString(body));
-      // open the window with data uri for contents
-      w.location.assign(uri);
-    }
+    'location=no,menubar=no,scrollbars=yes,status=no,toolbar=no');
+    // create data uri
+    var uri = 'data:text/html;base64,' +
+      btoa('<title>' + title + '</title>' +
+      new XMLSerializer().serializeToString(body));
+    // open the window with data uri for contents
+    w.location.assign(uri);
     w.focus();
   }
 }
@@ -1219,7 +1510,17 @@ function aboutDialog () {
   // openaero.php will return an image with size aacc x bbdd, where
   // version is aa.bb.cc.dd
   var img = document.createElement('img');
-  img.src = 'http://openaero.net/openaero.php?f=v';
+  if (chromeApp.active) {
+    var xhr = new XMLHttpRequest();
+    xhr.responseType = 'blob';
+    xhr.onload = function() {
+      img.src = window.URL.createObjectURL(xhr.response);
+    }
+    xhr.open('GET', 'http://openaero.net/openaero.php?f=v', true);
+    xhr.send();
+  } else {
+    img.src = 'http://openaero.net/openaero.php?f=v';
+  }
   img.onload = function() {
     var v1 = parseInt(this.width / 100);
     var v2 = parseInt(this.height / 100);
@@ -1416,16 +1717,10 @@ function getSuperFamily (aresti, category) {
   // Set default Super Family. First check if a matching category is
   // active, otherwise use "advanced".
   category = category.toLowerCase();
-  if (superFamilies[category]) {
-    superFamily = superFamilies[category];
-  } else {
-    superFamily = superFamilies.advanced;
-  }
+  superFamily = superFamilies[category] || superFamilies.advanced;
   // set Super Family from rules
-  if (rulesActive) {
-    if (ruleSuperFamily.length) {
-      superFamily = ruleSuperFamily;
-    }
+  if (rulesActive && ruleSuperFamily.length) {
+    superFamily = ruleSuperFamily;
   }
 
   var returnValue = '';
@@ -1550,7 +1845,7 @@ function myGetBBox (e) {
 // x and y represent the corner of the rectangle bounding the arrow at the top downwind side
 // The return value is an array with the width and height of the bounding rectangle
 function drawWind (x, y, sign, svgEl) {
-  if (!svgEl) svgEl = SVGRoot.getElementById('sequence');
+  svgEl = svgEl || SVGRoot.getElementById('sequence');
   var g = document.createElementNS (svgNS, 'g');
   g.setAttribute('id', 'windArrow');
   var path = document.createElementNS (svgNS, "path");
@@ -2491,13 +2786,9 @@ function makeRoll (params) {
       // Get the relative movement by the line and use this to build the tip connector line
       dx = pathsArray[pathsArray.length - 1].dx;
       dy = pathsArray[pathsArray.length - 1].dy;
-      if (params[3]) {
-        // glider slow roll
-        var radPoint = rad + sign * (Math.PI / 2);
-      } else {
-        // regular roll
-        var radPoint = rad + sign * (Math.PI / 3);
-      }
+      // glider slow roll or regular roll
+      var radPoint = (params[3])? rad+sign*(Math.PI/2) : rad+sign*(Math.PI/3);
+
       dxTip = (((Math.cos(radPoint) * (rollcurveRadius + 2)) - (radCos * rollcurveRadius)));
       dyTip = -(((Math.sin(radPoint) * (rollcurveRadius + 2)) - (radSin * rollcurveRadius)));
       if (params[3]) {
@@ -3229,7 +3520,7 @@ function doOnLoad () {
   addEventListeners();
   
   // disable iOS overscroll
-  /*if (isTouchDevice) {
+  /*if (isTouchDevice()) {
     document.body.addEventListener('touchmove',function(event){
       event.preventDefault();
     });
@@ -3428,7 +3719,8 @@ function getElementsByAttribute(oElm, strTagName, strAttributeName, strAttribute
 */
 
 // launchURL is run during doOnLoad (web) or on event onLaunched (App)
-// and retrieves sequence from URL (if any).
+// and retrieves sequence from URL (if any). It returns true on succes
+// or false on faillure
 function launchURL (launchData) {
   var match = launchData.url.toString().match(/\?(sequence|s)=.+/);
   if (match) {
@@ -3436,12 +3728,13 @@ function launchURL (launchData) {
     if (match.match (/^%3Csequence%3E/)) {
       // before 1.5.0    : URI encoded link
       // Make sure to decode %2B to + character
-      activateXMLsequence (decodeURI (match.replace(/%2B/g, '+')));
+      return activateXMLsequence (decodeURI (match.replace(/%2B/g, '+')));
     } else {
       // 1.5.0 and later : base64url encoded link
-      activateXMLsequence (decodeBase64Url (match));
+      return activateXMLsequence (decodeBase64Url (match));
     }
   }
+  return false;
 }
 
 // appZoom adds zoom functionality to the app and is called by keydown
@@ -3483,11 +3776,11 @@ function addEventListeners () {
     }, true);  
   document.getElementById('file').addEventListener('change', openSequence, false);
   document.getElementById('t_openSequence').addEventListener('mousedown', document.getElementById('file').click, false);
+  document.getElementById('t_openSequenceLink').addEventListener('click', openSequenceLink, false);
   document.getElementById('t_clearSequence').addEventListener('click', clearSequence, false);
   document.getElementById('t_saveSequence').addEventListener('click', saveSequence, false);
   document.getElementById('t_emailSequence').addEventListener('mousedown', emailSequence, false);
   document.getElementById('t_saveAsLink').addEventListener('click', saveAsURL, false);
-  document.getElementById('t_saveAsImage').addEventListener('click', function(){printDialog(true)}, false);
   document.getElementById('t_saveFigsSeparate').addEventListener('click', saveFigs, false);
   document.getElementById('t_printSaveForms').addEventListener('click', function(){printDialog(true)}, false);
   
@@ -3672,6 +3965,10 @@ function addEventListeners () {
   document.getElementById('t_iOScancelSave').addEventListener('mousedown', function(){
       document.getElementById('iOSsaveDialog').classList.add ('noDisplay');
     }, false);
+  
+  // openSequenceLink dialog
+  document.getElementById('t_openSequenceLinkOpen').addEventListener('mousedown', function(){openSequenceLink(true)});
+  document.getElementById('t_openSequenceLinkCancel').addEventListener('mousedown', function(){openSequenceLink(false)});
   
   // print/save image dialog
   document.getElementById('manual.html_save_print').addEventListener('click', function(){
@@ -4439,11 +4736,7 @@ function addRollSelectElement (figNr, rollEl, elNr, parent) {
 function createExampleSequence (year, rnLower, rules, cat, seq, string) {
   var key = year + rules + ' ' + cat + ' ' + seq;
   var sequence = '<sequence><class>';
-  if (rnLower.match(/^glider-/)) {
-    sequence += 'glider';
-  } else {
-    sequence += 'powered';
-  }
+  sequence += (rnLower.match(/^glider-/))? 'glider' : 'powered';
   sequence += '</class><rules>' + rules + '</rules>' +
     '<category>' + cat + '</category>' +
     '<program>' + seq + '</program>' +
@@ -4602,7 +4895,7 @@ function loadSettingsXML (xml) {
 // loadSettingsStorage will load the settings from storage
 // When location is not set it will default to 'settings'
 function loadSettingsStorage (location) {
-  if (!location) location = 'settings';
+  location = location || 'settings';
   
   function f (settings) {
     if (settings) {
@@ -4651,18 +4944,14 @@ function loadSettingsStorage (location) {
 // saveSettingsStorage will save the settings to storage
 // When location is not set it will default to 'settings'
 function saveSettingsStorage (location) {
-  if (!location) location = 'settings';
+  location = location || 'settings';
   if (storage) {
     var settings = [];
     for (var i = saveSettings.length - 1; i >=0; i--) {
       var el = document.getElementById(saveSettings[i]);
       var value = '';
       if (el.type === 'checkbox') {
-        if (el.checked) {
-          value = 1;
-        } else {
-          value = 0;
-        }
+        value = (el.checked)? 1 : 0;
       } else {
         value = encodeURI(el.value);
       }
@@ -5210,11 +5499,7 @@ function addRollSelectors (figureId) {
           // loop until max rolls per element + 1
           for (var j = 0; j < rollsPerRollElement + 1; j++) {
             var pattern = figures[figureId].rollInfo[i].pattern[j-1];
-            if (pattern) {
-              pattern = pattern.replace('-', '');
-            } else {
-              pattern = '';
-            }
+            pattern = (pattern)? pattern.replace('-', '') : '';
             // show the element when:
             // it's the first one OR the previous one is not empty
             // AND it's number is not higher than rollsPerRollElement
@@ -5240,11 +5525,7 @@ function addRollSelectors (figureId) {
           }
           var gap = figures[figureId].rollInfo[i].gap;
           for (var j = 0; j < subRolls; j++) {
-            if (typeof gap[j] != 'undefined') {
-              var thisGap = gap[j];
-            } else {
-              thisGap = 0;
-            }
+            var thisGap = (typeof gap[j] != 'undefined')? gap[j] : 0;
             var span = document.createElement('span');
             span.setAttribute('id', 'roll'+i+'-gap'+j);
             span.classList.add ('plusMin');
@@ -5717,11 +5998,7 @@ function addUpdateListener () {
         // Swap it in and reload the page to get the new hotness.
         window.applicationCache.swapCache();
         // only reload after confirmation
-        if (storage) {
-          var t = userText.loadNewVersion;
-        } else {
-          var t = userText.loadNewVersionNoCookies;
-        }
+        var t = (storage)? userText.loadNewVersion : userText.loadNewVersionNoCookies;
         confirmBox (t, userText.loadNewVersionTitle, function(){
           sequenceSaved = true;
           window.document.removeEventListener('beforeunload', preventUnload);
@@ -5738,9 +6015,25 @@ function addUpdateListener () {
 // checkUpdateDone checks if an update was just done. If so, it presents
 // a dialog to the user
 function checkUpdateDone() {
+
   function f (oldVersion) {
     if (oldVersion !== version) {
-      alertBox (versionNew);
+      // create version update text
+      var list = [];
+      for (var v in versionNew) {
+        if (compVersion (oldVersion, v) < 0) {
+          for (var i = 0 ; i < versionNew[v].length; i++) {
+            list.push (versionNew[v][i]);
+          }
+        }
+      }
+      list.sort (function (a,b) {return b[1]-a[1]});
+      var li = '';
+      for (var i = 0; i < list.length; i++) {
+        if (i === versionNewMax) break;
+        li += '<li>' + list[i][0] + '</li>\n';
+      }
+      alertBox (sprintf(userText.versionNew, oldVersion, version, li));
       // create link for changelog
       document.getElementById('changelog').addEventListener (
         'mousedown',
@@ -5748,7 +6041,8 @@ function checkUpdateDone() {
       );
       storeLocal ('version', version);
     }
-  }   
+  }
+  
   // this only works when storage is enabled
   if (storage) getLocal ('version', f);
 }
@@ -5766,15 +6060,15 @@ function changeSequenceInfo () {
     title += document.getElementById('location').value + ' - ';
     title += document.getElementById('date').value + ' - ';
     title += document.getElementById('pilot').value;
-    document.title = title;
+    title = title.replace (/- +-/g, '-');
+    document.title = title.replace (/[ -]+$/, '');
+
     var xml = '<sequence>\n'
     for (i = 0; i < sequenceXMLlabels.length; i++) {
       var el = document.getElementById(sequenceXMLlabels[i]);
-      if (el) {
-        if (el.value !== '') {
+      if (el && (el.value !== '')) {
         xml += '  <' + sequenceXMLlabels[i] + '>' +
           el.value + '</' + sequenceXMLlabels[i] + '>\n';
-        }
       }
     }
     xml += '</sequence>';
@@ -5999,7 +6293,7 @@ function buildLogoSvg(logoImage, x, y, width, height) {
   svg.setAttribute("baseProfile", "tiny");
   svg.setAttribute("xmlns", svgNS);
   svg.setAttribute("xmlns:xlink", xlinkNS);
-// svg images are included inline and scaled
+  // svg images are included inline and scaled
   if (logoImage.match(/<svg/)) {
     var parser = new DOMParser();
     var doc = parser.parseFromString(logoImage, "image/svg+xml");
@@ -6013,7 +6307,7 @@ function buildLogoSvg(logoImage, x, y, width, height) {
       ') scale(' + scale.toFixed(4) + ')');
     group.appendChild(svgBase);
     svg.appendChild(group);
-// other images are included through an xlink data url
+  // other images are included through an xlink data url
   } else {
     // find image size and use this to set correct width and height of
     // image, using provided as max
@@ -6152,7 +6446,10 @@ function parseFiguresFile () {
       // increase figGroupNr counter
       figGroupNr++;
       // parse family and name
-      figGroup[figGroupNr] = {'family':splitLine[0].replace(/^F/, ''), 'name':splitLine[1]};
+      figGroup[figGroupNr] = {
+        'family':splitLine[0].replace(/^F/, ''),
+        'name':splitLine[1]
+      };
       // add an option for the group to the figure selector
       var option = document.createElement('option');
       option.setAttribute('value', figGroupNr);
@@ -6171,7 +6468,13 @@ function parseFiguresFile () {
         if (!arestiK[1].match(/:/)) kFactors[1] = kFactors[0];
         // Split K factors on the colon; kFactors[0] is for Powered,
         // kFactors[1] is for Gliders
-        fig[i] = {'aresti':arestiK[0], 'kpwrd':kFactors[0], 'kglider':kFactors[1], 'group':figGroupNr, 'pattern':splitLine[0]};
+        fig[i] = {
+          'aresti':arestiK[0],
+          'kpwrd':kFactors[0],
+          'kglider':kFactors[1],
+          'group':figGroupNr,
+          'pattern':splitLine[0]
+        };
         // We will extract roll elements for everything but roll figures
         // and (rolling) turns
         if (regexTurn.test(splitLine[0])) {
@@ -6236,7 +6539,7 @@ function parseFiguresFile () {
 // parseRules walks through the rules file to find out which rules
 // are available
 function parseRules(start) {
-  if (!start) start = 0;
+  start = start || 0;
   var year = rulesYear();
   for (var i=start; i<rules.length; i++) {
     // Check for [section]
@@ -6310,7 +6613,7 @@ function updateRulesList () {
   while (el.childNodes.length > 0) el.removeChild(el.lastChild);
   // build list for powered or glider
   for (ruleName in seqCheckAvail) {
-    if ((document.getElementById('class').value === 'glider') === (regex.test(ruleName))) {  
+    if ((document.getElementById('class').value === 'glider') === regex.test(ruleName)) {  
       if (seqCheckAvail[ruleName].show) {
         var listItem = document.createElement('li');
         listItem.innerHTML = seqCheckAvail[ruleName].name;
@@ -6360,11 +6663,7 @@ function updateProgramList () {
 // rulesYear retrieves the year of the rules provided in ruleName.
 // with no ruleName provided, the year of rulesYY.js is used
 function rulesYear (ruleName) {
-  if (ruleName) {
-    ruleName = '-' + ruleName;
-  } else {
-    ruleName = '';
-  }
+  ruleName = (ruleName)? '-' + ruleName : '';
   var year = '';
   // find the year of the rules from the file name in index.html
   var scripts = document.getElementsByTagName('script');
@@ -6372,11 +6671,8 @@ function rulesYear (ruleName) {
   for (var i = scripts.length - 1; i >=0; i--) {
     var match = scripts[i].src.match(regex);
     if (match) {
-      if (match[1].length == 2) {
-        year = '20' + match[1] + ' ';
-      } else {
-        year = match[1] + ' ';
-      }
+      year = match[1] + ' ';
+      if (year.length == 3) year = '20' + year;
       break;
     }
   }
@@ -7277,7 +7573,7 @@ function checkName (obj) {
 // 'value' represents a value for processing
 // 'type' represents the type of checking error
 function checkAlert (value, type, figNr) {
-  if (figNr) alertFig = '(' + figNr + ') '; else alertFig = ''
+  alertFig = (figNr) ? '(' + figNr + ') ' : '';
   switch (type) {
     case 'maxperfig':
       alertMsgs.push(alertFig + sprintf (userText.checkAlert.maxperfig,
@@ -7345,13 +7641,13 @@ function checkSequence(show) {
         }
         return body;
       }, userText.sequenceCheckLog);
+      div.classList.add ('noDisplay');
     } else {
       div.classList.remove ('noDisplay');
-      var content = '';
       if (rulesActive) {
-        content = '<p>' + userText.checkingRules + ' : ' + rulesActive + '</p>';
+        var content = '<p>' + userText.checkingRules + ' : ' + rulesActive + '</p>';
       } else {
-        content = '<p>' + userText.noRules + '</p>';
+        var content = '<p>' + userText.noRules + '</p>';
       }
       // get alerts from alert area
       var contentDiv = document.getElementById('checkSequenceContent');
@@ -8265,11 +8561,7 @@ function grabFigure(evt) {
     var svgRect = svg.getBoundingClientRect();
     var viewBox = svg.getAttribute('viewBox').split(' ');
     // svg may be rescaled on mobile browser
-    if (mobileBrowser) {
-     var scale = svg.getAttribute('width') / viewBox[2];
-    } else {
-     var scale = 1;
-    }
+    var scale = mobileBrowser ? svg.getAttribute('width')/viewBox[2] : 1;
     var margin = 5 * scale;
     GrabPoint.x = TrueCoords.x;
     GrabPoint.y = TrueCoords.y;
@@ -10290,11 +10582,7 @@ function addFormElements (form) {
   h += 40;
   switch (form) {
     case 'B':
-      if (miniFormA) {
-        drawWind ((w + x) + 172, y, 1);
-      } else {
-        drawWind (w + x, y, 1);
-      }
+      drawWind ((w + x) + (miniFormA ? 172 : 0), y, 1);
       break;
     case 'C':
       drawWind (x, y, -1);
@@ -10350,11 +10638,7 @@ function draw () {
   rebuildSequenceSvg ();
   // reset all drawing variables to default values
   // firstFigure is disabled in Free Unknown designer
-  if (activeForm !== 'FU') {
-    firstFigure = true;
-  } else {
-    firstFigure = false;
-  }
+  firstFigure = (activeForm !== 'FU') ? true : false;
   Attitude = 0;
   X = 0;
   Y = 0;
@@ -10428,11 +10712,7 @@ function updateSequenceTextHeight () {
 // virtualKeyboard shows or hides the virtual keyboard for
 // special keys for touch devices
 function virtualKeyboard (e) {
-  if (document.activeElement.id === 'sequence_text') {
-    e.hasfocus = true;
-  } else {
-    e.hasfocus = false;
-  }
+  e.hasfocus = (document.activeElement.id === 'sequence_text') ? true : false;
   if (isTouchDevice()) {
     var el = document.getElementById('virtualKeyboard');
     if (document.activeElement.id === 'sequence_text') {
@@ -10748,18 +11028,14 @@ function openRulesFile () {
 //           names are loaded<handler>
 // params  = parameters, if any
 function openFile (file, handler, params) {
-  if(file){
+  if (file) {
     console.log('Reading file: ' + file.name);
     var reader = new FileReader();
-    reader.readAsBinaryString(file);
     // Handle success, and errors. With onload the correct loading
     // function will be called
     switch (handler) {
       case 'FileList':
         reader.onload = function(e){loadedFileList (e, params)};
-        break;
-      case 'SequenceMulti':
-        reader.onload = loadedSequenceMulti;
         break;
       case 'Sequence':
         reader.onload = loadedSequence;
@@ -10774,8 +11050,8 @@ function openFile (file, handler, params) {
         reader.onload = loadedRulesFile;
         break;
     }
-
     reader.onerror = errorHandler;
+    reader.readAsDataURL(file);
   }
 }
 
@@ -10942,7 +11218,7 @@ function checkMulti () {
   activateXMLsequence (multi.savedSeq);
 }
 
-// loadedSequenceMulti will be called when a sequence file has been
+// checkSequenceMulti will be called when a sequence file has been
 // loaded for multiple sequence checking
 function checkSequenceMulti(i, body) {
 
@@ -11010,7 +11286,7 @@ function checkSequenceMulti(i, body) {
       }
     }
   }
-  pre.appendChild(document.createTextNode('--------------------------------------------------------\n'));
+  pre.appendChild(document.createTextNode('\n--------------------------------------------------------\n'));
 }
 
 /***********************************************************************
@@ -11021,14 +11297,15 @@ function checkSequenceMulti(i, body) {
  
 // loadedSequence will be called when a sequence file has been loaded
 function loadedSequence(evt) {
+  
   // Obtain the read file data  
-  var fileString = loadSequence (evt.target.result);
-  if (fileString === false) {
+  var xml = loadSequence (evt.target.result);
+  if (xml === false) {
     alertBox(userText.notSequenceFile);
     return;
   }
-
-  activateXMLsequence (fileString, true);
+  
+  activateXMLsequence (xml, true);
 
   // update the sequence if OLANSequence was true
   if (OLANSequence) {
@@ -11084,19 +11361,34 @@ function loadSequence (fileString) {
   // Check if we have an OLAN sequence or an OpenAero XML sequence.
   // If the sequence file starts with '<sequence', assume it's an XML
   // sequence.
+  // If it does the same from steg decode, assume it's XML
   // If it starts with '[', assume it's an OLAN sequence.
   // In all other cases throw an error.
-  if (fileString.match (/^<sequence/)) {
-    // this is an OpenAero sequence, no need to do OLAN checks
-    OLANBumpBugCheck = false;
-  } else if (fileString.charAt(0) === '[') {
-    // OLAN sequence, transform to XML
-    fileString = OLANtoXML (fileString);
+  if (/^data:image\/png/.test (fileString)) {
+    try {
+      var string = steg.decode (fileString);
+      if (string.match (/^<sequence/)) {
+        // this is an OpenAero sequence, no need to do OLAN checks
+        OLANBumpBugCheck = false;
+        return string;
+      }
+    } catch (err) {}
   } else {
-    console.log('*** ' + userText.notSequenceFile);
-    fileString = false;
+    try {
+      fileString = atob (fileString.replace (/^data:.*;base64,/, ''));
+      if (fileString.match (/^<sequence/)) {
+        // this is an OpenAero sequence, no need to do OLAN checks
+        OLANBumpBugCheck = false;
+        return fileString;
+      }
+      if (fileString.charAt(0) === '[') {
+        // OLAN sequence, transform to XML
+        return OLANtoXML (fileString);
+      }
+    } catch (err) {}
   }
-  return fileString;
+  console.log('*** ' + userText.notSequenceFile);
+  return false;
 }
 
 // OLANtoXML transforms an OLAN file to OpenAero XML
@@ -11132,6 +11424,7 @@ function OLANtoXML (string) {
 }
 
 // activateXMLsequence will make a sequence provided as XML active
+// it returns true on succes and false on failure
 function activateXMLsequence (xml, noLoadRules) {
   
   var freeUnknownSequence = '';
@@ -11167,6 +11460,10 @@ function activateXMLsequence (xml, noLoadRules) {
     var myTextArea = document.createElement('textarea');
     myElement.innerHTML = xml;
     var rootNode = myElement.getElementsByTagName("sequence")[0];
+    
+    // return false (=faillure) if no sequence root element present
+    if (!rootNode) return false;
+    
     var nodes = rootNode.childNodes;
     // Put every element in the correct field
     for (var ele in nodes) {
@@ -11269,6 +11566,7 @@ function activateXMLsequence (xml, noLoadRules) {
   window.document.removeEventListener('beforeunload', preventUnload);
   sequenceSaved = true;
   
+  return true;
   // debug.appendChild(document.createTextNode('ActivateXMLsequence ready'));
 }
 
@@ -11339,13 +11637,7 @@ function compVersion (v1, v2) {
 function loadedLogo (evt) {
   var fileData = evt.target.result;
   if (evt.type) {
-    // svg images are put in logoImg as-is
-    if (fileData.match(/<svg/)) {
-      logoImg = fileData;
-    // other (binary) images are encoded to base64
-    } else {
-      logoImg = 'data:' + evt.type + ';base64,' + btoa(fileData);
-    }
+    logoImg = fileData;
     draw();
     drawActiveLogo();
   } else {
@@ -11358,7 +11650,7 @@ function loadedRulesFile (evt) {
   // get start index for new rules
   var start = rules.length;
   // convert file to array
-  var lines = evt.target.result.toString().split("\n");
+  var lines = atob (evt.target.result.replace (/^data:.*;base64,/, '')).split("\n");
   for (var i = 0; i < lines.length; i++) {
     // remove any windows linebreaks
     var line = lines[i].replace('\r', '');
@@ -11384,20 +11676,17 @@ function loadedRulesFile (evt) {
 // updateSaveFilename gets called when the "Save as" filename is changed
 // and syncs between t_saveFile and fileName elements
 function updateSaveFilename() {
-  var filename = this.value;
+  var filename = this.value || '';
   var el = document.getElementById('t_saveFile').firstChild;
-  if (el) {
-    el.setAttribute('download', filename + document.getElementById('fileExt').innerHTML);
+  if (el && ('download' in el)) {
+    el.download = filename + document.getElementById('fileExt').innerHTML;
   }
   fileName.value = filename;
 }
 
 // writeFileEntry uses the Chrome app API to write files
 function writeFileEntry(writableEntry, opt_blob, callback) {
-  if (!writableEntry) {
-    //output.textContent = 'Nothing selected.';
-    return;
-  }
+  if (!writableEntry) return;
 
   writableEntry.createWriter(function(writer) {
 
@@ -11549,11 +11838,10 @@ function saveFile(data, name, ext, filter, format, noBounce) {
     }
     // Disable http bounce for noBounce. Used because zip files cause trouble
     if (noBounce) http = false;
-    if (http) {
-      var waitTime = 2000; // wait for two seconds when using http
-    } else {
-      var waitTime = 10;   // wait for 10 ms otherwise (=immediately)
-    }
+    // wait for two seconds when using http
+    // wait for 10 ms otherwise (=immediately)
+    var waitTime = (http) ? 2000 : 10;
+
     // 3) Try to save the file through a bounce from PHP.
     //    We use an XMLHttpRequest to determine if we are online
     var xhr = new XMLHttpRequest();
@@ -11768,7 +12056,7 @@ function saveAsURL () {
     
     if (chromeApp.active) {
       alertBox ('<p>' + userText.saveAsURLFromApp +
-        '</p><textarea id="saveAsURLArea"></textarea>',
+        '</p><textarea id="saveAsURLArea" readonly></textarea>',
         userText.saveAsURLTitle);
       var copyFrom = document.getElementById('saveAsURLArea');
       copyFrom.innerHTML = url;
@@ -11803,6 +12091,27 @@ function emailSequence () {
   
   el.setAttribute('href', '#');
   missingInfoCheck (email);
+}
+
+// openSequenceLink handles opening a sequence from link in dialog
+function openSequenceLink (e) {
+  var dialog = document.getElementById('openSequenceLink');
+  var link = document.getElementById ('openSequenceLinkUrl');
+  
+  if (e === false) {
+    dialog.classList.add ('noDisplay');
+  } else if (e === true) {
+    dialog.classList.add ('noDisplay');
+    if (!launchURL ({url : link.value})) {
+      alertBox (
+        sprintf(userText.openSequenceLinkError, link.value),
+        userText.openSequenceLink
+      );
+    }
+  } else {
+    dialog.classList.remove ('noDisplay');
+  }
+  link.value = '';
 }
 
 /********************************
@@ -11861,11 +12170,7 @@ function parseAircraft (t) {
       break;
     }
   }
-  if (t === 'registration') {
-    return reg;
-  } else {
-    return aircraft.replace (reg, '');
-  }
+  return ((t === 'registration') ? reg : aircraft.replace (reg, ''));
 }
 
 // printForms will print selected forms
@@ -11918,7 +12223,7 @@ function printForms () {
       win.document.head.appendChild(style);
       
       // no print on Android, leave it to the user
-      if (/Android/i.test(navigator.userAgent)) {
+      if (!/Android/i.test(navigator.userAgent)) {
         // use setTimeout for printing to prevent blocking and
         // associated warnings by the browser
         setTimeout (function(){
@@ -11946,8 +12251,7 @@ function buildForms (print) {
   // save the current logo
   var logoSave = document.getElementById('logo').value;
   
-  var filename = activeFileName();
-  if (filename === '') filename = 'sequence';
+  var filename = activeFileName() || 'sequence';
 
   // make sure no figure is selected
   selectFigure (false);
@@ -11984,11 +12288,7 @@ function buildForms (print) {
       if (document.getElementById('showFileName').checked) {
         var e = document.getElementById('printNotes');
         var t = document.getElementById('notes').value;
-        if ((t != '') && e.checked) {
-          t = file.name + ' - ' + t;
-        } else {
-          t = file.name;
-        }
+        t = ((t != '') && e.checked) ? file.name + ' - ' + t : file.name;
         document.getElementById('notes').value = t;
         e.setAttribute('checked', true);
       }
@@ -12102,11 +12402,7 @@ function buildForms (print) {
   miniFormA = (miniFormASave)? true : false;
   selectForm (activeFormSave);
   
-  if (print) {
-    return body;
-  } else {
-    return svg;
-  }
+  return (print ? body : svg);
 }
 
 // adjustRollFontSize will adjust the rollFontSize to compensate for
@@ -12903,7 +13199,7 @@ function buildCornertab (svg) {
 // activeFileName will return the current active file name, or create a
 // default file name. The result is appended with 'append' when supplied
 function activeFileName (append) {
-  if (!append) append = '';
+  append = append || '';
   if (!fileName.value) {
     var filename = document.getElementById('location').value+' ';
     if (document.getElementById('class').value == 'glider') {
@@ -12973,9 +13269,9 @@ function savePNG () {
   setTimeout(function(){
     // wrap conversion in try, in case it fails
     try {
-      svgToPng (data, function(data){
+      svgToPng (data, function(canvas){
         saveFile(
-          data,
+          steg.encode(activeSequence.xml, canvas).replace(/^data:[^,]*,/, ''),
           activeFileName(),
           '.png',
           {'name':'PNG file', 'filter':'*.png'},
@@ -13031,7 +13327,13 @@ function saveFigs () {
       fName = fName.replace (/%form/g, activeForm);
       fName = fName.replace (/%figure/g, figures[i].seqNr);
       if (document.getElementById('imageFormatPNG').checked) {
-        zip.file(fName + '.png', svgToPng (svg), {base64: true});
+        // rasterize canvas to png data URL (without data URL info) and
+        // put in ZIP file
+        zip.file (
+          fName + '.png',
+          svgToPng (svg).toDataURL().replace(/^data:[^,]*,/, ''),
+          {base64: true}
+        );
       } else {
         // convert svg to standalone
         svg = '<?xml version="1.0" standalone="no"?>\n' +
@@ -13055,7 +13357,7 @@ function saveFigs () {
 }  
 
 // svgToPng will convert an svg to a png image
-// The png will be returned as base64
+// The png will be returned as canvas
 // If provided, function f will be executed when the canvas has loaded.
 // Otherwise, the function will return with the data.
 // Use the callback (with function f) when the SVG may include external
@@ -13070,16 +13372,13 @@ function svgToPng (svg, f) {
   if (f) {
     setTimeout(function(){
       // Wait 500ms for canvas to render, then...
-      // rasterize canvas to png data URL, without data URL info
-      var data = canvas.toDataURL().replace(/^data:[^,]*,/, '');
       document.lastChild.removeChild (canvas);
-      f(data);
+      f(canvas);
     }, 500);
   } else {
     // rasterize canvas to png data URL, without data URL info
-    var data = canvas.toDataURL().replace(/^data:[^,]*,/, '');
     document.lastChild.removeChild (canvas);
-    return data;
+    return canvas;
   }
 }
 
@@ -13783,11 +14082,7 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
             if ((roll[rollnr][j].type == 'possnap') || (roll[rollnr][j].type == 'negsnap')) {
               if (((Attitude == 90) || (Attitude == 270)) && lowKFlick) {
                 // Handle snaps on verticals where lowKFlick is set
-                if (roll[rollnr][j].type == 'possnap') {
-                  rollAtt = '+' + rollAtt;
-                } else {
-                  rollAtt = '-' + rollAtt;
-                }
+                rollAtt = (roll[rollnr][j].type == 'possnap')? '+' + rollAtt : '-' + rollAtt;
               } else if (((rollSum / 180) == parseInt(rollSum / 180)) || (Attitude == 90) || (Attitude == 270)) {
                 // Handle snaps on verticals and from non-knife-edge
                 rollAtt = (NegLoad == 0)? '+' + rollAtt : '-' + rollAtt;
@@ -13798,13 +14093,9 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
                 var inv = ((Attitude > 90) && (Attitude < 270));
                 inv = (inv == (((Math.abs(rollSum) - 90) / 360) == parseInt((Math.abs(rollSum) - 90) / 360)));
                 inv = (inv == ((rollSum * roll[rollnr][j].extent) > 0));
-                if (inv) {
-                  // Foot up for pos start, foot down for neg start
-                  rollAtt = '+' + rollAtt;
-                } else {
-                  // Foot down for pos start, foot up for neg start
-                  rollAtt = '-' + rollAtt;
-                }
+                // 1) Foot up for pos start, foot down for neg start
+                // 2) Foot down for pos start, foot up for neg start
+                rollAtt = (inv)? '+' + rollAtt : '-' + rollAtt;
               }
             }
             // set lowKFlick to true after anything but a line
@@ -14535,11 +14826,7 @@ function updateSequence (figNr, figure, replace, fromFigSel, force) {
           if (!updateSelected) {
             // only build the move when it is more than one unit
             if ((Math.abs(dx) + Math.abs(dy)) > 1) {
-              if (curve) {
-                figure = '(' + dx + ',' + dy + ')';
-              } else {
-                figure = '[' + dx + ',' + dy + ']';
-              }
+              figure = (curve)? '('+dx+','+dy+')' : '['+dx+','+dy+']';
             } else {
               figure = '';
               selectedFigure.id--;

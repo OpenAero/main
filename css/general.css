@@ -1,5 +1,5 @@
 /*
- general.css 1.4.4.3
+ general.css 1.5.0.4
  This file is part of OpenAero.
 
   OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -488,6 +488,12 @@ option.used {
 	background-size: auto 100%;
 }
 
+/* openSequenceLink dialog */
+#openSequenceLinkUrl {
+	width: 99%;
+  height: 10em;
+}
+
 /* print dialog */
 #pilotCardX, #pilotCardY {
   width: 4em;
@@ -661,6 +667,12 @@ option.used {
 #saveAsURLArea {
   width: 99%;
   height: 12em;
+}
+#newWindow {
+  position: relative;
+  overflow: auto;
+  width: 99%;
+  height: 24em;
 }
 #dlTextField {
   float: left;

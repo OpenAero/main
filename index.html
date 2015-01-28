@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--
-  index.html version 1.5.0
+  index.html version 1.5.0.4
   This file is part of OpenAero.
 
   OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -93,7 +93,7 @@
     <script src="canvg/canvg.js" type="text/javascript"></script>
     <!-- all the country flags -->
     <script src="flags.js" type="text/javascript"></script>
-    <!-- add to homescreen for iOS -->
+    <!-- add to homescreen for iOS and Android -->
     <script src="addtohomescreen/addtohomescreen.min.js"></script>
     
     <!-- jsconsole script for debugging only !!! -->
@@ -135,7 +135,17 @@
         <a class="textButton userText" id="t_iOSsaveFile"></a>
         <span class="textButton userText close" id="t_iOScancelSave"></span>
       </div>
-    </div>    
+    </div>
+    <!-- openSequenceLink dialog -->
+    <div id="openSequenceLink" class="boxbg noDisplay">
+      <div class="box">
+        <span class="boxTitle userText" id="t_openSequenceLinkTitle"></span>
+        <div class="userText" id="openSequenceLinkMessage"></div>
+        <textarea id="openSequenceLinkUrl"></textarea>
+        <a class="textButton userText" id="t_openSequenceLinkOpen"></a>
+        <span class="textButton userText close" id="t_openSequenceLinkCancel"></span>        
+      </div>
+    </div> 
     <!-- print dialog -->
     <div id="printDialog" class="boxbg noDisplay">
       <div class="box">
@@ -520,12 +530,12 @@
                   </form>
                 </div>
               </li>
+              <li><a class="userText" id="t_openSequenceLink" href="#"></a></li>
               <li><a class="userText" id="t_clearSequence" href="#"></a></li>
               <li><a class="userText" id="t_saveSequence" href="#"></a></li>
               <li><a class="userText" id="t_emailSequence" target="_blank" href="#"></a></li>
               <li><a class="userText" id="t_saveAsLink" href="#"></a></li>
               <hr class="disableFUdesigner">
-              <li><a class="userText disableFUdesigner" id="t_saveAsImage" href="#"></a></li>
               <li><a class="userText disableFUdesigner" id="t_saveFigsSeparate" href="#"></a></li>
               <hr class="disableFUdesigner">
               <li><a class="userText disableFUdesigner" id="t_printSaveForms" href="#"></a></li>

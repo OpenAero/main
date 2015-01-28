@@ -476,7 +476,8 @@ lang.fr = {
 // new 1.4.2
 'sameAsBefore' : 'Comme avant',
 //
-'saveAsImage' : 'Enregistrer l\'image',
+// removed 1.5.0.4
+// 'saveAsImage' : 'Enregistrer l\'image',
 'saveAsLink' : 'Enregistrer en tant que lien',
 'saveAsPNG' : 'Enregistrer une image PNG',
 'saveAsSVG' : 'Enregistrer une image SVG',
