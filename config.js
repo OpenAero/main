@@ -1,4 +1,4 @@
-// config.js 1.5.0
+// config.js 1.5.0.4
 
 // This file is part of OpenAero.
 
@@ -36,14 +36,15 @@
 
 var version = '1.5.0.4';
 // versionNew is an object that contains version update information
-// The structure is {vvv : [[ttt, n], [ttt, n], ...]} , where
+// The structure is {vvv : [[ttt, n], ...], ...} , where
 // vvv = version number
 // ttt = update text
 // n   = importance (higher = more important)
 var versionNew = {
   '1.5.0.4' : [
-    ['Sequences can be embedded in PNG image, for easy opening and ' +
-      'saving on iOS', 3]
+    ['Sequence data is embedded in PNG image', 3],
+    ['Fixed bug causing printing to be disabled', 3],
+    ['Added "Open Sequence link". Especially useful for iOS', 3]
   ],
   '1.5.0'   : [
     ['<b>Free Unknown designer!</b> Create Free Unknown sequences ' +
