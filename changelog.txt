@@ -1,3 +1,13 @@
+1.5.1
+* added Form L & R concepts
+* added default 4mm margin to forms to disable header printing. Tested on Chrome, might not work on other browsers
+* improved some routines by using Math.min
+* updated IAC logo to 2015 version
+* added automatic saving of print dialog settings
+* adjusted mobile print dialog font size (Issue #169)
+* added Team country selection field to Sequence Info
+* added reference sequence checking for Free Unknown (Issue #166)
+
 1.5.0.4
 * fixed "Show log" bug on iOS standalone (Issue #167)
 * added steganography to encode/decode sequence in PNG image (Issue #168)

@@ -1,5 +1,5 @@
 /*
- desktop.css 1.5.0
+ desktop.css 1.5.1
  This file is part of OpenAero.
 
   OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -90,6 +90,13 @@ body {
   background: -webkit-linear-gradient(top, #f4f4f4, #e0e0ff);
   background: linear-gradient(top, #f4f4f4, #e0e0ff);
 }
+#pilot {
+  width: 116px !important;
+}
+#team {
+  width: 52px !important;
+  margin-left: 2px;
+}
 #figureInfo {
   background: -webkit-linear-gradient(top, #f4f4f4, #e0e0ff);
   background: linear-gradient(top, #f4f4f4, #e0e0ff);
@@ -144,6 +151,10 @@ body {
   right: auto;
   left: 0;
 }
+#referenceSequenceString {
+  width: 99%;
+  height: 4em;
+}
 /* button tooltips */
 .tooltip {outline:none; }
 .tooltip strong {line-height:30px;}
@@ -180,7 +191,15 @@ body {
   -moz-border-radius: 8px 8px 8px 0;
   -webkit-border-radius: 8px 8px 8px 0;
 }
-  
+
+/* sections */
+.section3cols {
+  width: 31%;
+}
+.section2cols {
+  width: 48%;
+}
+
 /* buttons */
 .undoRedoButton {
   float: left;
@@ -328,66 +347,3 @@ body {
   top: 41px;
 	content: url('../images/arrow_blue_right.png');
 }
-
-/*
-#fuSequence .flipXAxisButton {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  width: 32px;
-  height: 32px;
-  background-image: url('../buttons/switchX.png');
-}
-#fuSequence .flipYAxisButton {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  width: 32px;
-  height: 32px;
-  background-image: url('../buttons/switchY.png');
-}
-#fuSequence .subEntryEuButton {
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 32px;
-  height: 32px;
-  background-image: url('../buttons/button-eu.png');
-}
-#fuSequence .subEntryEjButton {
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 32px;
-  height: 32px;
-  background-image: url('../buttons/button-ej.png');
-}
-#fuSequence .subEntryEdButton {
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 32px;
-  height: 32px;
-  background-image: url('../buttons/button-ed.png');
-}
-#fuSequence .subEntryEjaButton {
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 32px;
-  height: 32px;
-  background-image: url('../buttons/button-eja.png');
-}
-#fuSequence .topBorder {
-  border-top: 1px solid blue !important;
-}
-#fuSequence .rightBorder {
-  border-right: 1px solid blue !important;
-}
-#fuSequence .bottomBorder {
-  border-bottom: 1px solid blue !important;
-}
-#fuSequence .leftBorder {
-  border-left: 1px solid blue !important;
-}
-*/

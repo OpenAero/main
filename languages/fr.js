@@ -1,4 +1,4 @@
-﻿// fr.js 1.5.0
+﻿// fr.js 1.5.1
 // This file is part of OpenAero.
 
 //  OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -85,7 +85,6 @@ lang.fr = {
 'addingFigure' : 'Ajouter une nouvelle figure',
 'addToQueue' : 'Ajouter à la file',
 'aircraft' : 'Avion et Immat',
-// new 1.4.4
 // alert forms a sub-array
 'alert': {
   'family111RollMissing' : 'Famille 1.1.1 sans rotation interdite',
@@ -98,13 +97,17 @@ lang.fr = {
 }, // end alert array
 'alertBoxClose' : 'Fermer',
 'alerts' : 'Alertes',
-'anonymousSequences' : 'Rend anonyme les programmes en supprimant le nom du pilote, etc...',
+// changed 1.5.1
+'anonymousSequences' : 'Rend anonyme les programmes en supprimant le nom du pilote, ' +
+  'l\'équipe et l\'avion',
+//
 'arestiSystem' : 'Système Aresti',
 'autocorrectRoll' : 'Tonneau d\'autocorrection',
 'blackWhite' : 'Noir et Blanc',
-// new 1.4.2
-'browserDetect' : 'Votre navigateur est identifié en tant que: %s.<br>',
+// new 1.5.1
+'boxOuts' : 'Sorties de Box',
 //
+'browserDetect' : 'Votre navigateur est identifié en tant que: %s.<br>',
 'cancel' : 'Annuler',
 'cancelPrint' : 'Annuler',
 'cancelSave' : 'Annuler',
@@ -132,6 +135,10 @@ lang.fr = {
 'checkMultiCounter' : 'Vérification du programme %s of %s<br>%s<br>Ceci peut ' +
   'prendre du temps. Patientez, svp...',
 'checkMultipleSeq' : 'Vérification d\'un groupe de programmes',
+// new 1.5.1
+'checkMultiUseReference' : 'Utilisez programme de référence pour ' +
+  'Inconnu-libre',
+//
 'checkMultiWait' : 'Vérification des programmes %s .<br>Ceci peut ' +
   'prendre du temps. Patientez, svp...',
 'checkSequence' : 'Vérification du programme',
@@ -171,6 +178,9 @@ lang.fr = {
 'date' : 'Date',
 'demo' : 'Exemples',
 'desktopVersion' : 'Version ordinateur',
+// new 1.5.1
+'disqualified' : 'Disqualifié',
+//
 'download' : 'Télécharger',
 // updated 1.4.2
 'downloadHTML5' : 'Vous pouvez enregistrer en choisissant un nom' +
@@ -220,19 +230,26 @@ lang.fr = {
 'figsInGrid' : 'Tableau des figures',
 'figureAlreadyInQueue' : 'Cette figure est déjà dans la file',
 'figureEditor' : 'Editeur&nbsp;de figure',
+// new 1.5.1
+'figureK' : 'Figure K',
+//
 'figurePositioning' : 'Positionnement de figure',
 'figureQueue' : 'File / Tampon',
 'file' : 'Fichier',
 'fileName' : 'Nom du fichier',
-// new 1.4.6
 'finalizeSequence' : 'Finaliser le programme et quitter l\'assembleur',
+// new 1.5.1
+'flightNr' : 'Vol N°',
 //
 'flipYAxis' : 'Changer d\'axe Y',
-//
 'forElement' : ' pour élément ',
 'formA' : 'Forme A',
 'formB' : 'Forme B',
 'formC' : 'Forme C',
+// new 1.5.1
+'formL' : 'Forme L',
+'formR' : 'Forme R',
+//
 // new 1.5.0
 'freeUnknownFig' : 'Fig Inconnu-Libre ',
 'freeUnknownLink' : 'Liaison Inconnu-Libre',
@@ -273,7 +290,7 @@ lang.fr = {
 'harmony' : 'Harmonie',
 'help' : 'Aide',
 'hideIllegalFigures' : 'Masquer les figures non autorisées',
-'iacForms' : 'Formulaire style IAC',
+'iacForms' : 'Formes A/B/C au style IAC',
 'illegalAtEnd' : 'Figure illégale à la fin',
 'illegalBefore' : 'Figure illégale avant la figure',
 'illegalFig' : ' est interdit, essayez ',
@@ -282,6 +299,9 @@ lang.fr = {
 'imageSize' : 'Taille d\'image',
 'imageWidth' : 'Largeur',
 'importRulesFile' : 'Importer un fichier de règles',
+// new 1.5.1
+'insertions' : 'Insertions',
+//
 'installation' : 'Installation',
 'installChromeApp' : 'Vous pouvez installer OpenAero comme une Application Chrome. Ceci ' +
   'procure:<ul><li>Une sauvegarde de fichiers améliorée</li><li>Le lancement ' +
@@ -293,6 +313,9 @@ lang.fr = {
   'accéder en ouvrant une nouvelle rubrique dans Chrome. Par un clic droit ' +
   'vous pouvez ajouter l\'application sur votre bureau.',
 'installChromeAppTitle' : 'Installer l\'application Chrome',
+// new 1.5.1
+'interruptions' : 'Interruptions',
+//
 'inverseForms' : 'Inverse vidéo (blanc sur noir)',
 // new 1.5.0
 'iOScancelSave' : 'Annuler',
@@ -309,6 +332,9 @@ lang.fr = {
   'individuellement.',
 'iOSsaveFileTitle' : 'Enregistrer le fichier',
 //
+// new 1.5.1
+'judgesName' : 'Nom des Juges',
+//
 'language' : 'Langue',
 // new 1.5.0
 'LINK' : 'LIAISON',
@@ -324,22 +350,24 @@ lang.fr = {
 'manual' : 'Manuel OpenAero',
 'maxConnectors' : 'Maximum de figures de liaison permis :',
 'maxScaling' : 'Agrandissement Max des petits programmes',
+// new 1.5.1
+'missedSlot' : 'Hors créneau',
+//
 'missingInfo' : 'Des informations essentielles du programme manquent.' +
   'Etes-vous sur de vouloir enregistrer ou imprimer le fichier sans celles-ci :',
 'missingInfoTitle' : 'Informations du programme manquantes',
 'mobileVersion' : 'Version mobile',
-// new 1.4.6
 'multiNoSequence' : 'Certains fichiers ne sont pas des programmes ' + 
   'OpenAero ou OLAN. Ils n\'ont pas été ajoutés à la liste', 
-// end new
 'multiOverrideRules' : 'Au lieu des règles de chaque programme, utiliser les règles :',
-// new 1.4.6
 'multiActiveLogo' : 'Utiliser le logo du programme en cours', 
 'multiRemoveLogo' : 'Supprimer le logo', 
 'multiOriginalLogo' : 'Utiliser le logo d\'origine',
-// end new
 // new 1.5.0
 'newCopySubsequence' : 'Créer / Copier sous-partie',
+//
+// new 1.5.1
+'newReplacementsABC' : 'Nouveau format pour les formes A/B/C',
 //
 'newTurnPerspective' : 'Vraie perspective pour les virages ' +
   '<font color=red>EXPERIMENTAL, A EVITER EN COMPETITION INTERNATIONALE!' +
@@ -362,6 +390,9 @@ lang.fr = {
   'la forme B ou C est affichée.',
 'notSequenceFile' : 'Ce n\'est pas le fichier d\'un programme ' +
   'OpenAero ou OLAN',
+// new 1.5.1
+'number' : 'Numéro',
+//
 'numberInCircle' : 'Numéros de figure dans un cercle',
 'ok' : 'OK',
 // OLANBumpBugWarning can be removed (with asociated code in OpenAero.js)
@@ -384,42 +415,54 @@ lang.fr = {
 'openaeroLanguage' : 'Syntaxe OpenAero',
 'openQueueFile' : 'Ouvrir un fichier file',
 'openSequence' : 'Ouvrir un programme',
-'orFileDrop' : 'Ou glisser/déplacer vos fichiers ici',
-// new 1.4.1
-'orFileDropPrint' : 'Ou glisser/déplacer vos fichiers ici',
+// new 1.5.0.4
+'openSequenceLink' : 'Open sequence link',
+'openSequenceLinkCancel' : 'Cancel',
+'openSequenceLinkError' : '<p>Il y a eu une erreur à l\'ouverture du programme ' +
+  'pointé par le lien. Voici le lien que vous avez fourni:<br>%s</p><p>Vérifiez que vous ' +
+  'avez copié <strong>l\'intégralité</strong> du lien',
+'openSequenceLinkMessage' : 'Pour ouvrir le programme qui vous a été indiqué ' +
+  'par un lien (par exemple, par email), copiez le intégralement et ' +
+  'placez le dans l\emplacement ci-dessous',
+'openSequenceLinkOpen' : 'Ouvrir',
+'openSequenceLinkTitle' : 'Ouvrir le programme à partir du lien',
 //
+'orFileDrop' : 'Ou glisser/déplacer vos fichiers ici',
+'orFileDropPrint' : 'Ou glisser/déplacer vos fichiers ici',
 'pageSpacing' : 'Espacement entre pages',
 'pilot' : 'Pilote',
 'pilotCardFormB' : 'Forme B',
 'pilotCardFormC' : 'Forme C',
-'pilotNo' : 'Pilote No.',
+// new 1.5.1
+'pilotID' : 'Pilote ID',
+//
+'pilotNo' : 'Pilote N°.',
 'pilotnumberIAC1' : "pilote",
 'pilotnumberIAC2' : "Numéro",
 'pleaseWaitStartup' : 'Patentiez pendant le chargement d\'OpenAero',
 'png' : 'PNG',
-// new 1.4.5
 'positionClearAuto' : 'Positionne Automatiquement les figures nouvelles/modifiées ' +
   'espacées les unes des autres',
-//
-'positioning' : 'Cadre (Coef)',
+'positioning' : 'Cadre(Coef)',
 'powered' : 'Avion',
 'print' : 'Imprimer / Enregistrer PDF',
 'printCheck' : 'Résultat de la vérification',
 'printDialog' : 'Options d\impression',
-// updated 1.4.2
 'printExplain' : 'Vous pouvez positionner les options d\'impression ci-dessous.<br>' +
   'Pour <i>enregistrer</i> PDF, cliquer <strong>Imprimer</strong> puis choisir ' +
   'comme <i>destination</i> <strong>Enregistrer en PDF</strong> dans le ' +
   'Menu de votre navigateur.',
-//
 'printForms' : 'Impression des Formes...',
 'printFormA' : 'Forme A',
 'printFormB' : 'Forme B',
 'printFormC' : 'Forme C',
 'printFormGrid' : 'Tableau des figures',
+// new 1.5.1
+'printFormL' : 'Forme L',
+'printFormR' : 'Forme R',
+//
 'printMiniFormAonB' : 'avec mini Forme A',
 'printMiniFormAonC' : 'avec mini Forme A',
-// changed 1.4.6
 'printMulti' : 'Impression de plusieurs programmes',
 'printMultiClose' : 'Fermer',
 'printMultiOverrideRules' : 'Utilise les régles de Programme plutôt que ' +
@@ -427,7 +470,6 @@ lang.fr = {
 'printMultipleSeq' : 'Impression de plusieurs programmes',
 'printMultiWait' : 'Impression de %s programmes.<br>Ceci peut ' +
   'prendre du temps. Patienter, svp...',
-//
 'printNotes' : 'Annotations (haut de page)',
 'printPilotCards' : 'Fiche pilote',
 'printSaveForms' : 'Imprimer / Enregistrer image',
@@ -445,6 +487,23 @@ lang.fr = {
 //
 'queueNotSaved' : 'Les figures de la file ont été enregistrées',
 'queueSaved' : 'Les figures de la file N\'ONT PAS été enregistrées',
+// new 1.5.1
+'referenceFigureDifferent' : 'Figure %s diffère de programme de référence',
+'referenceFigureExitOpp' : 'Figure %s devrait sortir en sens inverse ' +
+	'à l\'entrée',
+'referenceFigureExitSame' : 'Figure %s devrait sortir dans la même ' +
+  'direction que l\'entrée',
+'referenceSequence' : 'Programme de référence',
+'referenceSequenceClose' : 'Fermer',
+'referenceSequenceExplain' : 'Dans l\'emplacement ci-dessous, vous pouvez ' +
+  'entrer un texte du programme qui est utilisé comme référence ' +
+  'pour le contrôle de programmes de figures nécessaires, telles que ' +
+  'des programmes d\'Inconnu-Libre. Des contrôles sont effectués ' +
+  'pour confirmer lettres correctes, codes Aresti et la ' +
+  'combinaison de la direction d\'entrée / sortie.',
+'referenceSequenceTitle' : 'Programme de référence pour des ' +
+  'programmes d\'Inconnu-Libre',
+//
 'remove' : 'Supprimer',
 'removeLogo' : 'Supprimer',
 'resetStyle' : 'Valeur par défaut',
@@ -473,9 +532,7 @@ lang.fr = {
   'Allez à <a href="http://openaero.net">openaero.net</a>. ' +
   'OpenAero sera automatiquement installe dans votre navigateur et sera également ' +
   'disponible hors connexion.',
-// new 1.4.2
 'sameAsBefore' : 'Comme avant',
-//
 // removed 1.5.0.4
 // 'saveAsImage' : 'Enregistrer l\'image',
 'saveAsLink' : 'Enregistrer en tant que lien',
@@ -520,20 +577,24 @@ lang.fr = {
 'setUpright' : 'entrée ventre',
 'setInverted' : 'entrée dos',
 //
-// changed 1.4.6
 'showFileName' : 'Ajouter le nom du fichier',
-// end changed
 'showFullLog' : 'Voir le rapport de vérification complet',
 'showQueue' : 'Voir la file',
+// new 1.5.1
+'signature' : 'Signature',
+//
 'styleSettingsHeader' : 'Vous pouvez changer ici les paramètres de dessin. ' +
   'Notez bien que ces changements affectent l\'apparence du programme sur ' +
   '<strong>votre<strong> version d\'OpenAero, mais pas ' +
   'celle obtenue sur d\'autres versions d\'OpenAero.',
 'styling' : 'Style',
-// new 1.4.2
 'subSequenceDirection' : 'Débuter la sous partie :',
-//
 'svg' : 'SVG',
+// new 1.5.1
+'team' : 'Equipe',
+'tooHigh' : 'Trop Haut',
+'tooLow' : 'Trop Bas',
+//
 'tools' : 'Outils',
 // tooltip forms a sub-array
 'tooltip' : {
@@ -554,14 +615,23 @@ lang.fr = {
   'switchX' : 'Change le sens de la sortie sur l\'axe X',
   'switchY' : 'Change le sens de la sortie sur l\'axe Y'
 }, // end tooltip sub-array
+// new 1.5.1
+'totalK' : 'K total',
+//
 'unknownFileType' : 'L\'ouverture de ce fichier n\'est pas supportée dans ce navigateur.',
 'unusedFigureLetters' : 'Lettre(s) inutilisée(s) : %s',
 'update' : 'Mise à jour',
-// new 1.4.2
 'upwind' : 'vent de face',
-//
 'upwindEntry' : 'Débuter vent de face',
 'version' : 'Version : %s',
+// new 1.5.0.4
+'versionNew' : '<strong>OpenAero a été mis à jour de la version %s à %s' +
+  '</strong><br>Nouvelles fonctionnalités:<ul>%s' +
+  '<li>Autres corrections et améliorations (lisez <a id="changelog">' +
+  'changelog.txt</a> si intéressé)</li>' +
+  '</ul>' +
+  'Ceci peut prendre quelques instants à charger.',
+//
 'view' : 'Affichage',
 'warningPre' : '<p> Lors de la prochaine sauvegarde, cet ' +
   'avertissement \'apparaîtra plus.</p>',
@@ -577,15 +647,14 @@ lang.fr = {
   'vérifiez bien, si vous êtes dans cette situation.</p>',
 'wind' : 'V E N T  ',
 'windIAC' : 'sens du vent',
-// new 1.4.2
+// new 1.5.1
+'wingRocks' : 'Battem. d\'Ailes',
+//
 'xBox' : 'de face',
 'xBoxAway' : 'de derrière',
-//
 'xBoxEntry' : 'Débuter de face',
 'xBoxEntryAway' : 'Débuter de derrière',
 'zipImageFilenamePattern' : 'Chaîne de définition des noms des fichiers image',
-// new 1.4.2
 'zoom' : 'Zoom'
-//
 // end of key-value pairs. No comma after last
 };

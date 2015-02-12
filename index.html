@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--
-  index.html version 1.5.0.4
+  index.html version 1.5.1
   This file is part of OpenAero.
 
   OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -182,7 +182,19 @@
               <span class="userText" id="t_printMiniFormAonC"></span>
             </span>            
           </div>
-          <div>
+          <div class="userText" id="t_newReplacementsABC"></div>
+          <div class="twoLine">}</div>
+          <span id="formRL">
+            <div>
+              <input type="checkbox" id="printFormR">
+              <span class="userText" id="t_printFormR"></span>
+            </div>
+            <div>
+              <input type="checkbox" id="printFormL">
+              <span class="userText" id="t_printFormL"></span>
+            </div>
+          </span>
+          <div class="clearBoth">
             <span>
               <input type="checkbox" id="printFormPilotCards">
               <span class="userText" id="t_printPilotCards"></span>
@@ -337,6 +349,10 @@
           <span id="multiCurrentRules"></span>
         </div>
         <div>
+          <input type="checkbox" id="multiUseReference">
+          <span class="userText" id="t_checkMultiUseReference"></span>
+        </div>
+        <div>
           <span class="userText" id="t_chooseFiles"></span>
           <form id="checkMultiFileForm">
             <input type="file" id="checkMultiFiles" multiple>
@@ -484,6 +500,23 @@
       </div>
     </div>
     <!-- end Settings -->
+    
+    <!-- reference sequence dialog -->
+    <div id="referenceSequenceDialog" class="boxbg noDisplay">
+      <div class="box">
+        <span class="boxTitle userText" id="t_referenceSequenceTitle"></span>
+        <div>
+          <div class="userText" id="t_referenceSequenceExplain"></div>
+          <textarea id="referenceSequenceString"></textarea>
+          <div id="referenceSequenceAlerts"></div>
+          <div id="referenceSequenceSvgContainer">
+            <svg xmlns="http://www.w3.org/2000/svg" version="1.2" baseProfile="tiny" id="referenceSequenceSvg"></svg>
+          </div>
+        </div>
+        <div class="textButton close userText" id="t_referenceSequenceClose"></div>
+      </div>
+    </div>
+    <!-- end reference sequence -->
 
     <!-- various message boxes. Put them after the dialogs so they are
          shown on top -->
@@ -711,7 +744,10 @@
             <div id="chooseLogo"></div>
           </div>
           <div class=item>
-            <div class="label userText" id="t_pilot"></div>
+            <span class="label userText" id="t_pilot"></span>
+            <span class="label">&nbsp;&&nbsp;</span>
+            <span class="label userText" id="t_team"></span>
+            <select id="team"></select>
             <input type=text name=pilot id=pilot maxlength="30">
           </div>
           <div class=item>
@@ -747,6 +783,9 @@
             <div class="label userText" id="t_program"></div>
             <input type=text name=program id=program maxlength="30">
             <ul id=programList></ul>
+          </div>
+          <div class="item">
+            <a href="#" class="userText noDisplay" id="t_referenceSequence"></a>
           </div>
           <div class=item>
             <div class="label userText" id="t_positioning"></div>

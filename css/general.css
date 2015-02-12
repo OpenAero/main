@@ -1,5 +1,5 @@
 /*
- general.css 1.5.0.4
+ general.css 1.5.1
  This file is part of OpenAero.
 
   OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -285,6 +285,11 @@ textarea {
   background: #fff;
   clear: both;
 }
+#alerts span {
+  display: inline-block;
+  padding-left: 1.5em;
+  text-indent: -1.5em;
+}
 .sectionLabel {
   float: left;
   font-size: 14px;
@@ -312,17 +317,18 @@ textarea {
   margin: 2px;
 }
 .label {
+  font-size: 0.9em;
   float: left;
 }
 #sequenceInfo input {
   float: right;
-  width: 160px;
+  width: 170px;
   height: 1.5em;
   font-size: 12px;
 }
 #sequenceInfo select {
   float: right;
-  width: 160px;
+  width: 170px;
   height: 1.6em;
   font-size: 12px;
 }
@@ -337,7 +343,9 @@ option.used {
   float: left !important;
   width: 98% !important;
 }
-#activeLogo {
+#activeLogo, #t_referenceSequence {
+  margin-top: 2px;
+  margin-bottom: 2px;
   float: right;
 }
 #sequenceInfo file {
@@ -422,7 +430,7 @@ option.used {
   top: 10%;
   left: 10%;
   width: 80%;
-  background: #f4f4f8;
+  background: #f4f4f4;
   border: 1px solid white;
   border-radius: 5px;
   -moz-box-shadow: 5px 5px 8px rgba(0, 0, 0, 0.5);
@@ -495,6 +503,26 @@ option.used {
 }
 
 /* print dialog */
+#formRL {
+float: left;
+  white-space: nowrap;
+}
+.twoLine {
+  float: right;
+  transform : scale(1.5,3) translate(0,3px);
+  -webkit-transform:scale(1.5,3) translate(0,3px); /* Safari and Chrome */
+  -moz-transform:scale(1.5,3) translate(0,3px); /* Firefox */
+  -ms-transform:scale(1.5,3) translate(0,3px); /* IE 9+ */
+  -o-transform:scale(1.5,3) translate(0,3px); /* Opera */
+  color: #555;
+}
+#t_newReplacementsABC {
+  float: right;
+  font-size: 0.9em;
+  color: #222;
+  width: 60%;
+  padding-top: 0.5em;
+}
 #pilotCardX, #pilotCardY {
   width: 4em;
 }
@@ -619,6 +647,16 @@ option.used {
   margin: 0 5px 0 0;
 }
 /* end print dialog */
+
+/* reference sequence */
+#referenceSequenceAlerts {
+  color: #f00;
+}
+#referenceSequenceSvgContainer {
+  width: 99%;
+  overflow-x: auto;
+}
+/* end reference sequence */
 
 .close {
   float: right;

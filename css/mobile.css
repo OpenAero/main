@@ -1,5 +1,5 @@
 /*
- mobile.css 1.4.4
+ mobile.css 1.5.1
  This file is part of OpenAero.
 
   OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -100,8 +100,19 @@ select {
   width: 200px;
   font-size: 16px;
 }
+#pilot {
+  width: 136px !important;
+}
+#team {
+  width: 62px !important;
+  margin-left: 2px;
+}
 #figureInfo {
   background: -webkit-linear-gradient(top, #f4f4f4, #e0e0ff);
+}
+#referenceSequenceString {
+  width: 99%;
+  height: 8em;
 }
 /* virtual keyboard */
 #virtualKeyboard {
@@ -151,6 +162,16 @@ select {
 #figureSelector.active {
   left:0;
 }
+
+/* sections */
+.section3cols {
+  width: 97%;
+}
+.section2cols {
+  width: 97%;
+}
+
+/* buttons */
 .button {
   margin-left: 5px;
   margin-right: 5px;
@@ -276,6 +297,10 @@ table#figureChooserTable td.selected {
   padding-left: 10px;
   padding-right: 10px;
   width: auto;
+}
+
+#printDialog {
+  font-size: 0.5em;
 }
 
 /* menu */

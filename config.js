@@ -1,4 +1,4 @@
-// config.js 1.5.0.4
+// config.js 1.5.1
 
 // This file is part of OpenAero.
 
@@ -34,13 +34,17 @@
 // Define active version number of OpenAero
 // **************
 
-var version = '1.5.0.4';
+var version = '1.5.1';
 // versionNew is an object that contains version update information
 // The structure is {vvv : [[ttt, n], ...], ...} , where
 // vvv = version number
 // ttt = update text
 // n   = importance (higher = more important)
 var versionNew = {
+  '1.5.1' : [
+    ['New form L & R concepts added', 4],
+    ['Reference sequence checking for detecting errors in Free Unknown', 4]
+  ],
   '1.5.0.4' : [
     ['Sequence data is embedded in PNG image', 3],
     ['Fixed bug causing printing to be disabled', 3],
@@ -71,6 +75,7 @@ var chromeApp = {
 // define the labels (=input field ids) for saving/loading sequences
 var sequenceXMLlabels = [
   'pilot',
+  'team',
   'aircraft',
   'category',
   'location',
@@ -244,10 +249,13 @@ var style = {
   'textBlockBorderBoldRed' : 'stroke: red; stroke-width: 2px; fill: none;',
   // Mini Form A styles
   'miniFormA' : 'font-family: verdana, helvetica, sans; font-size: 10px; fill: black;',
+  'miniFormABold' : 'font-family: verdana, helvetica, sans; font-size: 10px; font-weight: bold; fill: black;',
   'miniFormAMax' : 'font-family: verdana, helvetica, sans; font-size: 14px; fill: black;',
   'miniFormASmall' : 'font-family: verdana, helvetica, sans; font-size: 8px; fill: black;',
   'miniFormATotal' : 'font-family: verdana, helvetica, sans; font-size: 16px; font-weight: bold; fill: black;',
   // Form A styles
+  'formATextTiny' : 'font-family: verdana, helvetica, sans; font-size: 8px; fill: black;',
+  'formATextSmall' : 'font-family: verdana, helvetica, sans; font-size: 10px; fill: black;',
   'formAText' : 'font-family: verdana, helvetica, sans; font-size: 12px; fill: black;',
   'formATextBold' : 'font-family: verdana, helvetica, sans; font-size: 12px; font-weight: bold; fill: black;',
   'formATextBold8px' : 'font-family: verdana, helvetica, sans; font-size: 8px; font-weight: bold; fill: black;',
@@ -258,13 +266,14 @@ var style = {
   'formATextBold13px' : 'font-family: verdana, helvetica, sans; font-size: 13px; font-weight: bold; fill: black;',
   'formATextMedium' : 'font-family: verdana, helvetica, sans; font-size: 15px; fill: black;',
   'formATextLarge' : 'font-family: verdana, helvetica, sans; font-size: 18px; fill: black;',
+  'formATextXL' : 'font-family: verdana, helvetica, sans; font-size: 21px; fill: black;',
   'formATextHuge' : 'font-family: verdana, helvetica, sans; font-size: 40px; font-weight: bold; fill: black;',
   'formLine' : 'stroke: black; stroke-width: 1px; fill: none;',
   'formLineBold' : 'stroke: black; stroke-width: 4px; fill: none;',
   // Print styles
   'formBackground' : 'fill: white;',
   'printNotes' : 'font-family: verdana, helvetica, sans; font-size: 14px; fill: black;',
-  'sequenceString' : 'font-family: monospace; font-size: 10px; color: blue; fill: blue; word-wrap: break-word;',
+  'sequenceString' : 'font-family: monospace; font-size: 8px; color: blue; fill: blue; word-wrap: break-word;',
   'windArrow' : 'stroke: black; stroke-width: 1.5px; fill: white;'
 }
 
@@ -451,6 +460,8 @@ var regexSwitchDirX = new RegExp ('\\' + userpat.switchDirX);
 var regexSwitchDirY = new RegExp ('\\' + userpat.switchDirY);
 var regexMoveForward = new RegExp ('^[0-9]*' + userpat.moveforward + '+');
 var regexMoveDown = new RegExp ('^[0-9]*\\' + userpat.movedown + '+');
+var regexMoveFwdDn = new RegExp ('^[0-9]*(' + userpat.moveforward +
+  '|\\' + userpat.movedown + ')+');
 var regexConnector = new RegExp (userpat.connector);
 var regexCurveTo = new RegExp ('^[\(][0-9\-]*,[0-9\-]*[\)]$');
 var regexMoveTo = new RegExp ('^\[[0-9\-]*,[0-9\-]*\]$');
