@@ -7793,7 +7793,11 @@ function changeReferenceSequence () {
   }
 
   // Parse sequence
+  var activeFormSave = activeForm;
+  activeForm = 'Grid';
+  Attitude = Direction = X = Y = 0;
   parseSequence ();
+  activeForm = activeFormSave;
   
   var figCount = 0;
   for (var i = 0; i < figures.length; i++) {
@@ -10849,9 +10853,7 @@ function draw () {
   // reset all drawing variables to default values
   // firstFigure is disabled in Free Unknown designer
   firstFigure = (activeForm !== 'FU') ? true : false;
-  Attitude = 0;
-  X = 0;
-  Y = 0;
+  Attitude = X = Y = 0;
   var content = '';
   if (activeForm === 'C') {
     goRight = false;
