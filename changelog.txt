@@ -1,3 +1,6 @@
+1.5.1.1
+* corrected Superfamily handling for Forms L & R
+
 1.5.1
 * added Form L & R concepts
 * added default 4mm margin to forms to disable header printing. Tested on Chrome, might not work on other browsers

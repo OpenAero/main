@@ -1,4 +1,4 @@
-﻿// OpenAero.js 1.5.1
+﻿// OpenAero.js 1.5.1.1
 // This file is part of OpenAero.
 
 //  OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -6361,10 +6361,8 @@ function buildLogoSvg(logoImage, x, y, width, height) {
     var parser = new DOMParser();
     var doc = parser.parseFromString(logoImage, "image/svg+xml");
     var svgBase = doc.getElementsByTagName('svg')[0];
-    var scale = width / svgBase.getAttribute('width');
-    if ((height / svgBase.getAttribute('height')) < scale) {
-      scale = height / svgBase.getAttribute('height');
-    }
+    var scale = Math.min (width / svgBase.getAttribute('width'),
+      height / svgBase.getAttribute('height'));
     var group = document.createElementNS(svgNS, "g");
     group.setAttribute('transform', 'translate(' + x + ',' + y + 
       ') scale(' + scale.toFixed(4) + ')');
@@ -6377,10 +6375,7 @@ function buildLogoSvg(logoImage, x, y, width, height) {
     var img = document.createElement('img');
     img.src = logoImage;
     if (img.width) {
-      var scale = width / img.width;
-      if ((img.height * scale) > height) {
-        var scale = height / img.height;
-      }
+      var scale = Math.min (width / img.width, height / img.height);
       width = parseInt (img.width * scale);
       height = parseInt (img.height * scale);
     }
@@ -10090,11 +10085,7 @@ function makeFormA() {
             // Get the drawn figure from the SVG and set the correct scaling
             var group = document.getElementById('figure' + i);
             var bBox = group.getBBox();
-            var scaleFigure = roundTwo((columnWidths[column] - 10) / bBox.width);
-            scaleFigure = scaleFigure.toFixed(4);
-            if (((rowHeight - 20) / bBox.height) < scaleFigure) {
-              scaleFigure = roundTwo((rowHeight - 10) / bBox.height);
-            }
+            var scaleFigure = roundTwo(Math.min((columnWidths[column] - 10) / bBox.width, (rowHeight - 20) / bBox.height));
             var xMargin = (columnWidths[column] - bBox.width * scaleFigure) / 2
             var yMargin = (rowHeight - bBox.height * scaleFigure) / 2
             group.setAttribute('transform', 'translate(' +
@@ -12705,8 +12696,7 @@ function buildForm (svg, print) {
       }
         
       // find correct scale
-      var scale = roundTwo(width / w);
-      if ((height / h) < scale ) scale = roundTwo(height / h);
+      var scale = roundTwo (Math.min (width / w, height / h));
   
       // make copies and translate / rotate / scale
       var seq1 = mySVG.getElementById('sequence');
@@ -12800,8 +12790,7 @@ function buildForm (svg, print) {
         if ((maxHeight / h) < scale) {
           scale = Math.min (maxHeight / h, maxScale);
           // height limited, so we can move the sequence right for centering
-          moveRight = ((700 - (w * scale)) / 2) + 15;
-          if (moveRight < 15) moveRight = 15;
+          moveRight = Math.max ((700 - (w * scale)) / 2, 0) + 15;
         }
         
         // Check if roll font size should be enlarged because of downscaling.
@@ -12884,8 +12873,7 @@ function buildForm (svg, print) {
           scale = Math.min (maxHeight / h, maxScale);
           // height limited, so we can move the sequence right for centering
           // limit this on tear-off tab
-          moveRight = 1620 - ((w + h) * scale);
-          if (moveRight < 0) moveRight = 0;
+          moveRight = Math.min (1620 - ((w + h) * scale), 0);
         }
         
         mySVG = adjustRollFontSize (scale, mySVG);
@@ -13194,9 +13182,10 @@ function addFormElementsLR (svg, print) {
       totalK += figK;
       if (document.getElementById('printSF').checked === true) {   
         if (document.getElementById('class').value == 'glider') {
-          var superFamily = getSuperFamily (aresti, 'glider');
+          var superFamily = getSuperFamily (figures[i].aresti, 'glider');
         } else {
-          var superFamily = getSuperFamily (aresti, document.getElementById('category').value);
+          var superFamily = getSuperFamily (figures[i].aresti,
+            document.getElementById('category').value);
         }
         if (superFamily) {
           drawText('SF ' + superFamily,
@@ -13214,8 +13203,7 @@ function addFormElementsLR (svg, print) {
     drawLine (i * 80, 0, 0, bBox.height + 10, 'formLine', g);
   }
   // scale width to fit, but don't upscale more than 20%
-  var scaleX = 799 / (bBox.width + 10);
-  if (scaleX > 1.2) scaleX = 1.2;
+  var scaleX = Math.min (799 / (bBox.width + 10), 1.2);
   var blockTop = 1100 - bBox.height;
   g.setAttribute ('transform', 'translate (0,' + blockTop + ') scale (' + scaleX + ',1)');
 
