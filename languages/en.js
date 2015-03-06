@@ -37,13 +37,20 @@ lang.en = {
   'you can help OpenAero development by adding them to ' +
   '<a href="https://code.google.com/p/open-aero/issues/list">the ' +
   'Issues list</a>.',
+// changed 1.5.1.2
 'aboutOlder' : '<font color="red">You are running an outdated version. ' +
-  '</font>If you are running from a local file, please check instructions at ' +
-  '<a href="https://code.google.com/p/open-aero/wiki/Installation">' +
-  'the Installation wiki</a>.<br>If you are using openaero.net on ' +
-  'Google Chrome it may help to clear the appCache. Enter ' +
+  '</font><br /><ul>' +
+  '<li>If you are using the Chrome app, open Chrome and enter ' +
+  '<strong>chrome://extensions</strong> in your address bar. Then, ' +
+  'choose "Developer mode" and click "Update extensions now".</li>' +
+  '<li>If you are using openaero.net on Google Chrome (but not as an ' +
+  'app) it may help to clear the appCache. Enter ' +
   '<strong>chrome://appcache-internals</strong> in your address bar ' +
-  'and <strong>Remove</strong> all entries that contain OpenAero.',
+  'and <strong>Remove</strong> all entries that contain OpenAero.</li>' +
+  '<li>If you are running from a local file, please check instructions at ' +
+  '<a href="https://code.google.com/p/open-aero/wiki/Installation">' +
+  'the Installation wiki</a>.</li></ul>',
+//
 'aboutUnknown' : 'Unable to determine Stable version. You are ' +
   'probably offline.',
 'aboutText' : '<div class="section">' +
@@ -338,7 +345,9 @@ lang.en = {
 'logoExplain' : 'Upload your own logo by clicking on the file ' +
   'chooser below, or select one of the displayed logos.',
 'manual' : 'Manual',
-'maxConnectors' : 'Maximum connecting figures allowed: ',
+// changed 1.5.1.2
+'maxConnectors' : 'Maximum connecting figures allowed: %s',
+//
 'maxScaling' : 'Max small seq. scaling',
 // new 1.5.1
 'missedSlot' : 'Missed Slot',

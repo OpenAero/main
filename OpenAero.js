@@ -1,4 +1,4 @@
-﻿// OpenAero.js 1.5.1.1
+﻿// OpenAero.js 1.5.1.2
 // This file is part of OpenAero.
 
 //  OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -2986,7 +2986,7 @@ function makeSpin (params) {
 // extent is the size of the line before the hammerhead top.
 // We will move that much down before continuing drawing
 function makeHammer (extent) {
-  pathArray = [];
+  var pathArray = [];
   Attitude = 270;
   changeDir(180);
   pathArray.style = 'pos';
@@ -4576,7 +4576,7 @@ function buildButtons () {
   }
   // add tooltips, but not on touchscreen
   if (!isTouchDevice()) {
-    for (key in userText.tooltip) {
+    for (var key in userText.tooltip) {
       var el = document.getElementById(key);
       if (el) {
         el.firstChild.classList.add ('tooltip');
@@ -4823,7 +4823,7 @@ function addExampleSequenceToMenu (key) {
 // -set correct options in settings dialog
 function setOptions () {
   // add example sequence entries
-  for (key in exampleSequences) {
+  for (var key in exampleSequences) {
     addExampleSequenceToMenu (key);
   }
 
@@ -4831,7 +4831,7 @@ function setOptions () {
   
   // create language chooser, with default language
   var el = document.getElementById('language');
-  for (key in lang) {
+  for (var key in lang) {
     var option = document.createElement('option');
     option.setAttribute('value', key);
     option.innerHTML = lang[key][key];
@@ -4972,7 +4972,7 @@ function saveSettingsStorage (location) {
     for (var i = saveSettings.length - 1; i >=0; i--) {
       var el = document.getElementById(saveSettings[i]);
       if (el.type === 'checkbox') {
-        var value = (el.checked)? 1 : 0;
+        var value = el.checked ? 1 : 0;
       } else {
         var value = encodeURI(el.value);
       }
@@ -5488,9 +5488,7 @@ function updateFigureOptions (figureId) {
     var el = document.getElementById('commentSection');
     el.classList.remove('noDisplay');
     var el = document.getElementById('comments');
-    if (f.comments) {
-      el.value = f.comments;
-    } else el.value = '';
+    el.value = f.comments ? f.comments : '';
     
     var disable = false;
     var el = document.getElementById('FUfigOptionsDisabled');
@@ -5534,14 +5532,14 @@ function updateFigureOptions (figureId) {
 // editing a figure
 // var figureId is the id of the figures[] object
 function addRollSelectors (figureId) {
-  var el = document.getElementById('rollInfo');
+  var myEl = document.getElementById('rollInfo');
   if (figureId === null) {
-    el.setAttribute('style', 'display:none;');
+    myEl.classList.add ('noDisplay');
   } else if (fig[figures[figureId].figNr]) {
-    el.removeAttribute('style');
+    myEl.classList.remove ('noDisplay');
     var rolls = fig[figures[figureId].figNr].rolls;
     // clear selectors
-    while (el.childNodes.length) el.removeChild(el.lastChild);
+    while (myEl.childNodes.length) myEl.removeChild(myEl.lastChild);
     // show the applicable roll selectors
     if (rolls) {
       var rollNr = 0;
@@ -5562,7 +5560,7 @@ function addRollSelectors (figureId) {
           // loop until max rolls per element + 1
           for (var j = 0; j < rollsPerRollElement + 1; j++) {
             var pattern = figures[figureId].rollInfo[i].pattern[j-1];
-            pattern = (pattern)? pattern.replace('-', '') : '';
+            pattern = pattern ? pattern.replace('-', '') : '';
             // show the element when:
             // it's the first one OR the previous one is not empty
             // AND it's number is not higher than rollsPerRollElement
@@ -5588,7 +5586,7 @@ function addRollSelectors (figureId) {
           }
           var gap = figures[figureId].rollInfo[i].gap;
           for (var j = 0; j < subRolls; j++) {
-            var thisGap = (typeof gap[j] != 'undefined')? gap[j] : 0;
+            var thisGap = (typeof gap[j] != 'undefined') ? gap[j] : 0;
             var span = document.createElement('span');
             span.setAttribute('id', 'roll'+i+'-gap'+j);
             span.classList.add ('plusMin');
@@ -5599,7 +5597,7 @@ function addRollSelectors (figureId) {
           var divdiv = document.createElement ('div');
           divdiv.classList.add ('clearBoth');
           div.appendChild (divdiv);
-          el.appendChild(div);
+          myEl.appendChild(div);
           rollNr++;
         }
       }
@@ -8346,6 +8344,7 @@ function markNotAllowedFigures () {
 // (e = object) or from grabFigure (e = figNr) or from certain functions
 // or false
 function selectFigure (e, noChooserUpdate) {
+  
   if ((e !== false) && !mobileBrowser) {
     // show figure editor tab
     selectTab ('tab-figureInfo');
@@ -8680,9 +8679,9 @@ function makeMiniFormA (x, y) {
             if (connectFig.max > 0) {
               figK = connectFig.totalK / connectFig.max;
             }
-            alertMsgs.push ('(' + figNr + ') ' +
-              userText.maxConnectors +
-              connectFig.max);
+            checkAlert (sprintf (userText.maxConnectors, connectFig.max),
+              false,
+              figNr);
           }
           drawText ('Conn.', blockX + 4, (topBlockY + blockY) / 2 + 16, 'miniFormA');
         } else {
@@ -8769,15 +8768,14 @@ function grabFigure(evt) {
      if (figures[i].draggable) {
        var bBox = svg.getElementById('figure'+i).getBoundingClientRect();
        // clicked well within bBox (>margin units within border)?
-       if ((x > (bBox.left + margin)) && (x < (bBox.right - margin))) {
-         if ((y > (bBox.top + margin)) && (y < (bBox.bottom - margin))) {
-           // calculate distance squared to bBox centre
-           var distSq = Math.pow(x - (bBox.left + (bBox.width / 2)), 2) +
-             Math.pow(y - (bBox.top + (bBox.height / 2)), 2);
-           if (distSq < minDistSq) {
-             minDistSq = distSq;
-             closest = i;
-           }
+       if ((x > (bBox.left + margin)) && (x < (bBox.right - margin)) &&
+         (y > (bBox.top + margin)) && (y < (bBox.bottom - margin))) {
+         // calculate distance squared to bBox centre
+         var distSq = Math.pow(x - (bBox.left + (bBox.width / 2)), 2) +
+           Math.pow(y - (bBox.top + (bBox.height / 2)), 2);
+         if (distSq < minDistSq) {
+           minDistSq = distSq;
+           closest = i;
          }
        }
      }
@@ -10127,9 +10125,9 @@ function makeFormA() {
                 figK = connectFig.totalK / connectors;
               } else {
                 figK = connectFig.totalK / connectFig.max[document.getElementById('class').value];
-                alertMsgs.push ('(' + (row + 1) + ') ' +
-                  userText.maxConnectors +
-                  connectFig.max);
+                checkAlert (sprintf (userText.maxConnectors, connectFig.max),
+                  false,
+                  row + 1);
               }
             }
             break;
@@ -13179,6 +13177,23 @@ function addFormElementsLR (svg, print) {
         figK += parseInt(figures[i].k[j]);
         y += 12;
       }
+      
+      // Adjust figure K for connectors
+      if (figures[i].unknownFigureLetter && (figures[i].unknownFigureLetter === 'L')) {
+        if (connectors <= connectFig.max) {
+          figK = connectFig.totalK / connectors;
+        } else {
+          if (connectFig.max > 0) {
+            figK = connectFig.totalK / connectFig.max;
+          }
+          checkAlert (sprintf (userText.maxConnectors, connectFig.max),
+            false,
+            figureNr);
+        }
+      }
+      // adjust figure K for floating point
+      if (figures[i].floatingPoint) figK -= 1;
+
       totalK += figK;
       if (document.getElementById('printSF').checked === true) {   
         if (document.getElementById('class').value == 'glider') {
@@ -13192,6 +13207,7 @@ function addFormElementsLR (svg, print) {
             x, 27 + rows * 12, 'miniFormABold', 'start', '', g);
         }
       }
+      if (figures[i].floatingPoint) figK = '(-1)' + figK;
       drawText (figK, x + 70, 27 + rows * 12, 'miniFormABold', 'end', '', g);
       x += 80;
     }
@@ -14607,7 +14623,7 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
                   false,
                   false,
                   roll[rollnr][j].comment), rollPaths);
-                lineLength += Math.abs(parseInt((roll[rollnr][j].extent - 1) / 360)) * (10 / lineElement);
+                lineLength += parseInt((Math.abs(roll[rollnr][j].extent) - 1) / 360) * (10 / lineElement);
                 break;
               case ('slowroll'):
                 rollPaths = buildShape('Roll', Array(
@@ -14617,7 +14633,7 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
                   true,
                   false,
                   roll[rollnr][j].comment), rollPaths);
-                lineLength += Math.abs(parseInt((roll[rollnr][j].extent - 1) / 360)) * (10 / lineElement);
+                lineLength += parseInt((Math.abs(roll[rollnr][j].extent) - 1) / 360) * (10 / lineElement);
                 break;
               case ('possnap'):
                 rollPaths = buildShape('Snap', Array(

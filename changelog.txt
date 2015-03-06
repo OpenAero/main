@@ -1,3 +1,8 @@
+1.5.1.2
+* improved procedure for forced Chrome app updating by user (aboutOlder text)
+* corrected figure K on forms L & R for linking figures and floating point
+* fixed bug that caused hammerhead to show a gap on form B OR C with 360 or 720 roll vertical up
+
 1.5.1.1
 * corrected Superfamily handling for Forms L & R
 

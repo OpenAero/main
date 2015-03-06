@@ -348,7 +348,7 @@ lang.fr = {
 'logoExplain' : 'Chargez votre logo en cliquant sur parcourir..., ' +
   'ou sélectionnez un des logos déjà affiches.',
 'manual' : 'Manuel OpenAero',
-'maxConnectors' : 'Maximum de figures de liaison permis :',
+'maxConnectors' : 'Maximum de figures de liaison permis : %s',
 'maxScaling' : 'Agrandissement Max des petits programmes',
 // new 1.5.1
 'missedSlot' : 'Hors créneau',
