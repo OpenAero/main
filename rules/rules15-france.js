@@ -22,13 +22,14 @@
 
 //######################################################################################
 //#####      Regles France 2015      Espoirs à Doret 2015  Olan 6.0  ###################
-//#####      Regles France 2015      Version 2015_PN.1.04            ###################
+//#####      Regles France 2015      Version 2015_PN.1.05            ###################
 //######################################################################################
 //######################################################################################
 //#####                                                              ###################
 //#####      Modifications et corrections 2013 pseudo numerotation   ###################
 //#####      Modifications mineures (commentaires) et connus 2014    ###################
 //#####      Corrections, modifications espoirs 2015, connus 2015    ###################
+//#####      Ajout de règles (déclenchés) d'inconnu Doret 2015.      ###################
 //#####      Prise en compte du distingo entre rotation alternées    ###################
 //#####      (,) et rotations même sens (;) dans les régles 2015.    ###################
 //#####                                                              ###################
@@ -932,6 +933,14 @@ rules.push("poslj=40");
 rules.push("posnl=40");
 rules.push("floating-point=0");
 rules.push("k-max=350");
+
+rules.push("snap-max=5");  				// Modif 2015 ajout de règles
+rules.push("isnap-min=2");  				// Modif 2015 ajout de règles
+rules.push("osnap-min=2");  				// Modif 2015 ajout de règles
+rules.push("group-vsnap=^9\\.(9|10)\\.[16]\\.");  	// Modif 2015 ajout de règles
+rules.push("vsnap-name=déclenché vertical montant");  	// Modif 2015 ajout de règles
+rules.push("vsnap-min=1");  				// Modif 2015 ajout de règles
+rules.push("vsnap-max=2");  				// Modif 2015 ajout de règles
 
 //###################################################################################################
 //##

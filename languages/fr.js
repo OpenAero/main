@@ -624,14 +624,12 @@ lang.fr = {
 'upwind' : 'vent de face',
 'upwindEntry' : 'Débuter vent de face',
 'version' : 'Version : %s',
-// new 1.5.0.4
 'versionNew' : '<strong>OpenAero a été mis à jour de la version %s à %s' +
   '</strong><br>Nouvelles fonctionnalités:<ul>%s' +
   '<li>Autres corrections et améliorations (lisez <a id="changelog">' +
   'changelog.txt</a> si intéressé)</li>' +
   '</ul>' +
   'Ceci peut prendre quelques instants à charger.',
-//
 'view' : 'Affichage',
 'warningPre' : '<p> Lors de la prochaine sauvegarde, cet ' +
   'avertissement \'apparaîtra plus.</p>',

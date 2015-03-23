@@ -1,3 +1,16 @@
+1.5.1.3
+* corrected "Select rules first" text in Sequence info
+* fixed changelog.txt link and Info buttons not working in iOS app (Issue #172)
+* updated 2015 France rules
+* added file_handler to automatically open seq files in OpenAero (Issue #170)
+* fixed disappearing of some parts of leftBlock (Issue #171)
+* fixed compVersion crash when no previous version available
+* fixed possibility of moving figure 1 when preceded by "drawing figure" (Issue #142)
+* moved project to GitHub as Google Code is shutting down (Issue #173)
+* added more timeOut to print function to solve printing failing on some systems
+* updated jszip and canvg
+* completely disabled moveTo, curveTo and moveForward on first figure
+
 1.5.1.2
 * improved procedure for forced Chrome app updating by user (aboutOlder text)
 * corrected figure K on forms L & R for linking figures and floating point

@@ -611,14 +611,12 @@ lang.en = {
 'upwind' : 'Upwind',
 'upwindEntry' : 'Upwind entry',
 'version' : 'Version: %s',
-// new 1.5.0.4
 'versionNew' : '<strong>OpenAero has been upgraded from version %s to %s' +
   '</strong><br>New features:<ul>%s' +
   '<li>Other bugfixes and improvements (check <a id="changelog">' +
   'changelog.txt</a> if interested)</li>' +
   '</ul>' +
   'This may take a few seconds to complete.',
-//
 'view' : 'View',
 'warningPre' : '<p>When you save this sequence again this ' +
   'warning will not be shown any more.</p>',
