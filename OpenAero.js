@@ -1,4 +1,4 @@
-﻿// OpenAero.js 1.5.1.3
+﻿// OpenAero.js 1.5.1.4
 // This file is part of OpenAero.
 
 //  OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -12445,9 +12445,13 @@ function printForms () {
         win.onLoad = function() {
           win.document.title = activeFileName();
           win.document.body = buildForms (true);
-          console.log(win.document.head);
+          if (win.matchMedia) {
+            var mediaQueryList = win.matchMedia ('print');
+            mediaQueryList.addListener (function (mql) {
+              if (!mql.matches) win.close();
+            });
+          }
           win.print();
-          win.close();
         };
       });
     } else {
@@ -12467,8 +12471,13 @@ function printForms () {
         // use setTimeout for printing to prevent blocking and
         // associated warnings by the browser
         setTimeout (function(){
+          if (win.matchMedia) {
+            var mediaQueryList = win.matchMedia ('print');
+            mediaQueryList.addListener (function (mql) {
+              if (!mql.matches) win.close();
+            });
+          }
           win.print();
-          setTimeout (function(){win.close()}, 1000);
         }, 500);
       }
     }
