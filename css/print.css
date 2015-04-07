@@ -1,15 +1,17 @@
 @page {
-  size: auto;
+  size: A4;
   margin: 4mm;
 }
-body {
-	margin: 0;
+html, body {
+  width: 202mm;
+  margin: 0;
+}
+svg {
+  height: 287mm !important;
+  page-break-inside:avoid;
 }
 .breakAfter {
   display:block;
   page-break-after:always;
 }
-svg {
-  height: 99.5%;
-  page-break-inside:avoid;
-}
+

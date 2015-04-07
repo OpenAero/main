@@ -1,3 +1,7 @@
+1.5.1.5
+* fixed print scale issue for Chrome App
+* restored CIVA form sequence centering which was broken in 1.5.1
+
 1.5.1.4
 * prevented print failing on some systems by using window.matchMedia (Issues #174 and #175)
 

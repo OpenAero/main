@@ -1,4 +1,4 @@
-﻿// OpenAero.js 1.5.1.4
+﻿// OpenAero.js 1.5.1.5
 // This file is part of OpenAero.
 
 //  OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -12905,7 +12905,7 @@ function buildForm (svg, print) {
           scale = Math.min (maxHeight / h, maxScale);
           // height limited, so we can move the sequence right for centering
           // limit this on tear-off tab
-          moveRight = Math.min (1620 - ((w + h) * scale), 0);
+          moveRight = Math.max (1620 - ((w + h) * scale), 0) / 2;
         }
         
         mySVG = adjustRollFontSize (scale, mySVG);
