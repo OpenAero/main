@@ -1,4 +1,4 @@
-﻿// OpenAero.js 1.5.1.5
+﻿// OpenAero.js 1.5.1.6
 // This file is part of OpenAero.
 
 //  OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -3852,7 +3852,8 @@ function addEventListeners () {
   // sequence info options
   document.getElementById('pilot').addEventListener('change', changeSequenceInfo, false);
   document.getElementById('team').addEventListener('change', changeSequenceInfo, false);
-  document.getElementById('aircraft').addEventListener('change', changeSequenceInfo, false);
+  document.getElementById('actype').addEventListener('change', changeSequenceInfo, false);
+  document.getElementById('acreg').addEventListener('change', changeSequenceInfo, false);
   document.getElementById('location').addEventListener('change', changeSequenceInfo, false);
   document.getElementById('date').addEventListener('change', changeSequenceInfo, false);
   document.getElementById('class').addEventListener('change',  selectPwrdGlider, false);
@@ -6147,6 +6148,12 @@ function changeSequenceInfo () {
     title = title.replace (/- +-/g, '-');
     document.title = title.replace (/[ -]+$/, '');
 
+    // update deprecated "aircraft" field
+    document.getElementById('aircraft').value = (
+      document.getElementById('actype').value + ' ' +
+      document.getElementById('acreg').value).trim();
+      
+    // create sequence XML
     var xml = '<sequence>\n'
     for (i = 0; i < sequenceXMLlabels.length; i++) {
       var el = document.getElementById(sequenceXMLlabels[i]);
@@ -6296,9 +6303,7 @@ function changeCombo(id) {
 
   if (id === 'rules') {
     // set logo
-    if (rulesLogo[ruleName]) {
-      selectLogo(rulesLogo[ruleName]);
-    }
+    if (rulesLogo[ruleName]) selectLogo(rulesLogo[ruleName]);
 
     // set CIVA or IAC forms default
     iacForms = (ruleName === 'iac')? true : false;
@@ -6310,8 +6315,7 @@ function changeCombo(id) {
     
     // clear category if these rules exist but do not contain the category
     if (seqCheckAvail[ruleName] && !seqCheckAvail[ruleName].cats[categoryName]) {
-      category.value = '';
-      program.value = '';
+      category.value = program.value = '';
     }
   }
   
@@ -11680,7 +11684,7 @@ function activateXMLsequence (xml, noLoadRules) {
   
   // clear previous values
   for (var i = 0; i < sequenceXMLlabels.length; i++) {
-    var el =  document.getElementById(sequenceXMLlabels[i]);
+    var el = document.getElementById(sequenceXMLlabels[i]);
     if (el) el.value = '';
   }
   // set 'class' to powered by default to provide compatibility with OLAN
@@ -11702,6 +11706,8 @@ function activateXMLsequence (xml, noLoadRules) {
     if (!rootNode) return false;
     
     var nodes = rootNode.childNodes;
+    
+    var oldSequence = true;
     // Put every element in the correct field
     for (var ele in nodes) {
       if(nodes[ele].innerHTML) {
@@ -11710,8 +11716,17 @@ function activateXMLsequence (xml, noLoadRules) {
         // e will be the field, only put a value when it exists
         var e = document.getElementById(nodes[ele].nodeName.toLowerCase());
         if (e) e.value = myTextArea.value;
+        if (nodes[ele].nodeName.toLowerCase() === 'actype') oldSequence = false;
       }
     }
+
+    // put actype and acreg in correct fields for pre 1.5.1.6
+    // sequences 
+    if (oldSequence) {
+      document.getElementById ('actype').value = parseAircraft ('type');
+      document.getElementById ('acreg').value = parseAircraft ('registration');
+    }
+
     var prevForm = activeForm;
     // check for default_view
     var view = document.getElementById('default_view').value;
@@ -12409,7 +12424,7 @@ function parseAircraft (t) {
       break;
     }
   }
-  return ((t === 'registration') ? reg : aircraft.replace (reg, ''));
+  return ((t === 'registration') ? reg : aircraft.replace(reg, '').trim());
 }
 
 // printForms will print selected forms
@@ -13387,9 +13402,11 @@ function buildHeader (svg, logoWidth) {
     drawRectangle (logoWidth, 65, 80, 65, 'formLine', svg);
     drawText (userText.pilotID, logoWidth + 5, 75, 'miniFormA', 'start', '', svg);
     drawRectangle (logoWidth + 80, 65, 640 - logoWidth, 65, 'formLine', svg);
+    // removed "Programme" and added Rules in 1.5.1.6
     drawText (
+      document.getElementById('rules').value + ' ' +
       ((document.getElementById('class').value === 'glider')? 'Glider ' : '') +
-      document.getElementById('category').value + ' Programme ' +
+      document.getElementById('category').value + ' ' +
       document.getElementById('program').value,
       475, 105, 'formATextLarge', 'middle', '', svg);
     drawRectangle (720, 65, 80, 65, 'formLine', svg);
@@ -13449,7 +13466,7 @@ function buildHeader (svg, logoWidth) {
       drawLine (800, 420, 0, 460, 'dotted', svg);
       drawText ('FREE PROGRAM CHECK BY:', 790, 1080, 'formAText', 'start', 'checkByText', svg);
       drawText ('(signature/date)', 790, 880, 'formAText', 'start', 'signText', svg);
-      drawText ('A/C: ' + parseAircraft('registration'), 790, 380, 'formAText', 'start', 'acText', svg);
+      drawText ('A/C: ' + document.getElementById('actype').value, 790, 380, 'formAText', 'start', 'acText', svg);
       // rotate text elements by 90 degr CCW    
       var el = svg.getElementById('checkByText');
       el.setAttribute('transform', 'rotate(-90 ' +
@@ -13496,7 +13513,7 @@ function buildScoreColumn (svg) {
 
     drawRectangle (590, 340, 210, 60, 'formLine', svg);
     drawText ('Aircraft type:', 600, 355, 'formAText', 'start', '', svg);
-    drawText (parseAircraft('type'), 695, 380, 'formATextLarge', 'middle', '', svg);
+    drawText (document.getElementById('type').value, 695, 380, 'formATextLarge', 'middle', '', svg);
     
     // "checked by" block
     drawRectangle (640, 430, 160, 280, 'formLine', svg);
@@ -13667,7 +13684,7 @@ function buildCornertab (svg) {
     newText.setAttribute('y', 1085);
     newText.setAttribute('transform', 'rotate(-45 755 1085)');
     if (iacForms) {
-      var textNode = document.createTextNode(parseAircraft('registration'));
+      var textNode = document.createTextNode(document.getElementById('registration').value);
     } else {
       var textNode = document.createTextNode(document.getElementById('aircraft').value);
     }

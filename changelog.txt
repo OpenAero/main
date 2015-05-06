@@ -1,3 +1,9 @@
+1.5.1.6
+* fixed basefigex11-repeat rule in rules15-iac.js
+* changed aircraft registration to type on IAC Form B/C (Issue #177)
+* separated aircraft type and registration fields (Issue #178)
+* removed "Programme" from A/B/C sequence description
+
 1.5.1.5
 * fixed print scale issue for Chrome App
 * restored CIVA form sequence centering which was broken in 1.5.1

@@ -1,5 +1,5 @@
 /*
- desktop.css 1.5.1
+ desktop.css 1.5.1.6
  This file is part of OpenAero.
 
   OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -95,6 +95,12 @@ body {
 }
 #team {
   width: 52px !important;
+  margin-left: 2px;
+}
+#actype, #acreg {
+  width: 84px !important;
+}
+#acreg {
   margin-left: 2px;
 }
 #figureInfo {

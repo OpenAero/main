@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--
-  index.html version 1.5.1.3
+  index.html version 1.5.1.6
   This file is part of OpenAero.
 
   OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -751,7 +751,11 @@
           </div>
           <div class=item>
             <div class="label userText" id="t_aircraft"></div>
-            <input type=text name=aircraft id=aircraft maxlength="30">
+            <!-- Hidden aircraft input replaces old aircraft input field.
+                 Keep it until 2016 for backward compatibility -->
+            <input type="hidden" id="aircraft">
+            <input type="text" id="acreg" maxlength="30">
+            <input type="text" id="actype" maxlength="30">
           </div>
           <div class=item>
             <div class="label userText" id="t_location"></div>

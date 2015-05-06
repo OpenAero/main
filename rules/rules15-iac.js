@@ -23,6 +23,8 @@
 //
 // 1.5.0
 // - added Known sequences
+// 1.5.1.6
+// - fixed basefigex11-repeat rule
 
 //###############################################################################
 //##### IAC Primary KNOWN #######################################################
@@ -59,7 +61,7 @@ rules.push("posnl=6");
 rules.push("basefig-max=12");
 rules.push("k-max=130");
 
-rules.push("basefigx11-repeat=1");
+rules.push("basefigex11-repeat=1");
 
 rules.push("roll-repeat=1");
 rules.push("spin-repeat=1");

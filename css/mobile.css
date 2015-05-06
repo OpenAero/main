@@ -1,5 +1,5 @@
 /*
- mobile.css 1.5.1
+ mobile.css 1.5.1.6
  This file is part of OpenAero.
 
   OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -105,6 +105,12 @@ select {
 }
 #team {
   width: 62px !important;
+  margin-left: 2px;
+}
+#actype, #acreg {
+  width: 99px !important;
+}
+#acreg {
   margin-left: 2px;
 }
 #figureInfo {
