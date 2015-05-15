@@ -1,3 +1,6 @@
+1.5.1.7
+* fixed IAC Form A bugs in parsing separate aircraft type and reg fields
+
 1.5.1.6
 * fixed basefigex11-repeat rule in rules15-iac.js
 * changed aircraft registration to type on IAC Form B/C (Issue #177)

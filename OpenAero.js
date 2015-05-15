@@ -1,4 +1,4 @@
-﻿// OpenAero.js 1.5.1.6
+﻿// OpenAero.js 1.5.1.7
 // This file is part of OpenAero.
 
 //  OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -13513,7 +13513,7 @@ function buildScoreColumn (svg) {
 
     drawRectangle (590, 340, 210, 60, 'formLine', svg);
     drawText ('Aircraft type:', 600, 355, 'formAText', 'start', '', svg);
-    drawText (document.getElementById('type').value, 695, 380, 'formATextLarge', 'middle', '', svg);
+    drawText (document.getElementById('actype').value, 695, 380, 'formATextLarge', 'middle', '', svg);
     
     // "checked by" block
     drawRectangle (640, 430, 160, 280, 'formLine', svg);
@@ -13684,7 +13684,7 @@ function buildCornertab (svg) {
     newText.setAttribute('y', 1085);
     newText.setAttribute('transform', 'rotate(-45 755 1085)');
     if (iacForms) {
-      var textNode = document.createTextNode(document.getElementById('registration').value);
+      var textNode = document.createTextNode(document.getElementById('acreg').value);
     } else {
       var textNode = document.createTextNode(document.getElementById('aircraft').value);
     }
