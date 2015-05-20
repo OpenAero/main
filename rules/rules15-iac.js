@@ -25,6 +25,8 @@
 // - added Known sequences
 // 1.5.1.6
 // - fixed basefigex11-repeat rule
+// 1.5.1.8
+// - added floating-point for Sportsman Free
 
 //###############################################################################
 //##### IAC Primary KNOWN #######################################################
@@ -59,7 +61,8 @@ rules.push("[IAC Sportsman Free]");
 
 rules.push("posnl=6");
 rules.push("basefig-max=12");
-rules.push("k-max=130");
+rules.push("k-max=131");
+rules.push("floating-point=1");
 
 rules.push("basefigex11-repeat=1");
 

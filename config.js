@@ -1,4 +1,4 @@
-// config.js 1.5.1.7
+// config.js 1.5.1.8
 
 // This file is part of OpenAero.
 
@@ -34,7 +34,7 @@
 // Define active version number of OpenAero
 // **************
 
-var version = '1.5.1.7';
+var version = '1.5.1.8';
 // versionNew is an object that contains version update information
 // The structure is {vvv : [[ttt, n], ...], ...} , where
 // vvv = version number
