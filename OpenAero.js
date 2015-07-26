@@ -1,4 +1,4 @@
-﻿// OpenAero.js 1.5.1.7
+﻿// OpenAero.js 1.5.2
 // This file is part of OpenAero.
 
 //  OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -2705,7 +2705,7 @@ function makeRollText (extent, stops, sign, comment, radSin, radCos) {
 // [0] is the amount of degrees. A negative value changes the direction of roll
 // [1] is hesitations in fractions of full roll
 // [2] is optional roll in top argument, false or non-present = not in top, true = in top
-// [3] is optional glider slow roll argument, true = slow roll
+// [3] is optional glider super slow roll argument, true = slow roll
 // [4] is optional autocorrect roll argument, true = autocorrect roll
 // [5] is optional comment
 // Example: (270,4) would be a 3x4 roll
@@ -2748,7 +2748,7 @@ function makeRoll (params) {
     path += 'l ' + roundTwo(dx) + ',' + roundTwo(dy) + ' z';
     pathsArray.push ({'path':path, 'style':style[0]});
 
-    // Make the second tip for glider slow rolls
+    // Make the second tip for glider super slow rolls
     if (params[3]) {
       var radPoint = rad + sign * (Math.PI / 2.5);
       dxTip = ((Math.cos(radPoint) - radCos) * rollcurveRadius);
@@ -2797,13 +2797,13 @@ function makeRoll (params) {
       // Get the relative movement by the line and use this to build the tip connector line
       dx = pathsArray[pathsArray.length - 1].dx;
       dy = pathsArray[pathsArray.length - 1].dy;
-      // glider slow roll or regular roll
+      // glider super slow roll or regular roll
       var radPoint = (params[3])? rad+sign*(Math.PI/2) : rad+sign*(Math.PI/3);
 
       dxTip = (((Math.cos(radPoint) * (rollcurveRadius + 2)) - (radCos * rollcurveRadius)));
       dyTip = -(((Math.sin(radPoint) * (rollcurveRadius + 2)) - (radSin * rollcurveRadius)));
       if (params[3]) {
-        // glider slow roll
+        // glider super slow roll
         path = 'm ' + roundTwo(dxTip+dx/2) + ',' + roundTwo(dyTip+dy/2) +
           ' l ' + roundTwo(-dx*1.5) + ',' + roundTwo(-dy*1.5);
       } else {
@@ -3102,7 +3102,10 @@ function makeTextBlock (text) {
   if (text != '') {
     // temporarily attach text to SVG root
     var t = SVGRoot.appendChild(document.createElementNS(svgNS, 'text'));
-    t.style = style.textBlock;
+    t.setAttribute('style', style.textBlock);
+    
+    // determine fontSize or use default of 20
+    var fontSize = style.textBlock.match(/font-size:[ ]*(\d+)px/)[1] || 20;
 
     // Parse special characters
     // Not all OLAN special codes are supported yet. They will be
@@ -3116,7 +3119,7 @@ function makeTextBlock (text) {
       switch (text[i]) {
         // anywhere tags
         case ('\\'): // new line          
-          t.appendChild (tspan(line));
+          t.appendChild (tspan(line, fontSize));
           line = '';
           lineNr++;
           break;
@@ -3153,7 +3156,7 @@ function makeTextBlock (text) {
       }
     }
 
-    t.appendChild (tspan(line));
+    t.appendChild (tspan(line, fontSize));
 
     // determine final text block size
     var box = t.getBBox();
@@ -3902,6 +3905,7 @@ function addEventListeners () {
   document.getElementById('comments').addEventListener('change', updateFigure, false);
     
   // figure selector
+  document.getElementById('figureStringInput').addEventListener('input', changeFigureString, false);
   document.getElementById('hideIllegal').addEventListener('change', changeHideIllegal, false);
   document.getElementById('hideFigureSelector').addEventListener('mousedown', hideFigureSelector, false);
   document.getElementById('figureGroup').addEventListener('change', changeFigureGroup, false);
@@ -4295,11 +4299,7 @@ function checkBrowser () {
     function f(c) {
       var d = new Date();
       var t = parseInt(d.getTime());
-      if (c) {
-        if (c < t) {
-          c = false;
-        }
-      }
+      if (c && (c < t)) c = false;
       if (!c) {
         storeLocal ('noChromeWarned', t + 2419200000);
         alertBox (sprintf (userText.browserDetect, browserString) +
@@ -4332,6 +4332,9 @@ function fileSupport () {
 function clickButton () {
   var e = this;
   var divClass = e.getAttribute('class');
+  
+  // don't click disabled buttons
+  if (e.classList.contains ('disable')) return;
   
   // when the figure is a Free Unknown figure with a letter, don't
   // click disableFUfig buttons
@@ -4632,13 +4635,11 @@ function buildPlusMinElement (id, value) {
   span.appendChild(img);
   el.appendChild (span);
   
-  if (!mobileBrowser) {
-    if (userText.tooltip[id]) {
-      el.classList.add ('tooltip','ttRight');
-      var div = document.createElement('div');
-      div.innerHTML = userText.tooltip[id];
-      el.appendChild(div);
-    }
+  if (!mobileBrowser && (userText.tooltip[id])) {
+    el.classList.add ('tooltip','ttRight');
+    var div = document.createElement('div');
+    div.innerHTML = userText.tooltip[id];
+    el.appendChild(div);
   }
 
   return el;
@@ -4709,9 +4710,14 @@ function addRollSelectElement (figNr, rollEl, elNr, parent) {
       'class="rollFlip smallButton';
   } else {
     html += '<div id="roll' + rollEl + '-' + elNr + '-flip" ' +
-      'class="rollFlipTwo disableFUfig smallButton';
+      'class="rollFlipTwo smallButton';
   }
   
+  // disable roll flip for no roll
+  if (pattern === '') {
+    html += ' disable';
+  } else if (elNr !== 0) html += ' disableFUfig';
+
   // decide wether the direction flip is activated for rolls
   if (pattern !== '') {
 
@@ -4738,7 +4744,7 @@ function addRollSelectElement (figNr, rollEl, elNr, parent) {
   // decide wether the direction flip is activated for rolls
   if (pattern !== '') {
     if (thisRoll.flipNumber[elNr]) html += ' on';
-  }
+  } else html += ' disable';
   
   html += '"><div><div></div></div></div>';
   
@@ -5214,6 +5220,7 @@ function showFigureSelector () {
     document.getElementById('figureSelector').classList.add('active');
   } else {
     document.getElementById('figureSelector').classList.add('leftActive');
+    document.getElementById('figureString').classList.add('inFigureSelector');
   }
 }
 
@@ -5223,6 +5230,7 @@ function showFigureSelector () {
 function hideFigureSelector () {
   document.getElementById('figureSelector').classList.remove('active');
   document.getElementById('figureSelector').classList.remove('leftActive');
+  document.getElementById('figureString').classList.remove('inFigureSelector');
 }
 
 // hideLogoChooser hides the logo chooser
@@ -5270,6 +5278,8 @@ function updateFigureOptions (figureId) {
   document.getElementById('selectedFigure').classList.remove('hidden');
   // hide fuSelectFigureFirst text by default
   document.getElementById('fuSelectFigureFirst').classList.add('noDisplay');
+  // hide figureStringInput by default
+  document.getElementById ('figureString').classList.add ('noDisplay');
 
   if (selectedFigure.id === null) {
     if (activeForm !== 'FU') {
@@ -5296,6 +5306,13 @@ function updateFigureOptions (figureId) {
     } else {
       document.getElementById ('t_addFigureText').classList.remove ('noDisplay');
     }
+    
+    if ((activeForm === 'FU') && (f.unknownFigureLetter === 'L')) {
+      // update and show figureStringInput
+      document.getElementById ('figureStringInput').value = (f.string !== 'l') ? f.string : '';
+      document.getElementById ('figureString').classList.remove ('noDisplay');
+    }
+
     // show figure modifiers
     document.getElementById('figureOptions').classList.remove ('noDisplay');
     document.getElementById('entryExit').classList.remove ('noDisplay');
@@ -5670,7 +5687,7 @@ function setEntryExitElements () {
 }
     
 // updateFigure will be called when any figure option is updated
-function updateFigure() {
+function updateFigure () {
   // get the current string
   var string = figures[selectedFigure.id].string;
   // get the base figure number
@@ -5776,6 +5793,8 @@ function updateFigure() {
     pattern = pattern.replace(/[\^\&\_]/, rolls);
     rollEl++;
   }
+  // pattern is empty, assume horizontal line (figure 1.1.1.1)
+  if (pattern === '') pattern = '0';
   // remove non-necessary roll elements in parenthesis, but only when
   // there are no active rolls in parenthesis
   // result is e.g.: dhd or dhd(1)()
@@ -7977,6 +7996,15 @@ function updateFigureSelectorOptions (selectedOption) {
   }
 }
 
+// changeFigureString is executed when the figureString in the Figure
+// Selector is changed
+function changeFigureString () {
+  var string = this.value.replace (/ /g, '');
+  this.value = string;
+  string = string || 'l';
+  updateSequence (selectedFigure.id, string, true, true);
+}
+
 // changeHideIllegal is executed when the hideIllegal checkbox is toggled
 function changeHideIllegal() {
   availableFigureGroups();
@@ -8435,8 +8463,8 @@ function selectFigure (e, noChooserUpdate) {
         // Replace the selected figure or add a new figure at the end
         // first we take the original base and remove + and full/any roll symbols
         var figure = fig[e.id].pattern.replace(/[\+\_\&]/g, '');
-        // Special case, put 0 for a horizontal line
-        if (fig[e.id].pattern == '+_+') figure = '0';
+        // Special case, put 0 for a horizontal line (figure 1.1.1.1)
+        if (fig[e.id].pattern === '+_+') figure = '0';
         // replace half roll symbols by actual half rolls
         figure = figure.replace(/\^/g, '2');
         // remove non-necessary roll elements in parenthesis, but only when
@@ -10172,6 +10200,14 @@ function makeFormA() {
           case (4):
             drawRectangle (x, y, columnWidths[column], rowHeight, 'formLine');
             if (figures[i].floatingPoint) {
+              if (iacForms) {
+                // add 'FP' for IAC form A
+                drawText ('FP',
+                  x + columnWidths[column] / 2,
+                  y + 20,
+                  'formAText',
+                  'middle');
+              }                
               drawText ('(' + figK + ')',
                 x + columnWidths[column] / 2,
                 y + rowHeight / 2 + 10,
@@ -14315,7 +14351,7 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
                   flipNumber = false;
                   comment = '';
                 } else if (rollPattern[j] === '0') {
-                  // Glider Slow roll
+                  // Glider Super Slow roll
                   var startJ = j;
                   // When there was a roll before, add a line first
                   if (extent > 0) {
@@ -14350,7 +14386,6 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
                       'flip':flipRoll,
                       'flipNumber':flipNumber,
                       'comment':comment});
-                    j++;
                   }
                   flipNumber = false;
                   comment = '';
@@ -15161,7 +15196,7 @@ function checkQRollSwitch (figString, figStringIndex, pattern, seqNr, rollSum, f
         }
 
       } else if (figureDraw[i] == figpat.hammer) {
-        // set a 'virtual' roll for the tailslides. HARDCODED
+        // set a 'virtual' roll for the hammerheads. HARDCODED
         nextRollExtent += 180;
       }
     }

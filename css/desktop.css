@@ -156,6 +156,7 @@ body {
 #figureSelector.leftActive {
   right: auto;
   left: 0;
+  padding-top: 30px;
 }
 #referenceSequenceString {
   width: 99%;

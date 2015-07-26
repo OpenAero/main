@@ -1,3 +1,15 @@
+1.5.2
+* added information on Floating Point to manual
+* removed text about PNG opening on iOS from manual
+* removed Intermediate from German Aerobatics rules, rules now for 2015
+* added "FP" text for Floating Point on IAC Form A were applicable (Issue #189)
+* fixed comment text block inversed colors and line height (Issue #186)
+* added checking for repetition of hesitation rolls, snaps and spins to CIVA Glider Free (Issue #184)
+* fixed problems with modifying figure 1.1.1.1 and disabled roll flipping for non-existent rolls (Issue #185)
+* added figure string input field for Free Unknown Designer linking figures (Issue #185)
+* added alert for CIVA Glider for section 6 part II 4.3.4.2 c (Issue #187)
+* fixed adding of opposite roll after Super Slow roll (Issue #190)
+
 1.5.1.8
 * added Floating Point calculation for IAC Sportsman Free (Issue #182)
 

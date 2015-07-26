@@ -44,6 +44,9 @@
 //  *improved detection of upright exit for seqcheck-upend
 // OpenAero 1.5.0
 // -added figures 2.2.7.1-4 to CIVA Glider rules for Known
+// OpenAero 1.5.2
+// -added checking for repetition of hesitation rolls, snaps and spins
+//  in Free
 
 //###################################################################################
 //################################ CIVA GLIDERS FREE ################################
@@ -82,9 +85,12 @@ rules.push("sf=^9\\.11\\.:3;^9\\.12\\.:3;^9\\.9\\.:4;^9\\.10\\.:4;^2\\.:2;^5\\.:
 //==========================================================================
 rules.push("basefigex11-repeat=1");// base figures except of 1.1.1. and 9.1
 // may not be repeated in sequence
-//##hesroll-repeat=1 # hesitation roll elements may not be repeated in sequence
-//##spin-repeat=1 # spin elements may not be repeated in sequence
-//##snap-repeat=1 # snap roll elements may not be repeated in sequence
+
+// Repetitions of rolls acc. to CIVA Section 6 part II Ch. 4.3.3.1 (a)
+//==========================================================================
+rules.push("hesroll-repeat=1");
+rules.push("snap-repeat=1");
+rules.push("spin-repeat=1");
 
 // Maximum K-Factor and number of figures acc. to CIVA Section 6 part II Ch. 4.3.3.1 (b)
 //======================================================================================
@@ -475,7 +481,14 @@ rules.push("k-maxperfig=40");// 2014 : maximum K for every figure
 //		80 (AG 70) for three figures
 //		95 (AG 85) for four figures
 
-// --- unable to implement ---
+// --- implemented only by warning ---
+
+// 4.3.4.2 c) Needs to be checked manually. Alert displays when there
+// are spaces in the sequence string
+
+rules.push("seqcheck-twoormore=^[^ ]*$");
+rules.push("twoormore-name=manual check required: section 6 part II 4.3.4.2&nbsp;c)");
+
 
 // 4.3.4.2 d) The same catalogue number may only be used once, except of fam. 9
 
@@ -870,6 +883,12 @@ rules.push("sf=^9\\.11\\.:3;^9\\.12\\.:3;^9\\.9\\.:4;^9\\.10\\.:4;^2\\.:2;^5\\.:
 rules.push("basefigex11-repeat=1");// base figures except of 1.1.1. and 9.1  ### Checken!!!
 // may not be repeated in sequence
 
+// Repetitions of rolls acc. to CIVA Section 6 part II Ch. 4.3.3.1 (a)
+//==========================================================================
+rules.push("hesroll-repeat=1");
+rules.push("snap-repeat=1");
+rules.push("spin-repeat=1");
+
 // Maximum K-Factor and number of figures acc. to CIVA Section 6 part II Ch. 4.3.3.1 (b)
 //======================================================================================
 rules.push("k-max=178");	// 2014 : maximum k-factor + maximum floating points
@@ -1215,6 +1234,12 @@ rules.push("spin-max=4");	// max 4 of spins
 // 4.3.4.2 b) No figure may be selected with a K higher than 40 (AG 35).
 
 rules.push("k-maxperfig=35");
+
+// 4.3.4.2 c) Needs to be checked manually. Alert displays when there
+// are spaces in the sequence string
+
+rules.push("seqcheck-twoormore=^[^ ]*$");
+rules.push("twoormore-name=manual check required: section 6 part II 4.3.4.2&nbsp;c)");
 
 // 4.3.4.2 d) The same catalogue number cannot be chosen again except for Family 9 ("AG"
 //		Families 5, 6 and 9)

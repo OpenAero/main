@@ -1,4 +1,4 @@
-﻿// fr.js 1.5.1
+﻿// fr.js 1.5.1.3
 // This file is part of OpenAero.
 
 //  OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -32,11 +32,11 @@ lang.fr = {
 // Subsequent keys are alphabetical.
 'fr' : 'Français',
 'about' : 'A propos',
-// new 1.4.5
+// changed 1.5.1.3
 'aboutNewer' : 'Vous travaillez avec une version plus récente que la version courante. ' +
   'Vous disposez des dernières améliorations, mais vous pouvez rencontrer des bugs. ' +
   'Si c\'est le cas, vous aiderez à l\'amélioration d\' OpenAero en les ajoutant à ' +
-  '<a href="https://code.google.com/p/open-aero/issues/list">la ' +
+  '<a href="https://github.com/OpenAero/main/issues">la ' +
   'liste des améliorations</a>.',
 'aboutOlder' : '<font color="red">Vous travaillez avec une ancienne version. ' +
   '</font>Si vous travaillez hors connexion, vérifiez les instructions au ' +
@@ -235,6 +235,9 @@ lang.fr = {
 //
 'figurePositioning' : 'Positionnement de figure',
 'figureQueue' : 'File / Tampon',
+// new 1.5.2
+'figureString' : 'Texte du figure',
+//
 'file' : 'Fichier',
 'fileName' : 'Nom du fichier',
 'finalizeSequence' : 'Finaliser le programme et quitter l\'assembleur',

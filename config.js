@@ -1,4 +1,4 @@
-// config.js 1.5.1.8
+// config.js 1.5.2
 
 // This file is part of OpenAero.
 
@@ -34,13 +34,17 @@
 // Define active version number of OpenAero
 // **************
 
-var version = '1.5.1.8';
+var version = '1.5.2';
 // versionNew is an object that contains version update information
 // The structure is {vvv : [[ttt, n], ...], ...} , where
 // vvv = version number
 // ttt = update text
 // n   = importance (higher = more important)
 var versionNew = {
+  '1.5.2' : [
+    ['Updated German Aerobatics and CIVA Glider rules', 2],
+    ['Added figure string input field for Free Unknown Designer linking figures', 1]
+  ],
   '1.5.1.4' : [
     ['Fixed printing failing on some systems', 3]
   ],
@@ -251,7 +255,7 @@ var style = {
   'figNbr_09' : 'font-family: verdana, helvetica, sans; font-size: 14px; font-weight: bold; fill: black;',
   'figNbr_10' : 'font-family: verdana, helvetica, sans; font-size: 12px; font-weight: bold; fill: black;',
   // Text block style
-  'textBlock' : 'font-family: verdana, helvetica, sans; font-size: 14px; fill: black;',
+  'textBlock' : 'font-family: verdana, helvetica, sans; font-size: 20px; fill: black;',
   'textBlockBorder' : 'stroke: black; stroke-width: 1px; fill: none;',
   'textBlockBorderBold' : 'stroke: black; stroke-width: 2px; fill: none;',
   'textBlockBorderBoldRed' : 'stroke: red; stroke-width: 2px; fill: none;',

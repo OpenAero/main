@@ -839,6 +839,25 @@ float: left;
 #selectedFigure.active {
   float: left;
 }
+#figureString {
+  position: relative;
+  z-index: 3;
+  left: 0;
+  top: 0;
+  width: 102px;
+  -webkit-transition: all 1s ease-in-out;
+  -moz-transition: all 1s ease-in-out;
+  -o-transition: all 1s ease-in-out;
+  transition: all 1s ease-in-out;
+}
+#figureString.inFigureSelector {
+  left: 60px;
+  top: -64px;
+  width: 320px;
+}
+#figureStringInput {
+  width: 100px;
+}
 #unknownFigureChooser {
 	float: left;
   width: 144px;
