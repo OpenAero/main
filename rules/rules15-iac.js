@@ -183,3 +183,13 @@ rules.push("allow=^[1-9]"); //all figures are allowed
 
 // what info should be filled out
 rules.push("infocheck=pilot;aircraft;positioning");
+
+//###############################################################################
+//##### IAC UNLIMITED FREE ######################################################
+//###############################################################################
+
+rules.push("[IAC Unlimited Free]");
+
+rules.push("posnl=26");
+
+rules.push("more=CIVA/IAC Unlimited Free");

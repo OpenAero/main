@@ -1,3 +1,13 @@
+1.5.2.2
+* added IAC Unlimited Free. Also required change in CIVA rules file (Issue #195)
+* improved GRID layout for sequences with country codes and large figures (Issue #196)
+* added figure K to figures in Free Unknown designer Figures tab (Issue #185)
+* fixed figure editor in Free Unknown designer not showing up automatically for link as first (Issue #191)
+
+1.5.2.1
+* corrected roll checking for CIVA Glider Unlimited Unknown figure 8.7.6.4 (Issue #194)
+* added AAC Sportsman Free rules
+
 1.5.2
 * added information on Floating Point to manual
 * removed text about PNG opening on iOS from manual

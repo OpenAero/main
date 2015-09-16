@@ -1,5 +1,5 @@
 /*
- general.css 1.5.1
+ general.css 1.5.2.2
  This file is part of OpenAero.
 
   OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -845,10 +845,10 @@ float: left;
   left: 0;
   top: 0;
   width: 102px;
-  -webkit-transition: all 1s ease-in-out;
-  -moz-transition: all 1s ease-in-out;
-  -o-transition: all 1s ease-in-out;
-  transition: all 1s ease-in-out;
+  -webkit-transition: left 1s ease-in-out, top 1s ease-in-out, width 1s ease-in-out;
+  -moz-transition: left 1s ease-in-out, top 1s ease-in-out, width 1s ease-in-out;
+  -o-transition: left 1s ease-in-out, top 1s ease-in-out, width 1s ease-in-out;
+  transition: left 1s ease-in-out, top 1s ease-in-out, width 1s ease-in-out;
 }
 #figureString.inFigureSelector {
   left: 60px;
@@ -1161,8 +1161,19 @@ table#figureChooserTable div {
   color: #048;
   text-shadow:-1px -1px white, 1px 1px white;
   font-size: 1.4em;
-  margin-left: 0.5em;
+  margin-left: 0.2em;
   left: 0;
+  bottom: 0;
+}
+.UFKInQueue {
+  position: absolute; /* relative to container */
+  color: #048;
+  text-shadow:-1px -1px white, 1px 1px white;
+  font-size: 0.6em;
+  font-weight: bold;
+  letter-spacing: 0.1em;
+  margin-right: 0.2em;
+  right: 0;
   bottom: 0;
 }
 .queueUsed {

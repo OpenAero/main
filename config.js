@@ -1,4 +1,4 @@
-// config.js 1.5.2
+// config.js 1.5.2.2
 
 // This file is part of OpenAero.
 
@@ -34,13 +34,16 @@
 // Define active version number of OpenAero
 // **************
 
-var version = '1.5.2';
+var version = '1.5.2.2';
 // versionNew is an object that contains version update information
 // The structure is {vvv : [[ttt, n], ...], ...} , where
 // vvv = version number
 // ttt = update text
 // n   = importance (higher = more important)
 var versionNew = {
+  '1.5.2.1' : [
+    ['Added AAC Sportsman Free rules', 2]
+  ],
   '1.5.2' : [
     ['Updated German Aerobatics and CIVA Glider rules', 2],
     ['Added figure string input field for Free Unknown Designer linking figures', 1]

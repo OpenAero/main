@@ -1,4 +1,4 @@
-﻿// OpenAero.js 1.5.2
+﻿// OpenAero.js 1.5.2.2
 // This file is part of OpenAero.
 
 //  OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -8199,8 +8199,7 @@ function changeFigureGroup() {
             inner.appendChild(div);
           }
         }
-         
-        
+
         // add this figure's Aresti number and pattern to arestiDraw
         // so it is not drawn twice
         arestiDraw.push(fig[i].aresti+fig[i].draw);
@@ -9760,6 +9759,10 @@ function handleFuDrop (e) {
     // sequence always ends with 'eu'
     string = string.replace (regexSub, '');
     updateSequence (figures.length - 1, string + ' eu');
+    // when dropping LINK, select and open figure editor
+    if (string.match (/\@L/)) {
+      selectFigureFu (figures.length - 2);
+    }
   } else {
     // drop figure or subsequence on figure (or end)
     var figNr = parseInt(this.className.match(regexFuFigNr)[1]);
@@ -10010,7 +10013,7 @@ function buildFuFiguresTab() {
           paths[j].style = 'chooserPos';
         }
       }
-      figures[-1] = {'paths': paths, 'aresti': figures[-1].aresti};
+      figures[-1].paths = paths;
   
       // reset X and Y and clear figureStart to prevent adjusting
       // figure position
@@ -10055,9 +10058,10 @@ function buildFuFiguresTab() {
     td.setAttribute('id', 'fu' + l);
     if (l != 'L') {
       td.innerHTML = fuFig[l].svg;
-    
-      // add the unknownFigureLetter
+      // add the unknownFigureLetter and K
       td.innerHTML += '<div class="UFletterInQueue">' + l + '</div>';
+      td.innerHTML += '<div class="UFKInQueue">K:' +
+         figures[-1].k.reduce(function(a, b){return a+b;}) + '</div>';
     } else {
       td.innerHTML = userText.LINK;
     }
@@ -10336,6 +10340,7 @@ function makeFormGrid (cols, width, svg) {
       // draw figure Ks, Arestis and Figure Letter
       var textWidth = 0;
       var figK = 0;
+      // yy is used to determine the top of all Aresti nrs, comments etc
       var yy = y + ch - 10;
       for (var j = f.k.length - 1; j>=0; j--) figK += parseInt(f.k[j]);
       drawText('K: ' + figK,  x + 5, yy, 'formATextBold', 'start', '', svg);
@@ -10348,7 +10353,8 @@ function makeFormGrid (cols, width, svg) {
           'start',
           'Fig' + i + 'Aresti' + j,
           svg);
-        var tw = svg.lastChild.getBBox().width;
+        var bBox = svg.lastChild.getBBox();
+        var tw = bBox.width;
         if (tw > textWidth) textWidth = tw;
       }
       if (f.unknownFigureLetter) {
@@ -10366,8 +10372,8 @@ function makeFormGrid (cols, width, svg) {
       if (f.comments) {
         var flagWidth = 0;
         var code = false;
-        // check for three-letter flag code
-        var match = f.comments.match(/[A-Z]{3}/g);
+        // check for three-letter flag code in separate "word"
+        var match = f.comments.match(/\b[A-Z]{3}\b/g);
         if (match) {
           for (var j = match.length - 1; j >= 0; j--) {
             // check for IOC codes first
@@ -10409,7 +10415,11 @@ function makeFormGrid (cols, width, svg) {
         }
         var bBox = g.getBBox();
         // check if comments fit right of Aresti nrs, scale if necessary
-        var scale = Math.min ((cw - tw - flagWidth - 40) / bBox.width, 1);
+        if (flag && (((y + ch) - yy) > bBox.height)) {
+          var scale = Math.min ((cw - tw - 40) / bBox.width, 1);
+        } else {
+          var scale = Math.min ((cw - tw - flagWidth - 40) / bBox.width, 1);
+        }
         if (scale < 0.67) {
           // would get too small, put above Aresti nrs and scale to
           // column width, upto factor 0.67
@@ -10420,14 +10430,28 @@ function makeFormGrid (cols, width, svg) {
             roundTwo(yy - (bBox.y * scale)) + ') scale(' +
             roundTwo(scale) + ')');
         } else {
-          // put right and scale
-          if (((yy - 15) + (bBox.height * scale)) > ((y + ch) - 10)) {
+          // put right bottom and scale
+          /*if (((yy - 15) + (bBox.height * scale)) > ((y + ch) - 10)) {
             yy = (y + ch) + 5 - (bBox.height * scale);
           }
           g.setAttribute ('transform', 'translate(' +
             roundTwo(x - (bBox.x * scale) + tw + 25) + ',' + 
             roundTwo((yy - 15) - (bBox.y * scale)) + ') scale(' +
-            roundTwo(scale) + ')');
+            roundTwo(scale) + ')');*/
+          console.log(scale);
+          if (flag) {
+            yy = Math.min (y + ch + 15 - (bBox.height * scale) - flag.getAttribute('height'), yy);
+            g.setAttribute ('transform', 'translate(' +
+              roundTwo((x - ((bBox.x + bBox.width) * scale)) + cw - 3) + ',' + 
+              roundTwo((y + ch + 3 - ((bBox.y + bBox.height) * scale) - flag.getAttribute('height'))) + ') scale(' +
+              roundTwo(scale) + ')');
+          } else {
+            yy = Math.min (y + ch + 15 - (bBox.height * scale), yy);
+            g.setAttribute ('transform', 'translate(' +
+              roundTwo((x - ((bBox.x + bBox.width) * scale)) + cw - 3) + ',' + 
+              roundTwo((y + ch - 2 - ((bBox.y + bBox.height) * scale))) + ') scale(' +
+              roundTwo(scale) + ')');
+            }
         }
       }
         
@@ -10472,15 +10496,15 @@ function makeFormGrid (cols, width, svg) {
     svg.setAttribute("height", (y + ch + 2));
   }    
 
-  // go through the figures again, set maximum scale to scaleMin * 1.8
+  // go through the figures again, set maximum scale to scaleMin * 2
   // and recenter horizontally when necessary
   for (var i = 0; i < figures.length; i++) {
     var f = figures[i];
     if (f.aresti) {
       var thisFig = svg.getElementById('figure' + i);
       var scale = f.viewScale;
-      if (scale > (scaleMin * 1.8)) {
-        var scale = scaleMin * 1.8;
+      if (scale > (scaleMin * 2)) {
+        var scale = scaleMin * 2;
         var bBox = f.bBox;
         var x = roundTwo(f.tx + (bBox.x * f.viewScale) - ((cw - bBox.width * f.viewScale) / 2));
         var y = roundTwo(f.ty + (bBox.y * f.viewScale) - ((f.fh - bBox.height * f.viewScale) / 2));
@@ -14442,9 +14466,9 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
   // fix the figNr in the figures object
   var arestiNrs = new Array(fig[figNr].aresti);
   if ((sportingClass.value === 'glider') && (fig[figNr].kglider)) {
-    var kFactors = new Array(fig[figNr].kglider);
+    var kFactors = [parseInt(fig[figNr].kglider)];
   } else {
-    var kFactors = new Array(fig[figNr].kpwrd);
+    var kFactors = [parseInt(fig[figNr].kpwrd)];
   }
   figures[figStringIndex].figNr = figNr;
   figCheckLine[seqNr] = fig[figNr].aresti;
@@ -14656,7 +14680,7 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
             var rollI = rollBase.indexOf(rollAtt + roll[rollnr][j].pattern);
             if (rollI >= 0) {
               arestiNrs.push (rollAresti[rollI]);
-              if ((sportingClass.value == 'glider') && (rollKGlider[rollI])) {
+              if ((sportingClass.value === 'glider') && (rollKGlider[rollI])) {
                 kFactors.push (rollKGlider[rollI]);
               } else {
                 kFactors.push (rollKPwrd[rollI]);
@@ -14889,7 +14913,7 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
             }
             if (rollI >= 0) {
               arestiNrs.push (rollAresti[rollI]);
-              if ((sportingClass.value == 'glider') && (rollKGlider[rollI])) {
+              if ((sportingClass.value === 'glider') && (rollKGlider[rollI])) {
                 kFactors.push (rollKGlider[rollI]);
               } else kFactors.push (rollKPwrd[rollI]);
             }

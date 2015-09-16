@@ -47,6 +47,8 @@
 // OpenAero 1.5.2
 // -added checking for repetition of hesitation rolls, snaps and spins
 //  in Free
+// OpenAero 1.5.2.1
+// -corrected roll checking for Unlimited Unknown figure 8.7.6.4
 
 //###################################################################################
 //################################ CIVA GLIDERS FREE ################################
@@ -796,7 +798,7 @@ rules.push("8.7.5.2  NHR:2 ; NOU:2 ; NOU:3 ; nfpf:1");
 rules.push("8.7.5.4  NR:2 ; NR:3 ; nfpf:1");
 rules.push("8.7.6.1  NOU:2 ; NOU:3 ; nfpf:1");
 rules.push("8.7.6.2  NHR:2 ; NOU:2 ; NOU:3 ; nfpf:1");
-rules.push("8.7.6.4  NR:2 ; NOU:3 ; nfpf:1");
+rules.push("8.7.6.4  NOU:2 ; nfpf:1");
 
 // Rolls
 //------
