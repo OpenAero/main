@@ -27,6 +27,10 @@
 // - fixed basefigex11-repeat rule
 // 1.5.1.8
 // - added floating-point for Sportsman Free
+// 1.5.2.2
+// - added Unlimited Free
+// 1.5.2.3
+// - updated infocheck directives for actype and acreg
 
 //###############################################################################
 //##### IAC Primary KNOWN #######################################################
@@ -80,7 +84,7 @@ rules.push("emptyline-max=0");
 rules.push("allow=^[1-9]"); //all figures are allowed for the Free Program
 
 // what info should be filled out
-rules.push("infocheck=pilot;aircraft;positioning");
+rules.push("infocheck=pilot;actype;acreg;positioning");
 
 //###############################################################################
 //##### IAC INTERMEDIATE FREE ##################################################
@@ -111,7 +115,7 @@ rules.push("emptyline-max=0");
 rules.push("allow=^[1-9]"); //all figures are allowed for the Free Program
 
 // what info should be filled out
-rules.push("infocheck=pilot;aircraft;positioning");
+rules.push("infocheck=pilot;actype;acreg;positioning");
 
 //###############################################################################
 //##### IAC INTERMEDIATE UNKNOWN##################################################
@@ -129,7 +133,7 @@ rules.push("emptyline-max=0");
 rules.push("allow=^[1-9]"); //all figures are allowed 
 
 // what info should be filled out
-rules.push("infocheck=pilot;aircraft;positioning");
+rules.push("infocheck=pilot;actype;acreg;positioning");
 
 //###############################################################################
 //##### IAC ADVANCED FREE ##################################################
@@ -164,7 +168,7 @@ rules.push("emptyline-max=0");
 rules.push("allow=^[1-9]"); //all figures are allowed for the Free Program
 
 // what info should be filled out
-rules.push("infocheck=pilot;aircraft;positioning");
+rules.push("infocheck=pilot;actype;acreg;positioning");
 //###############################################################################
 //##### IAC ADVANCED UNKNOWN##################################################
 //###############################################################################
@@ -182,7 +186,7 @@ rules.push("emptyline-max=0");
 rules.push("allow=^[1-9]"); //all figures are allowed 
 
 // what info should be filled out
-rules.push("infocheck=pilot;aircraft;positioning");
+rules.push("infocheck=pilot;actype;acreg;positioning");
 
 //###############################################################################
 //##### IAC UNLIMITED FREE ######################################################

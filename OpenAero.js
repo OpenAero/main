@@ -160,6 +160,11 @@ var confirmFunction;
 // mobileBrowser is true when OpenAero is run on a mobile browser
 var mobileBrowser = false;
 
+// touchDevice is true on touch enabled devices
+var touchDevice = (('ontouchstart' in window)
+  || (navigator.maxTouchPoints > 0)
+  || (navigator.msMaxTouchPoints > 0));
+
 // browserString identifies the browser
 var browserString = '';
 
@@ -209,6 +214,7 @@ base    : the pattern for each figure as it's written in the sequence,
            with + and - but without any rolls
 aresti  : the Aresti number for each figure 
 rolls   : shows which roll positions are possible for each figure
+          types are 1=full roll, 2=half roll, 3=any roll
 kpwrd   : the powered K factor for each figure
 kglide  : the glider K factor for each figure
 draw    : the drawing instructions for each figure
@@ -758,7 +764,7 @@ var iosDragDropShim = { enableEnterLeave: true,
     // var dragDiv = 'draggable' in div;
     // var evts = 'ondragstart' in div && 'ondrop' in div;    
     // var needsPatch = !(dragDiv || evts) || /iPad|iPhone|iPod/.test(navigator.userAgent);
-    var needsPatch = isTouchDevice();
+    var needsPatch = touchDevice;
     
     log((needsPatch ? "" : "not ") + "patching html5 drag drop");
 
@@ -1255,9 +1261,15 @@ function rebuildSequenceSvg () {
   SVGRoot.setAttribute("viewBox", "0 0 800 600");
   // enable figure selection and drag&drop on all forms except A
   if (activeForm != 'A') {
-    SVGRoot.addEventListener ('mousedown', grabFigure, false);
-    SVGRoot.addEventListener ('mousemove', Drag, false);
-    SVGRoot.addEventListener ('mouseup', Drop, false);    
+    if (touchDevice) {
+      SVGRoot.addEventListener ('touchstart', grabFigure, false);
+      SVGRoot.addEventListener ('touchmove', Drag, false);
+      SVGRoot.addEventListener ('touchend', Drop, false);    
+    } else {
+      SVGRoot.addEventListener ('mousedown', grabFigure, false);
+      SVGRoot.addEventListener ('mousemove', Drag, false);
+      SVGRoot.addEventListener ('mouseup', Drop, false);    
+    }
   }
   
   // this will serve as the canvas over which items are dragged.
@@ -1376,13 +1388,15 @@ function printDialog(show) {
       document.getElementById('printOptions').classList.add ('section2cols');
       document.getElementById('printOptions').classList.remove ('section3cols');
   
-      // by default, disable "Print Super Family"
+      // by default, disable "Print Super Family", but enable change
       var el = document.getElementById('printSF');
       el.checked = false;
-      // enable when rules with sf definition active
+      el.disabled = false;
+      // enable when rules with sf definition active and disable change
       if (rulesActive) {
         if (ruleSuperFamily.length) {
           el.checked = true;
+          el.disabled = true;
         }
       }
     });
@@ -1488,7 +1502,7 @@ function newWindow (body, title) {
         win.document.body = body;
       };
     });
-  } else if (isTouchDevice()) {
+  } else if (touchDevice) {
     alertBox ('<textarea id="newWindow" readonly></textarea>', title)
     document.getElementById('newWindow').innerText = body.innerText;
   } else {
@@ -1964,7 +1978,7 @@ function makeFigStart (params) {
 
 // makeFigStop creates figure stop
 function makeFigStop (lastFig) {
-  var pathArray = [];
+  var pathArray = {style:'pos'};
   var angle = (Direction + 90) * degToRad;
   var dx = roundTwo(Math.cos(angle) * lineElement / scale);
   var dy = - roundTwo(Math.sin(angle) * lineElement / scale);
@@ -1974,13 +1988,11 @@ function makeFigStop (lastFig) {
     var dy2 = - roundTwo(Math.sin(angle2) * lineElement);
     pathArray.path = 'm ' + (dx2 + dx * 2) + ',' + (dy2 + dy * 2) +
       ' l ' + (-4 * dx) + ',' + (-4 * dy);
-    pathArray.style = 'pos';
     pathArray.dx = dx2;
     pathArray.dy = dy2;
   } else {
     pathArray.path = 'l ' + dx + ',' + dy + ' l ' + (-2 * dx) +
       ',' + (-2 * dy);
-    pathArray.style = 'pos';
     pathArray.dx = 0;
     pathArray.dy = 0;
   }
@@ -1990,50 +2002,42 @@ function makeFigStop (lastFig) {
 // makeFigSpace creates space after figure
 // scaling should not affect movement, so divide by scale
 function makeFigSpace (extent) {
-  var pathArray = [];
   var angle = dirAttToAngle (Direction, Attitude);
-  var dx = Math.cos(angle) * (lineElement / scale) * extent;
-  var dy = - Math.sin(angle) * (lineElement / scale) * extent;
-  pathArray.path = '';
-  pathArray.style = 'neg';
-  pathArray.dx = roundTwo(dx);
-  pathArray.dy = roundTwo(dy);
-  return Array(pathArray);
+  return Array({
+    'path': '',
+    'style': 'neg',
+    'dx': roundTwo(Math.cos(angle) * (lineElement / scale) * extent),
+    'dy': roundTwo(-Math.sin(angle) * (lineElement / scale) * extent)
+  });
 }
 
 // makeVertSpace creates vertical space
 // scaling should not affect movement, so divide by scale
 function makeVertSpace (extent) {
-  var pathArray = [];
-  pathArray.path = '';
-  pathArray.style = 'neg';
-  pathArray.dx = 0;
-  pathArray.dy = (lineElement / scale) * extent;
-  return Array(pathArray);
-}
-
-// makeFigLast creates last figure stop
-function makeFigLast () {
-  var pathArray = new Array(2);
+  return Array({
+    'path': '',
+    'style': 'neg',
+    'dx': 0,
+    'dy': (lineElement / scale) * extent
+  });
 }
 
 // makeLine creates lines
 // Params:
 // 0: line length
+// 1: handle
 function makeLine (Params) {
   var Extent = Params[0];
-  var pathArray = [];
   var angle = dirAttToAngle (Direction, Attitude);
   var dx = roundTwo(Math.cos(angle) * lineElement * Extent);
   var dy = - roundTwo(Math.sin(angle) * lineElement * Extent);
   if (((Direction == 90) || (Direction == 270)) && curvePerspective) {
     dx = roundTwo(yAxisScaleFactor*dx);
-    if ((Attitude == 90) || (Attitude == 270)) {
-    } else {
+    if (!((Attitude == 90) || (Attitude == 270))) {
       dy = roundTwo(yAxisScaleFactor*dy);
     }
     if (((Attitude == 45) || (Attitude == 315)) || ((Attitude == 225) || (Attitude == 135))) {
-      angle = angle - (yAxisOffset * degToRad);
+      angle -= yAxisOffset * degToRad;
       dx = roundTwo(scaleLine.x * Math.cos(angle) * lineElement * Extent);
       if (yAxisOffset > 90) {
         dy = roundTwo((-scaleLine.y * Math.cos(angle) + Math.sin(angle)) * lineElement * Extent);
@@ -2041,29 +2045,30 @@ function makeLine (Params) {
         dy = - roundTwo((scaleLine.y * Math.cos(angle) + Math.sin(angle)) * lineElement * Extent);
       }
       True_Drawing_Angle = Math.atan(-dy/dx);
-      if (dx < 0) True_Drawing_Angle = True_Drawing_Angle + Math.PI;
+      if (dx < 0) True_Drawing_Angle += Math.PI;
     }
   } else True_Drawing_Angle = angle;
-  pathArray.path = 'l ' + dx + ',' + dy;
-  pathArray.style = (NegLoad == 0)? 'pos' : 'neg';
-  pathArray.dx = dx;
-  pathArray.dy = dy;
-  return Array(pathArray);
+  return Array({
+    'path': 'l ' + dx + ',' + dy,
+    'style': (NegLoad == 0)? 'pos' : 'neg',
+    'class': 'line',
+    'handle': Params[1],
+    'dx': dx,
+    'dy': dy
+  });
 }
 
 // makeMove is similar to makeLine but only moves the pointer and
 // creates no lines
 function makeMove (Params) {
   var Extent = Params[0];
-  var pathArray = [];
   var angle = dirAttToAngle (Direction, Attitude);
-  var dx = roundTwo(Math.cos(angle) * lineElement * Extent);
-  var dy = - roundTwo(Math.sin(angle) * lineElement * Extent);
-  pathArray.path = '';
-  pathArray.style = '';
-  pathArray.dx = dx;
-  pathArray.dy = dy;
-  return Array(pathArray);
+  return Array({
+    'path': '',
+    'style': '',
+    'dx': roundTwo(Math.cos(angle) * lineElement * Extent),
+    'dy': -roundTwo(Math.sin(angle) * lineElement * Extent)
+  });
 }
 
 // makeCorner creates sharp corners. Actually it only changes direction,
@@ -2071,14 +2076,12 @@ function makeMove (Params) {
 function makeCorner (param) {
   // make sure param is an Integer
   param = parseInt (param);
-  var Extent = Math.abs(param);
-  var PullPush = (param >= 0)? 0 : 1;
-  var pathArray = [];
   changeAtt (param);
-  pathArray.path = '';
-  NegLoad = PullPush;
-  pathArray.style = (NegLoad == 0)? 'pos' : 'neg';
-  return Array(pathArray);
+  NegLoad = (param >= 0)? 0 : 1;
+  return Array({
+    'path': '',
+    'style': (NegLoad == 0)? 'pos' : 'neg'
+  });
 }
 
 // getEllipseParameters gets the ellipse radius and orientation from
@@ -2119,7 +2122,7 @@ function getEllipseParameters(P_Angle,Y_Scale) {
     B*Math.cos(theta)) / (A*Math.cos(theta))) / Math.PI)) ;
   var V_r_max = roundTwo(Math.sqrt(Math.pow(A*Math.cos(theta),2) +
     Math.pow(Math.sin(theta) + B*Math.cos(theta),2)));
-  theta = theta + Math.PI/2 ;
+  theta += Math.PI/2 ;
   var V_r_min = roundTwo(Math.sqrt(Math.pow(A*Math.cos(theta),2) +
     Math.pow(Math.sin(theta) + B*Math.cos(theta),2)));
   // Parameters for perspective of elements in the horizontal plane
@@ -2127,7 +2130,7 @@ function getEllipseParameters(P_Angle,Y_Scale) {
   theta = Math.atan(2*A/(1 - Y_Scale * Y_Scale))/2 ;
   var H_r_max = roundTwo(Math.sqrt(Math.pow(Math.cos(theta) +
     A*Math.sin(theta),2) + Math.pow(B*Math.sin(theta),2)));
-  theta = theta + Math.PI/2 ;
+  theta += Math.PI/2 ;
   var H_r_min = roundTwo(Math.sqrt(Math.pow(Math.cos(theta) +
     A*Math.sin(theta),2) + Math.pow(B*Math.sin(theta),2)));
   var H_orient = roundTwo(-90 - 180 * Math.atan((B*Math.sin(theta)) /
@@ -2261,7 +2264,7 @@ function makeCurve (param) {
     var Rot_axe_Ellipse = (yAxisOffset < 90) ? perspective_param.rot_angle : -perspective_param.rot_angle;
     var X_axis_Radius = perspective_param.x_radius * Radius;
     var Y_axis_Radius = perspective_param.y_radius * Radius;
-    dy = dy - dx * Math.sin(yAxisOffset * degToRad);
+    dy -= dx * Math.sin(yAxisOffset * degToRad);
     dx = dx * Math.cos(yAxisOffset * degToRad);
     pathArray.path = 'a' + roundTwo(X_axis_Radius) + ',' +
       roundTwo(Y_axis_Radius) + ' ' + Rot_axe_Ellipse + ' ' + longCurve +
@@ -2340,9 +2343,9 @@ function makeTurnArc (rad, startRad, stopRad, pathsArray) {
     var Rot_axe_Ellipse = (yAxisOffset < 90) ? perspective_param.H_rot_angle : -perspective_param.H_rot_angle;
     var X_curveRadius = roundTwo(perspective_param.H_x_radius * curveRadius) ;
     var Y_curveRadius = roundTwo(perspective_param.H_y_radius * curveRadius) ;
-    dy =  yAxisScaleFactor * (Math.cos(stopRad) - Math.cos(startRad)) ;
-    dx =  roundTwo((Math.sin(stopRad) - Math.sin(startRad) - dy * Math.cos(yAxisOffset * degToRad)) * curveRadius) * sign;
-    dy =  roundTwo(dy * Math.sin(yAxisOffset * degToRad) * curveRadius) * sign;
+    dy = yAxisScaleFactor * (Math.cos(stopRad) - Math.cos(startRad)) ;
+    dx = roundTwo((Math.sin(stopRad) - Math.sin(startRad) - dy * Math.cos(yAxisOffset * degToRad)) * curveRadius) * sign;
+    dy = roundTwo(dy * Math.sin(yAxisOffset * degToRad) * curveRadius) * sign;
     sweepFlag = (rad > 0)? 0 : 1;
     longCurve = (Math.abs (rad) < Math.PI)? 0 : 1;
     if ((Attitude > 90) && (Attitude < 270)) {
@@ -2385,7 +2388,7 @@ function makeTurnDots (rad, startRad, stopRad, pathsArray) {
     dx = (stopX - startX) * sign;
     dy = (stopY - startY) * sign;
     sweepFlag = (rad > 0)? 0 : 1;
-    if (Math.abs (rad) < Math.PI) longCurve = 0; else longCurve = 1;
+    longCurve = (Math.abs (rad) < Math.PI) ? 0 : 1;
     pathsArray.push({'path':'a ' + curveRadius + ',' +
       roundTwo(curveRadius * flattenTurn) + ' 0 ' + longCurve + ' ' +
       sweepFlag + ' ' + dx + ',' + dy, 'style':'dotted'});
@@ -2399,7 +2402,7 @@ function makeTurnDots (rad, startRad, stopRad, pathsArray) {
     dx =  roundTwo((Math.sin(stopRad) - Math.sin(startRad) - dy * Math.cos(yAxisOffset * degToRad)) * curveRadius) * sign;
     dy =  roundTwo(dy * Math.sin(yAxisOffset * degToRad) * curveRadius) * sign;
     sweepFlag = (rad > 0)? 0 : 1;
-    if (Math.abs (rad) < Math.PI) longCurve = 0; else longCurve = 1;
+    longCurve = (Math.abs (rad) < Math.PI) ? 0 : 1;
     pathsArray.push({'path':'a ' + X_curveRadius + ',' +
       Y_curveRadius + ' ' + Rot_axe_Ellipse + ' ' + longCurve + ' ' +
       sweepFlag + ' ' + dx + ',' + dy, 'style':'dotted'});
@@ -2433,10 +2436,10 @@ function makeTurnRoll (param, rad) {
     var radPoint = rad + sign * (Math.PI / 6);
     dx = (((Math.cos(radPoint) * (rollcurveRadius + 4)) - (radCos * rollcurveRadius))) - dxTip;
     dy = -(((Math.sin(radPoint) * (rollcurveRadius + 4)) - (radSin * rollcurveRadius))) - dyTip;
-    path = path + 'l ' + roundTwo(dx) + ',' + roundTwo(dy) + ' ';
+    path += 'l ' + roundTwo(dx) + ',' + roundTwo(dy) + ' ';
     dx = (((Math.cos(radPoint) * (rollcurveRadius - 4)) - (radCos * rollcurveRadius))) - dx - dxTip;
     dy = -(((Math.sin(radPoint) * (rollcurveRadius - 4)) - (radSin * rollcurveRadius))) - dy - dyTip;
-    path = path + 'l ' + roundTwo(dx) + ',' + roundTwo(dy) + ' z';
+    path += 'l ' + roundTwo(dx) + ',' + roundTwo(dy) + ' z';
     pathsArray.push ({'path':path, 'style':'blackfill'});
   
     // Calculate at which angle the curve starts and stops
@@ -2467,12 +2470,12 @@ function makeTurnRoll (param, rad) {
     dy = -(((Math.sin(radPoint) * (turn_rollcurveRadius + arrow_tip_width)) - (radSin * turn_rollcurveRadius))) - dyTip;
     var el_dx = dx - yAxisScaleFactor * dy * persp_Cos ; 
     var el_dy = yAxisScaleFactor * dy * persp_Sin ; 
-    path = path + 'l ' + roundTwo(el_dx) + ',' + roundTwo(el_dy) + ' ';
+    path += 'l ' + roundTwo(el_dx) + ',' + roundTwo(el_dy) + ' ';
     dx = (((Math.cos(radPoint) * (turn_rollcurveRadius - arrow_tip_width)) - (radCos * turn_rollcurveRadius))) - dx - dxTip;
     dy = -(((Math.sin(radPoint) * (turn_rollcurveRadius - arrow_tip_width)) - (radSin * turn_rollcurveRadius))) - dy - dyTip;
     el_dx = dx - yAxisScaleFactor * dy * persp_Cos ; 
     el_dy = yAxisScaleFactor * dy * persp_Sin ; 
-    path = path + 'l ' + roundTwo(el_dx) + ',' + roundTwo(el_dy) + ' z';
+    path += 'l ' + roundTwo(el_dx) + ',' + roundTwo(el_dy) + ' z';
     pathsArray.push ({'path':path, 'style':'blackfill'});
   
     // Calculate at which angle the curve starts and stops
@@ -2588,7 +2591,7 @@ function makeTurn (draw) {
     var step = rad / steps;
     var halfStepSigned = sign * (step / 2);
     var rollPos = 1;
-    for (var i = 0; i < rad; i = i + step) {
+    for (var i = 0; i < rad; i += step) {
       pathsArray = makeTurnArc (halfStepSigned, startRad, startRad + halfStepSigned, pathsArray);
       startRad += halfStepSigned;
       if (numbers[rollPos] == '5') { 
@@ -2665,12 +2668,12 @@ function makeRollText (extent, stops, sign, comment, radSin, radCos) {
     text = comment;
   }
 
-  if ((parseInt(extent / 180) != (extent / 180)) || (stops > 0) || (text.length > 0)) {
+  if ((extent % 180) || (stops > 0) || (text.length > 0)) {
     if (stops > 0) {
       if (text.length > 0) text = ' ' + text;
       if (extent != 360) text = 'x' + stops + text;
       text = (extent / (360 / stops)) + text;
-    } else if ((parseInt(extent / 180) != (extent / 180))) {
+    } else if (extent % 180) {
       if (text.length > 0) text = ' ' + text;
       text = ((extent / 90) - (parseInt (extent / 360) * 4)) + '/4' + text;
     }
@@ -2790,9 +2793,9 @@ function makeRoll (params) {
       // Make the line between the two rolls.
       // Only move the pointer (no line) for rolls in the top
       if (rollTop) {
-        pathsArray = buildShape ('Move', Array(1/scale, 0), pathsArray);
+        pathsArray = buildShape ('Move', [1/scale], pathsArray);
       } else {
-        pathsArray = buildShape ('Line', Array(1/scale, 0), pathsArray);
+        pathsArray = buildShape ('Line', [1/scale], pathsArray);
       }
       // Get the relative movement by the line and use this to build the tip connector line
       dx = pathsArray[pathsArray.length - 1].dx;
@@ -2850,18 +2853,18 @@ function makeSnap (params) {
     if (extent >= 360) { // full snap symbol
       dx = (radCos * snapElement12) + (radSin * snapElement3 * sign);
       dy = (- radSin * snapElement12) + (radCos * snapElement3 * sign);
-      path = path + 'l ' + roundTwo(dx) + ',' + roundTwo(dy) + ' ';
+      path += 'l ' + roundTwo(dx) + ',' + roundTwo(dy) + ' ';
       dx = (- radCos) * snapElement24;
       dy = radSin * snapElement24;
     } else { // half snap symbol
       dx = (radCos * snapElement) + (radSin * snapElement2 * sign);
       dy = (- radSin * snapElement) + (radCos * snapElement2 * sign);
-      path = path + 'l ' + roundTwo(dx) + ',' + roundTwo(dy) + ' ';
+      path += 'l ' + roundTwo(dx) + ',' + roundTwo(dy) + ' ';
       dx = (- radCos) * snapElement2;
       dy = radSin * snapElement2;
     }
     path += 'l ' + roundTwo(dx) + ',' + roundTwo(dy) + ' z';
-    if (params[1] == 0) pathStyle = 'posfill'; else pathStyle = 'negfill';
+    pathStyle = (params[1] == 0) ? 'posfill' : 'negfill';
     pathsArray.push ({
       'path':path,
       'style':pathStyle,
@@ -2876,7 +2879,7 @@ function makeSnap (params) {
       if (rollText) pathsArray.push (rollText);
     }
     // Completed the first (full) roll. Continue for more than 360
-    extent = extent - 360;
+    extent -= 360;
     // For more than 360 degrees, draw a line between the rolls and the roll tip connect line
     if (extent > 0) {
       // Save the status of the load variable, don't want to change that during the roll
@@ -2884,9 +2887,9 @@ function makeSnap (params) {
       // Make the line between the two rolls
       // Only move the pointer for rolls in the top
       if (rollTop) {
-        pathsArray = buildShape ('Move', Array(1.5/scale, 0), pathsArray);
+        pathsArray = buildShape ('Move', [1.5/scale], pathsArray);
       } else {
-        pathsArray = buildShape ('Line', Array(1.5/scale, 0), pathsArray);
+        pathsArray = buildShape ('Line', [1.5/scale], pathsArray);
       }
       NegLoad = saveLoad;
       // Get the relative movement by the line and use this to build the tip connector line
@@ -2934,13 +2937,13 @@ function makeSpin (params) {
     if (extent >= 360) {
       dx = (radCos * spinElement * 1.5) + (radSin * spinElement3 * sign);
       dy = (- radSin * spinElement * 1.5) + (radCos * spinElement3 * sign);
-      path = path + 'l ' + roundTwo(dx) + ',' + roundTwo(dy) + ' ';
+      path += 'l ' + roundTwo(dx) + ',' + roundTwo(dy) + ' ';
       dx = (- radCos) * spinElement * 1.5;
       dy = radSin * spinElement * 1.5;
     } else {
       dx = (radCos * spinElement) + (radSin * spinElement2 * sign);
       dy = (- radSin * spinElement) + (radCos * spinElement2 * sign);
-      path = path + 'l ' + roundTwo(dx) + ',' + roundTwo(dy) + ' ';
+      path += 'l ' + roundTwo(dx) + ',' + roundTwo(dy) + ' ';
       dx = (- radCos) * spinElement;
       dy = radSin * spinElement;
     }
@@ -2959,15 +2962,15 @@ function makeSpin (params) {
       if (rollText) pathsArray.push (rollText);
     }
     // Completed the first (full) spin. Continue for more than 360
-    extent = extent - 360;
+    extent -= 360;
     // For more than 360 degrees, draw a line between the spins and the spin tip connect line
     if (extent > 0) {
       // Make the line between the two rolls. Always positive for now
       // Only move the pointer for rolls in the top
       if (rollTop) {
-        pathsArray = buildShape ('Move', Array(0.5/scale, 0), pathsArray);
+        pathsArray = buildShape ('Move', [0.5/scale], pathsArray);
       } else {
-        pathsArray = buildShape ('Line', Array(0.5/scale, 0), pathsArray);
+        pathsArray = buildShape ('Line', [0.5/scale], pathsArray);
       }
       // Get the relative movement by the line and use this to build the tip connector line
       dx = pathsArray[pathsArray.length - 1].dx + radCos * spinElement2;
@@ -2986,10 +2989,14 @@ function makeSpin (params) {
 // extent is the size of the line before the hammerhead top.
 // We will move that much down before continuing drawing
 function makeHammer (extent) {
-  var pathArray = [];
+  var pathArray = {
+    style: 'pos',
+    class: 'hammerTip',
+    dx: 0,
+    dy: lineElement * extent
+  };
   Attitude = 270;
   changeDir(180);
-  pathArray.style = 'pos';
   if ((Direction == 90) || (Direction == 270)) {
     dy = roundTwo((1 - scaleLine.y) * lineElement);
     dx = roundTwo(scaleLine.x * lineElement);
@@ -2997,8 +3004,6 @@ function makeHammer (extent) {
   } else {
     pathArray.path = "l " + (lineElement) + "," + (lineElement);
   }
-  pathArray.dx = 0;
-  pathArray.dy = lineElement * extent;
   return Array(pathArray);
 }
 
@@ -3033,7 +3038,7 @@ function makeTailslide (param) {
   }
   pathsArray[0].dx = dx;
   pathsArray[0].dy = dy;
-  var Radius = (curveRadius) / 2;
+  var Radius = curveRadius / 2;
   dx = (angle > 0) ? Radius : -Radius;
   dy = Radius;
   if (((Direction == 90) || (Direction == 270)) && curvePerspective) {
@@ -3064,7 +3069,13 @@ function makeTailslide (param) {
 function makePointTip (extent) {
   changeAtt(180);
   changeDir(180);
-  return Array({path: '', style: 'pos', dx: 0, dy: lineElement * extent});
+  return Array({
+    path: 'M 0,0', // make sure it is "drawn", as a drag handle marker
+    style: 'pos',
+    class: 'pointTip',
+    dx: 0,
+    dy: lineElement * extent
+  });
 }
 
 // tspan creates an svg tspan with optional spacing to the next line 
@@ -3236,9 +3247,6 @@ function buildShape(shapeName, Params, paths) {
     case 'VertSpace':
       var pathsArray = makeVertSpace (Params);
       break;
-    case 'FigLast':
-      var pathsArray = makeFigLast (Params);
-      break;
     case 'Line':
       var pathsArray = makeLine (Params);
       break;
@@ -3303,6 +3311,10 @@ function drawShape (pathArray, svgElement, prev) {
     path.setAttribute('d', 'M ' + roundTwo(X) + ',' + roundTwo(Y) +
       ' ' + pathArray.path);
     path.setAttribute('style', style[pathArray.style]);
+    if (pathArray.class) path.setAttribute('class', pathArray.class);
+    if (pathArray.handle && svgElement.id) {
+      path.setAttribute('id', svgElement.id + '-' + pathArray.handle);
+    }
     // option for rotating paths. Not used yet but may become usefull
     // for fitting rolls and snaps to curve in top or bottom of loop
     if ('rotate' in pathArray) {
@@ -3311,14 +3323,15 @@ function drawShape (pathArray, svgElement, prev) {
     }
     svgElement.appendChild(path);
   } else if (pathArray.text) {
-    var text = document.createElementNS (svgNS, "text");
-    text.setAttribute('x', roundTwo(X + pathArray.x));
-    text.setAttribute('y', roundTwo(Y + pathArray.y));
-    text.setAttribute('style', style[pathArray.style]);
-    text.setAttribute('text-anchor', pathArray['text-anchor']);
-    var textNode = document.createTextNode(pathArray.text);
-    text.appendChild(textNode);
-    svgElement.appendChild(text);
+    var text = drawText (
+      pathArray.text,
+      roundTwo(X + pathArray.x),
+      roundTwo(Y + pathArray.y),
+      pathArray.style,
+      pathArray['text-anchor'],
+      false,
+      svgElement
+    );
     
     // Following is used to check subsequent rolls for overlap and
     // apply corrections. We use two ellipses sized to fit the text BBox
@@ -3420,7 +3433,9 @@ function drawLine (x, y, dx, dy, styleId, svg) {
 }
   
 // drawRectangle draws a rectangle at position x, y in style styleId
-// When an svg object is provided, it will be used i.s.o. the standard sequenceSvg
+// When an svg object is provided, it will be used i.s.o. the standard
+// sequenceSvg
+// The function returns the drawn rectangle
 function drawRectangle (x, y, width, height, styleId, svg) {
   svg = svg || SVGRoot.getElementById('sequence');
   var path = document.createElementNS (svgNS, "rect");
@@ -3430,6 +3445,7 @@ function drawRectangle (x, y, width, height, styleId, svg) {
   path.setAttribute('height', height);
   path.setAttribute('style', style[styleId]);
   svg.appendChild(path);
+  return path;
 }
   
 // drawText draws any text at position x, y in style styleId with
@@ -3438,13 +3454,14 @@ function drawText (text, x, y, styleId, anchor, id, svg) {
   svg = svg || SVGRoot.getElementById('sequence');
   var newText = document.createElementNS (svgNS, "text");
   if (id) newText.setAttribute('id', id);
-  if (style) newText.setAttribute('style', style[styleId]);
+  if (style && styleId) newText.setAttribute('style', style[styleId]);
   if (anchor) newText.setAttribute('text-anchor', anchor);
   newText.setAttribute('x', roundTwo(x));        
   newText.setAttribute('y', roundTwo(y));
   var textNode = document.createTextNode(text);
   newText.appendChild(textNode);
   svg.appendChild (newText);
+  return newText;
 }
 
 // drawTextArea draws any text area at position x, y in style styleId
@@ -3474,7 +3491,7 @@ function drawCircle (attributes, svg) {
   svg = svg || SVGRoot.getElementById('sequence');
   var circle = document.createElementNS (svgNS, "circle");
   for (var key in attributes) {
-    if (key in circle) circle.setAttribute (key, attributes[key]);
+    circle.setAttribute (key, attributes[key]);
   }
   svg.appendChild (circle);
 }
@@ -3511,7 +3528,7 @@ function doOnLoad () {
   addEventListeners();
   
   // disable iOS overscroll
-  /*if (isTouchDevice()) {
+  /*if (touchDevice) {
     document.body.addEventListener('touchmove',function(event){
       event.preventDefault();
     });
@@ -4041,13 +4058,6 @@ function addMenuEventListeners() {
   
   var menu = document.getElementById ('menu');
   addListeners(menu);
-}
-
-// isTouchDevice returns true when running on a touch device
-function isTouchDevice () {
-  return (('ontouchstart' in window)
-    || (navigator.maxTouchPoints > 0)
-    || (navigator.msMaxTouchPoints > 0));
 }
 
 // checkForApp will check if the OpenAero Chrome app is present
@@ -4589,7 +4599,7 @@ function buildButtons () {
     el[i].innerHTML = '<a><img src="buttons/mask.png"><div></div></a>';
   }
   // add tooltips, but not on touchscreen
-  if (!isTouchDevice()) {
+  if (!touchDevice) {
     for (var key in userText.tooltip) {
       var el = document.getElementById(key);
       if (el) {
@@ -4807,7 +4817,9 @@ function addExampleSequenceToMenu (key) {
     }
     var subli = document.createElement('li');
     if (key.match (/^[\d]+ CIVA(-Glider|)/)) {
-      subli.innerHTML = '<a href="#">' + key.replace(/^[\d]+[ ]*/, '') + '</a>';
+      subli.innerHTML = '<a href="#">' +
+        key.replace(/^[\d]+[ ]*/, '').replace (/ /g, '&nbsp;').replace (/-/g, '&#8209;') +
+        '</a>';
       subli.setAttribute ('id', 'example-' + key);
       subli.addEventListener ('click', exampleSequence, false);
     } else {
@@ -5603,25 +5615,28 @@ function addRollSelectors (figureId) {
           }
           // j indicates how many active subrolls there are
           var subRolls = j;
-          // build the gaps element for subRolls rolls
-          var divdiv = document.createElement ('div');
-          divdiv.classList.add ('rollGaps');
-          // only show 'Gaps' text for non-mobile
-          if (!mobileBrowser) {
-            var span = document.createElement('span');
-            span.innerHTML = userText.gaps;
-            div.appendChild (span);
+          // build the gaps element for subRolls rolls, but not for
+          // rolls in the top
+          if (!figures[figureId].rollInfo[i].rollTop) {
+            var divdiv = document.createElement ('div');
+            divdiv.classList.add ('rollGaps');
+            // only show 'Gaps' text for non-mobile
+            if (!mobileBrowser) {
+              var span = document.createElement('span');
+              span.innerHTML = userText.gaps;
+              div.appendChild (span);
+            }
+            var gap = figures[figureId].rollInfo[i].gap;
+            for (var j = 0; j < subRolls; j++) {
+              var thisGap = (typeof gap[j] != 'undefined') ? gap[j] : 0;
+              var span = document.createElement('span');
+              span.setAttribute('id', 'roll'+i+'-gap'+j);
+              span.classList.add ('plusMin');
+              span.appendChild (buildPlusMinElement('roll'+i+'-gap'+j+'-value', thisGap));
+              divdiv.appendChild(span);
+            }
+            div.appendChild (divdiv);
           }
-          var gap = figures[figureId].rollInfo[i].gap;
-          for (var j = 0; j < subRolls; j++) {
-            var thisGap = (typeof gap[j] != 'undefined') ? gap[j] : 0;
-            var span = document.createElement('span');
-            span.setAttribute('id', 'roll'+i+'-gap'+j);
-            span.classList.add ('plusMin');
-            span.appendChild (buildPlusMinElement('roll'+i+'-gap'+j+'-value', thisGap));
-            divdiv.appendChild(span);
-          }
-          div.appendChild (divdiv);
           var divdiv = document.createElement ('div');
           divdiv.classList.add ('clearBoth');
           div.appendChild (divdiv);
@@ -6650,8 +6665,10 @@ function parseRules(start) {
   for (var i=start; i<rules.length; i++) {
     // Check for [section]
     if (rules[i][0].match(/[\[\(]/)) {
-      var parts = rules[i].replace(/[\[\]\(\)]/g, '').split(" ");
-      if (parts.length > 2) {
+      var parts = rules[i].match (/^[\[\(]([^ ]+) ([^ ]+) (.+)[\]\)]$/);
+      if (parts && parts.length > 3) {
+        // remove first, global, match. We don't need it
+        parts.shift();
         // Seems like a valid section name. Set correct rule, cat and seq.
         var ruleName = parts[0];
         var rnLower = ruleName.toLowerCase();
@@ -6684,6 +6701,9 @@ function parseRules(start) {
         } else {
           seqCheckAvail[rnLower].cats[catName.toLowerCase()].seqs[seqName.toLowerCase()] = '*' + seqName;
         }
+        
+        // set correct year
+        year = rulesYear (ruleName);
       }
     } else if (rules[i].match (/^demo[\s]*=/)) {
       if (seqName && year) {
@@ -6769,11 +6789,11 @@ function updateProgramList () {
 // rulesYear retrieves the year of the rules provided in ruleName.
 // with no ruleName provided, the year of rulesYY.js is used
 function rulesYear (ruleName) {
-  ruleName = (ruleName)? '-' + ruleName : '';
+  ruleName = ruleName ? '-' + ruleName : '';
   var year = '';
   // find the year of the rules from the file name in index.html
   var scripts = document.getElementsByTagName('script');
-  var regex = new RegExp ('rules/rules([0-9][0-9]+)' + ruleName + '\\.js$');
+  var regex = new RegExp ('rules/rules([0-9][0-9]+)' + ruleName + '\\.js$', 'i');
   for (var i = scripts.length - 1; i >=0; i--) {
     var match = scripts[i].src.match(regex);
     if (match) {
@@ -7232,8 +7252,8 @@ function checkRules () {
         elemCount = [];
         for (var j = 0; j < aresti.length; j++) {
           log.push ('---- Element: ' + aresti[j]);
-          figK = figK + parseInt(k[j]);
-          figureK = figureK + parseInt(k[j]);
+          figK += parseInt(k[j]);
+          figureK += parseInt(k[j]);
           if (elemCount[aresti[j]]) {
             elemCount[aresti[j]]++;
           } else elemCount[aresti[j]] = 1;
@@ -7633,13 +7653,10 @@ function checkRules () {
           ufl[l] = [figures[i].seqNr];
         }
         remaining = remaining.replace(l, '');
-      } else if (figureLetters) {
-        var msg = sprintf(userText.noFigureLetterAssigned, figures[i].seqNr);
-        alertMsgs.push (msg);
-        log.push ('*** Error: ' + msg);
       }
     }
   }
+  
   for (l in ufl) {
     if ((ufl[l].length > 1) && (l != 'L')) {
       var msg = sprintf(userText.FUletterMulti, ufl[l].join(','), l);
@@ -7649,6 +7666,18 @@ function checkRules () {
   }
   // see if we have remaining (=unused) letters
   if (remaining.length) {
+    var figs = [];
+    for (var i = 0; i < figures.length; i++) {
+      if (!figures[i].unknownFigureLetter && figures[i].aresti) {
+        figs.push (figures[i].seqNr);
+      }
+    }
+    if (figs.length) {
+      var msg = sprintf(userText.noFigureLetterAssigned, figs.join(','));
+      alertMsgs.push (msg);
+      log.push ('*** Error: ' + msg);
+    }
+
     var msg = sprintf(userText.unusedFigureLetters, remaining);
     alertMsgs.push (msg);
     log.push ('*** Error: ' + msg);
@@ -7687,6 +7716,21 @@ function checkName (obj) {
     return obj.name;
   } else if (obj.why_en) {
     return obj.name_en;
+  } else return '';
+}
+
+// checkName creates the correct 'name' string. Priority is:
+// 1) current language
+// 2) no language
+// 3) English
+function checkRuleText (obj) {
+  var language = document.getElementById('language').value;
+  if (obj['rule_' + language]) {
+    return obj['rule_' + language];
+  } else if (obj.rule) {
+    return obj.rule;
+  } else if (obj.rule_en) {
+    return obj.rule_en;
   } else return '';
 }
 
@@ -7922,8 +7966,8 @@ function checkInfo () {
   for (var i = el.length - 1; i >= 0; i--) {
     el[i].classList.remove ('checkInfo');
   }
-  // when no rules are active, revert to default: pilot and aircraft
-  if (!rulesActive) infoCheck = ['pilot', 'aircraft'];
+  // when no rules are active, revert to default: pilot, actype, acreg
+  if (!rulesActive) infoCheck = ['pilot', 'actype', 'acreg'];
   // add red borders to missing info
   for (var i = 0; i < infoCheck.length; i++) {
     el = document.getElementById(infoCheck[i]);
@@ -8083,11 +8127,9 @@ function changeFigureGroup() {
           figure = figure.replace(RegExp('\\' + figpat.halfroll, 'g'), '2');
           figures[-1] = [];
           if (figure[0] != '-') {
-            Attitude = 0;
-            Direction = 0;
+            Attitude = Direction = 0;
           } else {
-            Attitude = 180;
-            Direction = 180;
+            Attitude = Direction = 180;
           }
           // build the figure and replace line paths by thicker line paths
           // fig[i].string is only set for Queue figures
@@ -8398,10 +8440,8 @@ function selectFigure (e, noChooserUpdate) {
 
   if (e === null) e = false;
   
-  if ((e !== false) && !mobileBrowser) {
-    // show figure editor tab
-    selectTab ('tab-figureInfo');
-  }
+  // show figure editor tab
+  if ((e !== false) && !mobileBrowser) selectTab ('tab-figureInfo');
   
   var queueFigure = false;
   var fromChooser = typeof e === 'object' ? true : false;
@@ -8589,7 +8629,7 @@ function selectFigure (e, noChooserUpdate) {
     // in the text and we are not on a touch device, as we assume this
     // would have a non-physical keyboard popping up. Select all the
     // way back to the previous real figure
-    if (!sequenceText.hasfocus && !('ontouchstart' in document.documentElement)) {
+    if (!sequenceText.hasfocus && !touchDevice) {
       var start = figures[selectedFigure.id].stringStart;
       for (var i = selectedFigure.id - 1; i>=0; i--) {
         if (figures[i].aresti) {
@@ -8687,7 +8727,7 @@ function checkFloatingPoint () {
       var n = figK.pop();
       if (n) {
         // retrieve correct i and set floatingPoint
-        var i = 99 - Math.round(((n / 100) - parseInt(n/100)) * 100);
+        var i = 99 - Math.round(n % 100);
         figures[i].floatingPoint = true;
         fp--;
       }
@@ -8720,7 +8760,7 @@ function makeMiniFormA (x, y) {
       for (var j = 0; j < aresti.length; j++) {
         drawText (aresti[j], blockX + 44, blockY + 16, 'miniFormA');
         drawText (k[j], blockX + 104, blockY + 16, 'miniFormA');
-        figK = figK + parseInt(k[j]);
+        figK += parseInt(k[j]);
         blockY += 12;
       }
       // Adjust figure K for connectors
@@ -8792,23 +8832,85 @@ function makeMiniFormA (x, y) {
 // grabFigure will select a figure and allow dragging
 function grabFigure(evt) {
   // put the coordinates of object evt in TrueCoords global
-  TrueCoords.x = evt.clientX;
-  TrueCoords.y = evt.clientY;
+  if (touchDevice) {
+    TrueCoords.x = evt.changedTouches[0].pageX;
+    TrueCoords.y = evt.changedTouches[0].pageY;
+  } else {
+    TrueCoords.x = evt.clientX;
+    TrueCoords.y = evt.clientY;
+  }
+
+  var svg = SVGRoot;
+  var viewBox = svg.getAttribute('viewBox').split(' ');
    
   DragTarget = null;
   // find out which element we moused down on
-  var targetElement = evt.target.parentNode;
-  // only drag real sequence figures
-  if (targetElement.id.match(/^figure[0-9]/)) {
-    if (figures[targetElement.id.replace('figure', '')].draggable) {
-      //set the item moused down on as the element to be dragged
-      DragTarget = targetElement;
+  
+  // first see if we grabbed a figure handle
+  if (evt.target.id.match (/-handle$/)) {
+    DragTarget = evt.target;
+    DragTarget.targetLine = svg.getElementById (
+      DragTarget.id.replace (/-handle$/, ''));
+    
+    // get dx and dy for this line
+    var match = DragTarget.targetLine.getAttribute ('d').match (/l ([0-9\-\.]+),([0-9\-\.]+)/);
+    DragTarget.linedx = parseFloat(match[1]);
+    DragTarget.linedy = parseFloat(match[2]);
+    
+    if (DragTarget.id.match (/entry-handle$/)) {
+      // get entry gap element
+      DragTarget.gap = document.getElementById ('entryExt-value');
+      DragTarget.lineLength = parseInt(
+        figures[DragTarget.id.match (/^figure(\d+)/)[1]].entryLength
+      );
+    } else if (DragTarget.id.match(/exit-handle$/)) {
+      // get exit gap element
+      DragTarget.gap = document.getElementById ('exitExt-value');
+      DragTarget.lineLength = parseInt(
+        figures[DragTarget.id.match (/^figure(\d+)/)[1]].exitLength
+      );
+    } else {
+      // get current roll gap element
+      DragTarget.gap = document.getElementById (
+        DragTarget.id.match (/roll\d+-gap\d+/)[0] + '-value');
+      
+      // get current line length from figures object
+      match = DragTarget.id.match (/^figure(\d+)-roll(\d+)-gap(\d+)/);
+      var roll = figures [match[1]].rolls [match[2]];
+      var gapnr = 0;
+      for (var i = 0; i < roll.length; i++) {
+        if ('lineLength' in roll[i]) {
+          if (gapnr == match[3]) {
+            DragTarget.lineLength = Math.max (parseInt(roll[i].lineLength), 0.02);
+            break;
+          } else gapnr++;
+        }
+      }
+      if (!DragTarget.lineLength) {
+        DragTarget.lineLength = Math.max (parseInt(roll.lineLengthAfter), 0.02);
+      }
     }
-  } else if (targetElement.id === 'svgContainer') {
+    // get current gap starting value
+    DragTarget.gapValue = parseInt(DragTarget.gap.value);
+    
+    // grab magnifier
+  } else if (evt.target.id === 'magnifier') {
+    DragTarget = evt.target;
+
+    selectedFigure.bottom = parseInt(selectedFigure.y) + parseInt(selectedFigure.height);
+    selectedFigure.scale = document.getElementById ('scale').value;
+    selectedFigure.diagonal = Math.sqrt (
+      Math.pow (selectedFigure.width,2) + Math.pow (selectedFigure.height, 2));
+    
+    // grab full sequence figures
+  } else if (evt.target.parentNode.id.match(/^figure[0-9]/)) {
+    if (figures[evt.target.parentNode.id.replace('figure', '')].draggable) {
+      //set the item moused down on as the element to be dragged
+      DragTarget = evt.target.parentNode;
+    }
+  } else if (evt.target.parentNode.id === 'svgContainer') {
     // clicked somewhere in the SVG container, maybe within figure bBox?
-    var svg = SVGRoot;
     var svgRect = svg.getBoundingClientRect();
-    var viewBox = svg.getAttribute('viewBox').split(' ');
     // svg may be rescaled on mobile browser
     var scale = mobileBrowser ? svg.getAttribute('width')/viewBox[2] : 1;
     var margin = 5 * scale;
@@ -8843,7 +8945,9 @@ function grabFigure(evt) {
   if (DragTarget) {
     // move this element to the "top" of the display, so it is
     // always over other elements
-    DragTarget.parentNode.appendChild( DragTarget );
+    if (!DragTarget.id.match (/^(.*-handle|magnifier)$/)) {
+      DragTarget.parentNode.appendChild( DragTarget );
+    }
 
     // turn off all pointer events to the dragged element, this does 2 things:
     //    1) allows us to drag text elements without selecting the text
@@ -8859,7 +8963,9 @@ function grabFigure(evt) {
     // blur sequenceText area
     sequenceText.blur();
     // the DragTarget id is the new selectedFigure.id
-    selectFigure(DragTarget.id.replace('figure', ''));
+    if (!DragTarget.id.match (/^(.*-handle|magnifier)$/)) {
+      selectFigure(DragTarget.id.replace('figure', ''));
+    }
   } else selectFigure(false);
 }
 
@@ -8903,7 +9009,7 @@ function setFigureSelected (figNr) {
     // if any figure was previously selected, remove that filter
     var selFig = SVGRoot.getElementById('figure'+selectedFigure.id);
     if (selFig) {
-      if (selectedFigure.id !== figNr) {
+      //if (selectedFigure.id !== figNr) {
         var nodes = selFig.childNodes;
         for (var i = nodes.length - 1; i >= 0; i--) {
           var s = nodes[i].getAttribute('style');
@@ -8912,30 +9018,72 @@ function setFigureSelected (figNr) {
             s = s.replace (/#ff1090/g, 'red');
             nodes[i].setAttribute ('style', s);
           }
+          if (nodes[i].id &&
+            nodes[i].id.match (/^(.*-handle|magnifier|selectedFigureBox)$/)) {
+            selFig.removeChild (nodes[i]);
+          }
         }
-      }
+      //}
     }
         
     // fill selectedFigure with BBox values
-    var selFig = SVGRoot.getElementById('figure'+figNr);
-    if (selFig) selectedFigure = selFig.getBBox();
+    var el = SVGRoot.getElementById('figure'+figNr);
+    if (el) selectedFigure = el.getBBox();
   
     if (figNr !== null) {
 
       header.innerHTML = userText.editingFigure + figures[figNr].seqNr;
-    
+/** Code for adding box around figure
+ *  Not working well (box doesn't scale, takes more programming) but
+ *  keep for the future
+      // add box
+      drawRectangle (
+        selectedFigure.x - 2,
+        selectedFigure.y - 2,
+        selectedFigure.width + 4,
+        selectedFigure.height + 4,
+        'selectedFigureBox',
+        el
+      ).id = 'selectedFigureBox';*/
+  
       // apply color filter
-      var el = SVGRoot.getElementById('figure'+figNr);
       if (el) {
         var nodes = el.childNodes;
-        for (var i = nodes.length - 1; i >= 0; i--) {
+        var length = nodes.length;
+        for (var i = 0 ; i < length; i++) {
           var s = nodes[i].getAttribute('style');
           if (s) {
             s = s.replace (/black/g, '#ff00a0');
             s = s.replace (/red/g, '#ff1090');
             nodes[i].setAttribute ('style', s);
           }
+          // add editing handles where applicable. They are centered on
+          // the element
+          if (nodes[i].id && !mobileBrowser) {
+            var bBox = nodes[i].getBBox();
+            drawCircle ({
+              'cx': roundTwo(bBox.x + bBox.width / 2),
+              'cy': roundTwo(bBox.y + bBox.height / 2),
+              'r': 8,
+              'style': style.selectedFigureHandle,
+              'cursor': 'move',
+              'id': nodes[i].id + '-handle'
+            }, el);
+          }
         }
+        // add scale handle
+        if (!mobileBrowser) {
+          var image = document.createElementNS (svgNS, 'image');
+          image.setAttribute ('x', selectedFigure.x + selectedFigure.width - 6);
+          image.setAttribute ('y', selectedFigure.y - 9);
+          image.setAttribute ('width', 20);
+          image.setAttribute ('height', 20);
+          image.setAttribute ('id', 'magnifier');
+          image.setAttribute ('cursor', 'move');
+          image.setAttributeNS (xlinkNS, 'href', 'images/magnifier.png');
+          el.appendChild (image);
+        }
+
       }
     }
   } else {
@@ -8948,20 +9096,160 @@ function setFigureSelected (figNr) {
   selectedFigure.id = figNr;
 }
 
-// Drag allows to drag the selected figure to a new position
-function Drag(evt) {
+// Drag allows to drag the selected figure or handle to a new position
+function Drag (evt) {
 
   // don't drag when on Fig in grid view
   if (activeForm === 'Grid') return;
   
   // put the coordinates of object evt in TrueCoords global
-   TrueCoords.x = evt.clientX;
-   TrueCoords.y = evt.clientY;
-
+  if (touchDevice) {
+    TrueCoords.x = evt.changedTouches[0].pageX;
+    TrueCoords.y = evt.changedTouches[0].pageY;
+  } else {
+    TrueCoords.x = evt.clientX;
+    TrueCoords.y = evt.clientY;
+  }
+  
   // if we don't currently have an element in tow, don't do anything
   if (DragTarget) {
+    
+    if (DragTarget.id.match (/-handle$/)) {
+      
+      /** dragging a handle */
+    
+      var crossLineC = -DragTarget.linedx * GrabPoint.x - DragTarget.linedy * GrabPoint.y;
+      // calculate the correct displacement of the handle, along it's
+      // line
+      var d = (DragTarget.linedx * TrueCoords.x +
+        DragTarget.linedy * TrueCoords.y + crossLineC) /
+        (Math.pow (DragTarget.linedx, 2) +
+        Math.pow (DragTarget.linedy, 2));
+      var newX = DragTarget.linedx * d;
+      var newY = DragTarget.linedy * d;
+
+      // do not adjust all the way to 0 line length
+      if (d > -0.5) {
+        // apply a new tranform translation to the dragged handle, to
+        // display it in its new location
+        DragTarget.setAttribute('transform',
+          'translate(' + newX + ',' + newY + ')');
+        
+        // transform the line which we are adjusting
+        newX *= 2;
+        newY *= 2;
+        var d = DragTarget.targetLine.getAttribute ('d');
+        d = d.replace (/l ([0-9\-\.]+),([0-9\-\.]+)/, 'l ' +
+          (DragTarget.linedx + newX) + ',' +
+          (DragTarget.linedy + newY));
+        DragTarget.targetLine.setAttribute ('d', d);
+        
+        // also change the gap value to reflect this transform
+        if (DragTarget.linedx != 0) {
+          DragTarget.gap.value = Math.round (DragTarget.gapValue +
+            (DragTarget.lineLength / DragTarget.linedx) * newX);
+        } else {
+          DragTarget.gap.value = Math.round (DragTarget.gapValue +
+            (DragTarget.lineLength / DragTarget.linedy) * newY);
+        }
+        
+        // when adjusting a vertical up, we need to check if this is
+        // followed by a hammerhead or point tip
+        // If so, we don't adjust the position of anything following it.
+        var el = DragTarget.targetLine;
+        var elStop = null;
+        var lastHandle = null;
+        do {
+          if (el.id) lastHandle = el.id + '-handle';
+          var elClass = el.getAttribute ('class');
+          if (elClass) {
+            // break if no longer vertical up
+            if ((elClass === 'line') &&
+              !el.getAttribute('d').match (/l 0,-/)) break;
+            if (elClass.match (/^(hammer|point)Tip$/)) {
+              // found a hammerhead or point tip!
+              elStop = el;
+              break;
+            }
+          }
+        } while (el = el.nextSibling);
+        // there's only a last handle when a stop element was found
+        if (!elStop) lastHandle = null;
+        
+        // move all later elements of this figure, upto stop if applicable
+        var el = DragTarget.targetLine;
+        while (el !== elStop) {
+          if (!(el = el.nextSibling)) break;
+          if (!el.id.match (/-handle$/)) {
+            el.setAttribute('transform',
+              'translate(' + newX + ',' + newY + ')');
+          }
+        }
+        
+        // and move all later handles, upto last if applicable
+        el = DragTarget;
+        while ((lastHandle !== el.id)) {
+          if (!(el = el.nextSibling)) break;
+          if (el.id.match (/-handle$/)) {
+            el.setAttribute('transform',
+              'translate(' + newX + ',' + newY + ')');
+          }
+        }
+        
+        // move subsequent figures, if no elStop
+        if (elStop === null) {
+          for (var figureNr = parseInt(DragTarget.parentNode.id.match (/\d+/)) + 1; figureNr < figures.length; figureNr++) {
+            if (figure = SVGRoot.getElementById ('figure' + figureNr)) {
+              figure.setAttribute('transform',
+                'translate(' + newX + ',' + newY + ')');
+            }
+          }
+        }
+
+        // Adjust magnifier position
+        // Do this by first removing it, then determining the bBox and
+        // putting it back
+        DragTarget.parentNode.removeChild(DragTarget.parentNode.lastChild);
+        var bBox = DragTarget.parentNode.getBBox();
+        // add scale handle
+        var image = document.createElementNS (svgNS, 'image');
+        image.setAttribute ('x', bBox.x + bBox.width - 10);
+        image.setAttribute ('y', bBox.y - 10);
+        image.setAttribute ('width', 20);
+        image.setAttribute ('height', 20);
+        image.setAttribute ('id', 'magnifier');
+        image.setAttribute ('cursor', 'move');
+        image.setAttributeNS (xlinkNS, 'href', 'images/magnifier.png');
+        DragTarget.parentNode.appendChild (image);
+
+      }
+    } else if (DragTarget.id === 'magnifier') {
+      
+      /** dragging magnifier */
+      
+
+      var scale = Math.sqrt (
+        Math.pow (TrueCoords.x + parseInt(selectedFigure.width) - GrabPoint.x, 2) +
+        Math.pow (-TrueCoords.y + parseInt(selectedFigure.height) + GrabPoint.y, 2)) /
+        selectedFigure.diagonal;
+      
+      // scale figure (and magnifier)
+      DragTarget.parentNode.setAttribute ('transform',
+        'translate (' +
+        ((parseInt(selectedFigure.x)) * (1 - scale)) + ',' +
+        ((parseInt(selectedFigure.bottom)) * (1 - scale)) +
+        ') scale (' + scale + ')');
+      
+      // Set scale. Math.log gets the natural logarithm. The number
+      // 14.427 = 10 / log (2)
+      document.getElementById ('scale').value = parseInt (
+        parseInt(selectedFigure.scale) + Math.log (scale) * 14.427);
+      
     // Don't drag the first real figure, it's auto positioned
-    if (figures[DragTarget.id.replace (/^figure/, '')].seqNr != '1') {
+    } else if (figures[DragTarget.id.replace (/^figure/, '')].seqNr != '1') {
+      
+      /** dragging a complete figure */
+    
       // account for the offset between the element's origin and the
       // exact place we grabbed it. This way, the drag will look more natural
       var newX = TrueCoords.x - GrabPoint.x;
@@ -8970,41 +9258,66 @@ function Drag(evt) {
       // apply a new tranform translation to the dragged element, to display
       // it in its new location
       DragTarget.setAttribute('transform', 'translate(' + newX + ',' + newY + ')');
-      // enlarge sequence SVG if necessary
-      // could be smoother, but works
-      var viewBox = SVGRoot.getAttribute('viewBox').split(' ')
-      var newWidth = TrueCoords.x + selectedFigure.width;
-      if (newWidth > viewBox[2]) {
-        SVGRoot.setAttribute('width', newWidth);
-        SVGRoot.setAttribute('viewBox', SVGRoot.getAttribute('viewBox').replace(/^([^ ]+ [^ ]+ )[^ ]+/, "$1" + newWidth));
-      } else {
-        var newHeight = TrueCoords.y + selectedFigure.height;
-        if (newHeight > viewBox[3]) {
-          SVGRoot.setAttribute('height', newHeight);
-          SVGRoot.setAttribute('viewBox', SVGRoot.getAttribute('viewBox').replace(/[^ ]+$/, newHeight));
-        } else if ((newX + selectedFigure.x) < 1) {
-          SVGRoot.setAttribute('viewBox', SVGRoot.getAttribute('viewBox').replace(/^[^ ]+/, parseInt(viewBox[0]) - 1));
-        } else if ((newY + selectedFigure.y) < 1) {
-          SVGRoot.setAttribute('viewBox', SVGRoot.getAttribute('viewBox').replace(/^([^ ]+ )[^ ]+/, "$1" + parseInt(viewBox[1] - 1)));
-        }  
+
+      // move subsequent figures
+      for (var figureNr = parseInt(DragTarget.id.match (/\d+/)) + 1; figureNr < figures.length; figureNr++) {
+        if (figure = SVGRoot.getElementById ('figure' + figureNr)) {
+          figure.setAttribute('transform',
+            'translate(' + newX + ',' + newY + ')');
+        }
       }
+
     }
+    
+    // enlarge sequence SVG if necessary
+    // could be smoother, but works
+    /*
+    var viewBox = SVGRoot.getAttribute('viewBox').split(' ')
+    var newWidth = TrueCoords.x + selectedFigure.width;
+    if (newWidth > viewBox[2]) {
+      SVGRoot.setAttribute('width', newWidth);
+      SVGRoot.setAttribute('viewBox', SVGRoot.getAttribute('viewBox').replace(/^([^ ]+ [^ ]+ )[^ ]+/, "$1" + newWidth));
+    } else {
+      var newHeight = TrueCoords.y + selectedFigure.height;
+      if (newHeight > viewBox[3]) {
+        SVGRoot.setAttribute('height', newHeight);
+        SVGRoot.setAttribute('viewBox', SVGRoot.getAttribute('viewBox').replace(/[^ ]+$/, newHeight));
+      } else if ((newX + selectedFigure.x) < 1) {
+        SVGRoot.setAttribute('viewBox', SVGRoot.getAttribute('viewBox').replace(/^[^ ]+/, parseInt(viewBox[0]) - 1));
+      } else if ((newY + selectedFigure.y) < 1) {
+        SVGRoot.setAttribute('viewBox', SVGRoot.getAttribute('viewBox').replace(/^([^ ]+ )[^ ]+/, "$1" + parseInt(viewBox[1] - 1)));
+      }  
+    }
+    */
+    // Adjust sequence SVG size. New as of 2016.1 using getBBox.
+    // Previous code kept as a fallback
+    var bBox = SVGRoot.getElementById ('sequence').getBBox();
+    if (!mobileBrowser) SVGRoot.setAttribute('width', bBox.width + 4);
+    SVGRoot.setAttribute ('viewBox', (bBox.x - 2) + ' ' + (bBox.y - 2) +
+      ' ' + (bBox.width + 4) + ' ' + (bBox.height + 4));
   }
 }
 
-// Drop is activated when a figure is dropped at a new position
+// Drop is activated when a figure or handle is dropped at a new position
 function Drop(evt) {
   
-   // if we aren't currently dragging an element, don't do anything
-   if ( DragTarget ) {
-      // since the element currently being dragged has its pointer-events turned off,
-      //    we are afforded the opportunity to find out the element it's being dropped on
-      var targetElement = evt.target;
-
-      // turn the pointer-events back on, so we can grab this item later
-      DragTarget.setAttribute('pointer-events', 'all');
-
-      var transform = DragTarget.getAttribute('transform');
+  // if we aren't currently dragging an element, don't do anything
+  if ( DragTarget ) {
+        
+    // turn the pointer-events back on, so we can grab this item later
+    DragTarget.setAttribute('pointer-events', 'all');
+    
+    var transform = DragTarget.getAttribute('transform');
+    
+    if (DragTarget.id.match (/^(.*-handle|magnifier)$/)) {
+      
+      /** dropping a handle or magnifier */
+      
+      updateFigure();
+      
+    } else {
+      
+      /** dropping a complete figure */
       
       // create new curveTo for dragged elements when not in grid view
       if (transform && (activeForm !== 'Grid')) {
@@ -9019,14 +9332,14 @@ function Drop(evt) {
           false,
           true)
       }
-      
-      // set the global variable to null, so nothing will be dragged until we
-      //    grab the next element
-      DragTarget = null;
-   }
-  if (!('ontouchstart' in document.documentElement)) {
-    sequenceText.focus();
+    }
+    
+    // set the global variable to null, so nothing will be dragged until
+    // we grab the next element
+    DragTarget = null;
   }
+
+  if (!touchDevice) sequenceText.focus();
 }
 
 /**********************************************************************
@@ -9396,7 +9709,7 @@ function addAllToQueue () {
   }
   
   infoBox (userText.addAllToQueueWait, userText.addAllToQueue);
-  //setTimeout(function(){
+  setTimeout(function(){
     var f = selectedFigure.id;
     for (var i = 0; i < figures.length; i++) {
       if (figures[i].aresti) {
@@ -9411,7 +9724,7 @@ function addAllToQueue () {
     // set the figure chooser to the queue group
     document.getElementById ('figureGroup').value = '0';
     changeFigureGroup();
-  //}, 100);
+  }, 100);
 }
 
 // removeFromQueue removes a figure from the queue
@@ -9972,7 +10285,7 @@ function buildFuFiguresTab() {
   var svg = document.getElementById('figureChooserSvg');
   
   // add margin to scroll for touch devices
-  var width = (isTouchDevice())? 110 : 120;
+  var width = touchDevice ? 110 : 120;
   var height = 100;
   var maxColCount = 2;
   var colCount = 0;
@@ -10217,7 +10530,7 @@ function makeFormA() {
                 y + rowHeight / 2 + 10,
                 'formAText',
                 'middle');
-              figK = figK - 1;
+              figK -= 1;
               drawText (figK,
                 x + columnWidths[column] / 2,
                 y + rowHeight / 2 - 8,
@@ -10737,20 +11050,10 @@ function makeFU () {
         }
       } else if (usedLetters[f.unknownFigureLetter] > 1) {
         td.classList.add ('fuFigureMulti');
-        /**
-        // add switcher for exit axis if applicable
-        if (f.entryAxis !== f.exitAxis) {
-          addExitButton (td, f.exitAxis);
-        }*/
       } else {
         td.classList.add ('fuFigure');
       }
-      /**
-      // add subsequence entry direction changer for first of subsequence
-      if (sub !== prevSub) {
-        addSubEntryButton (td, i);
-      }
-      */
+
       fuCellAddHandlers(td);
 
       // append every figure with it's letter to subseqString
@@ -10758,8 +11061,7 @@ function makeFU () {
       
       // set X and Y to 0 to prevent roundoff errors in figure drawing
       // and scaling
-      X = 0;
-      Y = 0;
+      X = Y = 0;
       drawFullFigure(i, false, svg);
       var bBox = f.bBox;
       var thisFig = svg.getElementById('figure' + i);
@@ -10901,7 +11203,7 @@ function addFormElements (form) {
   SVGRoot.setAttribute("viewBox",
     (x - 3) + ' ' + (y - 3) + ' ' + (w + 5) + ' ' + (h + 30));
   // resize svg if we are on a mobile browser
-  var scaleSvg = (mobileBrowser)? 312 / (w + 5) : 1;
+  var scaleSvg = mobileBrowser ? 312 / (w + 5) : 1;
   
   SVGRoot.setAttribute("width",  scaleSvg * (w + 5));
   SVGRoot.setAttribute("height", scaleSvg * (h + 30));
@@ -11011,7 +11313,7 @@ function updateSequenceTextHeight () {
 // special keys for touch devices
 function virtualKeyboard (e) {
   e.hasfocus = (document.activeElement.id === 'sequence_text') ? true : false;
-  if (isTouchDevice()) {
+  if (touchDevice) {
     var el = document.getElementById('virtualKeyboard');
     if (document.activeElement.id === 'sequence_text') {
       el.classList.remove ('noDisplay');
@@ -11843,9 +12145,10 @@ function activateXMLsequence (xml, noLoadRules) {
   }
   
   // the sequence is now fully loaded. Check if it was loaded as a grid
-  // and if so, if it may be a Free Unknown figures file
+  // and rules allow connectors and figure letters are required.
+  // If so, if it may be a Free Unknown figures file
   var l = figureLetters;
-  if ((activeForm === 'Grid') && l) {
+  if ((activeForm === 'Grid') && (connectFig.max > 0) && l) {
     for (var i = 0; i < figures.length; i++) {
       // when we find a figure without a letter, or with an incorrect
       // letter, stop. In that case make sure we do not ask to start
@@ -11879,7 +12182,6 @@ function activateXMLsequence (xml, noLoadRules) {
   sequenceSaved = true;
   
   return true;
-  // debug.appendChild(document.createTextNode('ActivateXMLsequence ready'));
 }
 
 // handleDragOver takes care of file dragging
@@ -11910,6 +12212,28 @@ function checkOpenAeroVersion () {
     // check for snaps started from knife edge
     if (sequenceText.value.match (/((^|[^0-9])(4|[357]4?))[if\.'`]*[,;][\.'`]*[357]i?f/)) {
       alerts += userText.warningPre137;
+    }
+  }
+  if (compVersion (oa_version.value, '2016.1') < 0) {
+    // check for double bumps with enlarged radius and rolls on the
+    // first and second line, where the first roll is of uneven quarters
+    if (sequenceText.value.match (/B/)) {
+      var figures = sanitizeSpaces (sequenceText.value).split (' ');
+      for (var i = 0; i < figures.length; i++) {
+        // remove comments
+        figures[i] = figures[i].replace (regexComments, '');
+        // only keep specific characters, and convert ; to ,
+        figures[i] = figures[i].replace (/[^\d,;B\(\)]/g, '').replace (/;/g, ',');
+        // convert all non-quarter rolls to 'r'
+        figures[i] = figures[i].replace (/(48|88|128|168|24|44|64|84|22|32|42|2|1|9)/g, 'r');
+        // convert remaining rolls to 'q' and remove ,
+        figures[i] = figures[i].replace (/\d+/g, 'q').replace (/,/g, '');
+        // check for correct match
+        if (figures[i].match (/^(q|qr|rq)B+\([qr]/)) {
+          alerts += userText.warningPre20161;
+          break;
+        }
+      }
     }
   }
     
@@ -13503,20 +13827,31 @@ function buildHeader (svg, logoWidth) {
       drawLine (490, 10, 0, 100, 'formLine', svg);// ||
       drawLine (290, 60, 0, 50, 'formLine', svg); // |
       drawText (activeForm, 115, 48, 'formATextHuge', 'middle', '', svg);
-      drawText (userText.contest + ':', 150, 25, 'formAText', 'start', '', svg);
-      drawText (document.getElementById('location').value, 315, 47, 'formATextLarge', 'middle', '', svg);
-      drawText (userText.category + ':', 500, 25, 'formAText', 'start', '', svg);
-      drawText (document.getElementById('category').value, 565, 47, 'formATextLarge', 'middle', '', svg);
-      drawText (userText.date + ':', 100, 75, 'formAText', 'start', '', svg);
-      drawText (document.getElementById('date').value, 190, 97, 'formATextLarge', 'middle', '', svg);
-      drawText (userText.program + ':', 300, 75, 'formAText', 'start', '', svg);
-      drawText (document.getElementById('program').value, 390, 97, 'formATextLarge', 'middle', '', svg);
-      drawText (userText.pilotNo, 530, 90, 'formAText', 'middle', '', svg);
+      drawText (userText.contest + ':', 150, 25,
+        'formAText', 'start', '', svg);
+      drawText (document.getElementById('location').value, 315, 47,
+        'formATextLarge', 'middle', '', svg);
+      drawText (userText.category + ':', 500, 25,
+        'formAText', 'start', '', svg);
+      drawText (document.getElementById('category').value, 565, 47,
+        'formATextLarge', 'middle', '', svg);
+      drawText (userText.date + ':', 100, 75,
+        'formAText', 'start', '', svg);
+      drawText (document.getElementById('date').value, 190, 97,
+        'formATextLarge', 'middle', '', svg);
+      drawText (userText.program + ':', 300, 75,
+        'formAText', 'start', '', svg);
+      drawText (document.getElementById('program').value, 390, 97,
+        'formATextLarge', 'middle', '', svg);
+      drawText (userText.pilotNo, 530, 90,
+        'formAText', 'middle', '', svg);
       
       // tear-off tab
       drawLine (640, 0, 160, 160, 'formLine', svg);
       drawLine (650, 0, 150, 150, 'dotted', svg);
-      drawText (userText.pilot + ': ' + document.getElementById('pilot').value, 670, 10, 'formAText', 'start', 'pilotText', svg);
+      drawText (userText.pilot + ': ' +
+        document.getElementById('pilot').value, 670, 10, 'formAText',
+        'start', 'pilotText', svg);
       // rotate pilot text elements by 45 degr CW    
       var el = svg.getElementById('pilotText');
       el.setAttribute('transform', 'rotate(45 ' +
@@ -13524,9 +13859,12 @@ function buildHeader (svg, logoWidth) {
         
       // check line
       drawLine (800, 420, 0, 460, 'dotted', svg);
-      drawText ('FREE PROGRAM CHECK BY:', 790, 1080, 'formAText', 'start', 'checkByText', svg);
-      drawText ('(signature/date)', 790, 880, 'formAText', 'start', 'signText', svg);
-      drawText ('A/C: ' + document.getElementById('actype').value, 790, 380, 'formAText', 'start', 'acText', svg);
+      drawText ('FREE PROGRAM CHECK BY:', 790, 1080, 'formAText',
+        'start', 'checkByText', svg);
+      drawText ('(signature/date)', 790, 880, 'formAText', 'start',
+        'signText', svg);
+      drawText ('A/C: ' + document.getElementById('actype').value,
+        790, 380, 'formAText', 'start', 'acText', svg);
       // rotate text elements by 90 degr CCW    
       var el = svg.getElementById('checkByText');
       el.setAttribute('transform', 'rotate(-90 ' +
@@ -13554,7 +13892,8 @@ function buildScoreColumn (svg) {
     drawRectangle (580, 180, 120, 50, 'formLine', svg);    
     drawText ('Presentation', 590, 205, 'formATextBold', 'start', '', svg);
     drawRectangle (700, 180, 40, 50, 'formLine', svg);
-    drawText (document.getElementById('positioning').value, 720, 205, 'formATextLarge', 'middle', '', svg);
+    drawText (document.getElementById('positioning').value, 720, 205,
+      'formATextLarge', 'middle', '', svg);
     drawRectangle (740, 180, 60, 50, 'formLineBold', svg);
     drawLine (740, 180, 0, 50, 'formLine', svg);
     
@@ -13573,7 +13912,8 @@ function buildScoreColumn (svg) {
 
     drawRectangle (590, 340, 210, 60, 'formLine', svg);
     drawText ('Aircraft type:', 600, 355, 'formAText', 'start', '', svg);
-    drawText (document.getElementById('actype').value, 695, 380, 'formATextLarge', 'middle', '', svg);
+    drawText (document.getElementById('actype').value, 695, 380,
+      'formATextLarge', 'middle', '', svg);
     
     // "checked by" block
     drawRectangle (640, 430, 160, 280, 'formLine', svg);
@@ -14446,10 +14786,10 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
         for (var j = 0; j < roll.length; j++) {
           if ((fig[figNrs[i]].rolls[j] == 1) || (!fig[figNrs[i]].rolls[j])) {
             // full or no roll symbol at this position in fig[xx].rolls[yy]
-            rollCorr = rollCorr + Math.abs((parseInt(rollSums[j] / 360) - (rollSums[j] / 360)) * 360);
+            rollCorr += Math.abs(rollSums[j] % 360);
           } else if (fig[figNrs[i]].rolls[j] == 2) {
             // half roll symbol at this position in fig[xx].rolls[yy]
-            rollCorr = rollCorr + Math.abs((parseInt((rollSums[j] + 180) / 360) - ((rollSums[j] + 180) / 360)) * 360);
+            rollCorr += Math.abs((rollSums[j] + 180) % 360);
           } 
         }
         if (rollCorr < rollCorrMin) {
@@ -14500,7 +14840,7 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
           figureDraw = figpat.forward + figureDraw;
           entryExt++;
         } else {
-          figureDraw = figureDraw + figpat.forward;
+          figureDraw += figpat.forward;
           exitExt++;
         }
       } else if (figString.charAt(i) == userpat.forwardshorten) {
@@ -14508,7 +14848,7 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
           figureDraw = userpat.forwardshorten + figureDraw;
           entryExt--;
         } else {
-          figureDraw = figureDraw + userpat.forwardshorten;
+          figureDraw += userpat.forwardshorten;
           exitExt--;
         }
       }
@@ -14520,6 +14860,7 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
   var lineSum = 0;
   var lineDraw = false;
   var rollTop = false;
+  var afterRoll = false;
   var comment = false;
   
   // Build the start of figure symbol
@@ -14529,6 +14870,8 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
       'first':firstFigure
     },
     paths);
+  var entryLine = true;
+  
   // add any paths that were already provided
   // (e.g. for autocorrect red circle)
   if (figures[figStringIndex].paths) {
@@ -14561,31 +14904,42 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
         lineSum++;
         lineDraw = true;
         break;
-        // shorten entry and exit lines
+      // shorten entry and exit lines
       case (userpat.forwardshorten):
         lineSum--;
         break;
-        // When a roll is encountered, continue there for line
-        // lengthening and/or shortening
+      // When a roll is encountered, continue there for line
+      // lengthening and/or shortening
       case (figpat.fullroll):
+        afterRoll = true;
         break;
-        // When something else than a roll or line is encountered, build
-        // the line. Do not make any existing line shorter than 1
+      // just skip any negative entry/exit
       case ('-'):
-        // just skip any negative entry/exit
         break;
+      // When something else than a roll or line is encountered, build
+      // the line. Do not make any existing line shorter than 1
       default:
-      if (lineDraw) {
-        if (lineSum > 0) {
-          lineLength += lineSum;
-          paths = buildShape('Line', Array(lineSum, NegLoad), paths);
-        } else {
-          lineLength++;
-          paths = buildShape('Line', Array(1, NegLoad), paths);
+        if (lineDraw || afterRoll) {
+          if (lineDraw) {
+            lineSum = Math.max (lineSum, 1);
+            var params = [lineSum];
+            lineLength += lineSum;
+          } else var params =[0.02];
+          if (afterRoll) {
+            params.push ('roll' + (rollnr - 1) + '-gap' + gapnr);
+            roll[rollnr - 1].lineLengthAfter = lineSum; 
+          }
+          if (entryLine) {
+            params.push ('entry');
+            figures[figStringIndex].entryLength = lineSum;
+            entryLine = false;
+          }
+          
+          paths = buildShape ('Line', params, paths);
+          lineDraw = false;
         }
-        lineDraw = false;
-      }
-      lineSum = 0;
+        lineSum = 0;
+        afterRoll = false;
     }
     // Take care of everything but lines
     switch (figureDraw.charAt(i)) {
@@ -14616,24 +14970,50 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
           rollSum = 0;
           rollDone = false;
           attChanged = 0;
+          var gapnr = 0;
           for (j = 0; j < roll[rollnr].length; j++) {
             // Build line elements after all extensions and shortenings have been processed
             if (roll[rollnr][j].type != 'line') {
+              // mark rolls in the top
+              if (rollTop) rollInfo[rollnr].rollTop = true;
               if (lineDraw) {
                 // set a fixed distance for rolls in the top
                 if (rollTop) {
-                  rollPaths = buildShape('Move', Array(1.2/scale, 0), rollPaths);
+                  rollPaths = buildShape('Move', [1.2/scale], rollPaths);
                 } else {
-                  if (lineSum > 0) {
-                    lineLength += lineSum;
-                    rollPaths = buildShape('Line', Array(lineSum, NegLoad), rollPaths);
+                  lineSum = Math.max (lineSum, 1);
+                  lineLength += lineSum;
+                  // add roll paths with id for handle, except before
+                  // first roll on entry line
+                  if (1==1) {
+                  //if ((paths[paths.length-1].handle !== 'start') || (j > 0)) {
+                    rollPaths = buildShape(
+                      'Line',
+                      [lineSum, 'roll' + rollnr + "-gap" + gapnr],
+                      rollPaths
+                    );
+                    gapnr++;
                   } else {
-                    lineLength++;
-                    rollPaths = buildShape('Line', Array(1, NegLoad), rollPaths);
+                    rollPaths = buildShape(
+                      'Line',
+                      [lineSum],
+                      rollPaths
+                    );
                   }
+                  roll[rollnr][j].lineLength = lineSum;
                 }
                 lineDraw = false;
+              } else if (!rollTop) {
+                // add roll paths tiny line with id for handle, except
+                // for rolls in the top
+                rollPaths = buildShape(
+                  'Line',
+                  [0.02, 'roll' + rollnr + "-gap" + j],
+                  rollPaths
+                );
+                roll[rollnr][j].lineLength = 0.02;
               }
+                
               lineSum = 0;
             } 
 
@@ -14649,7 +15029,7 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
               if (((Attitude == 90) || (Attitude == 270)) && lowKFlick) {
                 // Handle snaps on verticals where lowKFlick is set
                 rollAtt = (roll[rollnr][j].type == 'possnap')? '+' + rollAtt : '-' + rollAtt;
-              } else if (((rollSum / 180) == parseInt(rollSum / 180)) || (Attitude == 90) || (Attitude == 270)) {
+              } else if (((rollSum % 180) == 0) || (Attitude == 90) || (Attitude == 270)) {
                 // Handle snaps on verticals and from non-knife-edge
                 rollAtt = (NegLoad == 0)? '+' + rollAtt : '-' + rollAtt;
               } else {                
@@ -14657,7 +15037,7 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
                 // previous amount of roll. Use switches to determine
                 // correct virtual load/attitude combination
                 var inv = ((Attitude > 90) && (Attitude < 270));
-                inv = (inv == (((Math.abs(rollSum) - 90) / 360) == parseInt((Math.abs(rollSum) - 90) / 360)));
+                inv = (inv == (((Math.abs(rollSum) - 90) % 360) == 0));
                 inv = (inv == ((rollSum * roll[rollnr][j].extent) > 0));
                 // 1) Foot up for pos start, foot down for neg start
                 // 2) Foot down for pos start, foot up for neg start
@@ -14665,9 +15045,8 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
               }
             }
             // set lowKFlick to true after anything but a line
-            if (roll[rollnr][j].type !== 'line') {
-              lowKFlick = true;
-            }
+            if (roll[rollnr][j].type !== 'line') lowKFlick = true;
+
             // Check if posspin and negspin are on correctly loaded line
             // Crossover spins will create alert when nonArestiRolls is
             // not checked (Aresti Catalogue item 26)
@@ -14788,7 +15167,7 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
               rollDone = true;
               // Half rolls and all rolls in the vertical change
               // direction and possibly attitude
-              if ((parseInt((rollSum + 180) / 360) - ((rollSum + 180) / 360)) == 0) {
+              if (((rollSum + 180) % 360) == 0) {
                 Attitude = 180 - Attitude;
                 if (Attitude < 0) Attitude += 360;
                 if (activeForm == 'C') {
@@ -14815,21 +15194,21 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
           rollSum = rollSums[rollnr];
           // See if we have to autocorrect the rolls
           if (fig[figNr].rolls[rollnr] == 1) {
-            autoCorr = (parseInt(rollSum / 360) - (rollSum / 360)) * 360;
+            autoCorr = -(rollSum % 360);
             // When a line is standing by to be built, build it before
             // doing the autocorrect
             if (autoCorr != 0) {
               if (lineDraw) {
                 // set a fixed distance for rolls in the top
                 if (rollTop) {
-                  rollPaths = buildShape('Move', Array(1.2/scale, 0), rollPaths);
+                  rollPaths = buildShape('Move', [1.2/scale], rollPaths);
                 } else {
                   if (lineSum > 0) {
                     lineLength += lineSum;
-                    rollPaths = buildShape('Line', Array(lineSum, NegLoad), rollPaths);
+                    rollPaths = buildShape('Line', [lineSum], rollPaths);
                   } else {
                     lineLength++;
-                    rollPaths = buildShape('Line', Array(1, NegLoad), rollPaths);
+                    rollPaths = buildShape('Line', [1], rollPaths);
                   }
                 }
                 lineSum = 0;
@@ -14839,9 +15218,9 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
               if (rollDone) {
                 // set a fixed distance for rolls in the top
                 if (rollTop) {
-                  rollPaths = buildShape('Move', Array(1.2/scale, 0), rollPaths);
+                  rollPaths = buildShape('Move', [1.2/scale], rollPaths);
                 } else {
-                  rollPaths = buildShape('Line', Array(2, NegLoad), rollPaths);
+                  rollPaths = buildShape('Line', [2], rollPaths);
                   lineLength += 2;
                 }
               }
@@ -14852,21 +15231,21 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
               changeDir(180);
             }
           } else if (fig[figNr].rolls[rollnr] == 2) {
-            autoCorr = (parseInt((rollSum + 180) / 360) - ((rollSum + 180) / 360)) * 360;
+            autoCorr = -((rollSum + 180) % 360);
             // When a line is standing by to be built, build it before
             // doing the autocorrect
             if (autoCorr != 0) {
               if (lineDraw) {
                 // set a fixed distance for rolls in the top
                 if (rollTop) {
-                  rollPaths = buildShape('Move', Array(1.2/scale), rollPaths);
+                  rollPaths = buildShape('Move', [1.2/scale], rollPaths);
                 } else {
                   if (lineSum > 0) {
                     lineLength += lineSum;
-                    rollPaths = buildShape('Line', Array(lineSum, NegLoad), rollPaths);
+                    rollPaths = buildShape('Line', [lineSum], rollPaths);
                   } else {
                     lineLength++;
-                    rollPaths = buildShape('Line', Array(1, NegLoad), rollPaths);
+                    rollPaths = buildShape('Line', [1], rollPaths);
                   }
                 }
                 lineSum = 0;
@@ -14876,9 +15255,9 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
               if (rollDone) {
                 // set a fixed distance for rolls in the top
                 if (rollTop) {
-                  rollPaths = buildShape('Move', Array(1.2/scale, 0), rollPaths);
+                  rollPaths = buildShape('Move', [1.2/scale], rollPaths);
                 } else {
-                  rollPaths = buildShape('Line', Array(2, NegLoad), rollPaths);
+                  rollPaths = buildShape('Line', [2], rollPaths);
                   lineLength += 2;
                 }
               }
@@ -14940,8 +15319,8 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
             // Retrieve the movement by the two curve paths
             dx = paths[paths.length - 1].dx + paths[paths.length - 3].dx;
             dy = paths[paths.length - 1].dy + paths[paths.length - 3].dy;
-            dxRolls = 0;
-            dyRolls = 0;
+            dxRolls = dyRolls = 0;
+
             // Retrieve the roll path movements
             for (var k = 0; k < rollPaths.length; k++) {
               if (rollPaths[k].dx) dxRolls += rollPaths[k].dx;
@@ -15070,9 +15449,7 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
               paths = buildShape ('Curve', angle / 2, paths);
             }
             // if applicable, reset curveRadius when done
-            if (figureDraw.charAt(i + 1) == '/') {
-              curveRadius = curveRadius * 2;
-            }
+            if (figureDraw.charAt(i + 1) == '/') curveRadius *= 2;
           }
           NegLoad = (angle < 0)? 1 : 0;
           // The lineLength may be necessary for e.g. hammerhead and is
@@ -15086,11 +15463,8 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
   // Draw any remaining line, we can leave the variables 'dirty' because
   // there is no more processing after this
   if (lineDraw) {
-    if (lineSum > 0) {
-      paths = buildShape('Line', Array(lineSum, NegLoad), paths);
-    } else {
-      paths = buildShape('Line', Array(1, NegLoad), paths);
-    }
+    paths = buildShape ('Line', [Math.max (lineSum, 1), 'exit'], paths);
+    figures[figStringIndex].exitLength = Math.max (lineSum, 1);
   }
 
   // Make the end of figure symbol
@@ -15136,7 +15510,7 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
 // roll direction.
 // Only run one X and one Y switch per figure
 function checkQRollSwitch (figString, figStringIndex, pattern, seqNr, rollSum, figureDraw, fdIndex, roll, rollnr) {
-  if (((Attitude == 90) || (Attitude == 270)) && ((rollSum / 180) != parseInt(rollSum / 180))) {
+  if (((Attitude == 90) || (Attitude == 270)) && (rollSum % 180)) {
     if (activeForm == 'C') {
       changeDir (-Math.abs(rollSum));
     } else {
@@ -15148,14 +15522,17 @@ function checkQRollSwitch (figString, figStringIndex, pattern, seqNr, rollSum, f
     var nextRollExtent = 0;
     var nextRollExtentPrev = 0;
     var switchVert = false;
-    var doubleBump = figString.match (/(pb|b)(pb|b)/);
+    // incorrect pre-2016.1 check
+    // var doubleBump = figString.match (/(pb|b)(pb|b)/);
+    var verticalRolls = (pattern.match(/&/g)||[]).length;
+
     var firstRoll = (rollnr == 0)? true : false;
     for (var i = fdIndex + 1; i < figureDraw.length; i++) {
       if (figureDraw[i] in drawAngles) {
         // found an angle
         nextAngle = drawAngles[figureDraw[i]];
         // break the loop when the angle doesn't bring us back to vertical
-        if ((nextAngle / 180) != parseInt (nextAngle / 180)) {
+        if (nextAngle % 180) {
           break;
         }
       } else if (figureDraw[i] == figpat.fullroll) {
@@ -15169,22 +15546,26 @@ function checkQRollSwitch (figString, figStringIndex, pattern, seqNr, rollSum, f
             nextRollExtent += parseInt(roll[rollnr][j].extent);
           }
         }
-        // when the next roll is a 1/4 roll there is no need to continue.
-        // Special code for double bumps: HACK
-        // This may need to be made more generic in the future
-        // when one of the following rolls is a 1/4 we just care about
+        // When the next roll is a 1/4 roll there is no need to continue.
+        // Code applies to all figures with 3 or more rolls of type &
+        // (any amount of rotation) as we assume those are vertical.
+        // Currently (2016) only applies to double bumps for Aresti,
+        // but also some non-Aresti figures (e.g. -4ibh(4)4).
+        // When one of the following rolls is a 1/4 we just care about
         // the direction of this roll. It should make the next curve go
         // in the correct direction.
         // We know this routine will be called again for the next roll
-        if ((nextRollExtent / 180) != parseInt(nextRollExtent / 180)) {
-          if (doubleBump && firstRoll) {
+        if (nextRollExtent % 180) {
+          if ((verticalRolls > 2) && firstRoll) {
             if (rollnr == 2) {
               nextRollExtent = nextRollExtentPrev;
               break;
             }
-            // see if there's a first part direction switcher (;> or ;^).
+            // see if there's a first part direction switcher (;> or ;^)
+            // before the pattern figure letters (e.g. bb)
             // Remove when applied
-            var regex = /;[>^](b|pb|ib|ipb)/;
+            var regex = new RegExp(';[>^]' + pattern.match(/[a-zA-Z]+/)[0]);
+
             if (figString.match (regex)) {
               var switchDir = true;
               figString = figString.replace(regex, "$1");
@@ -15298,9 +15679,7 @@ function checkQRollSwitch (figString, figStringIndex, pattern, seqNr, rollSum, f
         }
       }
     }
-    if ((nextRollExtent / 180) == parseInt(nextRollExtent / 180)) {
-      changeDir (-nextRollExtent);
-    }
+    if (!(nextRollExtent % 180)) changeDir (-nextRollExtent);
   }
   return figString;
 }
@@ -15743,7 +16122,7 @@ function parseSequence () {
       if (base.match(/^.j[^w]/)) {
         base = figure.replace(/[^a-zA-Z0-9\-\+]+/g, '');
         if (base.charAt(0) != '-') base = '+' + base;
-        if (base.charAt(base.length - 1) != '-') base = base + '+';
+        if (base.charAt(base.length - 1) != '-') base += '+';
       }
       // Retrieve the figNrs (if any) from array figBaseLookup
       figNrs = figBaseLookup[base];

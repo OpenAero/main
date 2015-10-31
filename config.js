@@ -1,4 +1,4 @@
-// config.js 1.5.2.2
+// config.js 2016.1
 
 // This file is part of OpenAero.
 
@@ -34,13 +34,22 @@
 // Define active version number of OpenAero
 // **************
 
-var version = '1.5.2.2';
+var version = '2016.1';
 // versionNew is an object that contains version update information
 // The structure is {vvv : [[ttt, n], ...], ...} , where
 // vvv = version number
 // ttt = update text
 // n   = importance (higher = more important)
 var versionNew = {
+  '2016.1' : [
+    ['Corrected handling of direction in double bumps with different ' +
+    'radii and having a roll of uneven quarters on the first line ' +
+    'and a roll on the second line', 3],
+    ['Added drag & drop figure editing. When a figure is selected, ' +
+    'handles appear that allow you to change all line lengths ' +
+    'directly.', 4],
+    ['CIVA rules and sequences for 2016', 4]
+  ],
   '1.5.2.1' : [
     ['Added AAC Sportsman Free rules', 2]
   ],
@@ -289,7 +298,10 @@ var style = {
   'formBackground' : 'fill: white;',
   'printNotes' : 'font-family: verdana, helvetica, sans; font-size: 14px; fill: black;',
   'sequenceString' : 'font-family: monospace; font-size: 8px; color: blue; fill: blue; word-wrap: break-word;',
-  'windArrow' : 'stroke: black; stroke-width: 1.5px; fill: white;'
+  'windArrow' : 'stroke: black; stroke-width: 1.5px; fill: white;',
+  // Selection styles
+  'selectedFigureBox' : 'stroke: #0000ff; stroke-width: 1; stroke-opacity: 0.7; fill: transparent',
+  'selectedFigureHandle' : 'stroke: #0000ff; stroke-width: 1; fill: #0000ff; fill-opacity: 0.2'
 }
 
 // ***************

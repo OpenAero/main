@@ -156,3 +156,17 @@ rules.push("9.11.1.4");
 rules.push("9.11.1.5");
 rules.push("9.11.1.6");
 
+/*******************************************************************
+ * 
+ * 2015 CIVA rules for Intermediate, Yak 52, Advanced and Unlimited
+ * 
+ *******************************************************************/
+
+rules.push("[NZAC Intermediate 2015 Free]");
+rules.push("more=CIVA Yak52 Free");
+rules.push("[NZAC Yak52 2015 Free]");
+rules.push("more=CIVA Yak52 Free");
+rules.push("[NZAC Advanced 2015 Free]");
+rules.push("more=CIVA Advanced Free");
+rules.push("[NZAC Unlimited 2015 Free]");
+rules.push("more=CIVA Unlimited Free");

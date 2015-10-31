@@ -332,6 +332,9 @@ textarea {
   height: 1.6em;
   font-size: 12px;
 }
+#pilotTeam, #acTypeReg {
+  float: right;
+}
 option.used {
   color: red;
 }
@@ -1229,8 +1232,8 @@ table#figureChooserTable div {
 #menu li ul li ul {
   display:none;
   position:absolute;
-  left:-182px;
-  width:180px;
+  left:-202px;
+  width:200px;
   z-index:10;
   -webkit-transform-style: preserve-3d;
   margin-top: -24px;
@@ -1253,7 +1256,7 @@ table#figureChooserTable div {
 #menu li ul li ul li ul {
   display:none;
   position:absolute;
-  left:175px;
+  left:195px;
   width:180px;
   z-index:10;
   -webkit-transform-style: preserve-3d;

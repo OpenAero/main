@@ -1,4 +1,4 @@
-﻿// fr.js 1.5.1.3
+﻿// fr.js 2016.1
 // This file is part of OpenAero.
 
 //  OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -84,6 +84,10 @@ lang.fr = {
 'addFigureText' : 'Cliquer pour ajouter figure',
 'addingFigure' : 'Ajouter une nouvelle figure',
 'addToQueue' : 'Ajouter à la file',
+// new 1.5.2.3
+'acreg': 'Immat d\'Avion',
+'actype': 'Avion',
+//
 'aircraft' : 'Avion et Immat',
 // alert forms a sub-array
 'alert': {
@@ -253,15 +257,19 @@ lang.fr = {
 'formL' : 'Forme L',
 'formR' : 'Forme R',
 //
+// changed 1.5.2.3
+//'freeUnknownFig' : 'Fig Inconnu-Libre ',
+'freeUnknownFig' : 'Lettre ',
 // new 1.5.0
-'freeUnknownFig' : 'Fig Inconnu-Libre ',
 'freeUnknownLink' : 'Liaison Inconnu-Libre',
 'FUconfirmExit' : 'L\'assembleur d\'inconnu-libre peut ne pas redémarrer ' +
   'correctement dans cette situation sans avoir à ré-ouvrir le programme. ' +
   'Confirmer que vous souhaitez quitter l\'assembleur d\'inconnu-libre.',
 'fuDesigner' : 'Assembleur d\'inconnu-libre',
 'fuFiguresTab' : 'Figures',
-'FUfigOptionsDisabled' : 'Certaines options sont invalidées pour l\'inconnu-libre',
+// changed 1.5.2.3
+//'FUfigOptionsDisabled' : 'Certaines options sont invalidées pour l\'inconnu-libre',
+'FUfigOptionsDisabled' : 'Certaines options sont invalidées pour des figures lettrés',
 'FUDesignletterMulti' : 'Lettre d\'inconnu-libre %s utilisée plusieurs fois. ' +
   'Impossible de lancer l\'assembleur d\'inconnu-libre.',
 'FUDesignMissingLetters' : 'Lettre(s) d\'inconnu-libre <strong>%s</strong> ' +
@@ -271,7 +279,9 @@ lang.fr = {
 'FUerrorsDetected' : 'Erreur(s) détectée(s) dans le programme, voir ci-dessous :',
 'FUfinalizing' : 'Assemblage du programme. Ceci peut prendre du temps. ' +
   'Patientez, svp...',
-'FUletterMulti' : '(%s) lettre(s) d\'Inconnu-Libre %s utilisée(s) plusieurs fois',
+// changed 1.5.2.3
+//'FUletterMulti' : '(%s) lettre(s) d\'Inconnu-Libre %s utilisée(s) plusieurs fois',
+'FUletterMulti' : '(%s) lettre(s) du figure %s utilisée(s) plusieurs fois',
 'FUmultipleSubsequences' : 'Le programme a %s sous-parties. ' +
   'Il ne devrait y en avoir qu\'un.',
 'fuSelectFigureFirst' : 'Cliquer sur une figure d\'une sous-partie ' +
@@ -382,7 +392,9 @@ lang.fr = {
   '<strong>chrome://chrome/settings/content</strong><br />' +
   'et choisissez <i>Autoriser l\'enregistrement de données locales</i>',
 'noFigureLetterAssigned' : '(%s) Pas de lettre affectée',
-'noFreeUnknownFig' : 'Pas de figure d\'Inconnu-Libre',
+// changed 1.5.2.3
+//'noFreeUnknownFig' : 'Pas de figure d\'Inconnu-Libre',
+'noFreeUnknownFig' : 'Pas de lettre du figure',
 // changed 1.4.4
 'nonArestiRolls' : 'Autoriser les rotations et combinaisons ' +
   'non-Aresti (essayer <i>41h4,f,4 66</i>)',
@@ -418,9 +430,9 @@ lang.fr = {
 'openaeroLanguage' : 'Syntaxe OpenAero',
 'openQueueFile' : 'Ouvrir un fichier file',
 'openSequence' : 'Ouvrir un programme',
-// new 1.5.0.4
-'openSequenceLink' : 'Open sequence link',
-'openSequenceLinkCancel' : 'Cancel',
+// changed 2016.1
+'openSequenceLink' : 'Ouvrir le lien du programme',
+'openSequenceLinkCancel' : 'Annuler',
 'openSequenceLinkError' : '<p>Il y a eu une erreur à l\'ouverture du programme ' +
   'pointé par le lien. Voici le lien que vous avez fourni:<br>%s</p><p>Vérifiez que vous ' +
   'avez copié <strong>l\'intégralité</strong> du lien',
@@ -646,6 +658,13 @@ lang.fr = {
   'avec une version d\'OpenAero antérieure à 1.3.7. Certains déclenchés débutés tranche ' +
   'peuvent avoir un code Aresti et un K incorrect. Ceci devrait être corrigé maintenant. ' +
   'vérifiez bien, si vous êtes dans cette situation.</p>',
+// new 2016.1
+'warningPre153' : '<p>Le fichier que vous venez d\'ouvrir a été créé avec une ' +
+  'version d\'OpenAero antérieure à 2016.1 et la figure suivante a été détecté :<br>' +
+  'Un double retournement vertical avec un grand rayon, un nombre impair de ' +
+  'quarts de rotation dans la première ligne et une rotation dans la seconde.<br>' +
+  'Ce type de figure était traitée incorrectement dans les anciennes versions d\'OpenAero. ' +
+  'Vérifiez bien que toutes les orientations (sens) de cette figure sont correctes.</p>',
 'wind' : 'V E N T  ',
 'windIAC' : 'sens du vent',
 // new 1.5.1

@@ -101,13 +101,16 @@ select {
   font-size: 16px;
 }
 #pilot {
+  float: left !important;
   width: 136px !important;
 }
 #team {
+  float: left !important;
   width: 62px !important;
   margin-left: 2px;
 }
 #actype, #acreg {
+  float: left !important;
   width: 99px !important;
 }
 #acreg {

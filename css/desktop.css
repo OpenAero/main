@@ -91,13 +91,16 @@ body {
   background: linear-gradient(top, #f4f4f4, #e0e0ff);
 }
 #pilot {
+  float: left !important;
   width: 116px !important;
 }
 #team {
+  float: left !important;
   width: 52px !important;
   margin-left: 2px;
 }
 #actype, #acreg {
+  float: left !important;
   width: 84px !important;
 }
 #acreg {

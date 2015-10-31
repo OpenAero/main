@@ -1,4 +1,4 @@
-// en.js 1.5.1.3
+// en.js 2016.1
 // This file is part of OpenAero.
 
 //  OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -90,6 +90,10 @@ lang.en = {
 'addFigureText' : 'Click to add figure',
 'addingFigure' : 'Add new figure',
 'addToQueue' : 'Add to Queue',
+// new 1.5.2.3
+'acreg': 'Aircraft registration',
+'actype': 'Aircraft type',
+//
 'aircraft' : 'A/C type &amp; reg',
 // alert forms a sub-array
 'alert': {
@@ -249,15 +253,19 @@ lang.en = {
 'formL' : 'Form L',
 'formR' : 'Form R',
 //
-// new 1.5.0
-'freeUnknownFig' : 'Free Unknown fig ',
-'freeUnknownLink' : 'Free unknown Link',
+// changed 1.5.2.3
+//'freeUnknownFig' : 'Free Unknown fig ',
+'freeUnknownFig' : 'Letter ',
+// changed 2016.1
+'freeUnknownLink' : 'Free unknown Additional',
 'FUconfirmExit' : 'The Free Unknown designer may not restart ' +
   'succesfully in this situation without re-opening the sequence. ' +
   'Confirm you want to exit the Free Unknown designer',
 'fuDesigner' : 'Free Unknown Designer',
 'fuFiguresTab' : 'Figures',
-'FUfigOptionsDisabled' : 'Some options disabled for Free Unknown fig',
+// changed 1.5.2.3
+//'FUfigOptionsDisabled' : 'Some options disabled for Free Unknown fig',
+'FUfigOptionsDisabled' : 'Some options disabled for lettered figures',
 'FUDesignletterMulti' : 'Free Unknown letter %s used multiple times. ' +
   'Unable to start Free Unknown Designer',
 'FUDesignMissingLetters' : 'Free Unknown letter(s) <strong>%s</strong> ' +
@@ -267,12 +275,15 @@ lang.en = {
 'FUerrorsDetected' : 'Error(s) in sequence detected, as shown below:',
 'FUfinalizing' : 'Finalizing sequence. This may take a while. Please ' +
   'wait...',
-'FUletterMulti' : '(%s) Free Unkn letter %s used multiple times',
+// changed 1.5.2.3
+//'FUletterMulti' : '(%s) Free Unkn letter %s used multiple times',
+'FUletterMulti' : '(%s) figure letter %s used multiple times',
 'FUmultipleSubsequences' : 'The sequence has %s subsequences. There ' +
   'should be only one',
+// changed 2016.1
 'fuSelectFigureFirst' : 'Click a figure on one of the subsequences ' +
-  'to edit it. You can drag & drop figures and links from the ' +
-  '<i>Figures</i> tab to the subsequence(s).',
+  'to edit it. You can drag & drop figures and Additional figures ' + 
+  'from the <i>Figures</i> tab to the subsequence(s).',
 'FUstarting' : 'Starting Free Unknown designer. This may take a while. ' +
   'Please wait...',
 'FUstartOnLoad' : 'The sequence appears to be a figures file for Free ' +
@@ -337,8 +348,8 @@ lang.en = {
 'judgesName' : 'Judges Name',
 //
 'language' : 'Language',
-// new 1.5.0
-'LINK' : 'LINK',
+// changed 2016.1
+'LINK' : 'Additional',
 //
 'loadNewVersion' : 'A new version of OpenAero is available. Load it?',
 'loadNewVersionNoCookies' : 'A new version of OpenAero is available. ' +
@@ -383,7 +394,9 @@ lang.en = {
   '<strong>chrome://chrome/settings/content</strong><br />' +
   'and choose <i>Allow local data to be set</i>.',
 'noFigureLetterAssigned' : '(%s) No figure letter assigned',
-'noFreeUnknownFig' : 'No Free Unknown fig',
+// changed 1.5.2.3
+//'noFreeUnknownFig' : 'No Free Unknown fig',
+'noFreeUnknownFig' : 'No figure letter',
 'nonArestiRolls' : 'Allow non-Aresti rolls and combinations (try ' + 
   'sequence text <i>41h4,f,4 66</i>)',
 'none' : 'None',
@@ -633,7 +646,15 @@ lang.en = {
 'warningPre137' : '<p>The file you just opened was created with an ' +
   'OpenAero version older than 1.3.7. Some snap rolls started from knife ' +
   'edge flight may have had the wrong Aresti number and K. They should be ' +
-  'correct now. Please check if applicable.</p>', 
+  'correct now. Please check if applicable.</p>',
+// new 2016.1
+'warningPre20161' : '<p>The file you just opened was created with an ' +
+  'OpenAero version older than 2016.1. Also, the following figure was ' +
+  'detected:<br>A double humpty bump with one of the radii enlarged, ' +
+  'having a roll of uneven quarters on the first line and a roll on ' +
+  'the second line.<br> This type of figure was handled incorrectly ' +
+  'on older versions of OpenAero. Please check that all double ' +
+  'Humpty Bump directions are correct.</p>', 
 'wind' : 'wind/vent',
 'windIAC' : 'wind direction',
 // new 1.5.1

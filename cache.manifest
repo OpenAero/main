@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# OpenAero version 1.5.2.2
+# OpenAero version 2016.1d
 addtohomescreen/addtohomescreen.css
 addtohomescreen/addtohomescreen.min.js
 arestisystem.html
@@ -82,6 +82,7 @@ images/fullrolls.png
 images/hesrolls.png
 images/ee_ext-exit.png
 images/ee_ext-entry.png
+images/magnifier.png
 images/multirolls.png
 images/OA_FigureAddPanel.gif
 images/OA_FigureGrid.gif
@@ -107,15 +108,15 @@ logo.js
 manual.html
 OpenAero.js
 print.html
-rules/rules15.js
-rules/rules15-civa.js
+rules/rules16.js
+rules/rules16-civa.js
 rules/rules15-aac.js
 rules/rules15-baea.js
 rules/rules15-france.js
 rules/rules15-ga.js
 rules/rules15-iac.js
 rules/rules15-vink.js
-rules/rules15-glider-civa.js
+rules/rules16-glider-civa.js
 rules/rules15-nzac.js
 sprintf.min.js
 vkbeautify.js

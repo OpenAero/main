@@ -1,4 +1,4 @@
-// OpenAero rules15-glider-civa.js file
+// OpenAero rules16-glider-civa.js file
 
 // This file is part of OpenAero.
 
@@ -20,44 +20,51 @@
 
 // This file defines year (YY) and rule type (XXX) specific rules
 
-// Updates:
-// OpenAero 1.3.4
-// -Free Unknown rules
-// -Advanced allowed figures for Known and Free:8.6.17-24.1-2
-// OpenAero 1.3.8
-// -infocheck directive for checking presence of Sequence info
-// OpenAero 1.4.0
-// -updated rules for 2014
-// OpenAero 1.4.2
-// -corrected rules for 8.6.1-8 column 3&4
-// OpenAero 1.4.3.1
-// -corrected civa-glider-rules:
-//	*corrected Kmax of Free Unknown and Unknowns
-//	*Section 6 part II 4.3.4.2 implemented
-//	*connectors are down- or upgraded in FREE UNKNOWN only
-//	*wrong alert "no roll on 1st element" for 4b3if corrected
-//	*wrong alert for repitition of 1.1.1.x corrected
-//	*in each Unknown and Free Unknown it is allowed to fly more than one
-//	 rolling circle / tailslide / stall-turn / spin / pos. flick / neg. flick /
-//	 hes roll / superslow roll as long as catIDs of these figures are not repeated
-//	*floating points in Free and Unknowns, but not in Free Unknown
-//  *improved detection of upright exit for seqcheck-upend
-// OpenAero 1.5.0
-// -added figures 2.2.7.1-4 to CIVA Glider rules for Known
-// OpenAero 1.5.2
-// -added checking for repetition of hesitation rolls, snaps and spins
-//  in Free
-// OpenAero 1.5.2.1
-// -corrected roll checking for Unlimited Unknown figure 8.7.6.4
-// 1.5.2.3
-// - updated infocheck directives for actype and acreg
-
+/**
+Updates:
+OpenAero 1.3.4
+-Free Unknown rules
+-Advanced allowed figures for Known and Free:8.6.17-24.1-2
+OpenAero 1.3.8
+-infocheck directive for checking presence of Sequence info
+OpenAero 1.4.0
+-updated rules for 2014
+OpenAero 1.4.2
+-corrected rules for 8.6.1-8 column 3&4
+OpenAero 1.4.3.1
+-corrected civa-glider-rules:
+	*corrected Kmax of Free Unknown and Unknowns
+	*Section 6 part II 4.3.4.2 implemented
+	*connectors are down- or upgraded in FREE UNKNOWN only
+	*wrong alert "no roll on 1st element" for 4b3if corrected
+	*wrong alert for repitition of 1.1.1.x corrected
+	*in each Unknown and Free Unknown it is allowed to fly more than one
+	 rolling circle / tailslide / stall-turn / spin / pos. flick / neg. flick /
+	 hes roll / superslow roll as long as catIDs of these figures are not repeated
+	*floating points in Free and Unknowns, but not in Free Unknown
+ *improved detection of upright exit for seqcheck-upend
+OpenAero 1.5.0
+-added figures 2.2.7.1-4 to CIVA Glider rules for Known
+OpenAero 1.5.2
+-added checking for repetition of hesitation rolls, snaps and spins
+ in Free
+OpenAero 1.5.2.1
+-corrected roll checking for Unlimited Unknown figure 8.7.6.4
+1.5.2.3
+- updated infocheck directives for actype and acreg
+OpenAero 2016.1
+-Changed to 2016 rules:
+ - New Known Free (Programme1)
+ - Kept Known and Free as hidden options to allow old sequence rule
+   checking
+ - Changed programmes 2-4
+*/
 //###################################################################################
 //################################ CIVA GLIDERS FREE ################################
 //###################################################################################
 
 //#######################################################################
-rules.push("[glider-CIVA Unlimited Known]");// specific rules for the Unlimited Known program
+rules.push("[glider-CIVA Unlimited Known]");// specific rules for the Unlimited Known programme
 //#######################################################################
 
 // what info should be filled out
@@ -71,12 +78,21 @@ rules.push("k-max=190");// maximum k-factor including floating points
 //====================================================
 rules.push("poslj=15+10");// positioning k-factor assuming line judges
 rules.push("posnl=15+10");// positioning k-factor assuming no line judges
-rules.push("poselec=15+10");// positioning k-factor assuming elcetric telemetry
+rules.push("poselec=15+10");// positioning k-factor assuming electric telemetry
 
 rules.push("more=glider-CIVA Unlimited arestibase");
 
 //######################################################################
-rules.push("[glider-CIVA Unlimited Free]");// specific rules for the Unlimited Free program
+rules.push("(glider-CIVA Unlimited Known Free)");// specific rules for the Unlimited Known Free programme
+//######################################################################
+
+rules.push("figure-letters=ABCDE");
+rules.push("basefig-min=10");	// minimum 10 base figures per sequence
+
+rules.push("more=glider-CIVA Unlimited Free");
+
+//######################################################################
+rules.push("(glider-CIVA Unlimited Free)");// specific rules for the Unlimited Free programme
 //######################################################################
 
 // what info should be filled out
@@ -854,7 +870,7 @@ rules.push("9.13.3.4");
 //########################################################################################
 
 //#######################################################################
-rules.push("[glider-CIVA Advanced Known]");// specific rules for the Advanced Known program
+rules.push("[glider-CIVA Advanced Known]");// specific rules for the Advanced Known programme
 //#######################################################################
 
 // what info should be filled out
@@ -873,7 +889,16 @@ rules.push("poselec=15+10");// positioning k-factor assuming elcetric telemetry
 rules.push("more=glider-CIVA Advanced arestibase");
 
 //######################################################################
-rules.push("[glider-CIVA Advanced Free]");// specific rules for the Advanced Free program
+rules.push("(glider-CIVA Advanced Known Free)");// specific rules for the Unlimited Known Free programme
+//######################################################################
+
+rules.push("figure-letters=ABCDE");
+rules.push("basefig-min=10");	// minimum 10 base figures per sequence
+
+rules.push("more=glider-CIVA Advanced Free");
+
+//######################################################################
+rules.push("[glider-CIVA Advanced Free]");// specific rules for the Advanced Free programme
 //######################################################################
 
 // what info should be filled out
