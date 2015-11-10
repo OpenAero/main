@@ -2,18 +2,21 @@
 * changed version number scheme to reflect active CIVA rules
 * improved code; reduced variables in makeXXX sections
 * corrected Tab field order in Sequence Info
-* added drag & drop figure editing (Issue #132) 
+* added drag & drop figure editing, including option to disable (Issue #132) 
 * added CIVA rules for 2016
 * updated infocheck directives for actype and acreg in several rule files
 * corrected handling of direction in double bumps with different radii (Issue #198)
 * added a warning for Issue #198 for pre-2016.1 sequences
 * removed gap adjustment for rolls in the top from the figure editor
 * changed 'Link' to 'Additional' for Free Unknowns according CIVA
+* updated all 'link' and 'connectors' references in code to 'additional'
 * added CIVA rules for 2016
-* added "2015" rules to NZAC and CIVA
-* added support for Programs consisting of multiple words (e.g. Known Free)
+* added "2015" Free rules to NZAC and CIVA
+* added support for Programs consisting of multiple words (e.g. Free Known)
 * disabled deselecting of "Super Family numbers" for sequences with superfamilies defined in rules (Issue #181)
-* enabled drag & drop figure editing for touch devices
+* added a button to quickly switch between Figures and Queue in figure chooser
+* adjusted queue used styles equal to the Free Unknown designer
+* added undo and redo buttons to Free Unknown designer
 
 1.5.2.2
 * added IAC Unlimited Free. Also required change in CIVA rules file (Issue #195)

@@ -48,7 +48,7 @@ var versionNew = {
     ['Added drag & drop figure editing. When a figure is selected, ' +
     'handles appear that allow you to change all line lengths ' +
     'directly.', 4],
-    ['CIVA rules and sequences for 2016', 4]
+    ['CIVA rules and Free Known sequences for 2016', 4]
   ],
   '1.5.2.1' : [
     ['Added AAC Sportsman Free rules', 2]
@@ -200,6 +200,7 @@ var saveSettings = [
   'zipImageFilenamePattern',
   'numberInCircle',
   'positionClearAuto',
+  'showHandles',
   'rollFontSize',
   'nonArestiRolls'];
 // define which settings will be loaded from sequence
@@ -354,8 +355,8 @@ superFamilies.advanced = [
 superFamilies.yak52 = superFamilies.advanced;
 superFamilies.intermediate = superFamilies.advanced;
 superFamilies.glider = superFamilies.advanced;
-// Total K for Unknown connector figures
-var connectFig = [];
+// Total K for Unknown additional figures
+var additionalFig = [];
 // available rolls
 var rollTypes = [
   ':none',
@@ -426,7 +427,7 @@ var gliderRollTypes = [
 // as a placeholder for switch operations.
 var userpat = {
   'comment' : '"',
-  'connector' : '=',
+  'additional' : '=',
   'curveTo' : '(',
   'flipNumber' : '|',
   'flipYaxis' : '/',
@@ -489,7 +490,7 @@ var regexMoveForward = new RegExp ('^[0-9]*' + userpat.moveforward + '+');
 var regexMoveDown = new RegExp ('^[0-9]*\\' + userpat.movedown + '+');
 var regexMoveFwdDn = new RegExp ('^[0-9]*(' + userpat.moveforward +
   '|\\' + userpat.movedown + ')+');
-var regexConnector = new RegExp (userpat.connector);
+var regexAdditional = new RegExp (userpat.additional);
 var regexCurveTo = new RegExp ('^[\(][0-9\-]*,[0-9\-]*[\)]$');
 var regexMoveTo = new RegExp ('^\[[0-9\-]*,[0-9\-]*\]$');
 // regexDrawInstr matches moveTo, curveTo, scale and text
@@ -517,7 +518,8 @@ regexRegistration.push (/(C|C-|G|G-|D|D-|F|F-)[A-Z]{4}/);
 regexRegistration.push (/(PH|PH-)[A-Z]{3}/);
 regexRegistration.push (/X(A|A-|B|B-|C|C-)[A-Z]{3}/);
 
-var regexRulesConnectors = /^connectors=([0-9]+)\/([0-9]+)/;
+// also accept deprecated 'connectors' for additional figures
+var regexRulesAdditionals = /^(connectors|additionals)=([0-9]+)\/([0-9]+)/;
 var regexSequenceOptions = /^(ed|eu|ej|eja|\/\/)$/;
 var regexTextBlock = /^"[^"]*"$/;
 var regexUnlinkedRolls = /[,; ](9\.[1-8]\.[0-9.]*;9\.[1-8]\.)|(9\.(9|10)\.[0-9.]*;9\.(9|10))|(9\.1[12]\.[0-9.]*;9\.1[12])/;

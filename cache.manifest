@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# OpenAero version 2016.1d
+# OpenAero version 2016.1
 addtohomescreen/addtohomescreen.css
 addtohomescreen/addtohomescreen.min.js
 arestisystem.html
@@ -77,6 +77,7 @@ images/arrow_blue_right.png
 images/spinrolls.png
 images/ee_ext-figure.png
 images/bg-dot.png
+images/blue_handles.png
 images/snaprolls.png
 images/fullrolls.png
 images/hesrolls.png

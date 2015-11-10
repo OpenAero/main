@@ -32,13 +32,13 @@ lang.en = {
 // Subsequent keys are alphabetical.
 'en' : 'English',
 'about' : 'About',
-// changed 1.5.1.3
+// changed 2016.1
 'aboutNewer' : 'You are running a newer version than Stable. You have ' +
   'all the latest features but may run into more bugs. If you do, ' +
   'you can help OpenAero development by adding them to ' +
-  '<a href="https://github.com/OpenAero/main/issues">the ' +
-  'Issues list</a>.',
-// changed 1.5.1.2
+  '<a href="https://github.com/OpenAero/main/issues" target="_blank">' +
+  'the Issues list</a>.',
+// changed 2016.1
 'aboutOlder' : '<font color="red">You are running an outdated version. ' +
   '</font><br /><ul>' +
   '<li>If you are using the Chrome app, open Chrome and enter ' +
@@ -49,7 +49,7 @@ lang.en = {
   '<strong>chrome://appcache-internals</strong> in your address bar ' +
   'and <strong>Remove</strong> all entries that contain OpenAero.</li>' +
   '<li>If you are running from a local file, please check instructions at ' +
-  '<a href="https://code.google.com/p/open-aero/wiki/Installation">' +
+  '<a href="https://github.com/OpenAero/main/wiki/Installation" target="_blank">' +
   'the Installation wiki</a>.</li></ul>',
 //
 'aboutUnknown' : 'Unable to determine Stable version. You are ' +
@@ -89,6 +89,9 @@ lang.en = {
   'may take a while. Please wait...',
 'addFigureText' : 'Click to add figure',
 'addingFigure' : 'Add new figure',
+// changed 2016.1
+'Additional' : 'Additional',
+//
 'addToQueue' : 'Add to Queue',
 // new 1.5.2.3
 'acreg': 'Aircraft registration',
@@ -257,7 +260,7 @@ lang.en = {
 //'freeUnknownFig' : 'Free Unknown fig ',
 'freeUnknownFig' : 'Letter ',
 // changed 2016.1
-'freeUnknownLink' : 'Free unknown Additional',
+'freeUnknownAdditional' : 'Free unknown Additional',
 'FUconfirmExit' : 'The Free Unknown designer may not restart ' +
   'succesfully in this situation without re-opening the sequence. ' +
   'Confirm you want to exit the Free Unknown designer',
@@ -348,9 +351,6 @@ lang.en = {
 'judgesName' : 'Judges Name',
 //
 'language' : 'Language',
-// changed 2016.1
-'LINK' : 'Additional',
-//
 'loadNewVersion' : 'A new version of OpenAero is available. Load it?',
 'loadNewVersionNoCookies' : 'A new version of OpenAero is available. ' +
 	'Load it? If you have a sequence open now it will be cleared.',
@@ -361,7 +361,7 @@ lang.en = {
   'chooser below, or select one of the displayed logos.',
 'manual' : 'Manual',
 // changed 1.5.1.2
-'maxConnectors' : 'Maximum connecting figures allowed: %s',
+'maxAdditionals' : 'Maximum additional figures allowed: %s',
 //
 'maxScaling' : 'Max small seq. scaling',
 // new 1.5.1
@@ -583,6 +583,9 @@ lang.en = {
 //
 'showFileName' : 'Add sequence file name',
 'showFullLog' : 'Show full log',
+// new 2016.1
+'showHandles' : 'Show figure editing handles (blue circles) when ' +
+  'figure is selected',
 'showQueue' : 'Show Queue',
 // new 1.5.1
 'signature' : 'Signature',
@@ -594,6 +597,9 @@ lang.en = {
 'styling' : 'Styling',
 'subSequenceDirection' : 'Sub sequence entry direction',
 'svg' : 'SVG',
+// new 2016.1
+'switchFigures' : 'Figures',
+'switchQueue' : 'Queue',
 // new 1.5.1
 'team' : 'Team',
 'tooHigh' : 'Too High',
@@ -602,7 +608,6 @@ lang.en = {
 'tools' : 'Tools',
 // tooltip forms a sub-array
 'tooltip' : {
-  'connector' : 'Make this figure a connector for Unknown sequences',
   'curvedLine' : 'Move figure to a new position with a curved line',
   'deleteFig' : 'Delete active figure',
   // next two disabled. Are disabling minus button

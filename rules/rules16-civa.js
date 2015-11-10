@@ -32,7 +32,7 @@ Modifications 2013 (ajout Prog Q 2013, Suppression Prog Free)  V 2013.0.50
 
 Added Yak 52 for 2013
 OpenAero 1.3.4:
--Updated Free Unknown connectors info
+-Updated Free Unknown additionals info
 OpenAero 1.3.7:
 -Corrected Yak52 Free rules for figure repetition
 -Moved rules from Intermediate to Yak52 as they are identical
@@ -52,10 +52,10 @@ OpenAero 1.5.0
 -removed from Yak 52/Intermediate Unknown:
  7.8.4.1 7.8.8.1 7.8.13.1 7.8.15.3 7.8.16.1 7.8.16.4
 OpenAero 1.5.2.3
--added (temporary) CIVA Known Free rules
+-added (temporary) CIVA Free Known rules
 OpenAero 2016.1
 -Changed to 2016 rules:
- - New Known Free (Programme1)
+ - New Free Known (Programme1)
  - Kept Known and Free as hidden options to allow old sequence rule
    checking
  - Changed programmes 2-4
@@ -67,7 +67,7 @@ OpenAero 2016.1
 //# Define Unlimited programmes.
 
 rules.push("[CIVA Unlimited Programme1]");
-rules.push("more=CIVA Unlimited Known Free");
+rules.push("more=CIVA Unlimited Free Known");
 rules.push("[CIVA Unlimited Programme2]");
 rules.push("more=CIVA Unlimited Unknown1");
 rules.push("[CIVA Unlimited Programme3]");
@@ -139,20 +139,20 @@ rules.push("infocheck=pilot;actype;acreg;positioning");
 rules.push("sf=^2\\.:2;^5\\.:5;^6\\.:6;^1\\.:7;^3\\.:7;^7\\.:7;^8\\.:7;^0\\.:7");
 
 //######################################################################################
-//##### CIVA UNLIMITED KNOWN FREE 2016 #################################################
+//##### CIVA UNLIMITED FREE KNOWN 2016 #################################################
 //######################################################################################
 
-rules.push("[CIVA Unlimited Known Free]");
+rules.push("[CIVA Unlimited Free Known]");
 rules.push("posnl=40");//assume no line judges
 rules.push("poslj=20");
 
-rules.push("more=CIVA/IAC Unlimited Known Free");
+rules.push("more=CIVA/IAC Unlimited Free Known");
 
 //######################################################################################
 //##### CIVA/IAC UNLIMITED FREE ########################################################
 //######################################################################################
 
-rules.push("(CIVA/IAC Unlimited Known Free)");
+rules.push("(CIVA/IAC Unlimited Free Known)");
 
 rules.push("basefig-min=10");
 rules.push("basefig-max=10");
@@ -188,9 +188,6 @@ rules.push("figure-letters=ABCDE");
 // what info should be filled out
 rules.push("infocheck=pilot;actype;acreg;positioning");
 
-// Super Families
-rules.push("sf=^2\\.:2;^5\\.:5;^6\\.:6;^1\\.:7;^3\\.:7;^7\\.:7;^8\\.:7;^0\\.:7");
-
 //#######################################################################################
 //##### CIVA UNLIMITED UNKNOWNS #########################################################
 //#######################################################################################
@@ -209,7 +206,7 @@ rules.push("[CIVA Unlimited Unknown3]");
 rules.push("more=CIVA Unlimited FreeUnknown");
 
 rules.push("(CIVA Unlimited FreeUnknown)");
-rules.push("connectors=4/24");
+rules.push("additionals=4/24");
 rules.push("figure-letters=ABCDEFGHIJ");
 
 rules.push("more=CIVA Unlimited Unknown");
@@ -675,7 +672,7 @@ rules.push("infocheck=positioning");
 //# Define Advanced programmes.
 
 rules.push("[CIVA Advanced Programme1]");
-rules.push("more=CIVA Advanced Known Free");
+rules.push("more=CIVA Advanced Free Known");
 rules.push("[CIVA Advanced Programme2]");
 rules.push("more=CIVA Advanced Unknown1");
 rules.push("[CIVA Advanced Programme3]");
@@ -745,10 +742,10 @@ rules.push("infocheck=pilot;actype;acreg;positioning");
 rules.push("more=CIVA AdvYakInt SF");
 
 //######################################################################################
-//##### CIVA ADVANCED KNOWN FREE #######################################################
+//##### CIVA ADVANCED FREE KNOWN #######################################################
 //######################################################################################
 
-rules.push("[CIVA Advanced Known Free]");
+rules.push("[CIVA Advanced Free Known]");
 rules.push("posnl=30");//no line judges
 rules.push("poslj=10");
 rules.push("k-max=320");
@@ -852,7 +849,7 @@ rules.push("roll-repeat=1");
 rules.push("snap-repeat=1");
 rules.push("spin-repeat=1");
 
-rules.push("connectors=4/24");
+rules.push("additionals=4/24");
 rules.push("figure-letters=ABCDEFGHIJ");
 
 rules.push("more=CIVA Advanced Unknownbase");
@@ -1110,7 +1107,7 @@ rules.push("infocheck=positioning");
 //# Define Intermediate & Yak52 programmes.
 
 rules.push("[CIVA Yak52 Programme1]");
-rules.push("more=CIVA Yak52 Known Free");
+rules.push("more=CIVA Yak52 Free Known");
 rules.push("[CIVA Yak52 Programme2]");
 rules.push("more=CIVA Yak52 Unknown1");
 rules.push("[CIVA Yak52 Programme3]");
@@ -1119,7 +1116,7 @@ rules.push("[CIVA Yak52 Programme4]");
 rules.push("more=CIVA Yak52 Unknown3");
 
 rules.push("[CIVA Intermediate Programme1]");
-rules.push("more=CIVA Intermediate Known Free");
+rules.push("more=CIVA Intermediate Free Known");
 rules.push("[CIVA Intermediate Programme2]");
 rules.push("more=CIVA Intermediate Unknown1");
 rules.push("[CIVA Intermediate Programme3]");
@@ -1128,10 +1125,10 @@ rules.push("[CIVA Intermediate Programme4]");
 rules.push("more=CIVA Intermediate Unknown3");
 
 //######################################################################################
-//##### CIVA YAK52 KNOWN FREE ##########################################################
+//##### CIVA YAK52 FREE KNOWN ##########################################################
 //######################################################################################
 
-rules.push("[CIVA Yak52 Known Free]");
+rules.push("[CIVA Yak52 Free Known]");
 rules.push("posnl=30");//no line judges
 rules.push("poslj=10");
 rules.push("k-max=200");
@@ -1169,14 +1166,12 @@ rules.push("figure-letters=ABCDE");
 // what info should be filled out
 rules.push("infocheck=pilot;actype;acreg;positioning");
 
-rules.push("more=CIVA AdvYakInt SF");
-
 //######################################################################################
-//##### CIVA INTERMEDIATE KNOWN FREE ###################################################
+//##### CIVA INTERMEDIATE FREE KNOWN ###################################################
 //######################################################################################
 
-rules.push("[CIVA Intermediate Known Free]");
-rules.push("more=CIVA Yak52 Known Free");
+rules.push("[CIVA Intermediate Free Known]");
+rules.push("more=CIVA Yak52 Free Known");
 
 //######################################################################################
 //##### CIVA YAK52 KNOWN 2015 ##########################################################
@@ -1319,7 +1314,7 @@ rules.push("roll-repeat=1");
 rules.push("snap-repeat=1");
 rules.push("spin-repeat=1");
 
-rules.push("connectors=4/24");
+rules.push("additionals=4/24");
 rules.push("figure-letters=ABCDEFGHIJ");
 
 rules.push("more=CIVA Yak52 Unknownbase");

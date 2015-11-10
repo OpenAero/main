@@ -429,6 +429,10 @@
               <input type="checkbox" id="positionClearAuto" checked>
               <span class="userText" id="t_positionClearAuto"></span>
             </div>
+            <div>
+              <input type="checkbox" id="showHandles" checked>
+              <span class="userText" id="t_showHandles"></span>
+            </div>
           </div>
           <div class="section">
             <span class="sectionLabel userText" id="t_saveFigsSeparateTitle"></span>
@@ -652,6 +656,7 @@
               <li>
                 <a class="userText" id="t_fuDesigner" href="#"></a>
               </li>
+              <hr>
               <li>
                 <a class="userText" id="t_checkMultipleSeq" href="#"></a>
               </li>
@@ -666,7 +671,9 @@
                   </form>
                 </div>
               </li>
+              <hr>
               <li><a class="userText" id="t_settings" href="#"></a></li>
+              <hr>
               <li id="installChromeApp" class="noDisplay">
                 <a class="userText" id="t_installChromeAppTitle" href="#"></a>
               </li>
@@ -693,7 +700,7 @@
       </div>
       <div class="clearBoth"></div>
       <!-- undo/redo buttons -->
-      <div id="undoRedo" class="disableFUdesigner">
+      <div id="undoRedo">
         <div id="undo" class="undoRedoButton"><div><img src="buttons/smallMask.png"></div></div>
         <div id="redo" class="undoRedoButton clearLeft"><div><img src="buttons/smallMask.png"></div></div>
       </div>
@@ -971,6 +978,7 @@
           <div id="figureSelectorOptionsDiv"></div>
           <div id="figureSelectorGroupDiv">
             <select id="figureGroup"></select>
+            <div id="t_switchQueue" class="textButton userText"></div>
           </div>
         </div>
         <div id="figureChooser">

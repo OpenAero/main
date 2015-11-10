@@ -32,15 +32,15 @@ lang.fr = {
 // Subsequent keys are alphabetical.
 'fr' : 'Français',
 'about' : 'A propos',
-// changed 1.5.1.3
+// changed 2016.1
 'aboutNewer' : 'Vous travaillez avec une version plus récente que la version courante. ' +
   'Vous disposez des dernières améliorations, mais vous pouvez rencontrer des bugs. ' +
   'Si c\'est le cas, vous aiderez à l\'amélioration d\' OpenAero en les ajoutant à ' +
-  '<a href="https://github.com/OpenAero/main/issues">la ' +
+  '<a href="https://github.com/OpenAero/main/issues" target="_blank">la ' +
   'liste des améliorations</a>.',
 'aboutOlder' : '<font color="red">Vous travaillez avec une ancienne version. ' +
   '</font>Si vous travaillez hors connexion, vérifiez les instructions au ' +
-  '<a href="https://code.google.com/p/open-aero/wiki/Installation">' +
+  '<a href="https://github.com/OpenAero/main/wiki/Installation" target="_blank">' +
   'site d\'installation Wiki</a>.<br>Si vous utilisez openaero.net avec ' +
   'Google Chrome il peut être nécessaire d\'effacer le Cache d\'application. Entrez ' +
   '<strong>chrome://appcache-internals</strong> dans la barre d\'adresse ' +
@@ -83,6 +83,9 @@ lang.fr = {
   'peut prendre du temps. Patentiez, svp…',
 'addFigureText' : 'Cliquer pour ajouter figure',
 'addingFigure' : 'Ajouter une nouvelle figure',
+// updated 2016.1
+'Additional' : 'Supplé&#173;mentaire',
+//
 'addToQueue' : 'Ajouter à la file',
 // new 1.5.2.3
 'acreg': 'Immat d\'Avion',
@@ -261,7 +264,7 @@ lang.fr = {
 //'freeUnknownFig' : 'Fig Inconnu-Libre ',
 'freeUnknownFig' : 'Lettre ',
 // new 1.5.0
-'freeUnknownLink' : 'Liaison Inconnu-Libre',
+'freeUnknownAdditional' : 'Supplémentaire Inconnu-Libre',
 'FUconfirmExit' : 'L\'assembleur d\'inconnu-libre peut ne pas redémarrer ' +
   'correctement dans cette situation sans avoir à ré-ouvrir le programme. ' +
   'Confirmer que vous souhaitez quitter l\'assembleur d\'inconnu-libre.',
@@ -349,9 +352,6 @@ lang.fr = {
 'judgesName' : 'Nom des Juges',
 //
 'language' : 'Langue',
-// new 1.5.0
-'LINK' : 'LIAISON',
-//
 'loadNewVersion' : 'Une nouvelle version d\'OpenAero est disponible. La charger ?',
 'loadNewVersionNoCookies' : 'Une nouvelle version d\'OpenAero est disponible. La charger ?' +
   'Si un programme est ouvert, il sera effacé.',
@@ -361,7 +361,7 @@ lang.fr = {
 'logoExplain' : 'Chargez votre logo en cliquant sur parcourir..., ' +
   'ou sélectionnez un des logos déjà affiches.',
 'manual' : 'Manuel OpenAero',
-'maxConnectors' : 'Maximum de figures de liaison permis : %s',
+'maxAdditionals' : 'Maximum de figures supplémentaires permis : %s',
 'maxScaling' : 'Agrandissement Max des petits programmes',
 // new 1.5.1
 'missedSlot' : 'Hors créneau',
@@ -594,6 +594,9 @@ lang.fr = {
 //
 'showFileName' : 'Ajouter le nom du fichier',
 'showFullLog' : 'Voir le rapport de vérification complet',
+// new 2016.1
+'showHandles' : 'Montre les points d\'édition (cercles bleu) quand ' +
+  'une figure est sélectionnée',
 'showQueue' : 'Voir la file',
 // new 1.5.1
 'signature' : 'Signature',
@@ -605,6 +608,9 @@ lang.fr = {
 'styling' : 'Style',
 'subSequenceDirection' : 'Débuter la sous partie :',
 'svg' : 'SVG',
+// new 2016.1
+'switchFigures' : 'Figures',
+'switchQueue' : 'File',
 // new 1.5.1
 'team' : 'Equipe',
 'tooHigh' : 'Trop Haut',
@@ -613,7 +619,6 @@ lang.fr = {
 'tools' : 'Outils',
 // tooltip forms a sub-array
 'tooltip' : {
-  'connector' : 'Fait de cette figure une figure de liaison pour Inconnu-Libre',
   'curvedLine' : 'Déplace la figure et crée une ligne de liaison courbe',
   'deleteFig' : 'Supprime la figure sélectionnée',
   // next two disabled. Are disabling minus button
@@ -659,7 +664,7 @@ lang.fr = {
   'peuvent avoir un code Aresti et un K incorrect. Ceci devrait être corrigé maintenant. ' +
   'vérifiez bien, si vous êtes dans cette situation.</p>',
 // new 2016.1
-'warningPre153' : '<p>Le fichier que vous venez d\'ouvrir a été créé avec une ' +
+'warningPre20161' : '<p>Le fichier que vous venez d\'ouvrir a été créé avec une ' +
   'version d\'OpenAero antérieure à 2016.1 et la figure suivante a été détecté :<br>' +
   'Un double retournement vertical avec un grand rayon, un nombre impair de ' +
   'quarts de rotation dans la première ligne et une rotation dans la seconde.<br>' +

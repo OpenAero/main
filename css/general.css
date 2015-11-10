@@ -194,6 +194,12 @@ textarea {
   height: 25px;
   font-size: 14px;
 }
+#redo {
+  clear: left;
+}
+#mainMenu #redo {
+  clear: none !important;
+}
 
 /* sections and documentation */
 .section, .section2cols, .section3cols, .docs table tr {
@@ -459,7 +465,7 @@ option.used {
   font-weight: bold;
   border: 2px solid #bcf;
   border-radius: 5px;
-  padding: 2px;
+  padding: 0 3px 0 3px;
   margin: 0.5em 0 0.5em 0.5em;
   text-decoration: none;
   cursor: pointer;
@@ -937,7 +943,7 @@ float: left;
   text-align: center;
   height: 32px;
   width: 32px;
-  margin: 2px;
+  margin: 1px;
 }
 /*#moveX,#moveY {
   float: left;
@@ -950,6 +956,8 @@ float: left;
 #moveXCont, #moveYCont {
   font-size: 1.5em;
   font-weight: bold;
+  float: right;
+  margin-right: 2px;
 }
 #moveXCont span, #moveYCont span {
   float: left;
@@ -1180,9 +1188,15 @@ table#figureChooserTable div {
   bottom: 0;
 }
 .queueUsed {
-  background: #ddd;
-  background: -webkit-linear-gradient(top, #eee, #ccc);
-  background: linear-gradient(top, #eee, #ccc);
+  transition: background 0.4s, border-color 0.4s;
+  border-color: #00d000;
+  background: #ecffec;
+  background-opacity: 1;
+}
+.queueUsedMulti {
+  transition: background 0.4s, border-color 0.4s;
+  border-color: #ff6040;
+  background: #ffe8e0;
 }
 
 /* main menu */

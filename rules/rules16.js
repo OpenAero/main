@@ -1,4 +1,4 @@
-﻿// rules15.js version 1.5.0
+﻿// rules15.js version 206.1
 
 // This file is part of OpenAero.
 
@@ -193,8 +193,8 @@
  * 
  * allow-defrules=
  *   list of default rules which are applied to ALL figures
- * connectors=XX/YY
- *   allowed number and total K of connectors
+ * additionals=XX/YY
+ *   allowed number and total K of additionals
  * unknown-letters=ABCDEFGHIJ
  *   allowed letters for Free Unknown figures
  * sf=r1:f1;r2:f2;r3:f3;...

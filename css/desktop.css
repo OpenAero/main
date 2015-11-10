@@ -302,11 +302,11 @@ body {
 .fuSequence table td.hover {
   border: 2px dashed magenta !important;
 }
-.fuSequence .linkFigure {
+.fuSequence .additionalFigure {
   background-color: #f0f4ff;
   border: 2px solid #9090ff;
 }
-.fuSequence .linkFigureMulti {
+.fuSequence .additionalFigureMulti {
   background-color: #f0f4ff;
   border: 2px solid #ff9060;
 }

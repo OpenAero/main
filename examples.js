@@ -23,82 +23,82 @@
 
 var exampleSequences = [];
 
-exampleSequences['2016 CIVA Unl Known Free'] = '<sequence>' +
+exampleSequences['2016 CIVA Unl Free Known'] = '<sequence>' +
 '<category>Unlimited</category>' +
 '<class>powered</class>' +
-'<program>Known Free</program>' +
+'<program>Free Known</program>' +
 '<rules>CIVA</rules>' +
 '<positioning>40</positioning>' +
 "<sequence_text>/ \"@A\" ```````````+24rpp(f)24 \"@B\" ,3'pbB(,2if),34-`> \"@C\" --,2m,32,2if- \"@D\" -3jo15 \"@E\" ``+,4ita``2f'+`</sequence_text>" +
 '<logo>CIVA</logo>' +
-'<notes>See "Creating a Known Free sequence" in the manual</notes>' +
+'<notes>See "Creating a Free Known sequence" in the manual</notes>' +
 '<default_view>grid:5</default_view>' +
 '<oa_version>2016.1</oa_version>' +
 '</sequence>';
 
-exampleSequences['2016 CIVA Adv Known Free'] = '<sequence>' +
+exampleSequences['2016 CIVA Adv Free Known'] = '<sequence>' +
 '<category>Advanced</category>' +
 '<class>powered</class>' +
-'<program>Known Free</program>' +
+'<program>Free Known</program>' +
 '<rules>CIVA</rules>' +
 '<positioning>30</positioning>' +
 "<sequence_text>\"@A\" m,6;6f- \"@B\" ````6s.ik22 \"@C\" 2db``f'' \"@D\" 4h2f \"@E\" -2jo15</sequence_text>" +
 '<logo>CIVA</logo>' +
-'<notes>See "Creating a Known Free sequence" in the manual</notes>' +
+'<notes>See "Creating a Free Known sequence" in the manual</notes>' +
 '<default_view>grid:5</default_view>' +
 '<oa_version>2016.1</oa_version>' +
 '</sequence>';
 
-exampleSequences['2016 CIVA Yak 52 Known Free'] = '<sequence>' +
+exampleSequences['2016 CIVA Yak 52 Free Known'] = '<sequence>' +
 '<category>Yak52</category>' +
 '<class>powered</class>' +
-'<program>Known Free</program>' +
+'<program>Free Known</program>' +
 '<rules>CIVA</rules>' +
 '<positioning>30</positioning>' +
 "<sequence_text>\"@A\" iv```5s. \"@B\" 'k,24 \"@C\" m2,22 \"@D\" ```2f.g' \"@E\" 1j1</sequence_text>" +
 '<logo>CIVA</logo>' +
-'<notes>See "Creating a Known Free sequence" in the manual</notes>' +
+'<notes>See "Creating a Free Known sequence" in the manual</notes>' +
 '<default_view>grid:5</default_view>' +
 '<oa_version>2016.1</oa_version>' +
 '</sequence>';
 
-exampleSequences['2016 CIVA Int Known Free'] = '<sequence>' +
+exampleSequences['2016 CIVA Int Free Known'] = '<sequence>' +
 '<category>Intermediate</category>' +
 '<class>powered</class>' +
-'<program>Known Free</program>' +
+'<program>Free Known</program>' +
 '<rules>CIVA</rules>' +
 '<positioning>30</positioning>' +
-"<sequence_text>/of +++k.,24....+ m,2,22++++ 6> +2fa+~ (-11,12) ++`,4b.'+`` h`,8''~~ 'rp1 1% 2> ``+````2f.g``````,22.'+` (-1,17) 1j5-</sequence_text>" +
+"<sequence_text>\"@A\" iv```5s. \"@B\" 'k,24 \"@C\" m2,22 \"@D\" ```2f.g' \"@E\" 1j1</sequence_text>" +
 '<logo>CIVA</logo>' +
-'<notes>See "Creating a Known Free sequence" in the manual</notes>' +
+'<notes>See "Creating a Free Known sequence" in the manual</notes>' +
 '<default_view>grid:5</default_view>' +
 '<oa_version>2016.1</oa_version>' +
 '</sequence>';
 
-exampleSequences['2016 CIVA-Glider Unl Known Free'] = '<sequence>' +
+exampleSequences['2016 CIVA-Glider Unl Free Known'] = '<sequence>' +
 '<class>glider</class>' +
 '<rules>CIVA</rules>' +
 '<category>Unlimited</category>' +
-'<program>Known Free</program>' +
+'<program>Free Known</program>' +
 '<positioning>15</positioning>' +
 '<harmony>10</harmony>' +
 "<sequence_text>\"@A\" ```-ta``2if.+` \"@B\" -m1 \"@C\" id2f- \"@D\" 4h \"@E\" -'k</sequence_text>" +
 '<logo>CIVA</logo>' +
-'<notes>See "Creating a Known Free sequence" in the manual</notes>' +
+'<notes>See "Creating a Free Known sequence" in the manual</notes>' +
 '<default_view>grid:5</default_view>' +
 '<oa_version>2016.1</oa_version>' +
 '</sequence>';
 
-exampleSequences['2016 CIVA-Glider Adv Known Free'] = '<sequence>' +
+exampleSequences['2016 CIVA-Glider Adv Free Known'] = '<sequence>' +
 '<class>glider</class>' +
 '<rules>CIVA</rules>' +
 '<category>Advanced</category>' +
-'<program>Known Free</program>' +
+'<program>Free Known</program>' +
 '<positioning>15</positioning>' +
 '<harmony>10</harmony>' +
 "<sequence_text>\"@A\" -d2 \"@B\" h \"@C\" 2''rdb \"@D\" q(1) \"@E\" m2</sequence_text>" +
 '<logo>CIVA</logo>' +
-'<notes>See "Creating a Known Free sequence" in the manual</notes>' +
+'<notes>See "Creating a Free Known sequence" in the manual</notes>' +
 '<default_view>grid:5</default_view>' +
 '<oa_version>2016.1</oa_version>' +
 '</sequence>';

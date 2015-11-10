@@ -109,7 +109,7 @@ xxx is a specific element, being:
 aresti               the Aresti nrs of the figure
 bBox                 bounding rectangles of the figure and it's elements
 comments             comments set before the figure by "xxx"
-connector            true for connector figures
+additional            true for additional figures
 draggable            boolean to indicate if draggable or not
 entryAxis            the entry axis (X or Y) of the figure
 entryAtt             entry Attitude
@@ -132,8 +132,8 @@ var figures = [];
 
 // firstFigure is true when the figure is the first of the (sub)sequence
 var firstFigure = true;
-// connectors holds the number of connector figures in the sequence
-var connectors = 0;
+// additionals holds the number of additional figures in the sequence
+var additionals = 0;
 // unknownFigureLetter holds the letter assigned to the upcoming figure
 var unknownFigureLetter = false;
 // Tau is 2 times PI. Saves calculations during runtime
@@ -1057,7 +1057,7 @@ var iosDragDropShim = { enableEnterLeave: true,
           handleFuRemove (evt, el);
           return false;
         } else if (el.classList.contains ('fuFigure') ||
-          el.classList.contains ('linkFigure')) {
+          el.classList.contains ('additionalFigure')) {
           evt.preventDefault();
           selectFigureFu (el.className.match(regexFuFigNr)[1]);
           return false;
@@ -2783,12 +2783,20 @@ function makeRoll (params) {
     // have hesitations
     // Also add any user defined comment here
     if (extent == Math.abs(params[0])) {
-      var rollText = makeRollText (extent, stops, sign, params[5], radSin, radCos);
+      var rollText = makeRollText (
+        extent,
+        stops,
+        sign,
+        params[5],
+        radSin,
+        radCos
+      );
       if (rollText) pathsArray.push (rollText);
     }
     // Completed the first (full) roll. Continue for more than 360
     extent -= 360;
-    // For more than 360 degrees, draw a line between the rolls and the roll tip connect line
+    // For more than 360 degrees, draw a line between the rolls and the
+    // roll tip connect line
     if (extent > 0) {
       // Make the line between the two rolls.
       // Only move the pointer (no line) for rolls in the top
@@ -2797,7 +2805,8 @@ function makeRoll (params) {
       } else {
         pathsArray = buildShape ('Line', [1/scale], pathsArray);
       }
-      // Get the relative movement by the line and use this to build the tip connector line
+      // Get the relative movement by the line and use this to build the
+      // tip additional line
       dx = pathsArray[pathsArray.length - 1].dx;
       dy = pathsArray[pathsArray.length - 1].dy;
       // glider super slow roll or regular roll
@@ -2872,17 +2881,27 @@ function makeSnap (params) {
       'dy':-radSin * snapElement075
     });
 
-    // Where necessary, show the roll numbers after completing the first roll point and arc.
+    // Where necessary, show the roll numbers after completing the first
+    // roll point and arc.
     // This is only necessary for rolls that are not multiples of 180
     if (extent == Math.abs(params[0])) {
-      var rollText = makeRollText (extent, 0, sign, params[3], radSin, radCos);
+      var rollText = makeRollText (
+        extent,
+        0,
+        sign,
+        params[3],
+        radSin,
+        radCos
+      );
       if (rollText) pathsArray.push (rollText);
     }
     // Completed the first (full) roll. Continue for more than 360
     extent -= 360;
-    // For more than 360 degrees, draw a line between the rolls and the roll tip connect line
+    // For more than 360 degrees, draw a line between the rolls and the
+    // roll tip connect line
     if (extent > 0) {
-      // Save the status of the load variable, don't want to change that during the roll
+      // Save the status of the load variable, don't want to change that
+      // during the roll
       var saveLoad = NegLoad;
       // Make the line between the two rolls
       // Only move the pointer for rolls in the top
@@ -2892,7 +2911,8 @@ function makeSnap (params) {
         pathsArray = buildShape ('Line', [1.5/scale], pathsArray);
       }
       NegLoad = saveLoad;
-      // Get the relative movement by the line and use this to build the tip connector line
+      // Get the relative movement by the line and use this to build the
+      // tip additional line
       dx = pathsArray[pathsArray.length - 1].dx + radCos * snapElement2;
       dy = pathsArray[pathsArray.length - 1].dy - radSin * snapElement2;
       dxTip = -radSin * snapElement24 * sign + radCos * snapElement;
@@ -2955,7 +2975,8 @@ function makeSpin (params) {
       'dx':radCos * spinElement,
       'dy':-radSin * spinElement
     });
-    // Where necessary, show the roll numbers after completing the first roll point and arc.
+    // Where necessary, show the roll numbers after completing the first
+    // roll point and arc.
     // This is only necessary for spins that are not multiples of 180
     if (extent == Math.abs(params[0])) {
       var rollText = makeRollText (extent, 0, sign, params[3], radSin, radCos);
@@ -2963,7 +2984,8 @@ function makeSpin (params) {
     }
     // Completed the first (full) spin. Continue for more than 360
     extent -= 360;
-    // For more than 360 degrees, draw a line between the spins and the spin tip connect line
+    // For more than 360 degrees, draw a line between the spins and the
+    // spin tip connect line
     if (extent > 0) {
       // Make the line between the two rolls. Always positive for now
       // Only move the pointer for rolls in the top
@@ -2972,7 +2994,8 @@ function makeSpin (params) {
       } else {
         pathsArray = buildShape ('Line', [0.5/scale], pathsArray);
       }
-      // Get the relative movement by the line and use this to build the tip connector line
+      // Get the relative movement by the line and use this to build the
+      // tip additional line
       dx = pathsArray[pathsArray.length - 1].dx + radCos * spinElement2;
       dy = pathsArray[pathsArray.length - 1].dy - radSin * spinElement2;
       dxTip = -radSin * spinElement24 * sign + radCos * spinElement;
@@ -3103,8 +3126,8 @@ function makeTextBlock (text) {
     text = text.replace (match[0], '');
     unknownFigureLetter = match[0].replace('@', '');
   }
-  // handle special code for Unknown connector
-  var regex = /^connector$/;
+  // handle special code for Unknown additional
+  var regex = /^additional$/;
   if (text.match(regex)) {
     text = '';
     unknownFigureLetter = 'L';
@@ -3362,12 +3385,15 @@ function drawShape (pathArray, svgElement, prev) {
       var ey1 = sin * (cur.height / 2 - rfCor);
       var ex2 = cos * (prev.width / 2 + rfCor);
       var ey2 = sin * (prev.height / 2 - rfCor);
-      var overlap = (Math.sqrt(ex1 * ex1 + ey1 * ey1) + Math.sqrt(ex2 * ex2 + ey2 * ey2)) - d;
+      var overlap = (Math.sqrt(ex1 * ex1 + ey1 * ey1) +
+        Math.sqrt(ex2 * ex2 + ey2 * ey2)) - d;
       if (overlap > 0) {
         // move previous and current figure opposite by 50% of overlap
         overlap = overlap / 2;
-        prev.t.setAttribute('x', roundTwo(parseFloat(prev.t.getAttribute('x')) + cos * overlap));
-        prev.t.setAttribute('y', roundTwo(parseFloat(prev.t.getAttribute('y')) + sin * overlap));
+        prev.t.setAttribute('x',
+          roundTwo(parseFloat(prev.t.getAttribute('x')) + cos * overlap));
+        prev.t.setAttribute('y',
+          roundTwo(parseFloat(prev.t.getAttribute('y')) + sin * overlap));
         text.setAttribute('x', roundTwo(X + pathArray.x - cos * overlap));
         text.setAttribute('y', roundTwo(Y + pathArray.y - sin * overlap));
       }
@@ -3391,7 +3417,8 @@ function drawShape (pathArray, svgElement, prev) {
         roundTwo(box.y + box.height / 2) + ')');
     }
   } else if (pathArray.figureStart) {
-    // Check if figure starts do not overlap when this is not the first figure
+    // Check if figure starts do not overlap when this is not the first
+    // figure
     if (figureStart.length > 0) {
       // count is used to make sure there is never an infinite loop
       var count = 0;
@@ -3400,7 +3427,8 @@ function drawShape (pathArray, svgElement, prev) {
         // lower than minimum with the one we're making now
         var overlap = false;
         for (var i = 0; i < figureStart.length; i++) {
-          var distSq = (figureStart[i].x - X)*(figureStart[i].x - X) + (figureStart[i].y - Y)*(figureStart[i].y - Y);
+          var distSq = (figureStart[i].x - X)*(figureStart[i].x - X) +
+            (figureStart[i].y - Y)*(figureStart[i].y - Y);
           if (distSq < minFigStartDistSq) {
             // found one that's too close. Move the start down and run again
             Y = parseInt(figureStart[i].y + Math.sqrt(minFigStartDistSq-((figureStart[i].x - X)*(figureStart[i].x - X))) + 1);
@@ -3926,6 +3954,7 @@ function addEventListeners () {
   document.getElementById('hideIllegal').addEventListener('change', changeHideIllegal, false);
   document.getElementById('hideFigureSelector').addEventListener('mousedown', hideFigureSelector, false);
   document.getElementById('figureGroup').addEventListener('change', changeFigureGroup, false);
+  document.getElementById('t_switchQueue').addEventListener('mousedown', function(){switchQueue(this)});
 
   // close alert box
   document.getElementById('t_closeAlert').addEventListener('click', function(){alertBox()}, false);
@@ -3962,6 +3991,7 @@ function addEventListeners () {
   document.getElementById('gridColumns').addEventListener('change', updateGridColumns, false);
   document.getElementById('queueColumns').addEventListener('change', changeQueueColumns, false);
   document.getElementById('positionClearAuto').addEventListener('change', saveSettingsStorage, false);
+  document.getElementById('showHandles').addEventListener('change', saveSettingsStorage, false);
   document.getElementById('imageFormatPNG').addEventListener('change', saveSettingsStorage, false);
   document.getElementById('imageFormatSVG').addEventListener('change', saveSettingsStorage, false);
   document.getElementById('saveFigsSeparateWidth').addEventListener('change', saveSettingsStorage, false);
@@ -5449,10 +5479,10 @@ function updateFigureOptions (figureId) {
       option.setAttribute ('value', '0');
       option.innerHTML = userText.noFreeUnknownFig;
       el.appendChild (option);
-      if (connectFig.max > 0) {
+      if (additionalFig.max > 0) {
         var option = document.createElement ('option');
         option.setAttribute ('value', 'L');
-        option.innerHTML = userText.freeUnknownLink;
+        option.innerHTML = userText.freeUnknownAdditional;
         el.appendChild (option);
         listLetters += 'L';
       }
@@ -5468,7 +5498,7 @@ function updateFigureOptions (figureId) {
           var option = document.createElement ('option');
           option.setAttribute ('value', f.unknownFigureLetter);
           if (f.unknownFigureLetter === 'L') {
-            option.innerHTML = userText.freeUnknownLink;
+            option.innerHTML = userText.freeUnknownAdditional;
           } else {
             option.innerHTML = userText.freeUnknownFig +
               f.unknownFigureLetter;
@@ -6256,13 +6286,13 @@ function buildFigureXML () {
         kj.appendChild(document.createTextNode(k[j]));
         figK += parseInt(k[j]);
       }
-      // Adjust figure K for connectors
+      // Adjust figure K for additionals
       if (figures[i].unknownFigureLetter) {
         if (figures[i].unknownFigureLetter == 'L') {
-          if (connectors <= connectFig.max) {
-            figK = connectFig.totalK / connectors;
-          } else if (connectFig.max > 0) {
-            figK = connectFig.totalK / connectFig.max;
+          if (additionals <= additionalFig.max) {
+            figK = additionalFig.totalK / additionals;
+          } else if (additionalFig.max > 0) {
+            figK = additionalFig.totalK / additionalFig.max;
           }
         }
       }
@@ -6843,7 +6873,7 @@ function loadRules() {
   checkRule = [];
   defRules = [];
   checkConv = [];
-  connectFig = {'max': 0, 'totalK': 0};
+  additionalFig = {'max': 0, 'totalK': 0};
   infoCheck = [];
   figureLetters = '';
   ruleSuperFamily = [];
@@ -6867,7 +6897,8 @@ function loadRules() {
   // First run, simplify rule lines and define groups and Groups
   for (var i = 0; i < rules.length; i++) {
     rules[i] = sanitizeSpaces(rules[i]);
-    // Check for [section] or (section) to match sequence type specific rules
+    // Check for [section] or (section) to match sequence type specific
+    // rules
     if ((rules[i][0] == '[') || (rules[i][0] == '(')) {
       parseSection = (i == section[ruleSection])? true : false;
     } else if (parseSection) {
@@ -7064,10 +7095,11 @@ function loadRules() {
       } else if (rules[i].match(/^floating-point/)) {
         // Apply floating-point rules
         checkCatGroup.floatingPoint = rules[i].match(/[0-9]+/)[0];
-      } else if (rules[i].match(regexRulesConnectors)) {
-        var match = rules[i].match(regexRulesConnectors);
-        connectFig.max = parseInt(match[1]);
-        connectFig.totalK = parseInt(match[2]);
+      } else if (rules[i].match(regexRulesAdditionals)) {
+        // apply Additionals rules
+        var match = rules[i].match(regexRulesAdditionals);
+        additionalFig.max = parseInt(match[2]);
+        additionalFig.totalK = parseInt(match[3]);
       } else if (rules[i].match(/^posnl/)) {
         // load positioning and harmony K
         var pos = rules[i].match(/[0-9+]+/)[0].split('+');
@@ -7134,7 +7166,8 @@ function unloadRules () {
   
 // checkRules will check a complete sequence against the loaded rules
 // and produce alerts where necessary.
-// The Aresti list according description in allowed.js is in the array figCheckLine
+// The Aresti list according description in allowed.js is in the array
+// figCheckLine
 // A log array is returned
 function checkRules () {
   
@@ -7157,7 +7190,7 @@ function checkRules () {
   
   var figNr = 0;
   var figureK = 0;
-  var connectors = 0;
+  var additionals = 0;
   var groupMatch = [];
   var figCount = [];
   var elemCount = [];
@@ -7235,12 +7268,12 @@ function checkRules () {
         thisFig = thisFig.replace(regex, '$1(' + k[j] + ')$2');
       }
       log.push ('========= Figure #' + figNr + ': ' + thisFig);
-      // Check if the figure is a connector
-      if (figures[i].connector) {
-        connectors++;
-        log.push ('is connector? True');
+      // Check if the figure is a additional
+      if (figures[i].additional) {
+        additionals++;
+        log.push ('is additional? True');
       } else {
-        log.push ('is connector? False');
+        log.push ('is additional? False');
         var figK = 0;
         var groupFigMatch = [];
         // Walk through the elements of the figure
@@ -7479,9 +7512,9 @@ function checkRules () {
     }
   }
   
-  // add connectors to figureK where applicable
-  if ((connectors > 0) && (connectFig.max > 0)) {
-    figureK += connectFig.totalK;
+  // add additionals to figureK where applicable
+  if ((additionals > 0) && (additionalFig.max > 0)) {
+    figureK += additionalFig.totalK;
   }
   // check for total min/max K
   if ('min' in checkCatGroup.k) {
@@ -7638,7 +7671,7 @@ function checkRules () {
   
   // check for multiple use of the same free unknown figure, except L(ink)
   // Also check if all figures have been assigned a Free Unknown letter
-  // or link when applicable
+  // or Additional when applicable
 
   var remaining = figureLetters ? figureLetters : '';
 
@@ -8035,6 +8068,9 @@ function updateFigureSelectorOptions (selectedOption) {
         select.appendChild (option);
       }
       container.appendChild (select);
+    } else {
+      // otherwise, make a placeholder
+      container.innerHTML = '&nbsp;';
     }
     markFigures();
   }
@@ -8098,7 +8134,7 @@ function changeFigureGroup() {
   var svg = document.getElementById('figureChooserSvg');
   
   // set the correct size and row count for the figure thumbnails
-  if (e.value != 0) {
+  if (figureGroup != 0) {
     var size = 62;
     var newRow = /\.[01]$/;
     var maxColCount = 4;
@@ -8262,7 +8298,7 @@ function changeFigureGroup() {
 function markFigures () {
   markUsedFigures ();
   markMatchingFigures ();
-  // for Free Unknown designer we only choose Linking figures. All
+  // for Free Unknown designer we only choose Additional figures. All
   // Aresti figures are allowed
   if (activeForm !== 'FU') {
     markNotAllowedFigures ();
@@ -8283,8 +8319,13 @@ function markUsedFigures () {
         if (!figures[k]) break;
         if (figures[k].aresti) {
           if (('queue-' + figures[k].aresti.join('-')) === fig[td[j].id].aresti) {
-            td[j].classList.add ('queueUsed');
-            break;
+            if (td[j].classList.contains ('queueUsed')) {
+              td[j].classList.remove ('queueUsed');
+              td[j].classList.add ('queueUsedMulti');
+              break;
+            } else {
+              td[j].classList.add ('queueUsed');
+            }
           }
         }
       }
@@ -8432,7 +8473,29 @@ function markNotAllowedFigures () {
     }
   }
 }
-  
+
+// switchQueue is called when switching to queue or back to figures in
+// the figureChooser
+function switchQueue (el) {
+  if (!el) return;
+  var e = document.getElementById ('figureGroup');
+  if (el.id === 't_switchQueue') {
+    el.innerHTML = userText.switchFigures;
+    el.id = 't_switchFigures';
+    var a = document.createAttribute("figureGroup");
+    a.value = e.value;
+    el.setAttributeNode(a);
+    e.setAttribute ('disabled', true);
+    e.value = 0;
+  } else {
+    el.innerHTML = userText.switchQueue;
+    el.id = 't_switchQueue';
+    e.removeAttribute ('disabled');
+    e.value = el.getAttribute('figureGroup');
+  }
+  changeFigureGroup();
+}
+
 // selectFigure is executed when clicking a figure in the figureChooser
 // (e = object) or from grabFigure (e = figNr) or from certain functions
 // or false
@@ -8685,7 +8748,7 @@ function selectFigureFu (id) {
   // update all figure options
   updateFigureEditor();
     
-  // set figure chooser for new Linking figures, or hide for others
+  // set figure chooser for new Additional figures, or hide for others
   if ((figures[id].unknownFigureLetter === 'L') && (figures[id].string === 'l')) {
     setFigChooser (id);
     markMatchingFigures ();
@@ -8703,11 +8766,11 @@ function selectFigureFu (id) {
 function checkFloatingPoint () {
   var figureK = 0;
   // in case of floating-point, check total K first to determine
-  // how much to take off and where. Disregard connectors.
+  // how much to take off and where. Disregard additionals.
   if (checkCatGroup.floatingPoint) {
     var figK = [];
     for (var i = 0; i < figures.length; i++) {
-      if (figures[i].aresti && !figures[i].connector) {
+      if (figures[i].aresti && !figures[i].additional) {
         // build array figK[i] = XXYY, where XX = K and YY = 99 - i
         // this will enable sorting while keeping K and i relation
         figK[i] = 99 - i;
@@ -8763,18 +8826,18 @@ function makeMiniFormA (x, y) {
         figK += parseInt(k[j]);
         blockY += 12;
       }
-      // Adjust figure K for connectors
+      // Adjust figure K for additionals
       if (figures[i].unknownFigureLetter) {
         if (aresti.length < 2) blockY += 12;
         drawText ('Fig ' + figNr, blockX + 4, (topBlockY + blockY) / 2 + 4, 'miniFormA');
         if (figures[i].unknownFigureLetter == 'L') {
-          if (connectors <= connectFig.max) {
-            figK = connectFig.totalK / connectors;
+          if (additionals <= additionalFig.max) {
+            figK = additionalFig.totalK / additionals;
           } else {
-            if (connectFig.max > 0) {
-              figK = connectFig.totalK / connectFig.max;
+            if (additionalFig.max > 0) {
+              figK = additionalFig.totalK / additionalFig.max;
             }
-            checkAlert (sprintf (userText.maxConnectors, connectFig.max),
+            checkAlert (sprintf (userText.maxAdditionals, additionalFig.max),
               false,
               figNr);
           }
@@ -9045,6 +9108,9 @@ function setFigureSelected (figNr) {
         'selectedFigureBox',
         el
       ).id = 'selectedFigureBox';*/
+      
+      var showHandles = document.getElementById ('showHandles').checked &&
+        !(activeForm === 'Grid') && !mobileBrowser;
   
       // apply color filter
       if (el) {
@@ -9058,13 +9124,14 @@ function setFigureSelected (figNr) {
             nodes[i].setAttribute ('style', s);
           }
           // add editing handles where applicable. They are centered on
-          // the element
-          if (nodes[i].id && !mobileBrowser) {
+          // the element. Somewhat larger circles for touch devices to
+          // improve grabbing
+          if (nodes[i].id && showHandles) {
             var bBox = nodes[i].getBBox();
             drawCircle ({
               'cx': roundTwo(bBox.x + bBox.width / 2),
               'cy': roundTwo(bBox.y + bBox.height / 2),
-              'r': 8,
+              'r': touchDevice ? 12 : 8,
               'style': style.selectedFigureHandle,
               'cursor': 'move',
               'id': nodes[i].id + '-handle'
@@ -9072,7 +9139,7 @@ function setFigureSelected (figNr) {
           }
         }
         // add scale handle
-        if (!mobileBrowser) {
+        if (showHandles) {
           var image = document.createElementNS (svgNS, 'image');
           image.setAttribute ('x', selectedFigure.x + selectedFigure.width - 6);
           image.setAttribute ('y', selectedFigure.y - 9);
@@ -9114,6 +9181,10 @@ function Drag (evt) {
   // if we don't currently have an element in tow, don't do anything
   if (DragTarget) {
     
+    // prevent scrolling on touch devices
+    if (touchDevice) evt.preventDefault();
+    
+    // find out what we are dragging
     if (DragTarget.id.match (/-handle$/)) {
       
       /** dragging a handle */
@@ -9612,9 +9683,8 @@ function drawFullFigure (i, draggable, svg) {
 
   figures[i].bBox = myGetBBox (group);
 
-  if ((selectedFigure.id === i) && draggable) {
-    setFigureSelected (i);
-  }
+  if ((selectedFigure.id === i) && draggable) setFigureSelected (i);
+
 }
 
 // showQueue shows the figure queue
@@ -9623,6 +9693,7 @@ function showQueue () {
   var options = select.options;
   select.selectedIndex = 0;
   changeFigureGroup(options[0]);
+  switchQueue (document.getElementById ('t_switchQueue'));
   showFigureSelector();
 }
 
@@ -9631,9 +9702,7 @@ function changeQueueColumns () {
   saveSettingsStorage();
   // clear queue figure SVGs first, to allow resizing
   for (var i = fig.length - 1; i >= 0; i--) {
-    if (fig[i]) {
-      if (fig[i].group == 0) fig[i].svg = false;
-    }
+    if (fig[i] && (fig[i].group == 0)) fig[i].svg = false;
   }
   showQueue();
 }
@@ -9794,6 +9863,15 @@ function startFuDesigner(dontConfirm) {
       // disableFUdesigner
       document.styleSheets[0].insertRule('.disableFUdesigner{display:none !important;}', 0);
       
+      // move undoRedo
+      var undoRedo = document.getElementById ('undoRedo');
+      document.getElementById ('mainMenu').insertBefore (
+        undoRedo, document.getElementById ('t_finalizeSequence')
+        );
+
+      // clear undo and redo
+      activeSequence.undo = activeSequence.redo = [];
+            
       // select the tab
       document.getElementById ('tab-fuFigures').classList.remove ('noDisplay');
       selectTab ('tab-fuFigures');
@@ -9803,16 +9881,17 @@ function startFuDesigner(dontConfirm) {
       // switch sequence view
       document.getElementById ('fuSequence').classList.remove ('noDisplay');
             
-      // clear the sequence if loading from Grid and no linking figure present
-      var noLink = true;
+      // clear the sequence if loading from Grid and no Additional
+      // figure present
+      var noAdditional = true;
       for (var i = 0; i < figures.length; i++) {
         if (figures[i].unknownFigureLetter === 'L') {
-          noLink = false;
+          noAdditional = false;
           break;
         }
       }
   
-      if ((activeForm === 'Grid') && noLink) {
+      if ((activeForm === 'Grid') && noAdditional) {
         sequenceText.value = 'eu';
       } else {
         // rebuild the sequence according Free Unknown designer format
@@ -9869,6 +9948,15 @@ function exitFuDesigner (newSequence) {
       // disableFUdesigner
       document.styleSheets[0].deleteRule(0);
       
+      // move undoRedo
+      var undoRedo = document.getElementById ('undoRedo');
+      document.getElementById ('topBlock').insertBefore (
+        undoRedo, document.getElementById ('sequenceTextContainer')
+        );
+      
+      // clear undo and redo
+      activeSequence.undo = activeSequence.redo = [];
+      
       // switch sequence view
       document.getElementById ('fuSequence').classList.add ('noDisplay');
 
@@ -9894,6 +9982,12 @@ function exitFuDesigner (newSequence) {
         // disableFUdesigner
         document.styleSheets[0].deleteRule(0);
         
+        // move undoRedo
+        var undoRedo = document.getElementById ('undoRedo');
+        document.getElementById ('topBlock').insertBefore (
+          undoRedo, document.getElementById ('sequenceTextContainer')
+          );
+                
         // switch sequence view
         document.getElementById ('fuSequence').classList.add ('noDisplay');
         
@@ -9905,6 +9999,9 @@ function exitFuDesigner (newSequence) {
         sequenceText.value = sequenceText.value.trim().replace(/ e(u|d|j|ja)$/, '').replace(/^eu /, '');
         
         checkSequenceChanged ();
+
+        // clear undo and redo
+        activeSequence.undo = activeSequence.redo = [];
         
         // put figures with letters in reference sequence field
         var div = document.getElementById('referenceSequenceDialog');
@@ -10072,7 +10169,7 @@ function handleFuDrop (e) {
     // sequence always ends with 'eu'
     string = string.replace (regexSub, '');
     updateSequence (figures.length - 1, string + ' eu');
-    // when dropping LINK, select and open figure editor
+    // when dropping Additional, select and open figure editor
     if (string.match (/\@L/)) {
       selectFigureFu (figures.length - 2);
     }
@@ -10108,7 +10205,7 @@ function handleFuDrop (e) {
     } else {
       // single figure
       updateSequence (figNr - 1 - previous, string, false, true);
-      // when dropping LINK, select and open figure editor
+      // when dropping Additional, select and open figure editor
       if (string.match (/\@L/)) {
         selectFigureFu (figNr + 1 - previous);
       }
@@ -10191,7 +10288,7 @@ function handleFuSubEntry (e) {
 }
 */
 
-// handleFuDeselect is called when a link figure is deselected
+// handleFuDeselect is called when an Additional figure is deselected
 function handleFuDeselect (e) {
   noPropagation(e); // Stops some browsers from redirecting.
   
@@ -10376,7 +10473,7 @@ function buildFuFiguresTab() {
       td.innerHTML += '<div class="UFKInQueue">K:' +
          figures[-1].k.reduce(function(a, b){return a+b;}) + '</div>';
     } else {
-      td.innerHTML = userText.LINK;
+      td.innerHTML = userText.Additional;
     }
     td.setAttribute ('draggable', true);
     td.addEventListener ('dragstart', handleFuDragFigureStart);
@@ -10503,12 +10600,12 @@ function makeFormA() {
                 'middle');
               figK += parseInt(k[j]);
             }
-            if (figures[i].connector) {
-              if (connectors <= connectFig.max) {
-                figK = connectFig.totalK / connectors;
+            if (figures[i].additional) {
+              if (additionals <= additionalFig.max) {
+                figK = additionalFig.totalK / additionals;
               } else {
-                figK = connectFig.totalK / connectFig.max[document.getElementById('class').value];
-                checkAlert (sprintf (userText.maxConnectors, connectFig.max),
+                figK = additionalFig.totalK / additionalFig.max[document.getElementById('class').value];
+                checkAlert (sprintf (userText.maxAdditionals, additionalFig.max),
                   false,
                   row + 1);
               }
@@ -10557,9 +10654,9 @@ function makeFormA() {
                   'middle');
               }
             }
-            // check if mark as connector or specific unknown figure
-            if (figures[i].connector) {
-              drawText('connect',
+            // check if mark as additional or specific unknown figure
+            if (figures[i].additional) {
+              drawText('additional',
                 x + columnWidths[column] / 2,
                 y + 15,
                 'formAText',
@@ -11041,12 +11138,12 @@ function makeFU () {
       var svg = newSvg();
       td.appendChild(svg);
 
-      // set different class for Linking figures
+      // set different class for Additional figures
       if (f.unknownFigureLetter === 'L') {
-        if (connectFig && (usedLetters.L > connectFig.max)) {
-          td.classList.add ('linkFigureMulti');
+        if (additionalFig && (usedLetters.L > additionalFig.max)) {
+          td.classList.add ('additionalFigureMulti');
         } else {
-          td.classList.add ('linkFigure');
+          td.classList.add ('additionalFigure');
         }
       } else if (usedLetters[f.unknownFigureLetter] > 1) {
         td.classList.add ('fuFigureMulti');
@@ -11102,13 +11199,13 @@ function makeFU () {
       // set subSeq number of new subsequence
       figures[i].subSeq = sub;
     } else if (f.string === 'l') {
-      // undefined linking figure
+      // undefined Additional figure
       var td = getTd();
-      td.innerHTML = userText.LINK;
+      td.innerHTML = userText.Additional;
 
       addRemoveFigureButton (td);
       td.classList.add ('fuFig' + i);
-      td.classList.add ('linkFigure');
+      td.classList.add ('additionalFigure');
       
       /**
       // add subsequence entry direction changer for first of subsequence
@@ -11118,7 +11215,7 @@ function makeFU () {
       */
 
       fuCellAddHandlers (td);
-      // append link to subseqString
+      // append Additional to subseqString
       subseqString += '"@L" l ';
       
       prevSub = sub;
@@ -11142,9 +11239,9 @@ function makeFU () {
     if (td) {
       var match = sequenceText.value.match(RegExp ('"@' + l[i] + '"', 'g'));
       if (match) {
-        var multi = ((l[i] === 'L') && connectFig && connectFig.max)? connectFig.max : 1;
+        var multi = ((l[i] === 'L') && additionalFig && additionalFig.max)? additionalFig.max : 1;
         if (l[i] === 'L') {
-          td.innerHTML = userText.LINK + '<br />' + match.length + 'x';
+          td.innerHTML = userText.Additional + '<br />' + match.length + 'x';
         }
         if (match.length > multi) {
           td.classList.remove ('figUsed');
@@ -11157,7 +11254,7 @@ function makeFU () {
         td.classList.remove ('figUsed');
         td.classList.remove ('figUsedMulti');
         if (l[i] === 'L') {
-          td.innerHTML = userText.LINK;
+          td.innerHTML = userText.Additional;
         }
       }
     }
@@ -12145,10 +12242,10 @@ function activateXMLsequence (xml, noLoadRules) {
   }
   
   // the sequence is now fully loaded. Check if it was loaded as a grid
-  // and rules allow connectors and figure letters are required.
+  // and rules allow additionals and figure letters are required.
   // If so, if it may be a Free Unknown figures file
   var l = figureLetters;
-  if ((activeForm === 'Grid') && (connectFig.max > 0) && l) {
+  if ((activeForm === 'Grid') && (additionalFig.max > 0) && l) {
     for (var i = 0; i < figures.length; i++) {
       // when we find a figure without a letter, or with an incorrect
       // letter, stop. In that case make sure we do not ask to start
@@ -13611,15 +13708,15 @@ function addFormElementsLR (svg, print) {
         y += 12;
       }
       
-      // Adjust figure K for connectors
+      // Adjust figure K for additionals
       if (figures[i].unknownFigureLetter && (figures[i].unknownFigureLetter === 'L')) {
-        if (connectors <= connectFig.max) {
-          figK = connectFig.totalK / connectors;
+        if (additionals <= additionalFig.max) {
+          figK = additionalFig.totalK / additionals;
         } else {
-          if (connectFig.max > 0) {
-            figK = connectFig.totalK / connectFig.max;
+          if (additionalFig.max > 0) {
+            figK = additionalFig.totalK / additionalFig.max;
           }
-          checkAlert (sprintf (userText.maxConnectors, connectFig.max),
+          checkAlert (sprintf (userText.maxAdditionals, additionalFig.max),
             false,
             figureNr);
         }
@@ -15893,7 +15990,7 @@ function parseSequence () {
   var subSequence = false;
   var comments = false;
   var figure = '';
-  connectors = 0;
+  additionals = 0;
 // Make sure the scale is set to 1 before parsing
   if (scale != 1) {
     curveRadius = curveRadius / scale;
@@ -16139,14 +16236,14 @@ function parseSequence () {
         }
         // build the figure into the figures object
         buildFigure (figNrs, figure, seqNr, i);
-        // check if this is a connector
-        if (regexConnector.test(figure)) {
-          connectors++;
-          figures[i].connector = true;
+        // check if this is a additional
+        if (regexAdditional.test(figure)) {
+          additionals++;
+          figures[i].additional = true;
         } else if (figures[i].unknownFigureLetter) {
           if (figures[i].unknownFigureLetter == 'L') {
-            connectors++;
-            figures[i].connector = true;
+            additionals++;
+            figures[i].additional = true;
           }
         }
             

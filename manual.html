@@ -66,8 +66,15 @@
     you are offline. For small tablets and Smartphones it will help to
     click <i>View ... Mobile version</i> and the layout will be adjusted
     to fit the narrower screen format.</p>
-    <p>As of OpenAero 1.4.0 a Chrome App for desktop is also available.
-    This provides:
+    <p>OpenAero should update automatically to the latest version
+    whenever you are online and open OpenAero. However, if you suspect
+    you do not have the latest version you can check this through
+    <i>About</i> in the <i>Help</i> menu. If this shows you have an
+    outdated version and you are using openaero.net on Google Chrome
+    (but not as an app) it may help to clear the appCache. Enter
+    <strong>chrome://appcache-internals</strong> in your address bar
+    and <strong>Remove</strong> all entries that contain OpenAero.</p>
+    <p>A Chrome App for desktop is also available. This provides:
     <ul>
       <li>Improved file saving</li>
       <li>Adding OpenAero to your desktop to start without opening
@@ -178,6 +185,13 @@
     <p><strong>Some of these options are not available for figures that
     have a Free Unknown letter to avoid changing Free Unknown figures.
     </strong></p>
+    <img border="0" src="images/blue_handles.png" width="160" height="99" align="left">
+    <p>The figure shape can also be edited with the handles (blue
+    circles) that show when selecting the figure. These allow you to
+    change the length of all lines. In the top-right of the figure a
+    magnifier shows which can be used to scale the entire figure.<br />
+    It is possible to disable this way of figure editing through
+    <i>Options</i> in the <i>Tools</i> menu.</p>
 		<p>When you have finished editing the figure click in an adjacent space 
 		to deactivate it, then you can add a new figure at the end of the 
 		sequence or optionally at the beginning. If a figure is highlighted when 
@@ -287,8 +301,9 @@
 		saved to disk for later re-use - when re-opened they are accessible 
 		through the &quot;* Figure Queue&quot; item at the top of the figure / family 
 		selection drop-list.</p>
-    <p>The background of queue figures will be grey when the figure is
-    already present in the sequence.</p>
+    <p>The background of queue figures will be green when the figure is
+    already present in the sequence. It will be red if the figure is
+    used multiple times.</p>
     <p>All figures in a sequence can be added to the queue at once by 
     clicking <i>Add all to queue</i>. All figures can be removed from
     the queue with <i>Clear queue</i>.</p>
@@ -380,7 +395,7 @@
       Multiple subsequences can be used, joined and copied in the design
       environment.<br />
       In the sequences, submitted figures are marked with a green border
-      and linking figures with a blue border.</p>
+      and additional figures with a blue border.</p>
       <p>When the sequence is complete, click the <i>Finalize sequence
       &amp; exit Free Unknown Designer</i> button to change the layout
       of the sequence.</p>
@@ -392,13 +407,13 @@
       <i>New / copy subsequence</i>.<br />
       Figures that are used exactly once in any of the subsequences are
       marked by a green border. Figures that are used multiple times (or
-      more than the maximum amount of links for the LINK figure) are
-      marked orange.</p>
+      more than the maximum amount of Additionals for the Additional
+      figure) are marked orange.</p>
       <p>To remove a figure, click the cross in the righthand upper
       corner.</p>
-      <p>Linking figures can be added by dropping the 'LINK' block. After
-      this has been done the linking figure can be changed after
-      selecting it by clicking.<br />
+      <p>Additional figures can be added by dropping the 'Additional'
+      block. After this has been done the linking figure can be changed
+      after selecting it by clicking.<br />
       The submitted figures also have some options that can be changed
       when selected.<br />
       </p>
@@ -412,7 +427,7 @@
       subsequence</i> will create a copy of the subsequence.
       <h3>Finalizing the sequence</h3>
       When the sequence is complete, with all submitted figures and
-      required links, it can be finalized by clicking <i>Finalize
+      required Additionals, it can be finalized by clicking <i>Finalize
       sequence & exit Free Unknown Designer</i>. Any errors will be
       reported. You will then be returned to the regular sequence editor
       where you can adjust layout.

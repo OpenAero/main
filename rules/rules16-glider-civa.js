@@ -54,17 +54,18 @@ OpenAero 1.5.2.1
 - updated infocheck directives for actype and acreg
 OpenAero 2016.1
 -Changed to 2016 rules:
- - New Known Free (Programme1)
+ - New Free Known (Programme1)
  - Kept Known and Free as hidden options to allow old sequence rule
    checking
  - Changed programmes 2-4
+ - removed Super Slow Roll from allowed figures
 */
 //###################################################################################
 //################################ CIVA GLIDERS FREE ################################
 //###################################################################################
 
 //#######################################################################
-rules.push("[glider-CIVA Unlimited Known]");// specific rules for the Unlimited Known programme
+rules.push("(glider-CIVA Unlimited Known)");// specific rules for the Unlimited Known programme
 //#######################################################################
 
 // what info should be filled out
@@ -83,13 +84,73 @@ rules.push("poselec=15+10");// positioning k-factor assuming electric telemetry
 rules.push("more=glider-CIVA Unlimited arestibase");
 
 //######################################################################
-rules.push("(glider-CIVA Unlimited Known Free)");// specific rules for the Unlimited Known Free programme
+rules.push("[glider-CIVA Unlimited Free Known]");// specific rules for the Unlimited Free Known programme
 //######################################################################
 
 rules.push("figure-letters=ABCDE");
-rules.push("basefig-min=10");	// minimum 10 base figures per sequence
 
-rules.push("more=glider-CIVA Unlimited Free");
+// what info should be filled out
+rules.push("infocheck=pilot;actype;acreg;positioning;harmony");
+
+// Repeations of base-figures acc. to CIVA Section 6 part II Ch. 4.3.3.1 (a)
+//==========================================================================
+rules.push("basefigex11-repeat=1");// base figures except of 1.1.1. and 9.1
+// may not be repeated in sequence
+
+// Repetitions of rolls acc. to CIVA Section 6 part II Ch. 4.3.3.1 (a)
+//==========================================================================
+rules.push("hesroll-repeat=1");
+rules.push("snap-repeat=1");
+rules.push("spin-repeat=1");
+
+// Maximum K-Factor and number of figures acc. to CIVA Section 6 part II Ch. 4.3.3.1 (b)
+//======================================================================================
+rules.push("k-max=233");	// maximum k-factor including maximum floating points
+rules.push("basefig-min=10");	// exactly 10 base figures per sequence
+rules.push("basefig-max=10");
+rules.push("floating-point=3");	// 3 points may be reduced
+
+// Versatility acc. to CIVA Section 6 part II Ch. 4.3.3.2
+//=======================================================
+rules.push("fam5-min=1");// minimum one figure from family 5
+rules.push("fam6-min=1");
+rules.push("fam7-min=1");
+rules.push("fam8-min=1");
+
+// 4.3.3.2 a)
+//-----------
+rules.push("group-roller=^(2\\.1\\.3|2\\.2\\.[2-6]|2\\.3\\.[2-5]|2\\.4\\.[3-8])");// new definition acc. new catIDs
+rules.push("roller-name=Rolling Turn with at least one full roll");
+rules.push("roller-min=1");
+
+// 4.3.3.2 b)
+//-----------
+// i)
+rules.push("group-froll2=^9\\.1\\.\\d\\.[^1]");
+rules.push("froll2-name=no-hesitation roll (9.1.x.x) of at least 1/2 required");
+rules.push("froll2-min=1");
+
+// ii)
+rules.push("hesroll-min=1");// a hesitation roll of any extent (fam 9.2, 9.4 & 9.8)
+
+// iii)
+rules.push("isnap-min=1");// minimum one inside snap roll element
+
+// iv)
+rules.push("osnap-min=1");// minimum one outside snap roll element
+
+// Sequence entry and exit attitudes acc. to Ch. 4.3.3.4
+//======================================================
+rules.push("seqcheck-upend=[\\da-z][~+`'()\"]*>?\\s*$");// Sequence exit must be in positive attitude
+rules.push("upend-name=Sequence must end flying upright");
+
+// Positioning and Harmony k-factors acc. to Ch. 4.3.6
+//====================================================
+rules.push("poslj=15+20");// positioning k-factor assuming line judges
+rules.push("posnl=15+20");// positioning k-factor assuming no line judges
+rules.push("poselec=15+20");// positioning k-factor assuming electric telemetry
+
+rules.push("more=glider-CIVA Unlimited arestibase");
 
 //######################################################################
 rules.push("(glider-CIVA Unlimited Free)");// specific rules for the Unlimited Free programme
@@ -394,9 +455,10 @@ rules.push("9.10.9.2-8");
 rules.push("9.10.10.2-8");
 rules.push("9.11.1.4-8");
 rules.push("9.12.1.4-8");
-rules.push("9.13.3.2");
-rules.push("9.13.3.4");
-rules.push("9.13.3.6");
+// Super Slow Roll removed from Glider competition at 2015 CIVA meeting
+// rules.push("9.13.3.2");
+// rules.push("9.13.3.4");
+// rules.push("9.13.3.6");
 
 //###################
 rules.push("[glider-CIVA Unlimited Unknown1]");
@@ -417,7 +479,7 @@ rules.push("k-max=200");	// 2014 : maximum k-factor + 3 floating points
 rules.push("k-min=180");	// 2014 : minimum k-factor
 rules.push("basefig-max=7");	// max. 7 base figures per sequence (+ max 2 links)
 //rules.push("floating-point=3");	// 3 points may be reduced (4.3.4.6 last sentence -applies to P3,5 and 6 only)
-rules.push("connectors=2/10"); 	// max 2 connectors with 10K total
+rules.push("additionals=2/10"); 	// max 2 additionals with 10K total
 
 // Positioning and Harmony k-factors acc. to Ch. 4.3.6
 //====================================================
@@ -860,8 +922,9 @@ rules.push("9.11.1.4-6");
 
 rules.push("9.12.1.4-6");
 
-rules.push("9.13.3.2");
-rules.push("9.13.3.4");
+// Super Slow Roll removed from Glider competition at 2015 CIVA meeting
+// rules.push("9.13.3.2");
+// rules.push("9.13.3.4");
 
 //########################################################################################
 
@@ -870,7 +933,7 @@ rules.push("9.13.3.4");
 //########################################################################################
 
 //#######################################################################
-rules.push("[glider-CIVA Advanced Known]");// specific rules for the Advanced Known programme
+rules.push("(glider-CIVA Advanced Known)");// specific rules for the Advanced Known programme
 //#######################################################################
 
 // what info should be filled out
@@ -889,16 +952,68 @@ rules.push("poselec=15+10");// positioning k-factor assuming elcetric telemetry
 rules.push("more=glider-CIVA Advanced arestibase");
 
 //######################################################################
-rules.push("(glider-CIVA Advanced Known Free)");// specific rules for the Unlimited Known Free programme
+rules.push("[glider-CIVA Advanced Free Known]");// specific rules for the Advanced Free Known programme
 //######################################################################
 
 rules.push("figure-letters=ABCDE");
-rules.push("basefig-min=10");	// minimum 10 base figures per sequence
 
-rules.push("more=glider-CIVA Advanced Free");
+// what info should be filled out
+rules.push("infocheck=pilot;actype;acreg;positioning;harmony");
+
+// Repeations of base-figures acc. to CIVA Section 6 part II Ch. 4.3.3.1 (a)
+//==========================================================================
+rules.push("basefigex11-repeat=1");// base figures except of 1.1.1. and 9.1  ### Checken!!!
+// may not be repeated in sequence
+
+// Repetitions of rolls acc. to CIVA Section 6 part II Ch. 4.3.3.1 (a)
+//==========================================================================
+rules.push("hesroll-repeat=1");
+rules.push("snap-repeat=1");
+rules.push("spin-repeat=1");
+
+// Maximum K-Factor and number of figures acc. to CIVA Section 6 part II Ch. 4.3.3.1 (b)
+//======================================================================================
+rules.push("k-max=178");	// 2014 : maximum k-factor + maximum floating points
+rules.push("basefig-min=10");	// exactly 10 base figures per sequence
+rules.push("basefig-max=10");
+rules.push("floating-point=3");	// 3 points may be reduced
+
+// Versatility acc. to CIVA Section 6 part II Ch. 4.3.3.3
+//=======================================================
+rules.push("fam5-min=1");// minimum one figure from family 5
+rules.push("fam6-min=1");
+rules.push("fam7-min=1");
+rules.push("fam8-min=1");
+
+// 4.3.3.3 a)
+//-----------
+rules.push("group-roller=^(2\\.[1-4]\\.1|2\\.1\\.3\\.1)");// new definition acc. new catIDs
+
+// 4.3.3.3 b)
+//-----------
+// i)
+rules.push("group-froll2=^9\\.1\\.\\d\\.[^1]");
+rules.push("froll2-name=no-hesitation roll at least 1/2");
+rules.push("froll2-min=1");
+
+// ii)
+rules.push("hesroll-min=1");// a hesitation roll of any extent
+
+// Sequence entry and exit attitudes acc. to Ch. 4.3.3.4
+//======================================================
+rules.push("seqcheck-upend=[\\da-z][~+`'()\"]*>?\\s*$");// Sequence exit must be in positive attitude
+rules.push("upend-name=Sequence must end flying upright (Section 6, Ch. 4.3.3.4)");
+
+// Positioning and Harmony k-factors acc. to Ch. 4.3.6
+//====================================================
+rules.push("poslj=15+20");// positioning k-factor assuming line judges
+rules.push("posnl=15+20");// positioning k-factor assuming no line judges
+rules.push("poselec=15+20");// positioning k-factor assuming electric telemetry
+
+rules.push("more=glider-CIVA Advanced arestibase");
 
 //######################################################################
-rules.push("[glider-CIVA Advanced Free]");// specific rules for the Advanced Free programme
+rules.push("(glider-CIVA Advanced Free)");// specific rules for the Advanced Free programme
 //######################################################################
 
 // what info should be filled out
@@ -1180,9 +1295,10 @@ rules.push("9.8.3.1-8");
 rules.push("9.8.4.1-2");
 rules.push("9.8.5.1");
 rules.push("9.11.1.4-8");
-rules.push("9.13.3.2");
-rules.push("9.13.3.4");
-rules.push("9.13.3.6");
+// Super Slow Roll removed from Glider competition at 2015 CIVA meeting
+// rules.push("9.13.3.2");
+// rules.push("9.13.3.4");
+// rules.push("9.13.3.6");
 
 //###################
 rules.push("[glider-CIVA Advanced Unknown1]");
@@ -1203,8 +1319,7 @@ rules.push("figure-letters=ABCDEFG");
 rules.push("k-max=160");		// 2014 : maximum k-factor without maximum floating points
 rules.push("k-min=140");		// 2014 : minimum k-factor
 rules.push("basefig-max=7");		// maximum 7 base figures per sequence (max 2 links)
-//rules.push("floating-point=3");	// 2014: 3 points may be reduced (4.3.4.6 last sentence - applies on P3,5 and 6 only)
-rules.push("connectors=2/10");		// max 2 connectors with 10K total
+rules.push("additionals=2/10");		// max 2 additionals with 10K total
 
 // Positioning and Harmony k-factors acc. to Ch. 4.3.6
 //====================================================
@@ -1480,8 +1595,9 @@ rules.push("9.8.3.2");
 
 rules.push("9.11.1.4-6");
 
-rules.push("9.13.3.2");
-rules.push("9.13.3.4");
+// Super Slow Roll removed from Glider competition at 2015 CIVA meeting
+// rules.push("9.13.3.2");
+// rules.push("9.13.3.4");
 
 //######################################################################
 
