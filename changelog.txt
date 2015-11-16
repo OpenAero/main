@@ -1,3 +1,11 @@
+2016.1.1
+* corrected prevention of pop-up blocker for Check Multiple Sequences
+* fixed figure exit direction being different in Grid view when starting on Y axis on Form B
+* changed handling of Floating Point to only deduct from figures without letter according 2016 CIVA rules
+* fixed issue where non-allowed rolls (e.g. 43) would be added to roll total (rollSums)
+* added "reference" directive for rule checking against fixed figures
+* improved several aspects of reference sequence handling
+
 2016.1
 * changed version number scheme to reflect active CIVA rules
 * improved code; reduced variables in makeXXX sections

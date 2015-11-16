@@ -139,17 +139,18 @@ rules.push("infocheck=pilot;actype;acreg;positioning");
 rules.push("sf=^2\\.:2;^5\\.:5;^6\\.:6;^1\\.:7;^3\\.:7;^7\\.:7;^8\\.:7;^0\\.:7");
 
 //######################################################################################
-//##### CIVA UNLIMITED FREE KNOWN 2016 #################################################
+//##### CIVA UNLIMITED FREE KNOWN ######################################################
 //######################################################################################
 
 rules.push("[CIVA Unlimited Free Known]");
 rules.push("posnl=40");//assume no line judges
 rules.push("poslj=20");
+rules.push("reference=/ \"@A\" ```````````+24rpp(f)24 \"@B\" ,3'pbB(,2if),34-`> \"@C\" --,2m,32,2if- \"@D\" -3jo15 \"@E\" ``+,4ita``2f'+`");
 
 rules.push("more=CIVA/IAC Unlimited Free Known");
 
 //######################################################################################
-//##### CIVA/IAC UNLIMITED FREE ########################################################
+//##### CIVA/IAC UNLIMITED FREE KNOWN ##################################################
 //######################################################################################
 
 rules.push("(CIVA/IAC Unlimited Free Known)");
@@ -780,6 +781,8 @@ rules.push("allow=^[1-9]");//all figures are allowed for the Free Programme
 
 rules.push("figure-letters=ABCDE");
 
+rules.push("reference=\"@A\" m,6;6f- \"@B\" ````6s.ik22 \"@C\" 2db``f'' \"@D\" 4h2f \"@E\" -2jo15");
+
 // what info should be filled out
 rules.push("infocheck=pilot;actype;acreg;positioning");
 
@@ -1162,6 +1165,8 @@ rules.push("opposite-min=1"); //one opposite roll is required!
 rules.push("allow=^[1-9]"); //all figures are allowed for the Free Programme
 
 rules.push("figure-letters=ABCDE");
+
+rules.push("reference=\"@A\" iv```5s. \"@B\" 'k,24 \"@C\" m2,22 \"@D\" ```2f.g' \"@E\" 1j1");
 
 // what info should be filled out
 rules.push("infocheck=pilot;actype;acreg;positioning");

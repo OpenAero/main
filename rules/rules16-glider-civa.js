@@ -89,6 +89,8 @@ rules.push("[glider-CIVA Unlimited Free Known]");// specific rules for the Unlim
 
 rules.push("figure-letters=ABCDE");
 
+rules.push("reference=\"@A\" ```-ta``2if.+` \"@B\" -m1 \"@C\" id2f- \"@D\" 4h \"@E\" -'k");
+
 // what info should be filled out
 rules.push("infocheck=pilot;actype;acreg;positioning;harmony");
 
@@ -956,6 +958,8 @@ rules.push("[glider-CIVA Advanced Free Known]");// specific rules for the Advanc
 //######################################################################
 
 rules.push("figure-letters=ABCDE");
+
+rules.push("reference=\"@A\" -d2 \"@B\" h \"@C\" 2''rdb \"@D\" q(1) \"@E\" m2");
 
 // what info should be filled out
 rules.push("infocheck=pilot;actype;acreg;positioning;harmony");

@@ -142,9 +142,9 @@ lang.fr = {
 'checkMultiCounter' : 'Vérification du programme %s of %s<br>%s<br>Ceci peut ' +
   'prendre du temps. Patientez, svp...',
 'checkMultipleSeq' : 'Vérification d\'un groupe de programmes',
-// new 1.5.1
+// changed 2016.1.1
 'checkMultiUseReference' : 'Utilisez programme de référence pour ' +
-  'Inconnu-libre',
+  '(In)connu-libre',
 //
 'checkMultiWait' : 'Vérification des programmes %s .<br>Ceci peut ' +
   'prendre du temps. Patientez, svp...',
@@ -516,8 +516,8 @@ lang.fr = {
   'des programmes d\'Inconnu-Libre. Des contrôles sont effectués ' +
   'pour confirmer lettres correctes, codes Aresti et la ' +
   'combinaison de la direction d\'entrée / sortie.',
-'referenceSequenceTitle' : 'Programme de référence pour des ' +
-  'programmes d\'Inconnu-Libre',
+// changed 2016.1.1
+'referenceSequenceTitle' : 'Programme de référence',
 //
 'remove' : 'Supprimer',
 'removeLogo' : 'Supprimer',

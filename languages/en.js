@@ -148,9 +148,9 @@ lang.en = {
 'checkMultiCounter' : 'Checking sequence %s of %s<br>%s<br>This may ' +
   'take some time. Please wait...',
 'checkMultipleSeq' : 'Check multiple seq',
-// new 1.5.1
+// changed 2016.1.1
 'checkMultiUseReference' : 'Use <a href="#">reference sequence</a> ' +
-  'for Free Unknown',
+  'for Free (Un)known',
 //
 'checkMultiWait' : 'Checking %s sequences.<br>This may ' +
   'take some time. Please wait...',
@@ -510,7 +510,11 @@ lang.en = {
   'with required figures, such as Free ' +
   'Unknown sequences. Checks are done to confirm correct letters, ' +
   'figure Aresti numbers and entry/exit direction combination.',
-'referenceSequenceTitle' : 'Reference sequence for Free Unknown',
+// new 2016.1.1
+'referenceSequenceFixed' : 'This reference sequence can not be ' +
+  'changed as it is coupled to the active sequence rules.',
+// changed 2016.1.1
+'referenceSequenceTitle' : 'Reference sequence',
 //
 'remove' : 'Remove',
 'removeLogo' : 'Remove',
@@ -659,7 +663,14 @@ lang.en = {
   'having a roll of uneven quarters on the first line and a roll on ' +
   'the second line.<br> This type of figure was handled incorrectly ' +
   'on older versions of OpenAero. Please check that all double ' +
-  'Humpty Bump directions are correct.</p>', 
+  'Humpty Bump directions are correct.</p>',
+// new 2016.1.1
+'warningPre201611' : '<p>The file you just opened was created with an ' +
+  'OpenAero version older than 2016.1.1. Also, it was opened as a ' +
+  'Grid and contains a figure exit direction change (^ or > symbol). ' +
+  'This is handled differently by older versions of OpenAero. Please ' +
+  'check the figures to make sure their exit directions are correct ' +
+  'relative to their start (same or opposite).', 
 'wind' : 'wind/vent',
 'windIAC' : 'wind direction',
 // new 1.5.1

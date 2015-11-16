@@ -33,7 +33,7 @@ exampleSequences['2016 CIVA Unl Free Known'] = '<sequence>' +
 '<logo>CIVA</logo>' +
 '<notes>See "Creating a Free Known sequence" in the manual</notes>' +
 '<default_view>grid:5</default_view>' +
-'<oa_version>2016.1</oa_version>' +
+'<oa_version>2016.1.1</oa_version>' +
 '</sequence>';
 
 exampleSequences['2016 CIVA Adv Free Known'] = '<sequence>' +
@@ -46,7 +46,7 @@ exampleSequences['2016 CIVA Adv Free Known'] = '<sequence>' +
 '<logo>CIVA</logo>' +
 '<notes>See "Creating a Free Known sequence" in the manual</notes>' +
 '<default_view>grid:5</default_view>' +
-'<oa_version>2016.1</oa_version>' +
+'<oa_version>2016.1.1</oa_version>' +
 '</sequence>';
 
 exampleSequences['2016 CIVA Yak 52 Free Known'] = '<sequence>' +
@@ -59,7 +59,7 @@ exampleSequences['2016 CIVA Yak 52 Free Known'] = '<sequence>' +
 '<logo>CIVA</logo>' +
 '<notes>See "Creating a Free Known sequence" in the manual</notes>' +
 '<default_view>grid:5</default_view>' +
-'<oa_version>2016.1</oa_version>' +
+'<oa_version>2016.1.1</oa_version>' +
 '</sequence>';
 
 exampleSequences['2016 CIVA Int Free Known'] = '<sequence>' +
@@ -72,7 +72,7 @@ exampleSequences['2016 CIVA Int Free Known'] = '<sequence>' +
 '<logo>CIVA</logo>' +
 '<notes>See "Creating a Free Known sequence" in the manual</notes>' +
 '<default_view>grid:5</default_view>' +
-'<oa_version>2016.1</oa_version>' +
+'<oa_version>2016.1.1</oa_version>' +
 '</sequence>';
 
 exampleSequences['2016 CIVA-Glider Unl Free Known'] = '<sequence>' +
@@ -86,7 +86,7 @@ exampleSequences['2016 CIVA-Glider Unl Free Known'] = '<sequence>' +
 '<logo>CIVA</logo>' +
 '<notes>See "Creating a Free Known sequence" in the manual</notes>' +
 '<default_view>grid:5</default_view>' +
-'<oa_version>2016.1</oa_version>' +
+'<oa_version>2016.1.1</oa_version>' +
 '</sequence>';
 
 exampleSequences['2016 CIVA-Glider Adv Free Known'] = '<sequence>' +
@@ -100,7 +100,7 @@ exampleSequences['2016 CIVA-Glider Adv Free Known'] = '<sequence>' +
 '<logo>CIVA</logo>' +
 '<notes>See "Creating a Free Known sequence" in the manual</notes>' +
 '<default_view>grid:5</default_view>' +
-'<oa_version>2016.1</oa_version>' +
+'<oa_version>2016.1.1</oa_version>' +
 '</sequence>';
 
 exampleSequences['2015 CIVA Unl Known'] = '<sequence>' +

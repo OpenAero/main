@@ -658,7 +658,7 @@ float: left;
 /* end print dialog */
 
 /* reference sequence */
-#referenceSequenceAlerts {
+#referenceSequenceAlerts, #t_referenceSequenceFixed {
   color: #f00;
 }
 #referenceSequenceSvgContainer {

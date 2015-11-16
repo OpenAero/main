@@ -204,6 +204,10 @@
  * floating-point=
  *   number of floating point that can be reduced from program if needed.
  *   FP is included in k-max.
+ * demo=
+ *   add sequence string to Demo menu
+ * reference=
+ *   fill reference sequence with supplied sequence string
  *************************************************************************/
 
 // define rules global
