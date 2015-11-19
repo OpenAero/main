@@ -5,6 +5,8 @@
 * fixed issue where non-allowed rolls (e.g. 43) would be added to roll total (rollSums)
 * added "reference" directive for rule checking against fixed figures
 * improved several aspects of reference sequence handling
+* added 2016 IAC rules
+* updated Form A, R & L penalty boxes as designed by CIVA
 
 2016.1
 * changed version number scheme to reflect active CIVA rules

@@ -13886,10 +13886,10 @@ function addFormElementsLR (svg, print) {
   drawText (userText.tooHigh, 516, blockTop + 44, 'formAText', 'start', '', svg);
   drawText (userText.interruptions, 516, blockTop + 70, 'formAText', 'start', '', svg);
   drawText (userText.insertions, 516, blockTop + 96, 'formAText', 'start', '', svg);
-  drawText (userText.boxOuts, 661, blockTop + 18, 'formAText', 'start', '', svg);
-  drawText (userText.missedSlot, 661, blockTop + 44, 'formAText', 'start', '', svg);
-  drawText (userText.wingRocks, 661, blockTop + 70, 'formAText', 'start', '', svg);
-  drawText (userText.disqualified, 661, blockTop + 96, 'formAText', 'start', '', svg);
+  drawText (userText.trgViolation, 661, blockTop + 18, 'formAText', 'start', '', svg);
+  drawText (userText.wingRocks, 661, blockTop + 44, 'formAText', 'start', '', svg);
+  drawText (userText.disqualified, 661, blockTop + 70, 'formAText', 'start', '', svg);
+  drawText (userText.otherNote, 661, blockTop + 96, 'formAText', 'start', '', svg);
   
   // harmony and position
   blockTop -= 50
@@ -14171,20 +14171,19 @@ function buildScoreColumn (svg) {
     drawRectangle (620, 355, 180, 25, 'formLine', svg);
     drawText ('Penalties', 710, 370, 'formATextBold', 'middle', '', svg);
     var penalties = new Array (
-      'Too Low',
-      'Disqual Fig',
-      'Too High',
-      'Outs',
-      'Interruptions',
-      'Insertions',
-      'Missed Slot',
-      'Trg Violation',
-      'Faulty Wing Rocks');
+      'tooLow',
+      'tooHigh',
+      'interruptions',
+      'insertions',
+      'trgViolation',
+      'wingRocks',
+      'disqualified',
+      'otherNote');
     var y = 380;
     drawRectangle (750, y, 50, penalties.length * 25, 'formLineBold', svg);
     for (var i = 0; i<penalties.length; i++) {
       drawRectangle (620, y, 180, 25, 'formLine', svg);
-      drawText (penalties[i], 628, y + 18, 'formAText', 'start', '', svg);
+      drawText (userText[penalties[i]], 628, y + 18, 'formAText', 'start', '', svg);
       y += 25;
     }
   

@@ -41,6 +41,9 @@ var version = '2016.1.1';
 // ttt = update text
 // n   = importance (higher = more important)
 var versionNew = {
+  '2016.1.1' : [
+    ['IAC Power rules for 2016', 3]
+  ],
   '2016.1' : [
     ['Corrected handling of direction in double bumps with different ' +
     'radii and having a roll of uneven quarters on the first line ' +

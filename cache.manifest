@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# OpenAero version 2016.1.1b
+# OpenAero version 2016.1.1c
 addtohomescreen/addtohomescreen.css
 addtohomescreen/addtohomescreen.min.js
 arestisystem.html
@@ -115,7 +115,7 @@ rules/rules15-aac.js
 rules/rules15-baea.js
 rules/rules15-france.js
 rules/rules15-ga.js
-rules/rules15-iac.js
+rules/rules16-iac.js
 rules/rules15-vink.js
 rules/rules16-glider-civa.js
 rules/rules15-nzac.js

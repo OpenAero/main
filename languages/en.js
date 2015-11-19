@@ -190,7 +190,7 @@ lang.en = {
 'demo' : 'Demo',
 'desktopVersion' : 'Desktop version',
 // new 1.5.1
-'disqualified' : 'Disqualified',
+'disqualified' : 'Disqual Fig',
 //
 'download' : 'Download',
 'downloadHTML5' : 'You can save your file by choosing a name ' +
@@ -443,6 +443,8 @@ lang.en = {
 //
 'orFileDrop' : 'Or drag & drop your files here',
 'orFileDropPrint' : 'Or drag & drop your files here',
+// new 2016.1.1
+'otherNote' : 'Other(note...)',
 'pageSpacing' : 'Page spacing',
 'pilot' : 'Pilot',
 'pilotCardFormB' : 'Form B',
@@ -630,7 +632,8 @@ lang.en = {
 }, // end tooltip sub-array
 // new 1.5.1
 'totalK' : 'Total K',
-//
+// new 2016.1.1
+'trgViolation' : 'Trg Violation',
 'unknownFileType' : 'File opening is not supported in this browser.',
 'unusedFigureLetters' : 'Unused figure letter(s): %s',
 'update' : 'Update',
