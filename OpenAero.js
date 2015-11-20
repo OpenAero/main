@@ -7947,6 +7947,14 @@ function changeReferenceSequence (auto) {
   var activeFormSave = activeForm;
   activeForm = 'Grid';
   Attitude = Direction = X = Y = 0;
+
+  // See if there is a y-axis flip symbol and activate it, except when 
+  // it matches the subSequence code which is similar (/ or //). Usually
+  // this is done by parseSequence, but it checks activeSequence.text
+  if (string.replace(regexComments, '').match(regexFlipYAxis)) {
+    setYAxisOffset (180 - yAxisOffset);
+  }
+  
   parseSequence ();
   activeForm = activeFormSave;
   
@@ -7956,7 +7964,7 @@ function changeReferenceSequence (auto) {
   }
   
   var div = document.getElementById('referenceSequenceDialog');
-  var hide = div.classList.contains ('noDisplay');
+  var noDisplay = div.classList.contains ('noDisplay');
   
   // show div to make sure bBoxes can be calculated
   div.classList.remove ('noDisplay');
@@ -7973,7 +7981,7 @@ function changeReferenceSequence (auto) {
   }
   
   // restore div to previous state
-  if (hide) div.classList.add ('noDisplay');
+  if (noDisplay) div.classList.add ('noDisplay');
   
   referenceSequence.figures = {};
   for (var i = 0; i < figures.length; i++) {

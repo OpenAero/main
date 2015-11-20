@@ -145,7 +145,7 @@ rules.push("sf=^2\\.:2;^5\\.:5;^6\\.:6;^1\\.:7;^3\\.:7;^7\\.:7;^8\\.:7;^0\\.:7")
 rules.push("[CIVA Unlimited Free Known]");
 rules.push("posnl=40");//assume no line judges
 rules.push("poslj=20");
-rules.push("reference=/ \"@A\" ```````````+24rpp(f)24 \"@B\" ,3'pbB(,2if),34-`> \"@C\" --,2m,32,2if- \"@D\" -3jo15 \"@E\" ``+,4ita``2f'+`");
+rules.push("reference=\/ \"@A\" ```````````+24rpp(f)24 \"@B\" ,3'pbB(,2if),34-`> \"@C\" --,2m,32,2if- \"@D\" -3jo15 \"@E\" ``+,4ita``2f'+`");
 
 rules.push("more=CIVA/IAC Unlimited Free Known");
 
