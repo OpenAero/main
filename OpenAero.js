@@ -9017,6 +9017,8 @@ function grabFigure(evt) {
     selectedFigure.scale = document.getElementById ('scale').value;
     selectedFigure.diagonal = Math.sqrt (
       Math.pow (selectedFigure.width,2) + Math.pow (selectedFigure.height, 2));
+
+    evt.preventDefault(); // prevent default drag & drop
     
     // grab full sequence figures
   } else if (evt.target.parentNode.id.match(/^figure[0-9]/)) {
@@ -9350,8 +9352,7 @@ function Drag (evt) {
     } else if (DragTarget.id === 'magnifier') {
       
       /** dragging magnifier */
-      
-
+            
       var scale = Math.sqrt (
         Math.pow (TrueCoords.x + parseInt(selectedFigure.width) - GrabPoint.x, 2) +
         Math.pow (-TrueCoords.y + parseInt(selectedFigure.height) + GrabPoint.y, 2)) /
@@ -10610,7 +10611,7 @@ function makeFormA() {
           case (1):
             drawRectangle (x, y, columnWidths[column], rowHeight, 'pos');
             // Get the drawn figure from the SVG and set the correct scaling
-            var group = document.getElementById('figure' + i);
+            var group = SVGRoot.getElementById('figure' + i);
             var bBox = group.getBBox();
             var scaleFigure = roundTwo(Math.min((columnWidths[column] - 10) / bBox.width, (rowHeight - 20) / bBox.height));
             var xMargin = (columnWidths[column] - bBox.width * scaleFigure) / 2;

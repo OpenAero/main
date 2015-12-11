@@ -1,3 +1,7 @@
+2016.1.2
+* fixed bug in figure scaling when using Reference sequence and Form A
+* fixed bug causing negative zoom (e.g. -1%) to create extra figure and not change zoom
+
 2016.1.1
 * corrected prevention of pop-up blocker for Check Multiple Sequences
 * fixed figure exit direction being different in Grid view when starting on Y axis on Form B

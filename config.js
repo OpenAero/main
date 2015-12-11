@@ -1,4 +1,4 @@
-// config.js 2016.1.1
+// config.js 2016.1.2
 
 // This file is part of OpenAero.
 
@@ -34,7 +34,7 @@
 // Define active version number of OpenAero
 // **************
 
-var version = '2016.1.1';
+var version = '2016.1.2';
 // versionNew is an object that contains version update information
 // The structure is {vvv : [[ttt, n], ...], ...} , where
 // vvv = version number
@@ -499,7 +499,7 @@ var regexMoveTo = new RegExp ('^\[[0-9\-]*,[0-9\-]*\]$');
 // regexDrawInstr matches moveTo, curveTo, scale and text
 // incorrect 2016.1 check
 // var regexDrawInstr = /^(\[|\().+(\]|\)$)|([0-9]+\%)|("[^"]*"$)/;
-var regexDrawInstr = /^([\[\(].+[\]\)]|[0-9]+\%|"[^"]*")$/;
+var regexDrawInstr = /^([\[\(].+[\]\)]|-?[0-9]+\%|"[^"]*")$/;
 var regexLongForward = new RegExp ('\\' + userpat.longforward, 'g');
 var regexEntryShorten = /`+\+(.*[a-zA-Z])/;
 var regexExitShorten = /([a-zA-Z].*)\+`+/;
