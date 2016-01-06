@@ -1,4 +1,4 @@
-// examples.js 2016.1
+// examples.js 2016.1.3
 
 // This file is part of OpenAero.
 
@@ -29,7 +29,7 @@ exampleSequences['2016 CIVA Unl Free Known'] = '<sequence>' +
 '<program>Free Known</program>' +
 '<rules>CIVA</rules>' +
 '<positioning>40</positioning>' +
-"<sequence_text>/ \"@A\" ```````````+24rpp(f)24 \"@B\" ,3'pbB(,2if),34-`> \"@C\" --,2m,32,2if- \"@D\" -3jo15 \"@E\" ``+,4ita``2f'+`</sequence_text>" +
+"<sequence_text>\"@A\" /```````````+24rpp(f)24 \"@B\" ,3'pbB(,2if),34-`> \"@C\" --,2m,32,2if- \"@D\" -3jo15 \"@E\" ``+,4ita``2f'+`</sequence_text>" +
 '<logo>CIVA</logo>' +
 '<notes>See "Creating a Free Known sequence" in the manual</notes>' +
 '<default_view>grid:5</default_view>' +
@@ -103,6 +103,21 @@ exampleSequences['2016 CIVA-Glider Adv Free Known'] = '<sequence>' +
 '<oa_version>2016.1.1</oa_version>' +
 '</sequence>';
 
+exampleSequences['2016 BAeA-Glider Int Free Known'] = '<sequence>' +
+'<category>Intermediate</category>' +
+'<date>2016</date>' +
+'<class>glider</class>' +
+'<program>Free Known</program>' +
+'<rules>BAeA</rules>' +
+'<positioning>15</positioning>' +
+'<harmony>10</harmony>' +
+'<notes>Base Figures for Intermediate Free Known 2016</notes>' +
+'<sequence_text>22 2t c2 m2 -j-</sequence_text>' +
+'<logo>CIVA</logo>' +
+'<oa_version>2016.1.3</oa_version>' +
+'<default_view>grid:5</default_view>' +
+'</sequence>';
+
 exampleSequences['2015 CIVA Unl Known'] = '<sequence>' +
 '<category>Unlimited</category>' +
 '<class>powered</class>' +
@@ -169,6 +184,28 @@ exampleSequences['2015 CIVA-Glider Adv Known'] = '<sequence>' +
 "<sequence_text>``s.irp--- --2j-- (0,8) -1- -t...'+ o,44 ita``,4. h4.+~ ++b```+ 3% +2j> d</sequence_text>" +
 '<logo>CIVA</logo>' +
 '<oa_version>1.5.0</oa_version>' +
+'</sequence>';
+
+exampleSequences['2015 BAeA Beginners Known'] = '<sequence>' +
+'<class>powered</class>' +
+'<rules>BAeA</rules>' +
+'<category>Beginners</category>' +
+'<program>Known</program>' +
+'<positioning>10</positioning>' +
+"<sequence_text>/id o `+c.,2.++ ~+++h... 3% oj 1</sequence_text>" +
+'<logo>BAeA</logo>' +
+'<oa_version>2016.1.3</oa_version>' +
+'</sequence>';
+
+exampleSequences['2015 BAeA Standard Known'] = '<sequence>' +
+'<class>powered</class>' +
+'<rules>BAeA</rules>' +
+'<category>Standard</category>' +
+'<program>Known</program>' +
+'<positioning>15</positioning>' +
+"<sequence_text>ed ++,2rc d iv```6s...++++ +c.2` (-3,7) o h``4' ~~+oj+ 4> ~~+++m2 id... 1</sequence_text>" +
+'<logo>BAeA</logo>' +
+'<oa_version>2016.1.3</oa_version>' +
 '</sequence>';
 
 exampleSequences['2014 CIVA Unl Known'] = '<sequence>' +

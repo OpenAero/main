@@ -47,6 +47,7 @@ lang.fr = {
   'et <strong>Supprimez</strong> toutes les entrées contenant OpenAero.',
 'aboutUnknown' : 'Impossible de déterminer la derniere version. ' +
   'Vous travaillez probablement hors connexion.',
+// changed 2016.1.3
 'aboutText' : '<div class="section">' +
   '<p>Cette&nbsp;version:<strong>%s</strong> &nbsp; ' +
   'Version&nbsp;courante:<strong>%s</strong></p>%s</div>' +
@@ -70,7 +71,7 @@ lang.fr = {
   '<tr><td><strong>Gilles Guillemard</strong></td>' +
   '<td>Codage des figures, des règles et de parties du logiciel</td></tr>' +
   '<tr><td><strong>Christian Falck</strong></td>' +
-  '<td>Codage des des règles</td></tr>' +
+  '<td>Codage des règles</td></tr>' +
   '</table></div>',
 // end new
 'ac' : 'Avion',
@@ -148,7 +149,8 @@ lang.fr = {
 //
 'checkMultiWait' : 'Vérification des programmes %s .<br>Ceci peut ' +
   'prendre du temps. Patientez, svp...',
-'checkSequence' : 'Vérification du programme',
+// changed 2016.1.3
+'checkSequence' : 'Vérifier le programme',
 'checkSequenceLog' : 'Voir le détail',
 'checkSequenceOK' : 'OK',
 'checkSequenceResult' : 'Résultat de vérification',
@@ -270,9 +272,8 @@ lang.fr = {
   'Confirmer que vous souhaitez quitter l\'assembleur d\'inconnu-libre.',
 'fuDesigner' : 'Assembleur d\'inconnu-libre',
 'fuFiguresTab' : 'Figures',
-// changed 1.5.2.3
-//'FUfigOptionsDisabled' : 'Certaines options sont invalidées pour l\'inconnu-libre',
-'FUfigOptionsDisabled' : 'Certaines options sont invalidées pour des figures lettrés',
+// changed 2016.1.3
+'FUfigOptionsDisabled' : 'Certaines options sont invalidées pour l\'inconnu-libre (figures avec lettres)',
 'FUDesignletterMulti' : 'Lettre d\'inconnu-libre %s utilisée plusieurs fois. ' +
   'Impossible de lancer l\'assembleur d\'inconnu-libre.',
 'FUDesignMissingLetters' : 'Lettre(s) d\'inconnu-libre <strong>%s</strong> ' +
@@ -319,16 +320,30 @@ lang.fr = {
 'insertions' : 'Insertions',
 //
 'installation' : 'Installation',
-'installChromeApp' : 'Vous pouvez installer OpenAero comme une Application Chrome. Ceci ' +
-  'procure:<ul><li>Une sauvegarde de fichiers améliorée</li><li>Le lancement ' +
-  'd\'OpenAero sans ouvrir le navigateur Chrome</li></ul>' +
-  'Voulez-vous installer l\'application? Si vous choisissez <i>Non</i> on ne vous' +
-  're-demandera pas, mais vous pourrez l\'installer par le menu <i>Outils</i> ' +
-  'a n\'importe quel moment.',
-'installChromeAppComplete' : 'L\'application Chrome a été installée. Vous pouvez y ' +
+// changed 2016.1.3
+'installChromeApp' : '<p>OpenAero est maintenant installé avec ce ' +
+  'navigateur et les mises à jour seront automatiques. Il est disponible ' +
+  'en ligne,mais aussi hors connexion à <a href="http://%1\$s" target="_blank">' +
+  '%1\$s</a>.</p>' +
+  '<p>Un <a href="manual.html" target="_blank">Mode d\'emploi</a> complet ' +
+  'est disponible. S\'il vous plait, prenez le temps de le lire !</p>' +
+  '<p>Vous pouvez installer OpenAero en tant qu\'Application Chrome. Ceci ' +
+  'vous procure:<ul><li>Un enregistrement des fichiers amélioré</li><li>Le lancement ' +
+  'd\'OpenAero à partir du bureau sans ouvrir votre navigateur Chrome </li></ul>' +
+  'Voulez vous installer cette application ? si vous choisissez <i>Non</i>, cette question ' +
+  'ne vous sera plus posée, mais vous pourrez l\'installer par le menu <i>Outils</i> ' +
+  'à tout moment.</p>','installChromeAppComplete' : 'L\'application Chrome a été installée. Vous pouvez y ' +
   'accéder en ouvrant une nouvelle rubrique dans Chrome. Par un clic droit ' +
   'vous pouvez ajouter l\'application sur votre bureau.',
 'installChromeAppTitle' : 'Installer l\'application Chrome',
+// new 2016.1.3
+'installed' : '<p>OpenAero est maintenant installé avec ce ' +
+  'navigateur et les mises à jour seront automatiques. Il est disponible ' +
+  'en ligne,mais aussi hors connexion à <a href="http://%1\$s" target="_blank">' +
+  '%1\$s</a>. Vous pouvez ajouter un raccourci vers cette adresse sur votre ' +
+  'bureau pour un accès direct.</p>' +
+  '<p>Un <a href="manual.html" target="_blank">Mode d\'emploi</a> complet ' +
+  'est disponible. S\'il vous plait, prenez le temps de le lire !</p>',
 // new 1.5.1
 'interruptions' : 'Interruptions',
 //
@@ -392,13 +407,14 @@ lang.fr = {
   '<strong>chrome://chrome/settings/content</strong><br />' +
   'et choisissez <i>Autoriser l\'enregistrement de données locales</i>',
 'noFigureLetterAssigned' : '(%s) Pas de lettre affectée',
-// changed 1.5.2.3
-//'noFreeUnknownFig' : 'Pas de figure d\'Inconnu-Libre',
-'noFreeUnknownFig' : 'Pas de lettre du figure',
+// changed 2016.1.3
+'noFreeUnknownFig' : 'Pas de lettre',
 // changed 1.4.4
 'nonArestiRolls' : 'Autoriser les rotations et combinaisons ' +
   'non-Aresti (essayer <i>41h4,f,4 66</i>)',
 'none' : 'Aucune',
+// new 2016.1.3
+'noRollAllowed' : 'Rotation interdite par l\'Aresti',
 'noRules' : 'Pas de règle de vérification disponible.',
 'notes' : 'Notes',
 'notOnFormBC' : 'Cette fonction est seulement disponible lorsque ' +
@@ -430,15 +446,16 @@ lang.fr = {
 'openaeroLanguage' : 'Syntaxe OpenAero',
 'openQueueFile' : 'Ouvrir un fichier file',
 'openSequence' : 'Ouvrir un programme',
-// changed 2016.1
-'openSequenceLink' : 'Ouvrir le lien du programme',
+// changed 2016.1.3
+'openSequenceLink' : 'Ouvrir le lien vers un programme',
 'openSequenceLinkCancel' : 'Annuler',
 'openSequenceLinkError' : '<p>Il y a eu une erreur à l\'ouverture du programme ' +
   'pointé par le lien. Voici le lien que vous avez fourni:<br>%s</p><p>Vérifiez que vous ' +
   'avez copié <strong>l\'intégralité</strong> du lien',
 'openSequenceLinkMessage' : 'Pour ouvrir le programme qui vous a été indiqué ' +
   'par un lien (par exemple, par email), copiez le intégralement et ' +
-  'placez le dans l\emplacement ci-dessous',
+  'placez le dans l\'emplacement ci-dessous :',
+//
 'openSequenceLinkOpen' : 'Ouvrir',
 'openSequenceLinkTitle' : 'Ouvrir le programme à partir du lien',
 //
@@ -502,22 +519,26 @@ lang.fr = {
 //
 'queueNotSaved' : 'Les figures de la file ont été enregistrées',
 'queueSaved' : 'Les figures de la file N\'ONT PAS été enregistrées',
-// new 1.5.1
-'referenceFigureDifferent' : 'Figure %s diffère de programme de référence',
-'referenceFigureExitOpp' : 'Figure %s devrait sortir en sens inverse ' +
-	'à l\'entrée',
-'referenceFigureExitSame' : 'Figure %s devrait sortir dans la même ' +
-  'direction que l\'entrée',
+// changed 2016.1.3
+'referenceFigureDifferent' : 'La figure %s n\'est pas dans le programme de référence',
+'referenceFigureExitOpp' : 'La figure %s devrait sortir en sens inverse ' +
+	'de l\'entrée',
+'referenceFigureExitSame' : 'La figure %s devrait sortir dans le même ' +
+  'sens que l\'entrée',
 'referenceSequence' : 'Programme de référence',
 'referenceSequenceClose' : 'Fermer',
 'referenceSequenceExplain' : 'Dans l\'emplacement ci-dessous, vous pouvez ' +
-  'entrer un texte du programme qui est utilisé comme référence ' +
-  'pour le contrôle de programmes de figures nécessaires, telles que ' +
-  'des programmes d\'Inconnu-Libre. Des contrôles sont effectués ' +
-  'pour confirmer lettres correctes, codes Aresti et la ' +
-  'combinaison de la direction d\'entrée / sortie.',
-// changed 2016.1.1
-'referenceSequenceTitle' : 'Programme de référence',
+  'entrer le texte de référence des figures obligatoires pour la ' +
+  'construction d\'un programme, tel qu\'un programme d\'Inconnu-Libre. ' +
+  'La vérification des lettres, des codes Aresti et des directions ' +
+  'relatives d\'entrée / sortie des figures seront alors effectués.',
+//
+// new 2016.1.3
+'referenceSequenceFixed' : 'Ce programme de référence ne pas être changé ' +
+  'car il est lié aux règles de vérification du programme en cours.',
+// changed 2016.1.3
+'referenceSequenceTitle' : 'Figures de référence pour les ' +
+  'programmes d\'(In)connu-Libre',
 //
 'remove' : 'Supprimer',
 'removeLogo' : 'Supprimer',
@@ -651,8 +672,9 @@ lang.fr = {
   '</ul>' +
   'Ceci peut prendre quelques instants à charger.',
 'view' : 'Affichage',
+// changed 2016.1.3
 'warningPre' : '<p> Lors de la prochaine sauvegarde, cet ' +
-  'avertissement \'apparaîtra plus.</p>',
+  'avertissement n\'apparaîtra plus.</p>',
 'warningPre123' : '<p> Le programme que vous venez d\'ouvrir a été créé ' +
   'avec une version d\'OpenAero antérieure à 1.2.3. Vérifiez que le sens de sortie de toutes ' +
   'les figures est correct.</p>',
@@ -670,6 +692,13 @@ lang.fr = {
   'quarts de rotation dans la première ligne et une rotation dans la seconde.<br>' +
   'Ce type de figure était traitée incorrectement dans les anciennes versions d\'OpenAero. ' +
   'Vérifiez bien que toutes les orientations (sens) de cette figure sont correctes.</p>',
+// new 2016.1.3
+'warningPre201611' : '<p>Le fichier que vous venez d\'ouvrir a été créé avec ' +
+  'une version d\'OpenAero antérieure à 2016.1.1. Il a été ouvert avec la vue ' +
+  '"Tableau des figures" et contient une ou plusieurs figures avec des ' +
+  'changements d\'axes (symboles ^ ou >). Ces figures étaient dessinées ' +
+  'différement par les anciennes versions d\'OpenAero. Vérifiez bien que les ' +
+  'sens relatifs d\'entrée/sortie sont corrects (même sens ou sens opposé).',
 'wind' : 'V E N T  ',
 'windIAC' : 'sens du vent',
 // new 1.5.1

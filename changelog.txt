@@ -1,3 +1,19 @@
+2016.1.3
+* corrected inability to change vertical line length of P-loops with half roll in top
+* removed viewport setting as it causes zooming issues when selecting text field
+* corrected demo menu to fold in on iOS when tapped
+* fixed issues with the Y-axis flip in 2016 Unlimited Free Known figures
+* added explaining text when OpenAero is first installed, including language chooser
+* replaced innerText by textContent according W3C specifications
+* added option to lock the sequence
+* added retaining of the queue through sessions
+* fixed bug causing figures to "jump" when selected
+* added more robust checking of legal figure letters
+* fixed mobile layout issues (Issue #201)
+* restored figure selection by moving through sequence string
+* improved figure dragging to edges of sequence
+* added default_view in all saves (also Form A, B, C)
+
 2016.1.2
 * fixed bug in figure scaling when using Reference sequence and Form A
 * fixed bug causing negative zoom (e.g. -1%) to create extra figure and not change zoom

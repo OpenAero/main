@@ -1,4 +1,4 @@
-// config.js 2016.1.2
+// config.js 2016.1.3
 
 // This file is part of OpenAero.
 
@@ -34,13 +34,16 @@
 // Define active version number of OpenAero
 // **************
 
-var version = '2016.1.2';
+var version = '2016.1.3';
 // versionNew is an object that contains version update information
 // The structure is {vvv : [[ttt, n], ...], ...} , where
 // vvv = version number
 // ttt = update text
 // n   = importance (higher = more important)
 var versionNew = {
+  '2016.1.3' : [
+    ['Added option to lock the sequence to prevent changing it', 2]
+  ],
   '2016.1.1' : [
     ['IAC Power rules for 2016', 3]
   ],
@@ -117,7 +120,8 @@ var sequenceXMLlabels = [
   'fu_figures',
   'logo',
   'oa_version',
-  'default_view'
+  'default_view',
+  'lock_sequence'
   ];
 
 /**********************************************************************
@@ -358,8 +362,6 @@ superFamilies.advanced = [
 superFamilies.yak52 = superFamilies.advanced;
 superFamilies.intermediate = superFamilies.advanced;
 superFamilies.glider = superFamilies.advanced;
-// Total K for Unknown additional figures
-var additionalFig = [];
 // available rolls
 var rollTypes = [
   ':none',

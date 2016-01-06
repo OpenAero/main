@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--
-  index.html version 2016.1
+  index.html version 2016.1.3
   This file is part of OpenAero.
 
   OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -26,8 +26,8 @@
     <!-- set Google verification tag, essential for installing App from site -->
     <meta name="google-site-verification" content="19PeFg_VefT13gYXLO6E-IJKXjPbzjF3f_iZ2T8pa9E" />
     <!-- set viewport for mobile browsers -->
-    <meta name="viewport" id="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <!-- <meta name="viewport" id="viewport" content="width=320, initial-scale=1.0, maximum-scale=2.0, minimum-scale=1.0" /> -->
+    <meta name="viewport" id="viewport" content="">
+    <!-- <meta name="viewport" id="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0" /> -->
     <!-- set web app capable for Chrome homescreen links -->
     <meta name="mobile-web-app-capable" content="yes">
     <!-- do the same for iOS, and set title and status bar -->
@@ -64,12 +64,12 @@
     <!-- logos -->
     <script src="logo.js" type="text/javascript"></script>
     <!-- figure definitions -->
-    <script src="figures14.js" type="text/javascript"></script>
+    <script src="figures16.js" type="text/javascript"></script>
     <!-- sequence rules -->
     <script src="rules/rules16.js" type="text/javascript"></script>
     <script src="rules/rules16-civa.js" type="text/javascript"></script>
     <script src="rules/rules15-aac.js" type="text/javascript"></script>
-    <script src="rules/rules15-baea.js" type="text/javascript"></script>
+    <script src="rules/rules16-baea.js" type="text/javascript"></script>
     <script src="rules/rules15-france.js" type="text/javascript"></script>
     <script src="rules/rules15-ga.js" type="text/javascript"></script>
     <script src="rules/rules16-iac.js" type="text/javascript"></script>
@@ -612,15 +612,17 @@
           <li id="menuSequence" class="disableFUdesigner">
             <a class="userText" id="t_sequence" href="#"></a>
             <ul id="sequenceOptions">
-              <li class="entryOption"><a class="userText" id="t_downwindEntry" href=#></a></li>
-              <li class="entryOption"><a class="userText" id="t_xBoxEntry" href=#></a></li>
-              <li class="entryOption"><a class="userText" id="t_xBoxEntryAway" href=#></a></li>
-              <li><a class="userText" id="t_flipYAxis" href=#></a></li>
+              <li class="entryOption lock"><a class="userText" id="t_downwindEntry" href=#></a></li>
+              <li class="entryOption lock"><a class="userText" id="t_xBoxEntry" href=#></a></li>
+              <li class="entryOption lock"><a class="userText" id="t_xBoxEntryAway" href=#></a></li>
+              <li class="lock"><a class="userText" id="t_flipYAxis" href=#></a></li>
               <hr>
-              <li><a class="userText" id="t_clearPositioning" href=#></a></li>
-              <li><a class="userText" id="t_separateFigures" href=#></a></li>
+              <li class="lock"><a class="userText" id="t_clearPositioning" href=#></a></li>
+              <li class="lock"><a class="userText" id="t_separateFigures" href=#></a></li>
               <hr>
               <li><a class="userText" id="t_checkSequence" href=#></a></li>
+              <hr>
+              <li><a class="userText" id="t_lockSequence" href=#></a></li>
             </ul>
           </li>
           <!-- Queue menu -->
@@ -655,7 +657,7 @@
             <a class="userText" id="t_tools" href="#"></a>
             <ul class="right">
               <li>
-                <a class="userText" id="t_fuDesigner" href="#"></a>
+                <a class="userText lock" id="t_fuDesigner" href="#"></a>
               </li>
               <hr>
               <li>
@@ -708,13 +710,14 @@
       <!-- Sequence text -->
       <div id="sequenceTextContainer" class="disableFUdesigner">
         <div id="sequenceTextClone"></div>
-        <textarea id="sequence_text" rows="2" wrap="virtual" autocapitalize="off"></textarea>
+        <textarea id="sequence_text" rows="2" wrap="virtual" autocapitalize="off" class="lock"></textarea>
       </div>
       <!-- fu_figures is used when saving from Free Unknown designer -->
       <input type="hidden" id="fu_figures" value="">
     </div>
     <!-- main sequence area -->
     <div id="main">
+      <div id="t_locked" class="userText noDisplay"></div>
       <!-- Left main block -->
       <div id="leftBlock">
         <!-- debug block -->
@@ -724,7 +727,7 @@
             <li id="tab-sequenceInfo" class="activeTab disableFUdesigner">
               <a class="userText" id="t_sequenceInfo" href="#"></a>
             </li>
-            <li id="tab-figureInfo" class="inactiveTab">
+            <li id="tab-figureInfo" class="inactiveTab lock">
               <a class="userText" id="t_figureEditor" href="#"></a>
             </li>
             <li id="tab-svgContainer" class="inactiveTab noDisplay">
@@ -756,8 +759,8 @@
             <span class="label">&nbsp;&&nbsp;</span>
             <span class="label userText" id="t_team"></span>
             <div id="pilotTeam">
-              <input type=text name=pilot id=pilot maxlength="30">
-              <select id="team"></select>
+              <input type=text name=pilot id=pilot maxlength="30" class="lock">
+              <select id="team" class="lock"></select>
             </div>
           </div>
           <div class=item>
@@ -766,38 +769,38 @@
                  Keep it until 2016 for backward compatibility -->
             <input type="hidden" id="aircraft">
             <div id="acTypeReg">
-              <input type="text" id="actype" maxlength="30">
-              <input type="text" id="acreg" maxlength="30">
+              <input type="text" id="actype" maxlength="30" class="lock">
+              <input type="text" id="acreg" maxlength="30" class="lock">
             </div>
           </div>
           <div class=item>
             <div class="label userText" id="t_location"></div>
-            <input type=text name=location id=location maxlength="30">
+            <input type=text name=location id=location maxlength="30" class="lock">
           </div>
           <div class=item>
             <div class="label userText" id="t_date"></div>
-            <input type=text name=date id=date maxlength="30">
+            <input type=text name=date id=date maxlength="30" class="lock">
           </div>
           <div class=item>
             <div class="label userText" id="t_class"></div>
-            <select name="class" id="class">
+            <select name="class" id="class" class="lock">
               <option value="powered" class="userText" id="t_powered" selected></option>
               <option value="glider" class="userText" id="t_glider"></option>
             </select>
           </div>
           <div class="item combo">
             <div class="label userText" id="t_rules"></div>
-            <input type=text name=rules id=rules maxlength="30">
+            <input type=text name=rules id=rules maxlength="30" class="lock">
             <ul id=rulesList></ul>
           </div>
           <div class="item combo">
             <div class="label userText" id="t_category"></div>
-            <input type=text name=category id=category maxlength="30">
+            <input type=text name=category id=category maxlength="30" class="lock">
             <ul id=categoryList></ul>
           </div>
           <div class="item combo">
             <div class="label userText" id="t_programme"></div>
-            <input type=text name=program id=program maxlength="30">
+            <input type=text name=program id=program maxlength="30" class="lock">
             <ul id=programList></ul>
           </div>
           <div class="item">
@@ -805,11 +808,11 @@
           </div>
           <div class=item>
             <div class="label userText" id="t_positioning"></div>
-            <input type=text name=positioning id=positioning maxlength="4">
+            <input type=text name=positioning id=positioning maxlength="4" class="lock">
           </div>
           <div id="harmonyField" class=item style="opacity:0;">
             <div class="label userText" id="t_harmony"></div>
-            <input type=text name=harmony id=harmony maxlength="4">
+            <input type=text name=harmony id=harmony maxlength="4" class="lock">
           </div>
           <div class="clearBoth"></div>
           <div class=item>
@@ -828,7 +831,7 @@
           <div class="clearSpace"></div>
           <div class=item>
             <div class="label userText" id="t_notes"></div>
-            <textarea name="notes" id="notes"></textarea>
+            <textarea name="notes" id="notes" class="lock"></textarea>
           </div>
           <div class="item">
             <div class="label userText" id="t_fileName"></div>
@@ -837,6 +840,7 @@
           </div>
           <input type=hidden id="oa_version">
           <input type=hidden id="default_view">
+          <input type=hidden id="lock_sequence">
         </div>
         <!-- Figure Editor -->
         <div id="figureInfo" class="section hidden">

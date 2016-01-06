@@ -1,4 +1,4 @@
-// en.js 2016.1.1
+// en.js 2016.1.3
 // This file is part of OpenAero.
 
 //  OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -235,7 +235,8 @@ lang.en = {
 'figureEditor' : 'Figure&nbsp;editor',
 // new 1.5.1
 'figureK' : 'Figure K',
-//
+// new 2016.1.3
+'figureLetterNotAllowed' : '(%s) Figure letter %s is not allowed',
 'figurePositioning' : 'Figure positioning',
 'figureQueue' : 'Figure Queue',
 // new 1.5.2
@@ -318,16 +319,31 @@ lang.en = {
 'insertions' : 'Insertions',
 //
 'installation' : 'Installation',
-'installChromeApp' : 'You can install OpenAero as a Chrome App. This ' +
+// changed 2016.1.3
+'installChromeApp' : '<p>OpenAero has now been installed ' +
+  'in this browser and will automatically receive updates. It is ' +
+  'available online and offline at <a href="http://%1\$s" target="_blank">' +
+  '%1\$s</a>.</p>' +
+  '<p>An extensive <a href="manual.html" target="_blank">Manual</a> ' +
+  'is available. Please take some time to read it!</p>' +
+  '<p>You can install OpenAero as a Chrome App. This ' +
   'provides:<ul><li>Improved file saving</li><li>Adding OpenAero to ' +
   'your desktop to start without opening Chrome browser</li></ul>' +
   'Do you wish to install the App? If you select <i>No</i> you will ' +
   'not be asked again but can install it through the <i>Tools</i> ' +
-  'menu at any time.',
+  'menu at any time.</p>',
 'installChromeAppComplete' : 'Chrome App has been installed. You can ' +
   'access it by opening a new tab in Chrome. By right-clicking you ' +
   'add the App to your desktop.',
 'installChromeAppTitle' : 'Install Chrome App',
+// new 2016.1.3
+'installed' : '<p>OpenAero has now been installed ' +
+  'in this browser and will automatically receive updates. It is ' +
+  'available online and offline at <a href="http://%1\$s" target="_blank">' +
+  '%1\$s</a>. You can add a link to this address to your desktop for ' +
+  'easy access.</p>' +
+  '<p>An extensive <a href="manual.html" target="_blank">Manual</a> ' +
+  'is available. Please take some time to read it!</p>',
 // new 1.5.1
 'interruptions' : 'Interruptions',
 //
@@ -351,11 +367,18 @@ lang.en = {
 'judgesName' : 'Judges Name',
 //
 'language' : 'Language',
-'loadNewVersion' : 'A new version of OpenAero is available. Load it?',
+// changed 2016.1.3
+'loadNewVersion' : 'A new version is available and will automatically ' +
+  'be loaded next time you start OpenAero. Load it now?',
 'loadNewVersionNoCookies' : 'A new version of OpenAero is available. ' +
 	'Load it? If you have a sequence open now it will be cleared.',
 'loadNewVersionTitle' : 'New version',
 'location' : 'Location',
+// new 2016.1.3
+'locked' : 'This sequence is locked. To unlock, choose <i>Unlock</i> ' +
+  'from the Sequence menu',
+'lockSequence' : 'Lock',
+//
 'logo' : 'Logo',
 'logoExplain' : 'Upload your own logo by clicking on the file ' +
   'chooser below, or select one of the displayed logos.',
@@ -400,6 +423,7 @@ lang.en = {
 'nonArestiRolls' : 'Allow non-Aresti rolls and combinations (try ' + 
   'sequence text <i>41h4,f,4 66</i>)',
 'none' : 'None',
+'noRollAllowed' : 'No roll allowed according Aresti Catalog',
 'noRules' : 'No sequence validity checking rules available.',
 'notes' : 'Notes',
 'notOnFormBC' : 'This function is only available when Form ' +
@@ -635,6 +659,7 @@ lang.en = {
 // new 2016.1.1
 'trgViolation' : 'Trg Violation',
 'unknownFileType' : 'File opening is not supported in this browser.',
+'unlockSequence' : 'Unlock',
 'unusedFigureLetters' : 'Unused figure letter(s): %s',
 'update' : 'Update',
 'upwind' : 'Upwind',

@@ -1,4 +1,4 @@
-﻿// OpenAero.js 2016.1.1
+﻿// OpenAero.js 2016.1.3
 // This file is part of OpenAero.
 
 //  OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -206,6 +206,7 @@ var defRules = [];
 var rulesActive = false;   // Are rules active?
 var infoCheck = [];        // Seq info fields to be filled out when saving or printing
 var figureLetters = '';    // Letters that can be assigned to individual figures
+var additionalFig = {'max': 0, 'totalK': 0};    // Additional figures, max and K
 var ruleSuperFamily = [];  // Array of rules for determining figure SF
 var ruleSeqCheck = [];     // rules for checking complete OpenAero seq string
 
@@ -1183,13 +1184,15 @@ function switchMobile () {
     document.getElementById('t_sequence').innerHTML = userText.sequenceShort;
     // update view menu
     setMobileMenu.innerHTML = userText.desktopVersion;
+    document.getElementById ('zoomMin').innerHTML = '<img src="buttons/mask.png">';
+    document.getElementById ('zoomPlus').innerHTML = '<img src="buttons/mask.png">';
     // unhide sequence tab
     tab.classList.remove ('noDisplay');
     // hide sequence svg
     svg.classList.add('hidden');
     //svg.setAttribute('style', 'position:absolute;z-index:-1;top:-5000px;');
     // remove any vertical displacement done by updateSequenceTextHeight
-    document.getElementById('sequence_text').removeAttribute('style');
+    sequenceText.removeAttribute('style');
     document.getElementById('main').removeAttribute('style');
   } else {
     viewport.setAttribute('content', '');
@@ -1197,7 +1200,11 @@ function switchMobile () {
     link.setAttribute('href', 'css/desktop.css');
     // update Sequence main menu link
     document.getElementById('t_sequence').innerHTML = userText.sequence;
+    // update view menu
     setMobileMenu.innerHTML = userText.mobileVersion;
+    document.getElementById ('zoomMin').innerHTML = '<img src="buttons/smallMask.png">';
+    document.getElementById ('zoomPlus').innerHTML = '<img src="buttons/smallMask.png">';
+
     tab.classList.add('noDisplay');
     svg.removeAttribute('style');
     svg.classList.remove('hidden');
@@ -1277,13 +1284,6 @@ function rebuildSequenceSvg () {
     }
   }
   
-  // this will serve as the canvas over which items are dragged.
-  //    having the drag events occur on the mousemove over a backdrop
-  //    (instead of the dragged element) prevents the dragged element
-  //    from being inadvertantly dropped when the mouse is moved rapidly
-  /** REMOVED in 1.4.1 : CAUSES TROUBLE IN CHROME 32 */
-  //group.innerHTML = "<rect id='BackDrop' x='0' y='0' width='100%' height='100%' fill='none' pointer-events='all' />";
-
   container.appendChild(SVGRoot);
   
   // these svg points hold x and y values...
@@ -1303,64 +1303,119 @@ function prepareSvg (svg) {
 /** Dialogs and windows */
 
 // infoBox creates a styled box without any options.
-// html contains the HTML text. When false, the box is closed
-function infoBox(html, title) {
+// message contains the HTML text. When false, the box is closed
+function infoBox(message, title) {
   // hide all menus
   menuInactiveAll();
   
   var div = document.getElementById('infoBox');
-  if (html) {
+  if (message) {
     // show box
     div.classList.remove ('noDisplay');
-    // Make the title
-    document.getElementById('infoTitle').innerHTML = (title)? title : '';
-    // Make the message
-    document.getElementById('infoMessage').innerHTML = html;
+    dialogBuildContents ('info', message, title);
   } else {
     div.classList.add ('noDisplay');
   }
 }
 
 // alertBox creates a styled alert box with a 'close' option
-// html contains the HTML text. When false, the box is closed
-function alertBox(html, title) {
+// message contains the HTML text. When false, the box is closed
+function alertBox(message, title) {
   // hide all menus
   menuInactiveAll();
   
   var div = document.getElementById('alertBox');
-  if (html) {
+  if (message) {
     // show box
     div.classList.remove ('noDisplay');
-    // Make the title
-    document.getElementById('alertTitle').innerHTML = (title)? title : '';
-    // Make the message
-    document.getElementById('alertMessage').innerHTML = html;
+    dialogBuildContents ('alert', message, title);
   } else {
     div.classList.add ('noDisplay');
   }
 }
 
 // confirmBox creates a styled confirm box with 'yes' and 'no' options
-// html contains the HTML text. When false, the box is closed
+// message contains the HTML text. When false, the box is closed
 // f is a function to be executed after confirm
-function confirmBox(html, title, f) {
+function confirmBox(message, title, f) {
   // hide all menus
   menuInactiveAll();
   
   var div = document.getElementById('confirmBox');
-  if (html) {
+  if (message) {
     // show box
     div.classList.remove ('noDisplay');
-    // Make the title
-    document.getElementById('confirmTitle').innerHTML = (title)? title : '';
-    // Make the message
-    document.getElementById('confirmMessage').innerHTML = html;
+    dialogBuildContents ('confirm', message, title);
     confirmFunction = f;
   } else {
     div.classList.add ('noDisplay');
   }
 }
 
+// dialogBuildContents will build the contents of an infoBox, alertBox
+// or confirmBox. boxName holds the name of the box. title and message
+// are either:
+// - formatted as HTML
+// - an array of 'userText key' and sprintf replace values
+// In the latter case multiple languages will be available for the box
+function dialogBuildContents (boxName, message, title) {
+  // Make the title
+  if (title && (typeof title === 'object')) {
+    title.params = title.params || [];
+    title.params.splice (0, 0, userText[title.userText]);
+    document.getElementById(boxName + 'Title').innerHTML =
+      sprintf.apply (undefined, title.params);
+  } else {
+    document.getElementById(boxName + 'Title').innerHTML = title ? title : '';
+  }
+  // Make the message
+  if (message.userText) {
+    message.params = message.params || [];
+    message.params.splice (0, 0, userText[message.userText]);
+    document.getElementById(boxName + 'Message').innerHTML =
+      sprintf.apply (undefined, message.params);
+    // add language chooser, assure correct title formatting
+    addLanguageChooser (
+      boxName,
+      message,
+      (typeof title === 'object') ? title : {userText: title, params: []});
+  } else {
+    document.getElementById(boxName + 'Message').innerHTML = message;
+  }
+}
+
+// addLanguageChooser adds flags to a supplied element to change the
+// language. message and title are supplied as:
+// {userText: key, params: [userText, param1, param2, ...]}
+function addLanguageChooser (boxName, message, title) {
+  var el = document.getElementById (boxName + 'Title');
+  for (var code in lang) {
+    // show flags for languages other than current
+    if (document.getElementById ('language').value !== code) {
+      var img = document.createElement ('img');
+      el.appendChild (img);
+      img.classList.add ('boxTitleFlag');
+      var flag = flags[(code === 'en') ? 'gb' : code]; 
+      img.setAttribute ('src', 'data:image/png;base64,' + flag);
+      img.setAttribute ('language', code);
+      // add function that will change the language
+      img.addEventListener ('mousedown', function() {
+        // change UI language
+        document.getElementById ('language').value = this.getAttribute ('language');
+        changeLanguage();
+        // update dialog box texts and rebuild language chooser
+        title.params[0] = userText [title.userText];
+        document.getElementById (boxName + 'Title').innerHTML =
+          sprintf.apply (undefined, title.params);
+        message.params[0] = userText [message.userText];
+        document.getElementById (boxName + 'Message').innerHTML =
+          sprintf.apply (undefined, message.params);
+        addLanguageChooser (boxName, message, title);
+      });
+    }
+  }
+}
+  
 // saveDialog shows or hides the save dialog
 // when message is false, the dialog is closed
 function saveDialog (message, name, ext) {
@@ -1512,7 +1567,7 @@ function newWindow (body, title) {
     });
   } else if (touchDevice) {
     alertBox ('<textarea id="newWindow" readonly></textarea>', title)
-    document.getElementById('newWindow').innerText = body.innerText;
+    document.getElementById('newWindow').textContent = body.textContent;
   } else {
     var w = window.open ('', title, 'width=800,height=600,top=50,' +
     'location=no,menubar=no,scrollbars=yes,status=no,toolbar=no');
@@ -3665,7 +3720,7 @@ function doOnLoad () {
     sortKeys[-1] = '';
     for (var i = -1; i < sortKeys.length; i++) {
       var option = document.createElement ('option');
-      option.value = option.innerText = sortKeys[i];
+      option.value = option.textContent = sortKeys[i];
       el.appendChild (option);
     }
 
@@ -3750,6 +3805,9 @@ function doOnLoad () {
     document.getElementById('t_print').classList.add ('noDisplay');
     document.getElementById('t_saveAsSVG').classList.add ('noDisplay');    
   }
+  
+  // retrieve queue from storage
+  queueFromStorage ();
 }
 
 /** Use of function getElementsByAttribute is DEPRECATED in 1.4.0
@@ -3808,7 +3866,7 @@ function appZoom (e) {
   // only update zoom when zoom has a valid value
   if (zoom) {
     document.body.style.zoom = zoom;
-    document.getElementById('zoom').innerText = parseInt(zoom * 100) + '%';
+    document.getElementById('zoom').textContent = parseInt(zoom * 100) + '%';
   }
   // don't bubble key
   return false;
@@ -3819,7 +3877,7 @@ function appZoom (e) {
 // specified as event listeners for Chrome Apps.
 function addEventListeners () {
   // zoom for Chrome app
-  if (chromeApp.active) {
+  if (chromeApp.active || touchDevice) {
     document.addEventListener ('keydown', appZoom, false);
   } else {
     document.getElementById('zoomMenu').classList.add('noDisplay');
@@ -3851,6 +3909,7 @@ function addEventListeners () {
   document.getElementById('t_clearPositioning').addEventListener('click', clearPositioningOption, false);
   document.getElementById('t_separateFigures').addEventListener('click', separateFigures, false);
   document.getElementById('t_checkSequence').addEventListener('click', function(){checkSequence(true)}, false);
+  document.getElementById('t_lockSequence').addEventListener('mousedown', lockSequence);
   
   document.getElementById('t_showQueue').addEventListener('click', showQueue, false);
   document.getElementById('t_addToQueue').addEventListener('click', addToQueue, false);
@@ -3890,10 +3949,12 @@ function addEventListeners () {
   // sequence string
   document.getElementById('undo').addEventListener('click', clickButton, false);
   document.getElementById('redo').addEventListener('click', clickButton, false);
-  document.getElementById('sequence_text').addEventListener('input', checkSequenceChanged, false);
-  document.getElementById('sequence_text').addEventListener('focus', virtualKeyboard, false);
-  document.getElementById('sequence_text').addEventListener('blur', virtualKeyboard, false);
-  document.getElementById('sequence_text').addEventListener('paste', function(){OLANBumpBugCheck=true}, false);
+  sequenceText.addEventListener('input', checkSequenceChanged, false);
+  sequenceText.addEventListener('keyup', checkSequenceChanged, false);
+  sequenceText.addEventListener('mouseup', checkSequenceChanged, false);
+  sequenceText.addEventListener('focus', virtualKeyboard, false);
+  sequenceText.addEventListener('blur', virtualKeyboard, false);
+  sequenceText.addEventListener('paste', function(){OLANBumpBugCheck=true}, false);
   
   // virtual keyboard
   document.getElementById('virtualKeyboard').addEventListener('mousedown', clickVirtualKeyboard, false);
@@ -3924,7 +3985,7 @@ function addEventListeners () {
   document.getElementById('logoFile').addEventListener('change', openLogoFile, false);
 
   document.getElementById('notes').addEventListener('change', changeSequenceInfo, false);
-  document.getElementById('fileName').addEventListener('keyup', updateSaveFilename, false);
+  fileName.addEventListener('keyup', updateSaveFilename, false);
     
   // figure editor options
   if (window.navigator.standalone) {
@@ -4088,9 +4149,11 @@ function addMenuEventListeners() {
   function addListeners(e) {
     var li = e.getElementsByTagName ('li');
     for (var i = 0; i < li.length; i++) {
-      // add listeners
       li[i].addEventListener('mouseover', menuActive, false);
       li[i].addEventListener('mouseout', menuInactive, false);
+      if (li.parentNode && (li.parentNode.id !== 'zoomMenu')) {
+        li[i].addEventListener('mouseup', menuInactive, false);
+      }
     }
   }
   
@@ -4123,7 +4186,8 @@ function checkForApp () {
         // Show link in tools menu
         document.getElementById('installChromeApp').classList.remove ('noDisplay');
           
-        // Create a box asking the user if they want to install the
+        // Create a box presenting the user with information on OpenAero
+        // and asking if they want to install the
         // App, unless installChromeAppAsked is present. Also wait until
         // loadComplete
         if (!c) {
@@ -4132,8 +4196,9 @@ function checkForApp () {
               window.clearInterval (intervalID.installChromeApp);
               delete intervalID.installChromeApp;
               confirmBox (
-                userText.installChromeApp,
-                userText.installChromeAppTitle,
+                { userText: 'installChromeApp',
+                  params: [window.location.host]},
+                { userText: 'installChromeAppTitle' },
                 installChromeApp
               );
             }
@@ -4953,7 +5018,7 @@ function loadSettingsXML (xml) {
     var nodes = settings.getElementsByTagName("setting");
     // Put every element in the correct field
     for (var i = 0; i < nodes.length; i++) {
-      var key = nodes[i].getElementsByTagName("key")[0].innerText;
+      var key = nodes[i].getElementsByTagName("key")[0].textContent;
       var val = nodes[i].getElementsByTagName("value")[0].innerHTML;
       // only adjust settings that are in loadSettings (config.js)
       if (loadSettings.indexOf(key) != -1) {
@@ -5635,21 +5700,30 @@ function addRollSelectors (figureId) {
           divdiv.classList.add ('sectionLabelClose');
           divdiv.innerHTML = '&nbsp;';
           div.appendChild (divdiv);
-          // loop until max rolls per element + 1
-          for (var j = 0; j < rollsPerRollElement + 1; j++) {
-            var pattern = figures[figureId].rollInfo[i].pattern[j-1];
-            pattern = pattern ? pattern.replace('-', '') : '';
-            // show the element when:
-            // it's the first one OR the previous one is not empty
-            // AND it's number is not higher than rollsPerRollElement
-            if ((j == 0) || (pattern != '')) {
-              if (j < rollsPerRollElement) {
-                addRollSelectElement(figureId, i, j, div);
-                var divdiv = document.createElement ('div');
-                divdiv.classList.add ('clearBoth');
-                div.appendChild (divdiv);
-              }
-            } else break;
+          // roll positions of type 4 only allow changing line length 
+          if (rolls[i] != 4) {
+            // loop until max rolls per element + 1
+            for (var j = 0; j < rollsPerRollElement + 1; j++) {
+              var pattern = figures[figureId].rollInfo[i].pattern[j-1];
+              pattern = pattern ? pattern.replace('-', '') : '';
+              // show the element when:
+              // it's the first one OR the previous one is not empty
+              // AND it's number is not higher than rollsPerRollElement
+              if ((j == 0) || (pattern != '')) {
+                if (j < rollsPerRollElement) {
+                  addRollSelectElement(figureId, i, j, div);
+                  var divdiv = document.createElement ('div');
+                  divdiv.classList.add ('clearBoth');
+                  div.appendChild (divdiv);
+                }
+              } else break;
+            }
+          } else {
+            var divdiv = document.createElement ('div');
+            divdiv.classList.add ('clearBoth');
+            divdiv.innerHTML = userText.noRollAllowed;
+            div.appendChild (divdiv);
+            var j = 1;
           }
           // j indicates how many active subrolls there are
           var subRolls = j;
@@ -5794,8 +5868,8 @@ function updateFigure () {
   // add rolls
   var rollEl = 0;
   // start at roll 1 for figures that don't have roll element 0
-  if (!document.getElementById('roll0-0')) rollEl = 1;
-  while (pattern.match(/[\^\&\_]/)) {
+  if (!document.getElementById('roll0')) rollEl = 1;
+  while (pattern.match(/[\^\&_~]/)) {
     var rolls = '';
     for (var rollNr = 0; rollNr <= rollsPerRollElement; rollNr++) {
       // apply gaps
@@ -5843,7 +5917,7 @@ function updateFigure () {
         rolls += ';' + userpat.switchDirX;
       }
     } 
-    pattern = pattern.replace(/[\^\&\_]/, rolls);
+    pattern = pattern.replace(/[\^\&_~]/, rolls);
     rollEl++;
   }
   // pattern is empty, assume horizontal line (figure 1.1.1.1)
@@ -6174,7 +6248,15 @@ function addUpdateListener () {
 function checkUpdateDone() {
 
   function f (oldVersion) {
-    if (oldVersion !== version) {
+    if (!oldVersion) {
+      // First install
+      // Only show the box if not on Chrome. If on Chrome, it will be
+      // shown by checkForApp
+      if (typeof chrome == "undefined") alertBox (
+        {userText: 'installed', params: [window.location.host]},
+        {userText: 'installChromeAppTitle'});
+      storeLocal ('version', version);
+    } else if (oldVersion !== version) {
       // create version update text
       var list = [];
       for (var v in versionNew) {
@@ -6233,7 +6315,7 @@ function changeSequenceInfo () {
       
     // create sequence XML
     var xml = '<sequence>\n'
-    for (i = 0; i < sequenceXMLlabels.length; i++) {
+    for (var i = 0; i < sequenceXMLlabels.length; i++) {
       var el = document.getElementById(sequenceXMLlabels[i]);
       if (el && (el.value !== '')) {
         xml += '  <' + sequenceXMLlabels[i] + '>' +
@@ -6278,9 +6360,15 @@ function buildFigureXML () {
       var f = ff.appendChild(document.createElement('figure'));
       var nr = f.appendChild(document.createElement('nr'));
       nr.appendChild(document.createTextNode(figNr));
+      // add figure letter if applicable
       if (figures[i].unknownFigureLetter) {
-        var letter = f.appendChild(document.createElement('letter'));
-        letter.appendChild(document.createTextNode(figures[i].unknownFigureLetter));
+        // if rules are loaded, check if letter is allowed accordingly
+        if ((figureLetters.indexOf (figures[i].unknownFigureLetter) > -1) ||
+          (additionalFig.max && (figures[i].unknownFigureLetter === 'L')) ||
+          !rulesActive) {
+          var letter = f.appendChild(document.createElement('letter'));
+          letter.appendChild(document.createTextNode(figures[i].unknownFigureLetter));
+        }
       }
       if (document.getElementById('class').value == 'glider') {
         var superFamily = getSuperFamily (aresti, 'glider');
@@ -6327,7 +6415,8 @@ function buildFigureXML () {
   } else var totalK = figureK;
   var tK = ff.appendChild(document.createElement('totalk'));
   tK.appendChild(document.createTextNode(totalK));
-  return (new XMLSerializer().serializeToString(ff));
+  var xml = new XMLSerializer().serializeToString(ff);
+  return (xml.replace (/^<figures[^>]*/, '<figures'));
 }
 
 // buildSettingsXML creates a well-formatted XML string that holds all
@@ -6654,7 +6743,7 @@ function parseFiguresFile () {
           fig[i].draw = splitLine[2];
         } else if (splitLine.length > 2) {
           // handle everything except (rolling) turns and rolls
-          theBase = splitLine[0].replace(/[\d\(\)\_\^\&]+/g, '');
+          theBase = splitLine[0].replace(/[\d\(\)_\^\&~]+/g, '');
           if (theBase in figBaseLookup) {
             figBaseLookup[theBase].push(i);
           } else {
@@ -6681,6 +6770,9 @@ function parseFiguresFile () {
                 break;
               case (figpat.anyroll):
                 fig[i].rolls[r] = 3;
+                break;
+              case (figpat.longforward):
+                fig[i].rolls[r] = 4;
                 break;
               default:
                 fig[i].rolls[r] = 0;
@@ -7701,7 +7793,8 @@ function checkRules () {
   
   // check for multiple use of the same free unknown figure, except L(ink)
   // Also check if all figures have been assigned a Free Unknown letter
-  // or Additional when applicable
+  // or Additional when applicable and if the assigned figure letters
+  // are allowed according the rules
 
   var remaining = figureLetters ? figureLetters : '';
 
@@ -7710,12 +7803,22 @@ function checkRules () {
     var l = figures[i].unknownFigureLetter;
     if (figures[i].aresti) {
       if (l) {
-        if (ufl[l]) {
-          ufl[l].push(figures[i].seqNr);
+        if ((figureLetters + 'L').indexOf (l) === -1) {
+          var msg = sprintf (
+            userText.figureLetterNotAllowed,
+            figures[i].seqNr,
+            l);
+          alertMsgs.push (msg);
+          log.push ('*** Error: ' + msg);
+          //delete figures[i].unknownFigureLetter;
         } else {
-          ufl[l] = [figures[i].seqNr];
+          if (ufl[l]) {
+            ufl[l].push(figures[i].seqNr);
+          } else {
+            ufl[l] = [figures[i].seqNr];
+          }
+          remaining = remaining.replace(l, '');
         }
-        remaining = remaining.replace(l, '');
       }
     }
   }
@@ -7782,7 +7885,7 @@ function checkName (obj) {
   } else return '';
 }
 
-// checkName creates the correct 'name' string. Priority is:
+// checkRuleText creates the correct 'ruleText' string. Priority is:
 // 1) current language
 // 2) no language
 // 3) English
@@ -7899,6 +8002,42 @@ function checkSequence(show) {
   } else {
     div.classList.add ('noDisplay');
   }
+}
+
+// lockSequence is called when locking or unlocking the sequence
+// When lock is not true, it toggles. When lock is true it locks the
+// sequence
+function lockSequence (lock) {
+  var els = document.getElementsByClassName ('lock');
+  if (document.getElementById ('lock_sequence').value && (lock !== true)) {
+    // was locked, so unlock
+    document.getElementById ('lock_sequence').value = '';
+    document.getElementById ('t_lockSequence').innerHTML = userText.lockSequence;
+    for (var i = 0; i < els.length; i++) {
+      if (els[i].tagName === 'LI') {
+        els[i].classList.remove ('noDisplay');
+      } else if (els[i].getAttribute('disabledByLock')) {
+        els[i].removeAttribute ('disabled');
+      }
+    }
+    document.getElementById ('t_locked').classList.add ('noDisplay');
+  } else {
+    // was unlocked, so lock
+    selectFigure (false);
+    selectTab ('tab-sequenceInfo');
+    document.getElementById ('lock_sequence').value = '1';
+    document.getElementById ('t_lockSequence').innerHTML = userText.unlockSequence;
+    for (var i = 0; i< els.length; i++) {
+      if (els[i].tagName === 'LI') {
+        els[i].classList.add ('noDisplay');
+      } else       if (!els[i].disabled) {
+        els[i].setAttribute ('disabledByLock', true);
+        els[i].setAttribute ('disabled', true);
+      }
+    }
+    document.getElementById ('t_locked').classList.remove ('noDisplay');
+  }
+  changeSequenceInfo();
 }
 
 // changeReferenceSequence is called when the reference sequence is
@@ -8550,7 +8689,10 @@ function switchQueue (el) {
 // selectFigure is executed when clicking a figure in the figureChooser
 // (e = object) or from grabFigure (e = figNr) or from certain functions
 // or false
-function selectFigure (e, noChooserUpdate) {
+function selectFigure (e) {
+
+  // disable when sequence locked
+  if (document.getElementById ('lock_sequence').value) return;
 
   if (e === null) e = false;
   
@@ -8731,19 +8873,17 @@ function selectFigure (e, noChooserUpdate) {
     updateFigureEditor();
     
     // set the figure chooser
-    //if (!noChooserUpdate) {
-      if (queueFigure) {
-        setFigChooser(queueFigure);
-      } else {
-        setFigChooser(figures[selectedFigure.id].figNr);
-      }
-    //}
+    if (queueFigure) {
+      setFigChooser(queueFigure);
+    } else {
+      setFigChooser(figures[selectedFigure.id].figNr);
+    }
       
     // Select the figure in the sequence text when we were not editing
     // in the text and we are not on a touch device, as we assume this
     // would have a non-physical keyboard popping up. Select all the
     // way back to the previous real figure
-    if (!sequenceText.hasfocus && !touchDevice) {
+    if ((document.activeElement.id !== 'sequence_text') && !touchDevice) {
       var start = figures[selectedFigure.id].stringStart;
       for (var i = selectedFigure.id - 1; i>=0; i--) {
         if (figures[i].aresti) {
@@ -8894,10 +9034,10 @@ function makeMiniFormA (x, y) {
               false,
               figNr);
           }
-          drawText ('Conn.', blockX + 4, (topBlockY + blockY) / 2 + 16, 'miniFormA');
+          drawText ('Add.', blockX + 4, (topBlockY + blockY) / 2 + 16, 'miniFormABold');
         } else {
           drawText (figures[i].unknownFigureLetter, blockX + 4,
-            (topBlockY + blockY) / 2 + 16, 'miniFormA');
+            (topBlockY + blockY) / 2 + 16, 'miniFormABold');
         }
       } else {
         drawText ('Fig ' + figNr, blockX + 4, (topBlockY + blockY) / 2 + 10, 'miniFormA');
@@ -8947,6 +9087,10 @@ function makeMiniFormA (x, y) {
  
 // grabFigure will select a figure and allow dragging
 function grabFigure(evt) {
+
+  // disable when sequence locked
+  if (document.getElementById ('lock_sequence').value) return;
+  
   // put the coordinates of object evt in TrueCoords global
   if (touchDevice) {
     TrueCoords.x = evt.changedTouches[0].pageX;
@@ -9057,7 +9201,7 @@ function grabFigure(evt) {
     }
     // select figure if the closest centre, within bBox, was found
     if (closest !== false) {
-      DragTarget = document.getElementById('figure'+closest);
+      DragTarget = SVGRoot.getElementById('figure'+closest);
     }
   }
   if (DragTarget) {
@@ -9072,6 +9216,22 @@ function grabFigure(evt) {
     //    2) allows us to find out where the dragged element is dropped (see Drop)
     DragTarget.setAttribute('pointer-events', 'none');
 
+    // enlarge svg to cover top and left
+    if (!mobileBrowser) {
+      var svgRect = svg.getBoundingClientRect();
+      svg.setAttribute ('viewBox',
+        (viewBox[0] - svgRect.left) + ' ' +
+        (viewBox[1] - svgRect.top) + ' ' +
+        (parseInt(viewBox[2]) + parseInt(svgRect.left)) + ' ' +
+        (parseInt(viewBox[3]) + parseInt(svgRect.top))
+      );
+      svg.setAttribute ('width', parseInt(viewBox[2]) + parseInt(svgRect.left));
+      svg.setAttribute ('height', parseInt(viewBox[3]) + parseInt(svgRect.top));
+      // correct position for padding
+      svg.parentNode.setAttribute ('style', 'left: -10px; top: -10px; z-index: 1000');
+      document.getElementById ('main').setAttribute ('style', 'top: 0');
+    }
+    
     // we need to find the current position and translation of the grabbed element,
     //    so that we only apply the differential between the current location
     //    and the new location
@@ -9080,10 +9240,12 @@ function grabFigure(evt) {
     
     // blur sequenceText area
     sequenceText.blur();
+
     // the DragTarget id is the new selectedFigure.id
     if (!DragTarget.id.match (/^(.*-handle|magnifier)$/)) {
       selectFigure(DragTarget.id.replace('figure', ''));
     }
+
   } else selectFigure(false);
 }
 
@@ -9325,7 +9487,8 @@ function Drag (evt) {
         // move subsequent figures, if no elStop
         if (elStop === null) {
           for (var figureNr = parseInt(DragTarget.parentNode.id.match (/\d+/)) + 1; figureNr < figures.length; figureNr++) {
-            if (figure = SVGRoot.getElementById ('figure' + figureNr)) {
+            var figure = SVGRoot.getElementById ('figure' + figureNr);
+            if (figure) {
               figure.setAttribute('transform',
                 'translate(' + newX + ',' + newY + ')');
             }
@@ -9377,8 +9540,9 @@ function Drag (evt) {
     
       // account for the offset between the element's origin and the
       // exact place we grabbed it. This way, the drag will look more natural
-      var newX = TrueCoords.x - GrabPoint.x;
-      var newY = TrueCoords.y - GrabPoint.y;
+      
+      var newX = parseInt(TrueCoords.x - GrabPoint.x);
+      var newY = parseInt(TrueCoords.y - GrabPoint.y);
 
       // apply a new tranform translation to the dragged element, to display
       // it in its new location
@@ -9386,7 +9550,8 @@ function Drag (evt) {
 
       // move subsequent figures
       for (var figureNr = parseInt(DragTarget.id.match (/\d+/)) + 1; figureNr < figures.length; figureNr++) {
-        if (figure = SVGRoot.getElementById ('figure' + figureNr)) {
+        var figure = SVGRoot.getElementById ('figure' + figureNr);
+        if (figure) {
           figure.setAttribute('transform',
             'translate(' + newX + ',' + newY + ')');
         }
@@ -9417,20 +9582,80 @@ function Drag (evt) {
     // Adjust sequence SVG size. New as of 2016.1 using getBBox.
     // Previous code kept as a fallback
     var bBox = SVGRoot.getElementById ('sequence').getBBox();
-    if (!mobileBrowser) SVGRoot.setAttribute('width', bBox.width + 4);
-    SVGRoot.setAttribute ('viewBox', (bBox.x - 2) + ' ' + (bBox.y - 2) +
-      ' ' + (bBox.width + 4) + ' ' + (bBox.height + 4));
+    var viewBox = SVGRoot.getAttribute('viewBox').split(' ');
+    var w = roundTwo((bBox.x - viewBox[0]) + bBox.width + 5);
+    var h = roundTwo((bBox.y - viewBox[1]) + bBox.height + 5);
+    SVGRoot.setAttribute ('viewBox',
+      viewBox[0] + ' ' +
+      viewBox[1] + ' ' +
+      w + ' ' +
+      h
+    );
+    if (!mobileBrowser) {
+      SVGRoot.setAttribute('width', w);
+      SVGRoot.setAttribute('height', h);
+    }
+    
+/**    if (!mobileBrowser) {
+      SVGRoot.setAttribute('width', roundTwo(bBox.width + 4));
+      SVGRoot.setAttribute('height', roundTwo(bBox.height + 4));
+    }
+
+    SVGRoot.setAttribute ('viewBox',
+      roundTwo(bBox.x - 2) + ' ' +
+      roundTwo(bBox.y - 2) + ' ' +
+      roundTwo(bBox.width + 4) + ' ' +
+      roundTwo(bBox.height + 4)
+    );
+*/
+
+    // Drop figure when we reach top or left edge
+    /**
+    var svgRect = SVGRoot.getBoundingClientRect();
+    if (((TrueCoords.x - svgRect.left) < 5) ||
+      ((TrueCoords.y - svgRect.top) < 5)) {
+      Drop (evt);
+    }
+    */
+    
+    /** disabled for now, maybe implement later
+    // set interval when we are dragging left or top, outside of svg
+    var svgRect = SVGRoot.getBoundingClientRect();
+    if (((TrueCoords.x - svgRect.left) < 10) ||
+      ((TrueCoords.y - svgRect.top) < 10)) {
+      if ((TrueCoords.x - svgRect.left) < 10) GrabPoint.x += 4;
+      if ((TrueCoords.y - svgRect.top) < 10) GrabPoint.y += 4;
+      if (!intervalID.drag) {
+        intervalID.drag = window.setInterval (function() {
+          console.log('drag');
+          Drag (evt);
+        }, 100);
+      }
+    } else if (intervalID.drag) {
+      window.clearInterval (intervalID.drag);
+      delete intervalID.drag;
+    } 
+    */   
   }
 }
 
 // Drop is activated when a figure or handle is dropped at a new position
 function Drop(evt) {
   
+  // clear drag left / top interval drag where applicable
+  if (intervalID.drag) {
+    window.clearInterval (intervalID.drag);
+    delete intervalID.drag;
+  }
+  
   // if we aren't currently dragging an element, don't do anything
   if ( DragTarget ) {
-        
+  
     // turn the pointer-events back on, so we can grab this item later
     DragTarget.setAttribute('pointer-events', 'all');
+    
+    // restore svgContainer size
+    document.getElementById ('svgContainer').removeAttribute ('style');
     
     var transform = DragTarget.getAttribute('transform');
     
@@ -9444,7 +9669,7 @@ function Drop(evt) {
       
       /** dropping a complete figure */
       
-      // create new curveTo for dragged elements when not in grid view
+      // create curveTo for dragged elements when not in grid view
       if (transform && (activeForm !== 'Grid')) {
         var dxdy = transform.match(/[0-9\-\.]*,[0-9\-\.]*/)[0].split(',');
         var dx = parseInt(dxdy[0] / lineElement)
@@ -9456,6 +9681,16 @@ function Drop(evt) {
           false,
           false,
           true)
+      } else {
+        // restore viewBox
+        var bBox = SVGRoot.getBBox();
+        SVGRoot.setAttribute ('viewBox', bBox.x + ' ' + bBox.y + ' ' +
+          (parseInt(bBox.width) + 5) + ' ' + (parseInt(bBox.height) + 5));
+        if (!mobileBrowser) {
+          SVGRoot.setAttribute ('width', parseInt(bBox.width) + 5);
+          SVGRoot.setAttribute ('height', parseInt(bBox.height) + 5);
+        }
+        updateSequenceTextHeight();
       }
     }
     
@@ -9528,6 +9763,9 @@ function flipYAxis () {
 // active start of the sequence. The active start is NOT displayed as an
 // option
 function updateSequenceOptions (code) {
+  // disable when sequence locked
+  if (document.getElementById ('lock_sequence').value) return;
+
   el = document.getElementById('sequenceOptions');
   if (el) {
     // needed for old browsers that don't support getElementsByClassName
@@ -9543,7 +9781,7 @@ function updateSequenceOptions (code) {
     for (key in entryOptions) {
       if (code != key) {
         var li = document.createElement('li');
-        li.setAttribute ('class', 'entryOption');
+        li.setAttribute ('class', 'entryOption lock');
         li.addEventListener('mouseover', menuActive);
         li.addEventListener('mouseout', menuInactive);
         var a = document.createElement('a');
@@ -9814,6 +10052,8 @@ function addToQueue () {
 
   fig[figLen].string = string;
   showQueue();
+  
+  queueToStorage ();
 }
 
 // addAllToQueue adds all figures in sequence to queue
@@ -9855,6 +10095,7 @@ function removeFromQueue (e) {
   noPropagation(e);
   fig.splice(e.target.parentNode.id.replace(/^removeFromQueue/, ''), 1);
   showQueue();
+  queueToStorage();
 }
 
 // clearQueue removes all figures from queue
@@ -9880,6 +10121,35 @@ function clearQueue () {
       hideFigureSelector();
     });
   }
+  showQueue();
+  storeLocal ('queue', []);
+}
+
+// queueToStorage saves the queue to localStorage to keep it through
+// restarts
+function queueToStorage () {
+  var queue = [];
+  var figLast = fig.length - 1;
+  while (!fig[figLast]) figLast--;
+  
+  while (fig[figLast] && (fig[figLast].group == 0)) {
+    queue.push (fig[figLast]);
+    figLast--;
+  }
+
+  storeLocal ('queue', JSON.stringify(queue));
+}
+
+// queueFromStorage retrieves the queue from localStorage
+function queueFromStorage () {
+  getLocal ('queue', function (string) {
+    if (string) {
+      var queue = JSON.parse(string);
+      while (queue && queue.length) {
+        fig.push(queue.pop());
+      }
+    }
+  });
 }
 
 /***********************************************************************
@@ -9902,82 +10172,82 @@ function startFuDesigner(dontConfirm) {
   function f () {
     // Free Unknown designer will not work in mobile browser layout
     if (mobileBrowser) switchMobile();
+
+    // unlock sequence when locked
+    if (document.getElementById ('lock_sequence').value) lockSequence();
     
     infoBox (userText.FUstarting, userText.fuDesigner);
     
-    // disabled setTimeout as it causes issues
-    //setTimeout (function() {
-      selectFigure (false);
-      clearPositioning ();
-      
-      // show finalize button
-      document.getElementById ('t_finalizeSequence').classList.remove ('noDisplay');
+    selectFigure (false);
+    clearPositioning ();
     
-      // add new stylesheet rule 0 to hide all elements with class
-      // disableFUdesigner
-      document.styleSheets[0].insertRule('.disableFUdesigner{display:none !important;}', 0);
-      
-      // move undoRedo
-      var undoRedo = document.getElementById ('undoRedo');
-      document.getElementById ('mainMenu').insertBefore (
-        undoRedo, document.getElementById ('t_finalizeSequence')
-        );
-
-      // clear undo and redo
-      activeSequence.undo = activeSequence.redo = [];
-            
-      // select the tab
-      document.getElementById ('tab-fuFigures').classList.remove ('noDisplay');
-      selectTab ('tab-fuFigures');
-      document.getElementById ('tab-sequenceInfo').classList.add ('noDisplay');
-      document.getElementById ('figureSelector').classList.add ('left');
-      
-      // switch sequence view
-      document.getElementById ('fuSequence').classList.remove ('noDisplay');
-            
-      // clear the sequence if loading from Grid and no Additional
-      // figure present
-      var noAdditional = true;
-      for (var i = 0; i < figures.length; i++) {
-        if (figures[i].unknownFigureLetter === 'L') {
-          noAdditional = false;
-          break;
-        }
-      }
+    // show finalize button
+    document.getElementById ('t_finalizeSequence').classList.remove ('noDisplay');
   
-      if ((activeForm === 'Grid') && noAdditional) {
-        sequenceText.value = 'eu';
-      } else {
-        // rebuild the sequence according Free Unknown designer format
-        // remove / symbols and entry/exit extension from strings
-        sequenceText.value = '';
-        for (var i = 0; i < figures.length; i++) {
-          if (figures[i].aresti && figures[i].unknownFigureLetter) {
-            var string = figures[i].string;
-            // remove extensions, shortenings and y axis switch
-            string = string.replace(/[~\.'`\+\/]/g, '').replace(/-+/g, '-');
-            // remove comments
-            string = string.replace(/"[^"]*"/g, '');
-            sequenceText.value += '"@' + figures[i].unknownFigureLetter +
-              '" ' + string + ' ';
-          } else if (figures[i].subSequence) {
-            sequenceText.value += figures[i].subSequence + ' ';
-          }
-        }
-        sequenceText.value = sequenceText.value.trim().replace(/ e(u|d|j|ja)$/, '') + ' eu';
-        if (!sequenceText.value.match (/^e(u|d|j|ja) /)) {
-          sequenceText.value = 'eu ' + sequenceText.value;
+    // add new stylesheet rule 0 to hide all elements with class
+    // disableFUdesigner
+    document.styleSheets[0].insertRule('.disableFUdesigner{display:none !important;}', 0);
+    
+    // move undoRedo
+    var undoRedo = document.getElementById ('undoRedo');
+    document.getElementById ('mainMenu').insertBefore (
+      undoRedo, document.getElementById ('t_finalizeSequence')
+      );
+
+    // clear undo and redo
+    activeSequence.undo = activeSequence.redo = [];
+          
+    // select the tab
+    document.getElementById ('tab-fuFigures').classList.remove ('noDisplay');
+    selectTab ('tab-fuFigures');
+    document.getElementById ('tab-sequenceInfo').classList.add ('noDisplay');
+    document.getElementById ('figureSelector').classList.add ('left');
+    
+    // switch sequence view
+    document.getElementById ('fuSequence').classList.remove ('noDisplay');
+          
+    // clear the sequence if loading from Grid and no Additional
+    // figure present
+    var noAdditional = true;
+    for (var i = 0; i < figures.length; i++) {
+      if (figures[i].unknownFigureLetter === 'L') {
+        noAdditional = false;
+        break;
+      }
+    }
+
+    if ((activeForm === 'Grid') && noAdditional) {
+      sequenceText.value = 'eu';
+    } else {
+      // rebuild the sequence according Free Unknown designer format
+      // remove / symbols and entry/exit extension from strings
+      sequenceText.value = '';
+      for (var i = 0; i < figures.length; i++) {
+        if (figures[i].aresti && figures[i].unknownFigureLetter) {
+          var string = figures[i].string;
+          // remove extensions, shortenings and y axis switch
+          string = string.replace(/[~\.'`\+\/]/g, '').replace(/-+/g, '-');
+          // remove comments
+          string = string.replace(/"[^"]*"/g, '');
+          sequenceText.value += '"@' + figures[i].unknownFigureLetter +
+            '" ' + string + ' ';
+        } else if (figures[i].subSequence) {
+          sequenceText.value += figures[i].subSequence + ' ';
         }
       }
-      
-      checkSequenceChanged (true);
-      //console.log(activeSequence.figures);
-      selectForm('FU');
-      updateSequenceTextHeight();
-      availableFigureGroups();
-      
-      infoBox();
-//    }, 100);
+      sequenceText.value = sequenceText.value.trim().replace(/ e(u|d|j|ja)$/, '') + ' eu';
+      if (!sequenceText.value.match (/^e(u|d|j|ja) /)) {
+        sequenceText.value = 'eu ' + sequenceText.value;
+      }
+    }
+    
+    checkSequenceChanged (true);
+    //console.log(activeSequence.figures);
+    selectForm('FU');
+    updateSequenceTextHeight();
+    availableFigureGroups();
+    
+    infoBox();
   }
   
   if (dontConfirm) {
@@ -11293,7 +11563,7 @@ function makeFU () {
     if (td) {
       var match = sequenceText.value.match(RegExp ('"@' + l[i] + '"', 'g'));
       if (match) {
-        var multi = ((l[i] === 'L') && additionalFig && additionalFig.max)? additionalFig.max : 1;
+        var multi = ((l[i] === 'L') && additionalFig.max)? additionalFig.max : 1;
         if (l[i] === 'L') {
           td.innerHTML = userText.Additional + '<br />' + match.length + 'x';
         }
@@ -11477,42 +11747,41 @@ function virtualKeyboard (e) {
 // clickVirtualKeyboard is called when one of the virtual keys is
 // clicked
 function clickVirtualKeyboard(e) {
-  var seqText = document.getElementById('sequence_text');
   // remove blur handler until clicking complete
-  seqText.removeEventListener ('blur', virtualKeyboard);
+  sequenceText.removeEventListener ('blur', virtualKeyboard);
 
-  var key = e.target.innerText;
+  var key = e.target.textContent;
   if (key.length === 1) {
     e.target.classList.add ('clicked');
     // always remove highlight after a second
     setTimeout(function(){
       e.target.classList.remove ('clicked');
       }, 1000);
-    var selStart = seqText.selectionStart;
-    var selEnd = seqText.selectionEnd;
-    seqText.value = seqText.value.substring (0, selStart) +
-      key + seqText.value.substring (selEnd);
+    var selStart = sequenceText.selectionStart;
+    var selEnd = sequenceText.selectionEnd;
+    sequenceText.value = sequenceText.value.substring (0, selStart) +
+      key + sequenceText.value.substring (selEnd);
     checkSequenceChanged();
-    seqText.selectionStart = selStart + 1;
-    seqText.selectionEnd = seqText.selectionStart;
+    sequenceText.selectionStart = selStart + 1;
+    sequenceText.selectionEnd = sequenceText.selectionStart;
   }
 }
 
 // releaseVirtualKeyboard is called when the virtual keyboard key is
 // released
 function releaseVirtualKeyboard(e) {
-  var seqText = document.getElementById('sequence_text');
   // restore blur handler
-  seqText.addEventListener (
+  sequenceText.addEventListener (
     'blur',
     virtualKeyboard,
     false);
-  seqText.focus();
+  sequenceText.focus();
   e.target.classList.remove ('clicked');
 }
 
 // checkSequenceChanged is called to check if it has to be redrawn.
-// When force is set (e.g. after drag & drop) redraw will always be done
+// When force is set to true (e.g. after drag & drop) redraw will always
+// be done
 function checkSequenceChanged (force) {
   
   // remove all line breaks from the sequence input field
@@ -11522,7 +11791,7 @@ function checkSequenceChanged (force) {
   // read the sequence string and mark the location of the caret/selection
   var selStart = sequenceText.selectionStart;
   var selectFigureId = false;
-  
+
   // whenever the sequence is empty, clear the filename
   if (sequenceText.value == '') fileName.value = '';
   
@@ -11532,7 +11801,7 @@ function checkSequenceChanged (force) {
     window.document.addEventListener('beforeunload', preventUnload);
   }
 
-  if ((activeSequence.text != sequenceText.value) || force) {
+  if ((activeSequence.text != sequenceText.value) || (force === true)) {
     // reset sequence entry options
     updateSequenceOptions ('');
     activeSequence.text = sequenceText.value;
@@ -11630,7 +11899,7 @@ function checkSequenceChanged (force) {
     if (el && el.classList.contains ('active')) {
       markFigures ();
     }
-  } else if (sequenceText === document.activeElement) {
+  } else if (document.activeElement.id === 'sequence_text') {
     // when no change was made, just check where the caret in the
     // sequence text is and when necessary change selected figure
     for (var i = 0; i < figures.length; i++) {
@@ -11669,7 +11938,7 @@ function updateDefaultView (queue) {
       el.value = 'grid:' + document.getElementById('gridColumns').value;
     } else if (activeForm === 'FU') {
       el.value = 'freeUnknown';
-    } else el.value = '';
+    } else el.value = activeForm;
   }
   changeSequenceInfo();
 }
@@ -12201,6 +12470,9 @@ function activateXMLsequence (xml, noLoadRules) {
   
   //debug.appendChild(document.createTextNode('Clearing values'));
   
+  // unlock sequence when locked
+  if (document.getElementById ('lock_sequence').value) lockSequence();
+
   // clear previous values
   for (var i = 0; i < sequenceXMLlabels.length; i++) {
     var el = document.getElementById(sequenceXMLlabels[i]);
@@ -12263,8 +12535,13 @@ function activateXMLsequence (xml, noLoadRules) {
           freeUnknownSequence = sequenceText.value;
           sequenceText.value = document.getElementById('fu_figures').value;
           activeForm = 'FU';
+          break;
+        default:
+          if (('ABC'.indexOf (view[0])) > -1) {
+            activeForm = view[0];
+          } else activeForm = 'B';
       }
-    }
+    } else activeForm = 'B';
     var logo = document.getElementById('logo').value;
     if (logoImages[logo]) selectLogo(logo);
 
@@ -12299,13 +12576,21 @@ function activateXMLsequence (xml, noLoadRules) {
   if (freeUnknownSequence) {
     sequenceText.value = freeUnknownSequence;
     checkSequenceChanged ();
+  } else {
+    // lock sequence when applicable
+    if (document.getElementById ('lock_sequence').value) lockSequence(true);
   }
   
-  // the sequence is now fully loaded. Check if it was loaded as a grid
-  // and rules allow additionals and figure letters are required.
+  // The sequence is now fully loaded. Check if it was loaded as a grid
+  // AND rules allow additionals AND figure letters are required AND
+  // sequence is not locked.
   // If so, if it may be a Free Unknown figures file
   var l = figureLetters;
-  if ((activeForm === 'Grid') && (additionalFig.max > 0) && l) {
+  if (
+    (activeForm === 'Grid') &&
+    (additionalFig.max > 0) &&
+    l &&
+    !document.getElementById ('lock_sequence').value) {
     for (var i = 0; i < figures.length; i++) {
       // when we find a figure without a letter, or with an incorrect
       // letter, stop. In that case make sure we do not ask to start
@@ -14942,7 +15227,7 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
     }
     // Set the number of the first roll for drawing later on
     // To do this we check the fig.pattern for a roll match before the base
-    var rollnr = (fig[figNr].pattern.match(/^[\+\-][_\^\&]/))? 0 : 1;
+    var rollnr = (fig[figNr].pattern.match(/^[\+\-][_\^\&~]/))? 0 : 1;
 
     // If there are multiple figNrs we check the rolls to see which one
     // matches best. It's very important that with different figures with
@@ -14965,15 +15250,16 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
         if (rollCorr < rollCorrMin) {
           rollCorrMin = rollCorr;
           figNr = figNrs[i];
-          var rollnr = (fig[figNr].pattern.match(/^[\+\-][_\^\&]/))? 0 : 1;
+          var rollnr = (fig[figNr].pattern.match(/^[\+\-][_\^\&~]/))? 0 : 1;
         }
       }
       var figureDraw = fig[figNr].draw;
     } else var figureDraw = fig[figNrs[0]].draw;
   } else var figureDraw = fig[figNrs[0]].draw;
   // The chosen figure is now final, so we can:
-  // assign Aresti Nr and K Factor to the figure
-  // fix the figNr in the figures object
+  // * assign Aresti Nr and K Factor to the figure
+  // * fix the figNr in the figures object
+  // * remove rolls where only line shortening/lengthening is allowed
   var arestiNrs = new Array(fig[figNr].aresti);
   if ((sportingClass.value === 'glider') && (fig[figNr].kglider)) {
     var kFactors = [parseInt(fig[figNr].kglider)];
@@ -14982,6 +15268,21 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
   }
   figures[figStringIndex].figNr = figNr;
   figCheckLine[seqNr] = fig[figNr].aresti;
+  
+  for (var i = 0; i < roll.length; i++) {
+    if (fig[figNr].rolls[i] === 4) {
+      for (var j = 0; j < roll[i].length; j++) {
+        if (roll[i][j].type !== 'line') {
+          roll[i].splice (j, 1);
+          j--;
+        }
+      }
+      rollSums[i] = 0;
+      var gap = 0;
+      for (var j = 0; j <= subRoll; j++) gap += parseInt(rollInfo[i].gap[j]);
+      rollInfo[i] = {gap: [gap], pattern: [], comment: []};
+    }
+  }
   // If we are not in Form A we check for entry and exit extension
   // and shortening and apply them
   var entryExt = 0;
@@ -15927,8 +16228,8 @@ function updateSequence (figNr, figure, replace, fromFigSel, force) {
               string = figures[i].string + ' ' + string;
             }
             i--;
-            // no move on figure 0, so stop there
-            if (i == 0) break;
+            // no move on the first figure, so stop there
+            if ((i == 0) || (figures[i].seqNr < 2)) break;
           }
           if (!updateSelected) {
             // only build the move when it is more than one unit
@@ -15989,7 +16290,7 @@ function updateSequence (figNr, figure, replace, fromFigSel, force) {
   }
   
   // reselect correct figure
-  if (selectedFigure.id !== null) selectFigure (selectedFigure.id, true);
+  if (selectedFigure.id !== null) selectFigure (selectedFigure.id);
 
 }
 
@@ -16057,7 +16358,7 @@ function parseSequence () {
   var figure = '';
   var formBDirection = 0;
   additionals = 0;
-// Make sure the scale is set to 1 before parsing
+  // Make sure the scale is set to 1 before parsing
   if (scale != 1) {
     curveRadius = curveRadius / scale;
     lineElement = lineElement / scale;
