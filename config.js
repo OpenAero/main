@@ -42,7 +42,8 @@ var version = '2016.1.3';
 // n   = importance (higher = more important)
 var versionNew = {
   '2016.1.3' : [
-    ['Added option to lock the sequence to prevent changing it', 2]
+    ['Added option to lock the sequence to prevent changing it', 2],
+    ['Improved drag & drop of figures', 2]
   ],
   '2016.1.1' : [
     ['IAC Power rules for 2016', 3]

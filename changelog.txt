@@ -13,6 +13,9 @@
 * restored figure selection by moving through sequence string
 * improved figure dragging to edges of sequence
 * added default_view in all saves (also Form A, B, C)
+* fixed grabbing and moving of figures on browsers that have both touch and mouse support (Chrome 48)
+* removed "New" text from print dialog for Forms R & L
+* don't give a warning when using Firefox or Safari anymore
 
 2016.1.2
 * fixed bug in figure scaling when using Reference sequence and Form A

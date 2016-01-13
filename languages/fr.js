@@ -1,4 +1,4 @@
-﻿// fr.js 2016.1
+﻿// fr.js 2016.1.3
 // This file is part of OpenAero.
 
 //  OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -394,9 +394,9 @@ lang.fr = {
 // new 1.5.0
 'newCopySubsequence' : 'Créer / Copier sous-partie',
 //
-// new 1.5.1
+/** removed in 2016.1.3
 'newReplacementsABC' : 'Nouveau format pour les formes A/B/C',
-//
+*/
 'newTurnPerspective' : 'Vraie perspective pour les virages ' +
   '<font color=red>EXPERIMENTAL, A EVITER EN COMPETITION INTERNATIONALE!' +
   '</font>',

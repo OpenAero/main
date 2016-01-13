@@ -377,4 +377,4 @@ rules.push("9.12.1.6");
 
 rules.push ("[glider-BAeA Intermediate Free Known]");
 rules.push("figure-letters=ABCDE");
-rules.push ("reference=\"@A\" 22 \"@B\" 2t \"@C\" c2 \"@D\" m2 \"@E\" -j-");
+rules.push ("reference=\"@A\" 2t \"@B\" c2 \"@C\" h \"@D\" m2 \"@E\" 2a");

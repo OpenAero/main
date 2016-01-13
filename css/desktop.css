@@ -129,8 +129,15 @@ body {
   left: 286px;
   padding: 10px 10px 20px 10px;
   /*height: 95%;*/
-  background-color: rgba(255, 255, 255, 0.3);
+  background-color: rgba(255, 255, 255, 0.1);
   overflow: auto;
+}
+.sequenceOverlay {
+  left: -10px !important;
+  top: -10px !important;
+  z-index: 1000;
+  background-color: rgba(255, 255, 255, 0.8) !important;
+  transition: background-color 2000ms ease;
 }
 #figureSelector {
   position: absolute;

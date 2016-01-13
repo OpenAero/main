@@ -112,8 +112,8 @@ exampleSequences['2016 BAeA-Glider Int Free Known'] = '<sequence>' +
 '<positioning>15</positioning>' +
 '<harmony>10</harmony>' +
 '<notes>Base Figures for Intermediate Free Known 2016</notes>' +
-'<sequence_text>22 2t c2 m2 -j-</sequence_text>' +
-'<logo>CIVA</logo>' +
+'<sequence_text>"@A" 2t "@B" c2 "@C" h "@D" m2 "@E" 2a</sequence_text>' +
+'<logo>BAeA</logo>' +
 '<oa_version>2016.1.3</oa_version>' +
 '<default_view>grid:5</default_view>' +
 '</sequence>';

@@ -160,7 +160,9 @@ var confirmFunction;
 // mobileBrowser is true when OpenAero is run on a mobile browser
 var mobileBrowser = false;
 
-// touchDevice is true on touch enabled devices
+// touchDevice is true on touch enabled devices. As it can also be true
+// on touch enabled browsers when using mouse and keyboard, we check
+// again every time a figure is grabbed.
 var touchDevice = (('ontouchstart' in window)
   || (navigator.maxTouchPoints > 0)
   || (navigator.msMaxTouchPoints > 0));
@@ -247,6 +249,8 @@ var rollKPwrd = [];
 var rollKGlider = [];
 // alertMsgs will hold any alerts about figures and the sequence
 var alertMsgs = [];
+// errors is used for tracking startup errors
+var errors = [];
 
 /************************************************
  * 
@@ -1273,15 +1277,17 @@ function rebuildSequenceSvg () {
   SVGRoot.setAttribute("viewBox", "0 0 800 600");
   // enable figure selection and drag&drop on all forms except A
   if (activeForm != 'A') {
+    // set touchDevice actions
     if (touchDevice) {
       SVGRoot.addEventListener ('touchstart', grabFigure, false);
       SVGRoot.addEventListener ('touchmove', Drag, false);
       SVGRoot.addEventListener ('touchend', Drop, false);    
-    } else {
-      SVGRoot.addEventListener ('mousedown', grabFigure, false);
-      SVGRoot.addEventListener ('mousemove', Drag, false);
-      SVGRoot.addEventListener ('mouseup', Drop, false);    
     }
+    // set mouse actions, also for touchDevice as this may also be a
+    // touch enabled browser with mouse
+    SVGRoot.addEventListener ('mousedown', grabFigure, false);
+    SVGRoot.addEventListener ('mousemove', Drag, false);
+    SVGRoot.addEventListener ('mouseup', Drop, false);
   }
   
   container.appendChild(SVGRoot);
@@ -1358,6 +1364,8 @@ function confirmBox(message, title, f) {
 // - formatted as HTML
 // - an array of 'userText key' and sprintf replace values
 // In the latter case multiple languages will be available for the box
+// Any errors will be added to the box, after which the errors will be
+// cleared.
 function dialogBuildContents (boxName, message, title) {
   // Make the title
   if (title && (typeof title === 'object')) {
@@ -1371,7 +1379,9 @@ function dialogBuildContents (boxName, message, title) {
   // Make the message
   if (message.userText) {
     message.params = message.params || [];
-    message.params.splice (0, 0, userText[message.userText]);
+    console.log(errors);
+    message.params.splice (0, 0, userText[message.userText] +
+      (errors ? '<p>' + errors.join('</p><p>') + '</p>' : ''));
     document.getElementById(boxName + 'Message').innerHTML =
       sprintf.apply (undefined, message.params);
     // add language chooser, assure correct title formatting
@@ -1380,8 +1390,10 @@ function dialogBuildContents (boxName, message, title) {
       message,
       (typeof title === 'object') ? title : {userText: title, params: []});
   } else {
-    document.getElementById(boxName + 'Message').innerHTML = message;
+    document.getElementById(boxName + 'Message').innerHTML = message +
+      (errors ? '<p>' + errors.join('</p><p>') + '</p>' : '');
   }
+  setTimeout (function(){errors = []}, 2000);
 }
 
 // addLanguageChooser adds flags to a supplied element to change the
@@ -1407,7 +1419,8 @@ function addLanguageChooser (boxName, message, title) {
         title.params[0] = userText [title.userText];
         document.getElementById (boxName + 'Title').innerHTML =
           sprintf.apply (undefined, title.params);
-        message.params[0] = userText [message.userText];
+        message.params[0] = userText [message.userText] +
+          (errors ? '<p>' + errors.join('</p><p>') + '</p>' : '');
         document.getElementById (boxName + 'Message').innerHTML =
           sprintf.apply (undefined, message.params);
         addLanguageChooser (boxName, message, title);
@@ -3587,6 +3600,19 @@ function drawCircle (attributes, svg) {
   svg.appendChild (circle);
 }
 
+// drawImage draws an image
+function drawImage (attributes, svg) {
+  svg = svg || SVGRoot.getElementById('sequence');
+  var image = document.createElementNS (svgNS, 'image');
+  for (var key in attributes) {
+    if (key === 'href') {
+      image.setAttributeNS(xlinkNS, 'href', attributes.href);
+    } else image.setAttribute (key, attributes[key]);
+  }
+  svg.appendChild (image);
+  return image;
+}
+
 // draw an aresti number text with a figure
 function drawArestiText(figNr, aresti) {
   drawText (aresti, X, Y, 'start', 'text-' + figNr);
@@ -3603,8 +3629,6 @@ function doOnLoad () {
   fileName = document.getElementById('fileName');
   newTurnPerspective = document.getElementById('newTurnPerspective');
   debug = document.getElementById('debug');
-
-  var errors = [];
   
   try {
     if (chrome) {
@@ -3617,13 +3641,6 @@ function doOnLoad () {
   
   // add all listeners for clicks, keyup etc
   addEventListeners();
-  
-  // disable iOS overscroll
-  /*if (touchDevice) {
-    document.body.addEventListener('touchmove',function(event){
-      event.preventDefault();
-    });
-  }*/
 
   // Use try to prevent bugs in this part from blocking OpenAero startup.
   // Errors are logged to console.
@@ -3766,8 +3783,6 @@ function doOnLoad () {
   el.setAttribute('style', 'display:none;');
   */
   
-  // Check if an update has just been done
-  checkUpdateDone();
   // Check for the latest version every 10 minutes
   if (!chromeApp.active) {
     window.setInterval(function(){latestVersion()},600000);
@@ -3779,10 +3794,12 @@ function doOnLoad () {
     // set alert if localStorage is disabled
     if (!storage) errors.push (userText.noCookies);
   }
-  // show alert box for any alerts
-  if (errors.length) {
-    alertBox ('<p>' + errors.join('</p><p>') + '</p>');
-  }
+  // show alert box for any errors (they are automatically appended)
+  if (errors.length) alertBox ('<p></p>');
+
+  // Check if an update has just been done
+  checkUpdateDone();
+
   loadComplete = true;
   // also check for latest version now
   if (chromeApp.active) {
@@ -4405,17 +4422,17 @@ function checkBrowser () {
   if (!fileSupport()) {
     return userText.fileOpeningNotSupported + '<br>' + userText.getChrome;
   }
-  // Present a warning if the browser is not Chrome and the warning was
-  // not displayed for four weeks. Use store value for setting the
-  // expiry time
-  if (BrowserDetect.browser != 'Chrome') {
+  // Present a warning if the browser is not Chrome, Safari or Firefox
+  // and the warning was not displayed for four weeks. Use store value
+  // for setting the expiry time
+  if (!BrowserDetect.browser.match(/Chrome|Safari|Firefox/)) {
     function f(c) {
       var d = new Date();
       var t = parseInt(d.getTime());
       if (c && (c < t)) c = false;
       if (!c) {
         storeLocal ('noChromeWarned', t + 2419200000);
-        alertBox (sprintf (userText.browserDetect, browserString) +
+        errors.push (sprintf (userText.browserDetect, browserString) +
           userText.getChrome);
       }
     }
@@ -5053,6 +5070,7 @@ function loadSettingsStorage (location) {
   
   function f (settings) {
     if (settings) {
+      console.log('Loading settings: ' + settings);
       settings = settings.split('|');
       for (var i = settings.length - 1; i >= 0; i--) {
         var setting = settings[i].split('=');
@@ -6254,7 +6272,7 @@ function checkUpdateDone() {
       // shown by checkForApp
       if (typeof chrome == "undefined") alertBox (
         {userText: 'installed', params: [window.location.host]},
-        {userText: 'installChromeAppTitle'});
+        {userText: 'installation'});
       storeLocal ('version', version);
     } else if (oldVersion !== version) {
       // create version update text
@@ -6540,7 +6558,8 @@ function createSelection(field, start, end) {
   field.focus();
 }
 
-// buildLogoSvg will create a logo svg from a provided image string, width and height
+// buildLogoSvg will create a logo svg from a provided image string,
+// width and height
 function buildLogoSvg(logoImage, x, y, width, height) {
   
   function toInt32(bytes) {
@@ -6575,14 +6594,8 @@ function buildLogoSvg(logoImage, x, y, width, height) {
       width = parseInt (img.width * scale);
       height = parseInt (img.height * scale);
     }
-    var image = document.createElementNS (svgNS, "image");
-    image.setAttribute('x', x);
-    image.setAttribute('y', y);
-    image.setAttribute('width', width);
-    image.setAttribute('height', height);
-    image.setAttribute('preserveAspectRatio', 'xMaxYMax');
-    image.setAttributeNS(xlinkNS, 'href', logoImage);
-    svg.appendChild (image);
+    drawImage ({x: x, y: y, width: width, height: height,
+      preserveAspectRatio: 'xMaxYMax', href: logoImage}, svg);
   }
   svg.setAttribute("class", "logoSvg");
   svg.setAttribute("width", x + width);
@@ -9091,11 +9104,16 @@ function grabFigure(evt) {
   // disable when sequence locked
   if (document.getElementById ('lock_sequence').value) return;
   
-  // put the coordinates of object evt in TrueCoords global
-  if (touchDevice) {
+  // Put the coordinates of object evt in TrueCoords global.
+  // Every time we check if we have a touch device or not and set
+  // touchDevice global accordingly
+  if (evt.changedTouches && evt.changedTouches[0] && ('pageX' in evt.changedTouches[0])) {
+    touchDevice = true;
+    evt.preventDefault();
     TrueCoords.x = evt.changedTouches[0].pageX;
     TrueCoords.y = evt.changedTouches[0].pageY;
   } else {
+    touchDevice = false;
     TrueCoords.x = evt.clientX;
     TrueCoords.y = evt.clientY;
   }
@@ -9228,8 +9246,11 @@ function grabFigure(evt) {
       svg.setAttribute ('width', parseInt(viewBox[2]) + parseInt(svgRect.left));
       svg.setAttribute ('height', parseInt(viewBox[3]) + parseInt(svgRect.top));
       // correct position for padding
-      svg.parentNode.setAttribute ('style', 'left: -10px; top: -10px; z-index: 1000');
-      document.getElementById ('main').setAttribute ('style', 'top: 0');
+      svg.parentNode.classList.add ('sequenceOverlay');
+      var main = document.getElementById ('main');
+      document.getElementById ('leftBlock').setAttribute ('style',
+        main.getAttribute ('style').replace (/^top:[ ]*/, 'margin-top:'));
+      main.setAttribute ('style', 'top: 0;');
     }
     
     // we need to find the current position and translation of the grabbed element,
@@ -9357,15 +9378,14 @@ function setFigureSelected (figNr) {
         }
         // add scale handle
         if (showHandles) {
-          var image = document.createElementNS (svgNS, 'image');
-          image.setAttribute ('x', selectedFigure.x + selectedFigure.width - 6);
-          image.setAttribute ('y', selectedFigure.y - 9);
-          image.setAttribute ('width', 20);
-          image.setAttribute ('height', 20);
-          image.setAttribute ('id', 'magnifier');
-          image.setAttribute ('cursor', 'move');
-          image.setAttributeNS (xlinkNS, 'href', 'images/magnifier.png');
-          el.appendChild (image);
+          drawImage ({
+            x: selectedFigure.x + selectedFigure.width - 6,
+            y: selectedFigure.y - 9,
+            width: 20,
+            height: 20,
+            'id': 'magnifier',
+            cursor: 'move',
+            href: 'images/magnifier.png'}, el);
         }
 
       }
@@ -9387,7 +9407,7 @@ function Drag (evt) {
   if (activeForm === 'Grid') return;
   
   // put the coordinates of object evt in TrueCoords global
-  if (touchDevice) {
+  if (touchDevice && evt.changedTouches && evt.changedTouches[0] && evt.changedTouches[0].pageX) {
     TrueCoords.x = evt.changedTouches[0].pageX;
     TrueCoords.y = evt.changedTouches[0].pageY;
   } else {
@@ -9501,16 +9521,14 @@ function Drag (evt) {
         DragTarget.parentNode.removeChild(DragTarget.parentNode.lastChild);
         var bBox = DragTarget.parentNode.getBBox();
         // add scale handle
-        var image = document.createElementNS (svgNS, 'image');
-        image.setAttribute ('x', bBox.x + bBox.width - 10);
-        image.setAttribute ('y', bBox.y - 10);
-        image.setAttribute ('width', 20);
-        image.setAttribute ('height', 20);
-        image.setAttribute ('id', 'magnifier');
-        image.setAttribute ('cursor', 'move');
-        image.setAttributeNS (xlinkNS, 'href', 'images/magnifier.png');
-        DragTarget.parentNode.appendChild (image);
-
+        drawImage ({
+          x: bBox.x + bBox.width - 10,
+          y: bBox.y - 10,
+          width: 20,
+          height: 20,
+          'id': 'magnifier',
+          cursor: 'move',
+          href: 'images/magnifier.png'}, DragTarget.parentNode);
       }
     } else if (DragTarget.id === 'magnifier') {
       
@@ -9642,6 +9660,17 @@ function Drag (evt) {
 // Drop is activated when a figure or handle is dropped at a new position
 function Drop(evt) {
   
+  function restoreViewBox () {
+    var bBox = SVGRoot.getBBox();
+    SVGRoot.setAttribute ('viewBox', bBox.x + ' ' + bBox.y + ' ' +
+      (parseInt(bBox.width) + 5) + ' ' + (parseInt(bBox.height) + 5));
+    if (!mobileBrowser) {
+      SVGRoot.setAttribute ('width', parseInt(bBox.width) + 5);
+      SVGRoot.setAttribute ('height', parseInt(bBox.height) + 5);
+    }
+    updateSequenceTextHeight();
+  }
+
   // clear drag left / top interval drag where applicable
   if (intervalID.drag) {
     window.clearInterval (intervalID.drag);
@@ -9651,11 +9680,14 @@ function Drop(evt) {
   // if we aren't currently dragging an element, don't do anything
   if ( DragTarget ) {
   
+    if (touchDevice) evt.preventDefault();
+    
     // turn the pointer-events back on, so we can grab this item later
     DragTarget.setAttribute('pointer-events', 'all');
     
     // restore svgContainer size
-    document.getElementById ('svgContainer').removeAttribute ('style');
+    SVGRoot.parentNode.classList.remove ('sequenceOverlay');
+    document.getElementById ('leftBlock').removeAttribute ('style');
     
     var transform = DragTarget.getAttribute('transform');
     
@@ -9664,6 +9696,7 @@ function Drop(evt) {
       /** dropping a handle or magnifier */
       
       updateFigure();
+      restoreViewBox();
       
     } else {
       
@@ -9682,15 +9715,7 @@ function Drop(evt) {
           false,
           true)
       } else {
-        // restore viewBox
-        var bBox = SVGRoot.getBBox();
-        SVGRoot.setAttribute ('viewBox', bBox.x + ' ' + bBox.y + ' ' +
-          (parseInt(bBox.width) + 5) + ' ' + (parseInt(bBox.height) + 5));
-        if (!mobileBrowser) {
-          SVGRoot.setAttribute ('width', parseInt(bBox.width) + 5);
-          SVGRoot.setAttribute ('height', parseInt(bBox.height) + 5);
-        }
-        updateSequenceTextHeight();
+        restoreViewBox();
       }
     }
     
@@ -11129,14 +11154,13 @@ function makeFormGrid (cols, width, svg) {
         if (code) {
           // set scale for flag
           var scale = Math.min (roundTwo((cw - tw - 10) / 56), 1);
-          var flag = document.createElementNS (svgNS, 'image');
-          flag.setAttribute('width', 48 * scale);
-          flag.setAttribute('height', 48 * scale);
-          flag.setAttribute('x', x + cw - (52 * scale));
-          flag.setAttribute('y', y + ch - (48 * scale));
-          flag.setAttribute('id', 'flag' + i);
-          flag.setAttributeNS(xlinkNS, 'href', 'data:image/png;base64,' + flags[code]);
-          svg.appendChild(flag);
+          var flag = drawImage ({
+            width: 48 * scale,
+            height: 48 * scale,
+            x: x + cw - (52 * scale),
+            y: y + ch - (48 * scale),
+            'id': 'flag' + i,
+            href: 'data:image/png;base64,' + flags[code]}, svg);
           flagWidth = 56 * scale;
         }
 
@@ -12775,7 +12799,8 @@ function updateSaveFilename() {
   if (el && ('download' in el)) {
     el.download = filename + document.getElementById('fileExt').innerHTML;
   }
-  fileName.value = filename;
+  // only update when different, prevents cursor jump
+  if (fileName.value !== filename) fileName.value = filename;
 }
 
 // writeFileEntry uses the Chrome app API to write files

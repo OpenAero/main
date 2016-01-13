@@ -404,9 +404,9 @@ lang.en = {
 // new 1.5.0
 'newCopySubsequence' : 'New / copy subsequence',
 //
-// new 1.5.1
+/** removed in 2016.1.3
 'newReplacementsABC' : 'New style replacements for A/B/C forms',
-//
+*/
 'newTurnPerspective' : 'Realistic-looking perspective for turns ' +
   '<font color=red>EXPERIMENTAL, DO NOT USE FOR COMPETITION SEQUENCES!' +
   '</font>',
