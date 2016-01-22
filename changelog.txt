@@ -1,3 +1,6 @@
+2016.1.4
+* fixed breaking of sequence scrolling on touch devices in 2016.1.3
+
 2016.1.3
 * corrected inability to change vertical line length of P-loops with half roll in top
 * removed viewport setting as it causes zooming issues when selecting text field

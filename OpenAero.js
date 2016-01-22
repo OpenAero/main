@@ -9109,7 +9109,6 @@ function grabFigure(evt) {
   // touchDevice global accordingly
   if (evt.changedTouches && evt.changedTouches[0] && ('pageX' in evt.changedTouches[0])) {
     touchDevice = true;
-    evt.preventDefault();
     TrueCoords.x = evt.changedTouches[0].pageX;
     TrueCoords.y = evt.changedTouches[0].pageY;
   } else {
@@ -9180,8 +9179,6 @@ function grabFigure(evt) {
     selectedFigure.diagonal = Math.sqrt (
       Math.pow (selectedFigure.width,2) + Math.pow (selectedFigure.height, 2));
 
-    evt.preventDefault(); // prevent default drag & drop
-    
     // grab full sequence figures
   } else if (evt.target.parentNode.id.match(/^figure[0-9]/)) {
     if (figures[evt.target.parentNode.id.replace('figure', '')].draggable) {
@@ -9223,6 +9220,8 @@ function grabFigure(evt) {
     }
   }
   if (DragTarget) {
+    evt.preventDefault(); // prevent default drag & drop
+    
     // move this element to the "top" of the display, so it is
     // always over other elements
     if (!DragTarget.id.match (/^(.*-handle|magnifier)$/)) {
