@@ -1,4 +1,4 @@
-﻿// OpenAero.js 2016.1.3
+﻿// OpenAero.js 2016.1.3 K_modified
 // This file is part of OpenAero.
 
 //  OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -228,8 +228,24 @@ kglide  : the glider K factor for each figure
 draw    : the drawing instructions for each figure
 group   : to which group every figure belongs
 unknownFigureLetter : the figure letter, if applicable
+// Modif GG v2016.1.4 Start
+next    : to chain the lines having the same value of .aresti
+            0 or undefined  = not set ; positive value = line number of the next instance ; -1 last instance
 */
 var fig = [];
+
+// rule_K hold the new figure K and the figure index for which a K change has been set in a rule file
+// in the form rule_K[i].xxx where xxx is:
+// .i_fig  : the index in fig for each figure with a changed K
+// .new_K  : the new K factor for the figure
+var rule_K = [];
+// aresti_K hold the original aresti K and the figure index for which a K change has been set in fig array
+// in the form aresti_K[i].xxx where xxx is:
+// .i_fig  : the index in fig for each figure with a changed K
+// .saved_K : the new K factor for the figure
+var aresti_K = [];
+var aresti_K_class ; // "class" (kpwrd or kglider) of the active rules for setting the corresponding K in fig.
+// Modif GG v2016.1.4 End
 
 // fuFig is similar to fig, holding figures for the Free Unknown Designer
 var fuFig = [];
@@ -5070,7 +5086,6 @@ function loadSettingsStorage (location) {
   
   function f (settings) {
     if (settings) {
-      console.log('Loading settings: ' + settings);
       settings = settings.split('|');
       for (var i = settings.length - 1; i >= 0; i--) {
         var setting = settings[i].split('=');
@@ -6808,12 +6823,15 @@ function parseFiguresFile () {
 
 // parseRules walks through the rules file to find out which rules
 // are available
-function parseRules(start) {
+function parseRules (start) {
   start = start || 0;
+  
+  var sections = [];
   var year = rulesYear();
   for (var i=start; i<rules.length; i++) {
     // Check for [section]
     if (rules[i][0].match(/[\[\(]/)) {
+      sections.push (rules[i].toLowerCase().replace (/[\[\(\]\)]/g, ''));
       var parts = rules[i].match (/^[\[\(]([^ ]+) ([^ ]+) (.+)[\]\)]$/);
       if (parts && parts.length > 3) {
         // remove first, global, match. We don't need it
@@ -6865,6 +6883,18 @@ function parseRules(start) {
           seqName,
           rules[i].match(/^demo[\s]*=[\s]*(.*)$/)[1]
         );
+      }
+    }
+  }
+
+  // verify all "more=" statements refer to existing sections
+  for (var i=start; i<rules.length; i++) {
+    if (rules[i][0].match(/[\[\(]/)) var currentSection = rules[i];
+    var match = rules[i].toLowerCase().match (/^more[\s]*=[\s]*(.*)$/);
+    if (match) {
+      if (sections.indexOf (match[1]) === -1) {
+        console.log ('*** Error: section ' + currentSection +
+          ' references non-existing section "' + match[1] + '"');
       }
     }
   }
@@ -7040,8 +7070,10 @@ function loadRules() {
       if (rules[i].match(/^more=/)) {
         // Apply 'more' rules
         var name = rules[i].replace('more=', '').toLowerCase();
-        i = section[name];
-        ruleSection = false; // don't go over this section again!
+        if (section[name]) {
+          i = section[name];
+          ruleSection = false; // don't go over this section again!
+        }
       } else if (rules[i].match(/^group-/)) {
         // Apply 'group' rules => single catalog id match
         var newGroup = rules[i].replace(/^group-/, '').split('=');
@@ -7093,8 +7125,13 @@ function loadRules() {
       } else if (rules[i].match(/^more=/)) {
         // Apply 'more' rules
         var name = rules[i].replace('more=', '').toLowerCase();
-        i = section[name];
-        ruleSection = false; // don't go over this section again!
+        if (section[name]) {
+          i = section[name];
+          ruleSection = false; // don't go over this section again!
+        } else {
+          console.log ('*** Error: rule section "' + name +
+            '" does not exist');
+        }
       } else if (rules[i].match(/^allow=/)) {
       // Apply 'allow' rules
         var newCatLine = rules[i].replace(/^allow=/, '');
@@ -7113,7 +7150,17 @@ function loadRules() {
         // The key of checkAllowCatId is equal to the figure number
         // The value is an array of rules that have to be applied
         var newCatLine = rules[i];
-        var newCat = newCatLine.match(/^[^\s]*/g)[0];
+// Modif GG v2016.1.4 Start
+        var newCat = newCatLine.match(/^[^\s\(]*/g)[0];
+	// Extract in the array newK the specified K if any
+	var newK = newCatLine.match(/\([0-9,:\s]*\)/);	  
+	if (newK) {
+	  newCatLine = newCatLine.replace(newK[0], '');
+// change from ':' to ',' is not necessary since rules file doesn't mix powered and glider
+//	  newK = newK[0].replace(/[\(\)\s]*/g,'').replace(/:/g,',').split(',');
+	  newK = newK[0].replace(/[\(\)\s]*/g,'').split(',');
+	} 
+// Modif GG v2016.1.4 End
         // Create an array with rules that have to be applied to the figure
         var newRules = newCatLine.replace(newCat, '').replace(/[\s]+/g, '').split(';');
         // When there are no rules we want an empty array, whereas split
@@ -7124,10 +7171,30 @@ function loadRules() {
         var multiple = newCat.match(/[0-9]+\-[0-9]+$/);
         if (multiple) {
           multiple = multiple[0];
+// Modif GG v2016.1.4 Start	  a check could be added to verify that the "size" of multiple and newK match.
           for (var j = multiple.split('-')[0]; j < (parseInt(multiple.split('-')[1]) + 1); j++) {
             checkAllowCatId[newCat.replace(multiple, '') + j] = newRules;
+	    if (newK && (newK[j - multiple.split('-')[0]] != '')) {
+		var i_fig = aresti2ind(newCat.replace(multiple, '') + j,0) ;
+		while (i_fig < 0) {
+			rule_K.push({'i_fig':-i_fig,'new_K':newK[j - multiple.split('-')[0]]}) ;
+			i_fig = aresti2ind(newCat,-i_fig) ;
+		} 
+	      rule_K.push({'i_fig':i_fig,'new_K':newK[j - multiple.split('-')[0]]}) ;
+            }
           }
-        } else checkAllowCatId[newCat] = newRules;
+        } else {
+          checkAllowCatId[newCat] = newRules;
+	  if (newK) {
+		var i_fig = aresti2ind(newCat,0) ;
+		while (i_fig < 0) {
+			rule_K.push({'i_fig':-i_fig,'new_K':newK[0]}) ;
+			i_fig = aresti2ind(newCat,-i_fig) ;
+		} 
+	  	rule_K.push({'i_fig':i_fig,'new_K':newK[0]}) ;			
+	  }
+        }
+// Modif GG v2016.1.4 End
       } else if (rules[i].match(/[^-]+-min=\d+$/)) {
       // Apply [group]-min rules
         var group = rules[i].replace(/-min/, '').split('=');
@@ -7269,6 +7336,8 @@ function loadRules() {
   // set rules active
   rulesActive = year + ruleName + ' ' + catName + ' ' + programName;
 
+  set_rule_K();  // Modif GG v2016.1.4 (Change K if needed). To prevent any K changes, just comment this line.
+
   if (figureLetters) {
     // show reference sequence link
     document.getElementById ('t_referenceSequence').classList.remove ('noDisplay');
@@ -7285,8 +7354,82 @@ function loadRules() {
   return true;
 }
 
+// Modif GG v2016.1.4 Start
+
+// write_log_fig() Writes fig content to console log. This is just for debug.
+function write_log_fig() {
+  newK_string = '' ;
+  var ggg = 0 ;
+  for (var gg in fig) if ((fig[gg].aresti) && (fig[gg].next)) {newK_string = newK_string + gg + '\t' + fig[gg].aresti + ' ' + fig[gg].base + '     \tpowered(' + fig[gg].kpwrd + ')\tglider(' + fig[gg].kglider + ')\tnext : ' + fig[gg].next + '\n' ; ggg++ ; }
+  console.log('Fig (' + aresti_K_class + ') , ' + ggg + ' chained lines : \n' + newK_string ) ;
+}
+
+// reset_aresti_K reset back K in fig to aresti K when changed in a rule file
+function reset_aresti_K() {
+  if (aresti_K.length != 0) {
+    for (var i in aresti_K) fig[aresti_K[i].i_fig][aresti_K_class] = aresti_K[i].saved_K ;
+    aresti_K = [] ;
+  }
+}
+
+// set_rule_K Set K in fig when changed in a rule file and reset it back to aresti K
+// set_rule_K is called each time new rules are loaded (at the end of loadrules)
+// So far only the change of K for powered has been tested, not the change for glider.
+function set_rule_K() {
+  // Next line code is just for debug.
+//  console.log('set_rule_K() rulesActive = ' + rulesActive + ' last_class = ' + aresti_K_class + ' class = ' + document.getElementById('class').value);
+  // First we reset fig with aresti K that have been changed if any
+  if (aresti_K.length != 0) reset_aresti_K() ;
+  // Then, if needed, we set fig with the new K from rule and save aresti K in aresti_K
+  if (rule_K.length != 0) {
+    aresti_K_class = (document.getElementById('class').value == 'powered')? 'kpwrd' : 'kglider' ;
+    var debug = '' ;
+    for (var i in rule_K) {
+//      debug = debug + '\n' + rule_K[i].i_fig + '\tfig : ' + fig[rule_K[i].i_fig].aresti + ' (' + rule_K[i].new_K + ') \tau lieu de ' + fig[rule_K[i].i_fig][aresti_K_class];
+      aresti_K.push({'i_fig' : rule_K[i].i_fig , 'saved_K' : fig[rule_K[i].i_fig][aresti_K_class]}) ;
+      fig[rule_K[i].i_fig][aresti_K_class] = rule_K[i].new_K ;
+    }
+    console.log('set_rule_K() : ' + rule_K.length + ' K has been changed for ' + aresti_K_class + ' :' + debug);
+    rule_K = [] ;
+//write_log_fig() ;		// just for debug
+  }
+// If figure chooser is diplayed while cat is changed, the figure chooser k need to be updated.
+  if (document.getElementById('figureSelector').classList.contains('active')) changeFigureGroup();
+}
+
+// aresti2ind returns the index of the passed aresti code in the fig array
+// when multiple instances exist in fig, the tag next is add to fig array for chaining all these instances.
+// fig.next is set to the index of the next instance with the same aresti value.
+// fig.next is set to -1 for the last instance or if there is no other instance.
+// The chaining for an aresti code is build once the first time this aresti code is looked for.
+// The return index is set to -index if there is an other instance with the same aresti code in fig.
+function aresti2ind(aresti,start) {
+  if (start == 0) {
+	var previous = 0 ;
+	var ind = false ;
+	for (var i in fig) if (fig[i].aresti == aresti) {
+		if (fig[i].next) {  	// linkage processed. Returns -fig_index if linked and fig_index if otherwise. 
+			ind = (fig[i].next == -1)? i : -i ; 
+			break ;
+		} else { 		// Built the linkage if any.
+			if (previous != 0) { fig[previous].next = i ; if (!ind) ind = -previous ; }
+			previous = i ;
+		}
+	}
+	if (previous != 0) {
+		fig[previous].next = -1 ;
+		if (!ind) ind = previous ; 
+	}
+  } else {
+	ind = (fig[fig[start].next].next == -1)? fig[start].next : -fig[start].next ;
+  }
+  return ind ;
+}
+ 
 // unloadRules will set rules to inactive and do some checks
 function unloadRules () {
+  if (aresti_K.length != 0) reset_aresti_K() ; // reset aresti K just in case. may be not needed ?
+// Modif GG v2016.1.4 End
   console.log('Clearing rules');
   rulesActive = false;
   // update sequence
@@ -8461,6 +8604,7 @@ function changeFigureGroup() {
         } else if (rollK < 0) {
           k += '<font color="red">(N/A)</font>';
         }
+        fig[i].rollK = rollK;
         inner.innerHTML += 'K:' + k;
         
         // extra for figures in queueGroup
@@ -8652,10 +8796,15 @@ function markNotAllowedFigures () {
       } else if (rulesActive) {
         if (Object.keys(checkAllowCatId).length > 0) {
           var aresti = fig[td[j].id].aresti;
+          var totalK = parseInt((sportingClass.value === 'powered') ? fig[td[j].id].kpwrd : fig[td[j].id].kglider);
+          totalK += parseInt (fig[td[j].id].rollK);
+
           if (aresti.match(/^queue-/)) {
             aresti = aresti.match(/^queue-([0-9\.]+)/)[1];
           }
-          if (!(aresti in checkAllowCatId)) {
+
+          if (!(aresti in checkAllowCatId) || (checkCatGroup.k &&
+            checkCatGroup.k.maxperfig && (checkCatGroup.k.maxperfig < totalK))) {
             if (document.getElementById('hideIllegal').checked == true) {
               td[j].classList.add ('figureNotAllowedHidden');
             } else {

@@ -1,3 +1,10 @@
+2016.1.5
+* added option to change the K factor for specific figures according rules
+* added 2016 French rules
+* added warning when parsing "more=" rule to non-existent rule
+* added checking for maximum K according rules in figure chooser
+* moved rolling turns in rules to generic (e.g. CIVA Advanced Unknownall) as max K checking is handled in figure chooser
+
 2016.1.4
 * fixed breaking of sequence scrolling on touch devices in 2016.1.3
 

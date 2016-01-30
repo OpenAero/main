@@ -192,7 +192,7 @@ lang.fr = {
 //
 'download' : 'Télécharger',
 // updated 1.4.2
-'downloadHTML5' : 'Vous pouvez enregistrer en choisissant un nom' +
+'downloadHTML5' : 'Vous pouvez enregistrer en choisissant un nom ' +
   'et en cliquant <i>Enregistrer fichier</i> ci-dessous.<br>Une ' +
   'fenêtre où vous pourrez choisir le répertoire apparaîtra.' +
   '<p class="chromeHint">Chrome hint: Par défaut, le navigateur Chrome sauvegardera ' +
@@ -241,7 +241,8 @@ lang.fr = {
 'figureEditor' : 'Editeur&nbsp;de figure',
 // new 1.5.1
 'figureK' : 'Figure K',
-//
+// new 2016.1.3
+'figureLetterNotAllowed' : '(%s) La lettre d\'identification %s n\'est pas autorisée',
 'figurePositioning' : 'Positionnement de figure',
 'figureQueue' : 'File / Tampon',
 // new 1.5.2
@@ -372,6 +373,11 @@ lang.fr = {
   'Si un programme est ouvert, il sera effacé.',
 'loadNewVersionTitle' : 'Nouvelle version',
 'location' : 'Lieu',
+// new 2016.1.3
+'locked' : 'Ce programme est verrouillé. Pour le déverrouiller, cliquez sur <i>Déverrouiller</i> ' +
+  'dans le menu Programme',
+'lockSequence' : 'Verrouiller',
+//
 'logo' : 'Logo',
 'logoExplain' : 'Chargez votre logo en cliquant sur parcourir..., ' +
   'ou sélectionnez un des logos déjà affiches.',
@@ -461,6 +467,8 @@ lang.fr = {
 //
 'orFileDrop' : 'Ou glisser/déplacer vos fichiers ici',
 'orFileDropPrint' : 'Ou glisser/déplacer vos fichiers ici',
+// new 2016.1.1
+'otherNote' : 'Autre(noter...)',
 'pageSpacing' : 'Espacement entre pages',
 'pilot' : 'Pilote',
 'pilotCardFormB' : 'Forme B',
@@ -658,8 +666,10 @@ lang.fr = {
 }, // end tooltip sub-array
 // new 1.5.1
 'totalK' : 'K total',
-//
+// new 2016.1.1
+'trgViolation' : 'Ech. Incorrect',
 'unknownFileType' : 'L\'ouverture de ce fichier n\'est pas supportée dans ce navigateur.',
+'unlockSequence' : 'Déverrouiller',
 'unusedFigureLetters' : 'Lettre(s) inutilisée(s) : %s',
 'update' : 'Mise à jour',
 'upwind' : 'vent de face',

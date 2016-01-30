@@ -21,8 +21,7 @@
 // This file defines year (YY) and rule type specific rules
 
 //######################################################################################
-//#####      Regles France 2015      Espoirs à Doret 2015  Olan 6.0  ###################
-//#####      Regles France 2015      Version 2015_PN.1.05            ###################
+//#####   Régles France 2016 Espoirs à Doret    Version 2016.1.00    ###################
 //######################################################################################
 //######################################################################################
 //#####                                                              ###################
@@ -32,24 +31,25 @@
 //#####      Ajout de règles (déclenchés) d'inconnu Doret 2015.      ###################
 //#####      Prise en compte du distingo entre rotation alternées    ###################
 //#####      (,) et rotations même sens (;) dans les régles 2015.    ###################
+//#####      Modifications 2016, connus 2016, nouveaux noms.         ###################
 //#####                                                              ###################
 //######################################################################################
 //#####                                                              ###################
 //#####      Régles de l'inconnu Doret prises en compte, à affiner.  ###################
 //#####                                                              ###################
 //######################################################################################
-// prog 2015 : Espoirs, Desavois, National2, Doret 
+// prog 2016 : Espoirs, Desavois, National2, Doret 
 
 //##### (Une partie des) Regles specifiques à la France.
 
-rules.push("[France espoirs connu]");
-rules.push("demo = d iv'6s..'+++ +h.. o ~m- (0,13) -22- 2% -2j- -2 6% 2j~ ~+c2...'+`` 3% ```+```````2``rc``````+~ 6> m2");
+rules.push("[France Espoirs connu]");
+rules.push("demo = ed 2g iv.''5s.... m22--~ 5> ~-3j----- -,2 h....'' rp+~~ c....2...+``` ````m6");
 rules.push("k-max=120");
-rules.push("more=France espoirs all");
-rules.push("[France espoirs inconnu]");
+rules.push("more=France Espoirs all");
+rules.push("[France Espoirs inconnu]");
 rules.push("k-max=120");
-rules.push("more=France espoirs all");
-rules.push("[France espoirs libre]");
+rules.push("more=France Espoirs all");
+rules.push("[France Espoirs libre]");
 rules.push("k-max=130");
 rules.push("basefig-max=12");
 rules.push("fam5-min=1");
@@ -61,8 +61,8 @@ rules.push("emptyline-max=0");
 rules.push("basefig-repeat=1");
 rules.push("roll-repeat=2");
 rules.push("roll-totrepeat=1");
-rules.push("more=France espoirs all");
-rules.push("(France espoirs all)");
+rules.push("more=France Espoirs all");
+rules.push("(France Espoirs all)");
 rules.push("sf = advanced");
 rules.push("poslj=10");
 rules.push("posnl=10");
@@ -134,18 +134,16 @@ rules.push("9.1.4.2");
 rules.push("9.2.3.4");
 rules.push("9.2.3.6");
 rules.push("9.2.3.8");
-rules.push("9.4.3.2");  
-rules.push("9.4.3.4");  
 rules.push("9.11.1.4-7");
-rules.push("[France desavois connu]");
-rules.push("demo = ed ircf- -iv.'is. 4> 24h.''- ``-c'',2''-`` 2> -pb.. 6> 8b...+``` > `+`,4k`2`+``` 2% `+m2,1+`` -4% ``+1jo1");
-rules.push("k-max=175");
-rules.push("more=France desavois all");
-rules.push("[France desavois inconnu]");
-rules.push("k-max=160");
-rules.push("more=France desavois all");
-rules.push("[France desavois libre]");
-rules.push("k-max=205");
+rules.push("[France Desavois/promotion connu]");
+rules.push("demo = 2h..-~~ -```m2-~~ 5> -iv.'is..~ 9> ``k''24 ,4''pb.''+` (0,0) ~~``8'b..''+` 4> mf- ~-``,22``-~ 12% 3> ````-2j2-``` ~-24~");
+rules.push("k-max=170"); 
+rules.push("more=France Desavois/promotion all");
+rules.push("[France Desavois/promotion inconnu]");
+rules.push("k-max=155"); 
+rules.push("more=France Desavois/promotion all");
+rules.push("[France Desavois/promotion libre]");
+rules.push("k-max=200"); 
 rules.push("basefig-max=12");
 rules.push("neg-min=5");
 rules.push("roller-min=1");
@@ -161,8 +159,8 @@ rules.push("roll-repeat=2");
 rules.push("roll-totrepeat=1");
 rules.push("snap-repeat=1");
 rules.push("spin-repeat=1");
-rules.push("more=France desavois all");
-rules.push("(France desavois all)");
+rules.push("more=France Desavois/promotion all");
+rules.push("(France Desavois/promotion all)");
 rules.push("sf = advanced");
 rules.push("poslj=15");
 rules.push("posnl=15");
@@ -233,9 +231,9 @@ rules.push("2.1.1.1-2");
 rules.push("2.2.1.1-2");
 rules.push("2.3.1.1-2");
 rules.push("2.4.1.1-2");
-rules.push("2.1.3.1-4");
-rules.push("2.2.5.1-4");
-rules.push("2.2.6.1-4");
+rules.push("2.1.3.1-4 (9,10,10,11)"); 
+rules.push("2.2.5.1-4 (12,13,14,15)"); 
+rules.push("2.2.6.1-4 (15,16,15,16)"); 
 rules.push("5.2.1.1 Max90do");
 rules.push("5.2.1.2 NR:1; NR:2");
 rules.push("5.2.1.3 NR:2");
@@ -351,19 +349,19 @@ rules.push("9.10.2.2");
 rules.push("9.10.3.2");
 rules.push("9.11.1.4-8");
 rules.push("9.12.1.4");
-rules.push("(France national2 connu_1)");
-rules.push("demo = d2,24 ``+ivs.'- (-11,7) -k2- -``4b.' 24h4 .'mf- (-5,13) -`8,5-` 2% ``-2jio15+`` -2% 5> ``+44c'',2.'+`` (-1,7) ,4pb'' 3> .,4''rp22~>");
-rules.push("more=France national2 connu");
-rules.push("(France national2 connu_2)");
-rules.push("demo = ej '24'h'4.> ~v'4'-- --iv.5is.'~ o22 '2'dh....''--- 15> -m2- ``-....'irc+`` 4,3- 6% ````-2joi15+``` 5% > ```+````````2f```rc`+`````` 2> ~~+```k.'',24'+`` `+d24,2");
-rules.push("more=France national2 connu");
-rules.push("[France national2 connu]");
-rules.push("k-max=235");
-rules.push("more=France national2 all");
-rules.push("[France national2 inconnu]");
-rules.push("k-max=220");
-rules.push("more=France national2 all");
-rules.push("[France national2 libre]");
+rules.push("(France National_2 connu_1)");
+rules.push("demo = ej ~+8b- -,4h4..'' 5> .'m34,5 ...''sirp24 h4 \"|\"8pb..''-~ -o24 m1,22- (-8,14) 6% ``-2jio15 > ,2fg");
+rules.push("more=France National_2 connu");
+rules.push("(France National_2 connu_2)");
+rules.push("demo = >ed ``-1g ```+.''s''irp- ```-.irc2-`` (0,5) -2if,22 h8.' 2> '2pb```4.'' 13% ```+````````,48```rc+```````````` o44 dh.....++++~~ 4> ''m''8,34~ ``+3joi3~~>");
+rules.push("more=France National_2 connu");
+rules.push("[France National_2 connu]");
+rules.push("k-max=225"); 
+rules.push("more=France National_2 all");
+rules.push("[France National_2 inconnu]");
+rules.push("k-max=210"); 
+rules.push("more=France National_2 all");
+rules.push("[France National_2 libre]");
 rules.push("k-max=265");
 rules.push("basefig-max=13");
 rules.push("neg-min=6");
@@ -382,8 +380,8 @@ rules.push("basefig-repeat=1");
 rules.push("roll-repeat=1");
 rules.push("snap-repeat=1");
 rules.push("spin-repeat=1");
-rules.push("more=France national2 all");
-rules.push("(France national2 all)");
+rules.push("more=France National_2 all");
+rules.push("(France National_2 all)");
 rules.push("sf = advanced");
 rules.push("poslj=20");
 rules.push("posnl=20");
@@ -460,17 +458,17 @@ rules.push("2.1.1.1-2");
 rules.push("2.2.1.1-2");
 rules.push("2.3.1.1-2");
 rules.push("2.4.1.1-2");
-rules.push("2.1.3.1-4");
-rules.push("2.2.5.1-4");
-rules.push("2.3.4.1-4");
-rules.push("2.4.5.1-4");
-rules.push("2.4.7.1-4");
-rules.push("2.2.6.1-4");
-rules.push("2.3.5.1-4");
-rules.push("2.4.6.1-4");
-rules.push("2.4.8.1-4");
-rules.push("2.2.3.1-4");
-rules.push("2.2.4.1-4");
+rules.push("2.1.3.1-4 (9,10,10,11)"); 
+rules.push("2.2.3.1-4 (14,14,16,16)"); 
+rules.push("2.2.4.1-4 (16,16,17,17)"); 
+rules.push("2.2.5.1-4 (12,13,14,15)"); 
+rules.push("2.2.6.1-4 (15,16,15,16)"); 
+rules.push("2.3.4.1-4 (15,16,18,19)"); 
+rules.push("2.3.5.1-4 (20,21,21,22)"); 
+rules.push("2.4.5.1-4 (19,20,23,24)"); 
+rules.push("2.4.6.1-4 (25,25,26,27)"); 
+rules.push("2.4.7.1-4 (18,19,22,23)"); 
+rules.push("2.4.8.1-4 (26,27,26,27)"); 
 rules.push("5.2.1.1");
 rules.push("5.2.1.2 NR:2; Max90up");
 rules.push("5.2.1.3 NR:2");
@@ -609,20 +607,20 @@ rules.push("9.10.4.2");
 rules.push("9.10.8.2");
 rules.push("9.11.1.4-8");
 rules.push("9.12.1.4-6");
-rules.push("[France advanced connu]");
-rules.push("more=CIVA advanced known");
-rules.push("[France advanced libre]");
-rules.push("more=CIVA advanced free");
-rules.push("[France advanced inconnu]");
+rules.push("[France Advanced connu]");
+rules.push("more=CIVA Advanced Free Known");
+rules.push("[France Advanced libre]");
+rules.push("more=CIVA Advanced free");
+rules.push("[France Advanced inconnu]");
 rules.push("k-maxperfig=45");
-rules.push("more=CIVA advanced unknownboth");
-rules.push("(France doret connu_1)");
-rules.push("demo = -ita``,24+```` 34h'3if''~~ 10> fbb(`,4'')3-> -2% -is'irp6if+`` -2% ++3jo15------~ 9> ~---pb.'',8+````> `+cc(1)f+````` ``+,4',2''b...''4. ``+1,2frc3,34");
-rules.push("more=France doret connu");
-rules.push("(France doret connu_2)");
-rules.push("demo = ej .',3ta1'' ifb..24.'+``` 4> ~~1n(.48....''),8+ 3> ```7s`ik```24```-`` ```-,2a4,3+`` (-3,13) ```+ac(2)6f,6-````````` (-6,16) ````-3joi3---~ 3> ~--4h2if.' ,48g,f");
-rules.push("more=France doret connu");
-rules.push("[France doret connu]");
+rules.push("more=CIVA Advanced unknownall");  
+rules.push("(France Doret/excellence connu_1)");
+rules.push("demo = ej ~~fh'3''- -''1ita.'+```` 3> ~~n(6if....''),8-~~ 5> ``-```5is.ibb(````````\"|\"3).,4.^> ,3ifh8... ,22m6f,6- 2> ---3j3-------~~ 10> -``,\"|\"4'b..'+++> ',24g`2,2if");
+rules.push("more=France Doret/excellence connu");
+rules.push("(France Doret/excellence connu_2)");
+rules.push("demo = ed ,frdb24.'+`````` ,3b.'3f'' '',24ta.'' 8> ',if`n(.'',2.....)2`+ [0,0] 6sirp,if,1-~ ````-3joi3-~~ 13> ---`8`h..'+++~ 3> .4,3m2,6 `+``````,2f``rc',88+``````````");
+rules.push("more=France Doret/excellence connu");
+rules.push("[France Doret/excellence connu]");
 rules.push("poslj=40");
 rules.push("posnl=40");
 rules.push("floating-point=0");
@@ -630,7 +628,7 @@ rules.push("k-max=350");
 rules.push("basefig-min=9");
 rules.push("basefig-max=9");
 rules.push("allow=^[1-9]");
-rules.push("[France doret libre]");
+rules.push("[France Doret/excellence libre]");
 rules.push("sf = unlimited");
 rules.push("poslj=40");
 rules.push("posnl=40");
@@ -658,7 +656,7 @@ rules.push("isnap-min=2");
 rules.push("osnap-min=2");
 rules.push("opposite-min=1");
 rules.push("allow=^[1-9]");
-rules.push("[France doret inconnu]");
+rules.push("[France Doret/excellence inconnu]");
 rules.push("poslj=40");
 rules.push("posnl=40");
 rules.push("floating-point=0");
@@ -1019,9 +1017,9 @@ rules.push("9.10.8.2");
 rules.push("9.10.10.2-4");
 rules.push("9.11.1.4-6");
 rules.push("9.12.1.4-6");
-rules.push("[France unlimited connu]");
-rules.push("more=CIVA unlimited known");
-rules.push("[France unlimited libre]");
+rules.push("[France Unlimited connu]");
+rules.push("more=CIVA Unlimited Free Known");	
+rules.push("[France Unlimited libre]");
 rules.push("more=CIVA unlimited free");
-rules.push("[France unlimited inconnu]");
+rules.push("[France Unlimited inconnu]");
 rules.push("more=CIVA Unlimited FreeUnknown");	

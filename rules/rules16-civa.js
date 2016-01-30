@@ -803,8 +803,6 @@ rules.push("more=CIVA Advanced Unknownall");
 rules.push("[CIVA Advanced Unknown3]");
 rules.push("k-maxperfig=40");
 rules.push("k-maxperfig-rule=Sporting Code Section 6 Part I, 4.3.4.1");
-rules.push("2.4.5.1-2"); // Only for Unknown2
-rules.push("2.4.7.1-2"); //  "    "     "
 
 rules.push("more=CIVA Advanced Unknownall");
 
@@ -933,11 +931,11 @@ rules.push("1.2.8.3 NOU");
 
 //2.13.1  # Suppression CIVA 2013
 rules.push("2.1.3.2-4");
+rules.push("2.2.3.1-4");
 rules.push("2.2.5.1-4");
 rules.push("2.3.4.1-4");
-//rules.push("2.4.5.1-2"); // Only for Unknown2
-//rules.push("2.4.7.1-2"); //  "    "     "
-rules.push("2.2.3.1-4");
+rules.push("2.4.5.1-2");
+rules.push("2.4.7.1-2");
 
 rules.push("5.2.1.1 NOU");
 rules.push("5.3.1.1-4  NOU ; NF:1 ; NF:2 ; DHVM ; DH45M");
