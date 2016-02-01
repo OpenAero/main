@@ -41,6 +41,10 @@ var version = '2016.1.5';
 // ttt = update text
 // n   = importance (higher = more important)
 var versionNew = {
+  '2016.1.5' : [
+    ['Added French rules for 2016, including reduced K factors for ' +
+    'rolling turns in certain categories', 3]
+  ],
   '2016.1.3' : [
     ['Added option to lock the sequence to prevent changing it', 2],
     ['Improved drag & drop of figures', 2]
@@ -284,6 +288,7 @@ var style = {
   'miniFormA' : 'font-family: verdana, helvetica, sans; font-size: 10px; fill: black;',
   'miniFormABold' : 'font-family: verdana, helvetica, sans; font-size: 10px; font-weight: bold; fill: black;',
   'miniFormAMax' : 'font-family: verdana, helvetica, sans; font-size: 14px; fill: black;',
+  'miniFormAModifiedK' : 'font-family: verdana, helvetica, sans; font-size: 10px; color: red; fill: red;',
   'miniFormASmall' : 'font-family: verdana, helvetica, sans; font-size: 8px; fill: black;',
   'miniFormATotal' : 'font-family: verdana, helvetica, sans; font-size: 16px; font-weight: bold; fill: black;',
   // Form A styles

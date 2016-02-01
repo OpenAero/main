@@ -234,15 +234,16 @@ next    : to chain the lines having the same value of .aresti
 */
 var fig = [];
 
-// rule_K hold the new figure K and the figure index for which a K change has been set in a rule file
-// in the form rule_K[i].xxx where xxx is:
+// rule_K holds the new figure K and the figure index for which a K
+// change has been set in a rule file in the form rule_K[i].xxx where xxx is:
 // .i_fig  : the index in fig for each figure with a changed K
 // .new_K  : the new K factor for the figure
 var rule_K = [];
-// aresti_K hold the original aresti K and the figure index for which a K change has been set in fig array
-// in the form aresti_K[i].xxx where xxx is:
-// .i_fig  : the index in fig for each figure with a changed K
-// .saved_K : the new K factor for the figure
+// aresti_K holds the original aresti K and the figure index for which a
+// K change has been set in fig array in the form aresti_K[key].xxx
+// where key is Aresti number and xxx is:
+// .i_fig   : the index in fig for each figure with a changed K
+// .saved_K : the saved K factor for the figure
 var aresti_K = [];
 var aresti_K_class ; // "class" (kpwrd or kglider) of the active rules for setting the corresponding K in fig.
 // Modif GG v2016.1.4 End
@@ -1799,9 +1800,8 @@ function updateUserTexts () {
     }
   }
   // put language values in userText
-  for (var key in language) {
-    userText[key] = language[key];
-  }
+  for (var key in language) userText[key] = language[key];
+
   var id;
   var value;
   var els = document.getElementsByClassName('userText');
@@ -3604,15 +3604,14 @@ function drawTextArea (text, x, y, w, h, styleId, id, svg) {
   if (styleId) div.setAttribute('style', style[styleId]);
   newText.appendChild (div);
   svg.appendChild (newText);
+  return newText;
 }
 
 // drawCircle draws a circle
 function drawCircle (attributes, svg) {
   svg = svg || SVGRoot.getElementById('sequence');
   var circle = document.createElementNS (svgNS, "circle");
-  for (var key in attributes) {
-    circle.setAttribute (key, attributes[key]);
-  }
+  for (var key in attributes) circle.setAttribute(key, attributes[key]);
   svg.appendChild (circle);
 }
 
@@ -4988,9 +4987,7 @@ function addExampleSequenceToMenu (key) {
 // -set correct options in settings dialog
 function setOptions () {
   // add example sequence entries
-  for (var key in exampleSequences) {
-    addExampleSequenceToMenu (key);
-  }
+  for (var key in exampleSequences) addExampleSequenceToMenu (key);
 
   // set settings dialog options
   
@@ -7152,14 +7149,14 @@ function loadRules() {
         var newCatLine = rules[i];
 // Modif GG v2016.1.4 Start
         var newCat = newCatLine.match(/^[^\s\(]*/g)[0];
-	// Extract in the array newK the specified K if any
-	var newK = newCatLine.match(/\([0-9,:\s]*\)/);	  
-	if (newK) {
-	  newCatLine = newCatLine.replace(newK[0], '');
-// change from ':' to ',' is not necessary since rules file doesn't mix powered and glider
-//	  newK = newK[0].replace(/[\(\)\s]*/g,'').replace(/:/g,',').split(',');
-	  newK = newK[0].replace(/[\(\)\s]*/g,'').split(',');
-	} 
+        // Extract in the array newK the specified K if any
+        var newK = newCatLine.match(/\([0-9,:\s]*\)/);	  
+        if (newK) {
+          newCatLine = newCatLine.replace(newK[0], '');
+      // change from ':' to ',' is not necessary since rules file doesn't mix powered and glider
+      //	  newK = newK[0].replace(/[\(\)\s]*/g,'').replace(/:/g,',').split(',');
+          newK = newK[0].replace(/[\(\)\s]*/g,'').split(',');
+        } 
 // Modif GG v2016.1.4 End
         // Create an array with rules that have to be applied to the figure
         var newRules = newCatLine.replace(newCat, '').replace(/[\s]+/g, '').split(';');
@@ -7174,25 +7171,25 @@ function loadRules() {
 // Modif GG v2016.1.4 Start	  a check could be added to verify that the "size" of multiple and newK match.
           for (var j = multiple.split('-')[0]; j < (parseInt(multiple.split('-')[1]) + 1); j++) {
             checkAllowCatId[newCat.replace(multiple, '') + j] = newRules;
-	    if (newK && (newK[j - multiple.split('-')[0]] != '')) {
-		var i_fig = aresti2ind(newCat.replace(multiple, '') + j,0) ;
-		while (i_fig < 0) {
-			rule_K.push({'i_fig':-i_fig,'new_K':newK[j - multiple.split('-')[0]]}) ;
-			i_fig = aresti2ind(newCat,-i_fig) ;
-		} 
-	      rule_K.push({'i_fig':i_fig,'new_K':newK[j - multiple.split('-')[0]]}) ;
+          if (newK && (newK[j - multiple.split('-')[0]] != '')) {
+            var i_fig = aresti2ind(newCat.replace(multiple, '') + j,0) ;
+            while (i_fig < 0) {
+              rule_K.push({'i_fig':-i_fig,'new_K':newK[j - multiple.split('-')[0]]}) ;
+              i_fig = aresti2ind(newCat,-i_fig) ;
+            } 
+            rule_K.push({'i_fig':i_fig,'new_K':newK[j - multiple.split('-')[0]]}) ;
             }
           }
         } else {
           checkAllowCatId[newCat] = newRules;
-	  if (newK) {
-		var i_fig = aresti2ind(newCat,0) ;
-		while (i_fig < 0) {
-			rule_K.push({'i_fig':-i_fig,'new_K':newK[0]}) ;
-			i_fig = aresti2ind(newCat,-i_fig) ;
-		} 
-	  	rule_K.push({'i_fig':i_fig,'new_K':newK[0]}) ;			
-	  }
+          if (newK) {
+          var i_fig = aresti2ind(newCat,0) ;
+          while (i_fig < 0) {
+            rule_K.push({'i_fig':-i_fig,'new_K':newK[0]}) ;
+            i_fig = aresti2ind(newCat,-i_fig) ;
+          } 
+            rule_K.push({'i_fig':i_fig,'new_K':newK[0]}) ;			
+          }
         }
 // Modif GG v2016.1.4 End
       } else if (rules[i].match(/[^-]+-min=\d+$/)) {
@@ -7360,14 +7357,24 @@ function loadRules() {
 function write_log_fig() {
   newK_string = '' ;
   var ggg = 0 ;
-  for (var gg in fig) if ((fig[gg].aresti) && (fig[gg].next)) {newK_string = newK_string + gg + '\t' + fig[gg].aresti + ' ' + fig[gg].base + '     \tpowered(' + fig[gg].kpwrd + ')\tglider(' + fig[gg].kglider + ')\tnext : ' + fig[gg].next + '\n' ; ggg++ ; }
+  for (var gg in fig) {
+    if ((fig[gg].aresti) && (fig[gg].next)) {
+      newK_string = newK_string + gg + '\t' + fig[gg].aresti + ' ' +
+        fig[gg].base + '     \tpowered(' + fig[gg].kpwrd +
+        ')\tglider(' + fig[gg].kglider + ')\tnext : ' + fig[gg].next +
+        '\n' ; ggg++ ;
+    }
+  }
   console.log('Fig (' + aresti_K_class + ') , ' + ggg + ' chained lines : \n' + newK_string ) ;
 }
 
 // reset_aresti_K reset back K in fig to aresti K when changed in a rule file
 function reset_aresti_K() {
-  if (aresti_K.length != 0) {
-    for (var i in aresti_K) fig[aresti_K[i].i_fig][aresti_K_class] = aresti_K[i].saved_K ;
+  if (Object.keys(aresti_K).length != 0) {
+    for (var key in aresti_K) {
+      fig[aresti_K[key].i_fig][aresti_K_class] = aresti_K[key].saved_K;
+      delete (fig[aresti_K[key].i_fig].arestiK);
+    }
     aresti_K = [] ;
   }
 }
@@ -7379,17 +7386,21 @@ function set_rule_K() {
   // Next line code is just for debug.
 //  console.log('set_rule_K() rulesActive = ' + rulesActive + ' last_class = ' + aresti_K_class + ' class = ' + document.getElementById('class').value);
   // First we reset fig with aresti K that have been changed if any
-  if (aresti_K.length != 0) reset_aresti_K() ;
+  reset_aresti_K() ;
   // Then, if needed, we set fig with the new K from rule and save aresti K in aresti_K
   if (rule_K.length != 0) {
     aresti_K_class = (document.getElementById('class').value == 'powered')? 'kpwrd' : 'kglider' ;
     var debug = '' ;
     for (var i in rule_K) {
 //      debug = debug + '\n' + rule_K[i].i_fig + '\tfig : ' + fig[rule_K[i].i_fig].aresti + ' (' + rule_K[i].new_K + ') \tau lieu de ' + fig[rule_K[i].i_fig][aresti_K_class];
-      aresti_K.push({'i_fig' : rule_K[i].i_fig , 'saved_K' : fig[rule_K[i].i_fig][aresti_K_class]}) ;
-      fig[rule_K[i].i_fig][aresti_K_class] = rule_K[i].new_K ;
+      aresti_K[fig[rule_K[i].i_fig].aresti] = {
+        'i_fig'   : rule_K[i].i_fig,
+        'saved_K' : fig[rule_K[i].i_fig][aresti_K_class]
+      };
+      fig[rule_K[i].i_fig][aresti_K_class] = rule_K[i].new_K;
+      fig[rule_K[i].i_fig].arestiK = fig[rule_K[i].i_fig][aresti_K_class];
     }
-    console.log('set_rule_K() : ' + rule_K.length + ' K has been changed for ' + aresti_K_class + ' :' + debug);
+    console.log('set_rule_K() : ' + rule_K.length + ' K changed for ' + aresti_K_class + ' :' + debug);
     rule_K = [] ;
 //write_log_fig() ;		// just for debug
   }
@@ -7398,37 +7409,45 @@ function set_rule_K() {
 }
 
 // aresti2ind returns the index of the passed aresti code in the fig array
-// when multiple instances exist in fig, the tag next is add to fig array for chaining all these instances.
-// fig.next is set to the index of the next instance with the same aresti value.
-// fig.next is set to -1 for the last instance or if there is no other instance.
-// The chaining for an aresti code is build once the first time this aresti code is looked for.
-// The return index is set to -index if there is an other instance with the same aresti code in fig.
+// When multiple instances exist in fig, the tag next is added to fig
+// array for chaining all these instances.
+// * fig.next is set to the index of the next instance with the same
+//   aresti value.
+// * fig.next is set to -1 for the last instance or if there is no other
+// instance.
+// The chaining for an aresti code is built once the first time this
+// aresti code is looked for.
+// The return index is set to -index if there is an other instance with 
+// the same aresti code in fig.
+
+// This is used for replacing figure K's for certain Aresti figures from
+// rule files
 function aresti2ind(aresti,start) {
   if (start == 0) {
-	var previous = 0 ;
-	var ind = false ;
-	for (var i in fig) if (fig[i].aresti == aresti) {
-		if (fig[i].next) {  	// linkage processed. Returns -fig_index if linked and fig_index if otherwise. 
-			ind = (fig[i].next == -1)? i : -i ; 
-			break ;
-		} else { 		// Built the linkage if any.
-			if (previous != 0) { fig[previous].next = i ; if (!ind) ind = -previous ; }
-			previous = i ;
-		}
-	}
-	if (previous != 0) {
-		fig[previous].next = -1 ;
-		if (!ind) ind = previous ; 
-	}
+    var previous = 0 ;
+    var ind = false ;
+    for (var i in fig) if (fig[i].aresti == aresti) {
+      if (fig[i].next) {  	// linkage processed. Returns -fig_index if linked and fig_index if otherwise. 
+        ind = (fig[i].next == -1)? i : -i ; 
+        break ;
+      } else { 		// Built the linkage if any.
+        if (previous != 0) { fig[previous].next = i ; if (!ind) ind = -previous ; }
+        previous = i ;
+      }
+    }
+    if (previous != 0) {
+      fig[previous].next = -1 ;
+      if (!ind) ind = previous ; 
+    }
   } else {
-	ind = (fig[fig[start].next].next == -1)? fig[start].next : -fig[start].next ;
+    ind = (fig[fig[start].next].next == -1)? fig[start].next : -fig[start].next ;
   }
   return ind ;
 }
  
 // unloadRules will set rules to inactive and do some checks
 function unloadRules () {
-  if (aresti_K.length != 0) reset_aresti_K() ; // reset aresti K just in case. may be not needed ?
+  reset_aresti_K() ; // reset aresti K if needed
 // Modif GG v2016.1.4 End
   console.log('Clearing rules');
   rulesActive = false;
@@ -9158,6 +9177,9 @@ function checkFloatingPoint () {
 function makeMiniFormA (x, y) {  
   var blockX = x;
   var blockY = y;
+  var figNr = 0;
+  var figureK = 0;
+
   // set the header for the correct sporting class
   if (sportingClass.options[sportingClass.selectedIndex]) {
     var myClass = sportingClass.options[sportingClass.selectedIndex].innerHTML;
@@ -9165,11 +9187,10 @@ function makeMiniFormA (x, y) {
     drawRectangle (blockX, blockY, 152, 24, 'pos');
     blockY += 24;
   }
-  var figNr = 0;
   
-  var figureK = 0;
+  var modifiedK = [];
   for (var i = 0; i < figures.length; i++) {
-    aresti = figures[i].aresti;
+    var aresti = figures[i].aresti;
     var k = figures[i].k;
     if (aresti) {
       figNr++;
@@ -9177,6 +9198,7 @@ function makeMiniFormA (x, y) {
       topBlockY = blockY;
       for (var j = 0; j < aresti.length; j++) {
         drawText (aresti[j], blockX + 44, blockY + 16, 'miniFormA');
+        if (aresti[j] in aresti_K) modifiedK.push (figNr);
         drawText (k[j], blockX + 104, blockY + 16, 'miniFormA');
         figK += parseInt(k[j]);
         blockY += 12;
@@ -9238,6 +9260,21 @@ function makeMiniFormA (x, y) {
     drawRectangle (blockX, blockY, 152, 24, 'pos');
     blockY += 24;
   }
+
+  // add text when K has been modified by rules
+  if (modifiedK.length) {
+    var text = drawTextArea (
+      sprintf (userText.changedFigureK, modifiedK.join(','), rulesActive),
+      blockX + 4,
+      blockY + 4,
+      144,
+      100, // height is determined later but needs to be set for iOS
+      'miniFormAModifiedK'
+    )
+    var h = parseInt(text.firstChild.getBoundingClientRect().height);
+    blockY += h;
+  }
+
   return {'width':152, 'height':blockY - y};
 }
 
@@ -10993,6 +11030,7 @@ function makeFormA() {
   Direction = 0;
   figNr = 0;
   svgElement = SVGRoot.getElementById('sequence');
+  var modifiedK = [];
   // Count how many real figures there are
   for (var i = 0; i < figures.length; i++) {
     var aresti = figures[i].aresti;
@@ -11073,6 +11111,7 @@ function makeFormA() {
                 13),
               8);
             for (var j = 0; j < aresti.length; j++) {
+              if (aresti[j] in aresti_K) modifiedK.push (row + 1);
               drawText (aresti[j],
                 x + columnWidths[column] / 2,
                 y + (j + 1) * fontsize,
@@ -11195,7 +11234,12 @@ function makeFormA() {
       row++;
     }
   }
-  SVGRoot.setAttribute("viewBox", '0 0 800 1000');
+  if (modifiedK.length) {
+    drawText (sprintf (userText.changedFigureK, modifiedK.join(','), rulesActive),
+      0, y + 12, 'miniFormAModifiedK', 'start', '', svgElement);
+    SVGRoot.setAttribute("viewBox", '0 0 800 1010');
+  } else SVGRoot.setAttribute("viewBox", '0 0 800 1000');
+  
   // resize svg if we are on a mobile browser
   if (mobileBrowser) {
     SVGRoot.setAttribute('width', '312px');
@@ -11237,6 +11281,7 @@ function makeFormGrid (cols, width, svg) {
   var y = 0;
   var col = 0;
   var scaleMin = Infinity; // high number, will hold the smallest Fig scale
+  var modifiedK = [];
   // draw all real figures
   for (var i = 0; i < figures.length; i++) {
     if (figures[i].aresti) {
@@ -11252,6 +11297,7 @@ function makeFormGrid (cols, width, svg) {
       for (var j = f.k.length - 1; j>=0; j--) figK += parseInt(f.k[j]);
       drawText('K: ' + figK,  x + 5, yy, 'formATextBold', 'start', '', svg);
       for (var j = f.k.length - 1; j>=0; j--) {
+        if (f.aresti[j] in aresti_K) modifiedK.push (figures[i].seqNr);
         yy -= 15;
         drawText(f.aresti[j] + '(' + f.k[j] + ')',
           x + 5,
@@ -11392,14 +11438,22 @@ function makeFormGrid (cols, width, svg) {
       }
     }
   }
+  
   // update viewbox and svg height
-  svg.setAttribute("viewBox", '-1 -1 ' + (width + 2) + ' ' + (y + ch + 2));
+  var height = y + ch + 2;
+  if (modifiedK.length) {
+    drawText (sprintf (userText.changedFigureK, modifiedK.join(','), rulesActive),
+      0, -4, 'miniFormAModifiedK', 'start', '', svgElement);
+    height += 12;
+    svg.setAttribute("viewBox", '-1 -13 ' + (width + 2) + ' ' + height);
+  } else svg.setAttribute("viewBox", '-1 -1 ' + (width + 2) + ' ' + height);
+
   if (mobileBrowser) {
     svg.setAttribute("width", 312);
-    svg.setAttribute("height", roundTwo((y + ch + 2) * (312 / (width + 2))));
+    svg.setAttribute("height", roundTwo(height * (312 / (width + 2))));
   } else {
     svg.setAttribute("width", (width + 2));
-    svg.setAttribute("height", (y + ch + 2));
+    svg.setAttribute("height", height);
   }    
 
   // go through the figures again, set maximum scale to scaleMin * 2
@@ -12275,7 +12329,7 @@ function checkMultiDialog(show) {
 
     div.classList.remove ('noDisplay');
     var el = document.getElementById('multiCurrentRules');
-    el.innerHTML = (rulesActive)? rulesActive : userText.none;
+    el.innerHTML = rulesActive ? rulesActive : userText.none;
   } else {
     div.classList.add ('noDisplay');
   }
@@ -13522,7 +13576,7 @@ function buildForms (print) {
   var svg = '';
   var translateY = 0;
   // save the miniFormA value and set miniFormA depending on checkbox
-  var miniFormASave = (miniFormA)? true : false;
+  var miniFormASave = miniFormA ? true : false;
   // save the Sequence Notes check
   var sequenceNotesSave = document.getElementById('printNotes').checked;
   // save the current logo
@@ -13681,7 +13735,7 @@ function buildForms (print) {
   }
 
   // Reset the screen to the normal view
-  miniFormA = (miniFormASave)? true : false;
+  miniFormA = miniFormASave ? true : false;
   selectForm (activeFormSave);
   
   return (print ? body : svg);
@@ -14224,6 +14278,7 @@ function addFormElementsLR (svg, print) {
     }
   }
   var totalK = 0;
+  var modifiedK = [];
   for (var i = 0; i < figures.length; i++) {
     if (figures[i].aresti) {
       figureNr++;
@@ -14234,6 +14289,7 @@ function addFormElementsLR (svg, print) {
       drawText ('K', x + 70, 15, 'miniFormABold', 'end', '', g);
       var y = 27;
       for (var j = 0; j < figures[i].aresti.length; j++) {
+        if (figures[i].aresti[j] in aresti_K) modifiedK.push (figureNr);
         drawText (figures[i].aresti[j], x, y, 'miniFormA', 'start', '', g);
         drawText (figures[i].k[j], x + 70, y, 'miniFormA', 'end', '', g);
         figK += parseInt(figures[i].k[j]);
@@ -14307,6 +14363,13 @@ function addFormElementsLR (svg, print) {
   if (document.getElementById('printCheck').checked) {
     bBox = addCheckResult (svg, {x:10, y:seqBottom - 6});
     seqBottom -= bBox.height;
+  }
+  
+  // add warning for modified K when applicable
+  if (modifiedK.length) {
+    drawText (sprintf (userText.changedFigureK, modifiedK.join(','), rulesActive),
+      10, seqBottom - 8, 'miniFormAModifiedK', 'start', '', svg);
+    seqBottom -= 10;
   }
   
   // remove wind arrow

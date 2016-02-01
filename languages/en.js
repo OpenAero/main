@@ -125,6 +125,9 @@ lang.en = {
 'cancelPrint' : 'Cancel',
 'cancelSave' : 'Cancel',
 'category' : 'Category',
+// new 2016.1.5
+'changedFigureK' : 'Standard Aresti K of figure(s) %s changed ' +
+  'according rules %s',
 'changeStyle' : 'Change',
 // new 1.5.0
 // checkAlert forms a sub-array

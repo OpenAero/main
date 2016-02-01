@@ -40,7 +40,7 @@
 //######################################################################################
 // prog 2016 : Espoirs, Desavois, National2, Doret 
 
-//##### (Une partie des) Regles specifiques à la France.
+//##### (Une partie des) Règles spécifiques à la France.
 
 rules.push("[France Espoirs connu]");
 rules.push("demo = ed 2g iv.''5s.... m22--~ 5> ~-3j----- -,2 h....'' rp+~~ c....2...+``` ````m6");
