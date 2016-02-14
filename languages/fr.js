@@ -1,4 +1,4 @@
-﻿// fr.js 2016.1.3
+﻿// fr.js 2016.1.5
 // This file is part of OpenAero.
 
 //  OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -120,6 +120,11 @@ lang.fr = {
 'cancelPrint' : 'Annuler',
 'cancelSave' : 'Annuler',
 'category' : 'Catégorie',
+// new 2016.1.5
+'changedFigureK' : 'Le K Aresti normal de la figure %s a été changé ' +
+  'selon le réglement %s',
+'changedFigureKMulti' : 'Les K Aresti normaux des figures %s ont été ' +
+  'changés selon le réglement %s',
 'changeStyle' : 'Changer',
 // new 1.5.0
 // checkAlert forms a sub-array

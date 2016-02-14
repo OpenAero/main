@@ -1,4 +1,4 @@
-﻿// OpenAero.js 2016.1.3 K_modified
+﻿// OpenAero.js 2016.1.5
 // This file is part of OpenAero.
 
 //  OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -40,7 +40,7 @@ var xlinkNS = "http://www.w3.org/1999/xlink";
 
 // debug holds the div for debug messages
 var debug;
-
+// True_Drawing_Angle is used for correctly drawing on Y axis
 var True_Drawing_Angle;
 // set y axis offset to the default
 var yAxisOffset = yAxisOffsetDefault;
@@ -1261,6 +1261,14 @@ function menuInactive (el) {
     this.classList.remove ('active');
   }
 }
+
+function menuTouch () {
+  var node = this;
+  while (node && node.classList.contains ('active')) {
+    menuInactive (node);
+    node = node.parentNode.parentNode;
+  }
+}  
 
 // menuInactiveAll hides all active menus
 function menuInactiveAll () {
@@ -4177,14 +4185,20 @@ function addEventListeners () {
 // addMenuEventListeners adds event listeners for showing and hiding 
 // submenus to all menus
 function addMenuEventListeners() {
-  // menu showing and hiding. Recursively add listeners to menus
+  // menu showing and hiding. Add listeners to all <li> menu items
   function addListeners(e) {
     var li = e.getElementsByTagName ('li');
     for (var i = 0; i < li.length; i++) {
-      li[i].addEventListener('mouseover', menuActive, false);
-      li[i].addEventListener('mouseout', menuInactive, false);
-      if (li.parentNode && (li.parentNode.id !== 'zoomMenu')) {
-        li[i].addEventListener('mouseup', menuInactive, false);
+      li[i].addEventListener('mouseover', menuActive);
+      li[i].addEventListener('mouseout', menuInactive);
+      if (li[i].parentNode && (li[i].parentNode.id !== 'zoomMenu')) {
+        checkUL : {
+          var els = li[i].childNodes;
+          for (var j in els) {
+            if (els[j].tagName && (els[j].tagName === 'UL')) break checkUL;
+          }
+          li[i].addEventListener('mouseup', menuTouch);
+        }
       }
     }
   }
@@ -5258,7 +5272,7 @@ function restoreDefaultSettings () {
     userText.restoreDefaultSettings,
     function(){
       storeLocal ('settings', '');
-      window.document.removeEventListener('beforeunload', preventUnload);
+      window.removeEventListener('beforeunload', preventUnload);
       // reload the page, sequence will be provided by localStorage
       window.location.reload(true);
     }
@@ -6245,7 +6259,8 @@ function latestVersion() {
 
 // preventUnload is used to set a question asking the user if he wants
 // to leave OpenAero. Argument is false (no question) or true (question)
-function preventUnload () {
+function preventUnload (e) {
+  e.returnValue = userText.confirmLeave;
   return userText.confirmLeave;
 }
 
@@ -6262,7 +6277,7 @@ function addUpdateListener () {
         var t = (storage)? userText.loadNewVersion : userText.loadNewVersionNoCookies;
         confirmBox (t, userText.loadNewVersionTitle, function(){
           sequenceSaved = true;
-          window.document.removeEventListener('beforeunload', preventUnload);
+          window.removeEventListener('beforeunload', preventUnload);
           // reload the page, sequence will be provided by localStorage
           window.location.reload(true);
         });
@@ -8633,6 +8648,11 @@ function changeFigureGroup() {
           div.classList.add ('removeFigureButton');
           div.id = 'removeFromQueue' + i;
           div.innerHTML = '<img src="buttons/close.png">';
+          // make sure we remove on touch devices by using touchstart
+          // which fires before mousedown
+          if (touchDevice) {
+            div.addEventListener ('touchstart', removeFromQueue);
+          }
           div.addEventListener ('mousedown', removeFromQueue);
           inner.appendChild(div);
           // add the unknownFigureLetter where defined
@@ -9264,7 +9284,7 @@ function makeMiniFormA (x, y) {
   // add text when K has been modified by rules
   if (modifiedK.length) {
     var text = drawTextArea (
-      sprintf (userText.changedFigureK, modifiedK.join(','), rulesActive),
+      changedFigureKText (modifiedK, rulesActive),
       blockX + 4,
       blockY + 4,
       144,
@@ -10632,7 +10652,7 @@ function fuCellAddHandlers (td) {
  * 
  **********************************************************************/
  
-// dontPropagate makes sure the event doesn't propagate/redirect
+// noPropagation makes sure the event doesn't propagate/redirect
 function noPropagation (e) {
   if (e.stopPropagation) {
     e.stopPropagation();
@@ -11024,6 +11044,13 @@ function buildFuFiguresTab() {
  * 
  **********************************************************************/
 
+// changedFigureKText creates a well-formatted string
+function changedFigureKText (figs) {
+  if (figs && figs.length > 1) {
+    return sprintf (userText.changedFigureKMulti, figs.join(','), rulesActive);
+  } else return sprintf (userText.changedFigureK, figs[0], rulesActive);
+}
+
 // makeFormA creates Form A from the figures object
 function makeFormA() {
   setYAxisOffset (yAxisOffsetDefault);
@@ -11235,9 +11262,9 @@ function makeFormA() {
     }
   }
   if (modifiedK.length) {
-    drawText (sprintf (userText.changedFigureK, modifiedK.join(','), rulesActive),
+    drawText (changedFigureKText (modifiedK, rulesActive),
       0, y + 12, 'miniFormAModifiedK', 'start', '', svgElement);
-    SVGRoot.setAttribute("viewBox", '0 0 800 1010');
+    SVGRoot.setAttribute("viewBox", '0 0 800 1020');
   } else SVGRoot.setAttribute("viewBox", '0 0 800 1000');
   
   // resize svg if we are on a mobile browser
@@ -11442,7 +11469,7 @@ function makeFormGrid (cols, width, svg) {
   // update viewbox and svg height
   var height = y + ch + 2;
   if (modifiedK.length) {
-    drawText (sprintf (userText.changedFigureK, modifiedK.join(','), rulesActive),
+    drawText (changedFigureKText (modifiedK, rulesActive),
       0, -4, 'miniFormAModifiedK', 'start', '', svgElement);
     height += 12;
     svg.setAttribute("viewBox", '-1 -13 ' + (width + 2) + ' ' + height);
@@ -11949,7 +11976,7 @@ function updateSequenceTextHeight () {
       var height = cloneDiv.offsetHeight;
       sequenceText.setAttribute('style', 'height:' + (height + 6) + 'px;');
       // also set the position of the "main" div
-      document.getElementById('main').setAttribute ('style', 'top:' + (height - 14) + 'px;');
+      document.getElementById('main').setAttribute ('style', 'top:' + (height - 12) + 'px;');
     } else {
       cloneDiv.innerHTML = '';
     }
@@ -12024,7 +12051,7 @@ function checkSequenceChanged (force) {
   // Prevent OpenAero from being left unintentionally
   if (activeSequence.text != sequenceText.value) {
     sequenceSaved = false;
-    window.document.addEventListener('beforeunload', preventUnload);
+    window.addEventListener('beforeunload', preventUnload);
   }
 
   if ((activeSequence.text != sequenceText.value) || (force === true)) {
@@ -12035,7 +12062,7 @@ function checkSequenceChanged (force) {
     // whenever the string is empty, consider it 'saved'
     if (string === '') {
       sequenceSaved = true;
-      window.document.removeEventListener('beforeunload', preventUnload);
+      window.removeEventListener('beforeunload', preventUnload);
     }
 
     var figure = [];
@@ -12571,7 +12598,7 @@ function loadedSequence(evt) {
   }
   // changeSequenceInfo();
   sequenceSaved = true;
-  window.document.removeEventListener('beforeunload', preventUnload);
+  window.removeEventListener('beforeunload', preventUnload);
 
   // Activate the loading of the checking rules (if any)
   changeCombo('program');
@@ -12782,7 +12809,10 @@ function activateXMLsequence (xml, noLoadRules) {
     } else el.removeAttribute('style');
   }
   // Load rules when applicable and update sequence data
-  if (!noLoadRules) changeCombo ('program');
+  if (!noLoadRules) {
+    rulesActive = false;
+    changeCombo ('program');
+  }
   
   // debug.appendChild(document.createTextNode('Check sequence changed'));
   
@@ -12846,7 +12876,7 @@ function activateXMLsequence (xml, noLoadRules) {
   }
 
   // sequence was just loaded, so also saved
-  window.document.removeEventListener('beforeunload', preventUnload);
+  window.removeEventListener('beforeunload', preventUnload);
   sequenceSaved = true;
   
   return true;
@@ -13059,27 +13089,16 @@ function waitForIO(writer, callback) {
 
 // saveFile saves a file
 // The function returns true if the file was saved
-function saveFile(data, name, ext, filter, format, noBounce) {
-  
-  /***** Version 1.4.0 *****
-   * We set noBounce to true as bounce does not work well on iPad and
-   * causes different behaviour online and offline.
-   * Keep the code for now in case we want to return to using bounce.
-   */
-  
-  // NEVER BOUNCE
-  noBounce = true;
-  
+function saveFile(data, name, ext, filter, format) {
   // Set saving result to true always as we currently have no method of
   // knowing whether the file was saved or not
   var result = true;
 
-  // depending on browser and online status, we choose a method for
+  // depending on browser we choose a method for
   // saving the file with the following preference:
   // 1) Use chrome.fileSystem, only available when running as Chrome App
   // 2) Use "download" attribute
-  // 3) Use bounce off server
-  // 4) Ask user to right-click and "Save as"
+  // 3) Ask user to right-click and "Save as"
 
   // 1) Chrome app saving
   if (chromeApp.active) {
@@ -13104,7 +13123,7 @@ function saveFile(data, name, ext, filter, format, noBounce) {
         fileName.updateSaveFilename;
         if (ext === '.seq') {
           sequenceSaved = true;
-          window.document.removeEventListener('beforeunload', preventUnload);
+          window.removeEventListener('beforeunload', preventUnload);
         }
       });
     });
@@ -13112,14 +13131,18 @@ function saveFile(data, name, ext, filter, format, noBounce) {
   }
 
   // prevent asking confirmation of 'leaving'
-  window.document.removeEventListener('beforeunload', preventUnload);
+  window.removeEventListener('beforeunload', preventUnload);
+  
+  /** disabled next part. Assume the sequence is saved by the user
+
   // reactivate the warning after five seconds
   var handle = setTimeout(function() {
     if (!sequenceSaved) {
       // Prevent OpenAero from being left unintentionally
-      window.document.addEventListener('beforeunload', preventUnload);
+      window.addEventListener('beforeunload', preventUnload);
     }
   }, 5000);
+  */
 
   // Transform utf8 to base64, otherwise handling in the data URI might
   // not work well
@@ -13131,47 +13154,48 @@ function saveFile(data, name, ext, filter, format, noBounce) {
   var fileURL = 'data:' + format + ',' + data;
 
   var a = document.createElement('a');
+
   if (/i(Pad|Phone|Pod)/i.test (navigator.userAgent)) {
     // 2a) iOS
     
     console.log('Save for iOS');
     document.getElementById('iOSsaveDialog').classList.remove ('noDisplay');
     var el = document.getElementById ('t_iOSsaveFile');
-    el.href = 'iOSsave.html#data:' + format + ',' + data;
+    el.href = 'iOSsave.html#' + fileURL;
     // use a random target string to make sure a new tab is created
     el.target = btoa (Math.random());
   } else if (typeof a.download != "undefined") {
     // 2b) use "download" attribute
     // Present an alert box with a download link for the file
+
+    /** Code for immediate saving, without seperate filename dialog
+     * This does work, but... The name under which the file was saved
+     * can currently (februari 2016) not be retrieved, causing the
+     * 'File name' sequence info field to be incorrect
+     * 
+     * Keep code for future, in case filename reporting is added to
+     * javascript
+    var save = document.createElement('a');
+    save.href = fileURL;
+    save.target = '_blank';
+    save.download = name + ext;
+    
+    var event = document.createEvent('MouseEvents');
+    event.initMouseEvent("click", true, true, window,
+      0, 0, 0, 0, 0, false, false, false, false, 0, null);
+    save.dispatchEvent(event);
+    (window.URL || window.webkitURL).revokeObjectURL(save.href);
+    */
     
     console.log('Save with download attribute');
     saveDialog (userText.downloadHTML5, name, ext);
     document.getElementById('t_saveFile').innerHTML =
-      '<a download="' + name + ext + '" href="data:' + format + ',' +
-      data + '" id="dlButton">' + userText.saveFile + '</a>';
+      '<a download="' + name + ext + '" href="' + fileURL +
+      '" id="dlButton">' + userText.saveFile + '</a>';
   
   } else {
-    if (window.location.protocol === 'http:' ||
-      window.location.protocol === 'https:') {  
-      var http = true;
-    } else {
-      var http = false;
-    }
-    // Disable http bounce for noBounce. Used because zip files cause trouble
-    if (noBounce) http = false;
-    // wait for two seconds when using http
-    // wait for 10 ms otherwise (=immediately)
-    var waitTime = (http) ? 2000 : 10;
 
-    // 3) Try to save the file through a bounce from PHP.
-    //    We use an XMLHttpRequest to determine if we are online
-    var xhr = new XMLHttpRequest();
-    
-    // Set a timer to waitTime. When this activates there is no or bad
-    // internet access
-    var noResponseTimer = setTimeout(function() {
-      xhr.abort();
-      // 4) Present an alert box with a download link for the file, to
+      // 3) Present an alert box with a download link for the file, to
       //    be used with right-click and "Save as...". The "download"
       //    attribute will not work, as otherwise we would not be
       //    running this routine. But we'll keep it for consistency
@@ -13180,78 +13204,11 @@ function saveFile(data, name, ext, filter, format, noBounce) {
       console.log('Save with right-click');
       saveDialog (userText.downloadLegacy, name, ext);
       document.getElementById('t_saveFile').innerHTML =
-        '<a href="data:' + format + ',' +
-        data + '" id="dlButton" target="_blank">' + userText.saveFile +
-        '</a>';
-    }, waitTime);
-  
-    if (http) {
-      // Set event for XMLHttpRequest state change
-      xhr.onreadystatechange = function() {
-        if (xhr.readyState != 4) {
-          return;
-        }
-        if (xhr.status == 200) {
-          // connection available, go for bounce
-          clearTimeout(noResponseTimer);
-          console.log('Save through bounce');
-          // show save dialog
-          saveDialog (userText.downloadHTML5, name, ext);
-          // add link that will arrange submitting the form to openaero.php
-          var el = document.getElementById('t_saveFile');
-          el.innerHTML = '<a href="#">' + userText.saveFile + '</a>';
-          el.addEventListener ('mousedown', bounceFile, false);
-          // populate bounce form
-          var form = document.getElementById("saveFileForm");
-          form.elements.data.value = data;
-          form.elements.name.value = document.getElementById('dlTextField').value + ext;
-          form.elements.format.value = format;
-        }
-      }
-      
-      // Send request
-      xhr.open("GET", 'openaero.php');
-      xhr.send();
-    }
+        '<a href="' + fileURL + '" id="dlButton" target="_blank">' +
+        userText.saveFile + '</a>';  
   }
 
-    /** code for immediate saving, without seperate filename dialog
-    var save = document.createElement('a');
-    save.href = fileURL;
-    save.target = '_blank';
-    save.download = savefile.name;
-    
-    var event = document.createEvent('MouseEvents');
-    event.initMouseEvent("click", true, true, window,
-      0, 0, 0, 0, 0, false, false, false, false, 0, null);
-    save.dispatchEvent(event);
-    (window.URL || window.webkitURL).revokeObjectURL(save.href);
-    */
- 
-/** IE code, disabled. Maybe use in the future
-
-  // for non-IE
-  if (!window.ActiveXObject) {
-  }
-
-  // for IE
-  else if ( !! window.ActiveXObject && document.execCommand)     {
-      var _window = window.open(fileURL, '_blank');
-      _window.document.close();
-      _window.document.execCommand('SaveAs', true, fileName || fileURL)
-      _window.close();
-  }
-
-//END IE code */ 
-  
   return result;
-}
-
-// bounceFile will submit the filled-out form for bouncing file off server
-function bounceFile () {
-  console.log ('Submitting file for bounce');
-  document.getElementById('saveFileForm').submit();
-  document.getElementById('t_saveFile').removeEventListener ('mousedown', bounceFile);
 }
   
 // saveSequence will save a sequence to a .seq file
@@ -13305,7 +13262,7 @@ function saveQueue () {
   // Beautify the output.
   var xml = vkbeautify.xml (activeSequence.xml);
   // prevent "leaving" warning
-  window.document.removeEventListener('beforeunload', preventUnload);
+  window.removeEventListener('beforeunload', preventUnload);
   saveFile (
     xml,
     filename,
@@ -13315,7 +13272,7 @@ function saveQueue () {
   );
   if (!sequenceSaved) {
     // Prevent OpenAero from being left unintentionally
-    window.document.addEventListener('beforeunload', preventUnload);
+    window.addEventListener('beforeunload', preventUnload);
   }
   // restore sequence
   sequenceText.value = sequenceString;
@@ -14367,8 +14324,8 @@ function addFormElementsLR (svg, print) {
   
   // add warning for modified K when applicable
   if (modifiedK.length) {
-    drawText (sprintf (userText.changedFigureK, modifiedK.join(','), rulesActive),
-      10, seqBottom - 8, 'miniFormAModifiedK', 'start', '', svg);
+    drawText (changedFigureKText (modifiedK, rulesActive),
+      10, seqBottom - 8, 'modifiedK', 'start', '', svg);
     seqBottom -= 10;
   }
   
@@ -14948,8 +14905,8 @@ function saveFigs () {
     filename,
     '.zip',
     {'name':'ZIP file', 'filter':'*.zip'},
-    'application/zip;base64',
-    true);
+    'application/zip;base64'
+  );
   selectedFigure.id = id;
   displaySelectedFigure();
 }  

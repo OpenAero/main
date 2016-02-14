@@ -310,6 +310,7 @@ var style = {
   'formLineBold' : 'stroke: black; stroke-width: 4px; fill: none;',
   // Print styles
   'formBackground' : 'fill: white;',
+  'modifiedK' : 'font-family: monospace; font-size: 8px; color: red; fill: red;',
   'printNotes' : 'font-family: verdana, helvetica, sans; font-size: 14px; fill: black;',
   'sequenceString' : 'font-family: monospace; font-size: 8px; color: blue; fill: blue; word-wrap: break-word;',
   'windArrow' : 'stroke: black; stroke-width: 1.5px; fill: white;',

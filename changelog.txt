@@ -4,6 +4,12 @@
 * added warning when parsing "more=" rule to non-existent rule
 * added checking for maximum K according rules in figure chooser
 * moved rolling turns in rules to generic (e.g. CIVA Advanced Unknownall) as max K checking is handled in figure chooser
+* removed 'bounce' and Internet Explorer option for saving files
+* restored functioning of preventUnload for Chrome 34+
+* restored menu clearing after touch (addMenuEventListeners)
+* corrected BAeA club positioning K to 10
+* fixed positioning K clearing when loading a sequence with the same rules as previous
+* restored functioning of Remove Queue Figure button on touch devices
 
 2016.1.4
 * fixed breaking of sequence scrolling on touch devices in 2016.1.3

@@ -26,13 +26,15 @@
 // - altered Club and Sports to Club and Sports respectively
 // - renamed Free programme to Free 2015 as BAeA now uses the
 //   CIVA Free Known
+// 2016.1.5
+// - corrected BAeA Club positioning to 10
 
 //######################################################################
 //##### BAeA CLUB KNOWN ################################################
 //######################################################################
 
 rules.push("[BAeA Club Known]");
-rules.push("posnl=15");
+rules.push("posnl=10");
 rules.push("demo=o c.,2 (2,6) jw +1+ h.' d");
 
 //######################################################################

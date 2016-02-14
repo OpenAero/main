@@ -208,6 +208,72 @@ exampleSequences['2015 BAeA Standard Known'] = '<sequence>' +
 '<oa_version>2016.1.3</oa_version>' +
 '</sequence>';
 
+exampleSequences['2015 France Espoirs Connu'] = '<sequence>' +
+'<class>powered</class>' +
+'<rules>France</rules>' +
+'<category>espoirs</category>' +
+'<program>connu</program>' +
+'<positioning>10</positioning>' +
+"<sequence_text>d iv'6s..'+++ +h.. o ~m- (0,13) -22- 2% -2j- -2 6% 2j~ ~+c2...'+`` 3% ```+```````2``rc``````+~ 6> m2</sequence_text>" +
+'<logo>FFAvoltige</logo>' +
+'<oa_version>2016.1.4</oa_version>' +
+'</sequence>';
+
+exampleSequences['2015 France Desavois Connu'] = '<sequence>' +
+'<category>desavois</category>' +
+'<class>powered</class>' +
+'<program>connu</program>' +
+'<rules>France</rules>' +
+'<positioning>15</positioning>' +
+"<sequence_text>ed ircf- -iv.'is. 4> 24h.''- ``-c'',2''-`` 2> -pb.. 6> 8b...+``` > `+`,4k`2`+``` 2% `+m2,1+`` -4% ``+1jo1</sequence_text>" +
+'<logo>FFAvoltige</logo>' +
+'<oa_version>2016.1.4</oa_version>' +
+'</sequence>';
+
+exampleSequences['2015 France National2 Connu1'] = '<sequence>' +
+'<class>powered</class>' +
+'<rules>France</rules>' +
+'<category>national2</category>' +
+'<program>connu_1</program>' +
+'<positioning>20</positioning>' +
+"<sequence_text>d2,24 ``+ivs.'- (-11,7) -k2- -``4b.' 24h4 .'mf- (-5,13) -`8,5-` 2% ``-2jio15+`` -2% 5> ``+44c'',2.'+`` (-1,7) ,4pb'' 3> .,4''rp22~></sequence_text>" +
+'<logo>FFAvoltige</logo>' +
+'<oa_version>2016.1.4</oa_version>' +
+'</sequence>';
+
+exampleSequences['2015 France National2 Connu2'] = '<sequence>' +
+'<category>national2</category>' +
+'<class>powered</class>' +
+'<program>connu_2</program>' +
+'<rules>France</rules>' +
+'<positioning>20</positioning>' +
+"<sequence_text>ej '24'h'4.> ~v'4'-- --iv.5is.'~ o22 '2'dh....''--- 15> -m2- ``-....'irc+`` 4,3- 6% ````-2joi15+``` 5% > ```+````````2f```rc`+`````` 2> ~~+```k.'',24'+`` `+d24,2</sequence_text>" +
+'<logo>FFAvoltige</logo>' +
+'<oa_version>2016.1.4</oa_version>' +
+'</sequence>';
+
+exampleSequences['2015 France Doret Connu1'] = '<sequence>' +
+'<category>doret</category>' +
+'<class>powered</class>' +
+'<program>connu_1</program>' +
+'<rules>France</rules>' +
+'<positioning>40</positioning>' +
+"<sequence_text>-ita``,24+```` 34h'3if''~~ 10> fbb(`,4'')3-> -2% -is'irp6if+`` -2% ++3jo15------~ 9> ~---pb.'',8+````> `+cc(1)f+````` ``+,4',2''b...''4. ``+1,2frc3,34</sequence_text>" +
+'<logo>FFAvoltige</logo>' +
+'<oa_version>2016.1.4</oa_version>' +
+'</sequence>';
+
+exampleSequences['2015 France Doret Connu2'] = '<sequence>' +
+'<category>doret</category>' +
+'<class>powered</class>' +
+'<program>connu_2</program>' +
+'<rules>France</rules>' +
+'<positioning>40</positioning>' +
+"<sequence_text>ej .',3ta1'' ifb..24.'+``` 4> ~~1n(.48....''),8+ 3> ```7s`ik```24```-`` ```-,2a4,3+`` (-3,13) ```+ac(2)6f,6-````````` (-6,16) ````-3joi3---~ 3> ~--4h2if.' ,48g,f</sequence_text>" +
+'<logo>FFAvoltige</logo>' +
+'<oa_version>2016.1.4</oa_version>' +
+'</sequence>';
+
 exampleSequences['2014 CIVA Unl Known'] = '<sequence>' +
 '<category>Unlimited</category>' +
 '<class>powered</class>' +
