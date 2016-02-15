@@ -12810,7 +12810,7 @@ function activateXMLsequence (xml, noLoadRules) {
   }
   // Load rules when applicable and update sequence data
   if (!noLoadRules) {
-    rulesActive = false;
+    unloadRules();
     changeCombo ('program');
   }
   
