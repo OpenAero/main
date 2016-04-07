@@ -60,6 +60,8 @@ OpenAero 2016.1
    checking
  - Changed programmes 2-4
  - removed Program (i.s.o. Programme). Obsolete since 2013
+OpenAero 2016.2
+-added several rule references, using the new x-y-rule=... syntax
 */
 
 //#######################################################################################
@@ -823,6 +825,7 @@ rules.push("group-two=^7\\.8\\.[1-8]");
 rules.push("k-minperfig=15");
 
 rules.push("snap-maxperfig=1");
+rules.push("snap-maxperfig-rule=Sporting Code Section 6 Part I, 4.3.4.4 b)");
 rules.push("snap-min=2");
 rules.push("snap-max=4");
 
@@ -843,7 +846,9 @@ rules.push("two-name_fr=famille 7.8.1-8 (noeuds de savoie)");
 rules.push("two-max=1");
 
 rules.push("basefig-min=10");
+rules.push("basefig-min-rule=Sporting Code Section 6 Part I, 4.3.4.1");
 rules.push("basefig-max=10");
+rules.push("basefig-max-rule=Sporting Code Section 6 Part I, 4.3.4.1");
 
 rules.push("basefig-repeat=1");
 rules.push("roll-repeat=1");
@@ -891,6 +896,7 @@ rules.push("conv-advdh45=^9\\.(4\\.2\\.2)=v ;  ^9\\.(1\\.2\\.2)=v ; ^9\\.=x; ^0\
 rules.push("rule-DH45M = advdh45: ^x");
 rules.push("why-DH45M = max of 9.4.2.2 or 9.1.2.2 allowed on 45° up");
 rules.push("why_fr-DH45M = maximun 9.4.2.2 ou 9.1.2.2 autorisé en 45° montant");
+rules.push("DH45M-rule=Sporting Code Section 6 Part I, A.8.1.2");
 
 rules.push("conv-advdhv= ^9\\.(1\\.1\\.1)=v ; ^9\\.=x; ^0\\.=z");
 rules.push("rule-DHVM = advdhv: ^. x");

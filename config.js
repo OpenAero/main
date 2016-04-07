@@ -1,4 +1,4 @@
-// config.js 2016.1.5
+// config.js 2016.2
 
 // This file is part of OpenAero.
 
@@ -32,15 +32,24 @@
 
 // **************
 // Define active version number of OpenAero
-// **************
+// It is of format yyyy.x.z
+// Where a new x should be used for versions that create sequences not
+// fully backward compatible with the previous version
 
-var version = '2016.1.5';
-// versionNew is an object that contains version update information
-// The structure is {vvv : [[ttt, n], ...], ...} , where
-// vvv = version number
-// ttt = update text
-// n   = importance (higher = more important)
+var version = '2016.2';
+/* versionNew is an object that contains version update information
+   The structure is {vvv : [[ttt, n], ...], ...} , where
+   vvv = version number
+   ttt = update text
+   n   = importance (higher = more important)
+*/
 var versionNew = {
+  '2016.2' : [
+    ['Added option to flip the Y axis direction for individual ' +
+    'figures. Except when the figure starts on Y axis.', 4],
+    ['Added "Open Sequence" for iOS. As of iOS 9, opening files from ' +
+    'Dropbox and Google Drive is supported.', 2]
+  ],
   '2016.1.5' : [
     ['Added French rules for 2016, including reduced K factors for ' +
     'rolling turns in certain categories', 3]

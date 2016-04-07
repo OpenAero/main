@@ -1,4 +1,4 @@
-﻿// OpenAero.js 2016.1.5
+﻿// OpenAero.js 2016.2
 // This file is part of OpenAero.
 
 //  OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -266,6 +266,8 @@ var rollKPwrd = [];
 var rollKGlider = [];
 // alertMsgs will hold any alerts about figures and the sequence
 var alertMsgs = [];
+// alertMsgsRules will hold the Rulebook reference for alerts
+var alertMsgRules = [];
 // errors is used for tracking startup errors
 var errors = [];
 
@@ -1262,12 +1264,16 @@ function menuInactive (el) {
   }
 }
 
+// menuTouch deactivates menu when called
 function menuTouch () {
   var node = this;
-  while (node && node.classList.contains ('active')) {
-    menuInactive (node);
-    node = node.parentNode.parentNode;
-  }
+  // add a delay to make sure the menu item gets activated
+  setTimeout(function(){
+    while (node && node.classList.contains ('active')) {
+      menuInactive (node);
+      node = node.parentNode.parentNode;
+    }
+  }, 200);
 }  
 
 // menuInactiveAll hides all active menus
@@ -3838,7 +3844,6 @@ function doOnLoad () {
   
   // disable or change some items for iOS
   if (/i(Pad|Phone|Pod)/i.test (navigator.userAgent)) {
-    document.getElementById('t_openSequence').parentNode.classList.add ('noDisplay');
     document.getElementById('t_saveSequence').parentNode.classList.add ('noDisplay');
     document.getElementById('t_saveFigsSeparate').parentNode.classList.add ('noDisplay');
     document.getElementById('t_printExplain').innerHTML = userText.iOSprintExplain;
@@ -4043,6 +4048,7 @@ function addEventListeners () {
   document.getElementById('t_addFigureText').addEventListener('mousedown', showFigureSelector, false);
   document.getElementById('subSequence').addEventListener('click', clickButton, false);
   document.getElementById('deleteFig').addEventListener('click', clickButton, false);
+  document.getElementById('flipYAxis').addEventListener('click', clickButton, false);
   document.getElementById('switchFirstRoll').addEventListener('click', clickButton, false);
   document.getElementById('switchY').addEventListener('click', clickButton, false);
   document.getElementById('switchX').addEventListener('click', clickButton, false);
@@ -4099,13 +4105,13 @@ function addEventListeners () {
   document.getElementById('language').addEventListener('change', changeLanguage, false);
   document.getElementById('gridColumns').addEventListener('change', updateGridColumns, false);
   document.getElementById('queueColumns').addEventListener('change', changeQueueColumns, false);
-  document.getElementById('positionClearAuto').addEventListener('change', saveSettingsStorage, false);
-  document.getElementById('showHandles').addEventListener('change', saveSettingsStorage, false);
-  document.getElementById('imageFormatPNG').addEventListener('change', saveSettingsStorage, false);
-  document.getElementById('imageFormatSVG').addEventListener('change', saveSettingsStorage, false);
-  document.getElementById('saveFigsSeparateWidth').addEventListener('change', saveSettingsStorage, false);
-  document.getElementById('saveFigsSeparateHeight').addEventListener('change', saveSettingsStorage, false);
-  document.getElementById('zipImageFilenamePattern').addEventListener('change', saveSettingsStorage, false);
+  document.getElementById('positionClearAuto').addEventListener('change', function(){saveSettingsStorage()}, false);
+  document.getElementById('showHandles').addEventListener('change', function(){saveSettingsStorage()}, false);
+  document.getElementById('imageFormatPNG').addEventListener('change', function(){saveSettingsStorage()}, false);
+  document.getElementById('imageFormatSVG').addEventListener('change', function(){saveSettingsStorage()}, false);
+  document.getElementById('saveFigsSeparateWidth').addEventListener('change', function(){saveSettingsStorage()}, false);
+  document.getElementById('saveFigsSeparateHeight').addEventListener('change', function(){saveSettingsStorage()}, false);
+  document.getElementById('zipImageFilenamePattern').addEventListener('change', function(){saveSettingsStorage()}, false);
 
   document.getElementById('numberInCircle').addEventListener('change', updateNumberInCircle, false);
   document.getElementById('rollFontSize').addEventListener('change', updateRollFontSize, false);
@@ -4549,6 +4555,7 @@ function clickButton () {
         case 'undo':
         case 'redo':
         case 'deleteFig':
+        case 'flipYAxis':
         case 'magMin':
         case 'magPlus':
           // don't click tempo buttons that are on
@@ -4630,7 +4637,7 @@ function clickButton () {
         if (figures[selectedFigure.id].moveTo ||
           figures[selectedFigure.id].curveTo ||
           figures[selectedFigure.id].moveForward) {
-          updateSequence(selectedFigure.id, '', true);
+          updateSequence (selectedFigure.id, '', true);
         }
         // when Y was flipped and we removed the figure with the only
         // flip symbol, put it back
@@ -4641,6 +4648,33 @@ function clickButton () {
       }
       // don't continue function, figure has been removed
       return;
+    case 'flipYAxis':
+      if (selectedFigure.id !== null) {
+        
+        function flipFigureYAxis (id) {
+          var v = figures[id].string;
+          if (v.replace(regexComments, '').match(regexFlipYAxis)) {
+            // disable flip
+            var t = '';
+            var inComment = false;
+            for (var i = 0; i < v.length; i++) {
+              // disregard / in comments
+              if (v[i] === userpat.comment) inComment = !inComment;
+              // check for single /
+              if ((v[i] !== '/') || inComment) t += v[i];
+            }
+            v = t;
+          } else {
+            v = userpat.flipYaxis + v;
+          }
+          updateSequence (id, v, true);
+        }
+        
+        flipFigureYAxis (selectedFigure.id);
+        // don't continue function. Figure already changed
+        return;
+      }
+      break;
     case 'magMin':
       document.getElementById('scale').value--;
       updateFigure();
@@ -5127,7 +5161,8 @@ function loadSettingsStorage (location) {
             }
           }
         } else {
-          el.value = value;
+          // only update non-empty settings
+          if (value !== '') el.value = value;
         }
       }
       updateUserTexts();
@@ -5143,6 +5178,7 @@ function loadSettingsStorage (location) {
 // When location is not set it will default to 'settings'
 function saveSettingsStorage (location) {
   location = location || 'settings';
+
   if (storage) {
     var settings = [];
     for (var i = saveSettings.length - 1; i >=0; i--) {
@@ -5475,6 +5511,11 @@ function updateFigureOptions (figureId) {
     // show figure modifiers
     document.getElementById('figureOptions').classList.remove ('noDisplay');
     document.getElementById('entryExit').classList.remove ('noDisplay');
+    if ((f.entryAxis === 'X') || (f.seqNr === 1) || f.subSequence) {
+      document.getElementById ('flipYAxis').classList.remove ('noDisplay');
+    } else {
+      document.getElementById ('flipYAxis').classList.add ('noDisplay');
+    }      
     // set switchFirstRoll
     var image = document.getElementById('switchFirstRoll').firstChild.firstChild;
     if (f.switchFirstRoll) {
@@ -7255,6 +7296,22 @@ function loadRules() {
         if (ruleSeqCheck[group[0]]) {
           ruleSeqCheck[group[0]][rules[i].match(/name_[a-z]{2}/)[0]] = group[1];
         }
+      } else if (rules[i].match(/-[^-]+-rule=.+$/)) {
+        // apply rulebook references
+        var part = rules[i].match (/^([^-]+)-([^-]+)-rule=(.*)$/, '');
+        if (checkCatGroup[part[1]] && checkCatGroup[part[1]][part[2]]) {
+          if (!checkCatGroup[part[1]].rule) checkCatGroup[part[1]].rule = [];
+          checkCatGroup[part[1]].rule[part[2]] = part[3];
+        }
+        if (checkFigGroup[part[1]] && checkFigGroup[part[1]][part[2]]) {
+          if (!checkFigGroup[part[1]].rule) checkFigGroup[part[1]].rule = [];
+          checkFigGroup[part[1]].rule[part[2]] = part[3];
+        }
+      } else if (rules[i].match(/-rule=.+$/)) {
+        var newRuleName = rules[i].match(/^[^-]+/)[0];
+        if (checkRule[newRuleName]) {
+          checkRule[newRuleName].rule = rules[i].replace(/^[^=]+=/, '');
+        }        
       } else if (rules[i].match(/^conv-[^=]+=.+/)) {
 // Apply conv-x rules
 // DEPRECATED
@@ -7637,7 +7694,6 @@ function checkRules () {
           }
           // Check for specific allowed figures if the checkAllowCatId
           // object is not empty
-          // Used only for Unknowns at this point (2012)
           if (Object.keys(checkAllowCatId).length > 0) {
             //log.push ('Checking for specific allowed figures');
             if (!(aresti[j] in checkAllowCatId)) {
@@ -7648,7 +7704,6 @@ function checkRules () {
         }
         // Run rule checks on specific allowed figures if the
         // checkAllowCatId object is not empty
-        // Used only for Unknowns at this point (2012)
         if (Object.keys(checkAllowCatId).length > 0) {
           //log.push ('Checking rules on specific allowed figures');
           var arestiNr = figString.split(' ')[0];
@@ -7702,7 +7757,7 @@ function checkRules () {
               }
               if (checkRule[rule].regex) {
                 if (checkLine.match(checkRule[rule].regex)) {
-                  checkAlert (why(rule) + forElement, 'rule', figNr);
+                  checkAlert (why(rule) + forElement, 'rule', figNr, rule);
                   log.push ('*** Error: Fig ' + figNr + ': ' + checkRule[rule].why + forElement);
                 }
               } else if (checkRule[rule].less) {
@@ -7713,7 +7768,7 @@ function checkRules () {
                   }
                   if ((check[l] == ' ') || (l == 0)) {
                     if (sum >= parseInt (checkRule[rule].less)) {
-                      checkAlert (why(rule) + forElement, 'rule', figNr);
+                      checkAlert (why(rule) + forElement, 'rule', figNr, rule);
                       log.push ('*** Error: Fig ' + figNr + ': ' + checkRule[rule].why + forElement);
                     }
                     sum = 0;
@@ -7727,7 +7782,7 @@ function checkRules () {
                   }
                 }
                 if (sum >= parseInt (checkRule[rule].totalLess)) {
-                  checkAlert (why(rule) + forElement, 'rule', figNr);
+                  checkAlert (why(rule) + forElement, 'rule', figNr, rule);
                   log.push ('*** Error: Fig ' + figNr + ': ' + checkRule[rule].why + forElement);
                 }
               }
@@ -7765,7 +7820,7 @@ function checkRules () {
                   }
                   if (checkRule[rule].regex) {
                     if (checkLine.match(checkRule[rule].regex)) {
-                      checkAlert (why(rule), 'rule', figNr);
+                      checkAlert (why(rule), 'rule', figNr, rule);
                       log.push ('*** Error: Fig ' + figNr + ': ' + checkRule[rule].why);
                     }
                   } else if (checkRule[rule].less) {
@@ -7776,7 +7831,7 @@ function checkRules () {
                       }
                       if ((check[l] == ' ') || (l == 0)) {
                         if (sum >= parseInt (checkRule[rule].less)) {
-                          checkAlert (why(rule), 'rule', figNr);
+                          checkAlert (why(rule), 'rule', figNr, rule);
                           log.push ('*** Error: Fig ' + figNr + ': ' + checkRule[rule].why);
                         }
                         sum = 0;
@@ -7790,7 +7845,7 @@ function checkRules () {
                       }
                     }
                     if (sum >= parseInt (checkRule[rule].totalLess)) {
-                      checkAlert (why(rule), 'rule', figNr);
+                      checkAlert (why(rule), 'rule', figNr, rule);
                       log.push ('*** Error: Fig ' + figNr + ': ' + checkRule[rule].why);
                     }
 
@@ -8091,46 +8146,34 @@ function checkRuleText (obj) {
 }
 
 // checkAlert adds an alert resulting from sequence checking
-// 'value' represents a value for processing
-// 'type' represents the type of checking error
-function checkAlert (value, type, figNr) {
+// value : a value for processing
+// type  : the type of checking error
+// rule  : optional, the rule that invoked this as in rule-xxx
+function checkAlert (value, type, figNr, rule) {
+  var alertRule = false;
   var alertFig = figNr ? '(' + figNr + ') ' : '';
   switch (type) {
     case 'maxperfig':
-      alertMsgs.push(alertFig + sprintf (userText.checkAlert.maxperfig,
-        checkCatGroup[value].maxperfig, checkName(checkCatGroup[value])));
-      break;
     case 'minperfig':
-      alertMsgs.push(alertFig + sprintf (userText.checkAlert.minperfig,
-        checkCatGroup[value].minperfig, checkName(checkCatGroup[value])));
-      break   
     case 'max':
-      alertMsgs.push(alertFig + sprintf (userText.checkAlert.max,
-        checkCatGroup[value].max, checkName(checkCatGroup[value])));
-      break;
     case 'min':
-      alertMsgs.push(alertFig + sprintf (userText.checkAlert.min,
-        checkCatGroup[value].min, checkName(checkCatGroup[value])));
-      break;
     case 'repeat':
-      alertMsgs.push(alertFig + sprintf (userText.checkAlert.repeat,
-        checkCatGroup[value].repeat, checkName(checkCatGroup[value])));
-      break;
     case 'totrepeat':
-      alertMsgs.push(alertFig + sprintf (userText.checkAlert.totrepeat,
-        checkCatGroup[value].totrepeat, checkName(checkCatGroup[value])));
+      alertMsgs.push(alertFig + sprintf (userText.checkAlert[type],
+        checkCatGroup[value][type], checkName(checkCatGroup[value])));
+      if (checkCatGroup[value].rule) {
+        alertRule = checkCatGroup[value].rule[type];
+      }
       break;
     case 'figmax':
-      alertMsgs.push(alertFig + sprintf (userText.checkAlert.figmax,
-        checkFigGroup[value].max, checkName(checkFigGroup[value])));
-      break;
     case 'figmin':
-      alertMsgs.push(alertFig + sprintf (userText.checkAlert.figmin,
-        checkFigGroup[value].min, checkName(checkFigGroup[value])));
-      break;
     case 'figrepeat':
-      alertMsgs.push(alertFig + sprintf (userText.checkAlert.figrepeat,
-        checkFigGroup[value].repeat, checkName(checkFigGroup[value])));
+      alertMsgs.push(alertFig + sprintf (userText.checkAlert[type],
+        checkFigGroup[value][type.replace (/^fig/, '')],
+        checkName(checkFigGroup[value])));
+      if (checkFigGroup[value].rule) {
+        alertRule = checkFigGroup[value].rule[type.replace (/^fig/, '')];
+      }
       break;
     case 'notAllowed':
       alertMsgs.push(alertFig + sprintf (userText.checkAlert.notAllowed,
@@ -8138,7 +8181,11 @@ function checkAlert (value, type, figNr) {
       break;
     default:
       alertMsgs.push(alertFig + value);
+      if (rule && checkRule[rule] && checkRule[rule].rule) {
+        alertRule = checkRule[rule].rule;
+      }
   }
+  if (alertRule) alertMsgRules [alertMsgs[alertMsgs.length - 1]] = alertRule;
 }
 
 // checkSequence will show a window with sequence checking information
@@ -8330,6 +8377,7 @@ function changeReferenceSequence (auto) {
   
   // restore sequence
   alertMsgs = [];
+  alertMsgRules = [];
   checkSequenceChanged (true);
 
 }
@@ -8674,6 +8722,7 @@ function changeFigureGroup() {
   if (-1 in figures) {
     // Clear alert messages created by building figures
     alertMsgs = [];
+    alertMsgRules = [];
     // Delete this figure
     delete figures[-1];
   }
@@ -9406,16 +9455,18 @@ function grabFigure(evt) {
     var minDistSq = Infinity;
     for (var i = figures.length - 1; i >= 0; i--) {
      if (figures[i].draggable) {
-       var bBox = svg.getElementById('figure'+i).getBoundingClientRect();
-       // clicked well within bBox (>margin units within border)?
-       if ((x > (bBox.left + margin)) && (x < (bBox.right - margin)) &&
-         (y > (bBox.top + margin)) && (y < (bBox.bottom - margin))) {
-         // calculate distance squared to bBox centre
-         var distSq = Math.pow(x - (bBox.left + (bBox.width / 2)), 2) +
-           Math.pow(y - (bBox.top + (bBox.height / 2)), 2);
-         if (distSq < minDistSq) {
-           minDistSq = distSq;
-           closest = i;
+       if (svg.getElementById('figure' + i)) {
+         var bBox = svg.getElementById('figure'+i).getBoundingClientRect();
+         // clicked well within bBox (>margin units within border)?
+         if ((x > (bBox.left + margin)) && (x < (bBox.right - margin)) &&
+           (y > (bBox.top + margin)) && (y < (bBox.bottom - margin))) {
+           // calculate distance squared to bBox centre
+           var distSq = Math.pow(x - (bBox.left + (bBox.width / 2)), 2) +
+             Math.pow(y - (bBox.top + (bBox.height / 2)), 2);
+           if (distSq < minDistSq) {
+             minDistSq = distSq;
+             closest = i;
+           }
          }
        }
      }
@@ -9953,7 +10004,8 @@ function changeEntryDirection () {
   updateSequence(-1, code);
 }
 
-// flipYAxis will flip the drawn direction of the Y axis
+// flipYAxis will flip the drawn direction of the Y axis for the whole
+// sequence
 function flipYAxis () {
   var v = sequenceText.value;
   if (v.replace(regexComments, '').match(regexFlipYAxis)) {
@@ -10413,11 +10465,7 @@ function startFuDesigner(dontConfirm) {
     
     // show finalize button
     document.getElementById ('t_finalizeSequence').classList.remove ('noDisplay');
-  
-    // add new stylesheet rule 0 to hide all elements with class
-    // disableFUdesigner
-    document.styleSheets[0].insertRule('.disableFUdesigner{display:none !important;}', 0);
-    
+      
     // move undoRedo
     var undoRedo = document.getElementById ('undoRedo');
     document.getElementById ('mainMenu').insertBefore (
@@ -10472,7 +10520,12 @@ function startFuDesigner(dontConfirm) {
     }
     
     checkSequenceChanged (true);
-    //console.log(activeSequence.figures);
+
+    // add new stylesheet rule 0 to hide all elements with class
+    // disableFUdesigner. Only do this after checkSequenceChanged as
+    // otherwise it may break some bBox routines!
+    document.styleSheets[0].insertRule('.disableFUdesigner{display:none !important;}', 0);
+
     selectForm('FU');
     updateSequenceTextHeight();
     availableFigureGroups();
@@ -11894,14 +11947,21 @@ function displayAlerts () {
     // Display messages, start with a break to stay clear from the label
     for (var i = 0; i < alertMsgs.length; i++) {
       container.appendChild (document.createElement('br'));
-      var htmlText = document.createElement('span');
-      container.appendChild (htmlText);
-      htmlText.innerHTML = alertMsgs[i];
+      var span = document.createElement('span');
+      container.appendChild (span);
+      span.innerHTML = alertMsgs[i];
+      if (alertMsgRules [alertMsgs[i]]) {
+        var div = document.createElement ('div');
+        div.innerHTML = alertMsgRules [alertMsgs[i]];
+        span.appendChild (div);
+        span.classList.add ('alertMsgRule');
+      }
     }
     // Add break to keep the box open with no alerts
     if (i === 0) container.appendChild (document.createElement('br'));
     // Clear all alerts
     alertMsgs = [];
+    alertMsgRules = [];
   }
 }
 
@@ -12533,6 +12593,7 @@ function checkSequenceMulti(i, body) {
     alertBox();
     // clear alert messages
     alertMsgs = [];
+    alertMsgRules = [];
   
     if (document.getElementById('multiFullLog').checked) {
       // full expanded log      
@@ -12896,25 +12957,30 @@ function handleDragOver(evt) {
 function checkOpenAeroVersion () {
   var oa_version = document.getElementById('oa_version');
   var alerts = '';
+
+  // before 1.2.3
   if (oa_version.value == '') {
-    // before 1.2.3
     if (sequenceText.value != '') alerts += userText.warningPre123;
   }
+  
+  // before 1.2.4: check for bumps
   if (compVersion (oa_version.value, '1.2.4') < 0) {
-    // check for bumps
     if (sequenceText.value.match (/(b|pb)(b|pb)/)) {
       alerts += userText.warningPre124;
     }
   }
+  
+  // before 1.3.7: check for snaps started from knife edge
   if (compVersion (oa_version.value, '1.3.7') < 0) {
-    // check for snaps started from knife edge
     if (sequenceText.value.match (/((^|[^0-9])(4|[357]4?))[if\.'`]*[,;][\.'`]*[357]i?f/)) {
       alerts += userText.warningPre137;
     }
   }
+  
+  // before 2016.1:
+  // check for double bumps with enlarged radius and rolls on the
+  // first and second line, where the first roll is of uneven quarters
   if (compVersion (oa_version.value, '2016.1') < 0) {
-    // check for double bumps with enlarged radius and rolls on the
-    // first and second line, where the first roll is of uneven quarters
     if (sequenceText.value.match (/B/)) {
       var figures = sanitizeSpaces (sequenceText.value).split (' ');
       for (var i = 0; i < figures.length; i++) {
@@ -12934,9 +13000,11 @@ function checkOpenAeroVersion () {
       }
     }
   }
+  
+  // before 2016.1.1:
+  // remove all figures that end with " but do not start with ".
+  // Older OpenAero versions would just disregard those
   if (compVersion (oa_version.value, '2016.1.1') < 0) {
-    // remove all figures that end with " but do not start with ".
-    // Older OpenAero versions would just disregard those
     while (sequenceText.value.match (/(^| )[^" ]+"[^"]*"( |$)/)) {
       console.log ('Correcting Pre-2016.1.1 sequence');
       console.log (sequenceText.value);
@@ -12950,6 +13018,14 @@ function checkOpenAeroVersion () {
   }
     
   // add any additional checks here
+
+  // check if running OpenAero version is older than that of the
+  // sequence, but only check the first two version parts. So checking
+  // version 2016.2.1 against 2016.2.2 would not trigger the warning
+  if (compVersion (oa_version.value, version, 2) > 0) {
+    alerts += userText.warningNewerVersion;
+  }
+
   // compVersion can be used to check against specific minimum versions
   if (alerts != '') alertBox(alerts + userText.warningPre);
   // set version to current version for subsequent saving
@@ -12961,15 +13037,17 @@ function checkOpenAeroVersion () {
 // 1 when v1 > v2
 // 0 when v1 = v2
 // No letters can be used but any number of digits. Comparison will
-// continue until all digits of the longest version have been checked,
+// continue until all parts of the longest version have been checked,
 // where a 0 will be counted the same as no number at all.
+// When "parts" is set, only that number of parts will be checked
 // E.g. ("1.4.0.0", "1.4.0") will return 0
-function compVersion (v1, v2) {
+function compVersion (v1, v2, parts) {
   if (!v1) return -1;
   if (!v2) return 1;
   var subV1 = v1.split('.');
   var subV2 = v2.split('.');
   var count = (subV1.length > subV2.length)? subV1.length : subV2.length;
+  if (parts && (parts < count)) count = parts;
   // pad zeroes
   while (subV1.length < count) subV1.push(0);
   while (subV2.length < count) subV2.push(0);
@@ -14172,6 +14250,7 @@ function addCheckResult (svg, pos) {
   }
   svg.appendChild (g);
   alertMsgs = [];
+  alertMsgRules = [];
   return g.getBBox();
 }
 
@@ -16467,7 +16546,7 @@ function updateSequence (figNr, figure, replace, fromFigSel, force) {
   sequenceText.value = string.replace (/ $/, '');
 
   // check for sequence changes
-  checkSequenceChanged(force);
+  checkSequenceChanged (force);
 
   // use automatic positioning if checked
   if (fromFigSel &&
@@ -16557,11 +16636,13 @@ function parseSequence () {
     lineElement = lineElement / scale;
     scale = 1;
   }
+  /** changed in 2016.2
   // See if there is a y-axis flip symbol and activate it, except when 
   // it matches the subSequence code which is similar (/ or //)
   if (activeSequence.text.replace(regexComments, '').match(regexFlipYAxis)) {
     setYAxisOffset (180 - yAxisOffset);
   }
+  */
   // Get the split string from activeSequence
   figures = activeSequence.figures;
 
@@ -16587,6 +16668,21 @@ function parseSequence () {
     }
 
     figure = figures[i].string;
+
+    // See if there is a y-axis flip symbol and activate it, except when 
+    // - it matches the subSequence code which is similar (/ or //)
+    // - the previous figure did not exited on X axis (not applicable
+    //   for Grid)
+    flipY: if (figure.replace(regexComments, '').match(regexFlipYAxis)) {
+      if (activeForm !== 'Grid') {
+        for (var j = i - 1; j >= 0; j--) {
+          if (figures[j].aresti) {
+            if (figures[j].exitAxis == 'X') break; else break flipY;
+          }
+        }
+      }
+      setYAxisOffset (180 - yAxisOffset);
+    }
         
     // simplify the string
     

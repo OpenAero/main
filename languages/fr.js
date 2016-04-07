@@ -1,4 +1,4 @@
-﻿// fr.js 2016.1.5
+﻿// fr.js 2016.2
 // This file is part of OpenAero.
 
 //  OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -660,6 +660,8 @@ lang.fr = {
   // exitExt' : 'Changer la ligne de sortie',
   'figEntryButton' : 'Change l\'entrée ventre <=> dos',
   'figExitButton' : 'Change la sortie ventre <=> dos',
+  // new 2016.2
+  'flipYAxis' : 'Changer d\'axe Y',
   'magMin' : 'réduit la taille de la figure',
   'magPlus' : 'Agrandit la figure',
   'moveForward' : 'Déplace la figure vers l\'avant sans ligne de liaison',
@@ -687,6 +689,11 @@ lang.fr = {
   '</ul>' +
   'Ceci peut prendre quelques instants à charger.',
 'view' : 'Affichage',
+// new 2016.2
+'warningNewerVersion' : '<p>Ce programme a été créé avec une version ' +
+  'd\'OpenAero plus récente que celle que vous utilisez actuellement. ' +
+  'Il utilise peut être de nouvelles fonctions. Vérifiez ' +
+  'attentivement que le programme est correct et correctement dessiné.</p>',
 // changed 2016.1.3
 'warningPre' : '<p> Lors de la prochaine sauvegarde, cet ' +
   'avertissement n\'apparaîtra plus.</p>',

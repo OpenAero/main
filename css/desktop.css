@@ -209,6 +209,30 @@ body {
   -webkit-border-radius: 8px 8px 8px 0;
 }
 
+/* alert message rule popup */
+.alertMsgRule div {
+  position: absolute;
+  z-index:10;
+  padding:4px;
+  text-indent:0;
+  margin-top:4px;
+  margin-left:-20px;
+  width:240px;
+  color:#222;
+  border:1px solid #888;
+  background:#f0f0f0;
+  -moz-box-shadow: 5px 5px 8px rgba(0,0,0,0.5);
+  -webkit-box-shadow: 5px 5px 8px rgba(0,0,0,0.5);
+  box-shadow: 5px 5px 8px rgba(0,0,0,0.5);
+}
+.alertMsgRule:hover div {
+  display:block;
+}
+.alertMsgRule:hover {
+  color: #400;
+  background-color: #ff8;
+}
+
 /* sections */
 .section3cols {
   width: 31%;

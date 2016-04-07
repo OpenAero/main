@@ -942,6 +942,9 @@ float: left;
 #deleteFig {
   background-image: url('../buttons/trash.png');
 }
+#flipYAxis {
+  background-image: url('../buttons/flipYAxis.png');
+}
 #magMin {
   background-image: url('../buttons/magmin.png');
 }
@@ -1021,6 +1024,11 @@ float: left;
 }
 .tooltip div {
   display:none;
+}
+
+/* hide alert message rule popup */
+.alertMsgRule div {
+  display: none;
 }
 
 /* figureInfo styling */

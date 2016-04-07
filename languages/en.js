@@ -1,4 +1,4 @@
-// en.js 2016.1.5
+// en.js 2016.2
 // This file is part of OpenAero.
 
 //  OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -650,6 +650,8 @@ lang.en = {
   //exitExt' : 'Change figure exit line length',
   'figEntryButton' : 'Switch figure entry upright/inverted',
   'figExitButton' : 'Switch figure exit upright/inverted',
+  // new 2016.2
+  'flipYAxis' : 'Flip Y-axis',
   'magMin' : 'Make figure smaller',
   'magPlus' : 'Make figure larger',
   'moveForward' : 'Move figure forward without a line',
@@ -677,6 +679,10 @@ lang.en = {
   '</ul>' +
   'This may take a few seconds to complete.',
 'view' : 'View',
+// new 2016.2
+'warningNewerVersion' : '<p>This sequence was created with a newer ' +
+  'version of OpenAero than you are running. It may contain new ' +
+  'features. Please double check the sequence is correct.</p>',
 'warningPre' : '<p>When you save this sequence again this ' +
   'warning will not be shown any more.</p>',
 'warningPre123' : '<p>The file you just opened was created with an ' +

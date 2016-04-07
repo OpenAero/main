@@ -1,3 +1,12 @@
+2016.2
+* added Sports Aerobatic Club of South Africa Sportsman Free rules
+* corrected saving of settings to localStorage
+* added Flip Y Axis for individual (combinations of) figures (Issue #69)
+* fixed issue with selecting figures in subsequences
+* added warning when loading a sequence with newer version than running OpenAero
+* as iOS 9 supports opening files from Dropbox and other file providers, added Open Sequence for iOS
+* added support for displaying Rulebook rules for sequence check alerts (Issue #188)
+
 2016.1.5
 * added option to change the K factor for specific figures according rules
 * added 2016 French rules
