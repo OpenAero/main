@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--
-  manual.html version 2016.1.1
+  manual.html
   This file is part of OpenAero.
 
   OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -97,7 +97,7 @@
     </td>
 	</tr>
 	<tr>
-		<td colspan="2">
+		<td colspan="3">
 		<h3 id="creating_sequences">Creating sequences</h3>
 		<p>Aerobatic sequences can be created within OpenAero in either of two 
 		ways:</p>
@@ -111,16 +111,20 @@
 		correct codes when using the text line above the sequence area please 
 		refer to <a href="language.html" target="_blank">OpenAero language <i>Help</i></a>.</p>
 		</td>
-		<td rowspan="2" width="220">
-		<p align="center"><b>
-		<img border="0" src="images/OA_SequenceInfoPanel.gif" width="175" height="244" align="right"></b></td>
 	</tr>
 	<tr>
 		<td colspan="2">
       <h3>Beginning a sequence</h3>
+      <img src="images/sequence_info.png" style="float:right;margin-left:20px;">
       <p>Always start by filling in the Sequence Info panel. The <i>Rules, 
       Category</i> and <i>Program</i> information will be used for determining sequence 
-      validity. In the Sequence menu you can choose to start the sequence 
+      validity. If actual rule checking is active for the chosen
+      combination, <img src="images/green_checkmark.png" style="display:inline;margin-bottom:-2px;"> will be
+      shown next to <i>Program</i>. Otherwise it will show
+      <img src="images/red_cross.png" style="display:inline;margin-bottom:-2px;">.
+      In the latter case sequences are only checked for basic Aresti
+      compliance.
+      <p>In the Sequence menu you can choose to start the sequence 
       down-wind or cross-box. This can always be changed at a later stage.</p>
 		</td>
 	</tr>
@@ -519,14 +523,16 @@
       </p>
       <p>
         It may be useful to add the submitting Team name or IOC country code 
-        to the figure comments. This can also be done by typing it 
-        between inverted marks into the sequence string after any Free Unknown 
-        identification letter &quot;@A&quot;, &quot;@B&quot; etc. and before the figure code - 
+        to the figure comments. This can be done in the figure editor or
+        by typing it between inverted marks into the sequence string
+        after any Free Unknown identification letter
+        &quot;@A&quot;, &quot;@B&quot; etc. and before the figure code - 
         for example &quot;@F USA&quot;. This will be shown in the grid 
         adjacent to the figure designation if present, 
         or the first Aresti manoeuvre code if not.<br>
-        Also, the country flag will be added to the Grid view 
+        <p>Also, the country flag will be added to the Grid view 
         (courtesy of <a href="http://www.icondrawer.com" target="_blank">www.icondrawer.com</a>).
+        </p>
       </p>
     </td>
   </tr>

@@ -1,4 +1,4 @@
-﻿// OpenAero.js 2016.2
+﻿// OpenAero.js
 // This file is part of OpenAero.
 
 //  OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -1741,7 +1741,7 @@ function combo(id,h,l) {
       }
       self.inp.value = self.list[++self.sel].firstChild.data;
       self.list[self.sel].style.backgroundColor = self.h;
-      changeCombo (selp.inp.id);
+      changeCombo (self.inp.id);
     } else if (k == 38 && self.sel > 0) {
       self.list[self.sel].style.backgroundColor = self.l;
       self.inp.value = self.list[--self.sel].firstChild.data;
@@ -2955,16 +2955,21 @@ function makeSnap (params) {
   var radSin = Math.sin(rad);
   var radCos = Math.cos(rad);
   if (params.length > 2) var rollTop = params[2];
+
+  // tipFactor makes sure the tip symbol is exactly on the tip,
+  // considering default line thickness
+  var tipFactor = snapElement2 / (snapElement2 + 0.75);
+
   while (extent > 0) {
     // Make the base shape
-    dxTip = -radSin * snapElement2 * sign;
-    dyTip = -radCos * snapElement2 * sign;
+    dxTip = -radSin * (snapElement2 + 0.75) * sign;
+    dyTip = -radCos * (snapElement2 + 0.75) * sign;
     path = 'm ' + roundTwo(dxTip) + ',' + roundTwo(dyTip) + ' ';
     dx = radCos * snapElement; 
     dy = -radSin * snapElement;
     path += 'l ' + roundTwo(dx) + ',' + roundTwo(dy) + ' ';
     pathsArray.push ({'path':path, 'style':'pos'});
-    path = 'm ' + roundTwo(dxTip) + ',' + roundTwo(dyTip) + ' ';
+    path = 'm ' + roundTwo(dxTip * tipFactor) + ',' + roundTwo(dyTip * tipFactor) + ' ';
     if (extent >= 360) { // full snap symbol
       dx = (radCos * snapElement12) + (radSin * snapElement3 * sign);
       dy = (- radSin * snapElement12) + (radCos * snapElement3 * sign);
@@ -3048,18 +3053,24 @@ function makeSpin (params) {
   // calculate sin and cos for rad once to save calculation time
   var radSin = Math.sin(rad);
   var radCos = Math.cos(rad);
+
+  // tipFactor makes sure the tip symbol is exactly on the tip,
+  // considering default line thickness
+  var tipFactor = spinElement2 / (spinElement2 - 0.75);
+    
   while (extent > 0) {
     // Make the base shape
     // First make the tip line
-    dxTip = -radSin * spinElement2 * sign;
-    dyTip = -radCos * spinElement2 * sign;
+    dxTip = -radSin * (spinElement2 - 0.75) * sign;
+    dyTip = -radCos * (spinElement2 - 0.75) * sign;
+
     path = 'm ' + roundTwo(dxTip) + ',' + roundTwo(dyTip) + ' ';
     dx = radCos * spinElement;
     dy = -radSin * spinElement;
     path += 'l ' + roundTwo(dx) + ',' + roundTwo(dy) + ' ';
     pathsArray.push ({'path':path, 'style':'pos'});
     // Next make the triangle
-    path = 'm ' + roundTwo(dxTip) + ',' + roundTwo(dyTip) + ' ';
+    path = 'm ' + roundTwo(dxTip * tipFactor) + ',' + roundTwo(dyTip * tipFactor) + ' ';
     if (extent >= 360) {
       dx = (radCos * spinElement * 1.5) + (radSin * spinElement3 * sign);
       dy = (- radSin * spinElement * 1.5) + (radCos * spinElement3 * sign);
@@ -7054,6 +7065,8 @@ function loadRules() {
     return false;
   }
 
+  document.getElementById ('rulesActive').classList.add ('good');
+
   var year = rulesYear (ruleName);
 
   // return true if rules were already loaded
@@ -7523,6 +7536,7 @@ function unloadRules () {
 // Modif GG v2016.1.4 End
   console.log('Clearing rules');
   rulesActive = false;
+  document.getElementById ('rulesActive').classList.remove ('good');
   // update sequence
   checkSequenceChanged(true);
   // make sure only available figure groups are shown in chooser
@@ -8181,8 +8195,10 @@ function checkAlert (value, type, figNr, rule) {
       break;
     default:
       alertMsgs.push(alertFig + value);
-      if (rule && checkRule[rule] && checkRule[rule].rule) {
-        alertRule = checkRule[rule].rule;
+      if (rule) {
+        if (checkRule[rule] && checkRule[rule].rule) {
+          alertRule = checkRule[rule].rule;
+        } else alertRule = rule;
       }
   }
   if (alertRule) alertMsgRules [alertMsgs[alertMsgs.length - 1]] = alertRule;
@@ -8215,7 +8231,7 @@ function checkSequence(show) {
       if (rulesActive) {
         var content = '<p>' + userText.checkingRules + ' : ' + rulesActive + '</p>';
       } else {
-        var content = '<p>' + userText.noRules + '</p>';
+        var content = '';
       }
       // get alerts from alert area
       var contentDiv = document.getElementById('checkSequenceContent');
@@ -11944,6 +11960,8 @@ function displayAlerts () {
     while (container.childNodes.length > 2) {
       container.removeChild(container.lastChild);
     }
+    // Add a message to the top to warn no rules are loaded
+    if (!rulesActive) alertMsgs.unshift (userText.noRules);
     // Display messages, start with a break to stay clear from the label
     for (var i = 0; i < alertMsgs.length; i++) {
       container.appendChild (document.createElement('br'));
@@ -12965,7 +12983,7 @@ function checkOpenAeroVersion () {
   
   // before 1.2.4: check for bumps
   if (compVersion (oa_version.value, '1.2.4') < 0) {
-    if (sequenceText.value.match (/(b|pb)(b|pb)/)) {
+    if (sequenceText.value.match (/p?bp?b/)) {
       alerts += userText.warningPre124;
     }
   }
@@ -13018,6 +13036,7 @@ function checkOpenAeroVersion () {
   }
     
   // add any additional checks here
+  // compVersion can be used to check against specific minimum versions
 
   // check if running OpenAero version is older than that of the
   // sequence, but only check the first two version parts. So checking
@@ -13026,7 +13045,6 @@ function checkOpenAeroVersion () {
     alerts += userText.warningNewerVersion;
   }
 
-  // compVersion can be used to check against specific minimum versions
   if (alerts != '') alertBox(alerts + userText.warningPre);
   // set version to current version for subsequent saving
   oa_version.value = version;
@@ -13040,7 +13058,7 @@ function checkOpenAeroVersion () {
 // continue until all parts of the longest version have been checked,
 // where a 0 will be counted the same as no number at all.
 // When "parts" is set, only that number of parts will be checked
-// E.g. ("1.4.0.0", "1.4.0") will return 0
+// E.g. ("1.4.1.1", "1.4.0", 2) will return 0 as it only checks "1.4"
 function compVersion (v1, v2, parts) {
   if (!v1) return -1;
   if (!v2) return 1;
@@ -14442,8 +14460,8 @@ function addFormElementsLR (svg, print) {
   // penalty block
   blockTop -= 114;
   drawRectangle (510, blockTop, 290, 104, 'formLine', svg);
-  drawRectangle (615, blockTop, 40, 104, 'formLineBold', svg);
-  drawRectangle (760, blockTop, 40, 104, 'formLineBold', svg);
+  drawRectangle (614, blockTop, 39, 104, 'formLineBold', svg);
+  drawRectangle (759, blockTop, 39, 104, 'formLineBold', svg);
   drawLine (510, blockTop + 26, 290, 0, 'formLine', svg);
   drawLine (510, blockTop + 52, 290, 0, 'formLine', svg);
   drawLine (510, blockTop + 78, 290, 0, 'formLine', svg);
@@ -14470,15 +14488,15 @@ function addFormElementsLR (svg, print) {
   }
     
   drawRectangle (673, blockTop, 127, 40, 'formLine', svg);
-  drawRectangle (740, blockTop, 60, 40, 'formLineBold', svg);
-  drawCircle ({cx: 770, cy: blockTop + 27, r: 2, fill: 'black'}, svg);
+  drawRectangle (740, blockTop, 58, 40, 'formLineBold', svg);
+  drawCircle ({cx: 769, cy: blockTop + 27, r: 2, fill: 'black'}, svg);
   drawText (userText.positioning, 706, blockTop + 12, 'formATextSmall', 'middle', '', svg);
   drawText (document.getElementById('positioning').value,
     706, blockTop + 32, 'formATextLarge', 'middle', '', svg);
   
   // figure grading block
-  drawRectangle (510, 110, 290, blockTop - 120, 'formLine', svg);
-  drawRectangle (540, 130, 260, blockTop - 140, 'formLineBold', svg);
+  drawRectangle (510, 110, 288, blockTop - 120, 'formLine', svg);
+  drawRectangle (540, 130, 258, blockTop - 140, 'formLineBold', svg);
   drawLine (540, 110, 0, 20, 'formLine', svg);
   drawLine (580, 110, 0, blockTop - 120, 'formLine', svg);
   drawLine (740, 110, 0, blockTop - 120, 'formLine', svg);
@@ -14493,7 +14511,7 @@ function addFormElementsLR (svg, print) {
   for (var i = 1; i <= figureNr; i++) {
     drawLine (510, y, 290, 0, 'formLine', svg);
     drawText (i, 525, y + (dy / 2) + 5, 'formATextLarge', 'middle', '', svg);
-    drawCircle ({cx: 770, cy: y + dy - 15, r: 2, fill: 'black'}, svg);
+    drawCircle ({cx: 769, cy: y + dy - 15, r: 2, fill: 'black'}, svg);
     y += dy;
   }
   
@@ -15781,13 +15799,28 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
             // set lowKFlick to true after anything but a line
             if (roll[rollnr][j].type !== 'line') lowKFlick = true;
 
-            // Check if posspin and negspin are on correctly loaded line
-            // Crossover spins will create alert when nonArestiRolls is
-            // not checked (Aresti Catalogue item 26)
             if (!document.getElementById('nonArestiRolls').checked) {
+              // Check if posspin and negspin are on correctly loaded line
+              // Crossover spins will create alert when nonArestiRolls is
+              // not checked (Aresti Catalogue item 26)
               if (((roll[rollnr][j].type == 'posspin') && !NegLoad) ||
                 ((roll[rollnr][j].type == 'negspin') && NegLoad)) {
                 checkAlert (userText.alert.noCrossoverSpin, false, seqNr);
+              }
+              // Check if spin is started on horizontal. This is done by
+              // confirming the spin on vertical down is preceded by
+              // 90 degree change of line angle (v/V in figure pattern)
+              if (roll[rollnr][j].type.match(/^(pos|neg)spin$/)) {
+                if (!figureDraw.substring(0, i-1).match(/[vV][^a-zA-Z=]*$/)) {
+                  checkAlert (
+                    userText.alert.spinsStartHorizontal,
+                    false,
+                    seqNr,
+                    (sportingClass.value === 'glider') ?
+                      'Sporting Code Section 6 Part II, B.9.27.2' :
+                      'Sporting Code Section 6 Part I, B.9.29.1'
+                  );
+                }
               }
             }
             var rollI = rollBase.indexOf(rollAtt + roll[rollnr][j].pattern);

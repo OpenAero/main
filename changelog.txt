@@ -1,3 +1,9 @@
+2016.2.1
+* added warning for spins started from other than horizontal (Issue #202)
+* added alert and indication of rule checking availability
+* improved look and clarity of spins and snaps
+* changed form R and L to assure right border of scoring box is also bold
+
 2016.2
 * added Sports Aerobatic Club of South Africa Sportsman Free rules
 * corrected saving of settings to localStorage

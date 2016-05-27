@@ -105,6 +105,8 @@ lang.en = {
     'elements allowed',
   'noCrossoverSpin' : 'Crossover spins are not allowed',
   'spinFirst' : 'No roll allowed before spin on same line',
+  // new 2016.2.1
+  'spinsStartHorizontal' : 'Spins should start from horizontal flight',
   'unlinkedSameNotAllowed' : 'Unlinked rolls of the same type and ' +
     'the same direction are not allowed'
 }, // end alert array
@@ -429,7 +431,8 @@ lang.en = {
   'sequence text <i>41h4,f,4 66</i>)',
 'none' : 'None',
 'noRollAllowed' : 'No roll allowed according Aresti Catalog',
-'noRules' : 'No sequence validity checking rules available.',
+// changed 2016.2.2
+'noRules' : 'No sequence validity checking rules active.',
 'notes' : 'Notes',
 'notOnFormBC' : 'This function is only available when Form ' +
   'B or C  is being viewed.',
@@ -622,9 +625,7 @@ lang.en = {
 'showHandles' : 'Show figure editing handles (blue circles) when ' +
   'figure is selected',
 'showQueue' : 'Show Queue',
-// new 1.5.1
 'signature' : 'Signature',
-//
 'styleSettingsHeader' : 'Here you can change various style settings. ' +
   'Please keep in mind that these change the look of ' +
   '<strong>your</strong> version of OpenAero but not how your sequence ' +

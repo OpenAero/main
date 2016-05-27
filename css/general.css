@@ -1,5 +1,5 @@
 /*
- general.css 2016.1.5
+ general.css
  This file is part of OpenAero.
 
   OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -1339,6 +1339,17 @@ table#figureChooserTable div {
 }
 #menu li.active {
   background-color:#ddf;
+}
+.status {
+  float: right;
+  width: 18px;
+  height: 1.4em;
+  background-image: url('../images/red_cross.png');
+  background-repeat: no-repeat;
+  background-position: left; 
+}
+.status.good {
+  background-image: url('../images/green_checkmark.png');
 }
 /* Class select box */
 #class {

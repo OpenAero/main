@@ -1,4 +1,4 @@
-// config.js 2016.2
+// config.js
 
 // This file is part of OpenAero.
 
@@ -36,7 +36,7 @@
 // Where a new x should be used for versions that create sequences not
 // fully backward compatible with the previous version
 
-var version = '2016.2';
+var version = '2016.2.1';
 /* versionNew is an object that contains version update information
    The structure is {vvv : [[ttt, n], ...], ...} , where
    vvv = version number
@@ -268,10 +268,10 @@ var style = {
   // Black filled path style
   'blackfill' : 'stroke: black; stroke-width: 1px; fill: black;',
   // Positive filled path style
-  'posfill' : 'stroke: black; stroke-width: 1px; fill: white;',
+  'posfill' : 'stroke: black; stroke-width: 1.5px; fill: white;',
   // Negative filled path style
-  'negfill' : 'stroke: black; stroke-width: 1px; fill: red;',
-  'negfillBW' : 'stroke: black; stroke-width: 1px; fill: black;',
+  'negfill' : 'stroke: black; stroke-width: 1.5px; fill: red;',
+  'negfillBW' : 'stroke: black; stroke-width: 1.5px; fill: black;',
   // Dotted path style
   'dotted' : 'stroke-dasharray: 1, 3; stroke: black; stroke-width: 1px; fill: none;',
   // Illegal figure cross style

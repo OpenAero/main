@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# OpenAero version 2016.2
+# OpenAero version 2016.2.1
 addtohomescreen/addtohomescreen.css
 addtohomescreen/addtohomescreen.min.js
 arestisystem.html
@@ -75,15 +75,14 @@ images/arrow_blue_left_down.png
 images/arrow_blue_down.png
 images/arrow_blue_right_down.png
 images/arrow_blue_right.png
-images/spinrolls.png
-images/ee_ext-figure.png
 images/bg-dot.png
 images/blue_handles.png
-images/snaprolls.png
-images/fullrolls.png
-images/hesrolls.png
+images/ee_ext-figure.png
 images/ee_ext-exit.png
 images/ee_ext-entry.png
+images/fullrolls.png
+images/green_checkmark.png
+images/hesrolls.png
 images/magnifier.png
 images/multirolls.png
 images/OA_FigureAddPanel.gif
@@ -92,10 +91,13 @@ images/OA_FigureInfoPanel.png
 images/OA_FigureSelection.gif
 images/OA_FreeUnknownDesignerMain.png
 images/OA_Queue.gif
-images/OA_SequenceInfoPanel.gif
 images/PilotCard2.png
 images/PilotCard4.png
 images/PilotCardPercent.png
+images/red_cross.png
+images/sequence_info.png
+images/snaprolls.png
+images/spinrolls.png
 images/startup.jpg
 images/startup_ipad_landscape.jpg
 images/startup_ipad_portrait.jpg
