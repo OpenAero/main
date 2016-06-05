@@ -7,7 +7,10 @@ chrome.app.runtime.onLaunched.addListener(function(launchData) {
   }
   
   function onBoundsChanged() {
-    chrome.storage.local.set({'bounds':appWin.getBounds()});
+    var bounds = appWin.getBounds();
+    // don't save below minimum size
+    if ((bounds. width < 480) || (bounds.height < 240)) return;
+    chrome.storage.local.set({'bounds': bounds});
   }
 
   if (!launchData.url) {
@@ -19,7 +22,9 @@ chrome.app.runtime.onLaunched.addListener(function(launchData) {
   chrome.storage.local.get ('bounds',
     function(bounds) {
       // set default bounds if no bounds stored
-      if (!bounds) bounds = {'bounds':{'width': 960, 'height': 720}};
+      if (!bounds || !('bounds' in bounds)) {
+        bounds = {'bounds':{'width': 960, 'height': 720}};
+      }
       if (match) {
         chrome.app.window.create('index.html' + match[0], 
           bounds,
