@@ -239,7 +239,8 @@ lang.en = {
 'figSelectorReplace' : 'Replace active figure',
 'figsInGrid' : 'Figs in grid',
 'figureAlreadyInQueue' : 'This figure is already in the queue',
-'figureEditor' : 'Figure&nbsp;editor',
+// changed 2016.3
+'figureEditor' : 'Figure editor',
 // new 1.5.1
 'figureK' : 'Figure K',
 // new 2016.1.3
@@ -387,6 +388,9 @@ lang.en = {
 'lockSequence' : 'Lock',
 //
 'logo' : 'Logo',
+// new 2016.3
+'logoChooserCancel' : 'Cancel',
+'logoChooserTitle' : 'Choose logo',
 'logoExplain' : 'Upload your own logo by clicking on the file ' +
   'chooser below, or select one of the displayed logos.',
 'manual' : 'Manual',
@@ -551,7 +555,7 @@ lang.en = {
 'referenceSequenceTitle' : 'Reference sequence',
 //
 'remove' : 'Remove',
-'removeLogo' : 'Remove',
+'removeLogo' : 'Remove logo',
 'resetStyle' : 'Reset',
 'resetStyleAll' : 'Reset All',
 'restoreDefaultSettings' : 'Restore all settings to their default ' +

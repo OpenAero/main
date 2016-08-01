@@ -822,6 +822,7 @@ var iosDragDropShim = { enableEnterLeave: true,
         var tr = document.createElement('tr');
         this.copy.appendChild(table).appendChild(tr).appendChild(newNode);
       } else {
+        if (newNode.tagName === 'TABLE') newNode.classList.add ('dragDropCopy');
         this.copy.appendChild (newNode);
       }
       doc.body.appendChild(this.copy);
@@ -1086,7 +1087,9 @@ var iosDragDropShim = { enableEnterLeave: true,
           handleFuRemove (evt, el);
           return false;
         } else if (el.classList.contains ('fuFigure') ||
-          el.classList.contains ('additionalFigure')) {
+          el.classList.contains ('fuFigureMulti') ||
+          el.classList.contains ('additionalFigure') ||
+          el.classList.contains ('additionalFigureMulti')) {
           evt.preventDefault();
           selectFigureFu (el.className.match(regexFuFigNr)[1]);
           return false;
@@ -1173,6 +1176,84 @@ function decode_utf8( s ) {
   return decodeURIComponent(escape(s));
 }
 
+/* DOM element resize listener
+ * 
+ * USAGE :
+ * 
+ * var myElement = document.getElementById('my_element'),
+ * myResizeFn = function(){
+        // do something on resize
+ * };
+ * addResizeListener(myElement, myResizeFn);
+ * removeResizeListener(myElement, myResizeFn);
+ */
+
+(function(){
+  var attachEvent = document.attachEvent;
+  var isIE = navigator.userAgent.match(/Trident/);
+
+  var requestFrame = (function(){
+    var raf = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame ||
+        function(fn){ return window.setTimeout(fn, 20); };
+    return function(fn){ return raf(fn); };
+  })();
+  
+  var cancelFrame = (function(){
+    var cancel = window.cancelAnimationFrame || window.mozCancelAnimationFrame || window.webkitCancelAnimationFrame ||
+           window.clearTimeout;
+    return function(id){ return cancel(id); };
+  })();
+  
+  function resizeListener(e){
+    var win = e.target || e.srcElement;
+    if (win.__resizeRAF__) cancelFrame(win.__resizeRAF__);
+    win.__resizeRAF__ = requestFrame(function(){
+      var trigger = win.__resizeTrigger__;
+      trigger.__resizeListeners__.forEach(function(fn){
+        fn.call(trigger, e);
+      });
+    });
+  }
+  
+  function objectLoad(e){
+    this.contentDocument.defaultView.__resizeTrigger__ = this.__resizeElement__;
+    this.contentDocument.defaultView.addEventListener('resize', resizeListener);
+  }
+  
+  window.addResizeListener = function(element, fn){
+    if (!element.__resizeListeners__) {
+      element.__resizeListeners__ = [];
+      if (attachEvent) {
+        element.__resizeTrigger__ = element;
+        element.attachEvent('onresize', resizeListener);
+      }
+      else {
+        if (getComputedStyle(element).position == 'static') element.style.position = 'relative';
+        var obj = element.__resizeTrigger__ = document.createElement('object'); 
+        obj.setAttribute('style', 'display: block; position: absolute; top: 0; left: 0; height: 100%; width: 100%; overflow: hidden; pointer-events: none; z-index: -1;');
+        obj.__resizeElement__ = element;
+        obj.onload = objectLoad;
+        obj.type = 'text/html';
+        if (isIE) element.appendChild(obj);
+        obj.data = 'about:blank';
+        if (!isIE) element.appendChild(obj);
+      }
+    }
+    element.__resizeListeners__.push(fn);
+  };
+  
+  window.removeResizeListener = function(element, fn){
+    element.__resizeListeners__.splice(element.__resizeListeners__.indexOf(fn), 1);
+    if (!element.__resizeListeners__.length) {
+      if (attachEvent) element.detachEvent('onresize', resizeListener);
+      else {
+        element.__resizeTrigger__.contentDocument.defaultView.removeEventListener('resize', resizeListener);
+        element.__resizeTrigger__ = !element.removeChild(element.__resizeTrigger__);
+      }
+    }
+  }
+})();
+
 // **************************************************************
 // *
 // *           FUNCTIONS
@@ -1211,14 +1292,16 @@ function switchMobile () {
     document.getElementById ('zoomPlus').innerHTML = '<img src="buttons/mask.png">';
     // unhide sequence tab
     tab.classList.remove ('noDisplay');
-    // hide sequence svg
+    // hide sequence svg and move to leftBlockTop
     svg.classList.add('hidden');
+    document.getElementById('leftBlockTop').appendChild(svg);
     //svg.setAttribute('style', 'position:absolute;z-index:-1;top:-5000px;');
     // remove any vertical displacement done by updateSequenceTextHeight
     sequenceText.removeAttribute('style');
     document.getElementById('main').removeAttribute('style');
   } else {
     viewport.setAttribute('content', '');
+
     document.getElementById('t_fuDesigner').classList.remove ('noDisplay');
     link.setAttribute('href', 'css/desktop.css');
     // update Sequence main menu link
@@ -1228,9 +1311,15 @@ function switchMobile () {
     document.getElementById ('zoomMin').innerHTML = '<img src="buttons/smallMask.png">';
     document.getElementById ('zoomPlus').innerHTML = '<img src="buttons/smallMask.png">';
 
+    // restore sequence container
     tab.classList.add('noDisplay');
     svg.removeAttribute('style');
     svg.classList.remove('hidden');
+    var placing = document.getElementById('svgContainerPlacing');
+    placing.parentNode.insertBefore (svg, placing);
+
+    selectTab ('tab-sequenceInfo');
+    
     checkSequenceChanged();    
   }
   // set correct sequence text height, but give some time to redraw first
@@ -1306,6 +1395,7 @@ function rebuildSequenceSvg () {
   SVGRoot.setAttribute("xmlns:xlink", xlinkNS);
   SVGRoot.setAttribute("id", "sequenceSvg");
   SVGRoot.setAttribute("viewBox", "0 0 800 600");
+  SVGRoot.setAttribute("viewport-fill", "white");
   // enable figure selection and drag&drop on all forms except A
   if (activeForm != 'A') {
     // set touchDevice actions
@@ -1777,7 +1867,11 @@ combo.prototype.addMouseDown = function () {
 // selectTab allows us to select different tabbed pages
 // 'e' is either the tab object or a tab id
 function selectTab (e) {
-  var li = (e.target)? e.target.parentNode : document.getElementById(e);
+  var li = e.target ? this : document.getElementById(e);
+  // make sure we only select tabs
+  if (!li.id.match(/^tab-/)) return;
+  // check if tabbing in leftBlockTop, for alertBox slide
+  var leftBlockTop = li.id.match (/^tab-(sequenceInfo|figureInfo|svgContainer)$/);
   var tab = document.getElementById(li.id.replace('tab-', ''));
   var ul = li.parentNode;
   var list = ul.getElementsByTagName('li');
@@ -1785,11 +1879,15 @@ function selectTab (e) {
   for (var i = list.length - 1; i >= 0; i--) {
     // only do something when the tab is not hidden
     if (!list[i].classList.contains('noDisplay')) {
+      if (leftBlockTop && list[i].classList.contains ('activeTab')) {
+        var rect = document.getElementById(list[i].id.replace('tab-', '')).getBoundingClientRect();
+      }
       list[i].classList.remove('activeTab');
       list[i].classList.add('inactiveTab');
       // hide the tab by using display:hidden
       // so any data is still accessible
-      document.getElementById(list[i].id.replace('tab-', '')).classList.add('hidden');
+      var hideTab = document.getElementById(list[i].id.replace('tab-', ''));
+      if (hideTab) hideTab.classList.add('hidden');
     }
   }
   // select correct tab
@@ -1797,6 +1895,24 @@ function selectTab (e) {
   li.classList.add('activeTab');
   tab.classList.remove('hidden');
   tab.parentNode.scrollTop = 0;
+  // slide alertBox and design when relevant
+  if (leftBlockTop && rect) {
+    var newRect = tab.getBoundingClientRect();
+    
+    function slide (el) {
+      el.style.transition = '';
+      el.style.transform = 'translateY(' + (
+        (rect.bottom - rect.top) - 
+        (newRect.bottom - newRect.top)) + 'px)';
+      setTimeout (function(){
+        el.style.transition = 'all 0.3s ease-in-out';
+        el.style.transform = '';
+      }, 200);
+    }
+    
+    slide (document.getElementById('alerts'));
+    slide (document.getElementById('design'));
+  }
 }
 
 // updateUserTexts updates all userText in the interface as indicated by
@@ -2781,7 +2897,7 @@ function makeRollText (extent, stops, sign, comment, radSin, radCos) {
       text = (extent / (360 / stops)) + text;
     } else if (extent % 180) {
       if (text.length > 0) text = ' ' + text;
-      text = ((extent / 90) - (parseInt (extent / 360) * 4)) + '/4' + text;
+      text = ((extent % 360) / 90) + '/4' + text;
     }
     if (flipText) {
       if (extent >= 360) { // make room for 'tail' of roll symbol
@@ -3125,6 +3241,287 @@ function makeSpin (params) {
   return pathsArray;
 }
 
+// makeShoulderRoll creates shoulder rolls
+// params is an array:
+// [0] is the amount of degrees. A negative value changes the direction
+// [1] indicates pos or neg. 0=pos 1=neg
+// [2] is optional roll in top argument, false or non-present = not in
+//     top, true = in top
+// [3] is optional comment
+function makeShoulderRoll (params) {
+  var pathsArray = [];
+  var stops = params[1];
+  var extent = Math.abs(params[0]);
+  var sign = params[0] > 0 ? 1 : -1;
+  var rad = dirAttToAngle (Direction, Attitude);
+  if (((Attitude == 45) || (Attitude == 315)) || ((Attitude == 225) || (Attitude == 135))) {
+    rad = True_Drawing_Angle;
+  }
+  // calculate sin and cos for rad once to save calculation time
+  var radSin = Math.sin(rad);
+  var radCos = Math.cos(rad);
+  if (params.length > 2) var rollTop = params[2];
+
+  while (extent > 0) {
+    // Make the base shape
+    dx = roundTwo((radCos * snapElement15) - (radSin * snapElement15 * sign));
+    dy = roundTwo(-(radCos * snapElement15 * sign) - (radSin * snapElement15));
+    path = 'a' + snapElement15 + ',' + snapElement15 + ' 0 0,' +
+      (sign === 1 ? 1 : 0) + ' ' + dx + ',' + dy;
+    dx = roundTwo((radCos * snapElement15) + (radSin * snapElement15 * sign));
+    dy = roundTwo((radCos * snapElement15 * sign) - (radSin * snapElement15));
+    path += ' l ' + dx + ',' + dy + ' ';
+
+    if (extent >= 360) { // full shoulder roll symbol
+      dx = radSin * snapElement075 * sign;
+      dy = radCos * snapElement075 * sign;
+      path += 'l ' + roundTwo(dx) + ',' + roundTwo(dy) + ' ';
+      dx = -radCos * snapElement3;
+      dy = radSin * snapElement3;
+      path += 'l ' + roundTwo(dx) + ',' + roundTwo(dy) + ' ';
+    }
+    path += 'z';
+    pathStyle = (params[1] == 0) ? 'posfill' : 'negfill';
+    pathsArray.push ({
+      'path':path,
+      'style':pathStyle,
+      'dx':radCos * snapElement3,
+      'dy':-radSin * snapElement3
+    });
+
+    // Where necessary, show the roll numbers after completing the first
+    // roll point and arc.
+    // This is only necessary for rolls that are not multiples of 180
+    if (extent == Math.abs(params[0])) {
+      var rollText = makeRollText (
+        extent,
+        0,
+        sign,
+        params[3],
+        radSin,
+        radCos
+      );
+      if (rollText) pathsArray.push (rollText);
+    }
+    // Completed the first (full) roll. Continue for more than 360
+    extent -= 360;
+    // For more than 360 degrees, draw a line between the rolls and the
+    // roll tip connect line
+    if (extent > 0) {
+      // Save the status of the load variable, don't want to change that
+      // during the roll
+      var saveLoad = NegLoad;
+      // Make the line between the two rolls
+      // Only move the pointer for rolls in the top
+      if (rollTop) {
+        pathsArray = buildShape ('Move', [0.5/scale], pathsArray);
+      } else {
+        pathsArray = buildShape ('Line', [0.5/scale], pathsArray);
+      }
+      NegLoad = saveLoad;
+      // Get the relative movement by the line and use this to build the
+      // tip additional line
+      dx = pathsArray[pathsArray.length - 1].dx + radCos * snapElement3;
+      dy = pathsArray[pathsArray.length - 1].dy - radSin * snapElement3;
+      dxTip = -radSin * snapElement2 * sign + radCos * snapElement;
+      dyTip = -radCos * snapElement2 * sign - radSin * snapElement;
+      path = 'm ' + roundTwo(dxTip) + ',' + roundTwo(dyTip) + ' l ' +
+        roundTwo(-dx) + ',' + roundTwo(-dy);
+      pathsArray.push ({'path':path, 'style':'pos'});
+    }
+  }
+  return pathsArray;
+}
+
+// makeRuade creates ruades
+// params is an array:
+// [0] is the amount of degrees. A negative value changes the direction
+// [1] indicates pos or neg. 0=pos 1=neg
+// [2] is optional roll in top argument, false or non-present = not in
+//     top, true = in top
+// [3] is optional comment
+function makeRuade (params) {
+  var pathsArray = [];
+  var stops = params[1];
+  var extent = Math.abs(params[0]);
+  var sign = params[0] > 0 ? 1 : -1;
+  var rad = dirAttToAngle (Direction, Attitude);
+  if (((Attitude == 45) || (Attitude == 315)) || ((Attitude == 225) || (Attitude == 135))) {
+    rad = True_Drawing_Angle;
+  }
+  // calculate sin and cos for rad once to save calculation time
+  var radSin = Math.sin(rad);
+  var radCos = Math.cos(rad);
+  if (params.length > 2) var rollTop = params[2];
+
+  while (extent > 0) {
+    // Make the base shape
+    dx = roundTwo(-radSin * snapElement15 * sign);
+    dy = roundTwo(-radCos * snapElement15 * sign);
+    path = 'l' + dx + ',' + dy;
+    dx = roundTwo((radCos * snapElement3) + (radSin * snapElement15 * sign));
+    dy = roundTwo((radCos * snapElement15 * sign) - (radSin * snapElement3));
+    path += ' l ' + dx + ',' + dy + ' ';
+
+    if (extent >= 360) { // full ruade symbol
+      dx = radSin * snapElement075 * sign;
+      dy = radCos * snapElement075 * sign;
+      path += 'l ' + roundTwo(dx) + ',' + roundTwo(dy) + ' ';
+      dx = -radCos * snapElement3;
+      dy = radSin * snapElement3;
+      path += 'l ' + roundTwo(dx) + ',' + roundTwo(dy) + ' ';
+    }
+    path += 'z';
+    pathStyle = (params[1] == 0) ? 'posfill' : 'negfill';
+    pathsArray.push ({
+      'path':path,
+      'style':pathStyle,
+      'dx':radCos * snapElement3,
+      'dy':-radSin * snapElement3
+    });
+
+    // Where necessary, show the roll numbers after completing the first
+    // roll point and arc.
+    // This is only necessary for rolls that are not multiples of 180
+    if (extent == Math.abs(params[0])) {
+      var rollText = makeRollText (
+        extent,
+        0,
+        sign,
+        params[3],
+        radSin,
+        radCos
+      );
+      if (rollText) pathsArray.push (rollText);
+    }
+    // Completed the first (full) roll. Continue for more than 360
+    extent -= 360;
+    // For more than 360 degrees, draw a line between the rolls and the
+    // roll tip connect line
+    if (extent > 0) {
+      // Save the status of the load variable, don't want to change that
+      // during the roll
+      var saveLoad = NegLoad;
+      // Make the line between the two rolls
+      // Only move the pointer for rolls in the top
+      if (rollTop) {
+        pathsArray = buildShape ('Move', [0.5/scale], pathsArray);
+      } else {
+        pathsArray = buildShape ('Line', [0.5/scale], pathsArray);
+      }
+      NegLoad = saveLoad;
+      // Get the relative movement by the line and use this to build the
+      // tip additional line
+      dx = pathsArray[pathsArray.length - 1].dx + radCos * snapElement3;
+      dy = pathsArray[pathsArray.length - 1].dy - radSin * snapElement3;
+      dxTip = -radSin * snapElement2 * sign + radCos * snapElement;
+      dyTip = -radCos * snapElement2 * sign - radSin * snapElement;
+      path = 'm ' + roundTwo(dxTip) + ',' + roundTwo(dyTip) + ' l ' +
+        roundTwo(-dx) + ',' + roundTwo(-dy);
+      pathsArray.push ({'path':path, 'style':'pos'});
+    }
+  }
+  return pathsArray;
+}
+
+// makeLomcevak creates Lomcevaks
+// params is an array:
+// [0] is the amount of degrees. A negative value changes the direction
+// [1] indicates pos or neg. 0=pos 1=neg
+// [2] is optional roll in top argument, false or non-present = not in
+//     top, true = in top
+// [3] is optional comment
+function makeLomcevak (params) {
+  var pathsArray = [];
+  var stops = params[1];
+  var extent = Math.abs(params[0]);
+  var sign = params[0] > 0 ? 1 : -1;
+  var rad = dirAttToAngle (Direction, Attitude);
+  if (((Attitude == 45) || (Attitude == 315)) || ((Attitude == 225) || (Attitude == 135))) {
+    rad = True_Drawing_Angle;
+  }
+  // calculate sin and cos for rad once to save calculation time
+  var radSin = Math.sin(rad);
+  var radCos = Math.cos(rad);
+  if (params.length > 2) var rollTop = params[2];
+
+  while (extent > 0) {
+    // Make the base shape
+    dx = roundTwo(-radSin * snapElement15 * sign);
+    dy = roundTwo(-radCos * snapElement15 * sign);
+    path = 'l' + dx + ',' + dy;
+    dx = roundTwo(radCos * snapElement3);
+    dy = roundTwo(-radSin * snapElement3);
+    path += 'l' + dx + ',' + dy;
+    dx = roundTwo(-(radCos * snapElement15) + (radSin * snapElement15 * sign));
+    dy = roundTwo((radCos * snapElement15 * sign) + (radSin * snapElement15));
+    path += 'a' + snapElement15 + ',' + snapElement15 + ' 0 0,' +
+      (sign === 1 ? 0 : 1) + ' ' + dx + ',' + dy;
+    dx = roundTwo(radCos * snapElement15);
+    dy = roundTwo(-radSin * snapElement15);
+    path += 'l' + dx + ',' + dy;
+
+    if (extent >= 360) { // full Lomcevak symbol
+      dx = radSin * snapElement075 * sign;
+      dy = radCos * snapElement075 * sign;
+      path += 'l ' + roundTwo(dx) + ',' + roundTwo(dy) + ' ';
+      dx = -radCos * snapElement3;
+      dy = radSin * snapElement3;
+      path += 'l ' + roundTwo(dx) + ',' + roundTwo(dy) + ' ';
+    }
+    path += 'z';
+    pathStyle = (params[1] == 0) ? 'posfill' : 'negfill';
+    pathsArray.push ({
+      'path':path,
+      'style':pathStyle,
+      'dx':radCos * snapElement3,
+      'dy':-radSin * snapElement3
+    });
+
+    // Where necessary, show the roll numbers after completing the first
+    // roll point and arc.
+    // This is only necessary for rolls that are not multiples of 180
+    if (extent == Math.abs(params[0])) {
+      var rollText = makeRollText (
+        extent,
+        0,
+        sign,
+        params[3],
+        radSin,
+        radCos
+      );
+      if (rollText) pathsArray.push (rollText);
+    }
+    // Completed the first (full) roll. Continue for more than 360
+    extent -= 360;
+    // For more than 360 degrees, draw a line between the rolls and the
+    // roll tip connect line
+    if (extent > 0) {
+      // Save the status of the load variable, don't want to change that
+      // during the roll
+      var saveLoad = NegLoad;
+      // Make the line between the two rolls
+      // Only move the pointer for rolls in the top
+      if (rollTop) {
+        pathsArray = buildShape ('Move', [0.5/scale], pathsArray);
+      } else {
+        pathsArray = buildShape ('Line', [0.5/scale], pathsArray);
+      }
+      NegLoad = saveLoad;
+      // Get the relative movement by the line and use this to build the
+      // tip additional line
+      dx = pathsArray[pathsArray.length - 1].dx + radCos * snapElement3;
+      dy = pathsArray[pathsArray.length - 1].dy - radSin * snapElement3;
+      dxTip = -radSin * snapElement2 * sign + radCos * snapElement;
+      dyTip = -radCos * snapElement2 * sign - radSin * snapElement;
+      path = 'm ' + roundTwo(dxTip) + ',' + roundTwo(dyTip) + ' l ' +
+        roundTwo(-dx) + ',' + roundTwo(-dy);
+      pathsArray.push ({'path':path, 'style':'pos'});
+    }
+  }
+  return pathsArray;
+}
+
 // makeHammer creates hammerhead tops
 // extent is the size of the line before the hammerhead top.
 // We will move that much down before continuing drawing
@@ -3416,6 +3813,15 @@ function buildShape(shapeName, Params, paths) {
       break;
     case 'Spin':
       var pathsArray = makeSpin (Params);
+      break;
+    case 'ShoulderRoll':
+      var pathsArray = makeShoulderRoll (Params);
+      break;
+    case 'Ruade':
+      var pathsArray = makeRuade (Params);
+      break;
+    case 'Lomcevak':
+      var pathsArray = makeLomcevak (Params);
       break;
     case 'Hammer':
       var pathsArray = makeHammer (Params);
@@ -3842,7 +4248,7 @@ function doOnLoad () {
 
   loadComplete = true;
   // also check for latest version now
-  if (chromeApp.active) {
+  if (chromeApp.active || window.location.hostname.match(/^(.+\.)?openaero.net$/)) {
     document.getElementById('latestVersion').parentNode.classList.add('noDisplay');
     document.getElementById('version').innerHTML = sprintf (
       userText.version, version);
@@ -3891,6 +4297,9 @@ function getElementsByAttribute(oElm, strTagName, strAttributeName, strAttribute
 // and retrieves sequence from URL (if any). It returns true on succes
 // or false on faillure
 function launchURL (launchData) {
+  // remove newlines if present
+  launchData.url = launchData.url.replace (/[\n\r]/g, '');
+  // check format
   var match = launchData.url.toString().match(/\?(sequence|s)=.+/);
   if (match) {
     match = match[0].replace(/^\?(sequence|s)=/, '');
@@ -4017,11 +4426,11 @@ function addEventListeners () {
   document.getElementById('virtualKeyboard').addEventListener('mouseup', releaseVirtualKeyboard, false);
   
   // left block tabs
-  document.getElementById('t_sequenceInfo').addEventListener('mousedown', selectTab, false);
-  document.getElementById('t_figureEditor').addEventListener('mousedown', selectTab, false);
-  document.getElementById('t_sequenceTab').addEventListener('mousedown', selectTab, false);
-  document.getElementById('t_fuFiguresTab').addEventListener('mousedown', selectTab, false);
-  
+  document.getElementById('tab-sequenceInfo').addEventListener('mousedown', selectTab, false);
+  document.getElementById('tab-figureInfo').addEventListener('mousedown', selectTab, false);
+  document.getElementById('tab-svgContainer').addEventListener('mousedown', selectTab, false);
+  document.getElementById('tab-fuFigures').addEventListener('mousedown', selectTab, false);
+    
   // sequence info options
   document.getElementById('pilot').addEventListener('change', changeSequenceInfo, false);
   document.getElementById('team').addEventListener('change', changeSequenceInfo, false);
@@ -4034,10 +4443,10 @@ function addEventListeners () {
   document.getElementById('t_referenceSequence').addEventListener('mousedown', referenceSequenceDialog);
   document.getElementById('harmony').addEventListener('change', changeSequenceInfo, false);
   
-  document.getElementById('t_chooseLogo').addEventListener('click', logoChooser, false);
-  document.getElementById('t_removeLogo').addEventListener ('click', removeLogo, false);
-  document.getElementById('logoImage').addEventListener ('click', logoChooser, false);
-  document.getElementById('hideLogoChooser').addEventListener('click', hideLogoChooser, false);
+  document.getElementById('t_chooseLogo').addEventListener('mousedown', logoChooser, false);
+  document.getElementById('t_removeLogo').addEventListener ('mousedown', removeLogo, false);
+  document.getElementById('logoImage').addEventListener ('mousedown', logoChooser, false);
+  document.getElementById('t_logoChooserCancel').addEventListener('mousedown', hideLogoChooser, false);
   document.getElementById('logoFile').addEventListener('change', openLogoFile, false);
 
   document.getElementById('notes').addEventListener('change', changeSequenceInfo, false);
@@ -4110,9 +4519,9 @@ function addEventListeners () {
       helpWindow('manual.html#settings', 'Settings');
     }, false);
   }
-  document.getElementById('t_general').addEventListener('click', selectTab, false);
-  document.getElementById('t_styling').addEventListener('click', selectTab, false);
-  document.getElementById('t_expert').addEventListener('click', selectTab, false);
+  document.getElementById('tab-general').addEventListener('click', selectTab, false);
+  document.getElementById('tab-styling').addEventListener('click', selectTab, false);
+  document.getElementById('tab-expert').addEventListener('click', selectTab, false);
   document.getElementById('language').addEventListener('change', changeLanguage, false);
   document.getElementById('gridColumns').addEventListener('change', updateGridColumns, false);
   document.getElementById('queueColumns').addEventListener('change', changeQueueColumns, false);
@@ -4468,10 +4877,11 @@ function checkBrowser () {
   if (!fileSupport()) {
     return userText.fileOpeningNotSupported + '<br>' + userText.getChrome;
   }
-  // Present a warning if the browser is not Chrome, Safari or Firefox
+  // Present a warning if the browser is not Chrome or Firefox
   // and the warning was not displayed for four weeks. Use store value
   // for setting the expiry time
-  if (!BrowserDetect.browser.match(/Chrome|Safari|Firefox/)) {
+  if (!(BrowserDetect.browser.match(/Chrome|Firefox/)) ||
+    (BrowserDetect.browser.match(/Safari/) &&  (BrowserDetect.OS === 'iPad'))) {
     function f(c) {
       var d = new Date();
       var t = parseInt(d.getTime());
@@ -5002,6 +5412,7 @@ function addExampleSequenceToMenu (key) {
     if (!li) {
       li = document.createElement('li');
       li.setAttribute ('id', 'year' + year);
+      li.classList.add ('leftArrow');
       li.innerHTML = '<a href="#">' + year + '</a>';
       var ul = document.createElement('ul');
       li.appendChild (ul);
@@ -5020,6 +5431,7 @@ function addExampleSequenceToMenu (key) {
       var group = key.match (/^[\d]+ ([^ ]+)/)[1];
       var subul = document.getElementById(year + ' ' + group);
       if (!subul) {
+        subli.classList.add ('rightArrow');
         subli.innerHTML = '<a href="#">' + group + '</a>';
         subul = document.createElement ('ul');
         subul.id = year + ' ' + group;
@@ -5426,6 +5838,8 @@ function showFigureSelector () {
     document.getElementById('figureSelector').classList.add('active');
   } else {
     document.getElementById('figureSelector').classList.add('leftActive');
+    // set figureString correctly, using positioning relative to leftBlock
+    document.getElementById('leftBlock').scrollTop = 0;
     document.getElementById('figureString').classList.add('inFigureSelector');
   }
 }
@@ -5441,8 +5855,7 @@ function hideFigureSelector () {
 
 // hideLogoChooser hides the logo chooser
 function hideLogoChooser () {
-  var el = document.getElementById('logoChooserContainer');
-  if (el) el.removeAttribute('class');
+  document.getElementById('logoChooserContainer').classList.add('noDisplay');
 }
 
 // displaySelectedFigure will display the currently selected figure
@@ -5480,8 +5893,9 @@ function displaySelectedFigure() {
 function updateFigureOptions (figureId) {
   var f = figures[figureId];
   
-  // show figure box by default
+  // show figure box and figureOptions by default
   document.getElementById('selectedFigure').classList.remove('hidden');
+  document.getElementById('figureOptions').classList.remove('hidden');
   // hide fuSelectFigureFirst text by default
   document.getElementById('fuSelectFigureFirst').classList.add('noDisplay');
   // hide figureStringInput by default
@@ -5489,15 +5903,17 @@ function updateFigureOptions (figureId) {
 
   if (selectedFigure.id === null) {
     if (activeForm !== 'FU') {
-      // move figure box right
+      // clear figure box
       document.getElementById('selectedFigure').classList.remove('active');
     } else {
-      // hide figure box. Important to only HIDE for Firefox
+      // hide figure box and options. Important to only HIDE for Firefox
       document.getElementById('selectedFigure').classList.add('hidden');
+      document.getElementById('figureOptions').classList.add('hidden');
+      document.getElementById('subSequenceDirection').classList.add ('noDisplay'); 
       document.getElementById('fuSelectFigureFirst').classList.remove('noDisplay');
     }
     // hide figure modifiers
-    document.getElementById('figureOptions').classList.add('noDisplay');
+    //document.getElementById('figureOptions').classList.add('noDisplay');
     document.getElementById('unknownFigure').classList.add('noDisplay');
     document.getElementById('entryExit').classList.add('noDisplay');
     // hide comments box
@@ -5505,7 +5921,7 @@ function updateFigureOptions (figureId) {
     // hide Free Unknown disabled options warning
     document.getElementById('FUfigOptionsDisabled').classList.add ('noDisplay');
   } else {
-    // move figure box left
+    // activate figure box
     document.getElementById('selectedFigure').classList.add('active');
     if ((activeForm === 'FU') && (f.unknownFigureLetter !== 'L')) {
       document.getElementById ('t_addFigureText').classList.add ('noDisplay');
@@ -5515,12 +5931,12 @@ function updateFigureOptions (figureId) {
     
     if ((activeForm === 'FU') && (f.unknownFigureLetter === 'L')) {
       // update and show figureStringInput
-      document.getElementById ('figureStringInput').value = (f.string !== 'l') ? f.string : '';
+      document.getElementById ('figureStringInput').value = (f.string !== 'L') ? f.string : '';
       document.getElementById ('figureString').classList.remove ('noDisplay');
     }
 
     // show figure modifiers
-    document.getElementById('figureOptions').classList.remove ('noDisplay');
+    //document.getElementById('figureOptions').classList.remove ('noDisplay');
     document.getElementById('entryExit').classList.remove ('noDisplay');
     if ((f.entryAxis === 'X') || (f.seqNr === 1) || f.subSequence) {
       document.getElementById ('flipYAxis').classList.remove ('noDisplay');
@@ -5787,15 +6203,16 @@ function addRollSelectors (figureId) {
           var rollInfo = figures[figureId].rollInfo[i];
           var div = document.createElement('div');
           div.id = 'roll' + i;
-          div.classList.add ('section');
+          div.classList.add ('content');
+          div.classList.add ('divider');
           var divdiv = document.createElement ('div');
-          divdiv.classList.add ('sectionLabel');
+          divdiv.classList.add ('contentLabel');
           divdiv.innerHTML = userText.rollPos[rollNr];
           div.appendChild (divdiv);
-          var divdiv = document.createElement ('div');
+          /*var divdiv = document.createElement ('div');
           divdiv.classList.add ('sectionLabelClose');
           divdiv.innerHTML = '&nbsp;';
-          div.appendChild (divdiv);
+          div.appendChild (divdiv);*/
           // roll positions of type 4 only allow changing line length 
           if (rolls[i] != 4) {
             // loop until max rolls per element + 1
@@ -5857,10 +6274,10 @@ function addRollSelectors (figureId) {
   /* HACK : force redraw of #leftBlock by removing and then showing the
    * #design div. Fixes issue #171
    */
-  document.getElementById('design').classList.add ('noDisplay');
+  /*document.getElementById('design').classList.add ('noDisplay');
   setTimeout (function(){
     document.getElementById('design').classList.remove ('noDisplay');
-    }, 300);
+    }, 300);*/
 }
 
 // setUndoRedo will update undo/redo buttons and redo object
@@ -5992,7 +6409,7 @@ function updateFigure () {
           if (rollFlip.classList.contains ('on')) {
             rolls += ',';
           } else {
-            if (rolls.match(/[0-9fs]/)) rolls += ';';
+            if (rolls.match(/[0-9fseul]/)) rolls += ';';
           }
           if (flipNumber.classList.contains ('on')) {
             comment = userpat.flipNumber; // add to start of comment
@@ -6686,11 +7103,12 @@ function buildLogoSvg(logoImage, x, y, width, height) {
 // and allow for selection of a logo
 function logoChooser() {
 // define logo thumbnail width and height
-  var width = 72;
-  var height = 72;
+  var width = mobileBrowser ? 66 : 80;
+  var height = mobileBrowser ? 66 : 80;
   // show the logo chooser container
   var container = document.getElementById('logoChooserContainer');
-  container.classList.add ('active');
+  //container.classList.add ('active');
+  container.classList.remove ('noDisplay');
   // clear logo file when present
   var el = document.getElementById('logoFile');
   if (el) el.value = '';
@@ -6740,6 +7158,7 @@ function drawActiveLogo() {
     var width = 120; // maximum width
     var height = 60; // maximum height
     el.classList.remove ('noDisplay');
+    document.getElementById('activeLogo').classList.remove ('empty');
     document.getElementById('t_chooseLogo').classList.add ('noDisplay');
     // Create logo svg
     var link = document.getElementById('logoImage');
@@ -6756,7 +7175,11 @@ function removeLogo() {
   logoImg = false;
   // Remove 'remove logo' link and logo image
   document.getElementById('t_removeLogo').classList.add ('noDisplay');
-  document.getElementById('logoImage').classList.add ('noDisplay');
+  document.getElementById('activeLogo').classList.add ('empty');
+  setTimeout (function()
+    {
+      document.getElementById('logoImage').classList.add ('noDisplay');
+    }, 1000);
   document.getElementById('logo').value = '';
   // Add choose logo option
   document.getElementById('t_chooseLogo').classList.remove ('noDisplay');
@@ -8236,9 +8659,7 @@ function checkSequence(show) {
       // get alerts from alert area
       var contentDiv = document.getElementById('checkSequenceContent');
       contentDiv.innerHTML = document.getElementById('alerts').innerHTML;
-      // remove label and <br> (first three items)
-      contentDiv.removeChild(contentDiv.firstChild);
-      contentDiv.removeChild(contentDiv.firstChild);
+      // remove label
       contentDiv.removeChild(contentDiv.firstChild);
       if (contentDiv.innerHTML == '') {
         // no alerts
@@ -8273,7 +8694,7 @@ function lockSequence (lock) {
         els[i].removeAttribute ('disabled');
       }
     }
-    document.getElementById ('t_locked').classList.add ('noDisplay');
+    document.getElementById ('t_locked').classList.add ('hidden');
   } else {
     // was unlocked, so lock
     selectFigure (false);
@@ -8288,9 +8709,10 @@ function lockSequence (lock) {
         els[i].setAttribute ('disabled', true);
       }
     }
-    document.getElementById ('t_locked').classList.remove ('noDisplay');
+    document.getElementById ('t_locked').classList.remove ('hidden');
   }
   changeSequenceInfo();
+  menuInactiveAll();
 }
 
 // changeReferenceSequence is called when the reference sequence is
@@ -8525,7 +8947,7 @@ function updateFigureSelectorOptions (selectedOption) {
 function changeFigureString () {
   var string = this.value.replace (/ /g, '');
   this.value = string;
-  string = string || 'l';
+  string = string || 'L';
   updateSequence (selectedFigure.id, string, true, true);
 }
 
@@ -8542,6 +8964,7 @@ function availableFigureGroups() {
   // hide all options
   for (var i = 1; i < options.length; i++) {
     options[i].classList.add ('noDisplay');
+    options[i].disabled = 'disabled';
   }
   if ((Object.keys(checkAllowCatId).length > 0) &&
     rulesActive &&
@@ -8551,17 +8974,20 @@ function availableFigureGroups() {
     for (var i in fig) {
       if (fig[i].aresti in checkAllowCatId) {
         options[fig[i].group].classList.remove('noDisplay');
+        options[fig[i].group].disabled = false;
       }
     }
   } else if (activeForm !== 'FU') {
     // show all options
     for (var i = 1; i < options.length; i++) {
       options[i].classList.remove ('noDisplay');
+      options[i].disabled = false;
     }
   } else {
     // show all options, except the last one (non-Aresti)
     for (var i = 1; i < (options.length - 1); i++) {
       options[i].classList.remove ('noDisplay');
+      options[i].disabled = false;
     }
   }      
 }
@@ -9206,7 +9632,7 @@ function selectFigureFu (id) {
   updateFigureEditor();
     
   // set figure chooser for new Additional figures, or hide for others
-  if ((figures[id].unknownFigureLetter === 'L') && (figures[id].string === 'l')) {
+  if ((figures[id].unknownFigureLetter === 'L') && (figures[id].string === 'L')) {
     setFigChooser (id);
     markMatchingFigures ();
     showFigureSelector ();
@@ -10007,6 +10433,8 @@ function Drop(evt) {
  
 // changeEntryDirection alters the entry direction of the sequence
 function changeEntryDirection () {
+  // close menu
+  document.getElementById('menuSequence').classList.remove ('active');
   // get code
   for (code in entryOptions) {
     if (entryOptions[code] === this.id) break;
@@ -10075,7 +10503,8 @@ function updateSequenceOptions (code) {
     // create a nodeList and remove the items of the nodelist
     var options = el.getElementsByClassName('entryOption');
     while (options[0]) el.removeChild(options[0]);
-  
+    
+    if (code === 'eu') code = '';
     for (key in entryOptions) {
       if (code != key) {
         var li = document.createElement('li');
@@ -10085,7 +10514,7 @@ function updateSequenceOptions (code) {
         var a = document.createElement('a');
         a.setAttribute ('id' , entryOptions[key]);
         a.setAttribute ('href', '#');
-        a.addEventListener ('click', changeEntryDirection);
+        a.addEventListener ('mousedown', changeEntryDirection);
         a.innerHTML = userText[entryOptions[key]];
         li.appendChild(a);
         el.insertBefore(li, el.firstChild);
@@ -10475,78 +10904,85 @@ function startFuDesigner(dontConfirm) {
     if (document.getElementById ('lock_sequence').value) lockSequence();
     
     infoBox (userText.FUstarting, userText.fuDesigner);
-    
-    selectFigure (false);
-    clearPositioning ();
-    
-    // show finalize button
-    document.getElementById ('t_finalizeSequence').classList.remove ('noDisplay');
+
+    // use setTimeout to assure the infoBox shows    
+    setTimeout (function() {
+      selectFigure (false);
+      clearPositioning ();
       
-    // move undoRedo
-    var undoRedo = document.getElementById ('undoRedo');
-    document.getElementById ('mainMenu').insertBefore (
-      undoRedo, document.getElementById ('t_finalizeSequence')
-      );
-
-    // clear undo and redo
-    activeSequence.undo = activeSequence.redo = [];
-          
-    // select the tab
-    document.getElementById ('tab-fuFigures').classList.remove ('noDisplay');
-    selectTab ('tab-fuFigures');
-    document.getElementById ('tab-sequenceInfo').classList.add ('noDisplay');
-    document.getElementById ('figureSelector').classList.add ('left');
-    
-    // switch sequence view
-    document.getElementById ('fuSequence').classList.remove ('noDisplay');
-          
-    // clear the sequence if loading from Grid and no Additional
-    // figure present
-    var noAdditional = true;
-    for (var i = 0; i < figures.length; i++) {
-      if (figures[i].unknownFigureLetter === 'L') {
-        noAdditional = false;
-        break;
-      }
-    }
-
-    if ((activeForm === 'Grid') && noAdditional) {
-      sequenceText.value = 'eu';
-    } else {
-      // rebuild the sequence according Free Unknown designer format
-      // remove / symbols and entry/exit extension from strings
-      sequenceText.value = '';
+      // show finalize button
+      document.getElementById ('t_finalizeSequence').classList.remove ('noDisplay');
+        
+      // move undoRedo
+      var undoRedo = document.getElementById ('undoRedo');
+      document.getElementById ('mainMenu').insertBefore (
+        undoRedo, document.getElementById ('t_finalizeSequence')
+        );
+  
+      // clear undo and redo
+      activeSequence.undo = activeSequence.redo = [];
+      
+      // set correct figureInfo tab movement
+      document.getElementById ('figureInfo').classList.add ('fuDesigner');
+        
+      // select the tab
+      document.getElementById ('fuFigures').classList.remove ('noDisplay');
+      document.getElementById ('tab-fuFigures').classList.remove ('noDisplay');
+      selectTab ('tab-fuFigures');
+      document.getElementById ('tab-sequenceInfo').classList.add ('noDisplay');
+      document.getElementById ('figureSelector').classList.add ('left');
+      
+      // switch sequence view
+      document.getElementById ('fuSequence').classList.remove ('noDisplay');
+            
+      // clear the sequence if loading from Grid and no Additional
+      // figure present
+      var noAdditional = true;
       for (var i = 0; i < figures.length; i++) {
-        if (figures[i].aresti && figures[i].unknownFigureLetter) {
-          var string = figures[i].string;
-          // remove extensions, shortenings and y axis switch
-          string = string.replace(/[~\.'`\+\/]/g, '').replace(/-+/g, '-');
-          // remove comments
-          string = string.replace(/"[^"]*"/g, '');
-          sequenceText.value += '"@' + figures[i].unknownFigureLetter +
-            '" ' + string + ' ';
-        } else if (figures[i].subSequence) {
-          sequenceText.value += figures[i].subSequence + ' ';
+        if (figures[i].unknownFigureLetter === 'L') {
+          noAdditional = false;
+          break;
         }
       }
-      sequenceText.value = sequenceText.value.trim().replace(/ e(u|d|j|ja)$/, '') + ' eu';
-      if (!sequenceText.value.match (/^e(u|d|j|ja) /)) {
-        sequenceText.value = 'eu ' + sequenceText.value;
+  
+      if ((activeForm === 'Grid') && noAdditional) {
+        sequenceText.value = 'eu';
+      } else {
+        // rebuild the sequence according Free Unknown designer format
+        // remove / symbols and entry/exit extension from strings
+        sequenceText.value = '';
+        for (var i = 0; i < figures.length; i++) {
+          if (figures[i].aresti && figures[i].unknownFigureLetter) {
+            var string = figures[i].string;
+            // remove extensions, shortenings and y axis switch
+            string = string.replace(/[~\.'`\+\/]/g, '').replace(/-+/g, '-');
+            // remove comments
+            string = string.replace(/"[^"]*"/g, '');
+            sequenceText.value += '"@' + figures[i].unknownFigureLetter +
+              '" ' + string + ' ';
+          } else if (figures[i].subSequence) {
+            sequenceText.value += figures[i].subSequence + ' ';
+          }
+        }
+        sequenceText.value = sequenceText.value.trim().replace(/ e(u|d|j|ja)$/, '') + ' eu';
+        if (!sequenceText.value.match (/^e(u|d|j|ja) /)) {
+          sequenceText.value = 'eu ' + sequenceText.value;
+        }
       }
-    }
-    
-    checkSequenceChanged (true);
-
-    // add new stylesheet rule 0 to hide all elements with class
-    // disableFUdesigner. Only do this after checkSequenceChanged as
-    // otherwise it may break some bBox routines!
-    document.styleSheets[0].insertRule('.disableFUdesigner{display:none !important;}', 0);
-
-    selectForm('FU');
-    updateSequenceTextHeight();
-    availableFigureGroups();
-    
-    infoBox();
+      
+      checkSequenceChanged (true);
+  
+      // add new stylesheet rule 0 to hide all elements with class
+      // disableFUdesigner. Only do this after checkSequenceChanged as
+      // otherwise it may break some bBox routines!
+      document.styleSheets[0].insertRule('.disableFUdesigner{display:none !important;}', 0);
+  
+      selectForm('FU');
+      updateSequenceTextHeight();
+      availableFigureGroups();
+      
+      infoBox();
+    }, 300);
   }
   
   if (dontConfirm) {
@@ -10563,68 +10999,42 @@ function startFuDesigner(dontConfirm) {
 function exitFuDesigner (newSequence) {
   
   function exitFu () {
-    if (newSequence === true) {
+    if (!newSequence) {
+      infoBox (userText.FUfinalizing, userText.finalizeSequence);
+    }
+
+    // use setTimeout to assure the infoBox shows
+    setTimeout(function(){
       // hide finalize button
       document.getElementById ('t_finalizeSequence').classList.add ('noDisplay');
       
       // delete stylesheet rule 0 to show all elements with class
       // disableFUdesigner
       document.styleSheets[0].deleteRule(0);
-      
+  
       // move undoRedo
       var undoRedo = document.getElementById ('undoRedo');
       document.getElementById ('topBlock').insertBefore (
         undoRedo, document.getElementById ('sequenceTextContainer')
         );
-      
+  
       // clear undo and redo
       activeSequence.undo = activeSequence.redo = [];
-      
+  
       // switch sequence view
       document.getElementById ('fuSequence').classList.add ('noDisplay');
-
-      document.getElementById('fu_figures').value = '';
-
-      checkSequenceChanged ();
   
-      // restore the tabs
-      document.getElementById ('tab-fuFigures').classList.add ('noDisplay');
-      document.getElementById ('fuFigures').classList.add ('hidden');
-      document.getElementById ('tab-sequenceInfo').classList.remove ('noDisplay');
-      selectTab ('tab-figureInfo');
-      selectTab ('tab-sequenceInfo');
-      document.getElementById ('figureSelector').classList.remove ('left');
-      availableFigureGroups();
-    } else {
-      infoBox (userText.FUfinalizing, userText.finalizeSequence);
-      //setTimeout (function(){
-        // hide finalize button
-        document.getElementById ('t_finalizeSequence').classList.add ('noDisplay');
-        
-        // delete stylesheet rule 0 to show all elements with class
-        // disableFUdesigner
-        document.styleSheets[0].deleteRule(0);
-        
-        // move undoRedo
-        var undoRedo = document.getElementById ('undoRedo');
-        document.getElementById ('topBlock').insertBefore (
-          undoRedo, document.getElementById ('sequenceTextContainer')
-          );
-                
-        // switch sequence view
-        document.getElementById ('fuSequence').classList.add ('noDisplay');
-        
-        document.getElementById('fu_figures').value = '';
-          
+      document.getElementById ('fu_figures').value = '';
+      
+      if (newSequence === true) {
+        checkSequenceChanged (true);
+      } else {
         selectFigure (false);
         selectForm ('B');
         separateFigures (true);
         sequenceText.value = sequenceText.value.trim().replace(/ e(u|d|j|ja)$/, '').replace(/^eu /, '');
-        
+  
         checkSequenceChanged ();
-
-        // clear undo and redo
-        activeSequence.undo = activeSequence.redo = [];
         
         // put figures with letters in reference sequence field
         var div = document.getElementById('referenceSequenceDialog');
@@ -10640,20 +11050,24 @@ function exitFuDesigner (newSequence) {
         }
         changeReferenceSequence();
         div.classList.add ('noDisplay');
+      }
     
-        // restore the tabs
-        document.getElementById ('tab-fuFigures').classList.add ('noDisplay');
-        document.getElementById ('fuFigures').classList.add ('hidden');
-        document.getElementById ('tab-sequenceInfo').classList.remove ('noDisplay');
-        selectTab ('tab-figureInfo');
-        selectTab ('tab-sequenceInfo');
-        document.getElementById ('figureSelector').classList.remove ('left');
-        availableFigureGroups();
-        
-        infoBox();
-      //}, 100);
-    }
-    
+      // restore the tabs
+      document.getElementById('subSequenceDirection').classList.add ('noDisplay'); 
+      document.getElementById ('tab-fuFigures').classList.add ('noDisplay');
+      document.getElementById ('fuFigures').classList.add ('noDisplay');
+      document.getElementById ('fuFigures').classList.add ('hidden');
+      document.getElementById ('tab-sequenceInfo').classList.remove ('noDisplay');
+      selectTab ('tab-figureInfo');
+      selectTab ('tab-sequenceInfo');
+      document.getElementById ('figureSelector').classList.remove ('left');
+      // set correct figureInfo tab movement
+      document.getElementById ('figureInfo').classList.remove ('fuDesigner');
+  
+      availableFigureGroups();
+      
+      if (!newSequence) infoBox();
+    }, 300);
   }
   
   if (newSequence) {
@@ -10662,9 +11076,7 @@ function exitFuDesigner (newSequence) {
     // get alerts from alert area
     var div = document.createElement('div');
     div.innerHTML = document.getElementById('alerts').innerHTML;
-    // remove label and <br> (first three items)
-    div.removeChild(div.firstChild);
-    div.removeChild(div.firstChild);
+    // remove label
     div.removeChild(div.firstChild);
     
     var myAlerts = div.innerHTML;
@@ -10711,7 +11123,7 @@ function fuCellAddHandlers (td) {
   td.addEventListener ('drop', handleFuDrop);
   
   if (!td.classList.contains ('endBlock')) {
-    td.addEventListener ('click', handleFuSelect);
+    td.addEventListener ('mousedown', handleFuSelect);
   }
 }
 
@@ -10739,7 +11151,7 @@ function handleFuDragFigureStart(e) {
   var l = this.id.replace (/^fu/, '');
   e.dataTransfer.effectAllowed = 'copy';
   if (l === 'L') {
-    e.dataTransfer.setData('text', '"@L" l');
+    e.dataTransfer.setData('text', '"@L" L');
   } else {
     e.dataTransfer.setData('text', '"@' + l + '" ' + fuFig[l].string);
   }
@@ -10748,6 +11160,7 @@ function handleFuDragFigureStart(e) {
 // handleFuDragSubStart is called when starting to drag a Free Unknown
 // subsequence. It will set the figure string in dataTransfer
 function handleFuDragSubStart(e, string) {
+  console.log('dragstart');
   e.target.getElementsByClassName('endBlock')[0].classList.add ('hidden');
   e.dataTransfer.effectAllowed = 'copy';
   e.dataTransfer.setData('text', string);
@@ -11687,7 +12100,6 @@ function makeFU () {
       svg.setAttribute('height', cellH);
     }
 
-    //td.innerHTML = userText.END;
     td.classList.add ('fuFig' + id);
     td.classList.add ('endBlock');
     fuCellAddHandlers (td);
@@ -11844,7 +12256,7 @@ function makeFU () {
       div.appendChild(table);
       // set subSeq number of new subsequence
       figures[i].subSeq = sub;
-    } else if (f.string === 'l') {
+    } else if (f.string === 'L') {
       // undefined Additional figure
       var td = getTd();
       td.innerHTML = userText.Additional;
@@ -11954,19 +12366,19 @@ function addFormElements (form) {
 
 // displayAlerts displays alert messages in the Alerts box
 function displayAlerts () {
-  var container = document.getElementById("alerts");
+  var container = document.getElementById('alerts');
   if (container) {
-    // Clear any previous messages but make sure we don't remove the label (2 nodes)
-    while (container.childNodes.length > 2) {
+    // Clear any previous messages but make sure we don't remove the label (1 node)
+    while (container.childNodes.length > 1) {
       container.removeChild(container.lastChild);
     }
     // Add a message to the top to warn no rules are loaded
     if (!rulesActive) alertMsgs.unshift (userText.noRules);
-    // Display messages, start with a break to stay clear from the label
+    // Display messages
     for (var i = 0; i < alertMsgs.length; i++) {
-      container.appendChild (document.createElement('br'));
       var span = document.createElement('span');
       container.appendChild (span);
+      container.appendChild (document.createElement('br'));
       span.innerHTML = alertMsgs[i];
       if (alertMsgRules [alertMsgs[i]]) {
         var div = document.createElement ('div');
@@ -11976,7 +12388,7 @@ function displayAlerts () {
       }
     }
     // Add break to keep the box open with no alerts
-    if (i === 0) container.appendChild (document.createElement('br'));
+//    if (i === 0) container.appendChild (document.createElement('br'));
     // Clear all alerts
     alertMsgs = [];
     alertMsgRules = [];
@@ -12624,10 +13036,9 @@ function checkSequenceMulti(i, body) {
       // get alerts from alert area
       var div = document.createElement('div');
       div.innerHTML = document.getElementById('alerts').innerHTML;
-      // remove label and <br> (first three items)
+      // remove label
       div.removeChild(div.firstChild);
-      div.removeChild(div.firstChild);
-      div.removeChild(div.firstChild);
+
       if (div.innerHTML == '') {
         if (rulesActive) {
           pre.appendChild(document.createTextNode('Rules: ' + rulesActive + '\n'));
@@ -13426,7 +13837,7 @@ function decodeBase64Url (t) {
 // and then email, bookmark or whatever
 function saveAsURL () {
   function save () {
-    var url = 'http://openaero.net?s=' + encodeBase64Url(activeSequence.xml);
+    var url = 'http://openaero.net/?s=' + encodeBase64Url(activeSequence.xml);
     
     if (chromeApp.active) {
       alertBox ('<p>' + userText.saveAsURLFromApp +
@@ -13453,7 +13864,7 @@ function emailSequence () {
     // create body with descriptive text, newlines and sequence URL
     // also replace single ticks (') and + as they may break the link
     var body = userText.emailHeader + '\n\n' + 
-      'http://openaero.net?s=' + encodeBase64Url(activeSequence.xml);
+      'http://openaero.net/?s=' + encodeBase64Url(activeSequence.xml);
     var subject =  activeFileName();
     if (subject === '') subject = 'Sequence';
     el.setAttribute('href', 'mailto:%20?subject=' + encodeURI(subject) +
@@ -13768,15 +14179,22 @@ function buildForms (print) {
 
   if (!print) {
     svg += '</svg>';
+    var height = translateY -
+      parseInt(document.getElementById ('pageSpacing').value) + 10;
+    // update first rectangle
+    svg = svg.replace (/<rect [^>]+>/, '<rect x="-5" y="-20" ' +
+      'width="810" height="' + (height + 40) + '" ' +
+      'style="fill: white;"/>');
     // Update viewBox
     // Add some margin to make sure bold lines etc are correctly shown
     svg = svg.replace (/viewBox="[^"]*"/, 'viewBox="-5 -5 810 ' +
-      (translateY - parseInt(document.getElementById ('pageSpacing').value) + 10) + '"');
+      height + '"');
     // replace first width and height. These should be for complete SVG
     svg = svg.replace (/width="[^"]*"/, 'width="' +
       document.getElementById ('imageWidth').value + 'px"');
     svg = svg.replace (/height="[^"]*"/, 'height="' +
-      document.getElementById ('imageHeight').value + 'px"');      
+      document.getElementById ('imageHeight').value + 'px"');    
+      console.log(svg);
   }
 
   if (multi) {
@@ -14142,8 +14560,8 @@ function buildForm (svg, print) {
   // So we change it back right away because otherwise the logo isn't displayed
   var sequenceSVG = new XMLSerializer().serializeToString(svg).replace (/ [^ ]*href/g, ' xlink:href');
   sequenceSVG = '<?xml version="1.0" standalone="no"?>\n' +
-    '<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" ' +
-    '"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">\n' + sequenceSVG;
+    '<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.2//EN" ' +
+    '"http://www.w3.org/Graphics/SVG/1.2/DTD/svg12.dtd">\n' + sequenceSVG;
     
   // create Black & White (sequence drawing only) forms when checked
   if (document.getElementById('blackWhite').checked) {
@@ -14989,8 +15407,8 @@ function saveFigs () {
       } else {
         // convert svg to standalone
         svg = '<?xml version="1.0" standalone="no"?>\n' +
-        '<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" ' +
-        '"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">\n' + svg;
+        '<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.2//EN" ' +
+        '"http://www.w3.org/Graphics/SVG/1.2/DTD/svg12.dtd">\n' + svg;
         zip.file(fName + '.svg', svg);
       }
     }
@@ -15019,6 +15437,7 @@ function svgToPng (svg, f) {
   svg = svg.replace (/^.*?<svg/, '<svg');
   // convert svg to canvas
   var canvas = document.createElement('canvas');
+  canvas.id = 'canvas';
   document.lastChild.appendChild (canvas);
   canvg (canvas, svg);
   if (f) {
@@ -15195,8 +15614,8 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
       }
     }
     
-    // Parse the roll patterns and find out where to put rolls, snaps
-    // and spins
+    // Parse the roll patterns and find out where to put rolls, snaps,
+    // spins and tumbles
     // We need to do this before building the figure because it can
     // affect our choice of figure
     for (var i = 0; i < rollPatterns.length; i++) {
@@ -15221,7 +15640,8 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
         for (j = 0; j < rollPattern.length; j++) {
           // check if we are not in a roll comment section
           if (!inComment) {
-            switch (rollPattern.charAt(j)) {
+            var char = rollPattern.charAt(j);
+            switch (char) {
               case (userpat.comment):
                 // start of comment
                 inComment = true;
@@ -15248,21 +15668,31 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
                 rollSign = -rollSign;
                 flipRoll = !flipRoll;
                 break;
-              case ('f'):
-                // Add single snaps
+              case 'f':
+              case 's':
+              case 'e':
+              case 'u':
+              case 'l':
+                // Add single snaps, spins and tumbles
                 // When there was a roll before, add a line first
+                var type = {
+                  'f': 'possnap',
+                  's': 'posspin',
+                  'e': 'posShoulderRoll',
+                  'u': 'posRuade',
+                  'l': 'posLomcevak'}[char];
                 if (extent > 0) {
                   roll[i].push({'type':'line', 'extent':2, 'load':NegLoad});
                 }
                 roll[i].push({
-                  'type':'possnap',
+                  'type': type,
                   'extent':rollSign * 360,
-                  'pattern':'1f',
+                  'pattern':'1' + char,
                   'flip':flipRoll,
                   'flipNumber':flipNumber,
                   'comment':comment});
                 extent = 360;
-                rollInfo[i].pattern[subRoll] = 'f';
+                rollInfo[i].pattern[subRoll] = char;
                 rollInfo[i].flip[subRoll] = flipRoll;
                 rollInfo[i].flipNumber[subRoll] = flipNumber;
                 rollInfo[i].comment[subRoll] = comment;
@@ -15271,56 +15701,28 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
                 subRoll++;
                 rollInfo[i].gap[subRoll] = 0;
                 break;
-              case ('s'):
-                // Add single spins
+              case 'i':
+                // Add single inverted snaps, spins and tumbles
                 // When there was a roll before, add a line first
-                if (extent > 0) {
-                  roll[i].push({'type':'line', 'extent':2, 'load':NegLoad});
-                }
-                roll[i].push({
-                  'type':'posspin',
-                  'extent':rollSign * 360,
-                  'pattern':'1s',
-                  'flip':flipRoll,
-                  'flipNumber':flipNumber,
-                  'comment':comment});
-                extent = 360;
-                rollInfo[i].pattern[subRoll] = 's';
-                rollInfo[i].flip[subRoll] = flipRoll;
-                rollInfo[i].flipNumber[subRoll] = flipNumber;
-                rollInfo[i].comment[subRoll] = comment;
-                flipNumber = false;
-                comment = '';
-                subRoll++;
-                rollInfo[i].gap[subRoll] = 0;
-                break;
-              case('i'):
-                // Add single inverted snaps and spins
-                // When there was a roll before, add a line first
-                if (extent > 0) {
-                  roll[i].push({'type':'line', 'extent':2, 'load':NegLoad});
-                }
-                if (rollPattern[j + 1].match (/[fs]/)) {
-                  j++;
-                  if (rollPattern[j] === 'f') {
-                    roll[i].push({
-                      'type':'negsnap',
-                      'extent':rollSign * 360,
-                      'pattern':'1if',
-                      'flip':flipRoll,
-                      'flipNumber':flipNumber,
-                      'comment':comment});
-                    rollInfo[i].pattern[subRoll] = 'if';
-                  } else {
-                    roll[i].push({
-                      'type':'negspin',
-                      'extent':rollSign * 360,
-                      'pattern':'1is',
-                      'flip':flipRoll,
-                      'flipNumber':flipNumber,
-                      'comment':comment});
-                    rollInfo[i].pattern[subRoll] = 'is';
+                var type = {
+                  'f': 'negsnap',
+                  's': 'negspin',
+                  'e': 'negShoulderRoll',
+                  'u': 'negRuade',
+                  'l': 'negLomcevak'}[rollPattern.charAt(j + 1)];
+                if (type) {
+                  if (extent > 0) {
+                    roll[i].push({'type':'line', 'extent':2, 'load':NegLoad});
                   }
+                  j++;
+                  roll[i].push({
+                    'type': type,
+                    'extent':rollSign * 360,
+                    'pattern':'1i' + rollPattern.charAt(j),
+                    'flip':flipRoll,
+                    'flipNumber':flipNumber,
+                    'comment':comment});
+                  rollInfo[i].pattern[subRoll] = 'i' + rollPattern.charAt(j);
                   extent = 360;
                   rollInfo[i].flip[subRoll] = flipRoll;
                   rollInfo[i].flipNumber[subRoll] = flipNumber;
@@ -15346,7 +15748,21 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
                     }
                   }
   
-                  if (rollPattern.charAt(j + 1).match(/[0-9]/)) { // use charAt to prevent end-of-string error
+                  if (rollPattern[j] == '9') {
+                    extent = 720;
+                    // 9 is a double roll. But for non-Aresti it can be
+                    // followed by more numbers to indicate more roll.
+                    // This can not be used for hesitations
+                    // e.g. 96 is 3 1/2 roll
+                    if (document.getElementById('nonArestiRolls').checked) {
+                      while (rollPattern.charAt(j + 1).match (/[12345679]/)) {
+                        j++;
+                        extent += parseInt({1: 360, 2: 180, 3: 270,
+                          4: 90, 5: 450, 6: 540, 7: 630,
+                          9: 720}[rollPattern[j]]);
+                      }
+                    }
+                  } else if (rollPattern.charAt(j + 1).match(/[0-8]/)) { // use charAt to prevent end-of-string error
                     // special case: more than 8x8 roll
                     if (rollPattern.charAt(j + 2).match(/[1-9]/)) { // use charAt to prevent end-of-string error
                       stops = parseInt(rollPattern[j + 2]);
@@ -15366,19 +15782,23 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
                   } else if (rollPattern[j] == '8') {
                     stops = 8;
                     extent = 90;
-                  } else if (rollPattern[j] == '9') {
-                    extent = 720;
                   } else {
                     extent = 90 * parseInt(rollPattern[j]);
                   }
                   var illegalSnapSpin = false;
-                  switch (rollPattern[j + 1]) {
-                    case ('i'):
-                      if (rollPattern[j + 2] === 'f') {
+                  switch (rollPattern.charAt(j + 1)) {
+                    case 'i':
+                      var type = {
+                        'f': 'negsnap',
+                        's': 'negspin',
+                        'e': 'negShoulderRoll',
+                        'u': 'negRuade',
+                        'l': 'negLomcevak'}[rollPattern.charAt(j + 2)];
+                      if (type) {
                         j += 2;
                         if (!stops) {
                           roll[i].push({
-                            'type':'negsnap',
+                            'type': type,
                             'extent':rollSign * extent,
                             'pattern':rollPattern.substring(startJ, j + 1),
                             'flip':flipRoll,
@@ -15387,43 +15807,26 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
                         } else {
                           illegalSnapSpin = rollPattern.substring(j - 1, j + 1);
                         }
-                      } else if (rollPattern[j + 2] === 's') {
-                        j += 2;
-                        if (!stops) {
-                          roll[i].push({
-                          'type':'negspin',
-                          'extent':rollSign * extent, 
-                          'pattern':rollPattern.substring(startJ, j + 1),
-                          'flip':flipRoll,
-                          'flipNumber':flipNumber,
-                          'comment':comment});
-                        } else {
-                          illegalSnapSpin = rollPattern.substring(j - 1, j + 1);
-                        }
-                      } 
+                      }
                       break;
-                    case ('f'):
+                    case 'f':
+                    case 's':
+                    case 'e':
+                    case 'u':
+                    case 'l':
+                      var type = {
+                        'f': 'possnap',
+                        's': 'posspin',
+                        'e': 'posShoulderRoll',
+                        'u': 'posRuade',
+                        'l': 'posLomcevak'}[rollPattern.charAt(j + 1)];
                       j++;
                       if (!stops) {
                         roll[i].push({
-                          'type':'possnap',
+                          'type': type,
                           'extent':rollSign * extent,
                           'pattern':rollPattern.substring(startJ, j + 1),
                           'flip':flipRoll, 
-                          'flipNumber':flipNumber,
-                          'comment':comment});
-                      } else {
-                        illegalSnapSpin = rollPattern.substring(j, j + 1);
-                      }
-                      break;
-                    case ('s'):
-                      j++;
-                      if (!stops) {
-                        roll[i].push({
-                          'type':'posspin',
-                          'extent':rollSign * extent, 
-                          'pattern':rollPattern.substring(startJ, j + 1),
-                          'flip':flipRoll,
                           'flipNumber':flipNumber,
                           'comment':comment});
                       } else {
@@ -15903,6 +16306,60 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
                 break;
               case ('negsnap'):
                 rollPaths = buildShape('Snap', Array(
+                  roll[rollnr][j].extent,
+                  1,
+                  rollTop,
+                  roll[rollnr][j].comment),
+                  rollPaths);
+                lineLength += Math.abs(parseInt(roll[rollnr][j].extent / 360)) * (snapElement075 / lineElement);
+                break;
+              case 'posShoulderRoll':
+                rollPaths = buildShape('ShoulderRoll', Array(
+                  roll[rollnr][j].extent,
+                  0,
+                  rollTop,
+                  roll[rollnr][j].comment),
+                  rollPaths);
+                lineLength += Math.abs(parseInt(roll[rollnr][j].extent / 360)) * (snapElement075 / lineElement);
+                break;
+              case 'negShoulderRoll':
+                rollPaths = buildShape('ShoulderRoll', Array(
+                  roll[rollnr][j].extent,
+                  1,
+                  rollTop,
+                  roll[rollnr][j].comment),
+                  rollPaths);
+                lineLength += Math.abs(parseInt(roll[rollnr][j].extent / 360)) * (snapElement075 / lineElement);
+                break;
+              case 'posRuade':
+                rollPaths = buildShape('Ruade', Array(
+                  roll[rollnr][j].extent,
+                  0,
+                  rollTop,
+                  roll[rollnr][j].comment),
+                  rollPaths);
+                lineLength += Math.abs(parseInt(roll[rollnr][j].extent / 360)) * (snapElement075 / lineElement);
+                break;
+              case 'negRuade':
+                rollPaths = buildShape('Ruade', Array(
+                  roll[rollnr][j].extent,
+                  1,
+                  rollTop,
+                  roll[rollnr][j].comment),
+                  rollPaths);
+                lineLength += Math.abs(parseInt(roll[rollnr][j].extent / 360)) * (snapElement075 / lineElement);
+                break;
+              case 'posLomcevak':
+                rollPaths = buildShape('Lomcevak', Array(
+                  roll[rollnr][j].extent,
+                  0,
+                  rollTop,
+                  roll[rollnr][j].comment),
+                  rollPaths);
+                lineLength += Math.abs(parseInt(roll[rollnr][j].extent / 360)) * (snapElement075 / lineElement);
+                break;
+              case 'negLomcevak':
+                rollPaths = buildShape('Lomcevak', Array(
                   roll[rollnr][j].extent,
                   1,
                   rollTop,
@@ -16662,6 +17119,7 @@ function parseSequence () {
   var comments = false;
   var figure = '';
   var formBDirection = 0;
+  var match = false;
   additionals = 0;
   // Make sure the scale is set to 1 before parsing
   if (scale != 1) {
@@ -16837,6 +17295,42 @@ function parseSequence () {
         // remove unknownFigureLetter from comments when applicable
         comments = comments.replace(/^@[A-L]/, '');
       }
+    } else if (match = figure.match (/^e(ja?|d|u)/)) {
+      match = match[0];
+      Attitude = 0;
+      // sequence entry options
+      if (match === 'eja') {
+        // Crossbox away entry 'figure'
+        Direction = 90;
+      } else if (match === 'ej') {
+        // Crossbox entry 'figure'
+        Direction = 270;
+      } else if (match === 'ed') {
+        // Downwind entry 'figure'
+        if (activeForm == 'C') {
+          Direction = 0;
+          goRight = true;
+        } else {
+          Direction = 180;
+          goRight = false;
+        }
+      } else if (match === 'eu') {
+        // Upwind entry 'figure'
+        if (activeForm == 'C') {
+          Direction = 180;
+          goRight = false;
+        } else {
+          Direction = 0;
+          goRight = true;
+        }
+      }
+      if (firstFigure) {
+        updateSequenceOptions (match);
+      } else {
+        subSequence = match;
+        firstFigure = true;
+      }
+      figures[i].subSequence = match;
     } else {
       // remove any comments inside the figure
       var base = figure.replace(/"[^"]*"/g, '');
@@ -16860,9 +17354,11 @@ function parseSequence () {
         figure = figure.replace(/(\d*)is/, "iv$1is");
         base = base.replace('is', 'iv');
       }
-      // To continue determining the base we remove if, is, f, s
-      base = base.replace(/if|is|f|s/g, '');
-      // Handle simple horizontal rolls that change from upright to inverted or vv
+      // To continue determining the base we remove all snap, spin and
+      // tumble characters
+      base = base.replace(/i?[fseul]/g, '');
+      // Handle simple horizontal rolls that change from upright to
+      // inverted or vv
       if (base == '-') {
         if (figure.replace(/[^a-zA-Z0-9\-\+]+/g, '').charAt(0) == '-') {
           base += '+';
@@ -16870,7 +17366,7 @@ function parseSequence () {
           base = '+' + base;
         }
         // Handle everything else
-      } else if ((base != '') || figure.match(/^[^\[\(]*[0-9fs]/)) {
+      } else if ((base != '') || figure.match(/^[^\[\(]*[0-9fseul]/)) {
         // begin the base with a '+' if there is no '-'
         if (base.charAt(0) != '-') base = '+' + base;
         // end the base with a '+' if there is no '-'
@@ -16966,62 +17462,6 @@ function parseSequence () {
           lineElement = lineElement / scale;
           scale = 1;
         }
-        // Crossbox entry 'figure'
-      } else if (base == '+ej+') {
-        Attitude = 0;
-        Direction = 270;
-        if (firstFigure) {
-          updateSequenceOptions ('ej');
-        } else {
-          subSequence = 'ej';
-          firstFigure = true;
-        }
-        figures[i].subSequence = 'ej';
-        // Crossbox away entry 'figure'
-      } else if (base == '+eja+') {
-        Attitude = 0;
-        Direction = 90;
-        if (firstFigure) {
-          updateSequenceOptions ('eja');
-        } else {
-          subSequence = 'eja';
-          firstFigure = true;
-        }
-        figures[i].subSequence = 'eja';
-        // Downwind entry 'figure'
-      } else if (base == '+ed+') {
-        Attitude = 0;
-        if (activeForm == 'C') {
-          Direction = 0;
-          goRight = true;
-        } else {
-          Direction = 180;
-          goRight = false;
-        }
-        if (firstFigure) {
-          updateSequenceOptions ('ed');
-        } else {
-          subSequence = 'ed';
-          firstFigure = true;
-        }
-        figures[i].subSequence = 'ed';
-        // Upwind entry 'figure'
-      } else if (base == '+eu+') {
-        Attitude = 0;
-        if (activeForm == 'C') {
-          Direction = 180;
-          goRight = false;
-        } else {
-          Direction = 0;
-          goRight = true;
-        }
-        if (firstFigure) {
-//          updateSequenceOptions ('eu');
-        } else {
-          subSequence = 'eu';
-          firstFigure = true;
-        }
-        figures[i].subSequence = 'eu';
       } else if (base != '') {
         if (firstFigure) updateSequenceOptions ('');
         // No viable figure found, therefore Illegal

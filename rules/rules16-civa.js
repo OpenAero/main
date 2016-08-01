@@ -62,6 +62,8 @@ OpenAero 2016.1
  - removed Program (i.s.o. Programme). Obsolete since 2013
 OpenAero 2016.2
 -added several rule references, using the new x-y-rule=... syntax
+OpenAero 2016.2.2
+-added MAX360 for Advanced Unknown figure 7.4.1.2
 */
 
 //#######################################################################################
@@ -962,7 +964,7 @@ rules.push("7.2.4.3-4  NF:2");
 
 //loops
 rules.push("7.4.1.1 NOU ; MAX360");
-rules.push("7.4.1.2 NOU ; FAM91:1");
+rules.push("7.4.1.2 NOU ; MAX360 ; FAM91:1");
 rules.push("7.4.2.1-2 NOU");
 rules.push("7.4.3.1-2 NOU");
 rules.push("7.4.5.1 NR:1 ; NR:2");

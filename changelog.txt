@@ -1,3 +1,22 @@
+2016.3
+* corrected Sequence menu to fold in on iOS when tapping sequence entry option
+* added removal of newlines from sequence string to make parsing more robust
+* changed sequence link url to http://openaero.net/?s=... (added slash) to prevent iOS email app changing url to lowercase
+* added support for various tumbles through letters e, u and l
+* added support for more than two full rotations of roll
+* added MAX360 for Advanced Unknown figure 7.4.1.2
+* started conforming OpenAero to Google's Material Design
+* improved detection of upright exit in Glider rules to accept . character
+* corrected froll2-name for Glider by removing "required"
+* added US Nationals IAC logo
+* added setTimeout to start and exit of Free Unknown designer to make sure infoBox shows
+* changed selectTab to react to entire tab when clicked
+* corrected bug that prevented selecting multiple-used figure in Free Unknown designer on iOS
+* removed black top and bottom borders of pages when saving as .png
+* VINK rules:corrected 8.6.5.1 and 8.7.5.1 in Standard Unknown to allow 9.1.3.4
+* reinstated startup warning for Safari due to file saving issues
+* changed logo chooser to dialog
+
 2016.2.1
 * added warning for spins started from other than horizontal (Issue #202)
 * added alert and indication of rule checking availability

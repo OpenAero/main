@@ -59,6 +59,9 @@ OpenAero 2016.1
    checking
  - Changed programmes 2-4
  - removed Super Slow Roll from allowed figures
+2016.2.2
+- improved detection of upright exit for seqcheck-upend to accept . character
+- corrected froll2-name by removing "required"
 */
 //###################################################################################
 //################################ CIVA GLIDERS FREE ################################
@@ -129,7 +132,7 @@ rules.push("roller-min=1");
 //-----------
 // i)
 rules.push("group-froll2=^9\\.1\\.\\d\\.[^1]");
-rules.push("froll2-name=no-hesitation roll (9.1.x.x) of at least 1/2 required");
+rules.push("froll2-name=no-hesitation roll (9.1.x.x) of at least 1/2");
 rules.push("froll2-min=1");
 
 // ii)
@@ -143,7 +146,7 @@ rules.push("osnap-min=1");// minimum one outside snap roll element
 
 // Sequence entry and exit attitudes acc. to Ch. 4.3.3.4
 //======================================================
-rules.push("seqcheck-upend=[\\da-z][~+`'()\"]*>?\\s*$");// Sequence exit must be in positive attitude
+rules.push("seqcheck-upend=[\\da-z][~+`'()\"\.]*>?\\s*$");// Sequence exit must be in positive attitude
 rules.push("upend-name=Sequence must end flying upright");
 
 // Positioning and Harmony k-factors acc. to Ch. 4.3.6
@@ -198,7 +201,7 @@ rules.push("roller-min=1");
 //-----------
 // i)
 rules.push("group-froll2=^9\\.1\\.\\d\\.[^1]");
-rules.push("froll2-name=no-hesitation roll (9.1.x.x) of at least 1/2 required");
+rules.push("froll2-name=no-hesitation roll (9.1.x.x) of at least 1/2");
 rules.push("froll2-min=1");
 
 // ii)
@@ -212,7 +215,7 @@ rules.push("osnap-min=1");// minimum one outside snap roll element
 
 // Sequence entry and exit attitudes acc. to Ch. 4.3.3.4
 //======================================================
-rules.push("seqcheck-upend=[\\da-z][~+`'()\"]*>?\\s*$");// Sequence exit must be in positive attitude
+rules.push("seqcheck-upend=[\\da-z][~+`'()\"\.]*>?\\s*$");// Sequence exit must be in positive attitude
 rules.push("upend-name=Sequence must end flying upright");
 
 // Positioning and Harmony k-factors acc. to Ch. 4.3.6
@@ -572,7 +575,6 @@ rules.push("k-maxperfig=40");// 2014 : maximum K for every figure
 
 rules.push("seqcheck-twoormore=^[^ ]*$");
 rules.push("twoormore-name=manual check required: section 6 part II 4.3.4.2&nbsp;c)");
-
 
 // 4.3.4.2 d) The same catalogue number may only be used once, except of fam. 9
 
@@ -1005,7 +1007,7 @@ rules.push("hesroll-min=1");// a hesitation roll of any extent
 
 // Sequence entry and exit attitudes acc. to Ch. 4.3.3.4
 //======================================================
-rules.push("seqcheck-upend=[\\da-z][~+`'()\"]*>?\\s*$");// Sequence exit must be in positive attitude
+rules.push("seqcheck-upend=[\\da-z][~+`'()\"\.]*>?\\s*$");// Sequence exit must be in positive attitude
 rules.push("upend-name=Sequence must end flying upright (Section 6, Ch. 4.3.3.4)");
 
 // Positioning and Harmony k-factors acc. to Ch. 4.3.6
@@ -1069,7 +1071,7 @@ rules.push("hesroll-min=1");// a hesitation roll of any extent
 
 // Sequence entry and exit attitudes acc. to Ch. 4.3.3.4
 //======================================================
-rules.push("seqcheck-upend=[\\da-z][~+`'()\"]*>?\\s*$");// Sequence exit must be in positive attitude
+rules.push("seqcheck-upend=[\\da-z][~+`'()\"\.]*>?\\s*$");// Sequence exit must be in positive attitude
 rules.push("upend-name=Sequence must end flying upright (Section 6, Ch. 4.3.3.4)");
 
 // Positioning and Harmony k-factors acc. to Ch. 4.3.6
@@ -1333,7 +1335,7 @@ rules.push("poselec=15+20");// positioning k-factor assuming electric telemetry
 
 // Sequence exit must be positive upright acc. to Ch. 4.3.4.8
 //===========================================================
-rules.push("seqcheck-upend=[\\da-z][~+`'()\"]*>?\\s*$");// Sequence exit must be in positive attitude
+rules.push("seqcheck-upend=[\\da-z][~+`'()\"\.]*>?\\s*$");// Sequence exit must be in positive attitude
 rules.push("upend-name=Sequence must end flying upright (Section 6, Ch. 4.3.4.8)");
 
 

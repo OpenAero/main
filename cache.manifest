@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# OpenAero version 2016.2.1
+# OpenAero version 2016.3
 addtohomescreen/addtohomescreen.css
 addtohomescreen/addtohomescreen.min.js
 arestisystem.html
@@ -50,6 +50,7 @@ canvg/StackBlur.js
 config.js
 css/desktop.css
 css/general.css
+#css/materialize.min.css
 css/mobile.css
 css/print.css
 examples.js
@@ -84,6 +85,8 @@ images/fullrolls.png
 images/green_checkmark.png
 images/hesrolls.png
 images/magnifier.png
+images/menu-arrow-left.png
+images/menu-arrow-right.png
 images/multirolls.png
 images/OA_FigureAddPanel.gif
 images/OA_FigureGrid.gif
@@ -104,6 +107,8 @@ images/startup_ipad_portrait.jpg
 images/startup_retina.jpg
 index.html
 iOSsave.html
+#js/jquery-3.0.0.min.js
+#js/materialize.min.js
 jszip.min.js
 language.html
 languages/en.js
@@ -126,6 +131,7 @@ rules/rules15-nzac.js
 sprintf.min.js
 vkbeautify.js
 window.html
+#https://fonts.googleapis.com/icon?family=Material+Icons
 NETWORK: 
 openaero.php
 http://jsconsole.com/remote.js

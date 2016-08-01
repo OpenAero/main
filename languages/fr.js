@@ -1,4 +1,4 @@
-﻿// fr.js 2016.2
+// fr.js 2016.2
 // This file is part of OpenAero.
 
 //  OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -243,7 +243,7 @@ lang.fr = {
 'figSelectorReplace' : 'Remplace la figure sélectionnée ',
 'figsInGrid' : 'Tableau des figures',
 'figureAlreadyInQueue' : 'Cette figure est déjà dans la file',
-'figureEditor' : 'Editeur&nbsp;de figure',
+'figureEditor' : 'Editeur de figure',
 // new 1.5.1
 'figureK' : 'Figure K',
 // new 2016.1.3
@@ -384,6 +384,9 @@ lang.fr = {
 'lockSequence' : 'Verrouiller',
 //
 'logo' : 'Logo',
+// new 2016.3
+'logoChooserCancel' : 'Annuler',
+'logoChooserTitle' : 'Choisir un logo',
 'logoExplain' : 'Chargez votre logo en cliquant sur parcourir..., ' +
   'ou sélectionnez un des logos déjà affiches.',
 'manual' : 'Manuel OpenAero',
@@ -554,7 +557,7 @@ lang.fr = {
   'programmes d\'(In)connu-Libre',
 //
 'remove' : 'Supprimer',
-'removeLogo' : 'Supprimer',
+'removeLogo' : 'Supprimer le logo',
 'resetStyle' : 'Valeur par défaut',
 'resetStyleAll' : 'Valeur par défaut (tous les paramètres)',
 // new 1.4.2

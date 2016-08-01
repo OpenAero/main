@@ -30,6 +30,9 @@
 // 2016.1.3
 // - removed Intermediate
 // - 2016 Beginners & Standard Known
+// 2016.3
+// - corrected 8.6.5.1 and 8.7.5.1 in Standard Unknown to allow 9.1.3.4
+
 
 //###############################################################################
 //##### VINK BEGINNERS KNOWN ####################################################
@@ -63,6 +66,9 @@ rules.push("why-no5Qspin=no 1 1/4 spin allowed");
 rules.push("rule-spinRequired=standardSpin:z");
 rules.push("why-spinRequired=spin required on vertical");
 
+rules.push("rule-NH=roll:2");
+rules.push("why-NH=no 2-point rolls allowed");
+
 rules.push("rule-NQ=roll:4");
 rules.push("why-NQ=no 4-point rolls allowed");
 
@@ -92,8 +98,8 @@ rules.push("8.5.3.3");
 rules.push("8.5.6.1 NR:1");
 rules.push("8.5.7.3");
 rules.push("8.6.4.3 spinRequired:1 ; no5Qspin");
-rules.push("8.6.5.1 NR");
-rules.push("8.7.5.1 NR");
+rules.push("8.6.5.1 NH ; NQ ; NR:2 ; NR:3");
+rules.push("8.7.5.1 NH ; NQ ; NR:2 ; NR:3");
 
 rules.push("9.1.2.2");
 rules.push("9.1.3.2");

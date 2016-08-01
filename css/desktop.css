@@ -1,5 +1,5 @@
 /*
- desktop.css 2016.1.3
+ desktop.css
  This file is part of OpenAero.
 
   OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -24,12 +24,13 @@
 body {
   overflow: hidden;
 }
+.tabSelector li {
+  min-width: 160px;
+}
 #topBlock {
   position: absolute;
   display: block;
-  background: #fafafa;
-  background: -webkit-linear-gradient(top, #ffffff, #f0f0f0);
-  background: linear-gradient(top, #ffffff, #f0f0f0);
+  background-color: #ede7f6;
   border-bottom: 1px solid #888;
   -moz-box-shadow: 0 4px 5px -2px rgba(0,0,0,0.5);
   -webkit-box-shadow: 0 4px 5px -2px rgba(0,0,0,0.5);
@@ -37,7 +38,6 @@ body {
   top: 0;
   left: 0;
   width: 100%;
-/*  height: 49px;*/
   margin: 0;
   padding: 0 0 4px 0;
   z-index: 8;
@@ -66,29 +66,67 @@ body {
   overflow: hidden;
 }
 #leftBlock {
+  position: relative;
   float: left;
   overflow-x: hidden;
   overflow-y: auto;
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
   background: #f4f4f4;
   background: -webkit-linear-gradient(top, #f4f4f4, #e8e8e8);
   background: linear-gradient(top, #f4f4f4, #e8e8e8);
   -moz-box-shadow: 2px 0 2px -2px rgba(0,0,0,0.5);
   -webkit-box-shadow: 2px 0 2px -2px rgba(0,0,0,0.5);
-  box-shadow: 2px 0 2px -2px rgba(0,0,0,0.5);
+  box-shadow: 0px 3px 6px rgba(0,0,0,0.5);
   width: 276px;
   height: 99%;
-  padding: 4px;
-  z-index: 1;
+  padding: 0;
+}
+#leftBlockTop {
+  position: relative;
+  width: 1000px;
 }
 #sequenceInfo {
+  position: relative;
+  top: 0;
+  left: 0;
+  width: 266px;
   background: -webkit-linear-gradient(top, #f4f4f4, #e0e0ff);
   background: linear-gradient(top, #f4f4f4, #e0e0ff);
+  transform: translateX(0);
+  transition: all 0.3s ease-in-out;
+}
+#sequenceInfo.hidden {
+  transform: translateX(-280px);
+  margin: 7px 5px 7px 5px !important;
+  visibility: visible;
+}
+#figureInfo {
+  position: relative;
+  top: 0;
+  left: -276px;
+  width: 266px;
+  transform: translateX(0);
+  transition: all 0.3s ease-in-out;
+}
+#figureInfo.hidden {
+  transform: translateX(280px);
+  margin: 7px 5px 7px 5px !important;
+  visibility: visible;
+}
+#figureInfo.fuDesigner.hidden {
+  transform: translateX(-280px);
+}
+#fuFigures {
+  position: relative;
+  top: 0;
+  left: -552px;
+  width: 266px;
+  transform: translateX(0);
+  transition: all 0.3s ease-in-out;
+}
+#fuFigures.hidden {
+  transform: translateX(280px);
+  margin: 7px 5px 7px 5px !important;
+  visibility: visible;
 }
 #pilot {
   float: left !important;
@@ -106,20 +144,23 @@ body {
 #acreg {
   margin-left: 2px;
 }
-#figureInfo {
-  background: -webkit-linear-gradient(top, #f4f4f4, #e0e0ff);
-  background: linear-gradient(top, #f4f4f4, #e0e0ff);
+#entryExit {
+  min-height: 46px;
 }
 /* virtual keyboard */
 #virtualKeyboard {
   top: 55px;
   left: 286px;
 }
-.tabSelector {
-  width: 600px;
+#leftBlock .tabSelector {
+  display: block;
+  margin-left: -4px !important;
+  margin-right: -4px !important;
+  min-width: 284px;
 }
-.tabSelector li {
-  width: 132px;
+#leftBlock .tabSelector li {
+  min-width: 118px;
+  max-width: 118px;
 }
 #svgContainer {
   position: absolute;
@@ -142,18 +183,17 @@ body {
 #figureSelector {
   position: absolute;
   overflow: hidden;
-  background: #f4f4f4;
-  background: -webkit-linear-gradient(top, #f4f4f4, #e8e8e8);
-  background: linear-gradient(top, #f4f4f4, #e8e8e8);
+  background: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
   top: 50px;
-  right: -300px;
+  right: -340px;
   -moz-transition: 0.3s;
   -o-transition: 0.3s;
   -webkit-transition: 0.3s;
   transition: 0.3s;
   width: 300px;
-  height: 95%;
-  padding: 0px;
+  height: 85%;
+  padding: 12px;
   z-index: 2;
 }
 #figureSelector.active {
@@ -161,7 +201,7 @@ body {
 }
 #figureSelector.left {
   right: auto;
-  left: -300px;
+  left: -340px;
 }
 #figureSelector.leftActive {
   right: auto;
@@ -241,6 +281,10 @@ body {
   width: 48%;
 }
 
+/* settings */
+#settingsDialog div.box {
+  min-width: 552px;
+}
 /* buttons */
 .undoRedoButton {
   float: left;
@@ -272,13 +316,13 @@ body {
   background-image: url('../buttons/smallFigEndInv.png');
 }
 #figEntryButton.smallButton {
-  margin-right: 10px;
+  margin-right: 6px;
 }
 #figExitButton.smallButton {
-  margin-left: 10px;
+  margin-left: 6px;
 }
 #comments {
-  width: 246px;
+  width: 236px;
   height: 1.5em;
 }
 
@@ -315,6 +359,9 @@ body {
   margin: 3px;
   border: 1px solid blue;
   border-radius: 10px;
+}
+.fuSequence table.dragDropCopy {
+  margin: 0;
 }
 .fuSequence table td {
   position: relative;
@@ -353,8 +400,9 @@ body {
 .fuSequence .fuNewSub {
   border: 2px solid #ffffff;
 }
-#t_fuSelectFigureFirst {
-  font-size: 1.3em;
+#fuSelectFigureFirst {
+  font-size: 16px;
+  margin: 12px;
 }
 #t_finalizeSequence {
   margin-top: 1px;

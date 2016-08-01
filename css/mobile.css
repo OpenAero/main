@@ -1,5 +1,5 @@
 /*
- mobile.css 2016.1.3
+ mobile.css
  This file is part of OpenAero.
 
   OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -34,9 +34,7 @@ select {
   position: fixed;
   top: 0px;
   left: 0px;
-  background: #fafafa;
-  background: -webkit-linear-gradient(top, #ffffff, #f0f0f0);
-  border-bottom: 1px solid #888;
+  background-color: #ede7f6;
   -moz-box-shadow: 0px 1px 2px rgba(0,0,0,0.5);
   -webkit-box-shadow: 0px 1px 2px rgba(0,0,0,0.5);
   box-shadow: 0px 1px 2px rgba(0,0,0,0.5);
@@ -114,9 +112,6 @@ select {
 #acreg {
   margin-left: 2px;
 }
-#figureInfo {
-  background: -webkit-linear-gradient(top, #f4f4f4, #e0e0ff);
-}
 #referenceSequenceString {
   width: 99%;
   height: 8em;
@@ -126,43 +121,39 @@ select {
   top: 44px;
   left: 4px;
 }
-.tabSelector {
+#leftBlock .tabSelector {
   width: 320px;
 }
-.tabSelector li {
-  padding-top: 4px;
-  line-height: 90%; 
-  width: 101px;
-  height: 30px;
-}
-.inactiveTab {
-  font-size: 17px;
-}
-.activeTab {
-  font-size: 16px;
+#leftBlock .tabSelector li {
+  display: inline-block;
+  width: 82px;
+  min-width: 82px;
+  max-width: 82px;
 }
 #svgContainer {
-  position: absolute;
-  top: 44px;
-  left: 0px;
+  position: relative;
+  top: 0;
+  left: 0;
   width: 312px;
   background-color:#ffffff;
-  /*background: -webkit-linear-gradient(top, #f4f4f4, #ffffff);*/
   padding: 4px;
-  z-index: 2;
+  margin-bottom: 4px;
+/*  z-index: 2;*/
 }
 #figureSelector {
   position: absolute;
-  overflow: hidden;
+  overflow: display;
   top: 4px;
-  left: -320px;
+  left: -340px;
   -moz-transition: 0.2s left;
   -o-transition: 0.2s left;
   -webkit-transition: 0.2s left;
   transition: 0.2s left;
   width: 320px;
+  height: 480px;
+  font-size: 16px;
   padding: 0px;
-  background: #f4f4f4;
+  background-color: #f4f4f4;
   background: -webkit-linear-gradient(top, #f4f4f4, #e0e0ff);
   z-index: 2;
 }
@@ -216,6 +207,9 @@ select {
 #redo {
   background-image: url('../buttons/redo.png');
 }
+#entryExit {
+  min-height: 56px;
+}
 #figEntryButton {
   background-image: url('../buttons/figStartUp.png');
 }
@@ -229,20 +223,25 @@ select {
   background-image: url('../buttons/figEndInv.png');
 }
 #figEntryButton.button {
-  margin-right: 6px;
+  margin-left: 0 !important;
+  margin-right: 2px !important;
 }
 #figExitButton.button {
-  margin-left: 6px;
+  margin-left: 2px !important;
+  margin-right: 0 !important;
 }
 .rollComment {
   font-size: 2em;
   float:right;
+  margin-left: 5px;
   margin-right: 5px;
-  width: 48px;
+  width: 40px;
+  transition: all 0.3s ease-in-out;
 }
 .rollComment:focus {
   margin-left: -260px;
   width:290px;
+  opacity: 0.999; /* prevents rollFlip shining through */
 }
 #scale {
   margin-left: 6px;
@@ -256,7 +255,7 @@ select {
   font-size: 2em;
 }
 #comments {
-  width: 296px;
+  width: 286px;
   height: 4em;
 }
 
@@ -264,17 +263,14 @@ select {
 #activeLogo {
   float: right;
 }
-#logoChooserContainer.active {
-  left: 30px;
+#chooseLogo div {
+  padding: 6px;
 }
+
 /* figure chooser */
 
 #figureChooser {
-  margin: 2px;
   width: 318px;
-  height: 100%;
-  background: rgba(255, 255, 255, 0.7);
-  overflow: auto;
 }
 table#figureChooserTable td {
   padding: 1px;
@@ -284,8 +280,14 @@ table#figureChooserTable td {
 table#figureChooserTable td.selected {
   border: 1px solid magenta;
 }
+#figureSelector div {
+  margin: 6px;
+}
+#figureSelector div div {
+  margin: 0;
+}
 #figureSelectorOptionsDiv select,#figureSelectorGroupDiv select {
-  font-size: 16px;
+  font-size: 14px;
 }
 #figureSelectorClose {
   margin: 5px;
@@ -296,6 +298,8 @@ table#figureChooserTable td.selected {
   top: 1%;
   left: 1%;
   width: 95%;
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
 }
 .box .tabSelector {
   width: auto;
@@ -321,6 +325,10 @@ table#figureChooserTable td.selected {
   font-size: 14px;
   letter-spacing: -1px;
 }
+#menu li ul {
+  z-index: 12;
+  margin-top: -3px;
+}
 #menu li ul li {
   width: auto;
   text-align: left;
@@ -328,11 +336,21 @@ table#figureChooserTable td.selected {
 }
 /* make the right menus float from right edge to left */
 #menu li ul.right {
-  min-width: 100px;
+  min-width: 110px;
   right: 3px;
 }
-
+#exampleSequences li a {
+  margin-left: 20px;
+}
+#exampleSequences li ul li a {
+  margin-left: 4px;
+}
 /* settings */
 #zipImageFilenamePattern, #styleString {
   width: 280px;
+}
+
+#t_locked {
+  font-size: 16px;
+  padding: 4px;
 }
