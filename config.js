@@ -36,7 +36,7 @@
 // Where a new x should be used for versions that create sequences not
 // fully backward compatible with the previous version
 
-var version = '2016.3';
+var version = '2016.3.1';
 /* versionNew is an object that contains version update information
    The structure is {vvv : [[ttt, n], ...], ...} , where
    vvv = version number
@@ -48,7 +48,7 @@ var versionNew = {
     ['Made many changes to interface to conform to ' +
     '<a href="https://material.google.com/" target="_blank">Material ' +
     'Design</a> philosophy. This will be the new look and feel of ' +
-    'OpenAero to improve user interaction.', 4]
+    'OpenAero to improve user interaction.', 3]
   ],
   '2016.2' : [
     ['Added option to flip the Y axis direction for individual ' +

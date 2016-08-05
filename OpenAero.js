@@ -1254,6 +1254,195 @@ function decode_utf8( s ) {
   }
 })();
 
+/* FileSaver.js
+ * A saveAs() FileSaver implementation.
+ * 1.3.2
+ * 2016-06-16 18:25:19
+ *
+ * By Eli Grey, http://eligrey.com
+ * License: MIT
+ *   See https://github.com/eligrey/FileSaver.js/blob/master/LICENSE.md
+ */
+
+/*global self */
+/*jslint bitwise: true, indent: 4, laxbreak: true, laxcomma: true, smarttabs: true, plusplus: true */
+
+/*! @source http://purl.eligrey.com/github/FileSaver.js/blob/master/FileSaver.js */
+
+var saveAs = saveAs || (function(view) {
+	"use strict";
+	// IE <10 is explicitly unsupported
+	if (typeof view === "undefined" || typeof navigator !== "undefined" && /MSIE [1-9]\./.test(navigator.userAgent)) {
+		return;
+	}
+	var
+		  doc = view.document
+		  // only get URL when necessary in case Blob.js hasn't overridden it yet
+		, get_URL = function() {
+			return view.URL || view.webkitURL || view;
+		}
+		, save_link = doc.createElementNS("http://www.w3.org/1999/xhtml", "a")
+		, can_use_save_link = "download" in save_link
+		, click = function(node) {
+			var event = new MouseEvent("click");
+			node.dispatchEvent(event);
+		}
+		, is_safari = /constructor/i.test(view.HTMLElement)
+		, is_chrome_ios =/CriOS\/[\d]+/.test(navigator.userAgent)
+		, throw_outside = function(ex) {
+			(view.setImmediate || view.setTimeout)(function() {
+				throw ex;
+			}, 0);
+		}
+		, force_saveable_type = "application/octet-stream"
+		// the Blob API is fundamentally broken as there is no "downloadfinished" event to subscribe to
+		, arbitrary_revoke_timeout = 1000 * 40 // in ms
+		, revoke = function(file) {
+			var revoker = function() {
+				if (typeof file === "string") { // file is an object URL
+					get_URL().revokeObjectURL(file);
+				} else { // file is a File
+					file.remove();
+				}
+			};
+			setTimeout(revoker, arbitrary_revoke_timeout);
+		}
+		, dispatch = function(filesaver, event_types, event) {
+			event_types = [].concat(event_types);
+			var i = event_types.length;
+			while (i--) {
+				var listener = filesaver["on" + event_types[i]];
+				if (typeof listener === "function") {
+					try {
+						listener.call(filesaver, event || filesaver);
+					} catch (ex) {
+						throw_outside(ex);
+					}
+				}
+			}
+		}
+		, auto_bom = function(blob) {
+			// prepend BOM for UTF-8 XML and text/* types (including HTML)
+			// note: your browser will automatically convert UTF-16 U+FEFF to EF BB BF
+			if (/^\s*(?:text\/\S*|application\/xml|\S*\/\S*\+xml)\s*;.*charset\s*=\s*utf-8/i.test(blob.type)) {
+				return new Blob([String.fromCharCode(0xFEFF), blob], {type: blob.type});
+			}
+			return blob;
+		}
+		, FileSaver = function(blob, name, no_auto_bom) {
+			if (!no_auto_bom) {
+				blob = auto_bom(blob);
+			}
+			// First try a.download, then web filesystem, then object URLs
+			var
+				  filesaver = this
+				, type = blob.type
+				, force = type === force_saveable_type
+				, object_url
+				, dispatch_all = function() {
+					dispatch(filesaver, "writestart progress write writeend".split(" "));
+				}
+				// on any filesys errors revert to saving with object URLs
+				, fs_error = function() {
+					if ((is_chrome_ios || (force && is_safari)) && view.FileReader) {
+						// Safari doesn't allow downloading of blob urls
+						var reader = new FileReader();
+						reader.onloadend = function() {
+							var url = is_chrome_ios ? reader.result : reader.result.replace(/^data:[^;]*;/, 'data:attachment/file;');
+							var popup = view.open(url, '_blank');
+							if(!popup) view.location.href = url;
+							url=undefined; // release reference before dispatching
+							filesaver.readyState = filesaver.DONE;
+							dispatch_all();
+						};
+						reader.readAsDataURL(blob);
+						filesaver.readyState = filesaver.INIT;
+						return;
+					}
+					// don't create more object URLs than needed
+					if (!object_url) {
+						object_url = get_URL().createObjectURL(blob);
+					}
+					if (force) {
+						view.location.href = object_url;
+					} else {
+						var opened = view.open(object_url, "_blank");
+						if (!opened) {
+							// Apple does not allow window.open, see https://developer.apple.com/library/safari/documentation/Tools/Conceptual/SafariExtensionGuide/WorkingwithWindowsandTabs/WorkingwithWindowsandTabs.html
+							view.location.href = object_url;
+						}
+					}
+					filesaver.readyState = filesaver.DONE;
+					dispatch_all();
+					revoke(object_url);
+				}
+			;
+			filesaver.readyState = filesaver.INIT;
+
+			if (can_use_save_link) {
+				object_url = get_URL().createObjectURL(blob);
+				setTimeout(function() {
+					save_link.href = object_url;
+					save_link.download = name;
+					click(save_link);
+					dispatch_all();
+					revoke(object_url);
+					filesaver.readyState = filesaver.DONE;
+				});
+				return;
+			}
+
+			fs_error();
+		}
+		, FS_proto = FileSaver.prototype
+		, saveAs = function(blob, name, no_auto_bom) {
+			return new FileSaver(blob, name || blob.name || "download", no_auto_bom);
+		}
+	;
+	// IE 10+ (native saveAs)
+	if (typeof navigator !== "undefined" && navigator.msSaveOrOpenBlob) {
+		return function(blob, name, no_auto_bom) {
+			name = name || blob.name || "download";
+
+			if (!no_auto_bom) {
+				blob = auto_bom(blob);
+			}
+			return navigator.msSaveOrOpenBlob(blob, name);
+		};
+	}
+
+	FS_proto.abort = function(){};
+	FS_proto.readyState = FS_proto.INIT = 0;
+	FS_proto.WRITING = 1;
+	FS_proto.DONE = 2;
+
+	FS_proto.error =
+	FS_proto.onwritestart =
+	FS_proto.onprogress =
+	FS_proto.onwrite =
+	FS_proto.onabort =
+	FS_proto.onerror =
+	FS_proto.onwriteend =
+		null;
+
+	return saveAs;
+}(
+	   typeof self !== "undefined" && self
+	|| typeof window !== "undefined" && window
+	|| this.content
+));
+// `self` is undefined in Firefox for Android content script context
+// while `this` is nsIContentFrameMessageManager
+// with an attribute `content` that corresponds to the window
+
+if (typeof module !== "undefined" && module.exports) {
+  module.exports.saveAs = saveAs;
+} else if ((typeof define !== "undefined" && define !== null) && (define.amd !== null)) {
+  define([], function() {
+    return saveAs;
+  });
+}
+
 // **************************************************************
 // *
 // *           FUNCTIONS
@@ -4419,7 +4608,6 @@ function addEventListeners () {
   sequenceText.addEventListener('mouseup', checkSequenceChanged, false);
   sequenceText.addEventListener('focus', virtualKeyboard, false);
   sequenceText.addEventListener('blur', virtualKeyboard, false);
-  sequenceText.addEventListener('paste', function(){OLANBumpBugCheck=true}, false);
   
   // virtual keyboard
   document.getElementById('virtualKeyboard').addEventListener('mousedown', clickVirtualKeyboard, false);
@@ -7747,7 +7935,9 @@ function loadRules() {
         var newRuleName = rules[i].match(/^[^-]+/)[0];
         if (checkRule[newRuleName]) {
           checkRule[newRuleName].rule = rules[i].replace(/^[^=]+=/, '');
-        }        
+        } else if (ruleSeqCheck[newRuleName]) {
+          ruleSeqCheck[newRuleName].rule = rules[i].replace(/^[^=]+=/, '');
+        }
       } else if (rules[i].match(/^conv-[^=]+=.+/)) {
 // Apply conv-x rules
 // DEPRECATED
@@ -8468,7 +8658,12 @@ function checkRules () {
   if (ruleSeqCheck !== []) {
     for (var name in ruleSeqCheck) {
       if (!ruleSeqCheck[name].regex.test(activeSequence.text)) {
-        checkAlert (checkName(ruleSeqCheck[name]));
+        checkAlert (
+          checkName(ruleSeqCheck[name]),
+          false,
+          false,
+          ruleSeqCheck[name].rule
+        );
       }
     }
   }
@@ -8530,6 +8725,18 @@ function checkRules () {
     alertMsgs.push (msg);
     log.push ('*** Error: ' + msg);
   }
+  
+  // when additionals are allowed, at least one is required
+  if (additionalFig.max && !additionals) {
+    checkAlert (
+      "At least 1 additional figure required",
+      false,
+      false,
+      (sportingClass.value === 'glider') ?
+        "Sporting Code Section 6 Part II, 3.3.3.8" :
+        "Sporting Code Section 6 Part I, 2.3.1.4&nbsp;c"
+    );
+  }
 
   // check Reference sequence if provided
   if (figureLetters && referenceSequence.figures &&
@@ -8585,7 +8792,7 @@ function checkRuleText (obj) {
 // checkAlert adds an alert resulting from sequence checking
 // value : a value for processing
 // type  : the type of checking error
-// rule  : optional, the rule that invoked this as in rule-xxx
+// rule  : optional, the rulebook rule that invoked this as in xxx-rule
 function checkAlert (value, type, figNr, rule) {
   var alertRule = false;
   var alertFig = figNr ? '(' + figNr + ') ' : '';
@@ -8720,12 +8927,14 @@ function lockSequence (lock) {
 function changeReferenceSequence (auto) {
 
   // remove all line breaks from the sequence reference
-  string = document.getElementById ('referenceSequenceString').value.replace (/(\r\n|\n|\r)/gm, '');
+  string = document.getElementById ('referenceSequenceString').value.replace (/(\r\n|\n|\r)/gm, ' ');
   
   if (auto !== true) savedReference = string;
-
+  
   var match;
   activeSequence.figures = [];
+  var savedText = activeSequence.text;
+
   var thisFigure = {'string':'', 'stringStart':0, 'stringEnd':0};
   var inText = false;
   for (var i = 0; i <= string.length; i++) {
@@ -8770,6 +8979,7 @@ function changeReferenceSequence (auto) {
   }
   
   parseSequence ();
+
   activeForm = activeFormSave;
   
   var figCount = 0;
@@ -8812,11 +9022,16 @@ function changeReferenceSequence (auto) {
     }
   }
   div.innerHTML = remaining ? sprintf (userText.unusedFigureLetters, remaining) : '';
-  
+
   // restore sequence
   alertMsgs = [];
   alertMsgRules = [];
-  checkSequenceChanged (true);
+
+  activeSequence.figures = [];
+  activeSequence.text = savedText;
+  sequenceText.value = savedText;
+  
+  parseSequence();
 
 }
 
@@ -12264,17 +12479,10 @@ function makeFU () {
       addRemoveFigureButton (td);
       td.classList.add ('fuFig' + i);
       td.classList.add ('additionalFigure');
-      
-      /**
-      // add subsequence entry direction changer for first of subsequence
-      if (sub !== prevSub) {
-        addSubEntryButton (td, i);
-      }
-      */
 
       fuCellAddHandlers (td);
       // append Additional to subseqString
-      subseqString += '"@L" l ';
+      subseqString += '"@L" L ';
       
       prevSub = sub;
     }
@@ -12311,9 +12519,7 @@ function makeFU () {
       } else {
         td.classList.remove ('figUsed');
         td.classList.remove ('figUsedMulti');
-        if (l[i] === 'L') {
-          td.innerHTML = userText.Additional;
-        }
+        if (l[i] === 'L') td.innerHTML = userText.Additional;
       }
     }
   }
@@ -12528,7 +12734,7 @@ function releaseVirtualKeyboard(e) {
 function checkSequenceChanged (force) {
   
   // remove all line breaks from the sequence input field
-  sequenceText.value = sequenceText.value.replace (/(\r\n|\n|\r)/gm, '');
+  sequenceText.value = sequenceText.value.replace (/(\r\n|\n|\r)/gm, ' ');
   // update height of sequence text box for non-mobile browsers
   updateSequenceTextHeight();
   // read the sequence string and mark the location of the caret/selection
@@ -17078,7 +17284,7 @@ function comparePreviousSequence () {
    
 // updateXYFlip changes all > to ^ and vv from figure 'n' (defined by
 // comparePreviousSequence) to the end.
-// But only on Free Unknown figures with matching Figure Letters. It is
+// But only on Free (Un)known figures with matching Figure Letters. It is
 // done only for these as otherwise unexpected effects when copy-pasting
 // whole sequences may occur.
 // When doing this, the Figure Letters will be identical by definition,
@@ -17295,7 +17501,7 @@ function parseSequence () {
         // remove unknownFigureLetter from comments when applicable
         comments = comments.replace(/^@[A-L]/, '');
       }
-    } else if (match = figure.match (/^e(ja?|d|u)/)) {
+    } else if (match = figure.match (/^e(ja?|d|u)$/)) {
       match = match[0];
       Attitude = 0;
       // sequence entry options

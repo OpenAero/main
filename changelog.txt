@@ -1,3 +1,8 @@
+2016.3.1
+* added check for at least 1 additional figure when additionals in rules
+* fixed bug causing some sequences to be mangled when loading reference sequence
+* removed OLANBumpBugCheck for sequence paste operations
+
 2016.3
 * corrected Sequence menu to fold in on iOS when tapping sequence entry option
 * added removal of newlines from sequence string to make parsing more robust
