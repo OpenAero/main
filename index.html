@@ -129,11 +129,11 @@
     <div id="saveDialog" class="boxbg noDisplay">
       <div class="box">
         <span class="boxTitle userText" id="t_saveFileTitle"></span>
-        <div id="saveFileMessage"></div>
-        <div>
+        <div class="content" id="saveFileMessage"></div>
+        <div class="content">
           <input type="text" value='' id="dlTextField">
           <span id="fileExt"></span>
-          <span class="textButton userText" id="t_saveFile"></span>
+          <span id="saveFileButton"></span>
         </div>
         <span class="textButton userText close" id="t_cancelSave"></span>
       </div>
@@ -142,8 +142,10 @@
     <div id="iOSsaveDialog" class="boxbg noDisplay">
       <div class="box">
         <span class="boxTitle userText" id="t_iOSsaveFileTitle"></span>
-        <div class="userText" id="iOSsaveFileMessage"></div>
-        <a class="textButton userText" id="t_iOSsaveFile"></a>
+        <div class="content">
+          <div class="userText" id="iOSsaveFileMessage"></div>
+          <a class="textButton userText" id="t_iOSsaveFile"></a>
+        </div>
         <span class="textButton userText close" id="t_iOScancelSave"></span>
       </div>
     </div>
@@ -151,8 +153,10 @@
     <div id="openSequenceLink" class="boxbg noDisplay">
       <div class="box">
         <span class="boxTitle userText" id="t_openSequenceLinkTitle"></span>
-        <div class="userText" id="openSequenceLinkMessage"></div>
-        <textarea id="openSequenceLinkUrl"></textarea>
+        <div class="content userText" id="openSequenceLinkMessage"></div>
+        <div class="content">
+          <textarea id="openSequenceLinkUrl"></textarea>
+        </div>
         <a class="textButton userText" id="t_openSequenceLinkOpen"></a>
         <span class="textButton userText close" id="t_openSequenceLinkCancel"></span>        
       </div>
@@ -163,14 +167,14 @@
         <span class="boxTitle">
           <span class="userText" id="t_printDialog"></span>
           <a href="#" id="manual.html_save_print" class="info">
-            <img src="buttons/smallInfo.png">
+            <i class="material-icons info">info</i>
           </a>
         </span>
-        <div>
+        <div class="content">
           <span class="userText" id="t_printExplain"></span>
         </div>
         <!-- print forms -->
-        <div class="section3cols content" id="printForms">
+        <div class="content3cols content" id="printForms">
           <div>
             <input type="checkbox" id="printFormA" checked="true">
             <span class="userText" id="t_printFormA"></span>
@@ -237,8 +241,8 @@
         </div>
         <!-- end print forms -->
         <!-- print options -->
-        <div class="section3cols content" id="printOptions">
-          <div class="content divider">
+        <div class="content3cols content" id="printOptions">
+          <div class="divider">
             <label>
               <span class="userText" id="t_printSF"></span>
               <input type="checkbox" id="printSF" class="material-switch-input" checked="checked">
@@ -274,8 +278,6 @@
               <input type="checkbox" id="blackWhite" class="material-switch-input">
               <span class="material-switch"></span>
             </label>
-          </div>
-          <div class="content divider">
             <label>
               <span class="userText" id="t_maxScaling"></span>
               <span id="maxScalingSpan">
@@ -283,25 +285,53 @@
               </span>
             </label>
           </div>
-          <div class="content">
-            <div class="userText" id="t_saveImageVariables"></div>
-            <span>
-              <input type="number" step="10" value="800" id="imageWidth">
-              <span class="userText" id="t_imageWidth"></span>
-            </span>
-            <span>
-              <input type="number" step="10" value="1130" id="imageHeight">
-              <span class="userText" id="t_imageHeight"></span>
-            </span>
+          <div class="divider">
+            <div class="expansion-panel" id="saveImageVariables">
+              <span class="userText contentLabel" id="t_saveImageVariables"></span>
+              <i class="material-icons expand-toggle">expand_more</i>
+              <div>
+                <label>
+                  <span class="userText" id="t_imageWidth"></span>
+                  <input type="number" step="10" value="800" id="imageWidth">
+                </label>
+                <label>
+                  <span class="userText" id="t_imageHeight"></span>
+                  <input type="number" step="10" value="1130" id="imageHeight">
+                </label>
+                <label>
+                  <span class="userText" id="t_pageSpacing"></span>
+                  <input type="number" step="10" value="40" id="pageSpacing">
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="expansion-panel" id="printMargins">
+            <span class="userText contentLabel" id="t_printMargins"></span>
+            <i class="material-icons expand-toggle">expand_more</i>
             <div>
-              <input type="number" step="10" value="40" id="pageSpacing">
-              <span class="userText" id="t_pageSpacing"></span>
+              <table>
+                <tr>
+                  <td></td>
+                  <td><input type="number" min="0" value="4" id="marginTop"></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td><input type="number" min="0" value="4" id="marginLeft"></td>
+                  <td>mm</td>
+                  <td><input type="number" min="0" value="4" id="marginRight"></td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td><input type="number" min="0" value="4" id="marginBottom"></td>
+                  <td></td>
+                </tr>
+              </table>
             </div>
           </div>
         </div>
         <!-- end print options -->
         <!-- print multi -->
-        <div class="section3cols content" id="printMulti">
+        <div class="content3cols content" id="printMulti">
           <label>
             <span class="userText" id="t_showFileName"></span>
             <input type="checkbox" id="showFileName" class="material-switch-input">
@@ -352,7 +382,7 @@
         <span class="boxTitle">
           <span class="userText" id="t_checkSequenceResult"></span>
         </span>
-        <div id="checkSequenceContent"></div>
+        <div class="content" id="checkSequenceContent"></div>
         <span class="textButton userText" id="t_checkSequenceOK"></span>
         <span class="textButton userText" id="t_checkSequenceLog"></span>
       </div>
@@ -383,15 +413,17 @@
             <span class="material-switch"></span>
           </label>
         </div>
-        <div>
-          <span class="userText" id="t_chooseFiles"></span>
-          <form id="checkMultiFileForm">
-            <input type="file" id="checkMultiFiles" multiple>
-          </form>
-        </div>
-        <!-- no break between next two DIVs ! -->
-        <div id="fileDrop" class="fileDrop"><div class="userText" id="t_orFileDrop"></div>
-            <div id="fileDropFiles"></div>
+        <div class="content">
+          <div>
+            <span class="userText" id="t_chooseFiles"></span>
+            <form id="checkMultiFileForm">
+              <input type="file" id="checkMultiFiles" multiple>
+            </form>
+          </div>
+          <!-- no break between next two DIVs ! -->
+          <div id="fileDrop" class="fileDrop"><div class="userText" id="t_orFileDrop"></div>
+              <div id="fileDropFiles"></div>
+          </div>
         </div>
         <div class="textButton userText" id="t_checkSequences"></div>
         <div class="textButton close userText" id="t_checkMultiClose"></div>
@@ -405,11 +437,11 @@
         <span class="boxTitle">
           <span id="t_logoChooserTitle" class="userText"></span>
         </span>
-        <div id="uploadLogo" class="fileOpening">
+        <div id="uploadLogo" class="content fileOpening">
           <div class="userText" id="t_logoExplain"></div>
           <div><input type="file" id="logoFile" accept="image/*"></div>
         </div>
-        <div id="chooseLogo"></div>
+        <div class="content" id="chooseLogo"></div>
         <div class="textButton close userText" id="t_logoChooserCancel"></div>
       </div>
     </div>
@@ -420,7 +452,7 @@
         <span class="boxTitle">
           <span class="userText" id="t_settingsTitle"></span>
           <a href="#" class="info" id="manual.html_settings">
-            <img src="buttons/smallInfo.png">
+            <i class="material-icons info">info</i>
           </a>
         </span>
         <span class="tabSelector">
@@ -484,22 +516,26 @@
           </div>
           <div class="content">
             <span class="contentLabel userText" id="t_saveFigsSeparateTitle"></span>
-            <div>
+            <div class="clearBoth"></div>
+            <span>
               <span class="userText" id="t_imageFormat"></span>
               <input type="radio" name="saveFigsSeparateImageFormat" value="png" id="imageFormatPNG" checked>
               <span class="userText" id="t_png"></span>
               <input type="radio" name="saveFigsSeparateImageFormat" value="svg" id="imageFormatSVG">
               <span class="userText" id="t_svg"></span>
-              <div class="clearBoth"></div>
+            </span>
+            <div class="clearBoth"></div>
+            <span>
               <span class="userText" id="t_imageSize"></span>
               <input type="text" id="saveFigsSeparateWidth" value="600">
               X
               <input type="text" id="saveFigsSeparateHeight" value="600">
-            </div>
-            <div>
-              <input type="text" id="zipImageFilenamePattern">
+            </span>
+            <div class="clearBoth"></div>
+            <span>
               <span class="userText" id="t_zipImageFilenamePattern"></span>
-            </div>
+              <input type="text" id="zipImageFilenamePattern">
+            </span>
           </div>
         </div>
         <!-- Styling settings -->
@@ -534,7 +570,7 @@
           </div>
           <div class="content divider">
             <span class="contentLabel userText" id="t_drawingStyles"></span>
-            <div>
+            <span>
               <span class="userText" id="t_drawingStylesExplain"></span>
               <span>
                 <select id="styles"></select>
@@ -545,7 +581,7 @@
                 <span class="textButton userText" id="t_resetStyle"></span>
                 <span class="textButton userText" id="t_resetStyleAll"></span>
               </span>
-            </div>
+            </span>
           </div>
           <div class="content divider">
             <label>
@@ -567,7 +603,7 @@
     <div id="referenceSequenceDialog" class="boxbg noDisplay">
       <div class="box">
         <span class="boxTitle userText" id="t_referenceSequenceTitle"></span>
-        <div>
+        <div class="content">
           <div class="userText" id="t_referenceSequenceExplain"></div>
           <div class="userText noDisplay" id="t_referenceSequenceFixed"></div>
           <textarea id="referenceSequenceString"></textarea>
@@ -587,14 +623,14 @@
     <div id="infoBox" class="boxbg noDisplay">
       <div class="box">
         <span class="boxTitle" id="infoTitle"></span>
-        <div id="infoMessage"></div>
+        <div class="content" id="infoMessage"></div>
       </div>
     </div>
     <!-- confirmBox -->
     <div id="confirmBox" class="boxbg noDisplay">
       <div class="box">
         <span class="boxTitle" id="confirmTitle"></span>
-        <div id="confirmMessage"></div>
+        <div class="content" id="confirmMessage"></div>
         <span class="textButton userText" id="t_confirmBoxYes"></span>
         <span class="textButton userText" id="t_confirmBoxNo"></span>
         </div>
@@ -603,7 +639,7 @@
     <div id="alertBox" class="boxbg noDisplay">
       <div class="box">
         <span class="boxTitle" id="alertTitle"></span>
-        <div id="alertMessage"></div>
+        <div class="content" id="alertMessage"></div>
         <span class="textButton userText close" id="t_closeAlert"></span>
       </div>
     </div>
@@ -644,21 +680,14 @@
               <li><a class="userText" id="t_formB" href=#></a></li>
               <li><a class="userText" id="t_formC" href=#></a></li>
               <li class="divider"><a class="userText" id="t_figsInGrid" href=#></a></li>
-              <span id="zoomMenu">
-                <li>
-                  <a class="userText" id="t_zoom" href=#></a>
-                  <span>
-                    <span id="zoomMin" class="minButton">
-                      <img src="buttons/smallMask.png">
-                    </span>
-                    <span id="zoom">100%</span>
-                    <span id="zoomPlus" class="plusButton">
-                      <img src="buttons/smallMask.png">
-                    </span>
-                  </span>
-                </li>
-                <div class="clearBoth divider"></div>
-              </span>
+              <li id="zoomMenu" class="divider">
+                <span class="userText" id="t_zoom"></span>
+                <span>
+                  <i id="zoomMin" class="material-icons">remove</i>
+                  <span id="zoom">100%</span>
+                  <i id="zoomPlus" class="material-icons">add</i>
+                </span>
+              </li>
               <li><a class="userText" id="t_setMobile" href=#></a></li>
             </ul>
           </li>
@@ -750,8 +779,8 @@
       <div class="clearBoth"></div>
       <!-- undo/redo buttons -->
       <div id="undoRedo">
-        <div id="undo" class="undoRedoButton"><div><img src="buttons/smallMask.png"></div></div>
-        <div id="redo" class="undoRedoButton clearLeft"><div><img src="buttons/smallMask.png"></div></div>
+        <div id="undo" class="undoRedoButton navbutton"><i class="material-icons disabled">undo</i></div>
+        <div id="redo" class="undoRedoButton navbutton clearLeft"><i class="material-icons disabled">redo</i></div>
       </div>
       <!-- Sequence text -->
       <div id="sequenceTextContainer" class="disableFUdesigner">
@@ -766,7 +795,9 @@
       <!-- Figure selector -->
       <div id="figureSelector">
         <div>
-          <div id="figureSelectorClose"><a id="hideFigureSelector" href="#"><img src="buttons/close.png"></a></div>
+          <div id="figureSelectorClose">
+            <i class="material-icons navbutton" id="hideFigureSelector"></i>
+          </div>
           <label id="hideIllegalFigures" class="disableFUdesigner">
             <span class="userText" id="t_hideIllegalFigures"></span>
             <input type="checkbox" id="hideIllegal" class="material-switch-input" checked="true">
@@ -782,223 +813,229 @@
           <table id="figureChooserTable"></table>
         </div>
       </div>
-      <!-- Left main block -->
-      <div id="leftBlock">
-        <div id="figureString" class="noDisplay">
-          <span class="userText" id="t_figureString"></span>
-          <input type="text" id="figureStringInput">
-        </div>
-        <!-- debug block -->
-        <div id="debug"></div>
-        <div class="tabSelector">
-          <ul>
-            <li id="tab-sequenceInfo" class="activeTab disableFUdesigner">
-              <span class="userText" id="t_sequenceInfo"></span>
-            </li>
-            <li id="tab-figureInfo" class="inactiveTab lock">
-              <span class="userText" id="t_figureEditor"></span>
-            </li>
-            <li id="tab-svgContainer" class="inactiveTab noDisplay">
-              <span class="userText" id="t_sequenceTab"></span>
-            </li>
-            <li id="tab-fuFigures" class="inactiveTab noDisplay">
-              <span class="userText" id="t_fuFiguresTab"></span>
-            </li>
-          </ul>
-        </div>
-        <div class=clearBoth></div>
-        <div id="leftBlockTop">
-          <!-- Sequence info -->
-          <div id="sequenceInfo" class="section">
-            <div class=item>
-              <span class="label userText" id="t_pilot"></span>
-              <span class="label">&nbsp;&&nbsp;</span>
-              <span class="label userText" id="t_team"></span>
-              <div id="pilotTeam">
-                <input type=text name=pilot id=pilot maxlength="30" class="lock">
-                <select id="team" class="lock"></select>
+      <!-- leftBlockContainer is used only to display scrollbar -->
+      <div id="leftBlockContainer">
+        <!-- Left main block -->
+        <div id="leftBlock">
+          <div id="figureString" class="noDisplay">
+            <span class="userText" id="t_figureString"></span>
+            <input type="text" id="figureStringInput">
+          </div>
+          <!-- debug block -->
+          <div id="debug"></div>
+          <div class="tabSelector">
+            <ul>
+              <li id="tab-sequenceInfo" class="activeTab disableFUdesigner">
+                <span class="userText" id="t_sequenceInfo"></span>
+              </li>
+              <li id="tab-figureInfo" class="inactiveTab lock">
+                <span class="userText" id="t_figureEditor"></span>
+              </li>
+              <li id="tab-svgContainer" class="inactiveTab noDisplay">
+                <span class="userText" id="t_sequenceTab"></span>
+              </li>
+              <li id="tab-fuFigures" class="inactiveTab noDisplay">
+                <span class="userText" id="t_fuFiguresTab"></span>
+              </li>
+            </ul>
+          </div>
+          <div class=clearBoth></div>
+          <div id="leftBlockTop">
+            <!-- Sequence info -->
+            <div id="sequenceInfo" class="section">
+              <div class=item>
+                <span class="label userText" id="t_pilot"></span>
+                <span class="label">&nbsp;&&nbsp;</span>
+                <span class="label userText" id="t_team"></span>
+                <div id="pilotTeam">
+                  <input type=text name=pilot id=pilot maxlength="30" class="lock">
+                  <select id="team" class="lock"></select>
+                </div>
               </div>
-            </div>
-            <div class=item>
-              <div class="label userText" id="t_aircraft"></div>
-              <!-- Hidden aircraft input replaces old aircraft input field.
-                   Keep it until 2016 for backward compatibility -->
-              <input type="hidden" id="aircraft">
-              <div id="acTypeReg">
-                <input type="text" id="actype" maxlength="30" class="lock">
-                <input type="text" id="acreg" maxlength="30" class="lock">
+              <div class=item>
+                <div class="label userText" id="t_aircraft"></div>
+                <!-- Hidden aircraft input replaces old aircraft input field.
+                     Keep it until 2016 for backward compatibility -->
+                <input type="hidden" id="aircraft">
+                <div id="acTypeReg">
+                  <input type="text" id="actype" maxlength="30" class="lock">
+                  <input type="text" id="acreg" maxlength="30" class="lock">
+                </div>
               </div>
-            </div>
-            <div class=item>
-              <div class="label userText" id="t_location"></div>
-              <input type=text name=location id=location maxlength="30" class="lock">
-            </div>
-            <div class=item>
-              <div class="label userText" id="t_date"></div>
-              <input type=text name=date id=date maxlength="30" class="lock">
-            </div>
-            <div class=item>
-              <div class="label userText" id="t_class"></div>
-              <select name="class" id="class" class="lock">
-                <option value="powered" class="userText" id="t_powered" selected></option>
-                <option value="glider" class="userText" id="t_glider"></option>
-              </select>
-            </div>
-            <div class="item combo">
-              <div class="label userText" id="t_rules"></div>
-              <input type=text name=rules id=rules maxlength="30" class="lock">
-              <ul id=rulesList></ul>
-            </div>
-            <div class="item combo">
-              <div class="label userText" id="t_category"></div>
-              <input type=text name=category id=category maxlength="30" class="lock">
-              <ul id=categoryList></ul>
-            </div>
-            <div class="item combo">
-              <div class="label userText" id="t_programme"></div>
-              <input type=text name=program id=program maxlength="30" class="lock">
-              <ul id=programList></ul>
-              <div id="rulesActive" class="status bad"></div>
-            </div>
-            <div class="item">
-              <span class="userText flatTextButton noDisplay" id="t_referenceSequence"></span>
-            </div>
-            <div class=item>
-              <div class="label userText" id="t_positioning"></div>
-              <input type=text name=positioning id=positioning maxlength="4" class="lock">
-            </div>
-            <div id="harmonyField" class="item" style="opacity:0;">
-              <div class="label userText" id="t_harmony"></div>
-              <input type=text name=harmony id=harmony maxlength="4" class="lock">
-            </div>
-            <div class="clearBoth"></div>
-            <div class="item">
-              <span>
-                <span id="t_removeLogo" class="flatTextButton userText noDisplay"></span>
-                <span id="t_chooseLogo" class="userText flatTextButton"></span>
-              </span>
-              <input type="hidden" id="logo">
-              <span id="activeLogo">
-                <a href="#" id="logoImage" class="noDisplay"></a>
-              </span>
-            </div>
-            <div class="clearSpace"></div>
-            <div class=item>
-              <div class="label userText" id="t_notes"></div>
-              <textarea name="notes" id="notes" class="lock"></textarea>
-            </div>
-            <div class="item">
-              <div class="label userText" id="t_fileName"></div>
+              <div class=item>
+                <div class="label userText" id="t_location"></div>
+                <input type=text name=location id=location maxlength="30" class="lock">
+              </div>
+              <div class=item>
+                <div class="label userText" id="t_date"></div>
+                <input type=text name=date id=date maxlength="30" class="lock">
+              </div>
+              <div class=item>
+                <div class="label userText" id="t_class"></div>
+                <select name="class" id="class" class="lock">
+                  <option value="powered" class="userText" id="t_powered" selected></option>
+                  <option value="glider" class="userText" id="t_glider"></option>
+                </select>
+              </div>
+              <div class="item combo">
+                <div class="label userText" id="t_rules"></div>
+                <input type=text name=rules id=rules maxlength="30" class="lock">
+                <ul id=rulesList></ul>
+              </div>
+              <div class="item combo">
+                <div class="label userText" id="t_category"></div>
+                <input type=text name=category id=category maxlength="30" class="lock">
+                <ul id=categoryList></ul>
+              </div>
+              <div class="item combo">
+                <div class="label userText" id="t_programme"></div>
+                <input type=text name=program id=program maxlength="30" class="lock">
+                <ul id=programList></ul>
+                <i id="rulesActive" class="material-icons md-18 status bad"></i>
+              </div>
+              <div class="item">
+                <span class="userText flatTextButton noDisplay" id="t_referenceSequence"></span>
+              </div>
+              <div class=item>
+                <div class="label userText" id="t_positioning"></div>
+                <input type=text name=positioning id=positioning maxlength="4" class="lock">
+              </div>
+              <div id="harmonyField" class="item" style="opacity:0;">
+                <div class="label userText" id="t_harmony"></div>
+                <input type=text name=harmony id=harmony maxlength="4" class="lock">
+              </div>
               <div class="clearBoth"></div>
-              <input type="text" value="" id="fileName">
+              <div class="item">
+                <span>
+                  <span id="t_removeLogo" class="flatTextButton userText noDisplay"></span>
+                  <span id="t_chooseLogo" class="userText flatTextButton"></span>
+                </span>
+                <input type="hidden" id="logo">
+                <span id="activeLogo">
+                  <a href="#" id="logoImage" class="noDisplay"></a>
+                </span>
+              </div>
+              <div class="clearSpace"></div>
+              <div class=item>
+                <div class="label userText" id="t_notes"></div>
+                <textarea name="notes" id="notes" class="lock"></textarea>
+              </div>
+              <div class="item">
+                <div class="label userText" id="t_fileName"></div>
+                <div class="clearBoth"></div>
+                <input type="text" value="" id="fileName">
+              </div>
+              <input type=hidden id="oa_version">
+              <input type=hidden id="default_view">
+              <input type=hidden id="lock_sequence">
             </div>
-            <input type=hidden id="oa_version">
-            <input type=hidden id="default_view">
-            <input type=hidden id="lock_sequence">
-          </div>
-          <!-- Figure Editor -->
-          <div id="figureInfo" class="section hidden">
-            <div class="boxTitle">
-              <span id="figureHeader"></span>
-              <a href="#" class="info" id="manual.html_adding_a_figure">
-                <img src="buttons/smallInfo.png">
-              </a>
-            </div>
-            <!-- sub sequence direction -->
-            <div id="subSequenceDirection" class="content divider noDisplay">
-              <div class="contentLabel userText" id="t_subSequenceDirection"></div>
-              <select id="subSequenceDirections">
-                <option class="userText disableFUdesigner" value="//" id="t_sameAsBefore"></option>
-                <option class="userText" value="eu" id="t_upwind"></option>
-                <option class="userText" value="ed" id="t_downwind"></option>
-                <option class="userText" value="ej" id="t_xBox"></option>
-                <option class="userText" value="eja" id="t_xBoxAway"></option>
-              </select>
-            </div>
-            <!-- figure box and option buttons -->
-            <div id="FUfigOptionsDisabled">
-              <span class="userText" id="t_FUfigOptionsDisabled"></span>
-            </div>
-            <div id="fuSelectFigureFirst" class="noDisplay">
-              <span class="userText" id="t_fuSelectFigureFirst"></span>
-            </div>
-            <div id="figureInfoTop">
-              <div id="figureOptions">
-                <div class="disableFUdesigner">
-                  <div id="subSequence" class="button"><img src="buttons/mask.png"></div>
-                  <div id="deleteFig" class="button"><img src="buttons/mask.png"></div>
-                  <div id="flipYAxis" class="button"><img src="buttons/mask.png"></div>
-                  <div class=clearSpace></div>
+            <!-- Figure Editor -->
+            <div id="figureInfo" class="section hidden">
+              <div class="boxTitle">
+                <span id="figureHeader"></span>
+                <a href="#" class="info" id="manual.html_adding_a_figure">
+                  <i class="material-icons info">info</i>
+                </a>
+              </div>
+              <!-- sub sequence direction -->
+              <div id="subSequenceDirection" class="content divider noDisplay">
+                <div class="contentLabel userText" id="t_subSequenceDirection"></div>
+                <select id="subSequenceDirections">
+                  <option class="userText disableFUdesigner" value="//" id="t_sameAsBefore"></option>
+                  <option class="userText" value="eu" id="t_upwind"></option>
+                  <option class="userText" value="ed" id="t_downwind"></option>
+                  <option class="userText" value="ej" id="t_xBox"></option>
+                  <option class="userText" value="eja" id="t_xBoxAway"></option>
+                </select>
+              </div>
+              <!-- figure box and option buttons -->
+              <div id="FUfigOptionsDisabled">
+                <span class="userText" id="t_FUfigOptionsDisabled"></span>
+              </div>
+              <div id="fuSelectFigureFirst" class="noDisplay">
+                <span class="userText" id="t_fuSelectFigureFirst"></span>
+              </div>
+              <div id="figureInfoTop">
+                <div id="figureOptions">
+                  <div class="disableFUdesigner">
+                    <div id="subSequence" class="button"><img src="buttons/mask.png"></div>
+                    <div id="deleteFig" class="button"><img src="buttons/mask.png"></div>
+                    <div id="flipYAxis" class="button"><img src="buttons/mask.png"></div>
+                    <div class=clearSpace></div>
+                  </div>
+                  <div>
+                    <div id="switchFirstRoll" class="button disableFUfig"><img src="buttons/mask.png"></div>
+                    <div id="switchY" class="button"><img src="buttons/mask.png"></div>
+                    <div id="switchX" class="button"><img src="buttons/mask.png"></div>
+                    <div class=clearSpace></div>
+                  </div>
+                  <div class="disableFUdesigner">
+                    <div id="magMin" class="button"><img src="buttons/mask.png"></div>
+                    <input type="text" name="scale" id="scale" value="0">
+                    <div id="magPlus" class="button"><img src="buttons/mask.png"></div>
+                    <div class=clearSpace></div>
+                  </div>
+                  <div class="disableFUdesigner">
+                    <div id="moveForward" class="button"><img src="buttons/mask.png"></div>
+                    <div id="straightLine" class="button"><img src="buttons/mask.png"></div>     
+                    <div id="curvedLine" class="button"><img src="buttons/mask.png"></div>
+                    <div class=clearBoth></div>
+                    <!-- IMPORTANT : keep following div and span attached -->
+                    <div id="moveXCont"><span>X </span>
+                      <span id="moveX" class="plusMin"></span>
+                    </div>
+                    <div class=clearBoth></div>
+                    <div id="moveYCont">
+                      <span>Y </span>
+                      <span id="moveY" class="plusMin"></span>
+                    </div>
+                  <div class="clearSpace"></div>
+                  </div>
                 </div>
+                <div id="selectedFigure">
+                  <svg xmlns="http://www.w3.org/2000/svg" version="1.2" baseProfile="tiny" id="selectedFigureSvg"></svg>
+                  <div id="t_addFigureText" class="userText"></div>
+                </div>
+                <div id="unknownFigureChooser">
+                  <select id="unknownFigure"></select>
+                </div>
+              </div>
+              <div class="clearBoth divider"></div>
+              <!-- entry and exit -->
+              <div id="entryExit" class="content divider">
+                <div class="contentLabel userText" id="t_entryExitAttExt"></div>
+                <span id="figEntryButton" class="smallButton disableFUfig"><div class="ttRight"><div></div></div></span>
+                <span id="entryExt" class="plusMin"></span>
+                <span><img src="images/ee_ext-figure.png"></span>
+                <span id="exitExt" class="plusMin"></span>
+                <span id="figExitButton" class="smallButton disableFUfig"><div><div></div></div></span>
+                &nbsp;
+              </div>
+              <!-- rolls -->
+              <div id="rollInfo">
+              </div>
+              <!-- comments -->
+              <div id="commentSection" class="content expansion-panel disableFUdesigner">
+                <span class="userText contentLabel" id="t_comments"></span>
+                <i class="material-icons expand-toggle">expand_more</i>
                 <div>
-                  <div id="switchFirstRoll" class="button disableFUfig"><img src="buttons/mask.png"></div>
-                  <div id="switchY" class="button"><img src="buttons/mask.png"></div>
-                  <div id="switchX" class="button"><img src="buttons/mask.png"></div>
-                  <div class=clearSpace></div>
-                </div>
-                <div class="disableFUdesigner">
-                  <div id="magMin" class="button"><img src="buttons/mask.png"></div>
-                  <input type="text" name="scale" id="scale" value="0">
-                  <div id="magPlus" class="button"><img src="buttons/mask.png"></div>
-                  <div class=clearSpace></div>
-                </div>
-                <div class="disableFUdesigner">
-                  <div id="moveForward" class="button"><img src="buttons/mask.png"></div>
-                  <div id="straightLine" class="button"><img src="buttons/mask.png"></div>     
-                  <div id="curvedLine" class="button"><img src="buttons/mask.png"></div>
-                  <div class=clearBoth></div>
-                  <!-- IMPORTANT : keep following div and span attached -->
-                  <div id="moveXCont"><span>X </span>
-                    <span id="moveX" class="plusMin"></span>
-                  </div>
-                  <div class=clearBoth></div>
-                  <div id="moveYCont">
-                    <span>Y </span>
-                    <span id="moveY" class="plusMin"></span>
-                  </div>
-                <div class="clearSpace"></div>
+                <textarea name="comments" id="comments"></textarea>
+                <a href="#" class="info" id="manual.html_figure_comments">
+                  <i class="material-icons info">info</i>
+                </a>
                 </div>
               </div>
-              <div id="selectedFigure">
-                <svg xmlns="http://www.w3.org/2000/svg" version="1.2" baseProfile="tiny" id="selectedFigureSvg"></svg>
-                <div id="t_addFigureText" class="userText"></div>
-              </div>
-              <div id="unknownFigureChooser">
-                <select id="unknownFigure"></select>
-              </div>
             </div>
-            <div class="clearBoth divider"></div>
-            <!-- entry and exit -->
-            <div id="entryExit" class="content divider">
-              <div class="contentLabel userText" id="t_entryExitAttExt"></div>
-              <span id="figEntryButton" class="smallButton disableFUfig"><div class="ttRight"><div></div></div></span>
-              <span id="entryExt" class="plusMin"></span>
-              <span><img src="images/ee_ext-figure.png"></span>
-              <span id="exitExt" class="plusMin"></span>
-              <span id="figExitButton" class="smallButton disableFUfig"><div><div></div></div></span>
-              &nbsp;
-            </div>
-            <!-- rolls -->
-            <div id="rollInfo">
-            </div>
-            <!-- comments -->
-            <div id="commentSection" class="content disableFUdesigner">
-              <div class="contentLabel"><span class="userText" id="t_comments"></span>&nbsp;<a href="#" class="info" id="manual.html_figure_comments">
-                <img src="buttons/smallInfo.png">
-              </a></div>
-              <textarea name="comments" id="comments"></textarea>
-              <div class="textButton userText" id="t_update"></div>
+            <!-- Free Unknown figure chooser -->
+            <div id="fuFigures" class="section hidden noDisplay">
+              <table id="fuFiguresTable" draggable="false"></table>
             </div>
           </div>
-          <!-- Free Unknown figure chooser -->
-          <div id="fuFigures" class="section hidden noDisplay">
-            <table id="fuFiguresTable" draggable="false"></table>
-          </div>
+          <!-- Alerts -->
+          <div id="alerts" class="section"><div class="boxTitle userText" id="t_alerts"></div></div>
+          <div class="clearBoth"></div>
+          <div id="design"><span>Software & design by Ringo Massa</span></div>
         </div>
-        <!-- Alerts -->
-        <div id="alerts" class="section"><div class="boxTitle userText" id="t_alerts"></div></div>
-        <div class="clearBoth"></div>
-        <div id="design"><span>Software & design by Ringo Massa</span></div>
       </div>
       <!-- Virtual keyboard for special characters -->
       <div id="virtualKeyboard" class="noDisplay">

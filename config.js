@@ -36,7 +36,7 @@
 // Where a new x should be used for versions that create sequences not
 // fully backward compatible with the previous version
 
-var version = '2016.3.1';
+var version = '2016.3.2';
 /* versionNew is an object that contains version update information
    The structure is {vvv : [[ttt, n], ...], ...} , where
    vvv = version number
@@ -44,6 +44,9 @@ var version = '2016.3.1';
    n   = importance (higher = more important)
 */
 var versionNew = {
+  '2016.3.2' : [
+    ['Improved printing for iOS and Microsoft Edge', 2]
+  ],
   '2016.3' : [
     ['Made many changes to interface to conform to ' +
     '<a href="https://material.google.com/" target="_blank">Material ' +
@@ -184,6 +187,10 @@ var spinElement3 = spinElement * 3;
 Math.GR = 1.618;
 // define A4 page ratio
 Math.PageRatio = 1.4143;
+// Tau is 2 times PI. Saves calculations during runtime
+Math.Tau = Math.PI * 2;
+// degToRad is Pi / 180. Saves calculations for degree to rad conversions
+Math.degToRad = Math.PI / 180;
 // define the offset for figures in the y axis in degrees
 var yAxisOffsetDefault = 30;
 // define the scale factor on the y axis for perspective drawing
@@ -221,6 +228,10 @@ var zipImageFilenamePattern = '%location %category %program %pilot Form %form_fi
 // define which settings will be saved in localStorage and sequence XML
 var saveSettings = [
   'language',
+  'marginBottom',
+  'marginLeft',
+  'marginTop',
+  'marginRight',
   'gridColumns',
   'queueColumns',
   'saveFigsSeparateWidth',

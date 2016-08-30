@@ -1,3 +1,23 @@
+2016.3.2
+* moved Tau and degToRad to config.js and changed to Math.Tau / Math.degToRad
+* fixed printing for Safari and Edge by using win.document.createElement in buildForms
+* changed file saving to use blobs and fileSaver.js
+* improved Chrome detection in checkForApp
+* enabled printing for iOS
+* added dismissal of dialogs by clicking outside of them
+* restored text selection for docs
+* fixed bug where sequence drawing scrolls back to top left after selecting figure
+* updated instructions on save dialogs
+* added selection of margins to print dialog (disabled on iOS due to lack of support)
+* assured scrollbar is drawn right of leftBlock when visible (Issue #206)
+* hide figure comments box by default, unless comment present
+* changed < to &lt; in sequence xml to prevent parsing problems
+* added support for loading reduced size sequence link, saving to be activated later
+* improved tablet menu closing by tapping anywhere outside menu
+* improved look of Zoom in View menu
+* added SuperFamiles to Unlimited and Yak52/Intermediate Free Known
+* corrected X value for straight or curved lines in Figure Editor when viewing Form C
+
 2016.3.1
 * added check for at least 1 additional figure when additionals in rules
 * fixed bug causing some sequences to be mangled when loading reference sequence
@@ -11,7 +31,7 @@
 * added support for more than two full rotations of roll
 * added MAX360 for Advanced Unknown figure 7.4.1.2
 * started conforming OpenAero to Google's Material Design
-* improved detection of upright exit in Glider rules to accept . character
+* improved detection of upright exit in Glider rules to accept . character (Issue #204)
 * corrected froll2-name for Glider by removing "required"
 * added US Nationals IAC logo
 * added setTimeout to start and exit of Free Unknown designer to make sure infoBox shows

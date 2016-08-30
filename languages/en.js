@@ -54,10 +54,10 @@ lang.en = {
 //
 'aboutUnknown' : 'Unable to determine Stable version. You are ' +
   'probably offline.',
-'aboutText' : '<div class="section">' +
+'aboutText' : '<div class="divider">' +
   '<p>This&nbsp;version:<strong>%s</strong> &nbsp; ' +
   'Stable&nbsp;version:<strong>%s</strong></p>%s</div>' +
-  '<div class="section">' +
+  '<div class="divider">' +
   '<p>OpenAero is aerobatic sequence design software that ' +
   'runs inside your web browser.</p><p>OpenAero is free software: you ' +
   'can redistribute it and/or modify it under the terms of the ' +
@@ -67,8 +67,8 @@ lang.en = {
   'in the hope that it will be useful, but WITHOUT ANY WARRANTY; ' +
   'without even the implied warranty of MERCHANTABILITY or FITNESS ' +
   'FOR A PARTICULAR PURPOSE. See the GNU General Public License for ' +
-  'more details.</p></div><div class="section">' +
-  'OpenAero is designed, built and maintained by ' +
+  'more details.</p></div><div>' +
+  '<p>OpenAero is designed, built and maintained by ' +
   '<strong>Ringo Massa</strong>, using <strong>Michael Golan</strong>\'s ' +
   'OLAN sequence coding.<br>Many people have contributed, including:' +
   '<table>' +
@@ -78,7 +78,7 @@ lang.en = {
   '<td>Figure, rule and software coding</td></tr>' +
   '<tr><td><strong>Christian Falck</strong></td>' +
   '<td>Rule coding</td></tr>' +
-  '</table></div>',
+  '</table></p></div>',
 'ac' : 'A/C',
 'addAllToQueue' : 'Add all to Queue',
 // new 1.5.0
@@ -200,12 +200,18 @@ lang.en = {
 'disqualified' : 'Disqual Fig',
 //
 'download' : 'Download',
+// changed 2016.3.2
 'downloadHTML5' : 'You can save your file by choosing a name ' +
-  'and clicking <i>Save File</i> below.<br>A dialog where you can ' +
-  'choose the folder will then pop up.' +
+  'and clicking <i>Save File</i> below.<br>Depending on your browser: ' +
+  '<ul><li>' +
+  'The file will be saved in your browser\'s default Download folder, or' +
+  '</li><li>' + 
+  'A dialog where you can choose the folder will pop up' +
+  '</li></ul>' +
   '<p class="chromeHint">Chrome hint: The standard Chrome browser will ' +
   'save the file to your default Download folder. To change this, go ' +
-  'to the <b>advanced</b> Settings (access via the Chrome ≡ button) ' +
+  'to the <b>advanced</b> Settings (access via the Chrome ' +
+  '<i class="material-icons md-18 inText">more_vert</i> button) ' +
   'and tick checkbox "Ask where to save ..."</p>',
 'downloadLegacy' : 'You can save your file by choosing a ' +
   'name, right-clicking on <i>Save File</i> below '+
@@ -361,10 +367,11 @@ lang.en = {
 'iOSprintExplain' : 'Select what you would like to print or save, then ' +
   'tap <strong>Save PNG image</strong>',
 'iOSsaveFile' : 'Show sequence image',
-'iOSsaveFileMessage' : '<p>By clicking the <i>Show sequence image</i> ' +
-  'button a new window or browser tab will be opened. In Safari, you ' +
-  'can then tap the <span class="iOSsaveIcon"></span> button to save ' +
-  'or print the image. In Chrome, you can print from the ≡ menu.</p>' +
+// changed 2016.3.2
+'iOSsaveFileMessage' : '<p>By clicking the <i>Save file</i> ' +
+  'button a new window or browser tab will be opened. You ' +
+  'can then tap the <span class="iOSsaveIcon"></span> button to print ' +
+  'or tap and hold the image to save it.</p>' +
   '<p>Tips: If the image quality is not sufficient, you can increase ' +
   'the resolution in the Print dialog under "Saving PNG or SVG image". ' +
   'If you only get a blank page, try saving each sequence Form ' +
@@ -447,8 +454,6 @@ lang.en = {
 //
 'numberInCircle' : 'Figure numbers in circle',
 'ok' : 'OK',
-// OLANBumpBugWarning can be removed (with asociated code in OpenAero.js)
-// in 2015
 'OLANBumpBugWarning' : ' has been detected to be a Humpty Bump ' +
   'from Y to X axis. ',
 'OLANBumpBugWarningMulti' : ' have been detected to be a Humpty ' +
@@ -509,10 +514,10 @@ lang.en = {
 'printFormB' : 'Form B',
 'printFormC' : 'Form C',
 'printFormGrid' : 'Figures in grid',
-// new 1.5.1
 'printFormL' : 'Form L',
 'printFormR' : 'Form R',
-//
+// new 2016.3.2
+'printMargins' : 'Print margins',
 'printMiniFormAonB' : 'with mini Form A',
 'printMiniFormAonC' : 'with mini Form A',
 'printMulti' : 'Print multiple sequences',

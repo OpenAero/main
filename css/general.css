@@ -35,6 +35,113 @@ body {
   -o-user-select: none;
   user-select: none;
 }
+
+@font-face {
+  font-family: 'Material Icons';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Material Icons'),
+       local('MaterialIcons-Regular'),
+       url(MaterialIcons-Regular.woff) format('woff');
+}
+.material-icons {
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;  /* Preferred icon size */
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+  cursor: default;
+  color: rgba(0, 0, 0, 0.54);
+
+  /* Support for all WebKit browsers. */
+  -webkit-font-smoothing: antialiased;
+  /* Support for Safari and Chrome. */
+  text-rendering: optimizeLegibility;
+
+  /* Support for Firefox. */
+  -moz-osx-font-smoothing: grayscale;
+
+  /* Support for IE. */
+  font-feature-settings: 'liga';
+}
+.material-icons.md-18 {
+  font-size: 18px;
+}
+.material-icons.inText {
+  position: relative;
+  top: 3px;
+}
+.navbutton {
+  width: 24px;
+  height: 24px;
+}
+.navbutton .material-icons {
+  margin: 0;
+  border-radius: 2px;
+  transition: all 0.05s;
+}
+.navbutton .material-icons:hover {
+  position: relative;
+  z-index: 999;
+  transition: all 0.3s;
+  background-color: rgba(0, 0, 0, 0.12);
+}
+.navbutton .material-icons:active {
+  transition: border-radius 0.05s, margin 0.05s, padding 0.05s, background-color 0s;
+  border-radius: 28px;
+  margin: -16px;
+  padding: 16px;
+  background-color: rgba(0, 108, 181, 0.3);
+}
+.material-icons.disabled {
+  color: rgba(0, 0, 0, 0.27);
+}
+.navbutton .material-icons.disabled:hover {
+  background-color: transparent;
+}
+.navbutton .material-icons.disabled:active {
+  margin: 0;
+  padding: 0;
+  background-color: transparent;
+}
+.expansion-panel {
+  position: relative;
+  padding-right: 24px;
+}
+.expansion-panel div {
+  margin: 0 !important;
+  padding: 0 !important;
+  max-height: 0;
+  overflow: hidden !important;
+  transition: all 0.2s ease-in-out;
+}
+.expansion-panel.expanded div {
+  max-height: 200px;
+}
+.expansion-panel .expand-toggle {
+  position: absolute;
+  top: 0;
+  right: 0;
+  transition: transform 0.3s;
+}
+.expansion-panel.expanded .expand-toggle {
+  transform: rotate(180deg);
+}
+body.docs {
+  -webkit-touch-callout: normal;
+  -webkit-user-select: initial;
+  -khtml-user-select: initial;
+  -moz-user-select: initial;
+  -ms-user-select: initial;
+  -o-user-select: initial;
+  user-select: initial;
+}
 #canvas {
   background-color: white;
 }
@@ -48,7 +155,7 @@ img {
 a {
   color: blue;
   text-decoration: none;
-  user-select: normal;
+  user-select: initial;
 }
 a:hover {
   text-decoration: underline;
@@ -72,7 +179,7 @@ input {
   -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
 	-moz-box-sizing: border-box;    /* Firefox, other Gecko */
 	box-sizing: border-box;
-	user-select: normal;
+	user-select: initial;
 }
 select {
   border-left: 1px solid #222;
@@ -95,7 +202,7 @@ textarea {
   -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
 	-moz-box-sizing: border-box;    /* Firefox, other Gecko */
 	box-sizing: border-box;
-	user-select: normal;
+	user-select: initial;
 }
 
 /* generic classes */
@@ -207,7 +314,7 @@ textarea {
 }
 
 /* sections and documentation */
-.box div.section, .section, .section2cols, .section3cols, .docs table tr {
+.box div.section, .section, .docs table tr {
   position: relative;
   float: left;
   box-sizing: border-box;
@@ -217,17 +324,33 @@ textarea {
   background-color: #fff;
   box-shadow: 0 2px 6px rgba(0,0,0,0.3);
 }
-.content {
+.content, .content2cols, .content3cols {
   position: relative;
   clear: both;
   margin: 0;
-  padding: 8px !important;
 }
-.content.section2cols, .content.section3cols {
+.content.content2cols, .content.content3cols {
+  float: left;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
   clear: none;
 }
 .divider {
   border-bottom: 1px solid rgba(0,0,0,0.2);
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+}
+.divider + .content { /* no top padding needed after divider */
+  padding-top: 0 !important;
+}
+.divider + div .content { /* no top padding needed after divider */
+  padding-top: 0 !important;
+}
+#alertMessage .divider {
+  margin-left: -16px;
+  margin-right: -16px;
+  padding-left: 16px;
+  padding-right: 16px;
 }
 .content label {
   display: inline-block;
@@ -255,11 +378,11 @@ textarea {
   padding: 0;
   padding-right: 1em;
 }
-.section3cols {
-  width: 31%;
+.content3cols {
+  width: 33%;
 }
-.section2cols {
-  width: 48%;
+.content2cols {
+  width: 50%;
 }
 .section, .docs table tr {
   width: 97%;
@@ -311,14 +434,6 @@ textarea {
   font-size: 12px;
   padding-bottom: 6px;
 }
-#figureInfo {
-  font-size: 12px;
-  background-color: #ede7f6;
-}
-#figureInfo .boxTitle {
-  background-color: #673ab7;
-  margin-bottom: 6px;
-}
 #alerts {
   position: relative;
   margin-top: 0;
@@ -356,8 +471,18 @@ textarea {
   margin-bottom: 6px;
 }
 .info {
-  margin: 2px;
+  margin: 1px;
   float: right;
+}
+.material-icons.info {
+  margin: 0;
+  background: transparent;
+  float: none;
+  color: #1565c0;
+  text-shadow: -1px -1px 0 #e3f2fd,
+                1px -1px 0 #e3f2fd,
+                1px  1px 0 #e3f2fd,
+               -1px  1px 0 #e3f2fd;
 }
 .item {
   clear: both;
@@ -399,9 +524,9 @@ option.used {
 #activeLogo {
   transform-origin: 0% 0%;
   max-height: 100px;
-  transition: transform 0.3s ease-in-out, max-height 0.3s ease-in-out;
 }
 #activeLogo.empty {
+  transition: transform 0.3s ease-in-out, max-height 0.3s ease-in-out;
   transform: scale(0,0);
   max-height: 1px;
 }
@@ -444,8 +569,8 @@ option.used {
 }
 #sequenceTextContainer {
   position: relative;
-  margin-right: 12px;
-  left: 22px;
+  margin-right: 20px;
+  left: 30px;
   font-family: monospace;
   font-size: 16px;
   padding: 2px;
@@ -461,16 +586,25 @@ option.used {
 }
 #chooseLogo div {
   display: inline-block;
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
 }
 #chooseLogo svg {
   margin: 10px 10px 0 0;
 }
 #zoom {
-  float: left;
   margin: 2px;
 }
-#zoom, #zoomMenu span, #zoomMenu a {
-  float: left;
+#zoomMenu {
+  margin-bottom: 8px !important;
+  padding-bottom: 8px !important;
+}
+#zoomMenu .material-icons {
+  position: relative;
+  top: 6px;
+}
+#zoomMenu span {
+  position: relative;
 }
 
 /* boxes and dialogs */
@@ -490,6 +624,7 @@ option.used {
 }
 .box {
   overflow: auto;
+  -webkit-overflow-scrolling: touch;
   margin: 5px;
   padding: 0;
   position: absolute;
@@ -503,8 +638,9 @@ option.used {
 }
 .box div {
   overflow: auto;
-  margin: 5px;
-  padding: 2px 10px 2px 10px;
+}
+.box div.content, .section div.content {
+  padding: 8px 16px 8px 16px;
 }
 .box div div {
   overflow: visible;
@@ -516,7 +652,7 @@ option.used {
 }
 .textButton, .flatTextButton {
   display: inline-block;
-  background: #57f;
+  background-color: #2979ff;
   font-weight: bold;
   text-transform: uppercase;
   border-radius: 2px;
@@ -532,7 +668,7 @@ option.used {
   color: white;
 }
 .flatTextButton, .boxbg .textButton, .boxbg .textButton a {
-  color: #46e;
+  color: #2979ff;
   background-color: transparent;
   transition: background-color 0.2s ease-in-out;
   box-shadow: none;
@@ -547,11 +683,13 @@ option.used {
 }
 .textButton:active {
   background-color: #35e;
+  -webkit-transform: translateY(-1px);
   transform: translateY(-1px);
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.5);
 }
 .boxbg .textButton:active {
   background-color: #35e;
+  -webkit-transform: none;
   transform: none;
   box-shadow: none;
 }
@@ -574,14 +712,13 @@ option.used {
 /* openSequenceLink dialog */
 #openSequenceLinkUrl {
   position: relative;
-	left: 2%;
-  width: 96%;
+  width: 100%;
   height: 10em;
 }
 
 /* print dialog */
 #formRL {
-float: left;
+  float: left;
   white-space: nowrap;
 }
 .twoLine {
@@ -593,17 +730,8 @@ float: left;
   -o-transform:scale(1.5,3) translate(0,3px); /* Opera */
   color: #555;
 }
-#t_newReplacementsABC {
-  float: right;
-  font-size: 0.9em;
-  color: #222;
-  width: 60%;
-  padding-top: 0.5em;
-}
-#pilotCardX, #pilotCardY {
-  width: 4em;
-}
 #pilotCardPercentValue {
+  float: left !important;
   width: 3em;
 }
 .folded div {
@@ -634,28 +762,17 @@ float: left;
 	background-color: #fff;
 	background-repeat: no-repeat;
 	background-position: 5px 5px;
+  -webkit-transform: scale(0.8,0.8);
   transform: scale(0.8,0.8);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
   transition: all 0.3s ease-in-out;
   transition: background-color 0.3s ease;
 }
 .pilotCardLayout.active {
+  -webkit-transform: scale(1,1);
   transform: scale(1,1);
   box-shadow: 0 5px 12px rgba(0, 0, 0, 0.5);
   background-color: #f4b;
-}
-#pilotCardXY {
-  background-image: url('../images/PilotCardXY.png');
-  text-align: right;
-  width: 140px;
-  color: #00c;
-  font-weight: bold;
-}
-#pilotCardXY div {
-  display: block;
-  height: 28px;
-  margin: 0px;
-  overflow: hidden;
 }
 #pilotCardPercent {
   position: relative;
@@ -685,10 +802,25 @@ float: left;
   border-left: 1px solid #ccc;
 }
 #maxScalingSpan {
+  float: right;
   display: inline-block;
 }
 #maxScaling {
   width: 4em;
+  text-align: right;
+}
+#saveImageVariables input {
+  float: right;
+  text-align: right;
+  padding-right: 3px;
+}
+#printMargins td {
+  text-align: center;
+}
+#printMargins input {
+  width: 60px;
+  text-align:right;
+  padding-right: 3px;
 }
 .fileDrop {
   overflow: auto !important;
@@ -702,7 +834,7 @@ float: left;
   color: #aaa;
   font-size: 2em;
   text-align: center;
-  padding: 2em;
+  padding: 1em;
 }
 #printMultiFiles {
   width: 15em;
@@ -732,7 +864,6 @@ float: left;
   color: #f00;
 }
 #referenceSequenceSvgContainer {
-  width: 99%;
   overflow-x: auto;
 }
 /* end reference sequence */
@@ -758,6 +889,7 @@ float: left;
   transition: all 0.3s ease-in-out;
 }
 #t_locked.hidden {
+  -webkit-transform: translateY(-90px);
   transform: translateY(-90px);
   height: auto !important;
 }
@@ -789,7 +921,7 @@ float: left;
 .boxTitle {
   display: block;
   margin: 0;
-  padding: 6px 10px 3px 10px;
+  padding: 8px 16px 8px 16px;
   background: #fb8c00;
   color: #fff;
   font-size: 20px;
@@ -803,11 +935,9 @@ float: left;
   border: 0;
 }
 
-#alertMessage, #confirmMessage {
-  padding: 0.5em;
-}
 #saveAsURLArea {
   width: 99%;
+  word-wrap: break-word;
   height: 12em;
 }
 #newWindow {
@@ -863,6 +993,7 @@ float: left;
 }
 #version {
   margin-right: 1em;
+  color: rgba(0,0,0,0.54);
 }
 .figureStart {
   z-index: 1;
@@ -949,7 +1080,10 @@ float: left;
 /****************************
  *      Figure edit tab     *
  ****************************/
-
+#figureInfo {
+  font-size: 12px;
+  background-color: #ede7f6;
+}
 #figureInfoTop {
   position: relative;
 }
@@ -983,7 +1117,7 @@ float: left;
   transition: all 0.5s ease-in-out;
 }
 #figureString.inFigureSelector {
-  left: 12px;
+  left: 42px;
   top: 4px;
 }
 #figureStringInput {
@@ -1119,6 +1253,9 @@ float: left;
   float: left;
   width: 80px;
 }
+#commentSection {
+  padding-top: 0;
+}
 /* button tooltips, disabled for mobile */
 .tooltip {
   width: 100%;
@@ -1127,6 +1264,9 @@ float: left;
 }
 .tooltip div {
   display:none;
+}
+.disable .tooltip {
+  display: none;
 }
 
 /* hide alert message rule popup */
@@ -1137,9 +1277,15 @@ float: left;
 /* figureInfo styling */
 #figureInfo .boxTitle {
   min-height: 32px;
+  background-color: #673ab7;
+  margin-bottom: 6px;
 }
 #figureInfo.section select {
   border: 1px;
+}
+#figureInfo .content, #figureInfo .divider {
+  padding-left: 8px;
+  padding-right: 8px;
 }
 #entryExit span {
   float: left;
@@ -1220,19 +1366,27 @@ float: left;
 /* figure chooser */
 #figureChooser {
   position: absolute;
-  margin: 2px;
   width: 300px;
   top: 110px;
-  bottom: 0px;
-  background-color: rgba(255, 255, 255, 0.7);
+  bottom: 0;
   overflow: auto;
   overflow-x: hidden;
 }
 #figureChooser a:hover {
   text-decoration: none;
 }
-#figureSelectorClose {
+#hideFigureSelector:after {
+  content: "arrow_forward";
+}
+#figureSelector #figureSelectorClose {
   float: right;
+}
+#figureSelector.left #figureSelectorClose {
+  float: left;
+  margin-right: 6px;
+}
+#figureSelector.left #hideFigureSelector:after {
+  content: "arrow_back";
 }
 #hideIllegalFigures span {
   display: inline-block;
@@ -1338,15 +1492,20 @@ table#figureChooserTable div {
 /*set up a tags*/ 
 #menu a {
   display:block;
-  color:#00f;
+  color: rgba(0,0,0,0.87);
   text-decoration: none;
-  padding: 5px 15px 5px 15px;
+  padding: 5px 16px 5px 16px;
 }
-#menu a:hover {
-  color:#03f;
-}
-#menu li ul a {
+#menu li ul a, #menu li ul span {
   font-weight: normal;
+  padding: 8px 16px 8px 16px;
+}
+#menu li ul span span {
+  padding: 0;
+}
+#menu .divider {
+  margin-bottom: 0;
+  padding-bottom: 0;
 }
 /*position level 1 links horizontally*/ 
 #menu li {
@@ -1354,7 +1513,6 @@ table#figureChooserTable div {
   float:left;
   background-color: #ede7f6;
   transition: background-color 0.2s;
-  margin-left:-1px;
 }
 #menu li ul li.leftArrow {
   background: white url('../images/menu-arrow-left.png') left center no-repeat;
@@ -1370,7 +1528,7 @@ table#figureChooserTable div {
 }
 /*position level 2 links vertically and hide*/ 
 #menu li ul {
-  visibility:hidden;  
+  visibility:hidden;
   transform: scaleY(0);
   transform-origin: 50% 0%;
   transition: transform 0.2s ease-in-out;
@@ -1397,7 +1555,7 @@ table#figureChooserTable div {
   transform: scale(0,0);
   transform-origin: 100% 0%;
   position:absolute;
-  left:-201px;
+  left:-200px;
   width:200px;
   z-index:10;
   -webkit-transform-style: preserve-3d;
@@ -1444,17 +1602,20 @@ table#figureChooserTable div {
   visibility:visible;
   transform: scale(1,1);
 }
-
-.status {
+#rulesActive {
   float: right;
-  width: 18px;
-  height: 1.4em;
-  background-image: url('../images/red_cross.png');
-  background-repeat: no-repeat;
-  background-position: left; 
 }
-.status.good {
-  background-image: url('../images/green_checkmark.png');
+.status:after {
+  color: red;
+  content: "error_outline";
+}
+.status.good:after {
+  color: #7cb342;
+  content: "check_circle";
+}
+.docs .status {
+  position: relative;
+  bottom: -5px;
 }
 /* Class select box */
 #class {
@@ -1541,6 +1702,7 @@ table#figureChooserTable div {
   box-shadow: inset 0 0 0 15px rgba(0,0,0,0.12);
 }
 .material-switch-input:checked ~ .material-switch::before {
+  -webkit-transform: translate(18px, 0);
   transform: translate(18px, 0);
   background: #006CB5;
   box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 0 0 16px rgba(0, 108, 181, 0);
@@ -1556,6 +1718,7 @@ table#figureChooserTable div {
   top: -3px;
   bottom: 2px;
   right: auto;
+  -webkit-transform: translate(0, 0);
   transform: translate(0, 0);
   display: block;
   width: 20px;

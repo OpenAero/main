@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# OpenAero version 2016.3.1
+# OpenAero version 2016.3.2
 addtohomescreen/addtohomescreen.css
 addtohomescreen/addtohomescreen.min.js
 arestisystem.html
@@ -30,14 +30,10 @@ buttons/switchFirstRoll.png
 buttons/plus.png
 buttons/minus.png
 buttons/mask.png
-buttons/redo.png
 buttons/smallFigEndInv.png
 buttons/smallFigEndUp.png
 buttons/smallFigStartInv.png
 buttons/smallFigStartUp.png
-buttons/smallRedo.png
-buttons/smallUndo.png
-buttons/undo.png
 buttons/flipOff.png
 buttons/flipOn.png
 buttons/flipTwoOff.png
@@ -50,6 +46,7 @@ canvg/StackBlur.js
 config.js
 css/desktop.css
 css/general.css
+css/MaterialIcons-Regular.woff
 #css/materialize.min.css
 css/mobile.css
 css/print.css
@@ -82,7 +79,6 @@ images/ee_ext-figure.png
 images/ee_ext-exit.png
 images/ee_ext-entry.png
 images/fullrolls.png
-images/green_checkmark.png
 images/hesrolls.png
 images/magnifier.png
 images/menu-arrow-left.png
@@ -97,7 +93,6 @@ images/OA_Queue.gif
 images/PilotCard2.png
 images/PilotCard4.png
 images/PilotCardPercent.png
-images/red_cross.png
 images/sequence_info.png
 images/snaprolls.png
 images/spinrolls.png

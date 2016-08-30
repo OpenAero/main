@@ -73,10 +73,21 @@ select {
   top: 88px;
   width: 320px;
 }
-#leftBlock {
+#leftBlockContainer {
   position: absolute;
   top: 2px;
-  left: 0px;
+  left: 0;
+  overflow-x: hidden;
+  overflow-y: visible;
+  width: 320px;
+  margin: 0;
+  padding: 0;
+}
+
+#leftBlock {
+  position: relative;
+  top: 0;
+  left: 0;
   background: #f4f4f4;
   width: 320px;
   padding: 0;
@@ -142,30 +153,29 @@ select {
 }
 #figureSelector {
   position: absolute;
-  overflow: display;
-  top: 4px;
+  overflow-x: hidden;
+  overflow-y: display;
   left: -340px;
-  -moz-transition: 0.2s left;
-  -o-transition: 0.2s left;
-  -webkit-transition: 0.2s left;
-  transition: 0.2s left;
+  -moz-transition: all 0.2s ease-in-out;
+  -o-transition: all 0.2s ease-in-out;
+  -webkit-transition: all 0.2s ease-in-out;
+  transition: all 0.2s ease-in-out;
   width: 320px;
   height: 480px;
   font-size: 16px;
-  padding: 0px;
-  background-color: #f4f4f4;
-  background: -webkit-linear-gradient(top, #f4f4f4, #e0e0ff);
+  padding: 0;
+  background-color: white;
   z-index: 2;
 }
 #figureSelector.active {
   left:0;
 }
 
-/* sections */
-.section3cols {
+/* columns */
+.content3cols {
   width: 97%;
 }
-.section2cols {
+.content2cols {
   width: 97%;
 }
 
@@ -183,9 +193,7 @@ select {
 }
 .undoRedoButton {
   float: left;
-  width: 32px;
-  height: 32px;
-  margin: 0;
+  margin: 2px 4px 0px 4px;
 }
 .minButton {
 	background-image: url('../buttons/minus.png');
@@ -200,12 +208,6 @@ select {
 .plusMinText {
   font-size: 24px;
   height: 32px;
-}
-#undo {
-  background-image: url('../buttons/undo.png');
-}
-#redo {
-  background-image: url('../buttons/redo.png');
 }
 #entryExit {
   min-height: 56px;
@@ -255,8 +257,8 @@ select {
   font-size: 2em;
 }
 #comments {
-  width: 286px;
-  height: 4em;
+  width: 260px;
+  height: 3em;
 }
 
 /* logo chooser */
@@ -270,7 +272,7 @@ select {
 /* figure chooser */
 
 #figureChooser {
-  width: 318px;
+  width: 308px;
 }
 table#figureChooserTable td {
   padding: 1px;
@@ -290,7 +292,7 @@ table#figureChooserTable td.selected {
   font-size: 14px;
 }
 #figureSelectorClose {
-  margin: 5px;
+  margin: 12px;
 }
 
 /* message and other boxes */
@@ -315,12 +317,14 @@ table#figureChooserTable td.selected {
 }
 
 /* menu */
+#menu {
+  overflow: hidden;
+}
 #menu a {
-  padding: 6px 3px 6px 3px;
-  border-left: 1px solid #ddd;
+  padding: 6px;
 }
 #menu li {
-  width: 46px; /* 320 : 7 */
+  width: 45px; /* 320 : 7 */
   text-align: center;
   font-size: 14px;
   letter-spacing: -1px;

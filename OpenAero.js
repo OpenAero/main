@@ -136,10 +136,6 @@ var firstFigure = true;
 var additionals = 0;
 // unknownFigureLetter holds the letter assigned to the upcoming figure
 var unknownFigureLetter = false;
-// Tau is 2 times PI. Saves calculations during runtime
-var Tau = Math.PI * 2;
-// degToRad is Pi / 180. Saves calculations for degree to rad conversions
-var degToRad = Math.PI / 180;
 // Get ellipse perameters for perspective drawing
 var perspective_param = getEllipseParameters(yAxisOffsetDefault,yAxisScaleFactor);
 // logoImg holds the active logo image
@@ -635,7 +631,7 @@ if(!document.getElementsByClassName) {
       imageData.data = data;
       shadowCtx.putImageData(imageData, 0, 0);
 
-      return shadowCanvas.toDataURL();
+      return shadowCanvas;
     },
     "decode": function(image, options) {
       options = options || {};
@@ -1443,6 +1439,24 @@ if (typeof module !== "undefined" && module.exports) {
   });
 }
 
+/* HTMLCanvasElement.toBlob() polyfill */
+if (!HTMLCanvasElement.prototype.toBlob) {
+ Object.defineProperty(HTMLCanvasElement.prototype, 'toBlob', {
+  value: function (callback, type, quality) {
+
+    var binStr = atob( this.toDataURL(type, quality).split(',')[1] ),
+        len = binStr.length,
+        arr = new Uint8Array(len);
+
+    for (var i=0; i<len; i++ ) {
+     arr[i] = binStr.charCodeAt(i);
+    }
+
+    callback( new Blob( [arr], {type: type || 'image/png'} ) );
+  }
+ });
+}
+
 // **************************************************************
 // *
 // *           FUNCTIONS
@@ -1477,13 +1491,13 @@ function switchMobile () {
     document.getElementById('t_sequence').innerHTML = userText.sequenceShort;
     // update view menu
     setMobileMenu.innerHTML = userText.desktopVersion;
-    document.getElementById ('zoomMin').innerHTML = '<img src="buttons/mask.png">';
-    document.getElementById ('zoomPlus').innerHTML = '<img src="buttons/mask.png">';
     // unhide sequence tab
     tab.classList.remove ('noDisplay');
     // hide sequence svg and move to leftBlockTop
     svg.classList.add('hidden');
     document.getElementById('leftBlockTop').appendChild(svg);
+    // move figureSelector to left side
+    document.getElementById ('figureSelector').classList.add ('left');
     //svg.setAttribute('style', 'position:absolute;z-index:-1;top:-5000px;');
     // remove any vertical displacement done by updateSequenceTextHeight
     sequenceText.removeAttribute('style');
@@ -1497,8 +1511,6 @@ function switchMobile () {
     document.getElementById('t_sequence').innerHTML = userText.sequence;
     // update view menu
     setMobileMenu.innerHTML = userText.mobileVersion;
-    document.getElementById ('zoomMin').innerHTML = '<img src="buttons/smallMask.png">';
-    document.getElementById ('zoomPlus').innerHTML = '<img src="buttons/smallMask.png">';
 
     // restore sequence container
     tab.classList.add('noDisplay');
@@ -1506,6 +1518,9 @@ function switchMobile () {
     svg.classList.remove('hidden');
     var placing = document.getElementById('svgContainerPlacing');
     placing.parentNode.insertBefore (svg, placing);
+
+    // move figureSelector back to right side
+    document.getElementById ('figureSelector').classList.remove ('left');
 
     selectTab ('tab-sequenceInfo');
     
@@ -1766,10 +1781,10 @@ function printDialog(show) {
 
       document.getElementById('printDialog').classList.remove ('noDisplay');
       document.getElementById('printMulti').classList.add ('noDisplay');
-      document.getElementById('printForms').classList.add ('section2cols');
-      document.getElementById('printForms').classList.remove ('section3cols');
-      document.getElementById('printOptions').classList.add ('section2cols');
-      document.getElementById('printOptions').classList.remove ('section3cols');
+      document.getElementById('printForms').classList.add ('content2cols');
+      document.getElementById('printForms').classList.remove ('content3cols');
+      document.getElementById('printOptions').classList.add ('content2cols');
+      document.getElementById('printOptions').classList.remove ('content3cols');
   
       // by default, disable "Print Super Family", but enable change
       var el = document.getElementById('printSF');
@@ -1806,10 +1821,10 @@ function printMultiDialog() {
   
   document.getElementById('printDialog').classList.remove ('noDisplay');
   document.getElementById('printMulti').classList.remove ('noDisplay');
-  document.getElementById('printForms').classList.add ('section3cols');
-  document.getElementById('printForms').classList.remove ('section2cols');
-  document.getElementById('printOptions').classList.add ('section3cols');
-  document.getElementById('printOptions').classList.remove ('section2cols');
+  document.getElementById('printForms').classList.add ('content3cols');
+  document.getElementById('printForms').classList.remove ('content2cols');
+  document.getElementById('printOptions').classList.add ('content3cols');
+  document.getElementById('printOptions').classList.remove ('content2cols');
 }
 
 // settingsDialog shows or hides the settings dialog
@@ -2206,18 +2221,18 @@ function dirAttToAngle (dir, att) {
   }
 // Check for right or left half, calculate angle and make negative for left half
   if ((theta < 90) || (theta > 270)) {
-    var angle = (theta + att) * degToRad;
-    if (angle > Tau) {
-      angle -= Tau;
+    var angle = (theta + att) * Math.degToRad;
+    if (angle > Math.Tau) {
+      angle -= Math.Tau;
     } else if (angle < 0) {
-      angle += Tau;
+      angle += Math.Tau;
     }
   } else {
-    var angle = (theta - att) * degToRad;
+    var angle = (theta - att) * Math.degToRad;
     if (angle >= 0) {
-      angle -= Tau;
-    } else if (angle < -Tau) {
-      angle += Tau;
+      angle -= Math.Tau;
+    } else if (angle < -Math.Tau) {
+      angle += Math.Tau;
     }
   }
   return angle;
@@ -2390,7 +2405,7 @@ function makeFigStart (params) {
 // makeFigStop creates figure stop
 function makeFigStop (lastFig) {
   var pathArray = {style:'pos'};
-  var angle = (Direction + 90) * degToRad;
+  var angle = (Direction + 90) * Math.degToRad;
   var dx = roundTwo(Math.cos(angle) * lineElement / scale);
   var dy = - roundTwo(Math.sin(angle) * lineElement / scale);
   if (lastFig) {
@@ -2448,7 +2463,7 @@ function makeLine (Params) {
       dy = roundTwo(yAxisScaleFactor*dy);
     }
     if (((Attitude == 45) || (Attitude == 315)) || ((Attitude == 225) || (Attitude == 135))) {
-      angle -= yAxisOffset * degToRad;
+      angle -= yAxisOffset * Math.degToRad;
       dx = roundTwo(scaleLine.x * Math.cos(angle) * lineElement * Extent);
       if (yAxisOffset > 90) {
         dy = roundTwo((-scaleLine.y * Math.cos(angle) + Math.sin(angle)) * lineElement * Extent);
@@ -2510,11 +2525,11 @@ function getEllipseParameters(P_Angle,Y_Scale) {
   }
   if (Y_Scale == 1) {
     var V_orient = (90 - P_Angle) /2;
-    var V_r_min = Math.sqrt(1 - Math.sin(P_Angle*degToRad)) ;
-    var V_r_max = Math.sqrt(1 + Math.sin(P_Angle*degToRad)) ;
+    var V_r_min = Math.sqrt(1 - Math.sin(P_Angle*Math.degToRad)) ;
+    var V_r_max = Math.sqrt(1 + Math.sin(P_Angle*Math.degToRad)) ;
     var H_orient = - P_Angle /2;
-    var H_r_min = Math.sqrt(1 - Math.sin((90-P_Angle)*degToRad)) ;
-    var H_r_max = Math.sqrt(1 + Math.sin((90-P_Angle)*degToRad)) ;
+    var H_r_min = Math.sqrt(1 - Math.sin((90-P_Angle)*Math.degToRad)) ;
+    var H_r_max = Math.sqrt(1 + Math.sin((90-P_Angle)*Math.degToRad)) ;
     return {
       'x_radius': V_r_min,
       'y_radius': V_r_max,
@@ -2524,8 +2539,8 @@ function getEllipseParameters(P_Angle,Y_Scale) {
       'H_rot_angle': H_orient
     };
   }
-  var A = Y_Scale * Math.cos(P_Angle*degToRad);
-  var B = Y_Scale * Math.sin(P_Angle*degToRad);
+  var A = Y_Scale * Math.cos(P_Angle*Math.degToRad);
+  var B = Y_Scale * Math.sin(P_Angle*Math.degToRad);
   // Parameters for perspective of elements in the vertical plane
   // (loops or loop parts)
   var theta = (Math.PI + Math.atan(-2*B/(1 - Y_Scale * Y_Scale)))/2 ;
@@ -2575,18 +2590,18 @@ function dirAttToXYAngle (dir, att) {
   // Check for right or left half, calculate angle and make negative for
   // left half
   if ((theta < 90) || (theta > 270)) {
-    var angle = (theta + att) * degToRad;
-    if (angle > Tau) {
-      angle -= Tau;
+    var angle = (theta + att) * Math.degToRad;
+    if (angle > Math.Tau) {
+      angle -= Math.Tau;
     } else if (angle < 0) {
-      angle += Tau;
+      angle += Math.Tau;
     }
   } else {
-    var angle = (theta - att) * degToRad;
+    var angle = (theta - att) * Math.degToRad;
     if (angle >= 0) {
-      angle -= Tau;
-    } else if (angle < -Tau) {
-      angle += Tau;
+      angle -= Math.Tau;
+    } else if (angle < -Math.Tau) {
+      angle += Math.Tau;
     }
   }
   True_Drawing_Angle = angle;
@@ -2611,18 +2626,18 @@ function dirAttToGGAngle (dir, att) {
   // Check for right or left half, calculate angle and make negative for
   // left half
   if ((theta < 90) || (theta > 270)) {
-    var angle = (theta + att) * degToRad;
-    if (angle > Tau) {
-      angle -= Tau;
+    var angle = (theta + att) * Math.degToRad;
+    if (angle > Math.Tau) {
+      angle -= Math.Tau;
     } else if (angle < 0) {
-      angle += Tau;
+      angle += Math.Tau;
     }
   } else {
-    var angle = (theta - att) * degToRad;
+    var angle = (theta - att) * Math.degToRad;
     if (angle >= 0) {
-      angle -= Tau;
-    } else if (angle < -Tau) {
-      angle += Tau;
+      angle -= Math.Tau;
+    } else if (angle < -Math.Tau) {
+      angle += Math.Tau;
     }
   }
   return angle;
@@ -2675,8 +2690,8 @@ function makeCurve (param) {
     var Rot_axe_Ellipse = (yAxisOffset < 90) ? perspective_param.rot_angle : -perspective_param.rot_angle;
     var X_axis_Radius = perspective_param.x_radius * Radius;
     var Y_axis_Radius = perspective_param.y_radius * Radius;
-    dy -= dx * Math.sin(yAxisOffset * degToRad);
-    dx = dx * Math.cos(yAxisOffset * degToRad);
+    dy -= dx * Math.sin(yAxisOffset * Math.degToRad);
+    dx = dx * Math.cos(yAxisOffset * Math.degToRad);
     pathArray.path = 'a' + roundTwo(X_axis_Radius) + ',' +
       roundTwo(Y_axis_Radius) + ' ' + Rot_axe_Ellipse + ' ' + longCurve +
       ' ' + sweepFlag + ' ' + roundTwo(dx) + ',' + roundTwo(dy);
@@ -2711,10 +2726,10 @@ function makeRollTopLine () {
 // makeTurnArc creates arc segments for turns and rolling circles.
 // Size is in DRAWN rads
 function makeTurnArc (rad, startRad, stopRad, pathsArray) {
-  while (startRad < 0) startRad += Tau;
-  while (startRad >= Tau) startRad -= Tau;
-  while (stopRad < 0) stopRad += Tau;
-  while (stopRad >= Tau) stopRad -= Tau;
+  while (startRad < 0) startRad += Math.Tau;
+  while (startRad >= Math.Tau) startRad -= Math.Tau;
+  while (stopRad < 0) stopRad += Math.Tau;
+  while (stopRad >= Math.Tau) stopRad -= Math.Tau;
 
   var sign = (rad >= 0)? 1 : -1;
   
@@ -2723,14 +2738,14 @@ function makeTurnArc (rad, startRad, stopRad, pathsArray) {
     radEllipse = Math.atan (-1 / (Math.tan(startRad) / flattenTurn));
     // as the atan function only produces angles between -PI/2 and PI/2 we
     // may have to correct for full ellipse range
-    if ((startRad > Math.PI) && (startRad < Tau)) {
+    if ((startRad > Math.PI) && (startRad < Math.Tau)) {
       radEllipse += Math.PI;
     }
     startX = Math.cos (radEllipse) * curveRadius;
     startY = - (Math.sin (radEllipse) * curveRadius * flattenTurn);
     // calculate where we go to in the ellipse
     radEllipse = Math.atan (-1 / (Math.tan(stopRad) / flattenTurn));
-    if ((stopRad > Math.PI) && (stopRad < Tau)) {
+    if ((stopRad > Math.PI) && (stopRad < Math.Tau)) {
       radEllipse += Math.PI;
     }
     stopX = Math.cos (radEllipse) * curveRadius;
@@ -2755,8 +2770,8 @@ function makeTurnArc (rad, startRad, stopRad, pathsArray) {
     var X_curveRadius = roundTwo(perspective_param.H_x_radius * curveRadius) ;
     var Y_curveRadius = roundTwo(perspective_param.H_y_radius * curveRadius) ;
     dy = yAxisScaleFactor * (Math.cos(stopRad) - Math.cos(startRad)) ;
-    dx = roundTwo((Math.sin(stopRad) - Math.sin(startRad) - dy * Math.cos(yAxisOffset * degToRad)) * curveRadius) * sign;
-    dy = roundTwo(dy * Math.sin(yAxisOffset * degToRad) * curveRadius) * sign;
+    dx = roundTwo((Math.sin(stopRad) - Math.sin(startRad) - dy * Math.cos(yAxisOffset * Math.degToRad)) * curveRadius) * sign;
+    dy = roundTwo(dy * Math.sin(yAxisOffset * Math.degToRad) * curveRadius) * sign;
     sweepFlag = (rad > 0)? 0 : 1;
     longCurve = (Math.abs (rad) < Math.PI)? 0 : 1;
     if ((Attitude > 90) && (Attitude < 270)) {
@@ -2775,8 +2790,8 @@ function makeTurnArc (rad, startRad, stopRad, pathsArray) {
 // makeTurnDots creates dotted arc segments for turns and rolling circles.
 // Size is in DRAWN rads
 function makeTurnDots (rad, startRad, stopRad, pathsArray) {
-  while (startRad >= Tau) startRad -= Tau;
-  while (stopRad >= Tau) stopRad -= Tau;
+  while (startRad >= Math.Tau) startRad -= Math.Tau;
+  while (stopRad >= Math.Tau) stopRad -= Math.Tau;
     
   sign = (rad >= 0)? 1 : -1;
   if (!newTurnPerspective.checked) {
@@ -2784,14 +2799,14 @@ function makeTurnDots (rad, startRad, stopRad, pathsArray) {
     radEllipse = Math.atan (-1 / (Math.tan(startRad) / flattenTurn));
     // as the atan function only produces angles between -PI/2 and PI/2
     // we may have to correct for full ellipse range
-    if ((startRad > Math.PI) && (startRad < Tau)) {
+    if ((startRad > Math.PI) && (startRad < Math.Tau)) {
       radEllipse += Math.PI;
     }
     startX = Math.cos (radEllipse) * curveRadius;
     startY = - (Math.sin (radEllipse) * curveRadius * flattenTurn);
     // calculate where we go to in the ellipse
     radEllipse = Math.atan (-1 / (Math.tan(stopRad) / flattenTurn));
-    if ((stopRad > Math.PI) && (stopRad < Tau)) {
+    if ((stopRad > Math.PI) && (stopRad < Math.Tau)) {
       radEllipse += Math.PI;
     }
     stopX = Math.cos (radEllipse) * curveRadius;
@@ -2810,8 +2825,8 @@ function makeTurnDots (rad, startRad, stopRad, pathsArray) {
     var X_curveRadius = roundTwo(perspective_param.H_x_radius * curveRadius) ;
     var Y_curveRadius = roundTwo(perspective_param.H_y_radius * curveRadius) ;
     dy =  yAxisScaleFactor * (Math.cos(stopRad) - Math.cos(startRad)) ;
-    dx =  roundTwo((Math.sin(stopRad) - Math.sin(startRad) - dy * Math.cos(yAxisOffset * degToRad)) * curveRadius) * sign;
-    dy =  roundTwo(dy * Math.sin(yAxisOffset * degToRad) * curveRadius) * sign;
+    dx =  roundTwo((Math.sin(stopRad) - Math.sin(startRad) - dy * Math.cos(yAxisOffset * Math.degToRad)) * curveRadius) * sign;
+    dy =  roundTwo(dy * Math.sin(yAxisOffset * Math.degToRad) * curveRadius) * sign;
     sweepFlag = (rad > 0)? 0 : 1;
     longCurve = (Math.abs (rad) < Math.PI) ? 0 : 1;
     pathsArray.push({'path':'a ' + X_curveRadius + ',' +
@@ -2863,8 +2878,8 @@ function makeTurnRoll (param, rad) {
       ' ' + roundTwo(dx) + ',' + roundTwo(dy) + ' ';
     pathsArray.push ({'path':path, 'style':'pos'});
   } else {
-    var persp_Sin = Math.sin(yAxisOffset * degToRad);
-    var persp_Cos = Math.cos(yAxisOffset * degToRad);
+    var persp_Sin = Math.sin(yAxisOffset * Math.degToRad);
+    var persp_Cos = Math.cos(yAxisOffset * Math.degToRad);
     // get ellipse parameters
     var rot_axe_Ellipse = (yAxisOffset < 90) ? perspective_param.H_rot_angle : -perspective_param.H_rot_angle;
     var X_rollcurveRadius = roundTwo(perspective_param.H_x_radius * turn_rollcurveRadius) ;
@@ -2981,11 +2996,11 @@ function makeTurn (draw) {
       var startRad = dirAttToGGAngle (Direction, Attitude);
     }
   }
-  if (stopRad < 0) stopRad += Tau;
-  if (startRad < 0) startRad += Tau;
+  if (stopRad < 0) stopRad += Math.Tau;
+  if (startRad < 0) startRad += Math.Tau;
   startRadSave = startRad;
   var rad = sign * stopRad - sign * startRad;
-  if (rad <= 0) rad += Tau;
+  if (rad <= 0) rad += Math.Tau;
   if (numbers.length > 1) {
     // rolling turns
     var steps = 0;
@@ -3021,13 +3036,13 @@ function makeTurn (draw) {
       startRad += halfStepSigned;
       rollPos++;
     }
-    pathsArray = makeTurnDots (sign*(Tau - rad), stopRad, startRadSave, pathsArray);
+    pathsArray = makeTurnDots (sign*(Math.Tau - rad), stopRad, startRadSave, pathsArray);
     changeDir (sign * extent);
   } else {
     // regular turns
     if (extent != 360) {
       pathsArray = makeTurnArc (sign * rad, startRad, stopRad, pathsArray);
-      pathsArray = makeTurnDots (sign * (Tau-rad), stopRad, startRad, pathsArray);
+      pathsArray = makeTurnDots (sign * (Math.Tau-rad), stopRad, startRad, pathsArray);
       // build turn extent text with degree sign in unicode
       // not always exactly centered: fixme: improve code
       if (!newTurnPerspective.checked) {
@@ -4408,6 +4423,30 @@ function doOnLoad () {
     // add submenu showing/hiding
     addMenuEventListeners();
     
+    // enable hiding dialogs by tapping outside dialog, but not in
+    // scrollbars
+    var els = document.getElementsByClassName ('boxbg');
+    for (var i = els.length - 1; i >= 0; i--) {
+      els[i].addEventListener ('mousedown', function(e) {
+        if (e.srcElement && e.srcElement.classList &&
+          e.srcElement.classList.contains ('boxbg') &&
+          (e.srcElement.clientWidth >= e.clientX) &&
+          (e.srcElement.clientHeight >= e.clientY)) {
+            this.classList.add ('noDisplay');
+          }
+        }
+      );
+    }
+    
+    // enable expansion panel toggles
+    var els = document.getElementsByClassName ('expand-toggle');
+    for (var i = els.length - 1; i >= 0; i--) {
+      els[i].addEventListener ('mousedown', function(e) {
+          e.srcElement.parentNode.classList.toggle ('expanded');
+        }
+      );
+    }
+    
   //} catch (e) {
   //  console.log(e);
   //}
@@ -4452,9 +4491,13 @@ function doOnLoad () {
   if (/i(Pad|Phone|Pod)/i.test (navigator.userAgent)) {
     document.getElementById('t_saveSequence').parentNode.classList.add ('noDisplay');
     document.getElementById('t_saveFigsSeparate').parentNode.classList.add ('noDisplay');
-    document.getElementById('t_printExplain').innerHTML = userText.iOSprintExplain;
-    document.getElementById('t_print').classList.add ('noDisplay');
-    document.getElementById('t_saveAsSVG').classList.add ('noDisplay');    
+    /*document.getElementById('t_printExplain').innerHTML = userText.iOSprintExplain;
+    document.getElementById('t_print').classList.add ('noDisplay');*/
+    document.getElementById('t_saveAsSVG').classList.add ('noDisplay');
+    
+    // print margins
+    document.getElementById('saveImageVariables').parentNode.classList.remove ('divider');
+    document.getElementById('printMargins').classList.add ('noDisplay');
   }
   
   // retrieve queue from storage
@@ -4498,7 +4541,21 @@ function launchURL (launchData) {
       return activateXMLsequence (decodeURI (match.replace(/%2B/g, '+')));
     } else {
       // 1.5.0 and later : base64url encoded link
-      return activateXMLsequence (decodeBase64Url (match));
+      var string = decodeBase64Url (match);
+      if (/<\/>/.test(string)) { // test for empty end tag
+        // 2016.3.2 and later : restore xml end tags and sequence tags
+        var tags = [];
+        var parts = string.split ('<');
+        for (var i = 1; i < parts.length; i++) {
+          if (/^\/>/.test(parts[i])) {
+            parts[i] = '/' + tags.pop() + parts[i].substring(1);
+          } else {
+            tags.push (parts[i].match (/^[^>]+/)[0]);
+          }
+        }
+        string = '<sequence>' + parts.join ('<') + '</sequence>';
+      }
+      return activateXMLsequence (string);
     }
   }
   return false;
@@ -4530,17 +4587,30 @@ function appZoom (e) {
 // In index.html no actions are specified. It is necessary they are
 // specified as event listeners for Chrome Apps.
 function addEventListeners () {
-  // zoom for Chrome app
+  // zoom for Chrome app and touch devices
   if (chromeApp.active || touchDevice) {
     document.addEventListener ('keydown', appZoom, false);
   } else {
     document.getElementById('zoomMenu').classList.add('noDisplay');
   }
-
+  
+  // remove all menus when tapping anywhere outside menu
+  if (touchDevice) {
+    document.addEventListener ('touchstart', function(evt){
+      var el = evt.target;
+      while (el !== this) {
+        if (el.id === 'menu') return;
+        el = el.parentNode;
+      }
+      setTimeout(menuInactiveAll, 200);
+    });
+  }
+  
   // menu
   document.getElementById('file').addEventListener('mousedown', function(){
     setTimeout(menuInactiveAll, 1000);
-    }, true);  
+    }, true);
+  document.getElementById('fileForm').addEventListener('mousedown', function(){this.reset()}, false);
   document.getElementById('file').addEventListener('change', openSequence, false);
   document.getElementById('t_openSequence').addEventListener('mousedown', document.getElementById('file').click, false);
   document.getElementById('t_openSequenceLink').addEventListener('click', openSequenceLink, false);
@@ -4670,7 +4740,8 @@ function addEventListeners () {
   document.getElementById('unknownFigure').addEventListener('change', updateFigure, false);
   document.getElementById('figEntryButton').addEventListener('click', clickButton, false);
   document.getElementById('figExitButton').addEventListener('click', clickButton, false);
-  document.getElementById('comments').addEventListener('change', updateFigure, false);
+  // document.getElementById('comments').addEventListener('change', updateFigureComments);
+  document.getElementById('comments').addEventListener('input', updateFigureComments);
     
   // figure selector
   document.getElementById('figureStringInput').addEventListener('input', changeFigureString, false);
@@ -4727,7 +4798,6 @@ function addEventListeners () {
   document.getElementById('nonArestiRolls').addEventListener('change', updateNonArestiRolls, false);
   document.getElementById('styles').addEventListener('change', getStyle, false);
   document.getElementById('styleString').addEventListener('change', updateStyle, false);
-  document.getElementById('t_changeStyle').addEventListener('mousedown', updateStyle, false);
   document.getElementById('t_resetStyle').addEventListener('mousedown', function(){resetStyle()}, false);
   document.getElementById('t_resetStyleAll').addEventListener('mousedown', function(){resetStyle(true)}, false);
   document.getElementById('newTurnPerspective').addEventListener('change', draw, false);
@@ -4741,9 +4811,9 @@ function addEventListeners () {
 
   // save dialog
   document.getElementById('dlTextField').addEventListener('keyup', updateSaveFilename, true);
-  document.getElementById('t_saveFile').addEventListener('click',function(){
+/*  document.getElementById('t_saveFile').addEventListener('click',function(){
     window.setTimeout(function(){saveDialog()}, 200);
-    }, false);
+    }, false);*/
   document.getElementById('t_cancelSave').addEventListener('mousedown', function(){saveDialog()}, false);
   
   // iOS save dialog
@@ -4782,10 +4852,6 @@ function addEventListeners () {
   document.getElementById('pilotCard2').addEventListener('click', setPilotCardLayout, false);
   document.getElementById('pilotCard4').addEventListener('click', setPilotCardLayout, false);
   document.getElementById('printFormGrid').addEventListener('change', saveImageSizeAdjust, false);
-  /*
-  document.getElementById('pilotCardX').addEventListener('change', function(){setRatio('pilotCardY', this, Math.PageRatio)}, false);
-  document.getElementById('pilotCardY').addEventListener('change', function(){setRatio('pilotCardX', this, 1/Math.PageRatio)}, false);
-  document.getElementById('pilotCardUnits').addEventListener('change', setPilotCardUnits, false);*/
   document.getElementById('imageWidth').addEventListener('change', saveImageSizeAdjust, false);
   document.getElementById('imageHeight').addEventListener('change', saveImageSizeAdjust, false);
   document.getElementById('pageSpacing').addEventListener('change', saveImageSizeAdjust, false);
@@ -4826,7 +4892,9 @@ function checkForApp () {
   // only do something when not running as Chrome app
   // and
   // in Chrome browser with extension support
-  if (typeof chrome == "undefined") return;
+  if (!((navigator.userAgent.toLowerCase().indexOf('chrome') > -1) &&
+    (navigator.vendor.toLowerCase().indexOf("google") > -1) &&
+    chrome)) return;
   if (!chromeApp.active) {
     function f (c) {
       
@@ -5065,17 +5133,19 @@ function checkBrowser () {
   if (!fileSupport()) {
     return userText.fileOpeningNotSupported + '<br>' + userText.getChrome;
   }
-  // Present a warning if the browser is not Chrome or Firefox
-  // and the warning was not displayed for four weeks. Use store value
+  // Present a warning if the browser is not
+  // Chrome or Firefox, or Safari on iOS
+  // and the warning was not displayed for one week. Use store value
   // for setting the expiry time
-  if (!(BrowserDetect.browser.match(/Chrome|Firefox/)) ||
-    (BrowserDetect.browser.match(/Safari/) &&  (BrowserDetect.OS === 'iPad'))) {
+  if (!(BrowserDetect.browser.match(/Chrome|Firefox/) ||
+    (BrowserDetect.browser.match(/^Safari/) &&
+    (BrowserDetect.OS.match(/^i(Pad|Phone)/))))) {
     function f(c) {
       var d = new Date();
       var t = parseInt(d.getTime());
       if (c && (c < t)) c = false;
       if (!c) {
-        storeLocal ('noChromeWarned', t + 2419200000);
+        storeLocal ('noChromeWarned', t + 604800000);
         errors.push (sprintf (userText.browserDetect, browserString) +
           userText.getChrome);
       }
@@ -5156,13 +5226,17 @@ function clickButton () {
     // handle all other buttons
     default:
       // don't click disabled buttons
-      if (e.firstChild.firstChild.getAttribute('src') == mask.disable) return;
-      if (e.firstChild.firstChild.getAttribute('src') == mask.smalldisable) return;
+      if (e.firstChild.classList.contains ('material-icons')) {
+        if (e.firstChild.classList.contains ('disabled')) return;
+      } else {
+        if (e.firstChild.firstChild.getAttribute('src') == mask.disable) return;
+        if (e.firstChild.firstChild.getAttribute('src') == mask.smalldisable) return;
+      }
       // activate the correct click action
       switch (e.id) {
         // temporary depression buttons
-        case 'undo':
-        case 'redo':
+        // case 'undo':
+        // case 'redo':
         case 'deleteFig':
         case 'flipYAxis':
         case 'magMin':
@@ -5180,6 +5254,8 @@ function clickButton () {
           break;
         case 'figEntryButton':
         case 'figExitButton':
+        case 'undo':
+        case 'redo':
           break;
         // switch between active/inactive buttons
         default:
@@ -5204,29 +5280,35 @@ function clickButton () {
   switch (e.id) {
     case 'undo':
       if (activeSequence.undo.length) {
-        activeSequence.redo.push (activeSequence.xml);
-        activeSequence.addUndo = false;
-        activateXMLsequence (activeSequence.undo.pop());       
-        changeSequenceInfo();
-        if (activeSequence.text == sequenceText.value) {
-          draw();
-        }
-        activeSequence.addUndo = true;
-        setUndoRedo();
+        setTimeout(function(){
+          activeSequence.redo.push (activeSequence.xml);
+          activeSequence.addUndo = false;
+          activateXMLsequence (activeSequence.undo.pop());       
+          changeSequenceInfo();
+          /*
+          if (activeSequence.text == sequenceText.value) {
+            draw();
+          }*/
+          activeSequence.addUndo = true;
+          setUndoRedo();
+        }, 200);
       }      
       // don't continue. Not a figure function
       return;
     case 'redo':
       if (activeSequence.redo.length) {
-        activeSequence.undo.push (activeSequence.xml);
-        activeSequence.addUndo = false;
-        activateXMLsequence (activeSequence.redo.pop());
-        changeSequenceInfo();
-        if (activeSequence.text == sequenceText.value) {
-          draw();
-        }
-        activeSequence.addUndo = true;
-        setUndoRedo();
+        setTimeout(function(){
+          activeSequence.undo.push (activeSequence.xml);
+          activeSequence.addUndo = false;
+          activateXMLsequence (activeSequence.redo.pop());
+          changeSequenceInfo();
+          /*
+          if (activeSequence.text == sequenceText.value) {
+            draw();
+          }*/
+          activeSequence.addUndo = true;
+          setUndoRedo();
+        }, 200);
       }
       // don't continue. Not a figure function
       return;
@@ -5888,7 +5970,7 @@ function getStyle() {
 // updateStyle will change a style after it has been changed in the
 // Settings styleString field
 function updateStyle() {
-  style[document.getElementById('styles').value] = document.getElementById('styleString').value;
+  style[document.getElementById('styles').value] = this.value;
   // update rollFontSize if applicable
   if (document.getElementById('styles').value === 'rollText') {
     rollFontSize = style.rollText.match(regexRollFontSize)[1];
@@ -5990,9 +6072,15 @@ function selectPwrdGlider () {
   changeSequenceInfo();
   // hide Harmony field for powered
   var el = document.getElementById ('harmonyField');
-  if (sportingClass.value === 'powered') {
-    el.setAttribute('style', 'opacity:0;');
-  } else el.removeAttribute('style');
+  if (el) {
+    if (sportingClass.value === 'powered') {
+      el.setAttribute('style', 'opacity:0;');
+      document.getElementById ('harmony').setAttribute ('disabled', 'disabled');
+    } else {
+      el.removeAttribute('style');
+      document.getElementById ('harmony').removeAttribute ('disabled');
+    }
+  }
 }
 
 // setYAxisOffset sets the Y axis offset
@@ -6001,8 +6089,8 @@ function setYAxisOffset (offset) {
   // set scaleLine object to prevent calculations in makeLine and other
   // functions
   if (curvePerspective) {
-    scaleLine.x = yAxisScaleFactor * Math.cos(yAxisOffset * degToRad);
-    scaleLine.y = yAxisScaleFactor * Math.sin(yAxisOffset * degToRad);
+    scaleLine.x = yAxisScaleFactor * Math.cos(yAxisOffset * Math.degToRad);
+    scaleLine.y = yAxisScaleFactor * Math.sin(yAxisOffset * Math.degToRad);
   } else {
     scaleLine.x = scaleLine.y = 1;
   }
@@ -6022,10 +6110,8 @@ function updateFigureEditor () {
 // for some reason sliding only works from the left for mobile !?
 function showFigureSelector () {
   updateFigureSelectorOptions ();
-  if (activeForm !== 'FU') {
-    document.getElementById('figureSelector').classList.add('active');
-  } else {
-    document.getElementById('figureSelector').classList.add('leftActive');
+  document.getElementById('figureSelector').classList.add('active');
+  if (activeForm === 'FU') {
     // set figureString correctly, using positioning relative to leftBlock
     document.getElementById('leftBlock').scrollTop = 0;
     document.getElementById('figureString').classList.add('inFigureSelector');
@@ -6037,7 +6123,6 @@ function showFigureSelector () {
 // we hide it by removing the CSS class that shows it on screen
 function hideFigureSelector () {
   document.getElementById('figureSelector').classList.remove('active');
-  document.getElementById('figureSelector').classList.remove('leftActive');
   document.getElementById('figureString').classList.remove('inFigureSelector');
 }
 
@@ -6193,7 +6278,8 @@ function updateFigureOptions (figureId) {
       var prevFig = figures[i];
       if (prevFig) {
         if (prevFig.moveTo) {
-          document.getElementById('moveX-value').value = prevFig.moveTo[0];
+          document.getElementById('moveX-value').value = (activeForm === 'C') ?
+            -prevFig.moveTo[0] : prevFig.moveTo[0];
           document.getElementById('moveY-value').value = prevFig.moveTo[1];
           document.getElementById('straightLine').firstChild.firstChild.setAttribute('src', mask.on);
           document.getElementById('moveXCont').classList.remove ('noDisplay');
@@ -6201,7 +6287,8 @@ function updateFigureOptions (figureId) {
           document.getElementById('moveYCont').classList.remove ('noDisplay');
           break;
         } else if (prevFig.curveTo) {
-          document.getElementById('moveX-value').value = prevFig.curveTo[0];
+          document.getElementById('moveX-value').value = (activeForm === 'C') ?
+            -prevFig.curveTo[0] : prevFig.curveTo[0];
           document.getElementById('moveY-value').value = prevFig.curveTo[1];
           document.getElementById('curvedLine').firstChild.firstChild.setAttribute('src', mask.on);
           document.getElementById('moveXCont').classList.remove ('noDisplay');
@@ -6330,6 +6417,9 @@ function updateFigureOptions (figureId) {
     // show comments box
     var el = document.getElementById('commentSection');
     el.classList.remove('noDisplay');
+    if (f.comments || (document.activeElement.id === 'comments')) {
+      el.classList.add ('expanded');
+    } else el.classList.remove ('expanded');
     var el = document.getElementById('comments');
     el.value = f.comments ? f.comments : '';
     
@@ -6473,28 +6563,15 @@ function setUndoRedo (e, clear) {
   if (clear) {
     activeSequence[e] = [];
   }
-  if (mobileBrowser) {
-    if (activeSequence.undo.length) {
-      document.getElementById('undo').firstChild.firstChild.setAttribute('src', mask.off);
-    } else {
-      document.getElementById('undo').firstChild.firstChild.setAttribute('src', mask.disable);
-    }
-    if (activeSequence.redo.length) {
-      document.getElementById('redo').firstChild.firstChild.setAttribute('src', mask.off);
-    } else {
-      document.getElementById('redo').firstChild.firstChild.setAttribute('src', mask.disable);
-    }
+  if (activeSequence.undo.length) {
+    document.getElementById('undo').firstChild.classList.remove ('disabled');
   } else {
-    if (activeSequence.undo.length) {
-      document.getElementById('undo').firstChild.firstChild.setAttribute('src', mask.smalloff);
-    } else {
-      document.getElementById('undo').firstChild.firstChild.setAttribute('src', mask.smalldisable);
-    }
-    if (activeSequence.redo.length) {
-      document.getElementById('redo').firstChild.firstChild.setAttribute('src', mask.smalloff);
-    } else {
-      document.getElementById('redo').firstChild.firstChild.setAttribute('src', mask.smalldisable);
-    }
+    document.getElementById('undo').firstChild.classList.add ('disabled');
+  }
+  if (activeSequence.redo.length) {
+    document.getElementById('redo').firstChild.classList.remove ('disabled');
+  } else {
+    document.getElementById('redo').firstChild.classList.add ('disabled');
   }
 }
 
@@ -6515,7 +6592,8 @@ function setEntryExitElements () {
 }
     
 // updateFigure will be called when any figure option is updated
-function updateFigure () {
+// when noRedraw is true, the figure editor is not updated
+function updateFigure (noRedraw) {
   // get the current string
   var string = figures[selectedFigure.id].string;
   // get the base figure number
@@ -6862,9 +6940,9 @@ function updateFigure () {
         match = prevFig.string.match(/^"([^"]*)"$/);
         if (match) {
           if (comments != '') {
-            updateSequence (i, '"' + comments + '"', true);
+            updateSequence (i, '"' + comments + '"', true, false, false, true);
           } else {
-            updateSequence (i, '', true);
+            updateSequence (i, '', true, false, false, true);
           }
           break;
         }
@@ -6873,16 +6951,33 @@ function updateFigure () {
     }
     // no match, apply new
     if (!match && (comments != '')) {
-      updateSequence (selectedFigure.id - 1, '"' + comments + '"', false);
+      updateSequence (
+        selectedFigure.id - 1,
+        '"' + comments + '"',
+        false,
+        false,
+        false,
+        true);
     }
   }
 
   // update the sequence with the final pattern
   if (pattern !== string) {
     updateSequence (selectedFigure.id, pattern, true);
-  } else {
+  } else if (!noRedraw) {
     updateFigureOptions (selectedFigure.id);
   }
+}
+
+// updateFigureComments updates the figure coments
+function updateFigureComments () {
+  if (intervalID.updateFigureComments) {
+    window.clearTimeout (intervalID.updateFigureComments);
+  }
+  intervalID.updateFigureComments = window.setTimeout (function(){
+    updateFigure();
+    delete intervalID.updateFigureComments;
+  }, 100);
 }
 
 // latestVersion makes sure the latest version is installed
@@ -7020,8 +7115,9 @@ function changeSequenceInfo () {
     for (var i = 0; i < sequenceXMLlabels.length; i++) {
       var el = document.getElementById(sequenceXMLlabels[i]);
       if (el && (el.value !== '')) {
-        xml += '  <' + sequenceXMLlabels[i] + '>' +
-          el.value + '</' + sequenceXMLlabels[i] + '>\n';
+        xml += '<' + sequenceXMLlabels[i] + '>' +
+          el.value.replace (/</g, '&lt;') + '</' +
+          sequenceXMLlabels[i] + '>\n';
       }
     }
     xml += '</sequence>';
@@ -7309,12 +7405,9 @@ function logoChooser() {
   for (var logoName in logoImages) {
     var div = document.createElement('div');
     container.appendChild(div);
-    var link = document.createElement('a');
-    link.setAttribute("href", "#");
-    link.setAttribute("alt", logoName);
-    link.addEventListener ('click', selectLogo, false);
-    div.appendChild(link);
-    link.appendChild(buildLogoSvg(logoImages[logoName], 0, 0, width, height));
+    div.setAttribute("alt", logoName);
+    div.addEventListener ('click', selectLogo, false);
+    div.appendChild(buildLogoSvg(logoImages[logoName], 0, 0, width, height));
   }
 }
 
@@ -7322,11 +7415,25 @@ function logoChooser() {
 // will select the correct logo for use
 function selectLogo(logo) {
   // get name from alt attribute when called from eventListener
-  if (this.getAttribute) logo = this.getAttribute('alt');
+  if (this.getAttribute) {
+    logo = this.getAttribute('alt');
+  }
   logoImg = logoImages[logo];
   document.getElementById('logo').value = logo;
-  hideLogoChooser();
   drawActiveLogo();
+  // move the logo smoothly into place from logoChooser
+  if (this.getAttribute) {
+    var el = document.getElementById('logoImage');
+    var elBox = el.getBoundingClientRect ();
+    var thisBox = this.firstChild.getBoundingClientRect ();
+    this.style.transform = 'translate(' + (elBox.left - thisBox.left) +
+      'px,' + (elBox.bottom - thisBox.bottom) + 'px)';
+    el.style = 'opacity: 0.001';
+    setTimeout (function(){
+      el.style = '';
+      hideLogoChooser();
+    }, 400);
+  }
   changeSequenceInfo();
 }
 
@@ -7578,12 +7685,10 @@ function parseRules (start) {
 
 // getRuleName will create the correct, active, ruleName
 function getRuleName () {
-  var ruleName = document.getElementById('rules').value.toLowerCase();
-  // prepend glider- for glider
-  if (document.getElementById('class').value === 'glider') {
-    ruleName = 'glider-' + ruleName;
-  }
-  return ruleName;
+  return (
+    (document.getElementById('class').value === 'glider' ? 'glider-' : '') +
+    document.getElementById('rules').value.toLowerCase()
+  );
 }
 
 // updateRulesList updates the rules field for power or glider
@@ -7652,8 +7757,7 @@ function rulesYear (ruleName) {
   for (var i = scripts.length - 1; i >=0; i--) {
     var match = scripts[i].src.match(regex);
     if (match) {
-      year = match[1] + ' ';
-      if (year.length == 3) year = '20' + year;
+      year = (match[1].length == 2 ? '20' + match[1] : match[1]) + ' ';
       break;
     }
   }
@@ -7938,16 +8042,6 @@ function loadRules() {
         } else if (ruleSeqCheck[newRuleName]) {
           ruleSeqCheck[newRuleName].rule = rules[i].replace(/^[^=]+=/, '');
         }
-      } else if (rules[i].match(/^conv-[^=]+=.+/)) {
-// Apply conv-x rules
-// DEPRECATED
-//  var convName = rules[i].match(/^conv-[^=]+/)[0].replace(/^conv-/, '')
-//  var convRules = rules[i].replace('conv-'+convName+'=', '').split(';')
-//  checkConv[convName] = []
-//  for (var j = 0; j<convRules.length; j++) {
-//    var convRuleParts = convRules[j].split('=')
-//    checkConv[convName][j] = {'regex':RegExp(convRuleParts[0], 'g'), 'replace':convRuleParts[1]}
-//  }
       } else if (rules[i].match(/^rule-[^=]+=.+/)) {
       // Apply rule-x rules
         var newRuleName = rules[i].match(/[^=]+/)[0].replace(/^rule-/, '');
@@ -8039,8 +8133,6 @@ function loadRules() {
   } else {
     // hide link
     document.getElementById ('t_referenceSequence').classList.add ('noDisplay');
-    // document.getElementById ('referenceSequenceString').value = '';
-    // referenceSequence.figures = {};
   }
 
   // update reference sequence
@@ -8152,12 +8244,12 @@ function unloadRules () {
   document.getElementById ('rulesActive').classList.remove ('good');
   // update sequence
   checkSequenceChanged(true);
+  // hide reference sequence button
+  document.getElementById ('t_referenceSequence').classList.add ('noDisplay');
   // make sure only available figure groups are shown in chooser
   availableFigureGroups();
   // update figure chooser
   changeFigureGroup ();
-  // hide reference sequence link
-  document.getElementById ('t_referenceSequence').classList.add ('noDisplay');
 }
   
 // checkRules will check a complete sequence against the loaded rules
@@ -8182,7 +8274,7 @@ function checkRules () {
     } else return '';
   }
   
-  //var t = Date.now(); // used for checking execution time
+  // var t = Date.now(); // used for checking execution time. Typical less than 50ms
   
   var figNr = 0;
   var figureK = 0;
@@ -8512,14 +8604,10 @@ function checkRules () {
   }
   // check for total min/max K
   if ('min' in checkCatGroup.k) {
-    if (figureK < checkCatGroup.k.min) {
-      checkAlert('k', 'min');
-    }
+    if (figureK < checkCatGroup.k.min) checkAlert('k', 'min');
   }
   if ('max' in checkCatGroup.k) {
-    if (figureK > checkCatGroup.k.max) {
-      checkAlert('k', 'max');
-    }
+    if (figureK > checkCatGroup.k.max) checkAlert('k', 'max');
   }
 
   // Run checks on maximum and minimum occurrence of a group (catalog ID)
@@ -8610,13 +8698,15 @@ function checkRules () {
     // Did we have a match on this group?
     if (groupMatch[group]) {
       // Check for max and min occurrences of the group
-      if (('max' in checkFigGroup[group]) && (groupMatch[group].length > checkFigGroup[group].max)) {
+      if (('max' in checkFigGroup[group]) &&
+        (groupMatch[group].length > checkFigGroup[group].max)) {
         errFigs = figureNumbers (groupMatch[group]);
         checkAlert(group, 'figmax', errFigs);
         log.push ('*** Error: Maximum ' + checkFigGroup[group].max +
           ' of group ' + group + '(' + errFigs + ')');
       }
-      if (('min' in checkFigGroup[group]) && (groupMatch[group].length < checkFigGroup[group].min)) {
+      if (('min' in checkFigGroup[group]) &&
+        (groupMatch[group].length < checkFigGroup[group].min)) {
         checkAlert(group, 'figmin');
         log.push ('*** Error: Minimum ' + checkFigGroup[group].min +
           ' of group ' + group);
@@ -8627,14 +8717,18 @@ function checkRules () {
         for (var j = 0; j < groupMatch[group].length; j++) {
           var thisMatch = groupMatch[group][j];
           if (matches[thisMatch.match]) {
-            matches[thisMatch.match].push({'match':thisMatch.match, 'fig':thisMatch.fig});
+            matches[thisMatch.match].push({
+              'match':thisMatch.match,
+              'fig':thisMatch.fig
+            });
           } else {
             matches[thisMatch.match] =
               [{'match':thisMatch.match, 'fig':thisMatch.fig}];
           }
         }
         for (match in matches) {
-          if (checkFigGroup[group].repeat && (matches[match].length > checkFigGroup[group].repeat)) {
+          if (checkFigGroup[group].repeat &&
+            (matches[match].length > checkFigGroup[group].repeat)) {
             errFigs = figureNumbers (matches[match]);
             checkAlert(group, 'figrepeat', errFigs);
             log.push ('*** Error: Repeat ' + checkFigGroup[group].repeat +
@@ -8859,7 +8953,8 @@ function checkSequence(show) {
     } else {
       div.classList.remove ('noDisplay');
       if (rulesActive) {
-        var content = '<p>' + userText.checkingRules + ' : ' + rulesActive + '</p>';
+        var content = '<div class="divider">' + userText.checkingRules +
+          ' : ' + rulesActive + '</div>';
       } else {
         var content = '';
       }
@@ -9204,7 +9299,7 @@ function availableFigureGroups() {
       options[i].classList.remove ('noDisplay');
       options[i].disabled = false;
     }
-  }      
+  }
 }
 
 // changeFigureGroup updates the figure group in the figure chooser
@@ -9392,9 +9487,7 @@ function markFigures () {
   markMatchingFigures ();
   // for Free Unknown designer we only choose Additional figures. All
   // Aresti figures are allowed
-  if (activeForm !== 'FU') {
-    markNotAllowedFigures ();
-  }
+  if (activeForm !== 'FU') markNotAllowedFigures ();
 }
 
 // markUsedFigures marks figures that are already in the sequence
@@ -9787,10 +9880,11 @@ function selectFigure (e) {
     }
       
     // Select the figure in the sequence text when we were not editing
-    // in the text and we are not on a touch device, as we assume this
-    // would have a non-physical keyboard popping up. Select all the
-    // way back to the previous real figure
-    if ((document.activeElement.id !== 'sequence_text') && !touchDevice) {
+    // in the text or the comments and we are not on a touch device, as
+    // we assume the latter would have a non-physical keyboard popping
+    // up. Select all the way back to the previous real figure
+    if ((document.activeElement.id !== 'sequence_text') && 
+      (document.activeElement.id !== 'comments') && !touchDevice) {
       var start = figures[selectedFigure.id].stringStart;
       for (var i = selectedFigure.id - 1; i>=0; i--) {
         if (figures[i].aresti) {
@@ -9819,9 +9913,7 @@ function selectFigure (e) {
       elFT.innerHTML = userText.clickAddFigure;
       document.getElementById('figureHeader').innerHTML = '';
     }
-    if (activeForm === 'FU') {
-      selectTab ('tab-fuFigures');
-    }
+    if (activeForm === 'FU') selectTab ('tab-fuFigures');
   }
 }
 
@@ -10133,9 +10225,14 @@ function grabFigure(evt) {
       DragTarget = SVGRoot.getElementById('figure'+closest);
     }
   }
+  
   if (DragTarget) {
     evt.preventDefault(); // prevent default drag & drop
     
+    // save current scrollTop, to be restored after Drop
+    DragTarget.scrollTopSave = document.getElementById('svgContainer').scrollTop;
+    DragTarget.scrollLeftSave = document.getElementById('svgContainer').scrollLeft;
+
     // move this element to the "top" of the display, so it is
     // always over other elements
     if (!DragTarget.id.match (/^(.*-handle|magnifier)$/)) {
@@ -10150,14 +10247,14 @@ function grabFigure(evt) {
     // enlarge svg to cover top and left
     if (!mobileBrowser) {
       var svgRect = svg.getBoundingClientRect();
+      var w = parseInt(viewBox[2]) + parseInt(svgRect.left) + parseInt(DragTarget.scrollLeftSave);
+      var h = parseInt(viewBox[3]) + parseInt(svgRect.top) + parseInt(DragTarget.scrollTopSave);
       svg.setAttribute ('viewBox',
-        (viewBox[0] - svgRect.left) + ' ' +
-        (viewBox[1] - svgRect.top) + ' ' +
-        (parseInt(viewBox[2]) + parseInt(svgRect.left)) + ' ' +
-        (parseInt(viewBox[3]) + parseInt(svgRect.top))
+        (viewBox[0] - svgRect.left - DragTarget.scrollLeftSave) + ' ' +
+        (viewBox[1] - svgRect.top - DragTarget.scrollTopSave) + ' ' + w + ' ' + h
       );
-      svg.setAttribute ('width', parseInt(viewBox[2]) + parseInt(svgRect.left));
-      svg.setAttribute ('height', parseInt(viewBox[3]) + parseInt(svgRect.top));
+      svg.setAttribute ('width', w);
+      svg.setAttribute ('height', h);
       // correct position for padding
       svg.parentNode.classList.add ('sequenceOverlay');
       var main = document.getElementById ('main');
@@ -10181,6 +10278,7 @@ function grabFigure(evt) {
     }
 
   } else selectFigure(false);
+
 }
 
 // setFigChooser sets the figure chooser to the correct group and
@@ -10419,7 +10517,8 @@ function Drag (evt) {
         
         // move subsequent figures, if no elStop
         if (elStop === null) {
-          for (var figureNr = parseInt(DragTarget.parentNode.id.match (/\d+/)) + 1; figureNr < figures.length; figureNr++) {
+          for (var figureNr = parseInt(DragTarget.parentNode.id.match (/\d+/)) + 1;
+            figureNr < figures.length; figureNr++) {
             var figure = SVGRoot.getElementById ('figure' + figureNr);
             if (figure) {
               figure.setAttribute('transform',
@@ -10490,28 +10589,7 @@ function Drag (evt) {
 
     }
     
-    // enlarge sequence SVG if necessary
-    // could be smoother, but works
-    /*
-    var viewBox = SVGRoot.getAttribute('viewBox').split(' ')
-    var newWidth = TrueCoords.x + selectedFigure.width;
-    if (newWidth > viewBox[2]) {
-      SVGRoot.setAttribute('width', newWidth);
-      SVGRoot.setAttribute('viewBox', SVGRoot.getAttribute('viewBox').replace(/^([^ ]+ [^ ]+ )[^ ]+/, "$1" + newWidth));
-    } else {
-      var newHeight = TrueCoords.y + selectedFigure.height;
-      if (newHeight > viewBox[3]) {
-        SVGRoot.setAttribute('height', newHeight);
-        SVGRoot.setAttribute('viewBox', SVGRoot.getAttribute('viewBox').replace(/[^ ]+$/, newHeight));
-      } else if ((newX + selectedFigure.x) < 1) {
-        SVGRoot.setAttribute('viewBox', SVGRoot.getAttribute('viewBox').replace(/^[^ ]+/, parseInt(viewBox[0]) - 1));
-      } else if ((newY + selectedFigure.y) < 1) {
-        SVGRoot.setAttribute('viewBox', SVGRoot.getAttribute('viewBox').replace(/^([^ ]+ )[^ ]+/, "$1" + parseInt(viewBox[1] - 1)));
-      }  
-    }
-    */
-    // Adjust sequence SVG size. New as of 2016.1 using getBBox.
-    // Previous code kept as a fallback
+    // Adjust sequence SVG size
     var bBox = SVGRoot.getElementById ('sequence').getBBox();
     var viewBox = SVGRoot.getAttribute('viewBox').split(' ');
     var w = roundTwo((bBox.x - viewBox[0]) + bBox.width + 5);
@@ -10526,48 +10604,8 @@ function Drag (evt) {
       SVGRoot.setAttribute('width', w);
       SVGRoot.setAttribute('height', h);
     }
-    
-/**    if (!mobileBrowser) {
-      SVGRoot.setAttribute('width', roundTwo(bBox.width + 4));
-      SVGRoot.setAttribute('height', roundTwo(bBox.height + 4));
-    }
-
-    SVGRoot.setAttribute ('viewBox',
-      roundTwo(bBox.x - 2) + ' ' +
-      roundTwo(bBox.y - 2) + ' ' +
-      roundTwo(bBox.width + 4) + ' ' +
-      roundTwo(bBox.height + 4)
-    );
-*/
-
-    // Drop figure when we reach top or left edge
-    /**
-    var svgRect = SVGRoot.getBoundingClientRect();
-    if (((TrueCoords.x - svgRect.left) < 5) ||
-      ((TrueCoords.y - svgRect.top) < 5)) {
-      Drop (evt);
-    }
-    */
-    
-    /** disabled for now, maybe implement later
-    // set interval when we are dragging left or top, outside of svg
-    var svgRect = SVGRoot.getBoundingClientRect();
-    if (((TrueCoords.x - svgRect.left) < 10) ||
-      ((TrueCoords.y - svgRect.top) < 10)) {
-      if ((TrueCoords.x - svgRect.left) < 10) GrabPoint.x += 4;
-      if ((TrueCoords.y - svgRect.top) < 10) GrabPoint.y += 4;
-      if (!intervalID.drag) {
-        intervalID.drag = window.setInterval (function() {
-          console.log('drag');
-          Drag (evt);
-        }, 100);
-      }
-    } else if (intervalID.drag) {
-      window.clearInterval (intervalID.drag);
-      delete intervalID.drag;
-    } 
-    */   
   }
+
 }
 
 // Drop is activated when a figure or handle is dropped at a new position
@@ -10594,7 +10632,7 @@ function Drop(evt) {
   if ( DragTarget ) {
   
     if (touchDevice) evt.preventDefault();
-    
+
     // turn the pointer-events back on, so we can grab this item later
     DragTarget.setAttribute('pointer-events', 'all');
     
@@ -10631,13 +10669,17 @@ function Drop(evt) {
         restoreViewBox();
       }
     }
-    
+
+    document.getElementById('svgContainer').scrollTop = DragTarget.scrollTopSave;
+    document.getElementById('svgContainer').scrollLeft = DragTarget.scrollLeftSave;
+              
     // set the global variable to null, so nothing will be dragged until
     // we grab the next element
     DragTarget = null;
   }
 
   if (!touchDevice) sequenceText.focus();
+
 }
 
 /**********************************************************************
@@ -12950,22 +12992,22 @@ function openSequence () {
     var el2 = el.cloneNode(true);
     
     // retrieve filename by changing file input to span
-    el.parentNode.replaceChild(document.createElement('span'),el);
+    el.parentNode.replaceChild(document.createElement('span'), el);
     var filename = el.value.replace(/.*\\/, '').replace(/\.[^.]*$/, '');
     
     fileName.value = filename;
     fileName.updateSaveFilename;
     
     // rebuild and reset the form
-    form.removeChild (form.firstChild);
+    form.innerHTML = '';
     form.appendChild(el2);
     form.reset();
-
+  
     // add event listeners to new element
     el2.addEventListener('change', openSequence, true);
     el2.addEventListener('mousedown', function(){
       setTimeout(menuInactiveAll, 1000);
-    }, false);  
+    }, false);
   }
 
   // Check if the current sequence was saved. If not, present a dialog
@@ -13298,6 +13340,8 @@ function loadedSequence(evt) {
 
   // Activate the loading of the checking rules (if any)
   changeCombo('program');
+  
+  checkFuFiguresFile();
 }
 
 // loadedQueue will be called when a queue file has been loaded
@@ -13502,7 +13546,11 @@ function activateXMLsequence (xml, noLoadRules) {
   if (el) {
     if (sportingClass.value === 'powered') {
       el.setAttribute('style', 'opacity:0;');
-    } else el.removeAttribute('style');
+      document.getElementById ('harmony').setAttribute ('disabled', 'disabled');
+    } else {
+      el.removeAttribute('style');
+      document.getElementById ('harmony').removeAttribute ('disabled');
+    }
   }
   // Load rules when applicable and update sequence data
   if (!noLoadRules) {
@@ -13533,35 +13581,45 @@ function activateXMLsequence (xml, noLoadRules) {
     if (document.getElementById ('lock_sequence').value) lockSequence(true);
   }
   
-  // The sequence is now fully loaded. Check if it was loaded as a grid
-  // AND rules allow additionals AND figure letters are required AND
-  // sequence is not locked.
-  // If so, if it may be a Free Unknown figures file
+  // The sequence is now fully loaded
+  if (!noLoadRules) checkFuFiguresFile();
+
+  // sequence was just loaded, so also saved
+  window.removeEventListener('beforeunload', preventUnload);
+  sequenceSaved = true;
+  
+  return true;
+}
+
+// checkFuFiguresFile checks if:
+// rules allow additionals AND figure letters are required AND
+// sequence is not locked AND not processing multiple files
+// If so, if it may be a Free Unknown figures file and the user is
+// asked if he wants to open it in the Free Unknown Designer
+function checkFuFiguresFile() {
   var l = figureLetters;
   if (
-    (activeForm === 'Grid') &&
     (additionalFig.max > 0) &&
     l &&
-    !document.getElementById ('lock_sequence').value) {
+    !document.getElementById ('lock_sequence').value &&
+    !multi.processing) {
     for (var i = 0; i < figures.length; i++) {
       // when we find a figure without a letter, or with an incorrect
-      // letter, stop. In that case make sure we do not ask to start
-      // Free Unknown designer by setting l to 'stopped'
+      // letter (including L), stop and return
       if (figures[i].aresti) {
         if (figures[i].unknownFigureLetter &&
           (l.indexOf(figures[i].unknownFigureLetter) >= 0)) {
           l = l.replace (figures[i].unknownFigureLetter, '');
-        } else {
-          l = 'stopped';
-          break;
-        }
+        } else return;
       }
     }
-    if ((l === '') && (!multi.processing)) {
+    if (l === '') {
       // all letters used once, ask question
       confirmBox (
-        userText.FUstartOnLoad + ' <img src="buttons/smallInfo.png" ' +
-        'id="manual.html_free_unknown_designer">', userText.openSequence,
+        userText.FUstartOnLoad,
+        userText.openSequence + ' <span class="info" ' +
+        'id="manual.html_free_unknown_designer">' +
+        '<i class="material-icons info">info</i></span>',
         function(){startFuDesigner(true)});
       document.getElementById('manual.html_free_unknown_designer').addEventListener('mousedown',
         function(){
@@ -13570,12 +13628,6 @@ function activateXMLsequence (xml, noLoadRules) {
       );
     }
   }
-
-  // sequence was just loaded, so also saved
-  window.removeEventListener('beforeunload', preventUnload);
-  sequenceSaved = true;
-  
-  return true;
 }
 
 // handleDragOver takes care of file dragging
@@ -13740,10 +13792,10 @@ function loadedRulesFile (evt) {
 // and syncs between t_saveFile and fileName elements
 function updateSaveFilename() {
   var filename = this.value || '';
-  var el = document.getElementById('t_saveFile').firstChild;
+  /*var el = document.getElementById('t_saveFile').firstChild;
   if (el && ('download' in el)) {
     el.download = filename + document.getElementById('fileExt').innerHTML;
-  }
+  }*/
   // only update when different, prevents cursor jump
   if (fileName.value !== filename) fileName.value = filename;
 }
@@ -13813,17 +13865,18 @@ function saveFile(data, name, ext, filter, format) {
   // 2) Use "download" attribute
   // 3) Ask user to right-click and "Save as"
 
+  // convert base64 to binary
+  if (format.match (/;base64$/)) {
+    var byteC = atob (data);
+    var byteN = new Array(byteC.length);
+    for (var i = 0; i < byteC.length; i++) {
+        byteN[i] = byteC.charCodeAt(i);
+    }
+    data = new Uint8Array(byteN);
+  }
+
   // 1) Chrome app saving
   if (chromeApp.active) {
-    // convert base64 to binary
-    if (format.match (/;base64$/)) {
-      var byteC = atob (data);
-      var byteN = new Array(byteC.length);
-      for (var i = 0; i < byteC.length; i++) {
-          byteN[i] = byteC.charCodeAt(i);
-      }
-      data = new Uint8Array(byteN);
-    }
     
     chrome.fileSystem.chooseEntry ({
       'type':'saveFile',
@@ -13845,6 +13898,37 @@ function saveFile(data, name, ext, filter, format) {
 
   // prevent asking confirmation of 'leaving'
   window.removeEventListener('beforeunload', preventUnload);
+  
+  var blob = new Blob ([data], {type: format.replace(/;.+$/, '')});
+  
+  var a = document.createElement('a');
+  
+  if (/i(Pad|Phone|Pod)/i.test (navigator.userAgent)) {
+    saveDialog (userText.iOSsaveFileMessage, name, ext);
+  } else if (typeof a.download !== "undefined") {
+    saveDialog (userText.downloadHTML5, name, ext);
+  } else {
+    saveDialog (userText.downloadLegacy, name, ext);
+  }
+  
+  // recreate download button
+  document.getElementById('saveFileButton').innerHTML =
+    '<span class="textButton userText" id="t_saveFile">' +
+    userText.saveFile + '</span>';
+  var button = document.getElementById ('t_saveFile');
+  
+  button.addEventListener ('mouseup', function(){
+    window.setTimeout(function(){saveDialog()}, 200);
+  });
+  button.addEventListener ('mousedown', function(){
+    var name = document.getElementById('dlTextField').value;
+    saveAs (blob, name + ext);
+  });
+  
+  return;
+
+  // Everything below does not get triggered. Deprecated by fileSaver.js
+  // Keep until fileSaver.js is checked to work correctly
   
   /** disabled next part. Assume the sequence is saved by the user
 
@@ -14035,7 +14119,6 @@ function encodeBase64Url (t) {
 
 // decodeBase64Url decodes URL safe base64 to string
 function decodeBase64Url (t) {
-  //t = (t + '===').slice(0, t.length + (t.length % 4));
   return atob (t.replace(/-/g, '+').replace(/_/g, '/'));
 }
 
@@ -14043,8 +14126,15 @@ function decodeBase64Url (t) {
 // and then email, bookmark or whatever
 function saveAsURL () {
   function save () {
-    var url = 'http://openaero.net/?s=' + encodeBase64Url(activeSequence.xml);
-    
+    // compress xml for shorter URL
+    var xml = activeSequence.xml.replace(/\n/g, ''); // remove newlines
+    xml = xml.replace(/> +</g, '><'); // remove spaces between tags
+    // simplifying of end tags and removal of <sequence> tags
+    // to be activated in 2016.3.3 or later
+    /** xml = xml.replace(/<\/?sequence>/g, '');
+    xml = xml.replace(/<\/[^>]+>/g, '</>'); // remove end tags */
+    var url = 'http://openaero.net/?s=' + encodeBase64Url(xml);
+
     if (chromeApp.active) {
       alertBox ('<p>' + userText.saveAsURLFromApp +
         '</p><textarea id="saveAsURLArea" readonly></textarea>',
@@ -14054,7 +14144,8 @@ function saveAsURL () {
       copyFrom.select();
     } else {
       alertBox (userText.saveAsURL + '<br />' +
-        '<a href="' + url + '">' + url + '</a>', userText.saveAsURLTitle);
+        '<a id="saveAsURLArea" href="' + url + '">' + url + '</a>',
+        userText.saveAsURLTitle);
     }
   }
   
@@ -14098,7 +14189,7 @@ function openSequenceLink (e) {
         sprintf(userText.openSequenceLinkError, link.value),
         userText.openSequenceLink
       );
-    }
+    } else updateSaveFilename(); // clear filename
   } else {
     dialog.classList.remove ('noDisplay');
   }
@@ -14196,7 +14287,7 @@ function printForms () {
         var win = w.contentWindow;
         win.onLoad = function() {
           win.document.title = activeFileName();
-          win.document.body = buildForms (true);
+          win.document.body = buildForms (win);
           if (win.matchMedia) {
             var mediaQueryList = win.matchMedia ('print');
             mediaQueryList.addListener (function (mql) {
@@ -14207,17 +14298,24 @@ function printForms () {
         };
       });
     } else {
-      win.document.body = buildForms (true);
+      win.document.body = buildForms (win);
       win.document.title = activeFileName();
-      var style = document.createElement ('style');
+      var style = win.document.createElement ('style');
       style.type = 'text/css';
       style.media = 'print';
-      style.innerHTML = '@page {size: auto; margin: 4mm}' +
-        'body {margin: 0px;}' +
-        '.breakAfter {display:block; page-break-after:always;}' +
-        'svg {height: 100%; page-break-inside:avoid;}';
+      style.innerHTML = '@page {size: auto; margin: ' +
+        document.getElementById ('marginTop').value + 'mm ' +
+        document.getElementById ('marginRight').value + 'mm ' +
+        document.getElementById ('marginBottom').value + 'mm ' +
+        document.getElementById ('marginLeft').value + 'mm}' +
+        'body {margin: 0;}' +
+        '.breakAfter {position: relative; display:block; ' +
+        'page-break-inside:avoid; page-break-after:always; ' +
+        'height: 100%;}' +
+        'svg {position: absolute; top: 0; height: 100%;}';
       win.document.head.appendChild(style);
-      
+      console.log(win.document);
+
       // no print on Android, leave it to the user
       if (!/Android/i.test(navigator.userAgent)) {
         // use setTimeout for printing to prevent blocking and
@@ -14237,9 +14335,9 @@ function printForms () {
 }
 
 // buildForms will format selected forms for print or save. When
-// print=true, a body is created and returned.
+// win=true, a body is created in window win and returned (for print).
 // Otherwise an SVG holding the forms is returned.
-function buildForms (print) {
+function buildForms (win) {
   var pages = ['A', 'B', 'C', 'R', 'L', 'PilotCards', 'Grid'];
   iacForms = document.getElementById('iacForms').checked;
   var activeFormSave = activeForm;
@@ -14257,9 +14355,7 @@ function buildForms (print) {
   // make sure no figure is selected
   selectFigure (false);
     
-  if (print) {
-    var body = document.createElement('body');
-  }
+  if (win) var body = win.document.createElement('body');
   
   // set multi to true if we have a fileList
   var multi = (fileList.length > 0);
@@ -14345,12 +14441,18 @@ function buildForms (print) {
         activeForm = pages[i];
         divClass = (i < (pages.length - 1))? 'breakAfter' : '';
         
-        var formSVG = buildForm (SVGRoot, print);
+        var formSVG = buildForm (SVGRoot, win);
         
-        if (print) {
-          var div = document.createElement('div');
+        if (win) {
+          
+          var div = win.document.createElement('div');
           div.setAttribute ('class', divClass);
           div.innerHTML = formSVG;
+          // make sure we only keep the svg images in the div
+          var nodes = div.childNodes;
+          for (var k = 0; k < nodes.length; k++) {
+            if (!/svg/i.test(nodes[k].tagName)) div.removeChild (nodes[k]);
+          }
           body.appendChild (div);
         } else {
           // remove newlines from SVG to simplify regex matching
@@ -14383,7 +14485,7 @@ function buildForms (print) {
   
   infoBox();
 
-  if (!print) {
+  if (!win) {
     svg += '</svg>';
     var height = translateY -
       parseInt(document.getElementById ('pageSpacing').value) + 10;
@@ -14400,7 +14502,6 @@ function buildForms (print) {
       document.getElementById ('imageWidth').value + 'px"');
     svg = svg.replace (/height="[^"]*"/, 'height="' +
       document.getElementById ('imageHeight').value + 'px"');    
-      console.log(svg);
   }
 
   if (multi) {
@@ -14415,7 +14516,7 @@ function buildForms (print) {
   miniFormA = miniFormASave ? true : false;
   selectForm (activeFormSave);
   
-  return (print ? body : svg);
+  return (win ? body : svg);
 }
 
 // adjustRollFontSize will adjust the rollFontSize to compensate for
@@ -14721,7 +14822,9 @@ function buildForm (svg, print) {
       mySVG.setAttribute("viewBox", '0 0 800 1130');
       mySVG.setAttribute("width", '100%');
   }
-    
+  
+  // remove height when printing
+  if (print) mySVG.setAttribute("height", '');
 
   // Add the notes to the top when checked. This will result in a
   // "vertical flattening" of the entire form
@@ -15546,14 +15649,17 @@ function savePNG () {
     // wrap conversion in try, in case it fails
     try {
       svgToPng (data, function(canvas){
+        steg.encode (activeSequence.xml, canvas).toBlob(function(blob){
+        
         saveFile(
-          steg.encode(activeSequence.xml, canvas).replace(/^data:[^,]*,/, ''),
+          blob,
           activeFileName(),
           '.png',
           {'name':'PNG file', 'filter':'*.png'},
-          'image/png;base64');
+          'image/png');
         infoBox ();
       });
+    });
     } catch (err) {
       console.log(err.stack);
       infoBox ();
@@ -15606,7 +15712,7 @@ function saveFigs () {
         // rasterize canvas to png data URL (without data URL info) and
         // put in ZIP file
         zip.file (
-          fName + '.png',
+          fName.trim() + '.png',
           svgToPng (svg).toDataURL().replace(/^data:[^,]*,/, ''),
           {base64: true}
         );
@@ -15615,18 +15721,19 @@ function saveFigs () {
         svg = '<?xml version="1.0" standalone="no"?>\n' +
         '<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.2//EN" ' +
         '"http://www.w3.org/Graphics/SVG/1.2/DTD/svg12.dtd">\n' + svg;
-        zip.file(fName + '.svg', svg);
+        zip.file(fName.trim() + '.svg', svg);
       }
     }
   }
-  var data = zip.generate();
+  
+  var data = zip.generate({type: 'blob'});
 
   saveFile(
     data,
     filename,
     '.zip',
     {'name':'ZIP file', 'filter':'*.zip'},
-    'application/zip;base64'
+    'application/zip'
   );
   selectedFigure.id = id;
   displaySelectedFigure();
@@ -15653,7 +15760,7 @@ function svgToPng (svg, f) {
       f(canvas);
     }, 500);
   } else {
-    // rasterize canvas to png data URL, without data URL info
+    // return canvas
     document.lastChild.removeChild (canvas);
     return canvas;
   }
@@ -17139,6 +17246,7 @@ function OLANXSwitch (figStringIndex) {
 // when force is true, update will be done even when it seems no change is made
 function updateSequence (figNr, figure, replace, fromFigSel, force) {
 
+  var updateSelected = true;
   // make sure figNr is handled as integer
   figNr = parseInt(figNr);
   // check if figure is from Figure Selector and correct direction changers
@@ -17155,7 +17263,6 @@ function updateSequence (figNr, figure, replace, fromFigSel, force) {
   // just return if asked to replace an identical figure
   if (replace && (figures[figNr].string == figure) && !force) return;
   
-  var updateSelected = true;
   var string = '';
   var separator = (figure == '') ? '' : ' ';
   for (var i = figures.length - 1; i >= 0; i--) {
@@ -17229,7 +17336,7 @@ function updateSequence (figNr, figure, replace, fromFigSel, force) {
   if ((selectedFigure.id !== null) && updateSelected) {
     if (selectedFigure.id > figNr) {
       if (replace) {
-        if (figure == '') selectedFigure.id--;
+        if (figure === '') selectedFigure.id--;
       } else {
         selectedFigure.id++;
       }
@@ -17258,7 +17365,9 @@ function updateSequence (figNr, figure, replace, fromFigSel, force) {
   }
   
   // reselect correct figure
-  if (selectedFigure.id !== null) selectFigure (selectedFigure.id);
+  if ((selectedFigure.id !== null) && updateSelected) {
+    selectFigure (selectedFigure.id);
+  }
 
 }
 
@@ -17721,8 +17830,7 @@ function parseSequence () {
     }
     if (warning != '') {
       alertBox(warning + userText.OLANBugWarningFooter);
-      OLANBumpBugFigs = [];
-      OLANNBugFigs = [];
+      OLANBumpBugFigs = OLANNBugFigs = [];
       OLANBumpBugCheck = false;
     }
   }

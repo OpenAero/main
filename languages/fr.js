@@ -48,10 +48,10 @@ lang.fr = {
 'aboutUnknown' : 'Impossible de déterminer la derniere version. ' +
   'Vous travaillez probablement hors connexion.',
 // changed 2016.1.3
-'aboutText' : '<div class="section">' +
+'aboutText' : '<div class="divider">' +
   '<p>Cette&nbsp;version:<strong>%s</strong> &nbsp; ' +
   'Version&nbsp;courante:<strong>%s</strong></p>%s</div>' +
-  '<div class="section">' +
+  '<div class="divider">' +
   '<p>OpenAero est un logiciel de conception de programmes de voltige ' +
   'qui s\'exécute dans votre navigateur web.</p><p>OpenAero est un logiciel gratuit: vous ' +
   'pouvez le redistribuer et/ou le modifier selon les termes de la ' +
@@ -61,8 +61,8 @@ lang.fr = {
   ' avec l\'espoir de vous être utile, mais SANS AUCUNE GARANTIE; ' +
   'sans même une garantie implicite de COMMERCIALISATION ou D\'APTITUDE ' +
   'A UNE TACHE PARTICULIERE. Voir la \'GNU General Public License\' pour ' +
-  'plus de détails.</p></div><div class="section">' +
-  'OpenAero est conçu, écrit et maintenu par ' +
+  'plus de détails.</p></div><div>' +
+  '<p>OpenAero est conçu, écrit et maintenu par ' +
   '<strong>Ringo Massa</strong>, sur la base du code des programmes ' +
   'OLAN de <strong>Michael Golan</strong>.<br>Plusieurs personnes ont participée, comme:' +
   '<table>' +
@@ -72,7 +72,7 @@ lang.fr = {
   '<td>Codage des figures, des règles et de parties du logiciel</td></tr>' +
   '<tr><td><strong>Christian Falck</strong></td>' +
   '<td>Codage des règles</td></tr>' +
-  '</table></div>',
+  '</table></p></div>',
 // end new
 'ac' : 'Avion',
 'addAllToQueue' : 'Ajouter tout à la file',
@@ -196,13 +196,19 @@ lang.fr = {
 'disqualified' : 'Disqualifié',
 //
 'download' : 'Télécharger',
-// updated 1.4.2
+// changed 2016.3.2
 'downloadHTML5' : 'Vous pouvez enregistrer en choisissant un nom ' +
-  'et en cliquant <i>Enregistrer fichier</i> ci-dessous.<br>Une ' +
-  'fenêtre où vous pourrez choisir le répertoire apparaîtra.' +
+  'et en cliquant <i>Enregistrer fichier</i> ci-dessous.' +
+  'En fonction de votre navigateur: '+
+  '<ul><li>' +
+  'Le fichier sera enregistré dans votre répertoire Téléchargement, ou' +
+  '</li><li>' +
+  'Une fenêtre où vous pourrez choisir le répertoire apparaîtra' +
+  '</li></ul>' +
   '<p class="chromeHint">Chrome hint: Par défaut, le navigateur Chrome sauvegardera ' +
   'le fichier dans votre répertoire Téléchargement. Pour changer ceci, allez ' +
-  'dans paramétrage <b>avancé</b>  (accessible via le bouton Chrome ≡) ' +
+  'dans paramétrage <b>avancé</b>  (accessible via le bouton Chrome ' +
+  '<i class="material-icons md-18 inText">more_vert</i>) ' +
   'et cochez la case "Demander où sauvegarder ..."</p>',
 //
 'downloadLegacy' : 'Vous pouvez enregistrer en choisissant un nom ' +
@@ -359,10 +365,11 @@ lang.fr = {
 'iOSprintExplain' : 'Selectionnez ce que vous voulez imprimer ou sauvegarder ' +
   'puis cliquez <strong>Enregistrer une image PNG</strong>',
 'iOSsaveFile' : 'Voir l\'image du programme',
-'iOSsaveFileMessage' : '<p>En cliquant sur le bouton <i>Voir l\'image du programme</i> ' +
-  'une nouvelle fenêtre ou un onglet s\'ouvrira. Dans Safari, vous ' +
+// changed 2016.3.2
+'iOSsaveFileMessage' : '<p>En cliquant sur le bouton <i>Enregistrer</i> ' +
+  'une nouvelle fenêtre ou un onglet s\'ouvrira. Vous ' +
   'pouvez alors cliquer sur le bouton <span class="iOSsaveIcon"></span> pour ' +
-  'sauvegarder ou imprimer l\'image. Dans Chrome, vous pouvez imprimer à partir du menu ≡.</p>' +
+  'imprimer ou appuyez et maintenez a l\'image pour enregistrer l\'image.</p>' +
   '<p>Astuce : Si la qualité de l\'image est insuffisante, vous pouvez augmenter ' +
   'la résolution dans la boite de dialogue Imprimer de "Enregistrement d\'une image en PNG ou SVG". ' +
   'Si vous obtenez une page blanche, essayer de sauvegarder chaque programme ' +
@@ -440,8 +447,6 @@ lang.fr = {
 //
 'numberInCircle' : 'Numéros de figure dans un cercle',
 'ok' : 'OK',
-// OLANBumpBugWarning can be removed (with asociated code in OpenAero.js)
-// in 2015
 'OLANBumpBugWarning' : ' a été détecté comme étant un comme retournement vertical ' +
   'de l\'axe X vers l\'axe Y.',
 'OLANBumpBugWarningMulti' : ' ont été détectés comme étant des retournements verticaux' +
@@ -495,7 +500,7 @@ lang.fr = {
 'powered' : 'Avion',
 'print' : 'Imprimer / Enregistrer PDF',
 'printCheck' : 'Résultat de la vérification',
-'printDialog' : 'Options d\impression',
+'printDialog' : 'Options d\'impression',
 'printExplain' : 'Vous pouvez positionner les options d\'impression ci-dessous.<br>' +
   'Pour <i>enregistrer</i> PDF, cliquer <strong>Imprimer</strong> puis choisir ' +
   'comme <i>destination</i> <strong>Enregistrer en PDF</strong> dans le ' +
@@ -505,10 +510,10 @@ lang.fr = {
 'printFormB' : 'Forme B',
 'printFormC' : 'Forme C',
 'printFormGrid' : 'Tableau des figures',
-// new 1.5.1
 'printFormL' : 'Forme L',
 'printFormR' : 'Forme R',
-//
+// new 2016.3.2
+'printMargins' : 'Marges d\'impression',
 'printMiniFormAonB' : 'avec mini Forme A',
 'printMiniFormAonC' : 'avec mini Forme A',
 'printMulti' : 'Impression de plusieurs programmes',

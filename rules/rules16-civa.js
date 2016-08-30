@@ -64,6 +64,8 @@ OpenAero 2016.2
 -added several rule references, using the new x-y-rule=... syntax
 OpenAero 2016.2.2
 -added MAX360 for Advanced Unknown figure 7.4.1.2
+OpenAero 2016.3.2
+-added SuperFamiles to Unlimited and Yak52/Intermediate Free Known
 */
 
 //#######################################################################################
@@ -192,6 +194,9 @@ rules.push("figure-letters=ABCDE");
 
 // what info should be filled out
 rules.push("infocheck=pilot;actype;acreg;positioning");
+
+// Super Families
+rules.push("sf=^2\\.:2;^5\\.:5;^6\\.:6;^1\\.:7;^3\\.:7;^7\\.:7;^8\\.:7;^0\\.:7");
 
 //#######################################################################################
 //##### CIVA UNLIMITED UNKNOWNS #########################################################
@@ -1176,6 +1181,8 @@ rules.push("reference=\"@A\" iv```5s. \"@B\" 'k,24 \"@C\" m2,22 \"@D\" ```2f.g' 
 
 // what info should be filled out
 rules.push("infocheck=pilot;actype;acreg;positioning");
+
+rules.push("more=CIVA AdvYakInt SF");
 
 //######################################################################################
 //##### CIVA INTERMEDIATE FREE KNOWN ###################################################
