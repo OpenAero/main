@@ -1704,7 +1704,6 @@ function dialogBuildContents (boxName, message, title) {
   // Make the message
   if (message.userText) {
     message.params = message.params || [];
-    console.log(errors);
     message.params.splice (0, 0, userText[message.userText] +
       (errors ? '<p>' + errors.join('</p><p>') + '</p>' : ''));
     document.getElementById(boxName + 'Message').innerHTML =
@@ -1868,8 +1867,11 @@ function helpWindow(url, title) {
       };
     });
   } else if (window.navigator.standalone) {
-    // return true to follow href and open Safari window for standalone iOS app
-    return true;
+    // create and click <a> for standalone
+    var a = document.createElement('a');
+    a.href = url;
+    a.target = '_blank';
+    a.click();
   } else {
     // open new window for all others
     var w = window.open(url, title, 'menubar=no, scrollbars=yes, status=no, toolbar=no, top=30, width=800');
@@ -1950,10 +1952,10 @@ function aboutDialog () {
     xhr.onload = function() {
       img.src = window.URL.createObjectURL(xhr.response);
     }
-    xhr.open('GET', 'http://openaero.net/openaero.php?f=v', true);
+    xhr.open('GET', 'https://openaero.net/openaero.php?f=v', true);
     xhr.send();
   } else {
-    img.src = 'http://openaero.net/openaero.php?f=v';
+    img.src = 'https://openaero.net/openaero.php?f=v';
   }
   img.onload = function() {
     var v1 = parseInt(this.width / 100);
@@ -4468,6 +4470,12 @@ function doOnLoad () {
     // set alert if localStorage is disabled
     if (!storage) errors.push (userText.noCookies);
   }
+  // check if we are running from http i.s.o. https (DEPRECATED sep 2016)
+  if ((window.location.protocol === 'http:') &&
+    !window.location.hostname.match (/^devel./)) {
+    errors.push (userText.runOverHttp);
+  }
+  
   // show alert box for any errors (they are automatically appended)
   if (errors.length) alertBox ('<p></p>');
 
@@ -4542,6 +4550,11 @@ function launchURL (launchData) {
     } else {
       // 1.5.0 and later : base64url encoded link
       var string = decodeBase64Url (match);
+      if (string === false) {
+        alertBox (sprintf(userText.openSequenceLinkError, launchData.url),
+          userText.openSequenceLink);
+        return false;
+      }
       if (/<\/>/.test(string)) { // test for empty end tag
         // 2016.3.2 and later : restore xml end tags and sequence tags
         var tags = [];
@@ -4635,12 +4648,12 @@ function addEventListeners () {
   document.getElementById('t_checkSequence').addEventListener('click', function(){checkSequence(true)}, false);
   document.getElementById('t_lockSequence').addEventListener('mousedown', lockSequence);
   
-  document.getElementById('t_showQueue').addEventListener('click', showQueue, false);
-  document.getElementById('t_addToQueue').addEventListener('click', addToQueue, false);
-  document.getElementById('t_addAllToQueue').addEventListener('click', addAllToQueue, false);
-  document.getElementById('t_clearQueue').addEventListener('click', clearQueue, false);
+  document.getElementById('t_showQueue').addEventListener('mousedown', showQueue, false);
+  document.getElementById('t_addToQueue').addEventListener('mousedown', addToQueue, false);
+  document.getElementById('t_addAllToQueue').addEventListener('mousedown', addAllToQueue, false);
+  document.getElementById('t_clearQueue').addEventListener('mousedown', clearQueue, false);
   document.getElementById('queue').addEventListener('change', openQueue, false);
-  document.getElementById('t_saveQueueFile').addEventListener('click', saveQueue, false);
+  document.getElementById('t_saveQueueFile').addEventListener('mousedown', saveQueue, false);
   
   document.getElementById('t_fuDesigner').addEventListener ('mousedown', startFuDesigner, false);
   document.getElementById('t_checkMultipleSeq').addEventListener('mousedown', function(){checkMultiDialog(true)}, false);
@@ -4651,22 +4664,16 @@ function addEventListeners () {
   
   document.getElementById('t_finalizeSequence').addEventListener ('mousedown', function(){exitFuDesigner(false)});
   
-  // use href for iOS standalone app, this will open the manuals in Safari
-  if (window.navigator.standalone) {
-    document.getElementById('t_manual').href = 'manual.html';
-    document.getElementById('t_openaeroLanguage').href = 'language.html';
-    document.getElementById('t_arestiSystem').href = 'arestisystem.html';
-  } else {
-    document.getElementById('t_manual').addEventListener('click', function(){
-        helpWindow('manual.html', 'OpenAero manual');
-      }, false);
-    document.getElementById('t_openaeroLanguage').addEventListener('click', function(){
-        helpWindow('language.html', 'OpenAero language');
-      }, false);
-    document.getElementById('t_arestiSystem').addEventListener('click', function(){
-        helpWindow('arestisystem.html', 'The Aresti aerocryptographic system');
-      }, false);
-    }
+  document.getElementById('t_manual').addEventListener('mousedown', function(){
+      helpWindow('manual.html', 'OpenAero manual');
+    }, false);
+  document.getElementById('t_openaeroLanguage').addEventListener('mousedown', function(){
+      helpWindow('language.html', 'OpenAero language');
+    }, false);
+  document.getElementById('t_arestiSystem').addEventListener('mousedown', function(){
+      helpWindow('arestisystem.html', 'The Aresti aerocryptographic system');
+    }, false);
+
   document.getElementById('t_about').addEventListener('mousedown',
     aboutDialog, false);
       
@@ -4711,17 +4718,13 @@ function addEventListeners () {
   fileName.addEventListener('keyup', updateSaveFilename, false);
     
   // figure editor options
-  if (window.navigator.standalone) {
-    document.getElementById('manual.html_adding_a_figure').href = 'manual.html#adding_a_figure';
-    document.getElementById('manual.html_figure_comments').href = 'manual.html#figure_comments';
-  } else {
-    document.getElementById('manual.html_adding_a_figure').addEventListener('mousedown', function(){
-      helpWindow('manual.html#adding_a_figure', 'Adding a figure');
-    }, false);
-    document.getElementById('manual.html_figure_comments').addEventListener('mousedown', function(){
-      helpWindow('manual.html#figure_comments', 'Figure comments');
-    }, false);
-  }
+  document.getElementById('manual.html_adding_a_figure').addEventListener('mousedown', function(){
+    helpWindow('manual.html#adding_a_figure', 'Adding a figure');
+  }, false);
+  document.getElementById('manual.html_figure_comments').addEventListener('mousedown', function(){
+    helpWindow('manual.html#figure_comments', 'Figure comments');
+  }, false);
+
   document.getElementById('subSequenceDirection').addEventListener('change', updateFigure, false);
   document.getElementById('t_addFigureText').addEventListener('mousedown', showFigureSelector, false);
   document.getElementById('subSequence').addEventListener('click', clickButton, false);
@@ -4771,13 +4774,9 @@ function addEventListeners () {
   document.getElementById('printMultiFiles').addEventListener('change', function(){updatePrintMulti(this)}, false);
 
   // settings dialog
-  if (window.navigator.standalone) {
-    document.getElementById('manual.html_settings').href = 'manual.html#settings';
-  } else {
-    document.getElementById('manual.html_settings').addEventListener('mousedown', function(){
-      helpWindow('manual.html#settings', 'Settings');
-    }, false);
-  }
+  document.getElementById('manual.html_settings').addEventListener('mousedown', function(){
+    helpWindow('manual.html#settings', 'Settings');
+  }, false);
   document.getElementById('tab-general').addEventListener('click', selectTab, false);
   document.getElementById('tab-styling').addEventListener('click', selectTab, false);
   document.getElementById('tab-expert').addEventListener('click', selectTab, false);
@@ -4835,13 +4834,9 @@ function addEventListeners () {
   for (var i = 0; i < inputs.length; i++) {
     inputs[i].addEventListener('change', savePrintDialogStorage, false);
   }
-  if (window.navigator.standalone) {
-    document.getElementById('manual.html_save_print').href = 'manual.html#save_print';
-  } else {
-    document.getElementById('manual.html_save_print').addEventListener('click', function(){
-        helpWindow('manual.html#save_print', 'OpenAero manual');
-      }, false);
-  }
+  document.getElementById('manual.html_save_print').addEventListener('mousedown', function(){
+      helpWindow('manual.html#save_print', 'OpenAero manual');
+    }, false);
   document.getElementById('printFormA').addEventListener('change', saveImageSizeAdjust, false);
   document.getElementById('printFormB').addEventListener('change', saveImageSizeAdjust, false);
   document.getElementById('printFormC').addEventListener('change', saveImageSizeAdjust, false);
@@ -5682,8 +5677,8 @@ function addExampleSequenceToMenu (key) {
     if (!li) {
       li = document.createElement('li');
       li.setAttribute ('id', 'year' + year);
-      li.classList.add ('leftArrow');
-      li.innerHTML = '<a href="#">' + year + '</a>';
+      li.innerHTML = '<a href="#">' + year + '</a>' +
+        '<i class="material-icons leftArrow"></i>';
       var ul = document.createElement('ul');
       li.appendChild (ul);
       el.appendChild (li);
@@ -5701,8 +5696,8 @@ function addExampleSequenceToMenu (key) {
       var group = key.match (/^[\d]+ ([^ ]+)/)[1];
       var subul = document.getElementById(year + ' ' + group);
       if (!subul) {
-        subli.classList.add ('rightArrow');
-        subli.innerHTML = '<a href="#">' + group + '</a>';
+        subli.innerHTML = '<a href="#">' + group + '</a>' +
+          '<i class="material-icons rightArrow"></i>';
         subul = document.createElement ('ul');
         subul.id = year + ' ' + group;
         subli.appendChild (subul);
@@ -7001,7 +6996,7 @@ function latestVersion() {
   } else {
     img.removeAttribute('onerror');
     // Apply latest version img src
-    var url = 'http://openaero.net/openaero.php?f=version&version=' + version;
+    var url = 'https://openaero.net/openaero.php?f=version&version=' + version;
     console.log ('Check version, get:' + url);
     img.setAttribute('src', url);
     // Hide the image on error (e.g. no internet connection)
@@ -7071,16 +7066,10 @@ function checkUpdateDone() {
       }
       alertBox (sprintf(userText.versionNew, oldVersion, version, li));
       // create link for changelog
-      if (window.navigator.standalone) {
-        // use href for iOS standalone app, this will open the manuals
-        // in Safari
-        document.getElementById('changelog').setAttribute('href', 'changelog.txt');
-      } else {
-        document.getElementById('changelog').addEventListener (
-          'mousedown',
-          function() {helpWindow ('changelog.txt', 'changelog.txt');}
-        );
-      }
+      document.getElementById('changelog').addEventListener (
+        'mousedown',
+        function() {helpWindow ('changelog.txt', 'changelog.txt');}
+      );
       storeLocal ('version', version);
     }
   }
@@ -9126,7 +9115,7 @@ function changeReferenceSequence (auto) {
   activeSequence.text = savedText;
   sequenceText.value = savedText;
   
-  parseSequence();
+  checkSequenceChanged (true);
 
 }
 
@@ -9502,7 +9491,7 @@ function markUsedFigures () {
       // the sequence
       for (var k = 0 ; k < figures.length ; k++) {
         if (!figures[k]) break;
-        if (figures[k].aresti) {
+        if (figures[k].aresti && fig[td[j].id].aresti) {
           if (('queue-' + figures[k].aresti.join('-')) === fig[td[j].id].aresti) {
             if (td[j].classList.contains ('queueUsed')) {
               td[j].classList.remove ('queueUsed');
@@ -9681,7 +9670,7 @@ function switchQueue (el) {
     el.innerHTML = userText.switchQueue;
     el.id = 't_switchQueue';
     e.removeAttribute ('disabled');
-    e.value = el.getAttribute('figureGroup');
+    e.value = Math.max (el.getAttribute('figureGroup'), 1);
   }
   changeFigureGroup();
 }
@@ -9915,6 +9904,7 @@ function selectFigure (e) {
     }
     if (activeForm === 'FU') selectTab ('tab-fuFigures');
   }
+  setQueueMenuOptions();
 }
 
 // selectFigureFu is called when selecting a figure in Free Unknown
@@ -10690,11 +10680,9 @@ function Drop(evt) {
  
 // changeEntryDirection alters the entry direction of the sequence
 function changeEntryDirection () {
-  // close menu
-  document.getElementById('menuSequence').classList.remove ('active');
   // get code
   for (code in entryOptions) {
-    if (entryOptions[code] === this.id) break;
+    if (entryOptions[code] === this.id.replace(/^t_/, '')) break;
   }
   updateSequenceOptions ('');
   if (activeSequence.figures[0] && entryOptions[activeSequence.figures[0].string]) {
@@ -10751,30 +10739,16 @@ function updateSequenceOptions (code) {
 
   el = document.getElementById('sequenceOptions');
   if (el) {
-    // needed for old browsers that don't support getElementsByClassName
-    if (!el.getElementsByClassName) {
-      el.prototype.getElementsByClassName = document.getElementsByClassName;
-    }
-    //
-  
-    // create a nodeList and remove the items of the nodelist
-    var options = el.getElementsByClassName('entryOption');
-    while (options[0]) el.removeChild(options[0]);
     
     if (code === 'eu') code = '';
     for (key in entryOptions) {
-      if (code != key) {
-        var li = document.createElement('li');
-        li.setAttribute ('class', 'entryOption lock');
-        li.addEventListener('mouseover', menuActive);
-        li.addEventListener('mouseout', menuInactive);
-        var a = document.createElement('a');
-        a.setAttribute ('id' , entryOptions[key]);
-        a.setAttribute ('href', '#');
-        a.addEventListener ('mousedown', changeEntryDirection);
-        a.innerHTML = userText[entryOptions[key]];
-        li.appendChild(a);
-        el.insertBefore(li, el.firstChild);
+      var el = document.getElementById ('t_' + entryOptions[key]);
+      if (code !== key) {
+        el.addEventListener ('mousedown', changeEntryDirection);
+        el.parentNode.classList.remove ('disabled');
+      } else {
+        el.removeEventListener ('mousedown', changeEntryDirection);
+        el.parentNode.classList.add ('disabled');
       }
     }
   }
@@ -10963,6 +10937,35 @@ function drawFullFigure (i, draggable, svg) {
 
 }
 
+// setQueueMenuOptions enables/disables queue menu options as applicable
+function setQueueMenuOptions() {
+  document.getElementById('t_addToQueue').removeEventListener('mousedown', addToQueue);
+  document.getElementById('t_addAllToQueue').removeEventListener('mousedown', addAllToQueue);
+  document.getElementById('t_clearQueue').removeEventListener('mousedown', clearQueue);
+  document.getElementById('t_saveQueueFile').removeEventListener('mousedown', saveQueue);
+  if (fig[fig.length - 1] && fig[fig.length - 1].group == 0) {
+    document.getElementById ('t_clearQueue').parentNode.classList.remove ('disabled');
+    document.getElementById ('t_saveQueueFile').parentNode.classList.remove ('disabled');
+    document.getElementById('t_clearQueue').addEventListener('mousedown', clearQueue);
+    document.getElementById('t_saveQueueFile').addEventListener('mousedown', saveQueue);
+  } else {
+    document.getElementById ('t_clearQueue').parentNode.classList.add ('disabled');
+    document.getElementById ('t_saveQueueFile').parentNode.classList.add ('disabled');
+  }
+  if (figures[selectedFigure.id]) {
+    document.getElementById ('t_addToQueue').parentNode.classList.remove ('disabled');
+    document.getElementById('t_addToQueue').addEventListener('mousedown', addToQueue);
+  } else {
+    document.getElementById ('t_addToQueue').parentNode.classList.add ('disabled');
+  }
+  if (figures.length) {
+    document.getElementById ('t_addAllToQueue').parentNode.classList.remove ('disabled');
+    document.getElementById('t_addAllToQueue').addEventListener('mousedown', addAllToQueue);
+  } else {
+    document.getElementById ('t_addAllToQueue').parentNode.classList.add ('disabled');
+  }
+}
+
 // showQueue shows the figure queue
 function showQueue () {
   var select = document.getElementById ('figureGroup');
@@ -11036,7 +11039,7 @@ function addToQueue () {
 
   fig[figLen].string = string;
   showQueue();
-  
+  setQueueMenuOptions();  
   queueToStorage ();
 }
 
@@ -11079,6 +11082,7 @@ function removeFromQueue (e) {
   noPropagation(e);
   fig.splice(e.target.parentNode.id.replace(/^removeFromQueue/, ''), 1);
   showQueue();
+  setQueueMenuOptions();
   queueToStorage();
 }
 
@@ -11103,10 +11107,11 @@ function clearQueue () {
         } else break;
       }
       hideFigureSelector();
+      setQueueMenuOptions();
+      storeLocal ('queue', []);
     });
   }
   showQueue();
-  storeLocal ('queue', []);
 }
 
 // queueToStorage saves the queue to localStorage to keep it through
@@ -11133,6 +11138,7 @@ function queueFromStorage () {
         fig.push(queue.pop());
       }
     }
+    setQueueMenuOptions();
   });
 }
 
@@ -14119,7 +14125,11 @@ function encodeBase64Url (t) {
 
 // decodeBase64Url decodes URL safe base64 to string
 function decodeBase64Url (t) {
-  return atob (t.replace(/-/g, '+').replace(/_/g, '/'));
+  try {
+    return atob (t.replace(/-/g, '+').replace(/_/g, '/'));
+  } catch (err) {
+    return false;
+  }
 }
 
 // saveAsURL provides a URL encoded sequence that the user can copy
@@ -14133,7 +14143,7 @@ function saveAsURL () {
     // to be activated in 2016.3.3 or later
     /** xml = xml.replace(/<\/?sequence>/g, '');
     xml = xml.replace(/<\/[^>]+>/g, '</>'); // remove end tags */
-    var url = 'http://openaero.net/?s=' + encodeBase64Url(xml);
+    var url = 'https://openaero.net/?s=' + encodeBase64Url(xml);
 
     if (chromeApp.active) {
       alertBox ('<p>' + userText.saveAsURLFromApp +
@@ -14161,7 +14171,7 @@ function emailSequence () {
     // create body with descriptive text, newlines and sequence URL
     // also replace single ticks (') and + as they may break the link
     var body = userText.emailHeader + '\n\n' + 
-      'http://openaero.net/?s=' + encodeBase64Url(activeSequence.xml);
+      'https://openaero.net/?s=' + encodeBase64Url(activeSequence.xml);
     var subject =  activeFileName();
     if (subject === '') subject = 'Sequence';
     el.setAttribute('href', 'mailto:%20?subject=' + encodeURI(subject) +
@@ -17670,8 +17680,8 @@ function parseSequence () {
         base = base.replace('is', 'iv');
       }
       // To continue determining the base we remove all snap, spin and
-      // tumble characters
-      base = base.replace(/i?[fseul]/g, '');
+      // tumble characters. Handle special case of non-Aresti tri figure
+      base = base.replace ('tri', '#').replace(/i?[fseul]/g, '').replace ('#', 'tri');
       // Handle simple horizontal rolls that change from upright to
       // inverted or vv
       if (base == '-') {

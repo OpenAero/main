@@ -1,3 +1,17 @@
+2016.3.4
+* replaced all <a> tags that only link to # by <span>
+* fixed bug where an illegal sequence link url could stop javascript execution
+* updated add-to-homescreen
+* fixed handling of non-Aresti tri figures with snap/spin/tumble as 2nd or 3rd roll
+
+2016.3.3
+* removed SF definition from all Free Known sequences
+* improved queue/figures switching in figure selector
+* improved menu by showing some items disabled when applicable
+* moved to new hosting provider antagonist.nl
+* enabled https, required for appCache in the future
+* fixed issue with selecting figures after exiting Free Unknown designer
+
 2016.3.2
 * moved Tau and degToRad to config.js and changed to Math.Tau / Math.degToRad
 * fixed printing for Safari and Edge by using win.document.createElement in buildForms

@@ -20,7 +20,7 @@
   along with OpenAero.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
-<html manifest="cache.manifest">
+<html manifest="appcache.manifest">
   <head>
     <meta charset="UTF-8">
     <!-- set Google verification tag, essential for installing App from site -->
@@ -105,6 +105,7 @@
     <!-- all the country flags -->
     <script src="flags.js" type="text/javascript"></script>
     <!-- add to homescreen for iOS and Android -->
+    <!-- https://github.com/cubiq/add-to-homescreen 15 sep 2016 -->
     <script src="addtohomescreen/addtohomescreen.min.js"></script>
     
     <!-- jsconsole script for debugging only !!! -->
@@ -166,9 +167,9 @@
       <div class="box">
         <span class="boxTitle">
           <span class="userText" id="t_printDialog"></span>
-          <a href="#" id="manual.html_save_print" class="info">
+          <span id="manual.html_save_print" class="info">
             <i class="material-icons info">info</i>
-          </a>
+          </span>
         </span>
         <div class="content">
           <span class="userText" id="t_printExplain"></span>
@@ -451,9 +452,9 @@
       <div class="box">
         <span class="boxTitle">
           <span class="userText" id="t_settingsTitle"></span>
-          <a href="#" class="info" id="manual.html_settings">
+          <span class="info" id="manual.html_settings">
             <i class="material-icons info">info</i>
-          </a>
+          </span>
         </span>
         <span class="tabSelector">
           <ul>
@@ -653,33 +654,33 @@
         <ul id="menu">
           <!-- File menu -->
           <li id="menuFile">
-            <a class="userText" id="t_file" href='#'></a>
+            <span class="userText" id="t_file"></span>
             <ul>
               <li class="fileOpening">
                 <div class="openSequence">
-                  <a class="userText" id="t_openSequence" href=#></a>
+                  <span class="userText" id="t_openSequence"></span>
                   <form id="fileForm">
                     <input type="file" id="file" size=1>
                   </form>
                 </div>
               </li>
-              <li class="divider"><a class="userText" id="t_openSequenceLink" href="#"></a></li>
-              <li class="divider"><a class="userText" id="t_clearSequence" href="#"></a></li>
-              <li><a class="userText" id="t_saveSequence" href="#"></a></li>
-              <li><a class="userText" id="t_emailSequence" target="_blank" href="#"></a></li>
-              <li class="divider"><a class="userText" id="t_saveAsLink" href="#"></a></li>
-              <li class="divider"><a class="userText disableFUdesigner" id="t_saveFigsSeparate" href="#"></a></li>
-              <li><a class="userText disableFUdesigner" id="t_printSaveForms" href="#"></a></li>
+              <li class="divider"><span class="userText" id="t_openSequenceLink"></span></li>
+              <li class="divider"><span class="userText" id="t_clearSequence"></span></li>
+              <li><span class="userText" id="t_saveSequence"></span></li>
+              <li><a class="userText" id="t_emailSequence" target="_blank"></a></li>
+              <li class="divider"><span class="userText" id="t_saveAsLink"></span></li>
+              <li class="divider"><span class="userText disableFUdesigner" id="t_saveFigsSeparate"></span></li>
+              <li><span class="userText disableFUdesigner" id="t_printSaveForms"></span></li>
             </ul>
           </li>
           <!-- View menu -->
           <li id="menuView" class="disableFUdesigner">
-            <a class="userText" id="t_view" href="#"></a>
+            <span class="userText" id="t_view"></span>
             <ul>
-              <li><a class="userText" id="t_formA" href=#></a></li>
-              <li><a class="userText" id="t_formB" href=#></a></li>
-              <li><a class="userText" id="t_formC" href=#></a></li>
-              <li class="divider"><a class="userText" id="t_figsInGrid" href=#></a></li>
+              <li><span class="userText" id="t_formA"></span></li>
+              <li><span class="userText" id="t_formB"></span></li>
+              <li><span class="userText" id="t_formC"></span></li>
+              <li class="divider"><span class="userText" id="t_figsInGrid"></span></li>
               <li id="zoomMenu" class="divider">
                 <span class="userText" id="t_zoom"></span>
                 <span>
@@ -688,84 +689,85 @@
                   <i id="zoomPlus" class="material-icons">add</i>
                 </span>
               </li>
-              <li><a class="userText" id="t_setMobile" href=#></a></li>
+              <li><span class="userText" id="t_setMobile"></span></li>
             </ul>
           </li>
           <!-- Sequence menu -->
           <li id="menuSequence" class="disableFUdesigner">
-            <a class="userText" id="t_sequence" href="#"></a>
+            <span class="userText" id="t_sequence"></span>
             <ul id="sequenceOptions">
-              <li class="entryOption lock"><a class="userText" id="t_downwindEntry" href=#></a></li>
-              <li class="entryOption lock"><a class="userText" id="t_xBoxEntry" href=#></a></li>
-              <li class="entryOption lock"><a class="userText" id="t_xBoxEntryAway" href=#></a></li>
-              <li class="lock divider"><a class="userText" id="t_flipYAxis" href=#></a></li>
-              <li class="lock"><a class="userText" id="t_clearPositioning" href=#></a></li>
-              <li class="lock divider"><a class="userText" id="t_separateFigures" href=#></a></li>
-              <li class="divider"><a class="userText" id="t_checkSequence" href=#></a></li>
-              <li><a class="userText" id="t_lockSequence" href=#></a></li>
+              <li class="entryOption lock"><span class="userText" id="t_upwindEntry"></span></li>
+              <li class="entryOption lock"><span class="userText" id="t_downwindEntry"></span></li>
+              <li class="entryOption lock"><span class="userText" id="t_xBoxEntry"></span></li>
+              <li class="entryOption lock"><span class="userText" id="t_xBoxEntryAway"></span></li>
+              <li class="lock divider"><span class="userText" id="t_flipYAxis"></span></li>
+              <li class="lock"><span class="userText" id="t_clearPositioning"></span></li>
+              <li class="lock divider"><span class="userText" id="t_separateFigures"></span></li>
+              <li class="divider"><span class="userText" id="t_checkSequence"></span></li>
+              <li><span class="userText" id="t_lockSequence"></span></li>
             </ul>
           </li>
           <!-- Queue menu -->
           <li id="menuQueue" class="disableFUdesigner">
-            <a class="userText" id="t_queue" href="#"></a>
+            <span class="userText" id="t_queue"></span>
             <ul id="queueOptions">
-              <li class="divider"><a class="userText" id="t_showQueue" href=#></a></li>
-              <li><a class="userText" id="t_addToQueue" href=#></a></li>
-              <li class="divider"><a class="userText" id="t_addAllToQueue" href=#></a></li>
-              <li class="divider"><a class="userText" id="t_clearQueue" href=#></a></li>
+              <li class="divider"><span class="userText" id="t_showQueue"></span></li>
+              <li><span class="userText" id="t_addToQueue"></span></li>
+              <li class="divider"><span class="userText" id="t_addAllToQueue"></span></li>
+              <li class="divider"><span class="userText" id="t_clearQueue"></span></li>
               <li class="fileOpening">
                 <div class="openFile">
-                  <a class="userText" id="t_openQueueFile" href=#></a>
+                  <span class="userText" id="t_openQueueFile"></span>
                   <form id="queueForm">
                     <input type="file" id="queue" size=1>
                   </form>
                 <div>
               </li>
-              <li><a class="userText" id="t_saveQueueFile" href="#"></a></li>
+              <li><span class="userText" id="t_saveQueueFile"></span></li>
             </ul>          
           </li>
           <!-- Demo menu -->
           <li id="menuDemo" class="disableFUdesigner">
-            <a class="userText" id="t_demo" href="#"></a>
+            <span class="userText" id="t_demo"></span>
             <ul id="exampleSequences" class="right">
             </ul>
           </li>
           <!-- Tools menu -->
           <li id="menuTools" class="disableFUdesigner">
-            <a class="userText" id="t_tools" href="#"></a>
+            <span class="userText" id="t_tools"></span>
             <ul class="right">
               <li class="divider">
-                <a class="userText lock" id="t_fuDesigner" href="#"></a>
+                <span class="userText lock" id="t_fuDesigner"></span>
               </li>
               <li>
-                <a class="userText" id="t_checkMultipleSeq" href="#"></a>
+                <span class="userText" id="t_checkMultipleSeq"></span>
               </li>
               <li>
-                <a class="userText" id="t_printMultipleSeq" href="#"></a>
+                <span class="userText" id="t_printMultipleSeq"></span>
               </li>
               <li class="fileOpening divider">
                 <div class="openFile">
-                  <a class="userText" id="t_importRulesFile" href="#"></a>
+                  <span class="userText" id="t_importRulesFile"></span>
                   <form id="rulesFileForm">
                     <input type="file" id="rulesFile" size=1>
                   </form>
                 </div>
               </li>
-              <li class="divider"><a class="userText" id="t_settings" href="#"></a></li>
+              <li class="divider"><span class="userText" id="t_settings"></span></li>
               <li id="installChromeApp" class="noDisplay">
-                <a class="userText" id="t_installChromeAppTitle" href="#"></a>
+                <span class="userText" id="t_installChromeAppTitle"></span>
               </li>
             </ul>
           </li>
           <!-- Help menu -->
           <li id="menuHelp">
-            <a class="userText" id="t_help" href="#"></a>
+            <span class="userText" id="t_help"></span>
             <ul class="right">
-              <li><a class="userText" id="t_manual" href="#"></a></li>
-              <li><a class="userText" id="t_openaeroLanguage" href="#"></a></li>
-              <li><a class="userText" id="t_arestiSystem" href="#"></a></li>
+              <li><span class="userText" id="t_manual"></span></li>
+              <li><span class="userText" id="t_openaeroLanguage"></span></li>
+              <li><span class="userText" id="t_arestiSystem"></span></li>
               <li><a class="userText" id="t_feedback" href="https://github.com/OpenAero/main/wiki/Feedback" target="_blank"></a></li>
-              <li><a class="userText" id="t_about" href="#"></a></li>
+              <li><span class="userText" id="t_about"></span></li>
             </ul>
           </li>
         </ul>
@@ -912,7 +914,7 @@
                 </span>
                 <input type="hidden" id="logo">
                 <span id="activeLogo">
-                  <a href="#" id="logoImage" class="noDisplay"></a>
+                  <span id="logoImage" class="noDisplay"></span>
                 </span>
               </div>
               <div class="clearSpace"></div>
@@ -933,9 +935,9 @@
             <div id="figureInfo" class="section hidden">
               <div class="boxTitle">
                 <span id="figureHeader"></span>
-                <a href="#" class="info" id="manual.html_adding_a_figure">
+                <span class="info" id="manual.html_adding_a_figure">
                   <i class="material-icons info">info</i>
-                </a>
+                </span>
               </div>
               <!-- sub sequence direction -->
               <div id="subSequenceDirection" class="content divider noDisplay">
@@ -1020,9 +1022,9 @@
                 <i class="material-icons expand-toggle">expand_more</i>
                 <div>
                 <textarea name="comments" id="comments"></textarea>
-                <a href="#" class="info" id="manual.html_figure_comments">
+                <span class="info" id="manual.html_figure_comments">
                   <i class="material-icons info">info</i>
-                </a>
+                </span>
                 </div>
               </div>
             </div>

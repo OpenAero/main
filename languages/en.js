@@ -585,6 +585,12 @@ lang.en = {
   'Please go to <a href="http://openaero.net">openaero.net</a>. ' +
   'OpenAero will automatically install in your browser and will also ' +
   'be available offline.',
+// new 2016.3.4
+'runOverHttp' : 'Your link to OpenAero seems to be outdated. Please ' +
+  'make sure you use ' +
+  '<a href="https://openaero.net">https://openaero.net</a>.<br>' +
+  'When using as a mobile homescreen app, please remove the app and ' +
+  'then add it to your homescreen again.',
 'sameAsBefore' : 'Same as before',
 // removed 1.5.0.4
 // 'saveAsImage' : 'Save as image',

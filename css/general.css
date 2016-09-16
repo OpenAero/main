@@ -565,7 +565,6 @@ option.used {
   font-size: 14px;
   width: 100%;
   opacity: 0;
-  cursor: pointer;
 }
 #sequenceTextContainer {
   position: relative;
@@ -587,7 +586,6 @@ option.used {
 #chooseLogo div {
   display: inline-block;
   transition: all 0.3s ease-in-out;
-  cursor: pointer;
 }
 #chooseLogo svg {
   margin: 10px 10px 0 0;
@@ -605,6 +603,7 @@ option.used {
 }
 #zoomMenu span {
   position: relative;
+  display: inline !important;
 }
 
 /* boxes and dialogs */
@@ -662,7 +661,7 @@ option.used {
   margin: 0.5em 0 0.5em 0.5em;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
   text-decoration: none;
-  cursor: pointer;
+  cursor: default;
 }
 .textButton, .textButton a {
   color: white;
@@ -1052,7 +1051,7 @@ option.used {
   float: left;
   display: block;
   text-align: center;
-  cursor: pointer;
+  cursor: default;
 }
 .tabSelector span {
   display: inline-block;
@@ -1483,20 +1482,27 @@ table#figureChooserTable div {
   z-index: 10;
 }
 #menu li.active {
-  background-color:#ddf !important;
+  background-color: #ddf !important;
+}
+#menu li.active.disabled {
+  background-color: white !important;
 }
 #menu, #menu ul {
   padding:0;
   margin:0;
 }
 /*set up a tags*/ 
-#menu a {
+#menu span, #menu a {
   display:block;
   color: rgba(0,0,0,0.87);
   text-decoration: none;
   padding: 5px 16px 5px 16px;
+  cursor: default;
 }
-#menu li ul a, #menu li ul span {
+#menu li.disabled span, #menu li.disabled a {
+  color: rgba(0,0,0,0.38);
+}
+#menu li ul span, #menu li ul a {
   font-weight: normal;
   padding: 8px 16px 8px 16px;
 }
@@ -1514,15 +1520,25 @@ table#figureChooserTable div {
   background-color: #ede7f6;
   transition: background-color 0.2s;
 }
-#menu li ul li.leftArrow {
-  background: white url('../images/menu-arrow-left.png') left center no-repeat;
+i.leftArrow:after, i.rightArrow:after {
+  content: "arrow_drop_down";
 }
-#menu li ul li.rightArrow {
-  background: white url('../images/menu-arrow-right.png') right center no-repeat;
+#menu i.leftArrow {
+  position: absolute;
+  top: 4px;
+  left: -4px;
+  transform: rotate(90deg);
+}
+#menu i.rightArrow {
+  position: absolute;
+  right: 0;
+  top: 4px;
+  transform: rotate(-90deg);
 }
 
 /*undo previous style for level 2 links*/
 #menu li ul li {
+  position: relative;
   background-color: white;
   float:none;
 }
@@ -1559,7 +1575,7 @@ table#figureChooserTable div {
   width:200px;
   z-index:10;
   -webkit-transform-style: preserve-3d;
-  margin-top: -28px;
+  margin-top: -30px;
 }
 /*don't unhide level 3 links on li.active from level 1*/
 #menu li.active ul li ul {
@@ -1585,7 +1601,7 @@ table#figureChooserTable div {
   width:180px;
   z-index:10;
   -webkit-transform-style: preserve-3d;
-  margin-top: -28px;
+  margin-top: -30px;
 }
 /*don't unhide level 4 links on li.active from level 1*/
 #menu li.active ul li ul li ul {
@@ -1655,7 +1671,6 @@ table#figureChooserTable div {
 .combo li {
   display:block;
   width: 100%;
-  cursor: pointer;
 }
 
 /* material design form elements */
@@ -1685,7 +1700,6 @@ table#figureChooserTable div {
   width: 36px;
   height: 14px;
   outline: 0;
-  cursor: pointer;
   position: relative;
   display: inline-block;
   top: 3px;

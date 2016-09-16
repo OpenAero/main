@@ -320,7 +320,7 @@ table#figureChooserTable td.selected {
 #menu {
   overflow: hidden;
 }
-#menu a {
+#menu a, #menu span {
   padding: 6px;
 }
 #menu li {
@@ -343,11 +343,18 @@ table#figureChooserTable td.selected {
   min-width: 110px;
   right: 3px;
 }
-#exampleSequences li a {
+#exampleSequences li a, #exampleSequences li span {
   margin-left: 20px;
 }
-#exampleSequences li ul li a {
+#exampleSequences li ul li a, #exampleSequences li ul li span {
   margin-left: 4px;
+}
+#exampleSequences li ul li ul {
+  max-width: 110px;
+  word-wrap: break-word;
+}
+#exampleSequences li ul li ul li {
+  font-size: 10px;
 }
 /* settings */
 #zipImageFilenamePattern, #styleString {
