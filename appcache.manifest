@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# OpenAero version 2016.3.4
+# OpenAero version 2016.3.4.1
 addtohomescreen/addtohomescreen.css
 addtohomescreen/addtohomescreen.min.js
 arestisystem.html
@@ -98,7 +98,6 @@ images/startup_ipad_portrait.jpg
 images/startup_retina.jpg
 index.html
 iOSsave.html
-#js/jquery-3.0.0.min.js
 jszip.min.js
 language.html
 languages/en.js
@@ -122,6 +121,5 @@ sprintf.min.js
 vkbeautify.js
 window.html
 NETWORK: 
-openaero.php
-http://jsconsole.com/remote.js
+#http://jsconsole.com/remote.js
 https://openaero.net/openaero.php

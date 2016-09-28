@@ -782,6 +782,9 @@ option.used {
   left: 10px;
   bottom: 9px;
 }
+.folded #pilotCardPercent span {
+  visibility: hidden;
+}
 #pilotCard2 {
   background-image: url('../images/PilotCard2.png');
 }
