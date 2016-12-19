@@ -76,10 +76,8 @@ lang.fr = {
 // end new
 'ac' : 'Avion',
 'addAllToQueue' : 'Ajouter tout à la file',
-// new 1.5.0
 'addAllToQueueNoFigures' : 'Il n\'y a pas de figure dans ce programme, donc ' +
   'aucune figure à ajouter à la file',
-// end new
 'addAllToQueueWait' : 'Ajout de toutes les figures à la file. Ceci ' +
   'peut prendre du temps. Patentiez, svp…',
 'addFigureText' : 'Cliquer pour ajouter figure',
@@ -88,10 +86,8 @@ lang.fr = {
 'Additional' : 'Supplé&#173;mentaire',
 //
 'addToQueue' : 'Ajouter à la file',
-// new 1.5.2.3
 'acreg': 'Immat d\'Avion',
 'actype': 'Avion',
-//
 'aircraft' : 'Avion et Immat',
 // alert forms a sub-array
 'alert': {
@@ -105,16 +101,12 @@ lang.fr = {
 }, // end alert array
 'alertBoxClose' : 'Fermer',
 'alerts' : 'Alertes',
-// changed 1.5.1
 'anonymousSequences' : 'Rend anonyme les programmes en supprimant le nom du pilote, ' +
   'l\'équipe et l\'avion',
-//
 'arestiSystem' : 'Système Aresti',
 'autocorrectRoll' : 'Tonneau d\'autocorrection',
 'blackWhite' : 'Noir et Blanc',
-// new 1.5.1
 'boxOuts' : 'Sorties de Box',
-//
 'browserDetect' : 'Votre navigateur est identifié en tant que: %s.<br>',
 'cancel' : 'Annuler',
 'cancelPrint' : 'Annuler',
@@ -126,7 +118,6 @@ lang.fr = {
 'changedFigureKMulti' : 'Les K Aresti normaux des figures %s ont été ' +
   'changés selon le réglement %s',
 'changeStyle' : 'Changer',
-// new 1.5.0
 // checkAlert forms a sub-array
 'checkAlert' : {
   'maxperfig' : 'Pas plus de %s %s par figure',
@@ -141,7 +132,6 @@ lang.fr = {
   'figrepeat' : 'Pas plus de %s répétition(s) de %s autorisée(s)',
   'notAllowed': '%s n\'est pas autorisé pour ce programme'
 }, // end checkAlert
-//
 'checkingRules' : 'Règles de vérification',
 'checkMulti' : 'Vérification de plusieurs programmes',
 'checkMultiClose' : 'Fermer',
@@ -161,9 +151,7 @@ lang.fr = {
 'checkSequenceResult' : 'Résultat de vérification',
 'checkSequences' : 'Vérification des programmes',
 'chooseFiles' : 'Choisir les fichiers ici :',
-// new 1.4.1
 'chooseFilesPrint' : 'Choisir les fichiers ici :',
-//
 'chooseLogo' : 'Choisir un logo',
 'class' : 'Type',
 'clearPositioning' : 'Effacer le positionnement',
@@ -192,9 +180,7 @@ lang.fr = {
 'date' : 'Date',
 'demo' : 'Exemples',
 'desktopVersion' : 'Version ordinateur',
-// new 1.5.1
 'disqualified' : 'Disqualifié',
-//
 'download' : 'Télécharger',
 // changed 2016.3.2
 'downloadHTML5' : 'Vous pouvez enregistrer en choisissant un nom ' +
@@ -216,27 +202,20 @@ lang.fr = {
   'et choisir "Enregistrer la cible du lien sous... " ou "Copier ' +
   'l\'adresse du lien".<br>Une fenêtre ou vous pourrez ' +
   'choisir le répertoire apparaîtra.',
-// new 1.4.2
 'downwind' : 'vent arrière',
-//
 'downwindEntry' : 'Débuter vent arrière',
 'drawingStyles' : 'Paramètres de dessin',
 'drawingStylesExplain' : '<p>Tous les paramètres du dessin peuvent être changés ici. ' +
   'Exemples : <strong>pos</strong>=ligne positive, ' +
   '<strong>neg</strong>=ligne negative, <strong>rollText</strong>=texte' +
   ' de la rotation (e.g. 2x8).</p>',
-// new 1.5.0
 'dropFigureHere' : 'Déplace Figure ici',
-//
 'editingFigure' : 'Edition figure',
-// new 1.4.2
 'emailHeader' : 'Cliquez sur le lien ci-dessous pour ouvrir le programme avec OpenAero. ' +
   'Ou, ça ne fonctionne pas, copiez le et collez le (intégralement!) ' +
   'dans la barre d\'adresse de votre navigateur.',
 'emailSequence' : 'Envoyer par email le programme',
-// new 1.5.0
 'END' : 'FIN',
-//
 'entryExitAttExt' : 'Attitude de debut/fin et longueur',
 'expert' : 'Expert',
 'feedback' : 'Retour',
@@ -250,34 +229,24 @@ lang.fr = {
 'figsInGrid' : 'Tableau des figures',
 'figureAlreadyInQueue' : 'Cette figure est déjà dans la file',
 'figureEditor' : 'Editeur de figure',
-// new 1.5.1
 'figureK' : 'Figure K',
 // new 2016.1.3
 'figureLetterNotAllowed' : '(%s) La lettre d\'identification %s n\'est pas autorisée',
 'figurePositioning' : 'Positionnement de figure',
 'figureQueue' : 'File / Tampon',
-// new 1.5.2
 'figureString' : 'Texte du figure',
-//
 'file' : 'Fichier',
 'fileName' : 'Nom du fichier',
 'finalizeSequence' : 'Finaliser le programme et quitter l\'assembleur',
-// new 1.5.1
 'flightNr' : 'Vol N°',
-//
 'flipYAxis' : 'Changer d\'axe Y',
 'forElement' : ' pour élément ',
 'formA' : 'Forme A',
 'formB' : 'Forme B',
 'formC' : 'Forme C',
-// new 1.5.1
 'formL' : 'Forme L',
 'formR' : 'Forme R',
-//
-// changed 1.5.2.3
-//'freeUnknownFig' : 'Fig Inconnu-Libre ',
 'freeUnknownFig' : 'Lettre ',
-// new 1.5.0
 'freeUnknownAdditional' : 'Supplémentaire Inconnu-Libre',
 'FUconfirmExit' : 'L\'assembleur d\'inconnu-libre peut ne pas redémarrer ' +
   'correctement dans cette situation sans avoir à ré-ouvrir le programme. ' +
@@ -295,8 +264,6 @@ lang.fr = {
 'FUerrorsDetected' : 'Erreur(s) détectée(s) dans le programme, voir ci-dessous :',
 'FUfinalizing' : 'Assemblage du programme. Ceci peut prendre du temps. ' +
   'Patientez, svp...',
-// changed 1.5.2.3
-//'FUletterMulti' : '(%s) lettre(s) d\'Inconnu-Libre %s utilisée(s) plusieurs fois',
 'FUletterMulti' : '(%s) lettre(s) du figure %s utilisée(s) plusieurs fois',
 'FUmultipleSubsequences' : 'Le programme a %s sous-parties. ' +
   'Il ne devrait y en avoir qu\'un.',
@@ -328,9 +295,7 @@ lang.fr = {
 'imageSize' : 'Taille d\'image',
 'imageWidth' : 'Largeur',
 'importRulesFile' : 'Importer un fichier de règles',
-// new 1.5.1
 'insertions' : 'Insertions',
-//
 'installation' : 'Installation',
 // changed 2016.1.3
 'installChromeApp' : '<p>OpenAero est maintenant installé avec ce ' +
@@ -356,11 +321,8 @@ lang.fr = {
   'bureau pour un accès direct.</p>' +
   '<p>Un <a href="manual.html" target="_blank">Mode d\'emploi</a> complet ' +
   'est disponible. S\'il vous plait, prenez le temps de le lire !</p>',
-// new 1.5.1
 'interruptions' : 'Interruptions',
-//
 'inverseForms' : 'Inverse vidéo (blanc sur noir)',
-// new 1.5.0
 'iOScancelSave' : 'Annuler',
 'iOSprintExplain' : 'Selectionnez ce que vous voulez imprimer ou sauvegarder ' +
   'puis cliquez <strong>Enregistrer une image PNG</strong>',
@@ -375,10 +337,7 @@ lang.fr = {
   'Si vous obtenez une page blanche, essayer de sauvegarder chaque programme ' +
   'individuellement.',
 'iOSsaveFileTitle' : 'Enregistrer le fichier',
-//
-// new 1.5.1
 'judgesName' : 'Nom des Juges',
-//
 'language' : 'Langue',
 'loadNewVersion' : 'Une nouvelle version d\'OpenAero est disponible. La charger ?',
 'loadNewVersionNoCookies' : 'Une nouvelle version d\'OpenAero est disponible. La charger ?' +
@@ -399,10 +358,9 @@ lang.fr = {
 'manual' : 'Manuel OpenAero',
 'maxAdditionals' : 'Maximum de figures supplémentaires permis : %s',
 'maxScaling' : 'Agrandissement Max des petits programmes',
-// new 1.5.1
 'missedSlot' : 'Hors créneau',
-//
-'missingInfo' : 'Des informations essentielles du programme manquent.' +
+// changed 2017.1
+'missingInfo' : 'Des informations essentielles du programme manquent.</br>' +
   'Etes-vous sur de vouloir enregistrer ou imprimer le fichier sans celles-ci :',
 'missingInfoTitle' : 'Informations du programme manquantes',
 'mobileVersion' : 'Version mobile',
@@ -412,9 +370,7 @@ lang.fr = {
 'multiActiveLogo' : 'Utiliser le logo du programme en cours', 
 'multiRemoveLogo' : 'Supprimer le logo', 
 'multiOriginalLogo' : 'Utiliser le logo d\'origine',
-// new 1.5.0
 'newCopySubsequence' : 'Créer / Copier sous-partie',
-//
 /** removed in 2016.1.3
 'newReplacementsABC' : 'Nouveau format pour les formes A/B/C',
 */
@@ -430,7 +386,6 @@ lang.fr = {
 'noFigureLetterAssigned' : '(%s) Pas de lettre affectée',
 // changed 2016.1.3
 'noFreeUnknownFig' : 'Pas de lettre',
-// changed 1.4.4
 'nonArestiRolls' : 'Autoriser les rotations et combinaisons ' +
   'non-Aresti (essayer <i>41h4,f,4 66</i>)',
 'none' : 'Aucune',
@@ -442,7 +397,6 @@ lang.fr = {
   'la forme B ou C est affichée.',
 'notSequenceFile' : 'Ce n\'est pas le fichier d\'un programme ' +
   'OpenAero ou OLAN',
-// new 1.5.1
 'number' : 'Numéro',
 //
 'numberInCircle' : 'Numéros de figure dans un cercle',
@@ -459,9 +413,7 @@ lang.fr = {
   'suivantes peuvent être dessinées différemment dans Olan et OpenAero !</font>' +
   'Vérifiez que la direction de sortie est correcte.<br>' +
   'Ce message ne sera plus affiche pour ce programme.',
-// new 1.4.2
 'oldBrowser' : 'Votre navigateur (%s) ne peut pas faire tourner OpenAero.<br>',
-//
 'openaeroLanguage' : 'Syntaxe OpenAero',
 'openQueueFile' : 'Ouvrir un fichier file',
 'openSequence' : 'Ouvrir un programme',
@@ -486,9 +438,7 @@ lang.fr = {
 'pilot' : 'Pilote',
 'pilotCardFormB' : 'Forme B',
 'pilotCardFormC' : 'Forme C',
-// new 1.5.1
 'pilotID' : 'Pilote ID',
-//
 'pilotNo' : 'Pilote N°.',
 'pilotnumberIAC1' : "pilote",
 'pilotnumberIAC2' : "Numéro",
@@ -529,13 +479,13 @@ lang.fr = {
 'printSF' : 'Numéro de Super Famille',
 'printString' : 'Texte du programme',
 'program' : 'Programme',
+// new 2017.1
 'programme' : 'Programme',
+'programmes' : 'Programmes',
+'programmesShort' : 'Prog.',
 'queue' : 'File/Tampon',
-// new 1.4.2
 'queueColumns' : 'Colonnes',
-//
 'queueEmpty' : 'Pas de figure à enregistrer dans la file',
-// new 1.4.2
 'queueLabel' : 'File/Tampon',
 //
 'queueNotSaved' : 'Les figures de la file ont été enregistrées',
@@ -565,12 +515,10 @@ lang.fr = {
 'removeLogo' : 'Supprimer le logo',
 'resetStyle' : 'Valeur par défaut',
 'resetStyleAll' : 'Valeur par défaut (tous les paramètres)',
-// new 1.4.2
 'restoreDefaultSettings' : 'Restaurer toutes les valeurs par defaut ' +
   'du paramétrage',
 'restoreDefaultSettingsConfirm' : 'Toutes le paramétrage d\'Openaero va être ' +
   'remis à sa valeur d\'origine. Voulez vous continuer?',
-//
 'rollLarge' : 'Grand',
 'rollMedium' : 'Moyen',
 'rollPos' : ['Première série de rotations','Deuxième série de rotations','Troisième série de rotations','Quatrième série de rotations'],
@@ -590,8 +538,6 @@ lang.fr = {
   'OpenAero sera automatiquement installe dans votre navigateur et sera également ' +
   'disponible hors connexion.',
 'sameAsBefore' : 'Comme avant',
-// removed 1.5.0.4
-// 'saveAsImage' : 'Enregistrer l\'image',
 'saveAsLink' : 'Enregistrer en tant que lien',
 'saveAsPNG' : 'Enregistrer une image PNG',
 'saveAsSVG' : 'Enregistrer une image SVG',
@@ -630,17 +576,14 @@ lang.fr = {
 'settings' : 'Paramétrage',
 'settingsClose' : 'Fermer',
 'settingsTitle' : 'Paramètres',
-// changed 1.5.0
 'setUpright' : 'entrée ventre',
 'setInverted' : 'entrée dos',
-//
 'showFileName' : 'Ajouter le nom du fichier',
 'showFullLog' : 'Voir le rapport de vérification complet',
 // new 2016.1
 'showHandles' : 'Montre les points d\'édition (cercles bleu) quand ' +
   'une figure est sélectionnée',
 'showQueue' : 'Voir la file',
-// new 1.5.1
 'signature' : 'Signature',
 //
 'styleSettingsHeader' : 'Vous pouvez changer ici les paramètres de dessin. ' +
@@ -653,11 +596,9 @@ lang.fr = {
 // new 2016.1
 'switchFigures' : 'Figures',
 'switchQueue' : 'File',
-// new 1.5.1
 'team' : 'Equipe',
 'tooHigh' : 'Trop Haut',
 'tooLow' : 'Trop Bas',
-//
 'tools' : 'Outils',
 // tooltip forms a sub-array
 'tooltip' : {
@@ -679,7 +620,6 @@ lang.fr = {
   'switchX' : 'Change le sens de la sortie sur l\'axe X',
   'switchY' : 'Change le sens de la sortie sur l\'axe Y'
 }, // end tooltip sub-array
-// new 1.5.1
 'totalK' : 'K total',
 // new 2016.1.1
 'trgViolation' : 'Ech. Incorrect',
@@ -731,9 +671,7 @@ lang.fr = {
   'sens relatifs d\'entrée/sortie sont corrects (même sens ou sens opposé).',
 'wind' : 'V E N T  ',
 'windIAC' : 'sens du vent',
-// new 1.5.1
 'wingRocks' : 'Battem. d\'Ailes',
-//
 'xBox' : 'de face',
 'xBoxAway' : 'de derrière',
 'xBoxEntry' : 'Débuter de face',

@@ -18,6 +18,12 @@
 
   You should have received a copy of the GNU General Public License
   along with OpenAero.  If not, see <http://www.gnu.org/licenses/>.
+  
+  ----------------------------------------------------------------------  
+  Updates
+  ----------------------------------------------------------------------
+  * 2016.4
+  grid_system
 -->
 
 <html style="overflow-y:scroll;">
@@ -116,14 +122,16 @@
 		<td colspan="2">
       <h3>Beginning a sequence</h3>
       <img src="images/sequence_info.png" style="float:right;margin-left:20px;">
-      <p>Always start by filling in the Sequence Info panel. The <i>Rules, 
-      Category</i> and <i>Program</i> information will be used for determining sequence 
-      validity. If actual rule checking is active for the chosen
-      combination, <i class="material-icons status good"></i> will be
-      shown next to <i>Program</i>. Otherwise it will show
-      <i class="material-icons status bad"></i>.
-      In the latter case sequences are only checked for basic Aresti
-      compliance.
+      <p>
+        Always start by filling in the Sequence Info panel. The <i>Rules, 
+        Category</i> and <i>Program</i> information will be used for determining sequence 
+        validity. If actual rule checking is active for the chosen
+        combination, <i class="material-icons status good"></i> will be
+        shown next to <i>Program</i>. Otherwise it will show
+        <i class="material-icons status bad"></i>.
+        In the latter case sequences are only checked for basic Aresti
+        compliance.
+      </p>
       <p>In the Sequence menu you can choose to start the sequence 
       down-wind or cross-box. This can always be changed at a later stage.</p>
 		</td>
@@ -381,7 +389,7 @@
       Otherwise, you can start it from the <i>Tools</i> menu.<br />
       If OpenAero detects it is just a figures file you will start with
       an empty sequence. Otherwise, the current sequence will be shown.
-      <p><image src="images/OA_FreeUnknownDesignerMain.png" align="right"></image>
+      <p><image src="images/OA_FreeUnknownDesignerMain.png" align="right"></image></p>
       <h3>Sequence layout</h3>
       <p>The purpose of the designer is to quickly create a sequence. For
       this reason, layout is schematic and fully automated. There are no
@@ -504,10 +512,64 @@
         <img border="0" src="images/OA_FigureGrid.gif" width="338" height="278" align="right">
         Either from the very start or from an existing sequence, <i>View ... 
         Figs in Grid</i> will set each figure into a tabular grid format showing the 
-        K-factors and any other relevant information. Use <i>Tools ... Settings</i> to 
+        K-factors and any other relevant information. Use the <i>Grid info</i> to 
         change the number of grid columns if required. This grid can be printed 
         for distribution to sequence designers bearing all the relevant figure 
         information, so that submitted sequences conform to CIVA regulations.
+      </p>
+      <p>
+        The Grid View contains an info box that assists in selection of
+        Free Unknown figures. It provides information on the amount of
+        positive and negative figure entries and exits, as well as the
+        associated Low, Neutral or High speed.</br>
+        Below this is an indication of the needed number of Additionals
+        to create a full sequence. This is estimated by matching the
+        figures based on attitude and speed
+        <span class="docsExtraInfo">(hover/tap here for full explanation).
+          <span>
+            </br>To determine matching every base figure is assigned Low,
+            Neutral or High speed for entry and exit. This is simply
+            determined by any form of climb or descent at the start and
+            end of the figure.</br>
+            For example, a 45 climbing line has High speed entry and Low
+            speed exit. A downgoing loop has Low speed entry and Low
+            speed exit. A rolling turn has Neutral entry and exit. Etc...
+            Note that this is completely independent from any rolls or
+            further continuation in the figure. It thus presents a
+            simplified but useable categorization.</br>
+            To determine which figures match, the algorithm proceeds as
+            follows:</br>
+            1) For the entire procedure, only match correct upright or
+              inverted attitude</br>
+            2) Try to match the first figure with all following figures,
+              only using exact matches: High speed exit with High speed
+              entry, etc...</br>
+            3) Do 2) for all following figures that have not yet been
+              matched to others</br>
+            4) Start again from 2, but this time also accept matching
+              Neutral speed with High speed or Low speed</br>
+            5) Do an extra run just as the previous, but with all the
+              figures in reverse order</br>
+            6) The lowest number of sets resulting from 4) and 5) is
+              used to determine how many additionals are needed. E.g. 3
+              sets means 2 additionals are needed</br>
+          </span>
+        </span>
+        </br>
+        This is only an indication! The real number needed will
+        also depend on sequence design preferences, box constraints and
+        aircraft performance characteristics.
+      </p>
+      <p>
+        On the grid info panel there is also a button to create groups.
+        In the resulting dialog you can automatically generate random
+        matching figure group proposals. This can be used for selection
+        of matching figure groups out of a large number of figures.</br>
+        When the combination is not acceptable, click <i>Create new
+        proposals</i> for a new combination.</br> 
+        When a satisfactory combination has been generated these can be
+        copy-pasted to another instance of OpenAero or all loaded
+        directly into the Grid.
       </p>
       <p>
         It may be useful to add the submitting Team name or IOC country code 
@@ -518,9 +580,8 @@
         for example &quot;@F USA&quot;. This will be shown in the grid 
         adjacent to the figure designation if present, 
         or the first Aresti manoeuvre code if not.<br>
-        <p>Also, the country flag will be added to the Grid view 
+        Also, the country flag will be added to the Grid view 
         (courtesy of <a href="http://www.icondrawer.com" target="_blank">www.icondrawer.com</a>).
-        </p>
       </p>
     </td>
   </tr>

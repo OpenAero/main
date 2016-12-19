@@ -73,23 +73,24 @@
     <!-- logos -->
     <script src="logo.js" type="text/javascript"></script>
     <!-- figure definitions -->
-    <script src="figures16.js" type="text/javascript"></script>
+    <script src="figures17.js" type="text/javascript"></script>
     <!-- sequence rules -->
     <script src="rules/rules16.js" type="text/javascript"></script>
-    <script src="rules/rules16-civa.js" type="text/javascript"></script>
+    <script src="rules/rules17-civa.js" type="text/javascript"></script>
+    <script src="rules/rules17-glider-civa.js" type="text/javascript"></script>
     <script src="rules/rules15-aac.js" type="text/javascript"></script>
     <script src="rules/rules16-baea.js" type="text/javascript"></script>
     <script src="rules/rules16-france.js" type="text/javascript"></script>
     <script src="rules/rules15-ga.js" type="text/javascript"></script>
-    <script src="rules/rules16-iac.js" type="text/javascript"></script>
+    <script src="rules/rules17-iac.js" type="text/javascript"></script>
     <script src="rules/rules16-vink.js" type="text/javascript"></script>
-    <script src="rules/rules16-glider-civa.js" type="text/javascript"></script>
-    <script src="rules/rules15-nzac.js" type="text/javascript"></script>
+    <script src="rules/rules16-nzac.js" type="text/javascript"></script>
+    <script src="rules/rules16-nzac-civa.js" type="text/javascript"></script>
     <script src="rules/rules16-sac.js" type="text/javascript"></script>
-    <!-- example sequences -->
-    <script src="examples.js" type="text/javascript"></script>
+    <!-- programmes -->
+    <script src="programmes.js" type="text/javascript"></script>
     <!-- improve look of XML output -->
-    <!-- https://code.google.com/p/vkbeautify -->
+    <!-- https://github.com/vkiryukhin/vkBeautify 0.99.00 beta-->
     <script src="vkbeautify.js" type="text/javascript"></script>
     <!-- create zip files. Used for individual figure image output -->
     <!-- https://github.com/Stuk/jszip 23 mar 2015 -->
@@ -479,18 +480,6 @@
           </div>
           <div class="content divider">
             <span class="userText" id="t_gridView"></span>        
-            <span>
-              <select id="gridColumns">
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5" selected>5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
-                <option value="8">8</option>
-              </select>
-              <span class="userText" id="t_columns"></span>
-            </span>
           </div>
           <div class="content divider">
             <span class="userText" id="t_queueLabel"></span>
@@ -618,6 +607,25 @@
     </div>
     <!-- end reference sequence -->
 
+    <!-- figure combination proposals dialog -->
+    <div id="createProposalsDialog" class="boxbg noDisplay">
+      <div class="box">
+        <span class="boxTitle userText" id="t_proposalsTitle"></span>
+        <div class="userText content" id="t_proposalsExplain"></div>
+        <!--<div class="content">
+          <span class="userText" id="t_proposalsFigureCount"></span>
+          <input type="number" min="1" value="7" id="proposalsFigureCount">
+        </div>-->
+        <div id="proposalsSequenceSvgContainer">
+          <svg xmlns="http://www.w3.org/2000/svg" version="1.2" baseProfile="tiny" id="proposalsSequenceSvg"></svg>
+        </div>
+        <pre class="userText content" id="proposals"></pre>
+        <div class="userText content" id="t_proposalsIncomplete"></div>
+        <div class="textButton userText" id="t_proposalsCreate"></div>
+        <div class="textButton userText" id="t_proposalsToGrid"></div>        
+        <div class="textButton close userText" id="t_proposalsDialogClose"></div>
+      </div>
+    </div>
     <!-- various message boxes. Put them after the dialogs so they are
          shown on top -->
     <!-- infoBox -->
@@ -726,10 +734,10 @@
               <li><span class="userText" id="t_saveQueueFile"></span></li>
             </ul>          
           </li>
-          <!-- Demo menu -->
-          <li id="menuDemo" class="disableFUdesigner">
-            <span class="userText" id="t_demo"></span>
-            <ul id="exampleSequences" class="right">
+          <!-- Programmes menu -->
+          <li id="menuProgrammes" class="disableFUdesigner">
+            <span class="userText" id="t_programmes"></span>
+            <ul id="programmes" class="right">
             </ul>
           </li>
           <!-- Tools menu -->
@@ -794,6 +802,70 @@
     </div>
     <!-- main sequence area -->
     <div id="main">
+      <!-- Grid info -->
+      <div id="gridInfo" class="expansion-panel draggablePanel">
+        <span id="t_gridInfo" class="userText contentLabel"></span>
+        <i class="material-icons expand-toggle">expand_more</i>
+        <div>
+          <div>
+            <span class="userText" id="t_columns"></span>
+            <select id="gridColumns">
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5" selected>5</option>
+              <option value="6">6</option>
+              <option value="7">7</option>
+              <option value="8">8</option>
+            </select>
+          </div>
+          <div>
+            <table>
+              <tr>
+                <td>
+                  <span class="info" id="manual_html_grid_system">
+                    <i class="material-icons info">info</i>
+                  </span>
+                </td>
+                <td colspan="3" class="userText" id="t_gridSpeed"></td>
+              </tr>
+              <tr>
+                <td></td><td>L</td><td>N</td><td>H</td>
+              </tr>
+              <tr>
+                <td class="userText" id="t_gridPosEntry"></td>
+                <td id="gridEntryL"></td>
+                <td id="gridEntryN"></td>
+                <td id="gridEntryH"></td>
+              </tr>
+              <tr>
+                <td class="userText" id="t_gridPosExit"></td>
+                <td id="gridExitL"></td>
+                <td id="gridExitN"></td>
+                <td id="gridExitH"></td>
+              </tr>
+              <tr>
+                <td class="userText" id="t_gridNegEntry"></td>
+                <td id="gridEntryl"></td>
+                <td id="gridEntryn"></td>
+                <td id="gridEntryh"></td>
+              </tr>
+              <tr>
+                <td class="userText" id="t_gridNegExit"></td>
+                <td id="gridExitl"></td>
+                <td id="gridExitn"></td>
+                <td id="gridExith"></td>
+              </tr>
+            </table>
+          </div>
+          <div>
+            <span class="userText" id="t_gridAdditionals"></span>
+            <span id="gridAdditionals"></span>
+          </div>
+          <div class="flatTextButton userText" id="t_proposalsCreateGroups"></div>
+        </div>
+      </div>
+      <!-- end grid info -->
       <!-- Figure selector -->
       <div id="figureSelector">
         <div>

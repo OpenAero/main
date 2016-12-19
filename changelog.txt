@@ -1,3 +1,22 @@
+2017.1
+* added 360 text to 360 turn
+* added loop with steep turn figures (oaj, oajj, oajjj, oajjjj)
+* added Grid info panel, collapsible and movable
+* added automatic generating of figure group proposals
+* added Google Analytics
+* added support for saving reduced size sequence link
+* updated CIVA rules and sequences for 2017
+* updated IAC power sequences for 2017
+* improved visual validation of input fields by using input:invalid CSS
+* fixed fileName clearing after reload
+* fixed issue where Save box would not close after saving on Windows 7
+* added Romanian Aeroclub logo
+* only show Harmony box on CIVA forms when Harmony K is present
+* renamed 'demo' to 'programme' throughout as this is more appropriate
+
+2016.3.5
+* updated NZAC rules for 2016/2017
+
 2016.3.4.1
 * fixed bug where Grid could not be (de)selected for print because pilotCard invisibly overlaps
 

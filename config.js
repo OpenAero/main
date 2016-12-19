@@ -36,7 +36,7 @@
 // Where a new x should be used for versions that create sequences not
 // fully backward compatible with the previous version
 
-var version = '2016.3.4.1';
+var version = '2017.1';
 /* versionNew is an object that contains version update information
    The structure is {vvv : [[ttt, n], ...], ...} , where
    vvv = version number
@@ -44,6 +44,15 @@ var version = '2016.3.4.1';
    n   = importance (higher = more important)
 */
 var versionNew = {
+  '2017.1' : [
+    ['CIVA rules and Free Known sequences for 2017', 4],
+    ['IAC Power rules and sequences for 2016', 3],
+    ['Added Grid info panel with figure group generator to improve ' +
+    'figure selection for Free Unknowns', 4]
+  ],
+  '2016.3.5' : [
+    ['Updated NZAC rules for 2016/2017', 3]
+  ],
   '2016.3.2' : [
     ['Improved printing for iOS and Microsoft Edge', 2]
   ],
@@ -191,6 +200,7 @@ Math.PageRatio = 1.4143;
 Math.Tau = Math.PI * 2;
 // degToRad is Pi / 180. Saves calculations for degree to rad conversions
 Math.degToRad = Math.PI / 180;
+Math.radToDeg = 180 / Math.PI;
 // define the offset for figures in the y axis in degrees
 var yAxisOffsetDefault = 30;
 // define the scale factor on the y axis for perspective drawing
@@ -565,6 +575,55 @@ var regexSequenceOptions = /^(ed|eu|ej|eja|\/\/)$/;
 var regexTextBlock = /^"[^"]*"$/;
 var regexUnlinkedRolls = /[,; ](9\.[1-8]\.[0-9.]*;9\.[1-8]\.)|(9\.(9|10)\.[0-9.]*;9\.(9|10))|(9\.1[12]\.[0-9.]*;9\.1[12])/;
 
+/* Define entry/exit speeds of figures as follows:
+* L for all descending entries and climbing exits
+* H for all climbing entries and all descending exits
+* N for all others
+*/
+var regexSpeedConv = {
+  'v' : /d?[vzmcpro]|dd|d\^[DVZMCPRO]/g,
+  'V' : /D?[VZMCPRO]|DD|D\^[dvzmcpro]/g
+}
+var regexSpeed = {
+  glider: {
+    entry: {
+      L : /^(\+([DV]|\^[dv])|-([dv]|\^[DV]))/,
+      H : /^(\+([dv]|\^[DV])|-([DV]|\^[dv]))/
+    },
+    exit: {
+      L : /(([DV]|[dv]\^)\+)|(([dv]|[DV]\^)-)$/,
+      H : /(([dv]|[DV]\^)\+)|(([DV]|[dv]\^)-)$/
+    }
+  },
+  power: {
+    entry: {
+      L : /^(\+([DV]|\^[dv])|-([dv]|\^[DV]))/,
+      H : /^(\+([dv]|\^[DV])|-([DV]|\^[dv]))/
+    },
+    exit: {
+      L : /(([DV]|[dv]\^)\+)|(([dv]|[DV]\^)-)$/,
+      H : /(([dv]|[DV]\^)\+)|(([DV]|[dv]\^)-)$/
+    }
+  }
+};
+
+/* optionally, count 45 only as N. However, as this is decided on base
+ * figure level, there is no way to differentiate e.g. 45 up with 4x4
+ * which is clearly a H
+
+  power: {
+    entry: {
+      L : /^(\+([DV]|\^[dv])|-([dv]|\^[DV]))/,
+      H : /^(\+(v|\^V)|-(V|\^v))/
+    },
+    exit: {
+      L : /(([V]|[v]\^)\+)|(([v]|[V]\^)-)$/,
+      H : /(([dv]|[DV]\^)\+)|(([DV]|[dv]\^)-)$/
+    }
+  }
+
+ */
+  
 /**********************************************************************
  * 
  * Flag configuration

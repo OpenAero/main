@@ -122,7 +122,7 @@ body {
   transition: all 0.2s ease-in-out;
 }
 .expansion-panel.expanded div {
-  max-height: 200px;
+  max-height: 280px;
 }
 .expansion-panel .expand-toggle {
   position: absolute;
@@ -428,6 +428,19 @@ textarea {
   background: url('../buttons/close.png');
   background-size: 3em 3em;
   background-repeat: no-repeat;
+}
+.docsExtraInfo {
+  color: navy;
+}
+.docsExtraInfo:hover {
+  color: inherit;
+}
+.docsExtraInfo span {
+  display: none;
+}
+.docsExtraInfo:hover span {
+  color: inherit;
+  display: block;
 }
 
 #sequenceInfo {
@@ -749,6 +762,9 @@ option.used {
 }
 #printFormGrid {
   z-index: 100;
+}
+#pilotCardLayout.folded {
+  margin: 20px;
 }
 .pilotCardLayout {
   float: left;
@@ -1262,10 +1278,10 @@ option.used {
 .tooltip {
   width: 100%;
   height: 100%;
-  outline:none;
+  outline: none;
 }
 .tooltip div {
-  display:none;
+  display: none;
 }
 .disable .tooltip {
   display: none;
@@ -1641,9 +1657,12 @@ i.leftArrow:after, i.rightArrow:after {
   background: #ffc;
 }
 
-.checkInfo {
+.checkInfo, input:invalid {
   border: 2px solid red;
   border-color: #c00 #f66 #f66 #c00;
+}
+.checkInfo:valid {
+  border: initial;
 }
 
 /*Combo input box*/

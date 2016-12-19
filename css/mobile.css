@@ -151,6 +151,9 @@ select {
   margin-bottom: 4px;
 /*  z-index: 2;*/
 }
+#gridInfo {
+  display: none;
+}
 #figureSelector {
   position: absolute;
   overflow-x: hidden;
@@ -343,17 +346,17 @@ table#figureChooserTable td.selected {
   min-width: 110px;
   right: 3px;
 }
-#exampleSequences li a, #exampleSequences li span {
+#programmes li a, #programmes li span {
   margin-left: 20px;
 }
-#exampleSequences li ul li a, #exampleSequences li ul li span {
+#programmes li ul li a, #programmes li ul li span {
   margin-left: 4px;
 }
-#exampleSequences li ul li ul {
+#programmes li ul li ul {
   max-width: 110px;
   word-wrap: break-word;
 }
-#exampleSequences li ul li ul li {
+#programmes li ul li ul li {
   font-size: 10px;
 }
 /* settings */

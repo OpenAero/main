@@ -70,7 +70,7 @@ body {
   float: left;
   overflow-x: hidden;
   overflow-y: auto;
-  width: 294px;
+  width: 288px;
   margin: 0;
   padding: 0;
   height: 99%;
@@ -181,7 +181,7 @@ body {
 }
 #svgContainer {
   position: absolute;
-  top: 50px;
+  top: 68px;
   right: 0px;
   bottom: 0;
   left: 286px;
@@ -190,12 +190,122 @@ body {
   background-color: rgba(255, 255, 255, 0.1);
   overflow: auto;
 }
+#svgContainer.grid {
+  padding-right: 220px; /* create margin for gridInfo block */
+}
 .sequenceOverlay {
   left: -10px !important;
   top: -10px !important;
   z-index: 1000;
   background-color: rgba(255, 255, 255, 0.8) !important;
   transition: background-color 2000ms ease;
+}
+#gridInfo {
+  float: right;
+  top: 0;
+  right: 16px;
+  min-width: 120px;
+  padding: 4px 16px 4px 16px;
+  background-color: #f4f4f4;
+  border-radius: 0 0 2px 2px;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.5);
+  z-index: 4;
+  transition: transform 0.3s ease-in-out;
+  cursor: move;
+}
+#gridInfo.dragging {
+  transition: none;
+}
+#gridInfo.hidden {
+  height: auto !important;
+  transform: translateY(-320px);
+  visibility: visible;
+}
+#gridInfo .expand-toggle {
+  top: 4px;
+  right: 8px;
+}
+#gridInfo div div {
+  margin-top: 12px !important;
+}
+#gridInfo table, #gridInfo tr, #gridInfo tbody {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+#gridInfo td {
+  margin: 0;
+  padding: 0 16px 0 0;
+}
+#gridInfo td:last-child {
+  padding: 0;
+}
+#gridAdditionals {
+  float: right;
+  font-weight: bold;
+}
+#gridColumns {
+  float: right;
+}
+#gridAdditionals.remaining4 {
+  color: #006800;
+}
+#gridAdditionals.remaining3 {
+  color: #205000;
+}
+#gridAdditionals.remaining2 {
+  color: #404800;
+}
+#gridAdditionals.remaining1 {
+  color: #603000;
+}
+#gridAdditionals.remaining0 {
+  color: #801800;
+}
+#gridAdditionals.remaining-1 {
+  color: #a00000;
+}
+#t_gridSpeed {
+  text-align: center;
+}
+#t_proposalsCreateGroups {
+  width: 100%;
+  text-align: center;
+}
+#proposalsFigureCount {
+  width: 48px;
+}
+#proposals {
+  padding: 16px;
+  margin: 0 16px 0 16px;
+  background-color: white;
+  border: 1px solid #ccc;
+  -webkit-touch-callout: normal;
+  -webkit-user-select: initial;
+  -khtml-user-select: initial;
+  -moz-user-select: initial;
+  -ms-user-select: initial;
+  -o-user-select: initial;
+  user-select: initial;
+  white-space: pre-wrap;       /* css-3 */
+  white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+  white-space: -pre-wrap;      /* Opera 4-6 */
+  white-space: -o-pre-wrap;    /* Opera 7 */
+  word-wrap: break-word;       /* Internet Explorer 5.5+ */
+}
+#proposalsSequenceSvgContainer {
+  overflow: auto;
+  height: 240px;
+  margin: 0 16px 0 16px;
+  background-color: white;
+  border: 1px solid #ccc;
+}
+
+#t_proposalsIncomplete {
+  color: red;
+}
+#manual_html_grid_system {
+  float: left;
 }
 #figureSelector {
   position: absolute;
