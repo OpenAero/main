@@ -206,7 +206,6 @@ textarea {
 }
 
 /* generic classes */
-
 .clearBoth {
   clear: both;
 }
@@ -1564,6 +1563,7 @@ i.leftArrow:after, i.rightArrow:after {
 /*position level 2 links vertically and hide*/ 
 #menu li ul {
   visibility:hidden;
+  min-width: 110px;
   transform: scaleY(0);
   transform-origin: 50% 0%;
   transition: transform 0.2s ease-in-out;

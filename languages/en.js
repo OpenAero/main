@@ -355,6 +355,8 @@ lang.en = {
 'iOSsaveFileTitle' : 'Save File',
 'judgesName' : 'Judges Name',
 'language' : 'Language',
+// new 2017.1
+'library' : 'Library',
 // changed 2016.1.3
 'loadNewVersion' : 'A new version is available and will automatically ' +
   'be loaded next time you start OpenAero. Load it now?',
@@ -493,9 +495,6 @@ lang.en = {
 'printString' : 'Sequence string',
 'program' : 'Program',
 'programme' : 'Programme',
-// new 2017.1
-'programmes' : 'Programmes',
-'programmesShort' : 'Prog.',
 'proposalsCreate' : 'Create new proposals',
 'proposalsCreateGroups' : 'Create groups',
 'proposalsDialogClose' : 'Close',

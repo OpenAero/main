@@ -1,4 +1,4 @@
-// fr.js 2016.2
+﻿// fr.js 2016.2
 // This file is part of OpenAero.
 
 //  OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -62,6 +62,9 @@ lang.fr = {
   'sans même une garantie implicite de COMMERCIALISATION ou D\'APTITUDE ' +
   'A UNE TACHE PARTICULIERE. Voir la \'GNU General Public License\' pour ' +
   'plus de détails.</p></div><div>' +
+  '<p>Pour améliorer l\'usage utilisateur, Google Analytics est utilisé pour collecter ' +
+  'les données utilisées. Pour protéger votre vie privée ces données sont rendus anonymes et ' +
+  'ne sont pas partagées avec d\'autres services de Google ou des tierces parties.</p></div><div>' +  
   '<p>OpenAero est conçu, écrit et maintenu par ' +
   '<strong>Ringo Massa</strong>, sur la base du code des programmes ' +
   'OLAN de <strong>Michael Golan</strong>.<br>Plusieurs personnes ont participée, comme:' +
@@ -282,7 +285,16 @@ lang.fr = {
   'dernière version du navigateur <a href="https://www.google.com/intl/en/chrome/browser/">' +
   'Google Chrome</a>.',
 'glider' : 'Planeur',
-'gridView' : 'Vue en tableau',
+// new 2017.1
+'gridAdditionals' : 'Informations requises',
+'gridInfo' : 'Info tableau',
+'gridNegEntry' : 'Entrée dos',
+'gridNegExit' : 'Sortie dos',
+'gridPosEntry' : 'Entrée ventre',
+'gridPosExit' : 'Sortie ventre',
+'gridSpeed' : 'Vitesse',
+// changed 2017.1
+'gridView' : 'le choix du nombre de colonnes de la vue en tableau est dans Vue en tableau',
 'harmony' : 'Harmonie',
 'help' : 'Aide',
 'hideIllegalFigures' : 'Masquer les figures non autorisées',
@@ -339,6 +351,8 @@ lang.fr = {
 'iOSsaveFileTitle' : 'Enregistrer le fichier',
 'judgesName' : 'Nom des Juges',
 'language' : 'Langue',
+// new 2017.1
+'library' : 'Bibliothèque',
 'loadNewVersion' : 'Une nouvelle version d\'OpenAero est disponible. La charger ?',
 'loadNewVersionNoCookies' : 'Une nouvelle version d\'OpenAero est disponible. La charger ?' +
   'Si un programme est ouvert, il sera effacé.',
@@ -481,8 +495,19 @@ lang.fr = {
 'program' : 'Programme',
 // new 2017.1
 'programme' : 'Programme',
-'programmes' : 'Programmes',
-'programmesShort' : 'Prog.',
+'proposalsCreate' : 'Créer de nouvelles propositions',
+'proposalsCreateGroups' : 'Créer des groupes',
+'proposalsDialogClose' : 'Fermer',
+'proposalsExplain' : 'Vous pouvez utiliser cette fenêtre pour une génération aléatoire ' +
+  'de propositions d\'assemblage de figures à partir du programme en cours. Le ' +
+  'nombre de figures des propositions est identique au nombre de colonnes sélectionnées ' +
+  'pour la vue en tableau. Les textes correspondants aux programmes générés peuvent ' +
+  'être copiés dans une autre fenêtre OpenAero, ou tous transférés dans la vue en tableau.',
+'proposalsFigureCount' : 'Figures dans chaque proposition',
+'proposalsIncomplete' : 'la dernière proposition est incompléte car il n\'y a pas ' +
+  'assez de figures dans le programme en cours',
+'proposalsTitle' : 'Créer des propositions d\'assemblage de groupes de figures',
+'proposalsToGrid' : 'Transférer dans la vue en tableau',
 'queue' : 'File/Tampon',
 'queueColumns' : 'Colonnes',
 'queueEmpty' : 'Pas de figure à enregistrer dans la file',

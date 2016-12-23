@@ -1487,9 +1487,8 @@ function switchMobile () {
     document.getElementById('t_fuDesigner').classList.add ('noDisplay');
     // set mobile css
     link.setAttribute('href', 'css/mobile.css');
-    // update Sequence and Programmes main menu links
+    // update Sequence main menu link
     document.getElementById('t_sequence').innerHTML = userText.sequenceShort;
-    document.getElementById('t_programmes').innerHTML = userText.programmesShort;
     // update view menu
     setMobileMenu.innerHTML = userText.desktopVersion;
     // unhide sequence tab
@@ -1508,9 +1507,8 @@ function switchMobile () {
 
     document.getElementById('t_fuDesigner').classList.remove ('noDisplay');
     link.setAttribute('href', 'css/desktop.css');
-    // update Sequence and Programmes main menu links
+    // update Sequence menu link
     document.getElementById('t_sequence').innerHTML = userText.sequence;
-    document.getElementById('t_programmes').innerHTML = userText.programmes;
     // update view menu
     setMobileMenu.innerHTML = userText.mobileVersion;
 
@@ -4448,10 +4446,10 @@ function doOnLoad () {
   var els = document.getElementsByClassName ('boxbg');
   for (var i = els.length - 1; i >= 0; i--) {
     els[i].addEventListener ('mousedown', function(e) {
-      if (e.srcElement && e.srcElement.classList &&
-        e.srcElement.classList.contains ('boxbg') &&
-        (e.srcElement.clientWidth >= e.clientX) &&
-        (e.srcElement.clientHeight >= e.clientY)) {
+      if (e.target && e.target.classList &&
+        e.target.classList.contains ('boxbg') &&
+        (e.target.clientWidth >= e.clientX) &&
+        (e.target.clientHeight >= e.clientY)) {
           this.classList.add ('noDisplay');
         }
       }
@@ -4462,7 +4460,7 @@ function doOnLoad () {
   var els = document.getElementsByClassName ('expand-toggle');
   for (var i = els.length - 1; i >= 0; i--) {
     els[i].addEventListener ('mousedown', function(e) {
-        e.srcElement.parentNode.classList.toggle ('expanded');
+        e.target.parentNode.classList.toggle ('expanded');
       }
     );
   }
@@ -5683,7 +5681,7 @@ function addRollSelectElement (figNr, rollEl, elNr, parent) {
 }
 
 // createProgramme will build a programme and add it to
-// the programmes menu list
+// the library menu list
 function createProgramme (year, rnLower, rules, cat, seq, string) {
   var key = year + rules + ' ' + cat + ' ' + seq;
   var sequence = '<sequence><class>';
@@ -5697,13 +5695,13 @@ function createProgramme (year, rnLower, rules, cat, seq, string) {
   }
   sequence += '<oa_version>' + version + '</oa_version></sequence>';
   console.log ('Adding programme: ' + key);
-  programmes[key] = sequence;
+  library[key] = sequence;
   addProgrammeToMenu (key);
 }  
 
-// addProgrammeToMenu will add an entry in the programmes menu list
+// addProgrammeToMenu will add an entry in the library menu list
 function addProgrammeToMenu (key) {
-  var el = document.getElementById('programmes');
+  var el = document.getElementById('library');
   var year = key.match (/^[\d]+/)[0];
   if (year) {
     var li = document.getElementById('year' + year);
@@ -5756,7 +5754,7 @@ function addProgrammeToMenu (key) {
 // -set correct options in settings dialog
 function setOptions () {
   // add programme entries
-  for (var key in programmes) addProgrammeToMenu (key);
+  for (var key in library) addProgrammeToMenu (key);
 
   // set settings dialog options
   
@@ -7719,7 +7717,7 @@ function parseRules (start) {
         year = rulesYear (ruleName);
       }
     } else if (rules[i].match (/^(demo|programme)[\s]*=/)) {
-      // add programmes
+      // add library
       if (seqName && year) {
         createProgramme (
           year,
@@ -13295,7 +13293,7 @@ function programme () {
   var key = this.id.replace(/^programme-/, '');
   OLANBumpBugCheck = false;
   fileName.value = '';
-  activateXMLsequence(programmes[key]);
+  activateXMLsequence(library[key]);
 }
 
 // openSequence will load a sequence from a .seq file
@@ -14213,7 +14211,7 @@ function saveFile(data, name, ext, filter, format) {
         }
       });
     });
-    return;
+    return result;
   }
 
   // prevent asking confirmation of 'leaving'
@@ -14246,86 +14244,6 @@ function saveFile(data, name, ext, filter, format) {
     saveAs (blob, name + ext);
   });
   
-  return;
-
-  // Everything below does not get triggered. Deprecated by fileSaver.js
-  // Keep until fileSaver.js is checked to work correctly
-  
-  /** disabled next part. Assume the sequence is saved by the user
-
-  // reactivate the warning after five seconds
-  var handle = setTimeout(function() {
-    if (!sequenceSaved) {
-      // Prevent OpenAero from being left unintentionally
-      window.addEventListener('beforeunload', preventUnload);
-    }
-  }, 5000);
-  */
-
-  // Transform utf8 to base64, otherwise handling in the data URI might
-  // not work well
-  if (RegExp(';utf8$').test(format)) {
-    format = format.replace('utf8', 'base64');
-    data = btoa(encode_utf8(data));
-  }
-
-  var fileURL = 'data:' + format + ',' + data;
-
-  var a = document.createElement('a');
-
-  if (/i(Pad|Phone|Pod)/i.test (navigator.userAgent)) {
-    // 2a) iOS
-    
-    console.log('Save for iOS');
-    document.getElementById('iOSsaveDialog').classList.remove ('noDisplay');
-    var el = document.getElementById ('t_iOSsaveFile');
-    el.href = 'iOSsave.html#' + fileURL;
-    // use a random target string to make sure a new tab is created
-    el.target = btoa (Math.random());
-  } else if (typeof a.download != "undefined") {
-    // 2b) use "download" attribute
-    // Present an alert box with a download link for the file
-
-    /** Code for immediate saving, without seperate filename dialog
-     * This does work, but... The name under which the file was saved
-     * can currently (februari 2016) not be retrieved, causing the
-     * 'File name' sequence info field to be incorrect
-     * 
-     * Keep code for future, in case filename reporting is added to
-     * javascript
-    var save = document.createElement('a');
-    save.href = fileURL;
-    save.target = '_blank';
-    save.download = name + ext;
-    
-    var event = document.createEvent('MouseEvents');
-    event.initMouseEvent("click", true, true, window,
-      0, 0, 0, 0, 0, false, false, false, false, 0, null);
-    save.dispatchEvent(event);
-    (window.URL || window.webkitURL).revokeObjectURL(save.href);
-    */
-    
-    console.log('Save with download attribute');
-    saveDialog (userText.downloadHTML5, name, ext);
-    document.getElementById('t_saveFile').innerHTML =
-      '<a download="' + name + ext + '" href="' + fileURL +
-      '" id="dlButton">' + userText.saveFile + '</a>';
-  
-  } else {
-
-      // 3) Present an alert box with a download link for the file, to
-      //    be used with right-click and "Save as...". The "download"
-      //    attribute will not work, as otherwise we would not be
-      //    running this routine. But we'll keep it for consistency
-      
-      // build HTML for alert box
-      console.log('Save with right-click');
-      saveDialog (userText.downloadLegacy, name, ext);
-      document.getElementById('t_saveFile').innerHTML =
-        '<a href="' + fileURL + '" id="dlButton" target="_blank">' +
-        userText.saveFile + '</a>';  
-  }
-
   return result;
 }
   

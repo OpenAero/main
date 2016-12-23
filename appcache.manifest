@@ -101,11 +101,11 @@ jszip.min.js
 language.html
 languages/en.js
 languages/fr.js
+library.js
 logo.js
 manual.html
 OpenAero.js
 print.html
-programmes.js
 rules/rules16.js
 rules/rules17-civa.js
 rules/rules15-aac.js
