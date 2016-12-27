@@ -13,6 +13,7 @@
 * added Romanian Aeroclub logo
 * only show Harmony box on CIVA forms when Harmony K is present
 * renamed 'demo' to 'library' throughout as this is more appropriate. Individual sequences are named 'programme'
+* add tag to sequence file when sequence rules are active and verified correct
 
 2016.3.5
 * updated NZAC rules for 2016/2017

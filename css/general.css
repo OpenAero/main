@@ -135,12 +135,12 @@ body {
 }
 body.docs {
   -webkit-touch-callout: normal;
-  -webkit-user-select: initial;
-  -khtml-user-select: initial;
-  -moz-user-select: initial;
-  -ms-user-select: initial;
-  -o-user-select: initial;
-  user-select: initial;
+  -webkit-user-select: text;
+  -khtml-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  -o-user-select: text;
+  user-select: text;
 }
 #canvas {
   background-color: white;

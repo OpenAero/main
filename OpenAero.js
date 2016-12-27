@@ -1866,7 +1866,7 @@ function proposalsDialog (e) {
 
 // proposalsToGrid loads the proposals from the dialog to the Grid
 function proposalsToGrid () {
-  sequenceText.value = document.getElementById ('proposals').innerText.trim();
+  sequenceText.value = document.getElementById ('proposals').textContent.trim();
   proposalsDialog (false);
   checkSequenceChanged (true);
 }
@@ -2740,7 +2740,6 @@ function makeRollTopLine () {
   return Array(pathArray);
 }
 
-// #################################
 // Code for making (rolling) turns
 // This has to be changed in the future to improve the look of the code
 // For now we keep it like this as it does work
@@ -4290,7 +4289,6 @@ function drawArestiText(figNr, aresti) {
   drawText (aresti, X, Y, 'start', 'text-' + figNr);
 }
 
-// #####################################################
 // Functions for setting up the software
 
 // doOnLoad is only called on initial loading of the page
@@ -4988,7 +4986,6 @@ function installChromeApp() {
   );
 }
 
-// #####################################################
 // Functions for interpreting user input and variables
 
 // confirmYes is executed when Yes is clicked in a confirm box. It
@@ -5708,7 +5705,7 @@ function addProgrammeToMenu (key) {
     if (!li) {
       li = document.createElement('li');
       li.setAttribute ('id', 'year' + year);
-      li.innerHTML = '<a href="#">' + year + '</a>' +
+      li.innerHTML = '<span>' + year + '</span>' +
         '<i class="material-icons leftArrow"></i>';
       var ul = document.createElement('ul');
       li.appendChild (ul);
@@ -5718,23 +5715,23 @@ function addProgrammeToMenu (key) {
     }
     var subli = document.createElement('li');
     if (key.match (/^[\d]+ CIVA(-Glider|)/)) {
-      subli.innerHTML = '<a href="#">' +
+      subli.innerHTML = '<span>' +
         key.replace(/^[\d]+[ ]*/, '').replace (/ /g, '&nbsp;').replace (/-/g, '&#8209;') +
-        '</a>';
+        '</span>';
       subli.setAttribute ('id', 'programme-' + key);
       subli.addEventListener ('click', programme, false);
     } else {
       var group = key.match (/^[\d]+ ([^ ]+)/)[1];
       var subul = document.getElementById(year + ' ' + group);
       if (!subul) {
-        subli.innerHTML = '<a href="#">' + group + '</a>' +
+        subli.innerHTML = '<span>' + group + '</span>' +
           '<i class="material-icons rightArrow"></i>';
         subul = document.createElement ('ul');
         subul.id = year + ' ' + group;
         subli.appendChild (subul);
       }
       var subsubli = document.createElement('li');
-      subsubli.innerHTML = '<a href="#">' + key.replace(/^[\d]+ [^ ]+[ ]*/, '') + '</a>';
+      subsubli.innerHTML = '<span>' + key.replace(/^[\d]+ [^ ]+[ ]*/, '') + '</span>';
       subsubli.setAttribute ('id', 'programme-' + key);
       subsubli.addEventListener ('click', programme, false);
       subul.appendChild (subsubli);
@@ -5742,7 +5739,7 @@ function addProgrammeToMenu (key) {
     ul.appendChild(subli);
   } else {
     var li = document.createElement('li');
-    li.innerHTML = '<a href="#">' + key + '</a>';
+    li.innerHTML = '<span>' + key + '</span>';
     li.setAttribute ('id', 'programme-' + key);
     li.addEventListener ('click', programme, false);
     el.appendChild(li);
@@ -6585,13 +6582,6 @@ function addRollSelectors (figureId) {
       }
     }
   }
-  /* HACK : force redraw of #leftBlock by removing and then showing the
-   * #design div. Fixes issue #171
-   */
-  /*document.getElementById('design').classList.add ('noDisplay');
-  setTimeout (function(){
-    document.getElementById('design').classList.remove ('noDisplay');
-    }, 300);*/
 }
 
 // setUndoRedo will update undo/redo buttons and redo object
@@ -10015,8 +10005,9 @@ function selectFigureFu (id) {
   }
 }
 
-// ###################################################
-// Functions for creating complete sequences
+/*******************************************
+ * Functions for creating complete sequences
+ ******************************************/
 
 // checkFloatingPoint checks if a floating point correction should be
 // made and adds this to the figures object where applicable
@@ -12376,7 +12367,7 @@ function makeFormGrid (cols, width, svg) {
   
   // run the matching routine both on the normal and reverse order of
   // figures. This improves match finding. Only use the lowest value.
-  gridAdditionals.innerText = Math.max (
+  gridAdditionals.textContent = Math.max (
     Math.min (
       getFigureSets(sets).length,
       getFigureSets(sets.reverse()).length
@@ -12385,8 +12376,8 @@ function makeFormGrid (cols, width, svg) {
 
   if (additionalFig.max) {
     gridAdditionals.setAttribute('class', 'remaining' + Math.max (
-      Math.min (additionalFig.max - gridAdditionals.innerText, 4), -1));
-    gridAdditionals.innerText += ' / ' + additionalFig.max;
+      Math.min (additionalFig.max - gridAdditionals.textContent, 4), -1));
+    gridAdditionals.textContent += ' / ' + additionalFig.max;
   } else gridAdditionals.setAttribute('class', '');
 }  
 
@@ -12521,7 +12512,8 @@ function createFigureProposals () {
     content += string.trim() + '\n';
     sequenceText.value += string;
   }
-  document.getElementById ('proposals').innerText = content;
+
+  document.getElementById ('proposals').textContent = content;
 
   activeSequence.figures = [];
   var savedText = activeSequence.text;
@@ -14258,6 +14250,12 @@ function saveSequence () {
     // remove the end tag, add figure XML and add the end tag again.
     // Then beautify the output.
     var xml = activeSequence.xml.replace('</sequence>', '');
+    // check if the alerts box contains no alerts. If so, add verified
+    // tag
+    if (rulesActive &&
+      (document.getElementById('alerts').childElementCount < 2)) {
+      xml += '<verified>' + rulesActive + '</verified>';
+    }
     xml += buildFigureXML();
     xml += buildSettingsXML();
     xml += '</sequence>';
@@ -14413,7 +14411,7 @@ function emailSequence () {
     el.click();
   }
   
-  el.setAttribute('href', '#');
+  el.setAttribute('href', '');
   missingInfoCheck (email);
 }
 
