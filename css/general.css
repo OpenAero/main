@@ -1617,7 +1617,8 @@ i.leftArrow:after, i.rightArrow:after {
   transform-origin: 0% 0%;
   position:absolute;
   left:200px;
-  width:180px;
+  white-space: nowrap;
+  width: initial;
   z-index:10;
   -webkit-transform-style: preserve-3d;
   margin-top: -30px;

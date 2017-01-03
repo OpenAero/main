@@ -46,7 +46,7 @@ var version = '2017.1';
 var versionNew = {
   '2017.1' : [
     ['CIVA rules and Free Known sequences for 2017', 4],
-    ['IAC Power rules and sequences for 2016', 3],
+    ['IAC Power rules and sequences for 2017', 3],
     ['Added Grid info panel with figure group generator to improve ' +
     'figure selection for Free Unknowns', 4]
   ],
@@ -57,7 +57,7 @@ var versionNew = {
     ['Improved printing for iOS and Microsoft Edge', 2]
   ],
   '2016.3' : [
-    ['Made many changes to interface to conform to ' +
+    ['Made many changes to the interface to conform to ' +
     '<a href="https://material.google.com/" target="_blank">Material ' +
     'Design</a> philosophy. This will be the new look and feel of ' +
     'OpenAero to improve user interaction.', 3]

@@ -294,7 +294,7 @@ lang.fr = {
 'gridPosExit' : 'Sortie ventre',
 'gridSpeed' : 'Vitesse',
 // changed 2017.1
-'gridView' : 'le choix du nombre de colonnes de la vue en tableau est dans Vue en tableau',
+'gridView' : 'Le choix du nombre de colonnes de la vue en tableau est dans Vue en tableau',
 'harmony' : 'Harmonie',
 'help' : 'Aide',
 'hideIllegalFigures' : 'Masquer les figures non autorisées',

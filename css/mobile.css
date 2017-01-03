@@ -343,20 +343,22 @@ table#figureChooserTable td.selected {
 }
 /* make the right menus float from right edge to left */
 #menu li ul.right {
-  min-width: 110px;
+  min-width: 132px;
   right: 3px;
 }
-#programmes li a, #programmes li span {
+#library li a, #library li span {
   margin-left: 20px;
 }
-#programmes li ul li a, #programmes li ul li span {
+#library li ul li a, #library li ul li span {
   margin-left: 4px;
 }
-#programmes li ul li ul {
-  max-width: 110px;
+#library li ul li ul {
+  min-width: 132px;
+  max-width: 132px;
   word-wrap: break-word;
+  white-space: normal !important;
 }
-#programmes li ul li ul li {
+#library li ul li ul li {
   font-size: 10px;
 }
 /* settings */

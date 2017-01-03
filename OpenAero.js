@@ -5714,7 +5714,9 @@ function addProgrammeToMenu (key) {
       var ul = li.lastChild;
     }
     var subli = document.createElement('li');
-    if (key.match (/^[\d]+ CIVA(-Glider|)/)) {
+    // don't put the current year CIVA sequences under CIVA submenu
+    if (key.match (/^[\d]+ CIVA(-Glider|)/) &&
+      (year === (version.match (/[\d]+/)[0]))) {
       subli.innerHTML = '<span>' +
         key.replace(/^[\d]+[ ]*/, '').replace (/ /g, '&nbsp;').replace (/-/g, '&#8209;') +
         '</span>';
