@@ -33,6 +33,8 @@
 // - updated infocheck directives for actype and acreg
 // 2017
 // - updated rules for 2017
+// 2017.1.1
+// - corrected fam 7 requirement for Sportsman Free
 
 //###############################################################################
 //##### IAC Primary KNOWN #######################################################
@@ -65,6 +67,9 @@ rules.push("posnl=8");
 
 rules.push("[IAC Sportsman Free]");
 
+rules.push("group-fam7274=^7\\.(2\\.[1-4]|4\\.[1-6])\\.");
+rules.push("fam7274-name=7.2.1 thru 7.2.4, or 7.4.1 thru 7.4.6");
+
 rules.push("posnl=6");
 rules.push("basefig-max=12");
 rules.push("k-max=134");
@@ -75,7 +80,7 @@ rules.push("basefigex11-repeat=1");
 rules.push("roll-repeat=1");
 rules.push("spin-repeat=1");
 
-rules.push("fam7-min=1");
+rules.push("fam7274-min=1");
 rules.push("fam8-min=1");
 rules.push("fam9-min=1");
 

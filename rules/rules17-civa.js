@@ -72,6 +72,8 @@ OpenAero 2016.3.2
 * - updated reference and example sequences for 2017
 * - added tailslides to Advanced Free Unknown
 * - added double bumps to Advanced and Unlimited Free Unknown
+* 2017.1.1
+* - added 8.8.1.4 to Unlimited Unknown
 */
 
 //#######################################################################################
@@ -595,6 +597,7 @@ rules.push("8.6.8.3-4");
 
 // double bumps
 rules.push("8.8.1.1 NOU");
+rules.push("8.8.1.4 NOU");
 rules.push("8.8.2.1 NOU");
 rules.push("8.8.5.1 NOU");
 rules.push("8.8.6.1 NOU");

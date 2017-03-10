@@ -1,3 +1,9 @@
+2017.1.1
+* added 8.8.1.4 to Unlimited Unknown (was omitted in 2017.1)
+* added BAeA 2017 sequences and updated rules
+* commented all instances of beforeunload. Not supported by app. Data is always saved in localStorage
+* corrected Fam 7 requirement for IAC Sportsman Free (7.2.1 thru 7.2.4, or 7.4.1 thru 7.4.6)
+
 2017.1
 * added 360 text to 360 turn
 * added loop with steep turn figures (oaj, oajj, oajjj, oajjjj)

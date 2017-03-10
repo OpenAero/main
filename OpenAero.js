@@ -4294,20 +4294,20 @@ function drawArestiText(figNr, aresti) {
 // doOnLoad is only called on initial loading of the page
 function doOnLoad () {
   // define DOM variables
-  sequenceText = document.getElementById('sequence_text');
-  sportingClass = document.getElementById('class');
-  fileName = document.getElementById('fileName');
-  getLocal ('fileName', function(value) {fileName.value = value});
-  newTurnPerspective = document.getElementById('newTurnPerspective');
-  debug = document.getElementById('debug');
-  
   try {
     if (chrome && chrome.fileSystem) {
       chromeApp.active = true;
       console.log('Running as Chrome app');
     }
   } catch (e) {};
-  
+
+  sequenceText = document.getElementById('sequence_text');
+  sportingClass = document.getElementById('class');
+  fileName = document.getElementById('fileName');
+  getLocal ('fileName', function(value) {fileName.value = value});
+  newTurnPerspective = document.getElementById('newTurnPerspective');
+  debug = document.getElementById('debug');
+    
   // add all listeners for clicks, keyup etc
   addEventListeners();
 
@@ -4523,15 +4523,33 @@ function doOnLoad () {
   
   // load Google Analytics
   try {
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-    
-    ga('create', 'UA-12919842-5', 'auto');
-    ga('set', 'forceSSL', true); // always use https
-    ga('set', 'anonymizeIp', true); // enable IP masking
-    ga('send', 'pageview');
+    if (chromeApp.active) {
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', 'https://www.google-analytics.com/analytics.js', true);
+      xhr.responseType = 'blob';
+      xhr.onload = function(e) {
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script',this.response,'ga');
+        
+        ga('create', 'UA-12919842-5', 'auto');
+        ga('set', 'forceSSL', true); // always use https
+        ga('set', 'anonymizeIp', true); // enable IP masking
+        ga('send', 'pageview');
+      };
+      xhr.send();
+    } else {
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+      
+      ga('create', 'UA-12919842-5', 'auto');
+      ga('set', 'forceSSL', true); // always use https
+      ga('set', 'anonymizeIp', true); // enable IP masking
+      ga('send', 'pageview');
+    }
   } catch (e) {};
 }
 
@@ -4627,9 +4645,6 @@ function addEventListeners () {
     window.addEventListener ('touchend', Drop);    
   }
   window.addEventListener ('mouseup', Drop);
-  window.addEventListener ('unload', function(){
-    storeLocal ('fileName', fileName.value)}
-  );
   
   // menu
   document.getElementById('file').addEventListener('mousedown', function(){
@@ -4740,7 +4755,7 @@ function addEventListeners () {
   document.getElementById('logoFile').addEventListener('change', openLogoFile, false);
 
   document.getElementById('notes').addEventListener('change', changeSequenceInfo, false);
-  fileName.addEventListener('keyup', updateSaveFilename, false);
+  fileName.addEventListener('input', updateSaveFilename, false);
     
   // figure editor options
   document.getElementById('manual.html_adding_a_figure').addEventListener('mousedown', function(){
@@ -6026,7 +6041,7 @@ function restoreDefaultSettings () {
     userText.restoreDefaultSettings,
     function(){
       storeLocal ('settings', '');
-      window.removeEventListener('beforeunload', preventUnload);
+      // window.removeEventListener('beforeunload', preventUnload);
       // reload the page, sequence will be provided by localStorage
       window.location.reload(true);
     }
@@ -7057,7 +7072,7 @@ function addUpdateListener () {
         var t = (storage)? userText.loadNewVersion : userText.loadNewVersionNoCookies;
         confirmBox (t, userText.loadNewVersionTitle, function(){
           sequenceSaved = true;
-          window.removeEventListener('beforeunload', preventUnload);
+          // window.removeEventListener('beforeunload', preventUnload);
           // reload the page, sequence will be provided by localStorage
           window.location.reload(true);
         });
@@ -13078,12 +13093,15 @@ function checkSequenceChanged (force) {
   var selectFigureId = false;
 
   // whenever the sequence is empty, clear the filename
-  if (sequenceText.value == '') fileName.value = '';
+  if (sequenceText.value == '') {
+    fileName.value = '';
+    storeLocal ('fileName', fileName.value);
+  }
   
   // Prevent OpenAero from being left unintentionally
   if (activeSequence.text != sequenceText.value) {
     sequenceSaved = false;
-    window.addEventListener('beforeunload', preventUnload);
+    // window.addEventListener('beforeunload', preventUnload);
   }
 
   if ((activeSequence.text != sequenceText.value) || (force === true)) {
@@ -13094,7 +13112,7 @@ function checkSequenceChanged (force) {
     // whenever the string is empty, consider it 'saved'
     if (string === '') {
       sequenceSaved = true;
-      window.removeEventListener('beforeunload', preventUnload);
+      // window.removeEventListener('beforeunload', preventUnload);
     }
 
     var figure = [];
@@ -13287,6 +13305,7 @@ function programme () {
   var key = this.id.replace(/^programme-/, '');
   OLANBumpBugCheck = false;
   fileName.value = '';
+  storeLocal ('fileName', fileName.value);
   activateXMLsequence(library[key]);
 }
 
@@ -13305,6 +13324,7 @@ function openSequence () {
     var filename = el.value.replace(/.*\\/, '').replace(/\.[^.]*$/, '');
     
     fileName.value = filename;
+    storeLocal ('fileName', fileName.value);
     fileName.updateSaveFilename;
     
     // rebuild and reset the form
@@ -13645,7 +13665,7 @@ function loadedSequence(evt) {
   }
   // changeSequenceInfo();
   sequenceSaved = true;
-  window.removeEventListener('beforeunload', preventUnload);
+  // window.removeEventListener('beforeunload', preventUnload);
 
   // Activate the loading of the checking rules (if any)
   changeCombo('program');
@@ -13897,7 +13917,7 @@ function activateXMLsequence (xml, noLoadRules) {
   if (!noLoadRules) checkFuFiguresFile();
 
   // sequence was just loaded, so also saved
-  window.removeEventListener('beforeunload', preventUnload);
+  // window.removeEventListener('beforeunload', preventUnload);
   sequenceSaved = true;
   
   return true;
@@ -14109,7 +14129,10 @@ function updateSaveFilename() {
     el.download = filename + document.getElementById('fileExt').innerHTML;
   }*/
   // only update when different, prevents cursor jump
-  if (fileName.value !== filename) fileName.value = filename;
+  if (fileName.value !== filename) {
+    fileName.value = filename;
+  }
+  storeLocal ('fileName', fileName.value);
 }
 
 // writeFileEntry uses the Chrome app API to write files
@@ -14198,10 +14221,11 @@ function saveFile(data, name, ext, filter, format) {
       writeFileEntry (w, blob, function(){
         // this callback is called after succesful write
         fileName.value = w.name.replace(/\.[^.]*$/, '');
+        storeLocal ('fileName', fileName.value);
         fileName.updateSaveFilename;
         if (ext === '.seq') {
           sequenceSaved = true;
-          window.removeEventListener('beforeunload', preventUnload);
+          // window.removeEventListener('beforeunload', preventUnload);
         }
       });
     });
@@ -14209,7 +14233,7 @@ function saveFile(data, name, ext, filter, format) {
   }
 
   // prevent asking confirmation of 'leaving'
-  window.removeEventListener('beforeunload', preventUnload);
+  // window.removeEventListener('beforeunload', preventUnload);
   
   var blob = new Blob ([data], {type: format.replace(/;.+$/, '')});
   
@@ -14298,7 +14322,7 @@ function saveQueue () {
   // Beautify the output.
   var xml = vkbeautify.xml (activeSequence.xml);
   // prevent "leaving" warning
-  window.removeEventListener('beforeunload', preventUnload);
+  // window.removeEventListener('beforeunload', preventUnload);
   saveFile (
     xml,
     filename,
@@ -14308,7 +14332,7 @@ function saveQueue () {
   );
   if (!sequenceSaved) {
     // Prevent OpenAero from being left unintentionally
-    window.addEventListener('beforeunload', preventUnload);
+    // window.addEventListener('beforeunload', preventUnload);
   }
   // restore sequence
   sequenceText.value = sequenceString;
@@ -15834,6 +15858,7 @@ function activeFileName (append) {
     filename = filename.replace(/\s\s+/g, ' ');
     filename = filename.replace(/^\s+|\s+$/g, '');
     fileName.value = filename;
+    storeLocal ('fileName', fileName.value);
   } else {
     filename = fileName.value;
   }

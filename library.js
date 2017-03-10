@@ -1,4 +1,4 @@
-// library.js 2017.1
+// library.js
 
 // This file is part of OpenAero.
 
@@ -165,6 +165,33 @@ var library = {
   "<sequence_text>/,4,3fdh3if;3.+++~~ 3> ~~+++24.pbB(`````f')..3..- -1% -5is,2....''irp3,34- 6% -2j15 /~~++,8ta```2if'+`` 4,3h5f /+++1n(,5if,3....)``,5 3% ```+''3if.iBb(````````,4,2`),5 fb`24.'</sequence_text>" +
   '<logo>IAC</logo>' +
   '<oa_version>2017.1</oa_version>' +
+  '</sequence>',
+
+  '2017 BAeA-Glider Intermediate Known':
+  '<sequence>' +
+  '<category>Intermediate</category>' +
+  '<class>glider</class>' +
+  '<program>Known</program>' +
+  '<rules>BAeA</rules>' +
+  '<positioning>15</positioning>' +
+  '<harmony>10</harmony>' +
+  "<sequence_text>~++ig2~ ~~+h.' (2,0) 22 7% 2j (-7,0) -2% p... m- (4,0) -io- (0,0) -iv...' (-3,0) ,1 (-2,0) -1% c2....' (4,0) -1% '2'rc</sequence_text>" +
+  '<logo>BAeA</logo>' +
+  '<oa_version>2017.1.1</oa_version>' +
+  '</sequence>',
+  
+  '2017 BAeA-Glider Int Free Known':
+  '<sequence>' +
+  '<category>Intermediate</category>' +
+  '<class>glider</class>' +
+  '<program>Free Known</program>' +
+  '<rules>BAeA</rules>' +
+  '<positioning>15</positioning>' +
+  '<sequence_text>"@A" 2t "@B" c2 "@C" h "@D" m2 "@E" 2a</sequence_text>' +
+  '<logo>BAeA</logo>' +
+  '<notes>See "Creating a Free Known sequence" in the manual</notes>' +
+  '<default_view>grid:5</default_view>' +
+  '<oa_version>2017.1.1</oa_version>' +
   '</sequence>',
   
   '2016 CIVA Unl Free Known':

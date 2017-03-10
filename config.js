@@ -36,7 +36,7 @@
 // Where a new x should be used for versions that create sequences not
 // fully backward compatible with the previous version
 
-var version = '2017.1';
+var version = '2017.1.1';
 /* versionNew is an object that contains version update information
    The structure is {vvv : [[ttt, n], ...], ...} , where
    vvv = version number
@@ -44,6 +44,9 @@ var version = '2017.1';
    n   = importance (higher = more important)
 */
 var versionNew = {
+  '2017.1.1' : [
+    ['BAeA Power and glider rules and sequences for 2017', 3]
+  ],
   '2017.1' : [
     ['CIVA rules and Free Known sequences for 2017', 4],
     ['IAC Power rules and sequences for 2017', 3],
