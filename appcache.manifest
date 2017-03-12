@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# OpenAero version 2017.1.1
+# OpenAero version 2017.1.1.1
 addtohomescreen/addtohomescreen.css
 addtohomescreen/addtohomescreen.min.js
 arestisystem.html
@@ -47,7 +47,6 @@ css/desktop.css
 css/general.css
 css/MaterialIcons-Regular.woff
 css/mobile.css
-css/print.css
 favicons/favicon16.png
 favicons/favicon24.png
 favicons/favicon32.png

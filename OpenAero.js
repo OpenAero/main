@@ -14551,9 +14551,24 @@ function printForms () {
         }
       }, function(w) {
         var win = w.contentWindow;
+        var style = win.document.createElement ('style');
+        style.type = 'text/css';
+        style.media = 'print';
+        style.innerHTML = '@page {size: auto; margin: ' +
+          document.getElementById ('marginTop').value + 'mm ' +
+          document.getElementById ('marginRight').value + 'mm ' +
+          document.getElementById ('marginBottom').value + 'mm ' +
+          document.getElementById ('marginLeft').value + 'mm}' +
+          'body {margin: 0;}' +
+          '.breakAfter {position: relative; display:block; ' +
+          'page-break-inside:avoid; page-break-after:always; ' +
+          'height: 100%;}' +
+          'svg {position: absolute; top: 0; height: 100%;}';
+
         win.onLoad = function() {
           win.document.title = activeFileName();
           win.document.body = buildForms (win);
+          win.document.head.appendChild(style);
           if (win.matchMedia) {
             var mediaQueryList = win.matchMedia ('print');
             mediaQueryList.addListener (function (mql) {
@@ -14580,7 +14595,6 @@ function printForms () {
         'height: 100%;}' +
         'svg {position: absolute; top: 0; height: 100%;}';
       win.document.head.appendChild(style);
-      console.log(win.document);
 
       // no print on Android, leave it to the user
       if (!/Android/i.test(navigator.userAgent)) {
