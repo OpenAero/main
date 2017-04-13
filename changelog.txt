@@ -1,3 +1,11 @@
+2017.1.2
+* added support for use of sequence string in library.js
+* added 2017 IAC Glider Known sequences
+* added Floating Point for IAC Advanced and Unlimited
+* moved "F.P." to IAC Form A Aresti nrs column, when applicable
+* added 2018 NZAC sequences and rules
+* disabled checkForApp for other than ChromeOS as Chrome apps will be discontinued for those in 2018
+
 2017.1.1.1
 * fixed printing issue for Chrome app, caused by invalid print css
 

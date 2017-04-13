@@ -154,7 +154,8 @@ rules.push("[IAC Advanced Free]");
 
 rules.push("posnl=12");
 rules.push("basefig-max=12");
-rules.push("k-max=300");
+rules.push("k-max=301");
+rules.push("floating-point=1");
 
 rules.push("basefig-repeat=1");
 rules.push("roll-repeat=1");
@@ -206,5 +207,7 @@ rules.push("infocheck=pilot;actype;acreg;positioning");
 rules.push("[IAC Unlimited Free]");
 
 rules.push("posnl=26");
+rules.push("k-max=421");
+rules.push("floating-point=1");
 
 rules.push("more=CIVA/IAC Unlimited Free");

@@ -109,6 +109,7 @@ rules.push("infocheck=positioning");
 rules.push("(CIVA Unlimited Free)");
 rules.push("posnl=40");//assume no line judges
 rules.push("poslj=20");
+rules.push("k-max=420");
 
 rules.push("more=CIVA/IAC Unlimited Free");
 
@@ -119,7 +120,6 @@ rules.push("more=CIVA/IAC Unlimited Free");
 rules.push("(CIVA/IAC Unlimited Free)");
 
 rules.push("basefig-max=9");
-rules.push("k-max=420");
 
 rules.push("basefig-repeat=1");
 rules.push("roll-repeat=1");

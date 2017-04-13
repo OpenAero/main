@@ -36,7 +36,7 @@
 // Where a new x should be used for versions that create sequences not
 // fully backward compatible with the previous version
 
-var version = '2017.1.1.1';
+var version = '2017.1.2';
 /* versionNew is an object that contains version update information
    The structure is {vvv : [[ttt, n], ...], ...} , where
    vvv = version number
@@ -44,6 +44,13 @@ var version = '2017.1.1.1';
    n   = importance (higher = more important)
 */
 var versionNew = {
+  '2017.1.2' : [
+    ['Disabled Chrome App installation for other than ChromeOS as ' +
+      'support <a href="https://blog.chromium.org/2016/08/from-chrome-apps-to-web.html" target="_blank">' +
+      'will be ended by Google</a>', 4],
+    ['IAC Glider sequences for 2017', 3],
+    ['NZAC Power sequences for 2017/2018', 3]
+  ],
   '2017.1.1' : [
     ['BAeA Power and glider rules and sequences for 2017', 3]
   ],

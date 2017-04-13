@@ -23,6 +23,24 @@
 
 var library = {
 
+	'2018 NZAC Primary Known':
+	'https://openaero.net/?s=PHNlcXVlbmNlPgo8Y2F0ZWdvcnk-UHJpbWFyeSA8L2NhdGVnb3J5Pgo8Y2xhc3M-cG93ZXJlZDwvY2xhc3M-Cjxwcm9ncmFtPktub3duIENvbXB1bHNvcnk8L3Byb2dyYW0-CjxydWxlcz5OWkFDPC9ydWxlcz4KPHBvc2l0aW9uaW5nPjM8L3Bvc2l0aW9uaW5nPgo8c2VxdWVuY2VfdGV4dD41JSBkIGl2Li5zLicnK34gLTElIC4uLidjLi4uMi4uLitgIDElIGBgK28rYCA4JSB-KzJqKyAuJzErfjwvc2VxdWVuY2VfdGV4dD4KPGxvZ28-TlpBQzwvbG9nbz4KPG9hX3ZlcnNpb24-MjAxNy4xLjE8L29hX3ZlcnNpb24-Cjwvc2VxdWVuY2U-',
+
+	'2018 NZAC Recreational Known':
+	'https://openaero.net/?s=PHNlcXVlbmNlPgo8Y2F0ZWdvcnk-UmVjcmVhdGlvbmFsPC9jYXRlZ29yeT4KPGNsYXNzPnBvd2VyZWQ8L2NsYXNzPgo8cHJvZ3JhbT5Lbm93biBDb21wdWxzb3J5PC9wcm9ncmFtPgo8cnVsZXM-TlpBQzwvcnVsZXM-Cjxwb3NpdGlvbmluZz42PC9wb3NpdGlvbmluZz4KPHNlcXVlbmNlX3RleHQ-J20yICgtMTgsMCkgOCUgfn4yan5-IH5-K2l2JydzJyd-fiB-KydoLi4nK34gfn5gYi4nICgtNiwwKSAtMiUgYGMuLi4uJzIrYGAgLTElIGBgK28rYCAnMWB-PC9zZXF1ZW5jZV90ZXh0Pgo8bG9nbz5OWkFDPC9sb2dvPgo8b2FfdmVyc2lvbj4yMDE3LjEuMTwvb2FfdmVyc2lvbj4KPGRlZmF1bHRfdmlldz5CPC9kZWZhdWx0X3ZpZXc-Cjwvc2VxdWVuY2U-',
+	
+	'2018 NZAC Sports Known':
+	'https://openaero.net/?s=PHNlcXVlbmNlPgo8dGVhbT5OWkw8L3RlYW0-CjxjYXRlZ29yeT5TcG9ydHM8L2NhdGVnb3J5Pgo8Y2xhc3M-cG93ZXJlZDwvY2xhc3M-Cjxwcm9ncmFtPktub3duIENvbXB1bHNvcnkgMjAxODwvcHJvZ3JhbT4KPHJ1bGVzPk5aQUM8L3J1bGVzPgo8cG9zaXRpb25pbmc-MTA8L3Bvc2l0aW9uaW5nPgo8c2VxdWVuY2VfdGV4dD5jYygyKTIrYGAgKDAsMCkgMiUgYGBtMitgICgtMjUsMjUpIDIlIH4yan4-ICgwLDApIH5-ZCsrICgwLDApIGl2JzVzLiAoMCwwKSBiLic0JysrKysrfiAoLTcsMCkgLTMlIH5-JydrLi4uMjQuLi4uJycrYGAgKC0yLDApIGBgK28rYGAgKysuaC4rKyAyMn48L3NlcXVlbmNlX3RleHQ-Cjxsb2dvPk5aQUM8L2xvZ28-CjxvYV92ZXJzaW9uPjIwMTcuMS4xPC9vYV92ZXJzaW9uPgo8ZGVmYXVsdF92aWV3PkI8L2RlZmF1bHRfdmlldz4KPC9zZXF1ZW5jZT4',
+	
+	'2018 NZAC Intermediate Known':
+	'https://openaero.net/?s=PHNlcXVlbmNlPgo8dGVhbT5OWkw8L3RlYW0-CjxjYXRlZ29yeT5JbnRlcm1lZGlhdGU8L2NhdGVnb3J5Pgo8Y2xhc3M-cG93ZXJlZDwvY2xhc3M-Cjxwcm9ncmFtPktub3duIENvbXB1bHNvcnkgMjAxODwvcHJvZ3JhbT4KPHJ1bGVzPk5aQUM8L3J1bGVzPgo8cG9zaXRpb25pbmc-MjA8L3Bvc2l0aW9uaW5nPgo8c2VxdWVuY2VfdGV4dD4zJSBvMjIgK3YuKyAoMCwwKSBpdi41cy4rYGAgKDIsLTEpIGArNGguKyt-fiAoMCwwKSB-fisrLjJmYGBgd2ArfiAoMTAsMTQpIDElIC4nMjRhMi0tLS0gKC0yLDApIC1yYzQ0ICgxNCwxNCkgYGBgK2BgcGIuJzIuKysrKyBbLTIsMF0gMiUgYGArMjRnK2AgMWoxPC9zZXF1ZW5jZV90ZXh0Pgo8bG9nbz5OWkFDPC9sb2dvPgo8b2FfdmVyc2lvbj4yMDE3LjEuMTwvb2FfdmVyc2lvbj4KPC9zZXF1ZW5jZT4',
+	
+	'2018 NZAC Advanced Known':
+	'https://openaero.net/?s=PHNlcXVlbmNlPgo8dGVhbT5OWkw8L3RlYW0-CjxjYXRlZ29yeT5BZHZhbmNlZDwvY2F0ZWdvcnk-CjxjbGFzcz5wb3dlcmVkPC9jbGFzcz4KPHByb2dyYW0-S25vd24gQ29tcHVsc29yeSAyMDE4PC9wcm9ncmFtPgo8cnVsZXM-TlpBQzwvcnVsZXM-Cjxwb3NpdGlvbmluZz4zMDwvcG9zaXRpb25pbmc-CjxzZXF1ZW5jZV90ZXh0PicsInwiMjRgcnkyICgwLDApICsnLDIuaC4sNDguLi4uLi4rKyt-ICgtNiwwKSA0JSAnInwiOC5iYihgYGBgYCJ8IjRgYCkuMicnK35-ICgzLDApIH5-Kycnc2lycCwyZiwyLSAoLTQsMTgpIDglIC0yamlvMi0gKDEzLDApIH4tLi5oLi4ifCIzZi4uLicnICgwLDApIC0xJSArJzRgcnA2LS1-fiAoLTEzLDApIC0uLidrYGAsMmYsMjRgYGAgKDAsMCkgMSUgJydtLDMyLDZmLTwvc2VxdWVuY2VfdGV4dD4KPGxvZ28-TlpBQzwvbG9nbz4KPG9hX3ZlcnNpb24-MjAxNy4xLjE8L29hX3ZlcnNpb24-Cjwvc2VxdWVuY2U-',
+	
+	'2018 NZAC Unlimited Known':
+	'https://openaero.net/?s=PHNlcXVlbmNlPgo8dGVhbT5OWkw8L3RlYW0-CjxjYXRlZ29yeT5VbmxpbWl0ZWQ8L2NhdGVnb3J5Pgo8Y2xhc3M-cG93ZXJlZDwvY2xhc3M-Cjxwcm9ncmFtPktub3duIENvbXB1bHNvcnkgMjAxODwvcHJvZ3JhbT4KPHJ1bGVzPk5aQUM8L3J1bGVzPgo8cG9zaXRpb25pbmc-NDA8L3Bvc2l0aW9uaW5nPgo8c2VxdWVuY2VfdGV4dD4uLDQsM2YnJ2RoKC4pLi4nJzNpZjszLi4nJyAoLTIwLDApIC8rKysuMjQuLicncGJiKGBgZmApLicsInwiMy4nLS0tLX5-IH5-LS4uJzVpc2AsMi4naXJwMywzNC1-fiAoLTEsMCkgMTMlIGBgYC0yajE1ICg0LDApIDMlIC8rLi4sOGBgdGEyaWYuLitgYGBgICcnNCwzJydoNWYuICgtMTgsMCkgLy4nJzEuJyduKDVpZiwzLiknJzUnfiA4JSBgYGArLicnM2lmLi4naWJiKGBgYGBgYGBgYGAsNCwyYGApJycsNWArYGBgYCB-fidmLidiLi4uLjI0Jzwvc2VxdWVuY2VfdGV4dD4KPGxvZ28-TlpBQzwvbG9nbz4KPG9hX3ZlcnNpb24-MjAxNy4xLjE8L29hX3ZlcnNpb24-Cjwvc2VxdWVuY2U-',
+	
   '2017 CIVA Unl Free Known':
   '<sequence>' +
   '<category>Unlimited</category>' +
@@ -166,6 +184,66 @@ var library = {
   '<logo>IAC</logo>' +
   '<oa_version>2017.1</oa_version>' +
   '</sequence>',
+
+	'2017 IAC-Glider Sportsman Known':
+	"<sequence>" +
+	"<team>USA</team>" +
+	"<category>Sportsman</category>" +
+	"<date>2017</date>" +
+	"<class>glider</class>" +
+	"<program>Known</program>" +
+	"<rules>IAC</rules>" +
+	"<positioning>15</positioning>" +
+	"<sequence_text>```2.'rc pb+`` ~2j (0,9) +b -4% ~~+.2..''rdb.....+++~ ~+'2''t....' .1+ /oj+~~ h</sequence_text>" +
+	"<logo>IAC</logo>" +
+	"<oa_version>2017.1.1.1</oa_version>" +
+	"<default_view>B</default_view>" +
+	"</sequence>",
+	
+	'2017 IAC-Glider Intermediate Known':
+	"<sequence>" +
+	"<team>USA</team>" +
+	"<category>Intermediate</category>" +
+	"<date>2017</date>" +
+	"<class>glider</class>" +
+	"<program>Known</program>" +
+	"<rules>IAC</rules>" +
+	"<positioning>15</positioning>" +
+	"<sequence_text>''22+ d'' ~iv```6s.'++++~ [0,13] ```2.g``2.- (4,0) ~~--2j- (0,9) -''2~ /~+1j1++ ```+ita````4.+````` -3% +''2..'rdb....</sequence_text>" +
+	"<logo>IAC</logo>" +
+	"<oa_version>2017.1.1.1</oa_version>" +
+	"<default_view>B</default_view>" +
+	"</sequence>",
+	  
+  '2017 IAC-Glider Advanced Known':
+	"<sequence>" +
+	"<team>USA</team>" +
+	"<category>Advanced</category>" +
+	"<date>2017</date>" +
+	"<class>glider</class>" +
+	"<program>Known</program>" +
+	"<rules>IAC</rules>" +
+	"<positioning>25</positioning>" +
+	"<sequence_text>`s''irp-------~ 6% ``-.',24```iw,2''+`` (-2,0) o1 ~++h4'' ta`````4''+``` -2% pp (-2,0) m--~ (-3,13) -.'6+ ~~+2j2</sequence_text>" +
+	"<logo>IAC</logo>" +
+	"<oa_version>2017.1.1.1</oa_version>" +
+	"<default_view>B</default_view>" +
+	"</sequence>",
+
+	'2017 IAC-Glider Unlimited Known':
+	"<sequence>" +
+	"<team>USA</team>" +
+	"<category>Unlimited</category>" +
+	"<date>2017</date>" +
+	"<class>glider</class>" +
+	"<program>Known</program>" +
+	"<rules>IAC</rules>" +
+	"<positioning>25</positioning>" +
+	"<sequence_text>-1% .'2,1ic.'24---~~ -iv``is....'' o2- -ta````4.+```` h`3if'-~~ ~~----k.24'-- -2j15</sequence_text>" +
+	"<logo>IAC</logo>" +
+	"<oa_version>2017.1.1.1</oa_version>" +
+	"<default_view>B</default_view>" +
+	"</sequence>",
 
   '2017 BAeA-Glider Intermediate Known':
   '<sequence>' +

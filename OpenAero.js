@@ -4930,9 +4930,10 @@ function addMenuEventListeners() {
 function checkForApp () {
   // only do something when not running as Chrome app
   // and
-  // in Chrome browser with extension support
+  // in Chrome browser with extension support on Chrome OS
   if (!((navigator.userAgent.toLowerCase().indexOf('chrome') > -1) &&
     (navigator.vendor.toLowerCase().indexOf("google") > -1) &&
+    (/\bCrOS/.test(navigator.userAgent)) &&
     chrome)) return;
   if (!chromeApp.active) {
     function f (c) {
@@ -7308,7 +7309,7 @@ function changeCombo(id) {
     if (rulesLogo[ruleName]) selectLogo(rulesLogo[ruleName]);
 
     // set CIVA or IAC forms default
-    iacForms = (ruleName === 'iac')? true : false;
+    iacForms = (ruleName === 'iac') ? true : false;
     if (iacForms) {
       document.getElementById('iacForms').setAttribute('checked', 'checked');
     } else {
@@ -8202,6 +8203,14 @@ function loadRules() {
   } else {
     // hide link
     document.getElementById ('t_referenceSequence').classList.add ('noDisplay');
+  }
+
+  // set CIVA or IAC forms default
+  iacForms = (ruleName === 'iac') ? true : false;
+  if (iacForms) {
+    document.getElementById('iacForms').setAttribute('checked', 'checked');
+  } else {
+    document.getElementById('iacForms').removeAttribute('checked');
   }
 
   // update reference sequence
@@ -10142,7 +10151,7 @@ function makeMiniFormA (x, y) {
   }
   drawText ('Total K = ' + figureK, blockX + 4, blockY + 17, 'miniFormATotal');
   // add maximum K (corrected for Floating Point) where applicable
-  if (checkCatGroup.k && checkCatGroup.k.max) {
+  if (rulesActive && checkCatGroup.k && checkCatGroup.k.max) {
     var max = checkCatGroup.k.max;
     if (checkCatGroup.floatingPoint) max -= checkCatGroup.floatingPoint;
     drawText ('(max K = ' + max + ')',
@@ -12000,6 +12009,14 @@ function makeFormA() {
                 'formATextBold' + fontsize + 'px',
                 'middle');
             }
+            if (figures[i].floatingPoint && iacForms) {
+              // add 'F.P.' to IAC form A when applicable
+              drawText ('F.P.',
+                x + columnWidths[column] / 2,
+                y + (j + 1) * fontsize,
+                'formATextBold' + fontsize + 'px',
+                'middle');
+            }
             break;
           case (3):
             drawRectangle (x, y, columnWidths[column], rowHeight, 'formLine');
@@ -12032,14 +12049,6 @@ function makeFormA() {
           case (4):
             drawRectangle (x, y, columnWidths[column], rowHeight, 'formLine');
             if (figures[i].floatingPoint) {
-              if (iacForms) {
-                // add 'FP' for IAC form A
-                drawText ('FP',
-                  x + columnWidths[column] / 2,
-                  y + 20,
-                  'formAText',
-                  'middle');
-              }                
               drawText ('(' + figK + ')',
                 x + columnWidths[column] / 2,
                 y + rowHeight / 2 + 10,
@@ -13306,7 +13315,13 @@ function programme () {
   OLANBumpBugCheck = false;
   fileName.value = '';
   storeLocal ('fileName', fileName.value);
-  activateXMLsequence(library[key]);
+  if (/^<sequence>/.test(library[key])) {
+    activateXMLsequence(library[key]);
+  } else {
+    if (!launchURL ({url : library[key]})) {
+      console.log ('Error loading programme ' + key);
+    }
+  } 
 }
 
 // openSequence will load a sequence from a .seq file
