@@ -406,8 +406,8 @@ textarea {
 }
 .docs {
   background: #f8f8f8;
-  background: -webkit-linear-gradient(315deg, #ffe090, #fff);
-  background: linear-gradient(315deg, #ffe090, #fff);
+  background: -webkit-linear-gradient(315deg, #ffe090, #fff8e0);
+  background: linear-gradient(315deg, #ffe090, #fff8e0);
 }
 .docs table {
   margin: 1em;

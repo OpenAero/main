@@ -3852,13 +3852,15 @@ function tspan (line, dy) {
   return span;
 }
 
-// makeTextBlock makes text blocks, for example from comments
+// makeTextBlock makes text blocks, for example from comments.
+// It also handles assignment of figure letter codes for Free (un)known
+// operations.
 function makeTextBlock (text) {
   var pathsArray = [];
   var rotate = false;
   var header = true;
   
-  // handle special code for Unknown figure designation
+  // handle special code for Free (Un)known figure designation
   var regex = /^@[A-Z]/;
   var match = text.match(regex);
   if (match) {
@@ -3870,6 +3872,11 @@ function makeTextBlock (text) {
   if (text.match(regex)) {
     text = '';
     unknownFigureLetter = 'L';
+  }
+  
+  // remove letter if it is an additional figure and none are allowed
+  if ((unknownFigureLetter === 'L') && !additionalFig.max) {
+    unknownFigureLetter = false;
   }
   
   if (text != '') {
@@ -4363,6 +4370,11 @@ function doOnLoad () {
   // check browser and capabilities
   var err = checkBrowser();
   if (err) errors.push (err);
+
+  // by default, do not allow drag & drop of files to OpenAero
+  document.body.addEventListener('dragover', noDragOver);
+  document.body.addEventListener('drop', noDrop);
+      
   // Setup the drag n drop listeners for multi file checking
   var dropZone = document.getElementById('fileDrop');
   dropZone.addEventListener('dragover', handleDragOver, false);
@@ -4371,6 +4383,12 @@ function doOnLoad () {
   var dropZone = document.getElementById('fileDropPrint');
   dropZone.addEventListener('dragover', handleDragOver, false);
   dropZone.addEventListener('drop', updatePrintMulti, false);
+  // Setup the drag n drop listener for file opening
+  document.getElementById('topBlock').addEventListener('dragover', handleDragOver, false);
+  document.getElementById('topBlock').addEventListener('drop', dropSequence);
+  document.getElementById('main').addEventListener('drop', dropSequence);
+  document.getElementById('main').addEventListener('dragover', handleDragOver, false);
+  
   // add onresize event for resizing the sequence text window
   window.onresize = windowResize;
   // Parse the figures file
@@ -12035,11 +12053,14 @@ function makeFormA() {
                 'middle');
               figK += parseInt(k[j]);
             }
+            // Adjust figure K for additionals
             if (figures[i].additional) {
               if (additionals <= additionalFig.max) {
                 figK = additionalFig.totalK / additionals;
               } else {
-                figK = additionalFig.totalK / additionalFig.max[document.getElementById('class').value];
+                if (additionalFig.max > 0) {
+                  figK = additionalFig.totalK / additionalFig.max[document.getElementById('class').value];
+                }
                 checkAlert (sprintf (userText.maxAdditionals, additionalFig.max),
                   false,
                   row + 1);
@@ -13324,6 +13345,16 @@ function programme () {
   } 
 }
 
+// dropSequence will attempt to load a sequence from a file dropped in
+// the main area
+function dropSequence (evt) {
+  if (evt && evt.dataTransfer) {
+    noPropagation(evt);
+    document.getElementById ('file').files = evt.dataTransfer.files;
+  }
+  openSequence();
+}
+
 // openSequence will load a sequence from a .seq file
 function openSequence () {
   function open () {
@@ -13977,11 +14008,23 @@ function checkFuFiguresFile() {
   }
 }
 
+// noDragOver is the default for the body
+function noDragOver(evt) {
+  noPropagation(evt);
+  evt.dataTransfer.dropEffect = 'none';
+}
+
+// noDrop is the default for the body
+function noDrop(evt) {
+  noPropagation(evt);
+}
+
 // handleDragOver takes care of file dragging
 function handleDragOver(evt) {
   noPropagation(evt);
   evt.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
 }
+
 
 /**********************
  * End file functions */

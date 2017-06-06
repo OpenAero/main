@@ -1,3 +1,9 @@
+2017.2
+* updated BAeA logo for 2017
+* fixed NaN showing in Form A figure K box when marking figures as Additional with 0 additionals allowed in rules
+* Only show "Additional" when rules allow the use of Additional figures
+* added dragging of sequence from system file manager to OpenAero to open it
+
 2017.1.2
 * added support for use of sequence string in library.js
 * added 2017 IAC Glider Known sequences

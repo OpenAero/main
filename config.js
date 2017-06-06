@@ -36,7 +36,7 @@
 // Where a new x should be used for versions that create sequences not
 // fully backward compatible with the previous version
 
-var version = '2017.1.2';
+var version = '2017.2';
 /* versionNew is an object that contains version update information
    The structure is {vvv : [[ttt, n], ...], ...} , where
    vvv = version number
@@ -44,6 +44,11 @@ var version = '2017.1.2';
    n   = importance (higher = more important)
 */
 var versionNew = {
+  '2017.2' : [
+    ['Updated BAeA logo for 2017', 1],
+    ['Only show "Additional" when rules allow the use of Additional figures', 3],
+    ['Added dragging of sequence from system file manager to OpenAero to open it', 3]
+  ],
   '2017.1.2' : [
     ['Disabled Chrome App installation for other than ChromeOS as ' +
       'support <a href="https://blog.chromium.org/2016/08/from-chrome-apps-to-web.html" target="_blank">' +
