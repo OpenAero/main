@@ -1,3 +1,13 @@
+2017.2.1
+* fixed P loops with half rolls in bottom
+* added extra space on top of figure chooser to prevent overlap by Grid Info panel
+* added Aresti column and row numbers to figure chooser
+* changed layout of legal figures in figure chooser to conform to Sporting Code section 6
+* added "info" button to figure chooser
+* added logo for Hungarian Aerobatic Club
+* added French rules and sequences for 2017
+* updated French language file
+
 2017.2
 * updated BAeA logo for 2017
 * fixed NaN showing in Form A figure K box when marking figures as Additional with 0 additionals allowed in rules

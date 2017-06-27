@@ -271,7 +271,7 @@ var library = {
   '<default_view>grid:5</default_view>' +
   '<oa_version>2017.1.1</oa_version>' +
   '</sequence>',
-  
+
   '2016 CIVA Unl Free Known':
   '<sequence>' +
   '<category>Unlimited</category>' +
@@ -357,7 +357,79 @@ var library = {
   '<default_view>grid:5</default_view>' +
   '<oa_version>2016.1.1</oa_version>' +
   '</sequence>',
+
+  '2016 France Espoirs Connu':
+  '<sequence>' +
+  '<class>powered</class>' +
+  '<rules>France</rules>' +
+  '<category>espoirs</category>' +
+  '<program>connu</program>' +
+  '<positioning>10</positioning>' +
+  "<sequence_text>ed 2g iv.''5s.... m22--~ 5> ~-3j----- -,2 h....'' rp+~~ c....2...+``` ````m6</sequence_text>" +
+  '<logo>FFAvoltige</logo>' +
+  '<oa_version>2017.2.1</oa_version>' +
+  '</sequence>',
   
+  '2016 France Desavois/promotion Connu':
+  '<sequence>' +
+  '<category>desavois</category>' +
+  '<class>powered</class>' +
+  '<program>connu</program>' +
+  '<rules>France</rules>' +
+  '<positioning>15</positioning>' +
+  "<sequence_text>2h..-~~ -```m2-~~ 5> -iv.'is..~ 9> ``k''24 ,4''pb.''+` (0,0) ~~``8'b..''+` 4> mf- ~-``,22``-~ 12% 3> ````-2j2-``` ~-24~</sequence_text>" +
+  '<logo>FFAvoltige</logo>' +
+  '<oa_version>2017.2.1</oa_version>' +
+  '</sequence>',
+  
+  '2016 France National2 Connu1':
+  '<sequence>' +
+  '<class>powered</class>' +
+  '<rules>France</rules>' +
+  '<category>national2</category>' +
+  '<program>connu_1</program>' +
+  '<positioning>20</positioning>' +
+  "<sequence_text>ej ~+8b- -,4h4..'' 5> .'m34,5 ...''sirp24 h4 \"|\"8pb..''-~ -o24 m1,22- (-8,14) 6% ``-2jio15 > ,2fg</sequence_text>" +
+  '<logo>FFAvoltige</logo>' +
+  '<oa_version>2017.2.1</oa_version>' +
+  '</sequence>',
+  
+  '2016 France National2 Connu2':
+  '<sequence>' +
+  '<category>national2</category>' +
+  '<class>powered</class>' +
+  '<program>connu_2</program>' +
+  '<rules>France</rules>' +
+  '<positioning>20</positioning>' +
+  "<sequence_text>ed ``-1g ```+.''s''irp- ```-.irc2-`` (0,5) -2if,22 h8.' 2> '2pb```4.'' 13% ```+````````,48```rc+```````````` o44 dh.....++++~~ 4> ''m''8,34~ ``+3joi3~~></sequence_text>" +
+  '<logo>FFAvoltige</logo>' +
+  '<oa_version>2017.2.1</oa_version>' +
+  '</sequence>',
+  
+  '2016 France Doret/excellence Connu1':
+  '<sequence>' +
+  '<category>doret</category>' +
+  '<class>powered</class>' +
+  '<program>connu_1</program>' +
+  '<rules>France</rules>' +
+  '<positioning>40</positioning>' +
+  "<sequence_text>-ita``,24+```` 34h'3if''~~ 10> fbb(`,4'')3-> -2% -is'irp6if+`` -2% ++3jo15------~ 9> ~---pb.'',8+````> `+cc(1)f+````` ``+,4',2''b...''4. ``+1,2frc3,34</sequence_text>" +
+  '<logo>FFAvoltige</logo>' +
+  '<oa_version>2017.2.1</oa_version>' +
+  '</sequence>',
+  
+  '2016 France Doret/excellence Connu2':
+  '<sequence>' +
+  '<category>doret</category>' +
+  '<class>powered</class>' +
+  '<program>connu_2</program>' +
+  '<rules>France</rules>' +
+  '<positioning>40</positioning>' +
+  "<sequence_text>ed ,frdb24.'+`````` ,3b.'3f'' '',24ta.'' 8> ',if`n(.'',2.....)2`+ [0,0] 6sirp,if,1-~ ````-3joi3-~~ 13> ---`8`h..'+++~ 3> .4,3m2,6 `+``````,2f``rc',88+``````````</sequence_text>" +
+  '<logo>FFAvoltige</logo>' +
+  '<oa_version>2017.2.1</oa_version>' +
+  '</sequence>',
+      
   '2016 BAeA-Glider Int Free Known':
   '<sequence>' +
   '<category>Intermediate</category>' +

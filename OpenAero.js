@@ -4805,6 +4805,9 @@ function addEventListeners () {
   document.getElementById('comments').addEventListener('input', updateFigureComments);
     
   // figure selector
+  document.getElementById('manual.html_the_figure_chooser').addEventListener('mousedown', function(){
+    helpWindow('manual.html#adding_a_figure', 'Adding a figure');
+  }, false);
   document.getElementById('figureStringInput').addEventListener('input', changeFigureString, false);
   document.getElementById('hideIllegal').addEventListener('change', changeHideIllegal, false);
   document.getElementById('hideFigureSelector').addEventListener('mousedown', hideFigureSelector, false);
@@ -6234,7 +6237,6 @@ function displaySelectedFigure() {
 // var figureId is the id of the figures[] object
 function updateFigureOptions (figureId) {
   var f = figures[figureId];
-  
   // show figure box and figureOptions by default
   document.getElementById('selectedFigure').classList.remove('hidden');
   document.getElementById('figureOptions').classList.remove('hidden');
@@ -6546,7 +6548,8 @@ function addRollSelectors (figureId) {
     if (rolls) {
       var rollNr = 0;
       for (var i = 0; i < rolls.length; i++) {
-        if (parseInt(rolls[i]) > 0) {
+        if ((parseInt(rolls[i]) > 0) &&
+          !((rolls[i] == 4) && figures[figureId].rollInfo[i].rollTop)) {
           var rollInfo = figures[figureId].rollInfo[i];
           var div = document.createElement('div');
           div.id = 'roll' + i;
@@ -9414,11 +9417,11 @@ function changeFigureGroup() {
   var svg = document.getElementById('figureChooserSvg');
   
   // set the correct size and row count for the figure thumbnails
-  if (figureGroup != 0) {
-    var size = 62;
+  if (figureGroup != 0) { // normal Aresti group
+    var size = 56;
     var newRow = /\.[01]$/;
     var maxColCount = 4;
-  } else {
+  } else { // queue group
     var maxColCount = document.getElementById('queueColumns').value;
     var size = parseInt((280 / maxColCount) - 8);
     var newRow = /never/;
@@ -9499,6 +9502,13 @@ function changeFigureGroup() {
           colCount = 0;
           var tr = document.createElement('tr');
           table.appendChild(tr);
+          var td = document.createElement('td');
+          tr.appendChild(td);
+          td.classList.add ('arestiRow');
+          // add Aresti row number if not in queue or non-Aresti figures
+          if ((fig[i].group != 0) && !/^0/.test(fig[i].aresti)) {
+            td.innerHTML = fig[i].aresti.match(/^\d+\.\d+\.(\d+)/)[1];
+          }
         }
         colCount++;
         if (colCount >= maxColCount) colCount = 0;
@@ -9596,7 +9606,7 @@ function markUsedFigures () {
   var tr = table.childNodes;
   for (var i = 0; i < tr.length; i++) {
     var td = tr[i].childNodes;
-    for (var j = 0; j < td.length; j++) {
+    for (var j = 1; j < td.length; j++) {
       td[j].classList.remove ('queueUsed');
       // add class queueUsed if the figure is already present in
       // the sequence
@@ -9701,7 +9711,8 @@ function markMatchingFigures () {
   var tr = table.childNodes;
   for (var i = 0; i < tr.length; i++) {
     var td = tr[i].childNodes;
-    for (var j = 0; j < td.length; j++) {
+    // start with 2nd <td>, as first holds Aresti row nr
+    for (var j = 1; j < td.length; j++) {
       if (fig[td[j].id].pattern.match(regex)) {
         td[j].classList.add ('matchingFigure');
       } else {
@@ -9716,21 +9727,29 @@ function markMatchingFigures () {
 function markNotAllowedFigures () {
   var table = document.getElementById('figureChooserTable');
   var tr = table.childNodes;
+  
+  function legalFigure () {
+    td[j].classList.remove ('figureNotAllowed');
+    td[j].firstChild.classList.remove ('hidden');
+    anyLegal = true;
+  }
+  function illegalFigure () {
+    if (document.getElementById('hideIllegal').checked == true) {
+      td[j].firstChild.classList.add ('hidden');
+      td[j].classList.remove ('matchingFigure');
+    } else {
+      td[j].classList.add ('figureNotAllowed');
+    }
+  }
+    
   for (var i = 0; i < tr.length; i++) {
     var td = tr[i].childNodes;
-    for (var j = 0; j < td.length; j++) {
+    var anyLegal = false;
+    for (var j = 1; j < td.length; j++) {
       if ((sportingClass.value === 'powered') && (fig[td[j].id].kpwrd == 0)) {
-        if (document.getElementById('hideIllegal').checked == true) {
-          td[j].classList.add ('figureNotAllowedHidden');
-        } else {
-          td[j].classList.add ('figureNotAllowed');
-        }
+        illegalFigure();
       } else if ((sportingClass.value === 'glider') && (fig[td[j].id].kglider == 0)) {
-        if (document.getElementById('hideIllegal').checked == true) {
-          td[j].classList.add ('figureNotAllowedHidden');
-        } else {
-          td[j].classList.add ('figureNotAllowed');
-        }
+        illegalFigure();
       } else if (rulesActive) {
         if (Object.keys(checkAllowCatId).length > 0) {
           var aresti = fig[td[j].id].aresti;
@@ -9743,23 +9762,20 @@ function markNotAllowedFigures () {
 
           if (!(aresti in checkAllowCatId) || (checkCatGroup.k &&
             checkCatGroup.k.maxperfig && (checkCatGroup.k.maxperfig < totalK))) {
-            if (document.getElementById('hideIllegal').checked == true) {
-              td[j].classList.add ('figureNotAllowedHidden');
-            } else {
-              td[j].classList.add ('figureNotAllowed');
-            }
+            illegalFigure();
           } else {
-            td[j].classList.remove ('figureNotAllowed');
-            td[j].classList.remove ('figureNotAllowedHidden');
+            legalFigure();
           }
         } else {
-          td[j].classList.remove ('figureNotAllowed');
-          td[j].classList.remove ('figureNotAllowedHidden');
+          legalFigure();
         }
       } else {
-        td[j].classList.remove ('figureNotAllowed');
-        td[j].classList.remove ('figureNotAllowedHidden');
+        legalFigure();
       }
+    }
+    // hide row when no legal figures present
+    if ((document.getElementById('hideIllegal').checked == true) && !anyLegal) {
+      tr[i].classList.add ('noDisplay');
     }
   }
 }
@@ -9777,11 +9793,13 @@ function switchQueue (el) {
     el.setAttributeNode(a);
     e.setAttribute ('disabled', true);
     e.value = 0;
+    document.getElementById ('figureChooserColumns').classList.add ('noDisplay');
   } else {
     el.innerHTML = userText.switchQueue;
     el.id = 't_switchQueue';
     e.removeAttribute ('disabled');
     e.value = Math.max (el.getAttribute('figureGroup'), 1);
+    document.getElementById ('figureChooserColumns').classList.remove ('noDisplay');
   }
   changeFigureGroup();
 }
@@ -16574,7 +16592,7 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
     }
     // Set the number of the first roll for drawing later on
     // To do this we check the fig.pattern for a roll match before the base
-    var rollnr = (fig[figNr].pattern.match(/^[\+\-][_\^\&~]/))? 0 : 1;
+    var rollnr = fig[figNr].pattern.match(/^[\+\-][_\^\&~]/) ? 0 : 1;
 
     // If there are multiple figNrs we check the rolls to see which one
     // matches best. It's very important that with different figures with
@@ -16586,18 +16604,21 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
       for (var i = 0; i < figNrs.length; i++) {
         rollCorr = 0;
         for (var j = 0; j < roll.length; j++) {
-          if ((fig[figNrs[i]].rolls[j] == 1) || (!fig[figNrs[i]].rolls[j])) {
-            // full or no roll symbol at this position in fig[xx].rolls[yy]
-            rollCorr += Math.abs(rollSums[j] % 360);
-          } else if (fig[figNrs[i]].rolls[j] == 2) {
+          if (fig[figNrs[i]].rolls[j] == 2) {
             // half roll symbol at this position in fig[xx].rolls[yy]
             rollCorr += Math.abs((rollSums[j] + 180) % 360);
-          } 
+          } else if (fig[figNrs[i]].rolls[j] != 3) {
+            // full or no roll symbol at this position in fig[xx].rolls[yy]
+            // 'no roll' can be no roll line at all (rolls[j] undefined)
+            // or only line without roll allowed as in some P-loops
+            // (rolls[j] = 4)
+            rollCorr += Math.abs(rollSums[j] % 360);
+          }
         }
         if (rollCorr < rollCorrMin) {
           rollCorrMin = rollCorr;
           figNr = figNrs[i];
-          var rollnr = (fig[figNr].pattern.match(/^[\+\-][_\^\&~]/))? 0 : 1;
+          var rollnr = fig[figNr].pattern.match(/^[\+\-][_\^\&~]/) ? 0 : 1;
         }
       }
       var figureDraw = fig[figNr].draw;
@@ -16608,7 +16629,7 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
   // * fix the figNr in the figures object
   // * remove rolls where only line shortening/lengthening is allowed
   var arestiNrs = new Array(fig[figNr].aresti);
-  if ((sportingClass.value === 'glider') && (fig[figNr].kglider)) {
+  if ((sportingClass.value === 'glider') && fig[figNr].kglider) {
     var kFactors = [parseInt(fig[figNr].kglider)];
   } else {
     var kFactors = [parseInt(fig[figNr].kpwrd)];
@@ -16616,6 +16637,7 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
   figures[figStringIndex].figNr = figNr;
   figCheckLine[seqNr] = fig[figNr].aresti;
   
+  // consolidate gaps for lines without rolls
   for (var i = 0; i < roll.length; i++) {
     if (fig[figNr].rolls[i] === 4) {
       for (var j = 0; j < roll[i].length; j++) {
@@ -16626,7 +16648,7 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
       }
       rollSums[i] = 0;
       var gap = 0;
-      for (var j = 0; j <= subRoll; j++) gap += parseInt(rollInfo[i].gap[j]);
+      for (var j = 0; j in rollInfo[i].gap; j++) gap += parseInt(rollInfo[i].gap[j]);
       rollInfo[i] = {gap: [gap], pattern: [], comment: []};
     }
   }
@@ -16783,6 +16805,8 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
       case (figpat.fullroll):
         // Make a space on the figCheckLine before every possible roll
         figCheckLine[seqNr] = figCheckLine[seqNr] + ' ';
+        // mark rolls in the top
+        if (rollTop) rollInfo[rollnr].rollTop = true;
         if (roll[rollnr]) {
           var rollPaths = [];
           rollSum = 0;
@@ -16792,8 +16816,6 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
           for (j = 0; j < roll[rollnr].length; j++) {
             // Build line elements after all extensions and shortenings have been processed
             if (roll[rollnr][j].type != 'line') {
-              // mark rolls in the top
-              if (rollTop) rollInfo[rollnr].rollTop = true;
               if (lineDraw) {
                 // set a fixed distance for rolls in the top
                 if (rollTop) {

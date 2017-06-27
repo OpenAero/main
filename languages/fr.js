@@ -219,7 +219,7 @@ lang.fr = {
   'dans la barre d\'adresse de votre navigateur.',
 'emailSequence' : 'Envoyer par email le programme',
 'END' : 'FIN',
-'entryExitAttExt' : 'Attitude de debut/fin et longueur',
+'entryExitAttExt' : 'Attitude de début/fin et longueur',
 'expert' : 'Expert',
 'feedback' : 'Retour',
 'fileOpeningNotSupported' : 'L\'ouverture de fichier n\'est pas supportée dans ' +
@@ -237,7 +237,7 @@ lang.fr = {
 'figureLetterNotAllowed' : '(%s) La lettre d\'identification %s n\'est pas autorisée',
 'figurePositioning' : 'Positionnement de figure',
 'figureQueue' : 'File / Tampon',
-'figureString' : 'Texte du figure',
+'figureString' : 'Texte de la figure',
 'file' : 'Fichier',
 'fileName' : 'Nom du fichier',
 'finalizeSequence' : 'Finaliser le programme et quitter l\'assembleur',
@@ -272,7 +272,7 @@ lang.fr = {
   'Il ne devrait y en avoir qu\'un.',
 'fuSelectFigureFirst' : 'Cliquer sur une figure d\'une sous-partie ' +
   'pour l\'éditer. Vous pouvez glisser/déplacer les figures ou les figures ' +
-  'de liaison depuis l\'onglet <i>Figures</i> vers le(s) sous-partie(s).',
+  'de liaison depuis l\'onglet <i>Figures</i> vers la(es) sous-partie(s).',
 'FUstarting' : 'lancement de l\'assembleur d\'inconnu-libre. Ceci peut prendre du temps. ' +
   'Patientez, svp...',
 'FUstartOnLoad' : 'Le programme est identifié comme une liste de figures d\'Inconnu-Libre. ' +
@@ -287,7 +287,7 @@ lang.fr = {
 'glider' : 'Planeur',
 // new 2017.1
 'gridAdditionals' : 'Informations requises',
-'gridInfo' : 'Info tableau',
+'gridInfo' : 'Infos de la vue en tableau',
 'gridNegEntry' : 'Entrée dos',
 'gridNegExit' : 'Sortie dos',
 'gridPosEntry' : 'Entrée ventre',
@@ -495,19 +495,19 @@ lang.fr = {
 'program' : 'Programme',
 // new 2017.1
 'programme' : 'Programme',
-'proposalsCreate' : 'Créer de nouvelles propositions',
+'proposalsCreate' : 'Nouvelles propositions',
 'proposalsCreateGroups' : 'Créer des groupes',
 'proposalsDialogClose' : 'Fermer',
 'proposalsExplain' : 'Vous pouvez utiliser cette fenêtre pour une génération aléatoire ' +
-  'de propositions d\'assemblage de figures à partir du programme en cours. Le ' +
-  'nombre de figures des propositions est identique au nombre de colonnes sélectionnées ' +
-  'pour la vue en tableau. Les textes correspondants aux programmes générés peuvent ' +
-  'être copiés dans une autre fenêtre OpenAero, ou tous transférés dans la vue en tableau.',
+  'de propositions d\'enchainements des figures du programme en cours. Le nombre de ' +
+  'figures de chaque proposition est égal au nombre de colonnes de la vue en tableau. ' +
+  'Les textes correspondant à chaque assemblage généré peuvent être copiés dans une ' +
+  'autre fenêtre OpenAero, ou l\'ensemble peut être transféré dans la vue en tableau.',
 'proposalsFigureCount' : 'Figures dans chaque proposition',
-'proposalsIncomplete' : 'la dernière proposition est incompléte car il n\'y a pas ' +
+'proposalsIncomplete' : 'la dernière proposition est incomplète car il n\'y a pas ' +
   'assez de figures dans le programme en cours',
-'proposalsTitle' : 'Créer des propositions d\'assemblage de groupes de figures',
-'proposalsToGrid' : 'Transférer dans la vue en tableau',
+'proposalsTitle' : 'Génération de propositions d\'enchainements de figures',
+'proposalsToGrid' : 'Transfert dans la vue en tableau',
 'queue' : 'File/Tampon',
 'queueColumns' : 'Colonnes',
 'queueEmpty' : 'Pas de figure à enregistrer dans la file',
@@ -530,7 +530,7 @@ lang.fr = {
   'relatives d\'entrée / sortie des figures seront alors effectués.',
 //
 // new 2016.1.3
-'referenceSequenceFixed' : 'Ce programme de référence ne pas être changé ' +
+'referenceSequenceFixed' : 'Ce programme de référence ne peut pas être changé ' +
   'car il est lié aux règles de vérification du programme en cours.',
 // changed 2016.1.3
 'referenceSequenceTitle' : 'Figures de référence pour les ' +
@@ -562,6 +562,12 @@ lang.fr = {
   'Allez à <a href="http://openaero.net">openaero.net</a>. ' +
   'OpenAero sera automatiquement installe dans votre navigateur et sera également ' +
   'disponible hors connexion.',
+// new 2016.3.4
+'runOverHttp' : 'Votre lien vers OpenAero ne semble pas à jour. Vérifiez ' +
+  'que vous utilisez bien ' +
+  '<a href="https://openaero.net">https://openaero.net</a>.<br>' +
+  'Si vous utilisez une application pour smartphone, supprimez la puis ' +
+  'ré-installez la sur votre page d\'accueil.',
 'sameAsBefore' : 'Comme avant',
 'saveAsLink' : 'Enregistrer en tant que lien',
 'saveAsPNG' : 'Enregistrer une image PNG',

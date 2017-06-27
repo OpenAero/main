@@ -203,7 +203,7 @@ body {
 #gridInfo {
   float: right;
   top: 0;
-  right: 16px;
+  right: 40px;
   min-width: 120px;
   padding: 4px 16px 4px 16px;
   background-color: #f4f4f4;
@@ -334,6 +334,11 @@ body {
   right: auto;
   left: 0;
   padding-top: 30px;
+}
+table#figureChooserColumns {
+  position: relative;
+  left: 12px;
+  width: 284px;
 }
 #referenceSequenceString {
   width: 99%;

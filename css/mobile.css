@@ -276,6 +276,12 @@ select {
 
 #figureChooser {
   width: 308px;
+  top: 140px;
+}
+table#figureChooserColumns {
+  position: relative;
+  left: 36px;
+  width: 284px;
 }
 table#figureChooserTable td {
   padding: 1px;
