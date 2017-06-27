@@ -74,6 +74,8 @@ OpenAero 2016.3.2
 * - added double bumps to Advanced and Unlimited Free Unknown
 * 2017.1.1
 * - added 8.8.1.4 to Unlimited Unknown
+* 2017.2.1
+* - fixed A.17.1.3 rule checking for Advanced Unknown
 */
 
 //#######################################################################################
@@ -904,10 +906,10 @@ rules.push("why_fr-NRPushout   = sortie dos interdite après cette rotation");
 
 
 //For Adv rp figures, we convert 3/4 up to 'x' which isnt allowed
-rules.push("conv-advrp=^9\\.(1\\.1\\.3)=x ;  ^9\\.=r; ^0\\.=z");
-rules.push("rule-NR:3Q1 =advrp:^x");
-rules.push("why-NR:3Q1  =no more than 1/2 roll is allowed for first rolling element position");
-rules.push("why_fr-NR:3Q1  =1/2 rotation maximum autorisée en premiere rotation");
+rules.push("conv-upqtrs=^9\\.([1-9]|10)\\.[16]\\.([1-8]) = $2 ; ^9\\.(9|10)\\. = f ; ^9\\. = r ; ^0\\.=z");
+rules.push("rule-Max180up =upqtrs:<3");
+rules.push("why-Max180up  =no more than 1/2 roll is allowed");
+rules.push("why_fr-Max180up  =1/2 rotation maximum autorisée");
 
 rules.push("rule-NH2F3 =roll:^[\\w,;]+ [1248] (f|\\w[,;]f)");
 rules.push("why-NH2F3 = no flick allowed in third position when 2nd position has a roll");
@@ -1053,17 +1055,17 @@ rules.push("8.5.4.1-2 NOU:1; NF:2");
 rules.push("8.5.4.3-4 NOU:1");
 
 //rp
-rules.push("8.6.1.1 NOU:1 ; NR:3Q1 ;NR:2 ;NF:3");
+rules.push("8.6.1.1 NOU:1 ; Max180up:1 ;NR:2 ;NF:3");
 // Changed in 1.4.3
 rules.push("8.6.1.4 NOU:1");
-rules.push("8.6.3.1 NOU:1 ; NR:3Q1 ;NR:2 ;NF:3");
+rules.push("8.6.3.1 NOU:1 ; Max180up:1 ;NR:2 ;NF:3");
 rules.push("8.6.3.2 NR:1   ;NR:2 ;NF:3");
 // Changed in 1.4.3
 rules.push("8.6.3.3 NOU:1");
 
-rules.push("8.6.2.1 NOU:1 ; NR:3Q1 ;NR:2 ;NF:3");
+rules.push("8.6.2.1 NOU:1 ; Max180up:1 ;NR:2 ;NF:3");
 rules.push("8.6.2.4 NOU:1");
-rules.push("8.6.4.1 NOU:1 ; NR:3Q1 ;NR:2 ;NF:3");
+rules.push("8.6.4.1 NOU:1 ; Max180up:1 ;NR:2 ;NF:3");
 rules.push("8.6.4.2 NR:1 ; NR:2 ; NF:3");
 rules.push("8.6.4.3 NOU:1");
 
@@ -1384,10 +1386,10 @@ rules.push("why-NRPushout   = negative recovery is not allowed after this roll")
 rules.push("why_fr-NRPushout   = sortie dos interdite après cette rotation");
 
 //For Adv rp figures, we convert 3/4 up to 'x' which isnt allowed
-rules.push("conv-advrp=^9\\.(1\\.1\\.3)=x ;  ^9\\.=r; ^0\\.=z");
-rules.push("rule-NR:3Q1 =advrp:^x");
-rules.push("why-NR:3Q1  =no more than 1/2 roll is allowed for first rolling element position");
-rules.push("why_fr-NR:3Q1  =1/2 rotation maximum autorisée en premiere rotation");
+rules.push("conv-upqtrs=^9\\.([1-9]|10)\\.[16]\\.([1-8]) = $2 ; ^9\\.(9|10)\\. = f ; ^9\\. = r ; ^0\\.=z");
+rules.push("rule-Max180up =upqtrs:<3");
+rules.push("why-Max180up  =no more than 1/2 roll is allowed");
+rules.push("why_fr-Max180up  =1/2 rotation maximum autorisée");
 
 rules.push("rule-NH2F3 =roll:^[\\w,;]+ [1248] (f|\\w[,;]f)");
 rules.push("why-NH2F3 = no flick allowed in third position when 2nd position has a roll");

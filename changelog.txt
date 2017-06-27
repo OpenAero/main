@@ -7,6 +7,7 @@
 * added logo for Hungarian Aerobatic Club
 * added French rules and sequences for 2017
 * updated French language file
+* fixed A.17.1.3 rule checking for Advanced Unknown
 
 2017.2
 * updated BAeA logo for 2017
