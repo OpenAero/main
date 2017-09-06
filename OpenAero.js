@@ -1,4 +1,4 @@
-﻿// OpenAero.js
+// OpenAero.js
 // This file is part of OpenAero.
 
 //  OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -1502,6 +1502,10 @@ function switchMobile () {
     // remove any vertical displacement done by updateSequenceTextHeight
     sequenceText.removeAttribute('style');
     document.getElementById('main').removeAttribute('style');
+    // move grid column setting to settings
+    var el = document.getElementById ('t_gridView');
+    el.classList.add ('noDisplay');
+    el.parentNode.appendChild (document.getElementById ('gridColumnsContainer'));
   } else {
     viewport.setAttribute('content', '');
 
@@ -1521,6 +1525,11 @@ function switchMobile () {
 
     // move figureSelector back to right side
     document.getElementById ('figureSelector').classList.remove ('left');
+
+    // move grid column setting to grid info
+    var el = document.getElementById ('gridInfoContents');
+    document.getElementById ('t_gridView').classList.remove ('noDisplay');
+    el.insertBefore (document.getElementById ('gridColumnsContainer'), el.firstChild);
 
     selectTab ('tab-sequenceInfo');
     
@@ -5762,6 +5771,7 @@ function addProgrammeToMenu (key) {
     } else {
       var group = key.match (/^[\d]+ ([^ ]+)/)[1];
       var subul = document.getElementById(year + ' ' + group);
+      // create new group if the group does not exist yet
       if (!subul) {
         subli.innerHTML = '<span>' + group + '</span>' +
           '<i class="material-icons rightArrow"></i>';
@@ -5774,8 +5784,19 @@ function addProgrammeToMenu (key) {
       subsubli.setAttribute ('id', 'programme-' + key);
       subsubli.addEventListener ('click', programme, false);
       subul.appendChild (subsubli);
+      // Sort the sub-sub menues on size.
+      // If previous ul has less children, swap ul. This keeps the
+      // largest program lists in top
+      var pNode = subul.parentNode;
+      while (pNode.previousSibling &&
+        pNode.previousSibling.lastChild &&
+        (pNode.previousSibling.lastChild.tagName === 'UL') &&
+        (pNode.previousSibling.lastChild.childElementCount < subul.childElementCount) &&
+        !/^CIVA(-Glider|)/.test (pNode.previousSibling.firstChild.innerHTML)) {
+        pNode.parentNode.insertBefore(pNode, pNode.previousSibling);
+      }
     }
-    ul.appendChild(subli);
+    if (subli.innerHTML) ul.appendChild(subli);
   } else {
     var li = document.createElement('li');
     li.innerHTML = '<span>' + key + '</span>';
@@ -8455,7 +8476,7 @@ function checkRules () {
         thisFig = thisFig.replace(regex, '$1(' + k[j] + ')$2');
       }
       log.push ('========= Figure #' + figNr + ': ' + thisFig);
-      // Check if the figure is a additional
+      // Check if the figure is an additional
       if (figures[i].additional) {
         additionals++;
         log.push ('is additional? True');
@@ -10059,7 +10080,7 @@ function selectFigureFu (id) {
     
   // set figure chooser for new Additional figures, or hide for others
   if ((figures[id].unknownFigureLetter === 'L') && (figures[id].string === 'L')) {
-    setFigChooser (id);
+    updateFigureSelectorOptions();
     markMatchingFigures ();
     showFigureSelector ();
   } else {
@@ -11340,6 +11361,9 @@ function startFuDesigner(dontConfirm) {
       // clear undo and redo
       activeSequence.undo = activeSequence.redo = [];
       
+      // disable gridInfo
+      document.getElementById ('gridInfo').classList.add ('noDisplay');
+      
       // set correct figureInfo tab movement
       document.getElementById ('figureInfo').classList.add ('fuDesigner');
         
@@ -11438,7 +11462,10 @@ function exitFuDesigner (newSequence) {
   
       // clear undo and redo
       activeSequence.undo = activeSequence.redo = [];
-  
+
+      // enable gridInfo
+      document.getElementById ('gridInfo').classList.remove ('noDisplay');
+        
       // switch sequence view
       document.getElementById ('fuSequence').classList.add ('noDisplay');
   
@@ -13864,6 +13891,9 @@ function activateXMLsequence (xml, noLoadRules) {
     var el = document.getElementById(sequenceXMLlabels[i]);
     if (el) el.value = '';
   }
+  fileName.value = '';
+  storeLocal ('fileName', fileName.value);
+  fileName.updateSaveFilename;
   // set 'class' to powered by default to provide compatibility with OLAN
   // and older OpenAero versions
   var el = document.getElementById('class');
@@ -14601,6 +14631,14 @@ function parseAircraft (t) {
 function printForms () {
   // open the print window in time to prevent popup blocking
   if (!chromeApp.active) {
+    /**
+    if (window.navigator.standalone) {
+      // create and click <a> for standalone
+      var a = document.createElement('a');
+      a.href = url;
+      a.target = '_blank';
+      a.click();
+    }*/
     var win = window.open ('',"printForms",'width=800,height=600,' +
       'top=50,location=no,menubar=no,scrollbars=yes,status=no,toolbar=no');
   }
@@ -18144,7 +18182,7 @@ function parseSequence () {
         if (firstFigure) updateSequenceOptions ('');
         // No viable figure found, therefore Illegal
         buildIllegal (i);
-        if (i == (figures.length - 1)) {
+        if (i == (figures.length - (activeForm === 'FU' ? 2 : 1))) {
           alertMsgs.push (userText.illegalAtEnd);
         } else {  
           alertMsgs.push (userText.illegalBefore + seqNr);

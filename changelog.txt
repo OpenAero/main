@@ -1,3 +1,11 @@
+2017.2.2
+* fixed Free Unknown designer layout by disabling gridInfo when starting
+* added sorting of groups in library by order of sequences to prevent them dropping off screen
+* fixed fileName field to be emptied when opening sequence link
+* fixed warning for illegal figure at the end in FU designer
+* fixed issue where selecting additional on iPad Safari did not work correctly
+* moved grid column setting back to Settings for mobile layout (no grid info)
+
 2017.2.1
 * fixed P loops with half rolls in bottom
 * added extra space on top of figure chooser to prevent overlap by Grid Info panel
