@@ -36,7 +36,7 @@
 // Where a new x should be used for versions that create sequences not
 // fully backward compatible with the previous version
 
-var version = '2017.2.2';
+var version = '2017.2.3';
 /* versionNew is an object that contains version update information
    The structure is {vvv : [[ttt, n], ...], ...} , where
    vvv = version number
@@ -44,6 +44,9 @@ var version = '2017.2.2';
    n   = importance (higher = more important)
 */
 var versionNew = {
+  '2017.2.3' : [
+    ['Switched figure rows 8.6.18 and 8.6.19 as they were not according latest Aresti catalog', 3]
+  ],
   '2017.2.2' : [
     ['Fixed several issues with Free Unknown designer', 3]
   ],

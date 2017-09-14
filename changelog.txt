@@ -1,3 +1,8 @@
+2017.2.3
+* updated AAC rules for 2017
+* switched figure rows 8.6.18 and 8.6.19 as they were not according latest Aresti catalog
+* fixed issue where dragging and dropping a part of the sequence string resulted in trying to open a file
+
 2017.2.2
 * fixed Free Unknown designer layout by disabling gridInfo when starting
 * added sorting of groups in library by order of sequences to prevent them dropping off screen

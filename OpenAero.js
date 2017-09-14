@@ -13393,11 +13393,11 @@ function programme () {
 // dropSequence will attempt to load a sequence from a file dropped in
 // the main area
 function dropSequence (evt) {
-  if (evt && evt.dataTransfer) {
+  if (evt && evt.dataTransfer && evt.dataTransfer.files) {
     noPropagation(evt);
-    document.getElementById ('file').files = evt.dataTransfer.files;
+    //document.getElementById ('file').files = evt.dataTransfer.files;
+    openSequence();
   }
-  openSequence();
 }
 
 // openSequence will load a sequence from a .seq file
