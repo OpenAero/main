@@ -111,35 +111,13 @@ rules.push("froll-min=1");               	// At least 1 from the Family 9.1
 
 rules.push("hroll-min=1");               	// At least 1 from the Family 9.2
 
-rules.push("troll-min=1");               	// At least 1 from the Family 9.3
-
 rules.push("qroll-min=1");               	// At least 1 from the Family 9.4
 
-rules.push("group-roll95=^9\\.5");		// Define the family
-
-rules.push("roll95-name=Family 9.5");		// Define the name
-
-rules.push("roll95-min=1");               	// At least 1 from the Family 9.5
-
-rules.push("group-roll96=^9\\.6");		// Define the family
-
-rules.push("roll96-name=Family 9.6");		// Define the name
-
-rules.push("roll96-min=1");               	// At least 1 from the Family 9.6
-
-rules.push("group-roll97=^9\\.7");		// Define the family
-
-rules.push("roll97-name=Family 9.7");		// Define the name
-
-rules.push("roll97-min=1");               	// At least 1 from the Family 9.7
-
 rules.push("eroll-min=1");               	// At least 1 from the Family 9.8
-
 
 rules.push("snap-min=1");               	// At least 1 from the Family 9.9 or 9.10 (snap)
 
 rules.push("spin-min=1");               	// Family 9.11 - 9.12
-
 
 rules.push("opposite-min=1");               	// At least 1 opposite roll
 
