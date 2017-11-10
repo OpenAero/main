@@ -1,4 +1,4 @@
-﻿// fr.js 2016.2
+﻿// fr.js 2017.2.4
 // This file is part of OpenAero.
 
 //  OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -85,8 +85,8 @@ lang.fr = {
   'peut prendre du temps. Patentiez, svp…',
 'addFigureText' : 'Cliquer pour ajouter figure',
 'addingFigure' : 'Ajouter une nouvelle figure',
-// updated 2016.1
-'Additional' : 'Supplé&#173;mentaire',
+// updated 2017.2.4
+'additional' : 'Supplé&#173;mentaire',
 //
 'addToQueue' : 'Ajouter à la file',
 'acreg': 'Immat d\'Avion',
@@ -167,7 +167,7 @@ lang.fr = {
 'clickChangeFigure' : 'Cliquer pour changer ou ajouter une figure',
 'closeAlert' : 'Fermer',
 'closeIt' : 'Fermer',
-'columns' : 'Colonnes',
+'columns' : 'Colonnes en tableau',
 'comments' : 'Commentaires',
 'confirmBoxYes' : 'Oui',
 'confirmBoxNo' : 'Non',
@@ -180,9 +180,10 @@ lang.fr = {
 'convertingToPng' : 'Conversion en image PNG.<br>Ceci peut prendre' +
   'du temps. Patientez, svp...',
 'convertingTitle' : 'Conversion en cours...',
+// new 2017.2.4
+'copyClipboard' : 'Copier',
 'date' : 'Date',
 'demo' : 'Exemples',
-'desktopVersion' : 'Version ordinateur',
 'disqualified' : 'Disqualifié',
 'download' : 'Télécharger',
 // changed 2016.3.2
@@ -377,7 +378,6 @@ lang.fr = {
 'missingInfo' : 'Des informations essentielles du programme manquent.</br>' +
   'Etes-vous sur de vouloir enregistrer ou imprimer le fichier sans celles-ci :',
 'missingInfoTitle' : 'Informations du programme manquantes',
-'mobileVersion' : 'Version mobile',
 'multiNoSequence' : 'Certains fichiers ne sont pas des programmes ' + 
   'OpenAero ou OLAN. Ils n\'ont pas été ajoutés à la liste', 
 'multiOverrideRules' : 'Au lieu des règles de chaque programme, utiliser les règles :',
@@ -536,6 +536,8 @@ lang.fr = {
 'referenceSequenceTitle' : 'Figures de référence pour les ' +
   'programmes d\'(In)connu-Libre',
 //
+// new 2017.2.4
+'registration' : 'Immat',
 'remove' : 'Supprimer',
 'removeLogo' : 'Supprimer le logo',
 'resetStyle' : 'Valeur par défaut',
@@ -576,8 +578,7 @@ lang.fr = {
   'Vous pouvez le copier dans un émail, en faire un favori, etc...<br /> ' +
   'Faire un clic droit et "Enregistrer la cible du lien sous...".',
 'saveAsURLFromApp' : 'Le lien ci-dessous contient votre programme. ' +
-  'Vous pouvez le copier dans un émail, en faire un favori, etc...<br /> ' +
-  'Faire un clic droit pour le copier.',
+  'Vous pouvez le copier dans un émail, en faire un favori, etc...',
 'saveAsURLTitle' : 'Enregistrement du programme en tant que lien',
 'saveFigsSeparate' : 'Enregistrer chaque figure',
 'saveFigsSeparateTitle' : 'Enregistrement individuel des figures',
@@ -603,7 +604,6 @@ lang.fr = {
 'sequenceTest' : 'Vérification :',
 'sequenceNotSavedWarning' : 'Le programme n\'a pas été enregistré.\n' +
   'Etes-vous sur de vouloir en ouvrir un nouveau ?',
-'setMobile' : 'Version mobile',
 'settings' : 'Paramétrage',
 'settingsClose' : 'Fermer',
 'settingsTitle' : 'Paramètres',
@@ -665,8 +665,7 @@ lang.fr = {
   '</strong><br>Nouvelles fonctionnalités:<ul>%s' +
   '<li>Autres corrections et améliorations (lisez <a id="changelog">' +
   'changelog.txt</a> si intéressé)</li>' +
-  '</ul>' +
-  'Ceci peut prendre quelques instants à charger.',
+  '</ul>',
 'view' : 'Affichage',
 // new 2016.2
 'warningNewerVersion' : '<p>Ce programme a été créé avec une version ' +

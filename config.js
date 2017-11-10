@@ -36,7 +36,7 @@
 // Where a new x should be used for versions that create sequences not
 // fully backward compatible with the previous version
 
-var version = '2017.2.3';
+var version = '2018.1';
 /* versionNew is an object that contains version update information
    The structure is {vvv : [[ttt, n], ...], ...} , where
    vvv = version number
@@ -44,6 +44,10 @@ var version = '2017.2.3';
    n   = importance (higher = more important)
 */
 var versionNew = {
+	'2018.1' : [
+		['Overhauled menu structure and layout, including addition of special mobile device menus', 4],
+    ['Expanded Free Unknown Designer to also support Free Known sequences', 5]
+	],
   '2017.2.3' : [
     ['Switched figure rows 8.6.18 and 8.6.19 as they were not according latest Aresti catalog', 3]
   ],
@@ -255,7 +259,7 @@ var separateMargin = 2;
 
 // define if we show an error when running from file://
 var presentFileError = false;
-// show mini Form A on Form B
+// show mini Form A on Form B and C
 var miniFormA = true;
 // define whether to draw IAC style forms by default
 var iacForms = false;
@@ -276,6 +280,7 @@ var saveSettings = [
   'numberInCircle',
   'positionClearAuto',
   'showHandles',
+  'smallMobile',
   'rollFontSize',
   'nonArestiRolls'];
 // define which settings will be loaded from sequence
@@ -313,12 +318,12 @@ var styleSave = [];
 // style holds the style objects
 var style = {
   // Positive line style
-  'pos' : 'stroke: black; stroke-width: 1.5px; fill: none;',
-  'chooserPos' : 'stroke: black; stroke-width: 3px; fill: none;',
+  'pos' : 'stroke: black; stroke-width: 1.5px; fill: none; vector-effect: non-scaling-stroke;',
+  //'chooserPos' : 'stroke: black; stroke-width: 3px; fill: none;',
   // Negative line style
-  'neg' : 'stroke-dasharray: 5, 3; stroke: red; stroke-width: 1.5px; fill: none;',
-  'negBW' : 'stroke-dasharray: 4, 4; stroke: black; stroke-width: 1.5px; fill: none;',
-  'chooserNeg' : 'stroke-dasharray: 10, 6; stroke: red; stroke-width: 3px; fill: none;',
+  'neg' : 'stroke-dasharray: 5, 3; stroke: red; stroke-width: 1.5px; fill: none; vector-effect: non-scaling-stroke;',
+  'negBW' : 'stroke-dasharray: 4, 4; stroke: black; stroke-width: 1.5px; fill: none; vector-effect: non-scaling-stroke;',
+  //'chooserNeg' : 'stroke-dasharray: 10, 6; stroke: red; stroke-width: 3px; fill: none;',
   // Black filled path style
   'blackfill' : 'stroke: black; stroke-width: 1px; fill: black;',
   // Positive filled path style
@@ -327,7 +332,7 @@ var style = {
   'negfill' : 'stroke: black; stroke-width: 1.5px; fill: red;',
   'negfillBW' : 'stroke: black; stroke-width: 1.5px; fill: black;',
   // Dotted path style
-  'dotted' : 'stroke-dasharray: 1, 3; stroke: black; stroke-width: 1px; fill: none;',
+  'dotted' : 'stroke-dasharray: 1, 3; stroke: black; stroke-width: 1px; fill: none; vector-effect: non-scaling-stroke;',
   // Illegal figure cross style
   'illegalCross' : 'stroke: red; stroke-width: 3px; fill: none;',
   // Illegal figure box style

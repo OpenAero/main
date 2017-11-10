@@ -83,7 +83,7 @@ var activeSequence = {'text': '',
                       'redo': [],
                       'addUndo': true
                       };
-// referenceSequence is used for checking Free Unknown sequence against
+// referenceSequence is used for checking Free (Un)known sequence against
 // reference
 var referenceSequence = {figures: []};
 // sequenceSaved is true when the current sequence has been saved. It
@@ -93,7 +93,7 @@ var sequenceSaved = true;
 var sequenceText;
 // sportingClass will hold the class select object
 var sportingClass;
-// fileName will hold the fileName input field
+// fileName will hold the fileName span
 var fileName;
 // figureK holds the current total figureK
 var figureK = 0;
@@ -125,7 +125,7 @@ seqNr                number in sequence
 startPos             the starting position
 string               as in sequence text line
 unknownFigureLetter  letter for Free (Un)known figures
-subSeq               subsequence number, used in Free Unknown Designer
+subSeq               subsequence number, used in Free (Un)known Designer
 switchFirstRoll      multi switch figures. true/false/null
 */
 var figures = [];
@@ -149,12 +149,17 @@ var SVGRoot = null;
 // These variables are used for dragging and dropping
 var TrueCoords = null;
 var GrabPoint = null;
-var DragTarget = null;
+var dragTarget = null;
 // confirmFunction is used as a function reference of confirm dialog
 var confirmFunction;
 
-// mobileBrowser is true when OpenAero is run on a mobile browser
-var mobileBrowser = false;
+// mobileDevice is true when running on a mobile device (e.g. tablet)
+/** SET TO TRUE FOR TESTING !!! */
+var mobileDevice = ((typeof window.orientation !== 'undefined') ||
+	(navigator.userAgent.indexOf('IEMobile') !== -1) || true);
+	
+// smallMobile is true when running on a small Mobile browser
+var smallMobile = false;
 
 // touchDevice is true on touch enabled devices. As it can also be true
 // on touch enabled browsers when using mouse and keyboard, we check
@@ -244,7 +249,7 @@ var aresti_K = [];
 var aresti_K_class ; // "class" (kpwrd or kglider) of the active rules for setting the corresponding K in fig.
 // Modif GG v2016.1.4 End
 
-// fuFig is similar to fig, holding figures for the Free Unknown Designer
+// fuFig is similar to fig, holding figures for the Free (Un)known Designer
 var fuFig = [];
 
 // figBaseLookup holds the same data as fig.base, but with the base as
@@ -1080,7 +1085,7 @@ var iosDragDropShim = { enableEnterLeave: true,
       } else if (iosDragDropShim.openaero) {
         if (el.classList.contains ('removeFigureButton')) {
           evt.preventDefault();
-          handleFuRemove (evt, el);
+          handleFreeRemove (evt, el);
           return false;
         } else if (el.classList.contains ('fuFigure') ||
           el.classList.contains ('fuFigureMulti') ||
@@ -1467,54 +1472,45 @@ if (!HTMLCanvasElement.prototype.toBlob) {
  * User interface functions
  ************************************************/
  
-// switchMobile switches between mobile and desktop layout
-function switchMobile () {
-  mobileBrowser = !mobileBrowser;
+// switchSmallMobile switches between smallMobile and regular layout
+function switchSmallMobile () {
+  //if (!mobileDevice) return;
+	saveSettingsStorage();
+  smallMobile = !smallMobile;
   // select no figure
   if (selectedFigure.id !== null) selectFigure (false);
   // get viewport meta element
   var viewport = document.getElementById('viewport');
-  // load CSS depending on mobile or desktop version
-  var link = document.getElementById('mobileDesktopCSS');
-  var setMobileMenu = document.getElementById('t_setMobile');
+  // load CSS depending on smallMobile, largeMobile or desktop version
+  var link = document.getElementById('desktopLargeMobileCSS');
   var tab = document.getElementById('tab-svgContainer');
   var svg = document.getElementById('svgContainer');
-  if (mobileBrowser) {
+  if (smallMobile) {
     // set view to device width
-    viewport.setAttribute('content', 'initial-scale=' +
-      roundTwo(screen.width / 320) + ', user-scalable=no');
-    // hide Free Unknown designer menu item
-    document.getElementById('t_fuDesigner').classList.add ('noDisplay');
-    // set mobile css
-    link.setAttribute('href', 'css/mobile.css');
-    // update Sequence main menu link
-    document.getElementById('t_sequence').innerHTML = userText.sequenceShort;
-    // update view menu
-    setMobileMenu.innerHTML = userText.desktopVersion;
+    windowResize();
+    // hide Free (Un)known designer menu item
+    document.getElementById('t_fuDesigner').parentNode.classList.add ('noDisplay');
+    // set smallMobile css
+    link.setAttribute('href', 'css/smallMobile.css');
     // unhide sequence tab
     tab.classList.remove ('noDisplay');
     // hide sequence svg and move to leftBlockTop
     svg.classList.add('hidden');
     document.getElementById('leftBlockTop').appendChild(svg);
-    // move figureSelector to left side
-    document.getElementById ('figureSelector').classList.add ('left');
     //svg.setAttribute('style', 'position:absolute;z-index:-1;top:-5000px;');
     // remove any vertical displacement done by updateSequenceTextHeight
     sequenceText.removeAttribute('style');
     document.getElementById('main').removeAttribute('style');
     // move grid column setting to settings
     var el = document.getElementById ('t_gridView');
-    el.classList.add ('noDisplay');
     el.parentNode.appendChild (document.getElementById ('gridColumnsContainer'));
+    // don't show mini form A
+    miniFormA = false;
   } else {
     viewport.setAttribute('content', '');
 
-    document.getElementById('t_fuDesigner').classList.remove ('noDisplay');
-    link.setAttribute('href', 'css/desktop.css');
-    // update Sequence menu link
-    document.getElementById('t_sequence').innerHTML = userText.sequence;
-    // update view menu
-    setMobileMenu.innerHTML = userText.mobileVersion;
+    document.getElementById('t_fuDesigner').parentNode.classList.remove ('noDisplay');
+    link.setAttribute('href', 'css/desktop-largeMobile.css');
 
     // restore sequence container
     tab.classList.add('noDisplay');
@@ -1523,15 +1519,14 @@ function switchMobile () {
     var placing = document.getElementById('svgContainerPlacing');
     placing.parentNode.insertBefore (svg, placing);
 
-    // move figureSelector back to right side
-    document.getElementById ('figureSelector').classList.remove ('left');
-
     // move grid column setting to grid info
     var el = document.getElementById ('gridInfoContents');
-    document.getElementById ('t_gridView').classList.remove ('noDisplay');
     el.insertBefore (document.getElementById ('gridColumnsContainer'), el.firstChild);
 
     selectTab ('tab-sequenceInfo');
+
+    // show mini form A
+    miniFormA = false;
     
     checkSequenceChanged();    
   }
@@ -1553,9 +1548,134 @@ function switchMobile () {
   changeFigureGroup();
 }    
 
+// mobileInterface adjusts interface for mobile devices
+function mobileInterface () {
+
+	document.getElementById('desktopCSS').setAttribute('href', 'css/mobile.css');
+
+	// update menu
+	var menuIcon = document.getElementById ('hamburgerMenu');
+	var mainMenu = document.getElementById ('mainMenu');
+	menuIcon.parentNode.insertBefore (mainMenu, menuIcon);
+
+	// move some Tools menu items to main and hide Tools menu
+	document.getElementById('menu').insertBefore (
+		document.getElementById('t_fuDesigner').parentNode,
+		document.getElementById('menuHelp')
+	);
+	document.getElementById('t_fuDesigner').parentNode.classList.remove ('divider');
+	document.getElementById('menu').insertBefore (
+		document.getElementById('settings'),
+		document.getElementById('menuHelp')
+	);
+	document.getElementById('settings').classList.remove ('divider');
+	document.getElementById('menuTools').classList.add ('noDisplay');
+	
+	// move Free (Un)known Designer finalize button
+	document.getElementById('topBlock').insertBefore (
+		document.getElementById ('t_finalizeSequence'),
+		document.getElementById ('undoRedo').nextSibling);
+    
+	// update header for mobile menus
+	mobileMenuHeader();
+	
+	// set rightArrow for all submenus
+	var menuNodes = document.getElementById ('menu').childNodes;
+	for (var i = 0; i < menuNodes.length; i++) {
+		if (menuNodes[i].tagName) {
+			var ul = menuNodes[i].getElementsByTagName ('UL');
+			if (ul.length > 0) {
+				var iNode = document.createElement('i');
+				iNode.setAttribute ('class', 'material-icons rightArrow');
+				menuNodes[i].insertBefore (iNode, ul[0]);
+			}
+		}
+	}
+	
+  // disable or change some items for iOS
+  if (/i(Pad|Phone|Pod)/i.test (navigator.userAgent)) {
+    // hide all save options
+    document.getElementById('t_saveSequence').parentNode.classList.add ('noDisplay');
+    document.getElementById('t_saveFigsSeparate').parentNode.classList.add ('noDisplay');
+    document.getElementById('t_saveQueueFile').parentNode.classList.add ('noDisplay');
+    
+    /*document.getElementById('t_printExplain').innerHTML = userText.iOSprintExplain;
+    document.getElementById('t_print').classList.add ('noDisplay');*/
+    document.getElementById('t_saveAsSVG').classList.add ('noDisplay');
+    
+    // print margins
+    document.getElementById('saveImageVariables').parentNode.classList.remove ('divider');
+    document.getElementById('printMargins').classList.add ('noDisplay');
+  }
+}
+
+// menuMobileHeader updates mobile menu header items
+function mobileMenuHeader () {
+	addHeader (document.getElementById ('menu'));
+	
+	function addHeader (menu) {
+		var nodes = menu.childNodes;
+		for (var i = 0; i < nodes.length; i++) {
+			if (nodes[i].tagName === 'LI') {
+				// copy menu title from previous menu
+			  var ul = nodes[i].getElementsByTagName ('UL')[0];
+			  if (ul) {
+				  if (ul.getElementsByClassName ('menuHeader')[0]) {
+				    ul.removeChild (ul.getElementsByClassName ('menuHeader')[0]);
+				  }
+				  var li = document.createElement ('li');
+				  li.classList.add ('menuHeader');
+				  li.innerHTML = '<span class="previousMenu">' +
+            '<i class="material-icons leftArrow"></i>' +
+					  ((menu === document.getElementById ('menu')) ? 'Menu' :
+					    nodes[i].parentNode.parentNode.getElementsByTagName ('SPAN')[0].innerHTML) +
+				    '</span>' +
+				    '<span class="currentMenu">' + ul.parentNode.getElementsByTagName ('SPAN')[0].innerHTML + '<span>';
+				  ul.insertBefore (li, ul.firstChild);
+				  li.firstChild.addEventListener ('mousedown', function(e){
+						this.parentNode.parentNode.parentNode.classList.remove ('active');
+						e.stopPropagation();
+					});
+				  addHeader (ul);
+				}
+			}
+		}
+	}
+}
+
+// panelHeader sets correct panel header for expanded or collapsed panel 
+function panelHeader (el, empty) {
+	var grandPa = el.parentNode.parentNode;
+	if (grandPa.classList.contains ('expanded')) {
+		el.innerText = '';
+	} else {
+		var inputs = grandPa.getElementsByClassName('panelHeader');
+		var values = [];
+		for (var i = 0; i < inputs.length; i++) {
+			if ((inputs[i].tagName === 'SELECT') && userText[inputs[i].value]) {
+				values.push (userText[inputs[i].value]);
+			} else values.push(inputs[i].value);
+		}
+		el.innerText = values.join(' ').trim() || empty || '';
+	}
+}
+
 // menuActive and menuInactive show and remove top menus on mouseover
 function menuActive () {
-  this.classList.add ('active');
+  if (this.id === 'hamburgerMenu') {
+    var menu = document.getElementById ('mainMenu');
+    if (menu.classList.contains ('active')) {
+      menuInactiveAll();
+    } else {
+      this.classList.add ('active');
+      menu.classList.add ('active');
+      document.body.classList.add ('menuOpen');
+			window.scrollTo (0,0);
+    }
+  } else {
+    this.classList.add ('active');
+    this.parentNode.scrollTop = 0;
+  }
 }
 
 function menuInactive (el) {
@@ -1580,11 +1700,13 @@ function menuTouch () {
 
 // menuInactiveAll hides all active menus
 function menuInactiveAll () {
-  var menu = document.getElementById('menu');
+  var menu = document.getElementById('mainMenu');
+  menu.classList.remove ('active');
   var el = menu.getElementsByClassName ('active');
   for (var i = el.length - 1; i >= 0; i--) {
     el[i].classList.remove ('active');
   }
+  document.body.classList.remove ('menuOpen');
 }
 
 // newSvg creates a new, minimal svg
@@ -1660,7 +1782,9 @@ function infoBox(message, title) {
 
 // alertBox creates a styled alert box with a 'close' option
 // message contains the HTML text. When false, the box is closed
-function alertBox(message, title) {
+// The buttons object may contain an array of buttons to be added of
+// form [{name:xxx, function:yyy}, ...]
+function alertBox(message, title, buttons) {
   // hide all menus
   menuInactiveAll();
   
@@ -1668,6 +1792,19 @@ function alertBox(message, title) {
   if (message) {
     // show box
     div.classList.remove ('noDisplay');
+    // remove old buttons
+    var closeButton = document.getElementById ('t_closeAlert');
+    var button = closeButton.parentNode.getElementsByClassName ('addedButton');
+    while (button.length > 0) button[0].parentNode.removeChild (button[0]);
+    // add new buttons
+    if (buttons) for (var i = 0; i < buttons.length; i++) {
+      var button = document.createElement ('span');
+      button.classList.add ('textButton');
+      button.classList.add ('addedButton');
+      button.innerHTML = userText[buttons[i].name];
+      button.addEventListener ('mousedown', buttons[i].function);
+      closeButton.parentNode.insertBefore (button, closeButton);
+    }
     dialogBuildContents ('alert', message, title);
   } else {
     div.classList.add ('noDisplay');
@@ -1837,12 +1974,12 @@ function printMultiDialog() {
 
 // settingsDialog shows or hides the settings dialog
 // when false, the dialog is closed
-function settingsDialog() {
+function settingsDialog(e) {
   // hide all menus
   menuInactiveAll();
   
   var div = document.getElementById('settingsDialog');
-  if (this.id === 't_settings') {
+  if (e) {
     div.classList.remove ('noDisplay');
   } else {
     div.classList.add ('noDisplay');
@@ -1875,14 +2012,21 @@ function proposalsDialog (e) {
 
 // proposalsToGrid loads the proposals from the dialog to the Grid
 function proposalsToGrid () {
-  sequenceText.value = document.getElementById ('proposals').textContent.trim();
+  sequenceText.innerText = document.getElementById ('proposals').textContent.trim();
   proposalsDialog (false);
   checkSequenceChanged (true);
 }
 
 // helpWindow will display a window with content from url and title
-function helpWindow(url, title) {
-  if (chromeApp.active) {
+function helpWindow (url, title) {
+	// set a small delay to make sure the menu is not again activated
+	setTimeout(menuInactiveAll, 100);
+	
+	if (mobileDevice) {
+		document.getElementById('helpTitle').innerText = title;
+		document.getElementById('helpContent').firstChild.src = url;
+		document.getElementById ('helpBox').classList.remove ('noDisplay');
+	} else if (chromeApp.active) {
     // use chrome.app.window.create for desktop Chrome app
     chrome.app.window.create (url, {
       bounds: {
@@ -2018,7 +2162,7 @@ function combo(id,h,l) {
   self.hasfocus = false; 
   self.sel = -1; 
   self.ul = self.inp.nextSibling;
-  while (self.ul.nodeType == 3) self.ul = self.ul.nextSibling; 
+  while (self.ul.tagName !== 'UL') self.ul = self.ul.nextSibling; 
   self.ul.onmouseover = function() {
     self.ul.classList.remove ('focused');
   }; 
@@ -2122,7 +2266,12 @@ function selectTab (e) {
       // hide the tab by using display:hidden
       // so any data is still accessible
       var hideTab = document.getElementById(list[i].id.replace('tab-', ''));
-      if (hideTab) hideTab.classList.add('hidden');
+      if (hideTab) {
+        hideTab.classList.add('hidden');
+        if (tab.id === 'svgContainer') {
+          hideTab.classList.add('left');
+        } else hideTab.classList.remove('left');
+      }
     }
   }
   // select correct tab
@@ -2142,7 +2291,7 @@ function selectTab (e) {
       setTimeout (function(){
         el.style.transition = 'all 0.3s ease-in-out';
         el.style.transform = '';
-      }, 200);
+      }, 300);
     }
     
     slide (document.getElementById('alerts'));
@@ -2416,7 +2565,7 @@ function makeFigStart (params) {
     if (seqNr && (activeForm != 'A')) {
       pathsArray.push ({
         'text':seqNr,
-        'style':'miniFormA',
+        'style':'figNbr_09',
         'x':0,
         'y':-8,
         'text-anchor':'middle'
@@ -4309,6 +4458,7 @@ function drawArestiText(figNr, aresti) {
 
 // doOnLoad is only called on initial loading of the page
 function doOnLoad () {
+  
   // define DOM variables
   try {
     if (chrome && chrome.fileSystem) {
@@ -4320,7 +4470,7 @@ function doOnLoad () {
   sequenceText = document.getElementById('sequence_text');
   sportingClass = document.getElementById('class');
   fileName = document.getElementById('fileName');
-  getLocal ('fileName', function(value) {fileName.value = value});
+  getLocal ('fileName', function(value) {fileName.innerText = value});
   newTurnPerspective = document.getElementById('newTurnPerspective');
   debug = document.getElementById('debug');
     
@@ -4371,14 +4521,27 @@ function doOnLoad () {
   */
   // build sequence svg
   rebuildSequenceSvg();
-  // determine if we are running on a mobile browser by screen width
-  if (screen.width < 761) {
-    switchMobile ();
-  }
 
   // check browser and capabilities
   var err = checkBrowser();
   if (err) errors.push (err);
+
+	// when smallMobile is checked (loaded from settings), or when screen
+	// width is small and no setting is found, switch to smallMobile
+	if (document.getElementById ('smallMobile').checked) {
+		switchSmallMobile ();
+	} else if (screen.width < 761) {
+
+		function f(settings) {
+			if (!/\bsmallMobile\b/.test (settings)) {
+				document.getElementById ('smallMobile').checked = 'checked';
+				switchSmallMobile ();
+			}
+		}
+		
+		if (storage) getLocal ('settings', f); else f();			 
+		
+	}
 
   // by default, do not allow drag & drop of files to OpenAero
   document.body.addEventListener('dragover', noDragOver);
@@ -4398,8 +4561,12 @@ function doOnLoad () {
   document.getElementById('main').addEventListener('drop', dropSequence);
   document.getElementById('main').addEventListener('dragover', handleDragOver, false);
   
-  // add onresize event for resizing the sequence text window
+  // add onresize event for resizing the sequence text window and/or
+  // smallMobile viewport
   window.onresize = windowResize;
+  window.matchMedia('(orientation: portrait)').addListener (windowResize);
+  window.matchMedia('(orientation: landscape)').addListener (windowResize);
+  
   // Parse the figures file
   parseFiguresFile();
   // Parse the rules
@@ -4461,7 +4628,7 @@ function doOnLoad () {
   // need to do this to make sure the sequence is drawn when loaded
   // from localStorage or url
   selectForm(activeForm);
-  if (mobileBrowser) selectTab('tab-sequenceInfo');
+  if (smallMobile) selectTab('tab-sequenceInfo');
   
   // add submenu showing/hiding
   addMenuEventListeners();
@@ -4484,18 +4651,24 @@ function doOnLoad () {
   // enable expansion panel toggles
   var els = document.getElementsByClassName ('expand-toggle');
   for (var i = els.length - 1; i >= 0; i--) {
-    els[i].addEventListener ('mousedown', function(e) {
-        e.target.parentNode.classList.toggle ('expanded');
-      }
-    );
+		if (els[i].parentNode.id === 'rulesLabel') {
+	    els[i].parentNode.addEventListener ('mousedown', function(e) {
+	        e.target.parentNode.parentNode.classList.toggle ('expanded');
+	        panelHeader (document.getElementById ('activeRules'));
+	      }
+	    );
+		} else if (els[i].parentNode.id === 'contestLabel') {
+			els[i].parentNode.addEventListener ('mousedown', function(e) {
+        e.target.parentNode.parentNode.classList.toggle ('expanded');
+        panelHeader (document.getElementById ('activeContest'), userText.contest);
+			});
+		} else {
+	    els[i].parentNode.addEventListener ('mousedown', function(e) {
+        e.target.parentNode.parentNode.classList.toggle ('expanded');
+	    });
+		}
   }
-  
-  /**
-  // load (mostly) completed, remove loading icon and status
-  el.innerHTML = '';
-  el.setAttribute('style', 'display:none;');
-  */
-  
+    
   // Check for the latest version every 10 minutes
   if (!chromeApp.active) {
     window.setInterval(function(){latestVersion()},600000);
@@ -4520,30 +4693,20 @@ function doOnLoad () {
   checkUpdateDone();
 
   loadComplete = true;
+
+  // load (mostly) completed, remove loading icon
+  var el = document.getElementById ('loading');
+  if (el) el.parentNode.removeChild (el);
+
   // also check for latest version now
-  if (chromeApp.active || window.location.hostname.match(/^(.+\.)?openaero.net$/)) {
-    document.getElementById('latestVersion').parentNode.classList.add('noDisplay');
-    document.getElementById('version').innerHTML = sprintf (
-      userText.version, version);
-  } else {
+  if (!(chromeApp.active || window.location.hostname.match(/^(.+\.)?openaero.net$/))) {
     latestVersion();
   }
+
+  if (mobileDevice) mobileInterface();
   
-  // activate addtohomescreen for mobile devices
+  // activate addtohomescreen for smallMobile devices
   if (!chromeApp.active) addToHomescreen();
-  
-  // disable or change some items for iOS
-  if (/i(Pad|Phone|Pod)/i.test (navigator.userAgent)) {
-    document.getElementById('t_saveSequence').parentNode.classList.add ('noDisplay');
-    document.getElementById('t_saveFigsSeparate').parentNode.classList.add ('noDisplay');
-    /*document.getElementById('t_printExplain').innerHTML = userText.iOSprintExplain;
-    document.getElementById('t_print').classList.add ('noDisplay');*/
-    document.getElementById('t_saveAsSVG').classList.add ('noDisplay');
-    
-    // print margins
-    document.getElementById('saveImageVariables').parentNode.classList.remove ('divider');
-    document.getElementById('printMargins').classList.add ('noDisplay');
-  }
   
   // retrieve queue from storage
   queueFromStorage ();
@@ -4659,7 +4822,7 @@ function addEventListeners () {
     document.addEventListener ('touchstart', function(evt){
       var el = evt.target;
       while (el !== this) {
-        if (el.id === 'menu') return;
+        if ((el.id === 'menu') || (el.id === 'hamburgerMenu')) return;
         el = el.parentNode;
       }
       setTimeout(menuInactiveAll, 200);
@@ -4674,61 +4837,62 @@ function addEventListeners () {
   window.addEventListener ('mouseup', Drop);
   
   // menu
+  document.getElementById('hamburgerMenu').addEventListener ('mousedown', menuActive);
   document.getElementById('file').addEventListener('mousedown', function(){
     setTimeout(menuInactiveAll, 1000);
     }, true);
   document.getElementById('fileForm').addEventListener('mousedown', function(){this.reset()}, false);
   document.getElementById('file').addEventListener('change', openSequence, false);
-  document.getElementById('t_openSequence').addEventListener('mousedown', document.getElementById('file').click, false);
-  document.getElementById('t_openSequenceLink').addEventListener('click', openSequenceLink, false);
-  document.getElementById('t_clearSequence').addEventListener('click', clearSequence, false);
-  document.getElementById('t_saveSequence').addEventListener('click', saveSequence, false);
-  document.getElementById('t_emailSequence').addEventListener('mousedown', emailSequence, false);
-  document.getElementById('t_saveAsLink').addEventListener('click', saveAsURL, false);
-  document.getElementById('t_saveFigsSeparate').addEventListener('click', saveFigs, false);
-  document.getElementById('t_printSaveForms').addEventListener('click', function(){printDialog(true)}, false);
+  document.getElementById('t_openSequence').parentNode.addEventListener('mousedown', document.getElementById('file').click, false);
+  document.getElementById('t_openSequenceLink').parentNode.addEventListener('click', openSequenceLink, false);
+  document.getElementById('t_clearSequence').parentNode.addEventListener('click', clearSequence, false);
+  document.getElementById('t_saveSequence').parentNode.addEventListener('click', saveSequence, false);
+  document.getElementById('t_emailSequence').parentNode.addEventListener('mousedown', emailSequence, false);
+  document.getElementById('t_saveAsLink').parentNode.addEventListener('click', saveAsURL, false);
+  document.getElementById('t_saveFigsSeparate').parentNode.addEventListener('click', saveFigs, false);
+  document.getElementById('t_printSaveForms').parentNode.addEventListener('click', function(){printDialog(true)}, false);
   
-  document.getElementById('t_formA').addEventListener('click', function(){selectForm('A')}, false);
-  document.getElementById('t_formB').addEventListener('click', function(){selectForm('B')}, false);
-  document.getElementById('t_formC').addEventListener('click', function(){selectForm('C')}, false);
-  document.getElementById('t_figsInGrid').addEventListener('click', function(){selectForm('Grid')}, false);
+  document.getElementById('t_formA').parentNode.addEventListener('click', function(){selectForm('A')}, false);
+  document.getElementById('t_formB').parentNode.addEventListener('click', function(){selectForm('B')}, false);
+  document.getElementById('t_formC').parentNode.addEventListener('click', function(){selectForm('C')}, false);
+  document.getElementById('t_figsInGrid').parentNode.addEventListener('click', function(){selectForm('Grid')}, false);
   document.getElementById('zoomMin').addEventListener('mousedown', function(){appZoom(-1)}, false);
   document.getElementById('zoomPlus').addEventListener('mousedown', function(){appZoom(1)}, false);
-  document.getElementById('t_setMobile').addEventListener('click', switchMobile, false);
   
-  document.getElementById('t_flipYAxis').addEventListener('click', flipYAxis, false);
-  document.getElementById('t_clearPositioning').addEventListener('click', clearPositioningOption, false);
-  document.getElementById('t_separateFigures').addEventListener('click', separateFigures, false);
-  document.getElementById('t_checkSequence').addEventListener('click', function(){checkSequence(true)}, false);
-  document.getElementById('t_lockSequence').addEventListener('mousedown', lockSequence);
+  document.getElementById('t_flipYAxis').parentNode.addEventListener('click', flipYAxis, false);
+  document.getElementById('t_clearPositioning').parentNode.addEventListener('click', clearPositioningOption, false);
+  document.getElementById('t_separateFigures').parentNode.addEventListener('click', separateFigures, false);
+  document.getElementById('t_checkSequence').parentNode.addEventListener('click', function(){checkSequence(true)}, false);
+  document.getElementById('lockSequence').parentNode.addEventListener('mousedown', lockSequence);
+  document.getElementById('unlockSequence').parentNode.addEventListener('mousedown', lockSequence);
   
-  document.getElementById('t_showQueue').addEventListener('mousedown', showQueue, false);
-  document.getElementById('t_addToQueue').addEventListener('mousedown', addToQueue, false);
-  document.getElementById('t_addAllToQueue').addEventListener('mousedown', addAllToQueue, false);
-  document.getElementById('t_clearQueue').addEventListener('mousedown', clearQueue, false);
+  document.getElementById('t_showQueue').parentNode.addEventListener('mousedown', showQueue, false);
+  document.getElementById('t_addToQueue').parentNode.addEventListener('mousedown', addToQueue, false);
+  document.getElementById('t_addAllToQueue').parentNode.addEventListener('mousedown', addAllToQueue, false);
+  document.getElementById('t_clearQueue').parentNode.addEventListener('mousedown', clearQueue, false);
   document.getElementById('queue').addEventListener('change', openQueue, false);
-  document.getElementById('t_saveQueueFile').addEventListener('mousedown', saveQueue, false);
+  document.getElementById('t_saveQueueFile').parentNode.addEventListener('mousedown', saveQueue, false);
   
-  document.getElementById('t_fuDesigner').addEventListener ('mousedown', startFuDesigner, false);
-  document.getElementById('t_checkMultipleSeq').addEventListener('mousedown', function(){checkMultiDialog(true)}, false);
-  document.getElementById('t_printMultipleSeq').addEventListener('mousedown', printMultiDialog, false);
+  document.getElementById('t_fuDesigner').parentNode.addEventListener ('mousedown', startFuDesigner, false);
+  document.getElementById('t_checkMultipleSeq').parentNode.addEventListener('mousedown', function(){checkMultiDialog(true)}, false);
+  document.getElementById('t_printMultipleSeq').parentNode.addEventListener('mousedown', printMultiDialog, false);
   document.getElementById('rulesFile').addEventListener('change', openRulesFile, false);
-  document.getElementById('t_settings').addEventListener('click', settingsDialog, false);
-  document.getElementById('t_installChromeAppTitle').addEventListener ('mousedown', installChromeApp, false);
+  document.getElementById('t_settings').parentNode.addEventListener('mousedown', settingsDialog, false);
+  document.getElementById('t_installChromeAppTitle').parentNode.addEventListener ('mousedown', installChromeApp, false);
   
   document.getElementById('t_finalizeSequence').addEventListener ('mousedown', function(){exitFuDesigner(false)});
   
-  document.getElementById('t_manual').addEventListener('mousedown', function(){
+  document.getElementById('t_manual').parentNode.addEventListener('mousedown', function(){
       helpWindow('manual.html', 'OpenAero manual');
     }, false);
-  document.getElementById('t_openaeroLanguage').addEventListener('mousedown', function(){
+  document.getElementById('t_openaeroLanguage').parentNode.addEventListener('mousedown', function(){
       helpWindow('language.html', 'OpenAero language');
     }, false);
-  document.getElementById('t_arestiSystem').addEventListener('mousedown', function(){
+  document.getElementById('t_arestiSystem').parentNode.addEventListener('mousedown', function(){
       helpWindow('arestisystem.html', 'The Aresti aerocryptographic system');
     }, false);
 
-  document.getElementById('t_about').addEventListener('mousedown',
+  document.getElementById('t_about').parentNode.addEventListener('mousedown',
     aboutDialog, false);
       
   // sequence string
@@ -4739,6 +4903,7 @@ function addEventListeners () {
   sequenceText.addEventListener('mouseup', checkSequenceChanged, false);
   sequenceText.addEventListener('focus', virtualKeyboard, false);
   sequenceText.addEventListener('blur', virtualKeyboard, false);
+  sequenceText.addEventListener('blur', updateSequenceTextHeight);
   
   // virtual keyboard
   document.getElementById('virtualKeyboard').addEventListener('mousedown', clickVirtualKeyboard, false);
@@ -4765,25 +4930,35 @@ function addEventListeners () {
     
   // sequence info options
   document.getElementById('pilot').addEventListener('change', changeSequenceInfo, false);
+  document.getElementById('pilot').addEventListener('keydown', function(e){
+    if (e.shiftKey && (e.keyCode == 9)) {
+      document.getElementById('notes').focus();
+      e.preventDefault();
+    }}, false);
   document.getElementById('team').addEventListener('change', changeSequenceInfo, false);
   document.getElementById('actype').addEventListener('change', changeSequenceInfo, false);
   document.getElementById('acreg').addEventListener('change', changeSequenceInfo, false);
-  document.getElementById('location').addEventListener('change', changeSequenceInfo, false);
-  document.getElementById('date').addEventListener('change', changeSequenceInfo, false);
+  
   document.getElementById('class').addEventListener('change',  selectPwrdGlider, false);
   document.getElementById('positioning').addEventListener('change', changeSequenceInfo, false);
   document.getElementById('t_referenceSequence').addEventListener('mousedown', referenceSequenceDialog);
   document.getElementById('harmony').addEventListener('change', changeSequenceInfo, false);
   
+  document.getElementById('location').addEventListener('change', changeSequenceInfo, false);
+  document.getElementById('date').addEventListener('change', changeSequenceInfo, false);
   document.getElementById('t_chooseLogo').addEventListener('mousedown', logoChooser, false);
-  document.getElementById('t_removeLogo').addEventListener ('mousedown', removeLogo, false);
+  document.getElementById('removeLogo').addEventListener ('mousedown', removeLogo, false);
   document.getElementById('logoImage').addEventListener ('mousedown', logoChooser, false);
   document.getElementById('t_logoChooserCancel').addEventListener('mousedown', hideLogoChooser, false);
   document.getElementById('logoFile').addEventListener('change', openLogoFile, false);
 
   document.getElementById('notes').addEventListener('change', changeSequenceInfo, false);
-  fileName.addEventListener('input', updateSaveFilename, false);
-    
+  document.getElementById('notes').addEventListener('keydown', function(e){
+    if (e.keyCode == 9) {
+      document.getElementById('pilot').focus();
+      e.preventDefault();
+    }}, false);
+  
   // figure editor options
   document.getElementById('manual.html_adding_a_figure').addEventListener('mousedown', function(){
     helpWindow('manual.html#adding_a_figure', 'Adding a figure');
@@ -4821,11 +4996,14 @@ function addEventListeners () {
   document.getElementById('hideIllegal').addEventListener('change', changeHideIllegal, false);
   document.getElementById('hideFigureSelector').addEventListener('mousedown', hideFigureSelector, false);
   document.getElementById('figureGroup').addEventListener('change', changeFigureGroup, false);
-  document.getElementById('t_switchQueue').addEventListener('mousedown', function(){switchQueue(this)});
+//  document.getElementById('t_switchQueue').addEventListener('mousedown', function(){switchQueue(this)});
 
   // close alert box
   document.getElementById('t_closeAlert').addEventListener('click', function(){alertBox()}, false);
   
+  // close help box
+  document.getElementById('closeHelp').addEventListener('mousedown', function(){
+		document.getElementById('helpBox').classList.add ('noDisplay');}, false);
   // confirm box
   document.getElementById('t_confirmBoxYes').addEventListener('click', confirmYes, false);
   document.getElementById('t_confirmBoxNo').addEventListener('click', function(){confirmBox()}, false);
@@ -4851,6 +5029,7 @@ function addEventListeners () {
   document.getElementById('tab-styling').addEventListener('click', selectTab, false);
   document.getElementById('tab-expert').addEventListener('click', selectTab, false);
   document.getElementById('language').addEventListener('change', changeLanguage, false);
+  document.getElementById('smallMobile').addEventListener('change', switchSmallMobile, false);
   document.getElementById('queueColumns').addEventListener('change', changeQueueColumns, false);
   document.getElementById('positionClearAuto').addEventListener('change', function(){saveSettingsStorage()}, false);
   document.getElementById('showHandles').addEventListener('change', function(){saveSettingsStorage()}, false);
@@ -4871,7 +5050,7 @@ function addEventListeners () {
   document.getElementById('newTurnPerspective').addEventListener('change', draw, false);
   document.getElementById('t_restoreDefaultSettings').addEventListener('mousedown', restoreDefaultSettings, false);
   
-  document.getElementById('t_settingsClose').addEventListener('mousedown', settingsDialog, false);
+  document.getElementById('t_settingsClose').addEventListener('mousedown', function(){settingsDialog()}, false);
 
   // reference sequence dialog
   document.getElementById('t_referenceSequenceClose').addEventListener('mousedown', function(){referenceSequenceDialog(false)});
@@ -4883,10 +5062,7 @@ function addEventListeners () {
   document.getElementById('t_proposalsDialogClose').addEventListener('mousedown', function(){proposalsDialog(false)});
   
   // save dialog
-  document.getElementById('dlTextField').addEventListener('keyup', updateSaveFilename, true);
-/*  document.getElementById('t_saveFile').addEventListener('click',function(){
-    window.setTimeout(function(){saveDialog()}, 200);
-    }, false);*/
+  document.getElementById('dlTextField').addEventListener('keyup', function(){updateSaveFilename(this.value)}, true);
   document.getElementById('t_cancelSave').addEventListener('mousedown', function(){saveDialog()}, false);
   
   // iOS save dialog
@@ -4938,8 +5114,12 @@ function addMenuEventListeners() {
   function addListeners(e) {
     var li = e.getElementsByTagName ('li');
     for (var i = 0; i < li.length; i++) {
-      li[i].addEventListener('mouseover', menuActive);
-      li[i].addEventListener('mouseout', menuInactive);
+      if (mobileDevice) {
+				li[i].addEventListener('mousedown', menuActive);
+			} else {
+        li[i].addEventListener('mouseover', menuActive);
+        li[i].addEventListener('mouseout', menuInactive); 
+      }
       if (li[i].parentNode && (li[i].parentNode.id !== 'zoomMenu')) {
         checkUL : {
           var els = li[i].childNodes;
@@ -5249,7 +5429,7 @@ function clickButton () {
   // don't click disabled buttons
   if (e.classList.contains ('disable')) return;
   
-  // when the figure is a Free Unknown figure with a letter, don't
+  // when the figure is a Free (Un)known figure with a letter, don't
   // click disableFUfig buttons
   if (selectedFigure.id) {
     if (figures[selectedFigure.id].unknownFigureLetter) {
@@ -5264,7 +5444,7 @@ function clickButton () {
   switch (divClass) {
     // handle min button
     case 'minButton':
-      if (mobileBrowser) {
+      if (smallMobile) {
         e.firstChild.setAttribute('src', mask.on);
         window.setTimeout (function(){
           e.firstChild.setAttribute('src', mask.off);
@@ -5279,7 +5459,7 @@ function clickButton () {
       break;
     // handle plus button
     case 'plusButton':
-      if (mobileBrowser) {
+      if (smallMobile) {
         e.firstChild.setAttribute('src', mask.on);
         window.setTimeout (function(){
           e.firstChild.setAttribute('src', mask.off);
@@ -5355,7 +5535,7 @@ function clickButton () {
           activateXMLsequence (activeSequence.undo.pop());       
           changeSequenceInfo();
           /*
-          if (activeSequence.text == sequenceText.value) {
+          if (activeSequence.text == sequenceText.innerText) {
             draw();
           }*/
           activeSequence.addUndo = true;
@@ -5372,7 +5552,7 @@ function clickButton () {
           activateXMLsequence (activeSequence.redo.pop());
           changeSequenceInfo();
           /*
-          if (activeSequence.text == sequenceText.value) {
+          if (activeSequence.text == sequenceText.innerText) {
             draw();
           }*/
           activeSequence.addUndo = true;
@@ -5508,14 +5688,14 @@ function addPlusMinElements () {
     var button = document.createElement('span');
     button.classList.add ('minButton');
     button.addEventListener ('mousedown', clickButton, false);
-    if (mobileBrowser) {
+    if (smallMobile) {
       button.innerHTML = '<img src="buttons/mask.png">';
     } else {
       button.innerHTML = '<img src="buttons/smallMask.png">';
     }
     el[i].appendChild (button);
     var value = document.createElement('input');
-    if (mobileBrowser) value.type = 'number';
+    if (smallMobile) value.type = 'number';
     value.id = el[i].id + '-value';
     value.size = '2';
     value.value = '0';
@@ -5525,7 +5705,7 @@ function addPlusMinElements () {
     var button = document.createElement('span');
     button.classList.add ('plusButton');
     button.addEventListener ('mousedown', clickButton, false);
-    if (mobileBrowser) {
+    if (smallMobile) {
       button.innerHTML = '<img src="buttons/mask.png">';
     } else {
       button.innerHTML = '<img src="buttons/smallMask.png">';
@@ -5561,7 +5741,7 @@ function buildPlusMinElement (id, value) {
   span.classList.add('minButton');
   span.addEventListener('click', clickButton, false);
   var img = document.createElement('img');
-  if (mobileBrowser) {
+  if (smallMobile) {
     img.setAttribute('src', 'buttons/mask.png');
   } else {
     img.setAttribute('src', 'buttons/smallMask.png');
@@ -5580,7 +5760,7 @@ function buildPlusMinElement (id, value) {
   span.classList.add('plusButton');
   span.addEventListener('click', clickButton, false);
   var img = document.createElement('img');
-  if (mobileBrowser) {
+  if (smallMobile) {
     img.setAttribute('src', 'buttons/mask.png');
   } else {
     img.setAttribute('src', 'buttons/smallMask.png');
@@ -5588,7 +5768,7 @@ function buildPlusMinElement (id, value) {
   span.appendChild(img);
   el.appendChild (span);
   
-  if (!mobileBrowser && (userText.tooltip[id])) {
+  if (!smallMobile && (userText.tooltip[id])) {
     el.classList.add ('tooltip','ttRight');
     var div = document.createElement('div');
     div.innerHTML = userText.tooltip[id];
@@ -5752,7 +5932,8 @@ function addProgrammeToMenu (key) {
       li = document.createElement('li');
       li.setAttribute ('id', 'year' + year);
       li.innerHTML = '<span>' + year + '</span>' +
-        '<i class="material-icons leftArrow"></i>';
+        '<i class="material-icons ' +
+        (mobileDevice ? 'rightArrow' : 'leftArrow') + '"></i>';
       var ul = document.createElement('ul');
       li.appendChild (ul);
       el.appendChild (li);
@@ -5942,7 +6123,7 @@ function loadSettingsStorage (location) {
         }
       }
       updateUserTexts();
-      numberInCircle = (document.getElementById('numberInCircle').checked)? true : false;
+      numberInCircle = document.getElementById('numberInCircle').checked ? true : false;
       changeRollFontSize (document.getElementById('rollFontSize').value);
     }
   }
@@ -6039,6 +6220,7 @@ function loadPrintDialogStorage () {
 // changeLanguage will change the interface language
 function changeLanguage () {
   updateUserTexts();
+  if (mobileDevice) mobileMenuHeader ();
   saveSettingsStorage();
   checkSequenceChanged(true);
 }
@@ -6200,7 +6382,7 @@ function updateFigureEditor () {
 }
 
 // showFigureSelector displays the base figure selector
-// for some reason sliding only works from the left for mobile !?
+// for some reason sliding only works from the left for smallMobile !?
 function showFigureSelector () {
   updateFigureSelectorOptions ();
   document.getElementById('figureSelector').classList.add('active');
@@ -6283,26 +6465,28 @@ function updateFigureOptions (figureId) {
     document.getElementById('entryExit').classList.add('noDisplay');
     // hide comments box
     document.getElementById('commentSection').classList.add('noDisplay');
-    // hide Free Unknown disabled options warning
+    // hide Free (Un)known disabled options warning
     document.getElementById('FUfigOptionsDisabled').classList.add ('noDisplay');
   } else {
     // activate figure box
     document.getElementById('selectedFigure').classList.add('active');
-    if ((activeForm === 'FU') && (f.unknownFigureLetter !== 'L')) {
+    if ((activeForm === 'FU') && f.unknownFigureLetter && (f.unknownFigureLetter !== 'L')) {
       document.getElementById ('t_addFigureText').classList.add ('noDisplay');
     } else {
       document.getElementById ('t_addFigureText').classList.remove ('noDisplay');
     }
     
-    if ((activeForm === 'FU') && (f.unknownFigureLetter === 'L')) {
+    if ((activeForm === 'FU') && ((f.unknownFigureLetter === 'L') || !f.unknownFigureLetter)) {
       // update and show figureStringInput
-      document.getElementById ('figureStringInput').value = (f.string !== 'L') ? f.string : '';
+      document.getElementById ('figureStringInput').value = (!/[LX]/.test(f.string)) ? f.string : '';
       document.getElementById ('figureString').classList.remove ('noDisplay');
     }
 
     // show figure modifiers
     //document.getElementById('figureOptions').classList.remove ('noDisplay');
-    document.getElementById('entryExit').classList.remove ('noDisplay');
+    if (fig[f.figNr]) {
+      document.getElementById('entryExit').classList.remove ('noDisplay');
+    } else document.getElementById('entryExit').classList.add ('noDisplay');
     if ((f.entryAxis === 'X') || (f.seqNr === 1) || f.subSequence) {
       document.getElementById ('flipYAxis').classList.remove ('noDisplay');
     } else {
@@ -6328,7 +6512,7 @@ function updateFigureOptions (figureId) {
     } else {
       image.setAttribute('src', mask.disable);
     }
-    // disable for Free Unknown fig unless this figure starts on Y axis
+    // disable for Free (Un)known fig unless this figure starts on Y axis
     if (f.entryAxis === 'Y') {
       el.classList.remove ('disableFUfig');
     } else {
@@ -6345,7 +6529,7 @@ function updateFigureOptions (figureId) {
     } else {
       image.setAttribute('src', mask.disable);
     }
-    // disable for Free Unknown fig unless this figure starts on X axis
+    // disable for Free (Un)known fig unless this figure starts on X axis
     if (f.entryAxis === 'X') {
       el.classList.remove ('disableFUfig');
     } else {
@@ -6404,7 +6588,7 @@ function updateFigureOptions (figureId) {
       document.getElementById('moveForward').firstChild.firstChild.setAttribute('src', mask.disable);
     }
     // set subSequence, but disable for first real figure except on
-    // Free Unknown designer
+    // Free (Un)known designer
     var image = document.getElementById('subSequence').firstChild.firstChild;
     var el = document.getElementById('subSequenceDirection');
     if ((i == -1) && (activeForm !== 'FU')) {
@@ -6503,9 +6687,9 @@ function updateFigureOptions (figureId) {
     }
     
     // set entry extension
-    document.getElementById('entryExt-value').value = f.entryExt;
+    document.getElementById('entryExt-value').value = f.entryExt || 0;
     // set exit extension
-    document.getElementById('exitExt-value').value = f.exitExt;
+    document.getElementById('exitExt-value').value = f.exitExt || 0;
     // show comments box
     var el = document.getElementById('commentSection');
     el.classList.remove('noDisplay');
@@ -6518,7 +6702,7 @@ function updateFigureOptions (figureId) {
     var disable = false;
     var el = document.getElementById('FUfigOptionsDisabled');
     el.classList.add ('noDisplay');
-    // when the figure is a Free Unknown figure with a letter, disable
+    // when the figure is a Free (Un)known figure with a letter, disable
     // disableFUfig buttons and disableRollFUfig select
     if (figures[selectedFigure.id].unknownFigureLetter) {
       if (figures[selectedFigure.id].unknownFigureLetter !== 'L') {
@@ -6558,9 +6742,9 @@ function updateFigureOptions (figureId) {
 // var figureId is the id of the figures[] object
 function addRollSelectors (figureId) {
   var myEl = document.getElementById('rollInfo');
-  if (figureId === null) {
+  if ((figureId === null) || !fig[figures[figureId].figNr]) {
     myEl.classList.add ('noDisplay');
-  } else if (fig[figures[figureId].figNr]) {
+  } else {
     myEl.classList.remove ('noDisplay');
     var rolls = fig[figures[figureId].figNr].rolls;
     // clear selectors
@@ -6616,8 +6800,8 @@ function addRollSelectors (figureId) {
           if (!figures[figureId].rollInfo[i].rollTop) {
             var divdiv = document.createElement ('div');
             divdiv.classList.add ('rollGaps');
-            // only show 'Gaps' text for non-mobile
-            if (!mobileBrowser) {
+            // only show 'Gaps' text for non-smallMobile
+            if (!smallMobile) {
               var span = document.createElement('span');
               span.innerHTML = userText.gaps;
               div.appendChild (span);
@@ -6665,7 +6849,7 @@ function setUndoRedo (e, clear) {
 function setEntryExitElements () {
   for (var i = 1; i>= 0; i--) {
     var el = document.getElementById(['figEntryButton', 'figExitButton'][i]);
-    if (mobileBrowser) {
+    if (smallMobile) {
       el.classList.remove ('smallButton');
       el.classList.add ('button');
       //el.firstChild.firstChild.setAttribute('src', mask.off);
@@ -6999,7 +7183,7 @@ function updateFigure (noRedraw) {
     pattern = userpat.flipYaxis + pattern;
   }
   
-  // update comments, including Free Unknown letter
+  // update comments, including Free (Un)known letter
   // keep this at the end to prevent disturbing other items
   var val = document.getElementById('unknownFigure').value;
   var comments = (val != 0)? '@' + val : '';
@@ -7068,30 +7252,11 @@ function updateFigureComments () {
 
 // latestVersion makes sure the latest version is installed
 function latestVersion() {
-  // show version
-  document.getElementById('version').innerHTML = sprintf (
-    userText.version, version);
-  var img = document.getElementById('latestVersion');
-  // displays a link to download the latest version of OpenAero when
-  // a newer one than the one being used is available and we are
-  // running from file. This is DEPRECATED but we'd rather have users
-  // using new file versions in case they insist
-  
-  // Only do this when we are not running from openaero.net or as
-  // Chrome app. In this case, we hide the container completely
   
   if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
     // Check for appcache when using http
     if (window.applicationCache) window.applicationCache.update();
-    img.parentNode.classList.add('noDisplay');
   } else {
-    img.removeAttribute('onerror');
-    // Apply latest version img src
-    var url = 'https://openaero.net/openaero.php?f=version&version=' + version;
-    console.log ('Check version, get:' + url);
-    img.setAttribute('src', url);
-    // Hide the image on error (e.g. no internet connection)
-    img.setAttribute('onerror', "this.style.display = 'none';");
   }
 }
 
@@ -7112,7 +7277,7 @@ function addUpdateListener () {
         // Swap it in and reload the page to get the new hotness.
         window.applicationCache.swapCache();
         // only reload after confirmation
-        var t = (storage)? userText.loadNewVersion : userText.loadNewVersionNoCookies;
+        var t = storage ? userText.loadNewVersion : userText.loadNewVersionNoCookies;
         confirmBox (t, userText.loadNewVersionTitle, function(){
           sequenceSaved = true;
           // window.removeEventListener('beforeunload', preventUnload);
@@ -7194,11 +7359,14 @@ function changeSequenceInfo () {
     var xml = '<sequence>\n'
     for (var i = 0; i < sequenceXMLlabels.length; i++) {
       var el = document.getElementById(sequenceXMLlabels[i]);
-      if (el && (el.value !== '')) {
-        xml += '<' + sequenceXMLlabels[i] + '>' +
-          el.value.replace (/</g, '&lt;') + '</' +
-          sequenceXMLlabels[i] + '>\n';
-      }
+      if (el) {
+				var value = ('value' in el) ? el.value : el.innerText;
+	      if (value !== '') {
+	        xml += '<' + sequenceXMLlabels[i] + '>' +
+	          value.replace (/</g, '&lt;') + '</' +
+	          sequenceXMLlabels[i] + '>\n';
+	      }
+			}
     }
     xml += '</sequence>';
     if (xml != activeSequence.xml) {
@@ -7332,10 +7500,12 @@ function changeCombo(id) {
       e.placeholder = userText.selectRulesFirst;
     }
     e.setAttribute ('disabled', 'disabled');
+    e.nextSibling.innerHTML = '';
   }
   function enable (e) {
     e.placeholder = '';
     e.removeAttribute ('disabled');
+    e.nextSibling.innerHTML = userText[e.id];
   }
   
   var rulesActiveSave = rulesActive;
@@ -7399,23 +7569,69 @@ function changeCombo(id) {
   return log;
 }
 
-// createSelection selects part of an input field. This can be used when
-// editing figures
-function createSelection(field, start, end) {
-  if( field.createTextRange ) {
-    var selRange = field.createTextRange();
-    selRange.collapse(true);
-    selRange.moveStart('character', start);
-    selRange.moveEnd('character', end-start);
-    selRange.select();
-  } else if( field.setSelectionRange ) {
-    field.setSelectionRange(start, end);
-  } else if( field.selectionStart ) {
-    field.selectionStart = start;
-    field.selectionEnd = end;
-  }
-  // focus the field when we're not in the mobile version
-  field.focus();
+// highlight marks part of a text
+function highlight (el, start, end) {
+	var text = el.innerText;
+	var range = saveSelection(el);
+	if (end) {
+		var newHTML = text.substr (0, start) +
+			'<span class="highlight">' + text.substr (start, (end - start)) +
+			'</span>' + text.substr (end);
+		if (el.innerHTML !== newHTML) el.innerHTML = newHTML;
+		var span = el.getElementsByClassName ('highlight')[0];
+		el.scrollTop = parseInt(span.getBoundingClientRect().top -
+			el.getBoundingClientRect().top);
+	} else el.innerHTML = text;
+	if (document.activeElement === el) restoreSelection (el, range); 
+}
+
+// saveSelection returns the current selection in containerEl
+function saveSelection (containerEl) {
+	var doc = containerEl.ownerDocument, win = doc.defaultView;
+	if (!win.getSelection().anchorNode) return {start: 0, end: 0};
+	var range = win.getSelection().getRangeAt(0);
+	var preSelectionRange = range.cloneRange();
+	preSelectionRange.selectNodeContents(containerEl);
+	preSelectionRange.setEnd(range.startContainer, range.startOffset);
+	var start = preSelectionRange.toString().length;
+
+	return {
+			start: start,
+			end: start + range.toString().length
+	};
+};
+
+// restoreSelection restores selection savedSel in containerEl
+function restoreSelection (containerEl, savedSel) {
+	var doc = containerEl.ownerDocument, win = doc.defaultView;
+	var charIndex = 0, range = doc.createRange();
+	range.setStart(containerEl, 0);
+	range.collapse(true);
+	var nodeStack = [containerEl], node, foundStart = false, stop = false;
+
+	while (!stop && (node = nodeStack.pop())) {
+			if (node.nodeType == 3) {
+					var nextCharIndex = charIndex + node.length;
+					if (!foundStart && savedSel.start >= charIndex && savedSel.start <= nextCharIndex) {
+							range.setStart(node, savedSel.start - charIndex);
+							foundStart = true;
+					}
+					if (foundStart && savedSel.end >= charIndex && savedSel.end <= nextCharIndex) {
+							range.setEnd(node, savedSel.end - charIndex);
+							stop = true;
+					}
+					charIndex = nextCharIndex;
+			} else {
+					var i = node.childNodes.length;
+					while (i--) {
+							nodeStack.push(node.childNodes[i]);
+					}
+			}
+	}
+
+	var sel = win.getSelection();
+	sel.removeAllRanges();
+	sel.addRange(range);
 }
 
 // buildLogoSvg will create a logo svg from a provided image string,
@@ -7466,12 +7682,11 @@ function buildLogoSvg(logoImage, x, y, width, height) {
 // logoChooser will display the available logos
 // and allow for selection of a logo
 function logoChooser() {
-// define logo thumbnail width and height
-  var width = mobileBrowser ? 66 : 80;
-  var height = mobileBrowser ? 66 : 80;
+	// define logo thumbnail width and height
+  var width = smallMobile ? 66 : 80;
+  var height = smallMobile ? 66 : 80;
   // show the logo chooser container
   var container = document.getElementById('logoChooserContainer');
-  //container.classList.add ('active');
   container.classList.remove ('noDisplay');
   // clear logo file when present
   var el = document.getElementById('logoFile');
@@ -7495,24 +7710,29 @@ function logoChooser() {
 // will select the correct logo for use
 function selectLogo(logo) {
   // get name from alt attribute when called from eventListener
-  if (this.getAttribute) {
-    logo = this.getAttribute('alt');
-  }
+  if (this.getAttribute) logo = this.getAttribute('alt');
+  // check if there already was a logo to replace
+  var replace = logoImg ? true : false;
   logoImg = logoImages[logo];
   document.getElementById('logo').value = logo;
-  drawActiveLogo();
+  if (!replace) drawActiveLogo();
   // move the logo smoothly into place from logoChooser
   if (this.getAttribute) {
     var el = document.getElementById('logoImage');
     var elBox = el.getBoundingClientRect ();
     var thisBox = this.firstChild.getBoundingClientRect ();
-    this.style.transform = 'translate(' + (elBox.left - thisBox.left) +
+    // set transform for new logo. Take into account that the old logo
+    // container may have been moved left from view if no logo was
+    // active
+    this.style.transform = 'translate(' +
+	    (((elBox.left > 0) ? elBox.left : (elBox.left + 240)) - thisBox.left) +
       'px,' + (elBox.bottom - thisBox.bottom) + 'px)';
-    el.style = 'opacity: 0.001';
+    if (!replace) el.style = 'opacity: 0.001';
     setTimeout (function(){
+			if (replace) drawActiveLogo();
       el.style = '';
       hideLogoChooser();
-    }, 400);
+    }, 300);
   }
   changeSequenceInfo();
 }
@@ -7540,7 +7760,8 @@ function drawActiveLogo() {
     if (link.firstChild) link.removeChild(link.firstChild);
     link.appendChild(buildLogoSvg(logoImg, 0, 0, width, height));
   
-    document.getElementById('t_removeLogo').classList.remove ('noDisplay');
+    document.getElementById('removeLogo').classList.remove ('noDisplay');
+    document.getElementById('contest').classList.add ('hasLogo');
     return true;
   } else return false;
 }
@@ -7549,15 +7770,16 @@ function drawActiveLogo() {
 function removeLogo() {
   logoImg = false;
   // Remove 'remove logo' link and logo image
-  document.getElementById('t_removeLogo').classList.add ('noDisplay');
+  document.getElementById('removeLogo').classList.add ('noDisplay');
   document.getElementById('activeLogo').classList.add ('empty');
   setTimeout (function()
     {
       document.getElementById('logoImage').classList.add ('noDisplay');
-    }, 1000);
+      document.getElementById('contest').classList.remove ('hasLogo');
+		  // Add choose logo option
+		  document.getElementById('t_chooseLogo').classList.remove ('noDisplay');
+    }, 300);
   document.getElementById('logo').value = '';
-  // Add choose logo option
-  document.getElementById('t_chooseLogo').classList.remove ('noDisplay');
   changeSequenceInfo();
 }
   
@@ -8314,7 +8536,8 @@ function set_rule_K() {
     rule_K = [] ;
 //write_log_fig() ;		// just for debug
   }
-// If figure chooser is diplayed while cat is changed, the figure chooser k need to be updated.
+	// If figure chooser is displayed while cat is changed, the figure
+	// chooser K needs to be updated.
   if (document.getElementById('figureSelector').classList.contains('active')) changeFigureGroup();
 }
 
@@ -8882,8 +9105,8 @@ function checkRules () {
     }
   }
   
-  // check for multiple use of the same free unknown figure, except L(ink)
-  // Also check if all figures have been assigned a Free Unknown letter
+  // check for multiple use of the same free unknown figure, except additionaL
+  // Also check if all figures have been assigned a Free (Un)known letter
   // or Additional when applicable and if the assigned figure letters
   // are allowed according the rules
 
@@ -9108,7 +9331,8 @@ function lockSequence (lock) {
   if (document.getElementById ('lock_sequence').value && (lock !== true)) {
     // was locked, so unlock
     document.getElementById ('lock_sequence').value = '';
-    document.getElementById ('t_lockSequence').innerHTML = userText.lockSequence;
+    document.getElementById ('lockSequence').classList.remove ('noDisplay');
+    document.getElementById ('unlockSequence').classList.add ('noDisplay');    
     for (var i = 0; i < els.length; i++) {
       if (els[i].tagName === 'LI') {
         els[i].classList.remove ('noDisplay');
@@ -9122,7 +9346,8 @@ function lockSequence (lock) {
     selectFigure (false);
     selectTab ('tab-sequenceInfo');
     document.getElementById ('lock_sequence').value = '1';
-    document.getElementById ('t_lockSequence').innerHTML = userText.unlockSequence;
+    document.getElementById ('lockSequence').classList.add ('noDisplay');
+    document.getElementById ('unlockSequence').classList.remove ('noDisplay'); 
     for (var i = 0; i< els.length; i++) {
       if (els[i].tagName === 'LI') {
         els[i].classList.add ('noDisplay');
@@ -9244,7 +9469,7 @@ function changeReferenceSequence (auto) {
 
   activeSequence.figures = [];
   activeSequence.text = savedText;
-  sequenceText.value = savedText;
+  sequenceText.innerText = savedText;
   
   checkSequenceChanged (true);
 
@@ -9343,7 +9568,7 @@ function updateFigureSelectorOptions (selectedOption) {
       }
     }
     // only make a selector when there is at least one figure in the seq
-    // and we are not in Free Unknown designer
+    // and we are not in Free (Un)known designer
     if ((firstFigure !== false) && (activeForm != 'FU')) {
       var options = ['figSelectorAddStart'];
       // if a figure is selected, add extra options
@@ -9373,6 +9598,8 @@ function updateFigureSelectorOptions (selectedOption) {
       container.innerHTML = '&nbsp;';
     }
     markFigures();
+    // add material design form field bar
+    container.innerHTML += '<i class="bar"></i>';
   }
 }
 
@@ -9381,7 +9608,7 @@ function updateFigureSelectorOptions (selectedOption) {
 function changeFigureString () {
   var string = this.value.replace (/ /g, '');
   this.value = string;
-  string = string || 'L';
+  string = string || (additionalFig.max ? 'L' : 'X');
   updateSequence (selectedFigure.id, string, true, true);
 }
 
@@ -9395,8 +9622,9 @@ function changeHideIllegal() {
 // limited by active rules.
 function availableFigureGroups() {
   var options = document.getElementById('figureGroup').childNodes;
+  var firstGroup = (activeForm === 'FU') ? 0 : 1;
   // hide all options
-  for (var i = 1; i < options.length; i++) {
+  for (var i = firstGroup; i < options.length; i++) {
     options[i].classList.add ('noDisplay');
     options[i].disabled = 'disabled';
   }
@@ -9442,10 +9670,12 @@ function changeFigureGroup() {
     var size = 56;
     var newRow = /\.[01]$/;
     var maxColCount = 4;
+    document.getElementById('figureChooserColumns').classList.remove('noDisplay');
   } else { // queue group
     var maxColCount = document.getElementById('queueColumns').value;
     var size = parseInt((280 / maxColCount) - 8);
     var newRow = /never/;
+    document.getElementById('figureChooserColumns').classList.add('noDisplay');
   }
   var colCount = 0;
   
@@ -9471,22 +9701,13 @@ function changeFigureGroup() {
           } else {
             Attitude = Direction = 180;
           }
-          // build the figure and replace line paths by thicker line paths
+          // build the figure
           // fig[i].string is only set for Queue figures
           if (fig[i].string) {
             buildFigure ([i], fig[i].string, false, -1);
           } else {
             buildFigure ([i], figure, false, -1);
           }
-          var paths = figures[-1].paths;
-          for (j = paths.length - 1; j >= 0; j--) {
-            if (paths[j].style == 'neg') {
-              paths[j].style = 'chooserNeg';
-            } else if (paths[j].style == 'pos') {
-              paths[j].style = 'chooserPos';
-            }
-          }
-          figures[-1] = {'paths': paths, 'aresti': figures[-1].aresti};
           // clear the svg
           prepareSvg(svg);
           // reset X and Y and clear figureStart to prevent adjusting
@@ -9578,7 +9799,7 @@ function changeFigureGroup() {
           var div = document.createElement('div');
           div.classList.add ('removeFigureButton');
           div.id = 'removeFromQueue' + i;
-          div.innerHTML = '<img src="buttons/close.png">';
+          div.innerHTML = '<i class="material-icons">close</i>';
           // make sure we remove on touch devices by using touchstart
           // which fires before mousedown
           if (touchDevice) {
@@ -9616,7 +9837,7 @@ function changeFigureGroup() {
 function markFigures () {
   markUsedFigures ();
   markMatchingFigures ();
-  // for Free Unknown designer we only choose Additional figures. All
+  // for Free (Un)known designer we only choose Additional figures. All
   // Aresti figures are allowed
   if (activeForm !== 'FU') markNotAllowedFigures ();
 }
@@ -9653,7 +9874,7 @@ function markUsedFigures () {
 // 'fit' in the selected sequence position. Figures in another
 // subsequence are not considered
 function markMatchingFigures () {
-  // for the Free Unknown designer, the selector is hidden. We always do
+  // for the Free (Un)known designer, the selector is hidden. We always do
   // replace in that case
   if (activeForm === 'FU') {
     var el = {'value': 'figSelectorReplace'};
@@ -9801,6 +10022,7 @@ function markNotAllowedFigures () {
   }
 }
 
+/*
 // switchQueue is called when switching to queue or back to figures in
 // the figureChooser
 function switchQueue (el) {
@@ -9824,6 +10046,7 @@ function switchQueue (el) {
   }
   changeFigureGroup();
 }
+*/
 
 // selectFigure is executed when clicking a figure in the figureChooser
 // (e = object) or from grabFigure (e = figNr) or from certain functions
@@ -9836,7 +10059,7 @@ function selectFigure (e) {
   if (e === null) e = false;
   
   // show figure editor tab
-  if ((e !== false) && !mobileBrowser) selectTab ('tab-figureInfo');
+  if ((e !== false) && !smallMobile) selectTab ('tab-figureInfo');
   
   var queueFigure = false;
   var fromChooser = typeof e === 'object' ? true : false;
@@ -9947,7 +10170,7 @@ function selectFigure (e) {
           break;
       }
     } else if (activeForm === 'FU') {
-      // in Free Unknown designer, always replace active figure
+      // in Free (Un)known designer, always replace active figure
       updateSequence (selectedFigure.id, figure, true);
     } else {
       // otherwise, add a new figure at the end
@@ -9955,7 +10178,7 @@ function selectFigure (e) {
       setFigureSelected(figures.length - 1);
     }
   } else if (e !== false) {
-    // redirect to selectFigureFU in Free Unknown designer
+    // redirect to selectFigureFU in Free (Un)known designer
     if (activeForm === 'FU') {
       selectFigureFu(e);
       return;
@@ -9968,15 +10191,10 @@ function selectFigure (e) {
   var elFT = document.getElementById('t_addFigureText');
   if (e !== false) {
     // e!==false => a figure is selected
-    // hide the figure selector for mobile browsers, but highlight the
+    // hide the figure selector for smallMobile browsers, but highlight the
     // chosen figure in case the figure selector is shown again
-    if (mobileBrowser) hideFigureSelector ();
+    if (smallMobile) hideFigureSelector ();
     var table = document.getElementById('figureChooserTable');
-    // needed for old browsers that don't support getElementsByClassName
-    if (!table.getElementsByClassName) {
-      table.prototype.getElementsByClassName = document.getElementsByClassName;
-    }
-    //
     var selected = table.getElementsByClassName('selected');
     // remove selected class for all
     for (var i = 0; i < selected.length; i++) {
@@ -9991,7 +10209,7 @@ function selectFigure (e) {
     
     // with figure loaded from chooser, remove any unknown figure letters
     // and add queue unknown figure letter if applicable. Don't do this
-    // in Free Unknown designer
+    // in Free (Un)known designer
     if (fromChooser && (activeForm !== 'FU')) {
       var uf = (queueFigure)? fig[queueFigure].unknownFigureLetter : false;
 
@@ -10010,20 +10228,24 @@ function selectFigure (e) {
 
     // update all figure options
     updateFigureEditor();
-    
-    // set the figure chooser
-    if (queueFigure) {
-      setFigChooser(queueFigure);
-    } else {
-      setFigChooser(figures[selectedFigure.id].figNr);
-    }
+   
+    // set the figure chooser, except when queue is set and not empty
+    if ((document.getElementById ('figureGroup').selectedIndex !== 0) ||
+	    (document.getElementById ('figureChooserTable').childNodes.length === 0)) {
+	    if (queueFigure) {
+	      setFigChooser(queueFigure);
+	    } else {
+	      setFigChooser(figures[selectedFigure.id].figNr);
+	    }
+		}
       
     // Select the figure in the sequence text when we were not editing
     // in the text or the comments and we are not on a touch device, as
     // we assume the latter would have a non-physical keyboard popping
     // up. Select all the way back to the previous real figure
-    if ((document.activeElement.id !== 'sequence_text') && 
-      (document.activeElement.id !== 'comments') && !touchDevice) {
+    //if ((document.activeElement.id !== sequenceText.id) && 
+    //  (document.activeElement.id !== 'comments') && !touchDevice) {
+    if (document.activeElement.id !== 'comments') {
       var start = figures[selectedFigure.id].stringStart;
       for (var i = selectedFigure.id - 1; i>=0; i--) {
         if (figures[i].aresti) {
@@ -10032,13 +10254,13 @@ function selectFigure (e) {
           start = figures[i].stringStart;
         }
       }
-      createSelection (sequenceText, start, figures[selectedFigure.id].stringEnd);
+			highlight (sequenceText, start, figures[selectedFigure.id].stringEnd);
     }
 
   } else {
     // e===false => select no figure
-    // remove selection start from sequence text
-    sequenceText.removeAttribute('selectionStart');
+    // remove highlight
+    highlight (sequenceText);
     // set selected figure to null
     setFigureSelected(null);
     if (document.getElementById('figureInfo')) {
@@ -10057,7 +10279,7 @@ function selectFigure (e) {
   setQueueMenuOptions();
 }
 
-// selectFigureFu is called when selecting a figure in Free Unknown
+// selectFigureFu is called when selecting a figure in Free (Un)known
 // designer
 function selectFigureFu (id) {
   selectTab ('tab-figureInfo');
@@ -10077,9 +10299,10 @@ function selectFigureFu (id) {
 
   // update all figure options
   updateFigureEditor();
-    
-  // set figure chooser for new Additional figures, or hide for others
-  if ((figures[id].unknownFigureLetter === 'L') && (figures[id].string === 'L')) {
+
+  // set figure chooser for new additionaL and eXtra figures, or hide for others
+  if (((figures[id].unknownFigureLetter === 'L') && (figures[id].string === 'L')) ||
+    (figures[id].string === 'X')) {
     updateFigureSelectorOptions();
     markMatchingFigures ();
     showFigureSelector ();
@@ -10143,7 +10366,7 @@ function makeMiniFormA (x, y) {
   if (sportingClass.options[sportingClass.selectedIndex]) {
     var myClass = sportingClass.options[sportingClass.selectedIndex].innerHTML;
     drawText (myClass, blockX + 4, blockY + 17, 'miniFormATotal');
-    drawRectangle (blockX, blockY, 152, 24, 'pos');
+    drawRectangle (blockX, blockY, 152, 24, 'formLine');
     blockY += 24;
   }
   
@@ -10195,13 +10418,13 @@ function makeMiniFormA (x, y) {
       } else {
         drawText (figK, blockX + 132, (topBlockY + blockY) / 2 + 10, 'miniFormA');
       }
-      drawLine (blockX, topBlockY, 152, 0, 'pos');
+      drawLine (blockX, topBlockY, 152, 0, 'formLine');
       var vertSize = (blockY - topBlockY + 12);
-      drawLine (blockX, topBlockY, 0, vertSize, 'pos');
-      drawLine (blockX + 40, topBlockY, 0, vertSize, 'pos');
-      drawLine (blockX + 100, topBlockY, 0, vertSize, 'pos');
-      drawLine (blockX + 126, topBlockY, 0, vertSize, 'pos');
-      drawLine (blockX + 152, topBlockY, 0, vertSize, 'pos');
+      drawLine (blockX, topBlockY, 0, vertSize, 'formLine');
+      drawLine (blockX + 40, topBlockY, 0, vertSize, 'formLine');
+      drawLine (blockX + 100, topBlockY, 0, vertSize, 'formLine');
+      drawLine (blockX + 126, topBlockY, 0, vertSize, 'formLine');
+      drawLine (blockX + 152, topBlockY, 0, vertSize, 'formLine');
       figureK += figK;
       blockY += 12;
     }
@@ -10213,10 +10436,10 @@ function makeMiniFormA (x, y) {
     if (checkCatGroup.floatingPoint) max -= checkCatGroup.floatingPoint;
     drawText ('(max K = ' + max + ')',
       blockX + 4, blockY + 32, 'miniFormAMax');
-      drawRectangle (blockX, blockY, 152, 40, 'pos');
+      drawRectangle (blockX, blockY, 152, 40, 'formLine');
       blockY += 40;
   } else {
-    drawRectangle (blockX, blockY, 152, 24, 'pos');
+    drawRectangle (blockX, blockY, 152, 24, 'formLine');
     blockY += 24;
   }
 
@@ -10261,59 +10484,59 @@ function grabFigure(evt) {
   var svg = SVGRoot;
   var viewBox = svg.getAttribute('viewBox').split(' ');
    
-  DragTarget = null;
+  dragTarget = null;
   // find out which element we moused down on
   
   // first see if we grabbed a figure handle
   if (evt.target.id.match (/-handle$/)) {
-    DragTarget = evt.target;
-    DragTarget.targetLine = svg.getElementById (
-      DragTarget.id.replace (/-handle$/, ''));
+    dragTarget = evt.target;
+    dragTarget.targetLine = svg.getElementById (
+      dragTarget.id.replace (/-handle$/, ''));
     
     // get dx and dy for this line
-    var match = DragTarget.targetLine.getAttribute ('d').match (/l ([0-9\-\.]+),([0-9\-\.]+)/);
-    DragTarget.linedx = parseFloat(match[1]);
-    DragTarget.linedy = parseFloat(match[2]);
+    var match = dragTarget.targetLine.getAttribute ('d').match (/l ([0-9\-\.]+),([0-9\-\.]+)/);
+    dragTarget.linedx = parseFloat(match[1]);
+    dragTarget.linedy = parseFloat(match[2]);
     
-    if (DragTarget.id.match (/entry-handle$/)) {
+    if (dragTarget.id.match (/entry-handle$/)) {
       // get entry gap element
-      DragTarget.gap = document.getElementById ('entryExt-value');
-      DragTarget.lineLength = parseInt(
-        figures[DragTarget.id.match (/^figure(\d+)/)[1]].entryLength
+      dragTarget.gap = document.getElementById ('entryExt-value');
+      dragTarget.lineLength = parseInt(
+        figures[dragTarget.id.match (/^figure(\d+)/)[1]].entryLength
       );
-    } else if (DragTarget.id.match(/exit-handle$/)) {
+    } else if (dragTarget.id.match(/exit-handle$/)) {
       // get exit gap element
-      DragTarget.gap = document.getElementById ('exitExt-value');
-      DragTarget.lineLength = parseInt(
-        figures[DragTarget.id.match (/^figure(\d+)/)[1]].exitLength
+      dragTarget.gap = document.getElementById ('exitExt-value');
+      dragTarget.lineLength = parseInt(
+        figures[dragTarget.id.match (/^figure(\d+)/)[1]].exitLength
       );
     } else {
       // get current roll gap element
-      DragTarget.gap = document.getElementById (
-        DragTarget.id.match (/roll\d+-gap\d+/)[0] + '-value');
+      dragTarget.gap = document.getElementById (
+        dragTarget.id.match (/roll\d+-gap\d+/)[0] + '-value');
       
       // get current line length from figures object
-      match = DragTarget.id.match (/^figure(\d+)-roll(\d+)-gap(\d+)/);
+      match = dragTarget.id.match (/^figure(\d+)-roll(\d+)-gap(\d+)/);
       var roll = figures [match[1]].rolls [match[2]];
       var gapnr = 0;
       for (var i = 0; i < roll.length; i++) {
         if ('lineLength' in roll[i]) {
           if (gapnr == match[3]) {
-            DragTarget.lineLength = Math.max (parseInt(roll[i].lineLength), 0.02);
+            dragTarget.lineLength = Math.max (parseInt(roll[i].lineLength), 0.02);
             break;
           } else gapnr++;
         }
       }
-      if (!DragTarget.lineLength) {
-        DragTarget.lineLength = Math.max (parseInt(roll.lineLengthAfter), 0.02);
+      if (!dragTarget.lineLength) {
+        dragTarget.lineLength = Math.max (parseInt(roll.lineLengthAfter), 0.02);
       }
     }
     // get current gap starting value
-    DragTarget.gapValue = parseInt(DragTarget.gap.value);
+    dragTarget.gapValue = parseInt(dragTarget.gap.value);
     
     // grab magnifier
   } else if (evt.target.id === 'magnifier') {
-    DragTarget = evt.target;
+    dragTarget = evt.target;
 
     selectedFigure.bottom = parseInt(selectedFigure.y) + parseInt(selectedFigure.height);
     selectedFigure.scale = document.getElementById ('scale').value;
@@ -10324,13 +10547,13 @@ function grabFigure(evt) {
   } else if (evt.target.parentNode.id.match(/^figure[0-9]/)) {
     if (figures[evt.target.parentNode.id.replace('figure', '')].draggable) {
       //set the item moused down on as the element to be dragged
-      DragTarget = evt.target.parentNode;
+      dragTarget = evt.target.parentNode;
     }
   } else if (evt.target.parentNode.id === 'svgContainer') {
     // clicked somewhere in the SVG container, maybe within figure bBox?
     var svgRect = svg.getBoundingClientRect();
-    // svg may be rescaled on mobile browser
-    var scale = mobileBrowser ? svg.getAttribute('width')/viewBox[2] : 1;
+    // svg may be rescaled on smallMobile browser
+    var scale = smallMobile ? svg.getAttribute('width')/viewBox[2] : 1;
     var margin = 5 * scale;
     GrabPoint.x = TrueCoords.x;
     GrabPoint.y = TrueCoords.y;
@@ -10359,36 +10582,36 @@ function grabFigure(evt) {
     }
     // select figure if the closest centre, within bBox, was found
     if (closest !== false) {
-      DragTarget = SVGRoot.getElementById('figure'+closest);
+      dragTarget = SVGRoot.getElementById('figure'+closest);
     }
   }
   
-  if (DragTarget) {
+  if (dragTarget) {
     evt.preventDefault(); // prevent default drag & drop
     
     // save current scrollTop, to be restored after Drop
-    DragTarget.scrollTopSave = document.getElementById('svgContainer').scrollTop;
-    DragTarget.scrollLeftSave = document.getElementById('svgContainer').scrollLeft;
+    dragTarget.scrollTopSave = document.getElementById('svgContainer').scrollTop;
+    dragTarget.scrollLeftSave = document.getElementById('svgContainer').scrollLeft;
 
     // move this element to the "top" of the display, so it is
     // always over other elements
-    if (!DragTarget.id.match (/^(.*-handle|magnifier)$/)) {
-      DragTarget.parentNode.appendChild( DragTarget );
+    if (!dragTarget.id.match (/^(.*-handle|magnifier)$/)) {
+      dragTarget.parentNode.appendChild( dragTarget );
     }
 
     // turn off all pointer events to the dragged element, this does 2 things:
     //    1) allows us to drag text elements without selecting the text
     //    2) allows us to find out where the dragged element is dropped (see Drop)
-    DragTarget.setAttribute('pointer-events', 'none');
+    dragTarget.setAttribute('pointer-events', 'none');
 
     // enlarge svg to cover top and left
-    if (!mobileBrowser) {
+    if (!smallMobile) {
       var svgRect = svg.getBoundingClientRect();
-      var w = parseInt(viewBox[2]) + parseInt(svgRect.left) + parseInt(DragTarget.scrollLeftSave);
-      var h = parseInt(viewBox[3]) + parseInt(svgRect.top) + parseInt(DragTarget.scrollTopSave);
+      var w = parseInt(viewBox[2]) + parseInt(svgRect.left) + parseInt(dragTarget.scrollLeftSave);
+      var h = parseInt(viewBox[3]) + parseInt(svgRect.top) + parseInt(dragTarget.scrollTopSave);
       svg.setAttribute ('viewBox',
-        (viewBox[0] - svgRect.left - DragTarget.scrollLeftSave) + ' ' +
-        (viewBox[1] - svgRect.top - DragTarget.scrollTopSave) + ' ' + w + ' ' + h
+        (viewBox[0] - svgRect.left - dragTarget.scrollLeftSave) + ' ' +
+        (viewBox[1] - svgRect.top - dragTarget.scrollTopSave) + ' ' + w + ' ' + h
       );
       svg.setAttribute ('width', w);
       svg.setAttribute ('height', h);
@@ -10396,7 +10619,7 @@ function grabFigure(evt) {
       svg.parentNode.classList.add ('sequenceOverlay');
       var main = document.getElementById ('main');
       document.getElementById ('leftBlock').setAttribute ('style',
-        main.getAttribute ('style').replace (/^top:[ ]*/, 'margin-top:'));
+        'margin-top: ' + main.offsetTop + 'px');
       main.setAttribute ('style', 'top: 0;');
     }
     
@@ -10409,18 +10632,18 @@ function grabFigure(evt) {
     // blur sequenceText area
     sequenceText.blur();
 
-    // the DragTarget id is the new selectedFigure.id
-    if (!DragTarget.id.match (/^(.*-handle|magnifier)$/)) {
-      selectFigure(DragTarget.id.replace('figure', ''));
+    // the dragTarget id is the new selectedFigure.id
+    if (!dragTarget.id.match (/^(.*-handle|magnifier)$/)) {
+      selectFigure(dragTarget.id.replace('figure', ''));
     }
 
   } else {
     selectFigure(false);
     if (this.classList.contains ('draggablePanel')) {
       this.classList.add ('dragging');
-      DragTarget = this;
+      dragTarget = this;
       //evt.preventDefault(); // prevent default drag & drop
-      var transform = DragTarget.style.transform.match(/-?[\d]*px/g) || [0, 0];
+      var transform = dragTarget.style.transform.match(/-?[\d]*px/g) || [0, 0];
 
       GrabPoint.x = TrueCoords.x - parseInt(transform[0]);
       GrabPoint.y = TrueCoords.y - parseInt(transform[1]);
@@ -10433,11 +10656,10 @@ function grabFigure(evt) {
 function setFigChooser (figNr) {
   // check if fig[figNr] is valid
   if (fig[figNr]) {
-    var figureGroup = fig[figNr].group;
     var select = document.getElementById ('figureGroup');
     var options = select.options;
     for (var i = options.length - 1; i >= 0; i--) {
-      if (options[i].value == figureGroup) {
+      if (options[i].value == fig[figNr].group) {
         options[i].setAttribute('selected', 'true');
         var selectedGroup = options[i];
         select.selectedIndex = i;
@@ -10446,14 +10668,11 @@ function setFigChooser (figNr) {
       }
     }
     changeFigureGroup(selectedGroup);
-    var figure = document.getElementById(figNr);
-    var td = figure.parentNode;
-    var div = document.getElementById('figureChooser');
-    // Get the vertical offset of the <tr> in which the element is
-    var scroll = td.parentNode.offsetTop;
     // Select the correct figure and scroll selector there
+    var td = document.getElementById(figNr).parentNode;
     td.classList.add ('selected');
-    div.scrollTop = scroll;
+    // Set the vertical offset of the <tr> in which the element is
+    document.getElementById('figureChooser').scrollTop = td.parentNode.offsetTop;
   }
   updateFigureSelectorOptions();
 }
@@ -10468,50 +10687,35 @@ function setFigureSelected (figNr) {
     // if any figure was previously selected, remove that filter
     var selFig = SVGRoot.getElementById('figure'+selectedFigure.id);
     if (selFig) {
-      //if (selectedFigure.id !== figNr) {
-        var nodes = selFig.childNodes;
-        for (var i = nodes.length - 1; i >= 0; i--) {
-          var s = nodes[i].getAttribute('style');
-          if (s) {
-            s = s.replace (/#ff00a0/g, 'black');
-            s = s.replace (/#ff1090/g, 'red');
-            nodes[i].setAttribute ('style', s);
-          }
-          if (nodes[i].id &&
-            nodes[i].id.match (/^(.*-handle|magnifier|selectedFigureBox)$/)) {
-            selFig.removeChild (nodes[i]);
-          }
-        }
-      //}
+			var nodes = selFig.childNodes;
+			for (var i = nodes.length - 1; i >= 0; i--) {
+				var s = nodes[i].getAttribute('style');
+				if (s) {
+					s = s.replace (/#ff00a0/g, 'black');
+					s = s.replace (/#ff1090/g, 'red');
+					nodes[i].setAttribute ('style', s);
+				}
+				if (nodes[i].id &&
+					nodes[i].id.match (/^(.*-handle|magnifier|selectedFigureBox)$/)) {
+					selFig.removeChild (nodes[i]);
+				}
+			}
     }
-        
-    // fill selectedFigure with BBox values
-    var el = SVGRoot.getElementById('figure'+figNr);
-    if (el) selectedFigure = el.getBBox();
-  
+          
     if (figNr !== null) {
 
+	    // fill selectedFigure with BBox values
+	    var el = SVGRoot.getElementById('figure'+figNr);
+
       header.innerHTML = userText.editingFigure + figures[figNr].seqNr;
-/** Code for adding box around figure
- *  Not working well (box doesn't scale, takes more programming) but
- *  keep for the future
-      // add box
-      drawRectangle (
-        selectedFigure.x - 2,
-        selectedFigure.y - 2,
-        selectedFigure.width + 4,
-        selectedFigure.height + 4,
-        'selectedFigureBox',
-        el
-      ).id = 'selectedFigureBox';*/
       
-      var showHandles = document.getElementById ('showHandles').checked &&
-        !(activeForm === 'Grid') && !mobileBrowser;
-  
-      // apply color filter
       if (el) {
+				selectedFigure = el.getBBox();
+	      var showHandles = document.getElementById ('showHandles').checked &&
+	        !(activeForm === 'Grid') && !smallMobile;
         var nodes = el.childNodes;
         var length = nodes.length;
+				// apply color filter
         for (var i = 0 ; i < length; i++) {
           var s = nodes[i].getAttribute('style');
           if (s) {
@@ -10561,10 +10765,10 @@ function setFigureSelected (figNr) {
 // Drag allows to drag the selected figure or handle to a new position
 function Drag (evt) {
 
-  if (!DragTarget) return;
+  if (!dragTarget) return;
   
   // don't drag figures when in grid view
-  if ((activeForm === 'Grid') && !DragTarget.classList.contains  ('draggablePanel')) return;
+  if ((activeForm === 'Grid') && !dragTarget.classList.contains  ('draggablePanel')) return;
   
   // put the coordinates of object evt in TrueCoords global
   if (touchDevice && evt.changedTouches && evt.changedTouches[0] && evt.changedTouches[0].pageX) {
@@ -10576,55 +10780,55 @@ function Drag (evt) {
   }
   
   // if we don't currently have an element in tow, don't do anything
-  if (DragTarget) {
+  if (dragTarget) {
     
     // prevent scrolling on touch devices
     if (touchDevice) evt.preventDefault();
     
     // find out what we are dragging
-    if (DragTarget.id.match (/-handle$/)) {
+    if (dragTarget.id.match (/-handle$/)) {
       
       /** dragging a handle */
     
-      var crossLineC = -DragTarget.linedx * GrabPoint.x - DragTarget.linedy * GrabPoint.y;
+      var crossLineC = -dragTarget.linedx * GrabPoint.x - dragTarget.linedy * GrabPoint.y;
       // calculate the correct displacement of the handle, along it's
       // line
-      var d = (DragTarget.linedx * TrueCoords.x +
-        DragTarget.linedy * TrueCoords.y + crossLineC) /
-        (Math.pow (DragTarget.linedx, 2) +
-        Math.pow (DragTarget.linedy, 2));
-      var newX = DragTarget.linedx * d;
-      var newY = DragTarget.linedy * d;
+      var d = (dragTarget.linedx * TrueCoords.x +
+        dragTarget.linedy * TrueCoords.y + crossLineC) /
+        (Math.pow (dragTarget.linedx, 2) +
+        Math.pow (dragTarget.linedy, 2));
+      var newX = dragTarget.linedx * d;
+      var newY = dragTarget.linedy * d;
 
       // do not adjust all the way to 0 line length
       if (d > -0.5) {
         // apply a new tranform translation to the dragged handle, to
         // display it in its new location
-        DragTarget.setAttribute('transform',
+        dragTarget.setAttribute('transform',
           'translate(' + newX + ',' + newY + ')');
         
         // transform the line which we are adjusting
         newX *= 2;
         newY *= 2;
-        var d = DragTarget.targetLine.getAttribute ('d');
+        var d = dragTarget.targetLine.getAttribute ('d');
         d = d.replace (/l ([0-9\-\.]+),([0-9\-\.]+)/, 'l ' +
-          (DragTarget.linedx + newX) + ',' +
-          (DragTarget.linedy + newY));
-        DragTarget.targetLine.setAttribute ('d', d);
+          (dragTarget.linedx + newX) + ',' +
+          (dragTarget.linedy + newY));
+        dragTarget.targetLine.setAttribute ('d', d);
         
         // also change the gap value to reflect this transform
-        if (DragTarget.linedx != 0) {
-          DragTarget.gap.value = Math.round (DragTarget.gapValue +
-            (DragTarget.lineLength / DragTarget.linedx) * newX);
+        if (dragTarget.linedx != 0) {
+          dragTarget.gap.value = Math.round (dragTarget.gapValue +
+            (dragTarget.lineLength / dragTarget.linedx) * newX);
         } else {
-          DragTarget.gap.value = Math.round (DragTarget.gapValue +
-            (DragTarget.lineLength / DragTarget.linedy) * newY);
+          dragTarget.gap.value = Math.round (dragTarget.gapValue +
+            (dragTarget.lineLength / dragTarget.linedy) * newY);
         }
         
         // when adjusting a vertical up, we need to check if this is
         // followed by a hammerhead or point tip
         // If so, we don't adjust the position of anything following it.
-        var el = DragTarget.targetLine;
+        var el = dragTarget.targetLine;
         var elStop = null;
         var lastHandle = null;
         do {
@@ -10645,7 +10849,7 @@ function Drag (evt) {
         if (!elStop) lastHandle = null;
         
         // move all later elements of this figure, upto stop if applicable
-        var el = DragTarget.targetLine;
+        var el = dragTarget.targetLine;
         while (el !== elStop) {
           if (!(el = el.nextSibling)) break;
           if (!el.id.match (/-handle$/)) {
@@ -10655,7 +10859,7 @@ function Drag (evt) {
         }
         
         // and move all later handles, upto last if applicable
-        el = DragTarget;
+        el = dragTarget;
         while ((lastHandle !== el.id)) {
           if (!(el = el.nextSibling)) break;
           if (el.id.match (/-handle$/)) {
@@ -10666,7 +10870,7 @@ function Drag (evt) {
         
         // move subsequent figures, if no elStop
         if (elStop === null) {
-          for (var figureNr = parseInt(DragTarget.parentNode.id.match (/\d+/)) + 1;
+          for (var figureNr = parseInt(dragTarget.parentNode.id.match (/\d+/)) + 1;
             figureNr < figures.length; figureNr++) {
             var figure = SVGRoot.getElementById ('figure' + figureNr);
             if (figure) {
@@ -10679,8 +10883,8 @@ function Drag (evt) {
         // Adjust magnifier position
         // Do this by first removing it, then determining the bBox and
         // putting it back
-        DragTarget.parentNode.removeChild(DragTarget.parentNode.lastChild);
-        var bBox = DragTarget.parentNode.getBBox();
+        dragTarget.parentNode.removeChild(dragTarget.parentNode.lastChild);
+        var bBox = dragTarget.parentNode.getBBox();
         // add scale handle
         drawImage ({
           x: bBox.x + bBox.width - 10,
@@ -10689,9 +10893,9 @@ function Drag (evt) {
           height: 20,
           'id': 'magnifier',
           cursor: 'move',
-          href: 'images/magnifier.png'}, DragTarget.parentNode);
+          href: 'images/magnifier.png'}, dragTarget.parentNode);
       }
-    } else if (DragTarget.id === 'magnifier') {
+    } else if (dragTarget.id === 'magnifier') {
       
       /** dragging magnifier */
             
@@ -10701,7 +10905,7 @@ function Drag (evt) {
         selectedFigure.diagonal;
       
       // scale figure (and magnifier)
-      DragTarget.parentNode.setAttribute ('transform',
+      dragTarget.parentNode.setAttribute ('transform',
         'translate (' +
         ((parseInt(selectedFigure.x)) * (1 - scale)) + ',' +
         ((parseInt(selectedFigure.bottom)) * (1 - scale)) +
@@ -10713,8 +10917,8 @@ function Drag (evt) {
         parseInt(selectedFigure.scale) + Math.log (scale) * 14.427);
       
     // Don't drag the first real figure, it's auto positioned
-    } else if (DragTarget.id.match (/^figure/) &&
-      (figures[DragTarget.id.replace (/^figure/, '')].seqNr != '1')) {
+    } else if (dragTarget.id.match (/^figure/) &&
+      (figures[dragTarget.id.replace (/^figure/, '')].seqNr != '1')) {
       
       /** dragging a complete figure */
     
@@ -10726,10 +10930,10 @@ function Drag (evt) {
 
       // apply a new tranform translation to the dragged element, to display
       // it in its new location
-      DragTarget.setAttribute('transform', 'translate(' + newX + ',' + newY + ')');
+      dragTarget.setAttribute('transform', 'translate(' + newX + ',' + newY + ')');
 
       // move subsequent figures
-      for (var figureNr = parseInt(DragTarget.id.match (/\d+/)) + 1; figureNr < figures.length; figureNr++) {
+      for (var figureNr = parseInt(dragTarget.id.match (/\d+/)) + 1; figureNr < figures.length; figureNr++) {
         var figure = SVGRoot.getElementById ('figure' + figureNr);
         if (figure) {
           figure.setAttribute('transform',
@@ -10737,18 +10941,18 @@ function Drag (evt) {
         }
       }
 
-    } else if (DragTarget.id === 'gridInfo') {
+    } else if (dragTarget.id === 'gridInfo') {
       var newX = parseInt(TrueCoords.x - GrabPoint.x);
       var newY = parseInt(TrueCoords.y - GrabPoint.y);
 
       // apply a new tranform translation to the dragged element, to
       // display it in its new location. Only allow translation to left
       // and bottom, and limit to left edge
-      DragTarget.style.transform = 'translate(' + Math.min (newX, 0) + 
+      dragTarget.style.transform = 'translate(' + Math.min (newX, 0) + 
         'px,' + Math.max (newY, 0) + 'px)';
-      var leftX = DragTarget.getBoundingClientRect().left;
+      var leftX = dragTarget.getBoundingClientRect().left;
       if (leftX < 0) {
-        DragTarget.style.transform = 'translate(' + Math.min (newX - leftX, 0) + 
+        dragTarget.style.transform = 'translate(' + Math.min (newX - leftX, 0) + 
           'px,' + Math.max (newY, 0) + 'px)';
       }
       
@@ -10767,7 +10971,7 @@ function Drag (evt) {
       w + ' ' +
       h
     );
-    if (!mobileBrowser) {
+    if (!smallMobile) {
       SVGRoot.setAttribute('width', w);
       SVGRoot.setAttribute('height', h);
     }
@@ -10779,27 +10983,28 @@ function Drag (evt) {
 function Drop(evt) {
   
   // if we aren't currently dragging an element, don't do anything
-  if (!DragTarget) return;
+  if (!dragTarget) return;
   
   function restoreViewBox () {
     var bBox = SVGRoot.getBBox();
     SVGRoot.setAttribute ('viewBox', bBox.x + ' ' + bBox.y + ' ' +
       (parseInt(bBox.width) + 5) + ' ' + (parseInt(bBox.height) + 5));
-    if (!mobileBrowser) {
+    if (!smallMobile) {
       SVGRoot.setAttribute ('width', parseInt(bBox.width) + 5);
       SVGRoot.setAttribute ('height', parseInt(bBox.height) + 5);
     }
     updateSequenceTextHeight();
   }
 
+	document.getElementById('main').style = '';
   //if (touchDevice) evt.preventDefault();
 
   // turn the pointer-events back on, so we can grab this item later
-  DragTarget.setAttribute('pointer-events', 'all');
+  dragTarget.setAttribute('pointer-events', 'all');
   
-  if (DragTarget.classList.contains ('draggablePanel')) {
-    DragTarget.classList.remove ('dragging');
-    DragTarget = null;
+  if (dragTarget.classList.contains ('draggablePanel')) {
+    dragTarget.classList.remove ('dragging');
+    dragTarget = null;
     return;
   }
   
@@ -10807,9 +11012,9 @@ function Drop(evt) {
   SVGRoot.parentNode.classList.remove ('sequenceOverlay');
   document.getElementById ('leftBlock').removeAttribute ('style');
   
-  var transform = DragTarget.getAttribute('transform');
+  var transform = dragTarget.getAttribute('transform');
   
-  if (DragTarget.id.match (/^(.*-handle|magnifier)$/)) {
+  if (dragTarget.id.match (/^(.*-handle|magnifier)$/)) {
     
     /** dropping a handle or magnifier */
     
@@ -10827,24 +11032,26 @@ function Drop(evt) {
       var dy = parseInt(dxdy[1] / lineElement)
       // reverse direction for dragging in Form C
       if (activeForm === 'C') dx = -dx;
-      updateSequence (DragTarget.id.replace('figure', '') - 1,
-        '(' + dx + ',' + dy + ')',
-        false,
-        false,
-        true)
+      if ((dx != 0) || (dy != 0)) {
+	      updateSequence (dragTarget.id.replace('figure', '') - 1,
+	        '(' + dx + ',' + dy + ')',
+	        false,
+	        false,
+	        true);
+			}
     } else {
       restoreViewBox();
     }
   }
 
-  document.getElementById('svgContainer').scrollTop = DragTarget.scrollTopSave;
-  document.getElementById('svgContainer').scrollLeft = DragTarget.scrollLeftSave;
+  document.getElementById('svgContainer').scrollTop = dragTarget.scrollTopSave;
+  document.getElementById('svgContainer').scrollLeft = dragTarget.scrollLeftSave;
             
   // set the global variable to null, so nothing will be dragged until
   // we grab the next element
-  DragTarget = null;
+  dragTarget = null;
 
-  if (!touchDevice) sequenceText.focus();
+  //if (!touchDevice) sequenceText.focus();
 
 }
 
@@ -10872,7 +11079,7 @@ function changeEntryDirection () {
 // flipYAxis will flip the drawn direction of the Y axis for the whole
 // sequence
 function flipYAxis () {
-  var v = sequenceText.value;
+  var v = sequenceText.innerText;
   if (v.replace(regexComments, '').match(regexFlipYAxis)) {
     // disable flip
     var t = '';
@@ -10893,7 +11100,7 @@ function flipYAxis () {
         t += v[i];
       }
     }
-    sequenceText.value = t;
+    sequenceText.innerText = t;
   } else {
     // add flip to first real figure, if it exists
     for (var i = 0; i < figures.length; i++) {
@@ -11145,10 +11352,9 @@ function setQueueMenuOptions() {
 // showQueue shows the figure queue
 function showQueue () {
   var select = document.getElementById ('figureGroup');
-  var options = select.options;
   select.selectedIndex = 0;
-  changeFigureGroup(options[0]);
-  switchQueue (document.getElementById ('t_switchQueue'));
+  changeFigureGroup(select.options[0]);
+  //switchQueue (document.getElementById ('t_switchQueue'));
   showFigureSelector();
 }
 
@@ -11320,27 +11526,31 @@ function queueFromStorage () {
 
 /***********************************************************************
  * 
- * Free Unknown Designer
+ * Free (Un)known Designer
  * 
  **********************************************************************/
  
-// startFuDesigner starts the Free Unknown Designer
+// startFuDesigner starts the Free (Un)known Designer
 function startFuDesigner(dontConfirm) {
   if (!figureLetters) {
     alertBox (userText.FUDesignNotFreeUnknown, userText.fuDesigner);
     return;
   }
   if (!buildFuFiguresTab()) {
-    console.log('Unable to start Free Unknown Designer');
+    console.log('Unable to start Free (Un)known Designer');
     return;
   }
   
   function f () {
-    // Free Unknown designer will not work in mobile browser layout
-    if (mobileBrowser) switchMobile();
+    // Free (Un)known designer will not work in smallMobile browser layout
+    if (smallMobile) switchSmallMobile();
 
     // unlock sequence when locked
     if (document.getElementById ('lock_sequence').value) lockSequence();
+    
+    // deactivate any active menu's, dialogs etc
+    var active = document.getElementsByClassName ('active');
+    while (active.length > 0) active[0].classList.remove ('active');
     
     infoBox (userText.FUstarting, userText.fuDesigner);
 
@@ -11351,18 +11561,24 @@ function startFuDesigner(dontConfirm) {
       
       // show finalize button
       document.getElementById ('t_finalizeSequence').classList.remove ('noDisplay');
-        
-      // move undoRedo
-      var undoRedo = document.getElementById ('undoRedo');
-      document.getElementById ('mainMenu').insertBefore (
-        undoRedo, document.getElementById ('t_finalizeSequence')
-        );
+      
+      if (mobileDevice) {
+				// move items from File menu to main menu for quick access
+				var items = document.getElementsByClassName ('menuFileItem');
+				for (var i = 0; i < items.length; i++) {
+					document.getElementById ('menu').insertBefore (
+						items[i], document.getElementById ('menuFile'));
+				}
+				document.getElementById ('menuFile').classList.add ('noDisplay');
+			} else {
+	      // move undoRedo and set topBlock height
+	      var undoRedo = document.getElementById ('undoRedo');
+	      document.getElementById ('mainMenu').insertBefore (
+	        undoRedo, document.getElementById ('t_finalizeSequence'));
+	    }
   
       // clear undo and redo
       activeSequence.undo = activeSequence.redo = [];
-      
-      // disable gridInfo
-      document.getElementById ('gridInfo').classList.add ('noDisplay');
       
       // set correct figureInfo tab movement
       document.getElementById ('figureInfo').classList.add ('fuDesigner');
@@ -11371,7 +11587,6 @@ function startFuDesigner(dontConfirm) {
       document.getElementById ('fuFigures').classList.remove ('noDisplay');
       document.getElementById ('tab-fuFigures').classList.remove ('noDisplay');
       selectTab ('tab-fuFigures');
-      document.getElementById ('tab-sequenceInfo').classList.add ('noDisplay');
       document.getElementById ('figureSelector').classList.add ('left');
       
       // switch sequence view
@@ -11388,29 +11603,38 @@ function startFuDesigner(dontConfirm) {
       }
   
       if ((activeForm === 'Grid') && noAdditional) {
-        sequenceText.value = 'eu';
+        sequenceText.innerText = 'eu';
       } else {
-        // rebuild the sequence according Free Unknown designer format
+        // rebuild the sequence according Free (Un)known designer format
         // remove / symbols and entry/exit extension from strings
-        sequenceText.value = '';
+        sequenceText.innerText = '';
         for (var i = 0; i < figures.length; i++) {
-          if (figures[i].aresti && figures[i].unknownFigureLetter) {
+					// only add figures with aresti Nr. For Unknown, only add
+					// those that have a figure letter
+          if (figures[i].aresti && (figures[i].unknownFigureLetter ||
+	          !additionalFig.max)) {
             var string = figures[i].string;
             // remove extensions, shortenings and y axis switch
             string = string.replace(/[~\.'`\+\/]/g, '').replace(/-+/g, '-');
             // remove comments
             string = string.replace(/"[^"]*"/g, '');
-            sequenceText.value += '"@' + figures[i].unknownFigureLetter +
-              '" ' + string + ' ';
+            if (!figures[i].unknownFigureLetter) {
+							sequenceText.innerText += string + ' ';
+						} else {
+	            sequenceText.innerText += '"@' + figures[i].unknownFigureLetter +
+	              '" ' + string + ' ';
+						}
           } else if (figures[i].subSequence) {
-            sequenceText.value += figures[i].subSequence + ' ';
+            sequenceText.innerText += figures[i].subSequence + ' ';
           }
         }
-        sequenceText.value = sequenceText.value.trim().replace(/ e(u|d|j|ja)$/, '') + ' eu';
-        if (!sequenceText.value.match (/^e(u|d|j|ja) /)) {
-          sequenceText.value = 'eu ' + sequenceText.value;
+        sequenceText.innerText = sequenceText.innerText.trim().replace(/ e(u|d|j|ja)$/, '') + ' eu';
+        if (!sequenceText.innerText.match (/^e(u|d|j|ja) /)) {
+          sequenceText.innerText = 'eu ' + sequenceText.innerText;
         }
       }
+      
+      if (sequenceText.innerText === 'eu eu') sequenceText.innerText = 'eu';
       
       checkSequenceChanged (true);
   
@@ -11434,7 +11658,7 @@ function startFuDesigner(dontConfirm) {
   }
 }
 
-// exitFuDesigner is called to exit the Free Unknown designer. Several
+// exitFuDesigner is called to exit the Free (Un)known designer. Several
 // checks are done and warnings presented if necessary.
 // newSequence is true when we are exiting because of loading of new
 // sequence
@@ -11453,18 +11677,24 @@ function exitFuDesigner (newSequence) {
       // delete stylesheet rule 0 to show all elements with class
       // disableFUdesigner
       document.styleSheets[0].deleteRule(0);
-  
-      // move undoRedo
-      var undoRedo = document.getElementById ('undoRedo');
-      document.getElementById ('topBlock').insertBefore (
-        undoRedo, document.getElementById ('sequenceTextContainer')
-        );
+
+			if (mobileDevice) {  
+				// move items from main menu back to File menu
+				var ul = document.getElementById ('menuFileUl');
+				var items = document.getElementsByClassName ('menuFileItem');
+				for (var i = items.length - 1; i >= 0; i--) {
+					ul.insertBefore (items[i], items[i + 1]);
+				}
+				ul.parentNode.classList.remove ('noDisplay');
+			} else {
+	      // move undoRedo
+	      var undoRedo = document.getElementById ('undoRedo');
+	      document.getElementById ('topBlock').insertBefore (
+	        undoRedo, document.getElementById ('sequenceTextContainer'));
+	    }
   
       // clear undo and redo
       activeSequence.undo = activeSequence.redo = [];
-
-      // enable gridInfo
-      document.getElementById ('gridInfo').classList.remove ('noDisplay');
         
       // switch sequence view
       document.getElementById ('fuSequence').classList.add ('noDisplay');
@@ -11477,7 +11707,7 @@ function exitFuDesigner (newSequence) {
         selectFigure (false);
         selectForm ('B');
         separateFigures (true);
-        sequenceText.value = sequenceText.value.trim().replace(/ e(u|d|j|ja)$/, '').replace(/^eu /, '');
+        sequenceText.innerText = sequenceText.innerText.trim().replace(/ e(u|d|j|ja)$/, '').replace(/^eu[ ]*/, '');
   
         checkSequenceChanged ();
         
@@ -11502,7 +11732,6 @@ function exitFuDesigner (newSequence) {
       document.getElementById ('tab-fuFigures').classList.add ('noDisplay');
       document.getElementById ('fuFigures').classList.add ('noDisplay');
       document.getElementById ('fuFigures').classList.add ('hidden');
-      document.getElementById ('tab-sequenceInfo').classList.remove ('noDisplay');
       selectTab ('tab-figureInfo');
       selectTab ('tab-sequenceInfo');
       document.getElementById ('figureSelector').classList.remove ('left');
@@ -11548,33 +11777,33 @@ function exitFuDesigner (newSequence) {
   }
 }
 
-// fuCell builds a td element for specified subsequence, column and row
-function fuCell (sub, col, row) {
+// freeCell builds a td element for specified subsequence, column and row
+function freeCell (sub, col, row) {
   var td = document.createElement ('td');
   td.id = 'sub' + sub + 'col' + col + 'row' + row;
   return td;
 }
 
-// fuCellAddHandlers adds correct handlers to each table cell in the
-// Free Unknown designer
-function fuCellAddHandlers (td) {
+// freeCellAddHandlers adds correct handlers to each table cell in the
+// Free (Un)known designer
+function freeCellAddHandlers (td) {
   td.addEventListener ('dragenter', function() {
     this.classList.add ('hover');
   });
   td.addEventListener ('dragleave', function() {
     this.classList.remove ('hover');
   });
-  td.addEventListener ('dragover', handleFuDragOver);
-  td.addEventListener ('drop', handleFuDrop);
+  td.addEventListener ('dragover', handleFreeDragOver);
+  td.addEventListener ('drop', handleFreeDrop);
   
   if (!td.classList.contains ('endBlock')) {
-    td.addEventListener ('mousedown', handleFuSelect);
+    td.addEventListener ('mousedown', handleFreeSelect);
   }
 }
 
 /***********************************************************************
  * 
- * Free Unknown drag & drop
+ * Free (Un)known drag & drop
  * 
  **********************************************************************/
  
@@ -11590,29 +11819,30 @@ function noPropagation (e) {
 
 var dragSrcEl = null;
 
-// handleFuDragFigureStart is called when starting to drag a Free Unknown
+// handleFreeDragFigureStart is called when starting to drag a Free (Un)known
 // figure. It will set the figure string in dataTransfer
-function handleFuDragFigureStart(e) {
+function handleFreeDragFigureStart(e) {
   var l = this.id.replace (/^fu/, '');
   e.dataTransfer.effectAllowed = 'copy';
   if (l === 'L') {
     e.dataTransfer.setData('text', '"@L" L');
+  } else if (l === 'X') {
+    e.dataTransfer.setData('text', 'X');
   } else {
     e.dataTransfer.setData('text', '"@' + l + '" ' + fuFig[l].string);
   }
 }
 
-// handleFuDragSubStart is called when starting to drag a Free Unknown
+// handleFreeDragSubStart is called when starting to drag a Free (Un)known
 // subsequence. It will set the figure string in dataTransfer
-function handleFuDragSubStart(e, string) {
-  console.log('dragstart');
+function handleFreeDragSubStart(e, string) {
   e.target.getElementsByClassName('endBlock')[0].classList.add ('hidden');
   e.dataTransfer.effectAllowed = 'copy';
   e.dataTransfer.setData('text', string);
 }
 
-// handleFuDragOver fires when dragging over Free Unknown designer figure
-function handleFuDragOver(e) {
+// handleFreeDragOver fires when dragging over Free (Un)known designer figure
+function handleFreeDragOver(e) {
   noPropagation (e); // Necessary. Allows us to drop.
 
   // fixme
@@ -11626,18 +11856,18 @@ function handleFuDragOver(e) {
   return false;
 }
 
-// handleFuDragEnd is called when dragging stops without dropping to
+// handleFreeDragEnd is called when dragging stops without dropping to
 // restore dragged subsequence
-function handleFuDragEnd (e) {
+function handleFreeDragEnd (e) {
   e.target.getElementsByClassName('endBlock')[0].classList.remove ('hidden');
 }
 
-// handleFuDrop handles dropping Free Unknown figure or subsequence
-function handleFuDrop (e) {
+// handleFreeDrop handles dropping Free (Un)known figure or subsequence
+function handleFreeDrop (e) {
   // this/e.target is current target element.
   noPropagation(e); // Stops some browsers from redirecting.
 
-  handleFuDeselect (e);
+  handleFreeDeselect (e);
   
   this.classList.remove ('hover');
 
@@ -11660,7 +11890,9 @@ function handleFuDrop (e) {
     var string = e.dataTransfer.getData('text');
 
     // if unknownFigureLetter is set, drop one figure earlier
-    var previous = (figures[figNr].unknownFigureLetter)? 1 : 0;
+    // var previous = (figures[figNr].unknownFigureLetter)? 1 : 0;
+    // if aresti is set, drop one figure earlier
+    var previous = (figures[figNr].aresti)? 1 : 0;
 
     // a subsequence is marked by "n" at the start, where
     // n = subsequence number
@@ -11680,44 +11912,48 @@ function handleFuDrop (e) {
             t += ' ' + figures[i].string + ' ';
           }
         }
-        sequenceText.value = t;
+        sequenceText.innerText = t;
         checkSequenceChanged();
       }
     } else {
       // single figure
       updateSequence (figNr - 1 - previous, string, false, true);
-      // when dropping Additional, select and open figure editor
+      // when dropping Additional or eXtra, select and open figure editor
       if (string.match (/\@L/)) {
         selectFigureFu (figNr + 1 - previous);
-      }
+      } else if (string === 'X') selectFigureFu (figNr - previous);
     }
   }
 
-  sequenceText.value = sanitizeSpaces (sequenceText.value);
+  sequenceText.innerText = sanitizeSpaces (sequenceText.innerText);
   return false;
 }
 
-// handleFuRemove handles removing a figure from the sequence
-function handleFuRemove (e, el) {
+// handleFreeRemove handles removing a figure from the sequence
+function handleFreeRemove (e, el) {
 
   var el = el ? el : this;
 
   noPropagation(e); // Stops some browsers from redirecting.
   
-  handleFuDeselect (e);
+  handleFreeDeselect (e);
   
   var figNr = el.parentNode.className.match(regexFuFigNr)[1];
-  updateSequence (figNr, '', true);
-  // remove figureletter too
-  updateSequence (figNr - 1, '', true);
+  
+  // remove figureletter first when applicable
+  if (/^\"\@[A-Z]/.test(figures[figNr - 1].string)) {
+    updateSequence (figNr - 1, '', true);
+    updateSequence (figNr - 1, '', true);
+  } else updateSequence (figNr, '', true);
+
   // remove any double entry options, keeping last one
-  sequenceText.value = sequenceText.value.replace (/e[udj] (e[udj])/, '$1');
+  sequenceText.innerText = sequenceText.innerText.replace (/e[udj] (e[udj])/, '$1');
   checkSequenceChanged();
 }
 
 /**
-// handleFuFlipExit flips exit direction for Free Unknown figures
-function handleFuFlipExit (e) {
+// handleFreeFlipExit flips exit direction for Free (Un)known figures
+function handleFreeFlipExit (e) {
   if (e.stopPropagation) {
     e.stopPropagation(); // Stops some browsers from redirecting.
   }
@@ -11739,8 +11975,8 @@ function handleFuFlipExit (e) {
   updateSequence (figNr, s, true);
 }
 
-// handleFuSubEntry changes entry direction of the subsequence
-function handleFuSubEntry (e) {
+// handleFreeSubEntry changes entry direction of the subsequence
+function handleFreeSubEntry (e) {
   if (e.stopPropagation) {
     e.stopPropagation(); // Stops some browsers from redirecting.
   }
@@ -11769,8 +12005,8 @@ function handleFuSubEntry (e) {
 }
 */
 
-// handleFuDeselect is called when an Additional figure is deselected
-function handleFuDeselect (e) {
+// handleFreeDeselect is called when an Additional figure is deselected
+function handleFreeDeselect (e) {
   noPropagation(e); // Stops some browsers from redirecting.
   
   var els = document.getElementsByClassName ('fuFig' + selectedFigure.id);
@@ -11782,15 +12018,15 @@ function handleFuDeselect (e) {
   hideFigureSelector ();
 }
   
-// handleFuSelect is called by mousedown on a Free Unknown figure
-function handleFuSelect () {
+// handleFreeSelect is called by mousedown on a Free (Un)known figure
+function handleFreeSelect () {
   var match = this.className.match(regexFuFigNr);
   if (match) {
     selectFigureFu (this.className.match(regexFuFigNr)[1]);
   }
 }
   
-// buildFuFiguresTab fills the fuFigures tab with the Free Unknown
+// buildFuFiguresTab fills the fuFigures tab with the Free (Un)known
 // lettered figures in the active sequence.
 function buildFuFiguresTab() {
   
@@ -11867,7 +12103,7 @@ function buildFuFiguresTab() {
   var height = 100;
   var maxColCount = 2;
   var colCount = 0;
-  var letters = figureLetters + 'L';
+  var letters = figureLetters + (additionalFig.max ? 'L' : 'X');
   
   firstFigure = false;
 
@@ -11881,7 +12117,7 @@ function buildFuFiguresTab() {
     // clear the svg
     prepareSvg(svg);
     var l = letters[i];
-    if (l != 'L') {
+    if (!/[LX]/.test(l)) {
       // clear figure
       figures[-1] = [];
   
@@ -11893,18 +12129,8 @@ function buildFuFiguresTab() {
         Direction = 180;
       }
   
-      // build the figure and replace line paths by thicker line paths
+      // build the figure
       buildFigure ([fuFig[l].figNr], fuFig[l].string, false, -1);
-  
-      var paths = figures[-1].paths;
-      for (j = paths.length - 1; j >= 0; j--) {
-        if (paths[j].style == 'neg') {
-          paths[j].style = 'chooserNeg';
-        } else if (paths[j].style == 'pos') {
-          paths[j].style = 'chooserPos';
-        }
-      }
-      figures[-1].paths = paths;
   
       // reset X and Y and clear figureStart to prevent adjusting
       // figure position
@@ -11947,17 +12173,17 @@ function buildFuFiguresTab() {
     var td = document.createElement('td');
     tr.appendChild(td);
     td.setAttribute('id', 'fu' + l);
-    if (l != 'L') {
+    if (!(/[LX]/.test(l))) {
       td.innerHTML = fuFig[l].svg;
       // add the unknownFigureLetter and K
       td.innerHTML += '<div class="UFletterInQueue">' + l + '</div>';
       td.innerHTML += '<div class="UFKInQueue">K:' +
          figures[-1].k.reduce(function(a, b){return a+b;}) + '</div>';
     } else {
-      td.innerHTML = userText.Additional;
+      td.innerHTML = userText[(l === 'L') ? 'additional' : 'free'];
     }
     td.setAttribute ('draggable', true);
-    td.addEventListener ('dragstart', handleFuDragFigureStart);
+    td.addEventListener ('dragstart', handleFreeDragFigureStart);
   }
   
   fu_figures.value = fu_figures.value.trim();
@@ -12197,10 +12423,11 @@ function makeFormA() {
     SVGRoot.setAttribute("viewBox", '0 0 800 1020');
   } else SVGRoot.setAttribute("viewBox", '0 0 800 1000');
   
-  // resize svg if we are on a mobile browser
-  if (mobileBrowser) {
-    SVGRoot.setAttribute('width', '312px');
-    SVGRoot.setAttribute('height', '390px');
+  // resize svg if we are on a smallMobile browser to hide the scoring
+  // columns
+  if (smallMobile) {
+    SVGRoot.setAttribute('width', '900px');
+    SVGRoot.setAttribute('height', '1125px');
   } else {
     SVGRoot.setAttribute("width", '800px');
     SVGRoot.setAttribute("height", '1000px');
@@ -12403,7 +12630,7 @@ function makeFormGrid (cols, width, svg) {
     svg.setAttribute("viewBox", '-1 -13 ' + (width + 2) + ' ' + height);
   } else svg.setAttribute("viewBox", '-1 -1 ' + (width + 2) + ' ' + height);
 
-  if (mobileBrowser) {
+  if (smallMobile) {
     svg.setAttribute("width", 312);
     svg.setAttribute("height", roundTwo(height * (312 / (width + 2))));
   } else {
@@ -12591,7 +12818,7 @@ function createFigureProposals () {
       
   // build a sequence string for each proposal
   var content = '';
-  sequenceText.value = '';
+  sequenceText.innerText = '';
   for (var i = 0; i < proposals.length; i++) {
     var string = "";
     for (var j = 0; j < proposals[i].length; j++) {
@@ -12602,7 +12829,7 @@ function createFigureProposals () {
       string += f.string + ' ';
     }
     content += string.trim() + '\n';
-    sequenceText.value += string;
+    sequenceText.innerText += string;
   }
 
   document.getElementById ('proposals').textContent = content;
@@ -12622,13 +12849,14 @@ function createFigureProposals () {
   
   activeSequence.figures = [];
   activeSequence.text = savedText;
-  sequenceText.value = savedText;
+  sequenceText.innerText = savedText;
   
   checkSequenceChanged (true);
 }
 
-// makeFU builds Free Unknown designer sequence
-function makeFU () {
+// makeFree builds Free Known and Unknown designer sequences
+// When additionalFig.max is zero, it's a Free Known. Otherwise, Unknown
+function makeFree () {
   // set sizes
   var cellW = 120;
   var cellH = 100;
@@ -12648,6 +12876,8 @@ function makeFU () {
   var minCol = 1;
   var maxCol = 1;
   var height = 0;
+  var totalK = 0;
+  var freeFigures = 0;
   Direction = 0;
   
   // getTd gets the td for the next figure block and updates size when
@@ -12664,7 +12894,7 @@ function makeFU () {
       var tr = document.createElement ('tr');
       table.appendChild (tr);
       for (var j = minCol; j <= maxCol; j++) {
-        tr.appendChild (fuCell (sub, j, row));
+        tr.appendChild (freeCell (sub, j, row));
       }
       height = row;
     }
@@ -12672,14 +12902,14 @@ function makeFU () {
       // add new column right
       var tr = table.childNodes;
       for (var j = 0; j < tr.length; j++) {
-        tr[j].appendChild (fuCell (sub, col, j + 1));
+        tr[j].appendChild (freeCell (sub, col, j + 1));
       }
       maxCol = col;
     } else if (col < minCol) {
       // add new column left
       var tr = table.childNodes;
       for (var j = 0; j < tr.length; j++) {
-        tr[j].insertBefore (fuCell (sub, col, j + 1), tr[j].firstChild);
+        tr[j].insertBefore (freeCell (sub, col, j + 1), tr[j].firstChild);
       }
       minCol = col;
     }
@@ -12741,15 +12971,26 @@ function makeFU () {
       svg.setAttribute('height', cellH);
     }
 
+    if (!additionalFig.max) {
+      // add Total K
+      var div = document.createElement ('div');
+      div.classList.add ('UFKInFigure');
+      div.innerHTML = 'Total K: ' + totalK;
+      if (rulesActive && checkCatGroup.k && checkCatGroup.k.max) {
+		    div.innerHTML += '<br />Max K: ' + checkCatGroup.k.max;
+			}
+      td.appendChild (div);
+    }
+      
     td.classList.add ('fuFig' + id);
     td.classList.add ('endBlock');
-    fuCellAddHandlers (td);
+    freeCellAddHandlers (td);
     
     // add table drag handling
     table.setAttribute ('draggable', true);
     table.addEventListener ('dragstart', function(e){
-      handleFuDragSubStart (e, string);});
-    table.addEventListener ('dragend', handleFuDragEnd);
+      handleFreeDragSubStart (e, string);});
+    table.addEventListener ('dragend', handleFreeDragEnd);
     
     // start new subsequence
     sub++;
@@ -12760,6 +13001,7 @@ function makeFU () {
     maxCol = 0;
     height = 0;
     subseqString = '';
+    totalK = 0;
     
     // return new table
     return document.createElement ('table');
@@ -12769,43 +13011,20 @@ function makeFU () {
   function addRemoveFigureButton (container) {
     var div = document.createElement('div');
     div.classList.add ('removeFigureButton');
-    div.innerHTML = '<img src="buttons/close.png">';
-    div.addEventListener ('mousedown', handleFuRemove);
-    container.appendChild (div);
-  }
-  /**
-  // addExitButton adds a button to flip the figure exit direction
-  function addExitButton (container,axis) {
-    var div = document.createElement('div');
-    div.classList.add ('flip' + axis + 'AxisButton');
-    div.innerHTML = '<img src="buttons/mask.png">';
-    div.addEventListener ('mousedown', handleFuFlipExit);
+    div.innerHTML = '<i class="material-icons">close</i>';
+    div.addEventListener ('mousedown', handleFreeRemove);
     container.appendChild (div);
   }
   
-  // addSubEntryButton adds a button to change the subsequence entry
-  // direction
-  function addSubEntryButton (container, id) {
-    var div = document.createElement('div');
-    var dir = figures[id].entryDir - figures[id].entryAtt;
-    if (dir < 0) dir += 360;
-    switch (dir) {
-      case 270:
-        div.classList.add ('subEntryEjButton');
-        break;
-      case 180:
-        div.classList.add ('subEntryEdButton');
-        break;
-      case 90:
-        div.classList.add ('subEntryEjaButton');
-        break;
-      default:
-        div.classList.add ('subEntryEuButton');
-    }
-    div.addEventListener ('mousedown', handleFuSubEntry);
+  // addFigureK adds figure K
+  function addFigureK (container) {
+    var div = document.createElement ('div');
+    var K = f.k.reduce(function(a, b){return a+b;});
+    div.classList.add ('UFKInFigure');
+    div.innerHTML = 'K:' + K;
     container.appendChild (div);
+    return K;
   }
-  */
   
   // make sure the sequence ends with 'eu'. If not, add it
   if (figures[figures.length - 1] && figures[figures.length - 1].string !== 'eu') {
@@ -12832,29 +13051,37 @@ function makeFU () {
       
       var td = getTd();
       addRemoveFigureButton(td);
+      if (!additionalFig.max) totalK += addFigureK(td);
       td.classList.add ('fuFig' + i);
 
       var svg = newSvg();
       td.appendChild(svg);
 
-      // set different class for Additional figures
+      // set different class for Additional and Free figures
       if (f.unknownFigureLetter === 'L') {
         if (additionalFig && (usedLetters.L > additionalFig.max)) {
           td.classList.add ('additionalFigureMulti');
         } else {
           td.classList.add ('additionalFigure');
         }
+      } else if (!f.unknownFigureLetter) {
+        td.classList.add ('additionalFigure');
+        freeFigures++;
       } else if (usedLetters[f.unknownFigureLetter] > 1) {
         td.classList.add ('fuFigureMulti');
       } else {
         td.classList.add ('fuFigure');
       }
 
-      fuCellAddHandlers(td);
+      freeCellAddHandlers(td);
 
-      // append every figure with it's letter to subseqString
-      subseqString += '"@' + f.unknownFigureLetter + '" ' + f.string + ' ';
-      
+      // append every figure with it's letter to subseqString (no letter
+      // needed for Free figures in Free Known)
+      if (!additionalFig.max && !f.unknownFigureLetter) {
+        subseqString += f.string + ' ';
+      } else {
+        subseqString += '"@' + f.unknownFigureLetter + '" ' + f.string + ' ';
+      }
       // set X and Y to 0 to prevent roundoff errors in figure drawing
       // and scaling
       X = Y = 0;
@@ -12897,18 +13124,18 @@ function makeFU () {
       div.appendChild(table);
       // set subSeq number of new subsequence
       figures[i].subSeq = sub;
-    } else if (f.string === 'L') {
+    } else if ((f.string === 'L') || (f.string === 'X')) {
       // undefined Additional figure
       var td = getTd();
-      td.innerHTML = userText.Additional;
+      td.innerHTML = userText[(f.string === 'L') ? 'additional' : 'free'];
 
       addRemoveFigureButton (td);
       td.classList.add ('fuFig' + i);
       td.classList.add ('additionalFigure');
 
-      fuCellAddHandlers (td);
+      freeCellAddHandlers (td);
       // append Additional to subseqString
-      subseqString += '"@L" L ';
+      subseqString += (additionalFig.max ? '"@L" L ' : 'X ');
       
       prevSub = sub;
     }
@@ -12917,23 +13144,23 @@ function makeFU () {
   // add 'new subsequence' block
   var tr = document.createElement ('tr');
   table.appendChild (tr);
-  var td = fuCell (sub, 1, 1);
-  fuCellAddHandlers (td);
+  var td = freeCell (sub, 1, 1);
+  freeCellAddHandlers (td);
   tr.appendChild (td);
   td.innerHTML = (sub === 1)? userText.dropFigureHere : userText.newCopySubsequence;
   td.classList.add ('fuNewSub');
   
   // mark figures in fuFiguresTable
-  var l = figureLetters + 'L';
+  var l = figureLetters + (additionalFig.max ? 'L' : 'X');
   for (var i = 0; i < l.length; i++) {
     var td = document.getElementById ('fu' + l[i]);
     // check if td exists to prevent failing ungracefully
     if (td) {
-      var match = sequenceText.value.match(RegExp ('"@' + l[i] + '"', 'g'));
+      var match = sequenceText.innerText.match(RegExp ('"@' + l[i] + '"', 'g'));
       if (match) {
         var multi = ((l[i] === 'L') && additionalFig.max)? additionalFig.max : 1;
         if (l[i] === 'L') {
-          td.innerHTML = userText.Additional + '<br />' + match.length + 'x';
+          td.innerHTML = userText.additional + '<br />' + match.length + 'x';
         }
         if (match.length > multi) {
           td.classList.remove ('figUsed');
@@ -12942,10 +13169,27 @@ function makeFU () {
           td.classList.add ('figUsed');
           td.classList.remove ('figUsedMulti');
         }
+      } else if (l[i] === 'X') {
+				// set Free figure defaults. Should be overridden by rules
+				var freeFigMin = 5;
+				var freeFigMax = 5;
+				if (rulesActive && checkCatGroup && checkCatGroup.basefig) {
+					freeFigMin = checkCatGroup.basefig.min - (figureLetters.length);
+					freeFigMax = checkCatGroup.basefig.max - (figureLetters.length);
+				}
+				if ((freeFigures < freeFigMin) || (freeFigures > freeFigMax)) {
+          td.classList.remove ('figUsed');
+          td.classList.add ('figUsedMulti');
+        } else {
+          td.classList.add ('figUsed');
+          td.classList.remove ('figUsedMulti');
+        }
+        td.innerHTML = userText.free + '<br />' + freeFigures + ' / ' +
+	        freeFigMax;
       } else {
         td.classList.remove ('figUsed');
         td.classList.remove ('figUsedMulti');
-        if (l[i] === 'L') td.innerHTML = userText.Additional;
+        if (l[i] === 'L') td.innerHTML = userText.additional;
       }
     }
   }
@@ -12969,7 +13213,6 @@ function addFormElements (form) {
   var w = parseInt(bBox.width);
   var h = parseInt(bBox.height);
   y -= 40;
-  h += 40;
   switch (form) {
     case 'B':
       drawWind ((w + x) + (miniFormA ? 172 : 0), y, 1);
@@ -12980,20 +13223,22 @@ function addFormElements (form) {
   }
   // Add mini Form A, but only to Form B or C when miniFormA is set
   if (((form === 'C') || (form === 'B')) && miniFormA) {
-    var block = makeMiniFormA ((w + x) + 20, y + 50);
-  } else {
-    var block = {'width':0, 'height':0};
+    makeMiniFormA ((w + x) + 20, y + 50);
   }
-  w += 20 + block.width;
-  if ((50 + block.height) > h) h = (50 + block.height);
+
+  var bBox = SVGRoot.getElementById('sequence').getBBox();
+  var x = parseInt(bBox.x) ;
+  var y = parseInt(bBox.y);
+  var w = parseInt(bBox.width);
+  var h = parseInt(bBox.height);
   // Change the viewBox to make the sequence fit
   SVGRoot.setAttribute("viewBox",
-    (x - 3) + ' ' + (y - 3) + ' ' + (w + 5) + ' ' + (h + 30));
-  // resize svg if we are on a mobile browser
-  var scaleSvg = mobileBrowser ? 312 / (w + 5) : 1;
+    (x - 3) + ' ' + (y - 3) + ' ' + (w + 5) + ' ' + (h + 5));
+  // resize svg if we are smallMobile, to a max factor 2
+  var scaleSvg = smallMobile ? Math.min(312 / (w + 5), 2) : 1;
   
   SVGRoot.setAttribute("width",  scaleSvg * (w + 5));
-  SVGRoot.setAttribute("height", scaleSvg * (h + 30));
+  SVGRoot.setAttribute("height", scaleSvg * (h + 5));
 }
 
 // displayAlerts displays alert messages in the Alerts box
@@ -13031,16 +13276,13 @@ function displayAlerts () {
 // console.log values for debugging
 function draw () {
 
-  //debug.appendChild(document.createTextNode(Date.now()));
-  //debug.appendChild(document.createTextNode('Rebuilding sequence svg'));
-
   rebuildSequenceSvg ();
   // reset all drawing variables to default values
-  // firstFigure is disabled in Free Unknown designer
+  // firstFigure is disabled in Free (Un)known designer
   firstFigure = (activeForm !== 'FU') ? true : false;
   Attitude = X = Y = 0;
   var content = '';
-  if (activeForm === 'C') {
+  if ((activeForm === 'C') || (activeForm === 'L')) {
     goRight = false;
     setYAxisOffset (180 - yAxisOffsetDefault);
     Direction = 180;
@@ -13049,29 +13291,31 @@ function draw () {
     setYAxisOffset (yAxisOffsetDefault);
     Direction = 0;
   }
-  // get current rollFontSize and numberInCircle settings
-  changeRollFontSize (document.getElementById('rollFontSize').value);
-  numberInCircle = (document.getElementById('numberInCircle').checked)? true : false;
+  // get current numberInCircle setting
+  //changeRollFontSize (document.getElementById('rollFontSize').value);
+  numberInCircle = document.getElementById('numberInCircle').checked ? true : false;
 
-  //debug.appendChild(document.createTextNode('Parsing sequence'));
-    
   parseSequence();
 
-  //debug.appendChild(document.createTextNode('Making Form'));
-  
-  if (activeForm === 'A') {
-    makeFormA();
-  } else if (activeForm === 'B') {
-    makeFormB();
-  } else if (activeForm === 'C') {
-    makeFormC();
-  } else if (activeForm === 'FU') {
-    makeFU();
-  } else {
-    makeFormGrid(document.getElementById('gridColumns').value);
+  switch (activeForm) {
+    case 'A':
+      makeFormA();
+      break;
+    case 'B':
+    case 'R':
+      makeFormB();
+      break;
+    case 'C':
+    case 'L':
+      makeFormC();
+      break;
+    case 'FU':
+      makeFree();
+      break;
+    default:
+      makeFormGrid(document.getElementById('gridColumns').value,
+	      smallMobile ? 240 * Math.sqrt(document.getElementById('gridColumns').value) : false);
   }
-  
-  //debug.appendChild(document.createTextNode('Form complete'));
   
   // check if selectedFigure.id is still valid
   if (!figures[selectedFigure.id]) selectFigure(false);
@@ -13079,39 +13323,70 @@ function draw () {
   displayAlerts ();
 }
 
-// windowResize gets called whenever the window is resized
+// windowResize gets called whenever the window is resized or rotated
 function windowResize () {
   updateSequenceTextHeight();
+	if (smallMobile) {
+    // set view to device width
+		var initScale = roundTwo(screen.width / 320);
+		if (initScale != 1) {
+	    document.getElementById ('viewport').setAttribute('content',
+		    'initial-scale=' + initScale + ', user-scalable=no');
+		}
+	}
 }
 
 // updateSequenceTextHeight updates the height of the sequence text when
 // necessary
 function updateSequenceTextHeight () {
+	/** DISABLED IN 2018.1, keep in case we want to re-enable
   var cloneDiv = document.getElementById('sequenceTextClone');
   if (cloneDiv) {
-    if (!mobileBrowser) {
+    if (!smallMobile && (document.activeElement.id === sequenceText.id)) {
       // use the clone div to determine the height of the sequence textarea
       // add two characters to make sure the text in the clone is always longer    
-      cloneDiv.innerHTML = sequenceText.value + '##';
-      // when the clone is only a single line, add a break for minimum 2 lines
-      if (cloneDiv.offsetHeight < 22) cloneDiv.innerHTML += '<br />.';
-      var height = cloneDiv.offsetHeight;
-      sequenceText.setAttribute('style', 'height:' + (height + 6) + 'px;');
-      // also set the position of the "main" div
-      document.getElementById('main').setAttribute ('style', 'top:' + (height - 12) + 'px;');
-    } else {
+      cloneDiv.innerHTML = sequenceText.innerText + '##';
+      // set minimum height to 52px or 48 for desktop
+      var height = Math.max (cloneDiv.offsetHeight + 6,
+	      mobileDevice ? 52 : 48);
+      sequenceText.setAttribute('style', 'height:' + height + 'px;');
+      // also correct topBlock and main, add 25 to account for menu on
+      // desktop
+      if (!mobileDevice) height += 25;
+      document.getElementById('topBlock').setAttribute (
+	      'style', 'height:' + (height + 4) + 'px;');
+	    // transition is set here in two steps to prevent unwanted
+	    // behaviour when dropping figures
+      document.getElementById('main').setAttribute (
+	      'style', 'top:' + (height + 4) + 'px;');
+	    setTimeout(function(){
+				document.getElementById('main').setAttribute (
+		      'style', 'transition: top 0.2s ease-in-out; ' +
+		      'top:' + (height + 4) + 'px;');}, 100);
+    } else if (!dragTarget) {
       cloneDiv.innerHTML = '';
+      sequenceText.removeAttribute ('style');
+      if ((activeForm !== 'FU') || mobileDevice) {
+	      document.getElementById('topBlock').removeAttribute ('style');
+	      document.getElementById('main').removeAttribute ('style');
+			} else {
+				document.getElementById('topBlock').setAttribute (
+	      'style', 'height: 30px');
+	      document.getElementById('main').setAttribute (
+	      'style', 'transition: top 0.2s ease-in-out; top: 30px');
+	    }
     }
   }
+  */
 }
 
 // virtualKeyboard shows or hides the virtual keyboard for
-// special keys for touch devices
+// special keys for touch devices, except on small mobile
 function virtualKeyboard (e) {
-  e.hasfocus = (document.activeElement.id === 'sequence_text') ? true : false;
-  if (touchDevice) {
+  e.hasfocus = (document.activeElement === sequenceText) ? true : false;
+  if (touchDevice && mobileDevice && !smallMobile) {
     var el = document.getElementById('virtualKeyboard');
-    if (document.activeElement.id === 'sequence_text') {
+    if (document.activeElement === sequenceText) {
       el.classList.remove ('noDisplay');
     } else {
       el.classList.add ('noDisplay');
@@ -13132,13 +13407,24 @@ function clickVirtualKeyboard(e) {
     setTimeout(function(){
       e.target.classList.remove ('clicked');
       }, 1000);
-    var selStart = sequenceText.selectionStart;
-    var selEnd = sequenceText.selectionEnd;
-    sequenceText.value = sequenceText.value.substring (0, selStart) +
-      key + sequenceText.value.substring (selEnd);
+    //var selStart = sequenceText.selectionStart;
+    //var selEnd = sequenceText.selectionEnd;
+ 
+    var selStart = window.getSelection().getRangeAt(0).startOffset;
+    var selEnd = window.getSelection().getRangeAt(0).endOffset;
+
+    sequenceText.innerText = sequenceText.innerText.substring (0, selStart) +
+      key + sequenceText.innerText.substring (selEnd);
     checkSequenceChanged();
-    sequenceText.selectionStart = selStart + 1;
-    sequenceText.selectionEnd = sequenceText.selectionStart;
+
+		var range = document.createRange();
+		var sel = window.getSelection();
+		range.setStart(sequenceText.childNodes[0], selStart + 1);
+		range.collapse(true);
+		sel.removeAllRanges();
+		sel.addRange(range);
+    //sequenceText.selectionStart = selStart + 1;
+    //sequenceText.selectionEnd = sequenceText.selectionStart;
   }
 }
 
@@ -13158,31 +13444,54 @@ function releaseVirtualKeyboard(e) {
 // When force is set to true (e.g. after drag & drop) redraw will always
 // be done
 function checkSequenceChanged (force) {
-  
-  // remove all line breaks from the sequence input field
-  sequenceText.value = sequenceText.value.replace (/(\r\n|\n|\r)/gm, ' ');
-  // update height of sequence text box for non-mobile browsers
+
+	var selStart = 0;
+	var selEnd = 0;
+
+  if (window.getSelection().focusNode) {
+		var range = saveSelection (sequenceText);
+	  selStart = range.start;
+		selEnd = range.end;
+	}
+				
+	if (/(\r\n|\n|\r)/gm.test(sequenceText.innerHTML)) {
+	  // read the sequence string and mark the location of the caret/selection
+	  if (window.getSelection().focusNode) {
+	
+		  // remove all line breaks from the sequence input field
+		  sequenceText.innerHTML = sequenceText.innerHtml.replace (/(\r\n|\n|\r)/gm, ' ');
+		  
+		  // put caret back in correct place
+			var range = document.createRange();
+			var sel = window.getSelection();
+			range.setStart(sequenceText.childNodes[0], selStart);
+			range.setEnd(sequenceText.childNodes[0], selEnd);
+			sel.removeAllRanges();
+			sel.addRange(range);
+		} else {
+			// remove all line breaks from the sequence input field
+		  sequenceText.innerHTML = sequenceText.innerHTML.replace (/(\r\n|\n|\r)/gm, ' ');
+		}
+	}
+
+  // update height of sequence text box for non-smallMobile browsers
   updateSequenceTextHeight();
-  // read the sequence string and mark the location of the caret/selection
-  var selStart = sequenceText.selectionStart;
+
   var selectFigureId = false;
 
   // whenever the sequence is empty, clear the filename
-  if (sequenceText.value == '') {
-    fileName.value = '';
-    storeLocal ('fileName', fileName.value);
-  }
+  if (sequenceText.innerText == '') updateSaveFilename();
   
   // Prevent OpenAero from being left unintentionally
-  if (activeSequence.text != sequenceText.value) {
+  if (activeSequence.text != sequenceText.innerText) {
     sequenceSaved = false;
     // window.addEventListener('beforeunload', preventUnload);
   }
 
-  if ((activeSequence.text != sequenceText.value) || (force === true)) {
+  if ((activeSequence.text != sequenceText.innerText) || (force === true)) {
     // reset sequence entry options
     updateSequenceOptions ('');
-    activeSequence.text = sequenceText.value;
+    activeSequence.text = sequenceText.innerText;
     var string = activeSequence.text;
     // whenever the string is empty, consider it 'saved'
     if (string === '') {
@@ -13277,7 +13586,7 @@ function checkSequenceChanged (force) {
     if (el && el.classList.contains ('active')) {
       markFigures ();
     }
-  } else if (document.activeElement.id === 'sequence_text') {
+  } else if (document.activeElement === sequenceText) {
     // when no change was made, just check where the caret in the
     // sequence text is and when necessary change selected figure
     for (var i = 0; i < figures.length; i++) {
@@ -13303,7 +13612,7 @@ function selectForm (form) {
   checkSequenceChanged (true);
   // draw (form);
   if (selectedFigure.id) updateFigureEditor();
-  if (mobileBrowser) {
+  if (smallMobile) {
     selectTab('tab-svgContainer');
   }
   setFormLayout (form);
@@ -13311,7 +13620,7 @@ function selectForm (form) {
 
 // setFormLayout sets the correct layout for each Form view    
 function setFormLayout (form) {    
-  if ((form === 'Grid') && !mobileBrowser) {
+  if ((form === 'Grid') && !smallMobile) {
     document.getElementById ('gridInfo').classList.remove ('hidden');
     document.getElementById('svgContainer').classList.add ('grid');
   } else {
@@ -13379,8 +13688,8 @@ function openLogoFile () {
 function programme () {
   var key = this.id.replace(/^programme-/, '');
   OLANBumpBugCheck = false;
-  fileName.value = '';
-  storeLocal ('fileName', fileName.value);
+  fileName.innerText = '';
+  storeLocal ('fileName', fileName.innerText);
   if (/^<sequence>/.test(library[key])) {
     activateXMLsequence(library[key]);
   } else {
@@ -13393,7 +13702,8 @@ function programme () {
 // dropSequence will attempt to load a sequence from a file dropped in
 // the main area
 function dropSequence (evt) {
-  if (evt && evt.dataTransfer && evt.dataTransfer.files) {
+  if (evt && evt.dataTransfer && evt.dataTransfer.files &&
+    evt.dataTransfer.files[0]) {
     noPropagation(evt);
     //document.getElementById ('file').files = evt.dataTransfer.files;
     openSequence();
@@ -13412,11 +13722,10 @@ function openSequence () {
     
     // retrieve filename by changing file input to span
     el.parentNode.replaceChild(document.createElement('span'), el);
-    var filename = el.value.replace(/.*\\/, '').replace(/\.[^.]*$/, '');
+    var fname = el.value.replace(/.*\\/, '').replace(/\.[^.]*$/, '');
     
-    fileName.value = filename;
-    storeLocal ('fileName', fileName.value);
-    fileName.updateSaveFilename;
+    fileName.innerText = fname;
+    updateSaveFilename(fname);
     
     // rebuild and reset the form
     form.innerHTML = '';
@@ -13877,29 +14186,20 @@ function activateXMLsequence (xml, noLoadRules) {
   // make sure no figure is selected
   if (selectedFigure.id !== null) selectFigure (false);
   
-  /** debugging, clear debug element first */
-  //while (debug.firstChild) debug.removeChild(debug.firstChild);
-  //debug.appendChild(document.createTextNode(Date.now() + ': Activating XML sequence'));
-  
-  //debug.appendChild(document.createTextNode('Clearing values'));
-  
   // unlock sequence when locked
   if (document.getElementById ('lock_sequence').value) lockSequence();
 
   // clear previous values
   for (var i = 0; i < sequenceXMLlabels.length; i++) {
     var el = document.getElementById(sequenceXMLlabels[i]);
-    if (el) el.value = '';
+    if (el.value) el.value = ''; else if (el.innerText) el.innerText = '';
   }
-  fileName.value = '';
-  storeLocal ('fileName', fileName.value);
-  fileName.updateSaveFilename;
+  logoImg = false;
+
   // set 'class' to powered by default to provide compatibility with OLAN
   // and older OpenAero versions
   var el = document.getElementById('class');
   if (el) el.value = 'powered';
-  
-  //debug.appendChild(document.createTextNode('Inserting values'));
   
   if (xml) {
     // myElement will hold every entry as a node
@@ -13922,7 +14222,11 @@ function activateXMLsequence (xml, noLoadRules) {
         myTextArea.innerHTML = nodes[ele].innerHTML;
         // e will be the field, only put a value when it exists
         var e = document.getElementById(nodes[ele].nodeName.toLowerCase());
-        if (e) e.value = myTextArea.value;
+        if (e) {
+					if ('value' in e) {
+						e.value = myTextArea.value;
+					} else if ('innerText' in e) e.innerText = myTextArea.value;
+				}
         if (nodes[ele].nodeName.toLowerCase() === 'actype') oldSequence = false;
       }
     }
@@ -13948,8 +14252,8 @@ function activateXMLsequence (xml, noLoadRules) {
           activeForm = 'Grid';
           break;
         case 'freeUnknown':
-          freeUnknownSequence = sequenceText.value;
-          sequenceText.value = document.getElementById('fu_figures').value;
+          freeUnknownSequence = sequenceText.innerText;
+          sequenceText.innerText = document.getElementById('fu_figures').value;
           activeForm = 'FU';
           break;
         default:
@@ -13978,6 +14282,11 @@ function activateXMLsequence (xml, noLoadRules) {
       document.getElementById ('harmony').removeAttribute ('disabled');
     }
   }
+  
+  // set panel headers correctly
+  panelHeader (document.getElementById ('activeRules'));
+  panelHeader (document.getElementById ('activeContest'), userText.contest);
+  
   // Load rules when applicable and update sequence data
   if (!noLoadRules) {
     unloadRules();
@@ -13986,7 +14295,7 @@ function activateXMLsequence (xml, noLoadRules) {
   
   // debug.appendChild(document.createTextNode('Check sequence changed'));
   
-  // check if we are switching from a regular sequence to Free Unknown
+  // check if we are switching from a regular sequence to Free (Un)known
   // or vv
   if ((activeForm === 'FU') && (prevForm !== 'FU')) {
     startFuDesigner(true);
@@ -13997,10 +14306,10 @@ function activateXMLsequence (xml, noLoadRules) {
     checkSequenceChanged();
   }
   
-  // if the loaded sequence was a (partial) Free Unknown composed
+  // if the loaded sequence was a (partial) Free (Un)known composed
   // sequence, load that now that the figures tab has been loaded
   if (freeUnknownSequence) {
-    sequenceText.value = freeUnknownSequence;
+    sequenceText.innerText = freeUnknownSequence;
     checkSequenceChanged ();
   } else {
     // lock sequence when applicable
@@ -14020,12 +14329,12 @@ function activateXMLsequence (xml, noLoadRules) {
 // checkFuFiguresFile checks if:
 // rules allow additionals AND figure letters are required AND
 // sequence is not locked AND not processing multiple files
-// If so, if it may be a Free Unknown figures file and the user is
-// asked if he wants to open it in the Free Unknown Designer
+// If so, if it may be a Free (Un)known figures file and the user is
+// asked if he wants to open it in the Free (Un)known Designer
 function checkFuFiguresFile() {
+	if (smallMobile) return;
   var l = figureLetters;
   if (
-    (additionalFig.max > 0) &&
     l &&
     !document.getElementById ('lock_sequence').value &&
     !multi.processing) {
@@ -14042,7 +14351,7 @@ function checkFuFiguresFile() {
     if (l === '') {
       // all letters used once, ask question
       confirmBox (
-        userText.FUstartOnLoad,
+        userText[(additionalFig.max ? 'FUstartOnLoad' : 'FKstartOnLoad')],
         userText.openSequence + ' <span class="info" ' +
         'id="manual.html_free_unknown_designer">' +
         '<i class="material-icons info">info</i></span>',
@@ -14085,19 +14394,19 @@ function checkOpenAeroVersion () {
 
   // before 1.2.3
   if (oa_version.value == '') {
-    if (sequenceText.value != '') alerts += userText.warningPre123;
+    if (sequenceText.innerText != '') alerts += userText.warningPre123;
   }
   
   // before 1.2.4: check for bumps
   if (compVersion (oa_version.value, '1.2.4') < 0) {
-    if (sequenceText.value.match (/p?bp?b/)) {
+    if (sequenceText.innerText.match (/p?bp?b/)) {
       alerts += userText.warningPre124;
     }
   }
   
   // before 1.3.7: check for snaps started from knife edge
   if (compVersion (oa_version.value, '1.3.7') < 0) {
-    if (sequenceText.value.match (/((^|[^0-9])(4|[357]4?))[if\.'`]*[,;][\.'`]*[357]i?f/)) {
+    if (sequenceText.innerText.match (/((^|[^0-9])(4|[357]4?))[if\.'`]*[,;][\.'`]*[357]i?f/)) {
       alerts += userText.warningPre137;
     }
   }
@@ -14106,8 +14415,8 @@ function checkOpenAeroVersion () {
   // check for double bumps with enlarged radius and rolls on the
   // first and second line, where the first roll is of uneven quarters
   if (compVersion (oa_version.value, '2016.1') < 0) {
-    if (sequenceText.value.match (/B/)) {
-      var figures = sanitizeSpaces (sequenceText.value).split (' ');
+    if (sequenceText.innerText.match (/B/)) {
+      var figures = sanitizeSpaces (sequenceText.innerText).split (' ');
       for (var i = 0; i < figures.length; i++) {
         // remove comments
         figures[i] = figures[i].replace (regexComments, '');
@@ -14130,14 +14439,14 @@ function checkOpenAeroVersion () {
   // remove all figures that end with " but do not start with ".
   // Older OpenAero versions would just disregard those
   if (compVersion (oa_version.value, '2016.1.1') < 0) {
-    while (sequenceText.value.match (/(^| )[^" ]+"[^"]*"( |$)/)) {
+    while (sequenceText.innerText.match (/(^| )[^" ]+"[^"]*"( |$)/)) {
       console.log ('Correcting Pre-2016.1.1 sequence');
-      console.log (sequenceText.value);
-      sequenceText.value = sequenceText.value.replace (/(^| )[^" ]+"[^"]*"( |$)/, ' ');
+      console.log (sequenceText.innerText);
+      sequenceText.innerText = sequenceText.innerText.replace (/(^| )[^" ]+"[^"]*"( |$)/, ' ');
     }
     // check for X-Y direction changers when loading as Grid
     if (document.getElementById('default_view').value.match (/^grid:\d+$/) &&
-      sequenceText.value.match (/[a-zA-Z][^ ]*[>^]/)) {
+      sequenceText.innerText.match (/[a-zA-Z][^ ]*[>^]/)) {
       alerts += userText.warningPre201611;
     }
   }
@@ -14227,18 +14536,12 @@ function loadedRulesFile (evt) {
 }
 
 // updateSaveFilename gets called when the "Save as" filename is changed
-// and syncs between t_saveFile and fileName elements
-function updateSaveFilename() {
-  var filename = this.value || '';
-  /*var el = document.getElementById('t_saveFile').firstChild;
-  if (el && ('download' in el)) {
-    el.download = filename + document.getElementById('fileExt').innerHTML;
-  }*/
+// and syncs between t_saveFile and fileName elements. It clears when
+function updateSaveFilename(fname) {
+  if (!fname) fname = '';
   // only update when different, prevents cursor jump
-  if (fileName.value !== filename) {
-    fileName.value = filename;
-  }
-  storeLocal ('fileName', fileName.value);
+  if (fileName.innerText !== fname) fileName.innerText = fname;
+  storeLocal ('fileName', fname);
 }
 
 // writeFileEntry uses the Chrome app API to write files
@@ -14326,13 +14629,9 @@ function saveFile(data, name, ext, filter, format) {
       var blob = new Blob([data], {type: format.replace(/;.+$/, '')});
       writeFileEntry (w, blob, function(){
         // this callback is called after succesful write
-        fileName.value = w.name.replace(/\.[^.]*$/, '');
-        storeLocal ('fileName', fileName.value);
-        fileName.updateSaveFilename;
-        if (ext === '.seq') {
-          sequenceSaved = true;
-          // window.removeEventListener('beforeunload', preventUnload);
-        }
+        fileName.innerText = w.name.replace(/\.[^.]*$/, '');
+        updateSaveFilename(fileName.innerText);
+        if (ext === '.seq') sequenceSaved = true;
       });
     });
     return result;
@@ -14375,9 +14674,9 @@ function saveFile(data, name, ext, filter, format) {
 // the .seq file is standard xml, so not OLAN compatible
 function saveSequence () {
   function save() {
-    var filename = activeFileName();
+    var fname = activeFileName();
 
-    if (filename === '') filename = 'sequence';
+    if (fname === '') fname = 'sequence';
     // take the original sequence XML,
     // remove the end tag, add figure XML and add the end tag again.
     // Then beautify the output.
@@ -14394,7 +14693,7 @@ function saveSequence () {
     xml = vkbeautify.xml (xml);
     saveFile (
       xml,
-      filename,
+      fname,
       '.seq',
       {'name':'OpenAero Sequence', 'filter':'*.seq'},
       'text/xhtml+xml;utf8'
@@ -14407,7 +14706,7 @@ function saveSequence () {
 // saveQueue will save the current queue to a .seq file
 // the .seq file is standard xml, so not OLAN compatible
 function saveQueue () {
-  var sequenceString = sequenceText.value;
+  var sequenceString = sequenceText.innerText;
   var queueFigs = [];
   for (var i = fig.length - 1; i >= 0; i--) {
     if (fig[i]) {
@@ -14421,17 +14720,17 @@ function saveQueue () {
     return;
   }
   // put queue figures in sequence for saving
-  sequenceText.value = queueFigs.join(' // ');
+  sequenceText.innerText = queueFigs.join(' // ');
   updateDefaultView(true);
   checkSequenceChanged();
-  var filename = activeFileName('QUEUE');
+  var fname = activeFileName('QUEUE');
   // Beautify the output.
   var xml = vkbeautify.xml (activeSequence.xml);
   // prevent "leaving" warning
   // window.removeEventListener('beforeunload', preventUnload);
   saveFile (
     xml,
-    filename,
+    fname,
     '.seq',
     {'name':'OpenAero Queue', 'filter':'*.seq'},
     'text/xhtml+xml;utf8'
@@ -14441,7 +14740,7 @@ function saveQueue () {
     // window.addEventListener('beforeunload', preventUnload);
   }
   // restore sequence
-  sequenceText.value = sequenceString;
+  sequenceText.innerText = sequenceString;
   updateDefaultView();
   checkSequenceChanged();
 }
@@ -14507,18 +14806,19 @@ function saveAsURL () {
     xml = xml.replace(/<\/[^>]+>/g, '</>'); // remove end tags
     var url = 'https://openaero.net/?s=' + encodeBase64Url(xml);
 
-    if (chromeApp.active) {
-      alertBox ('<p>' + userText.saveAsURLFromApp +
-        '</p><textarea id="saveAsURLArea" readonly></textarea>',
-        userText.saveAsURLTitle);
-      var copyFrom = document.getElementById('saveAsURLArea');
-      copyFrom.innerHTML = url;
-      copyFrom.select();
-    } else {
-      alertBox (userText.saveAsURL + '<br />' +
-        '<a id="saveAsURLArea" href="' + url + '">' + url + '</a>',
-        userText.saveAsURLTitle);
-    }
+    alertBox ('<p>' + userText.saveAsURLFromApp +
+      '</p><textarea id="saveAsURLArea" readonly></textarea>',
+      userText.saveAsURLTitle,
+      [{'name': 'copyClipboard', 'function': function(){
+        if (!copyFrom.select()) copyFrom.setSelectionRange (0, 9999);
+        document.execCommand ('copy');
+        alertBox();
+      }}]);
+    var copyFrom = document.getElementById('saveAsURLArea');
+    copyFrom.innerHTML = url;
+    copyFrom.focus();
+    if (!copyFrom.select()) copyFrom.setSelectionRange (0, 9999);
+
   }
   
   missingInfoCheck(save);
@@ -14628,19 +14928,48 @@ function parseAircraft (t) {
 }
 
 // printForms will print selected forms
+// Depending on the system a method will be chosen:
+// 1) Standalone web app: integrate print into main page and use screen
+//    and media print styles. Opening a new window is not possible!
+// 2) Android: same as Standalone web app
+// 3) Others: open window and print from that (also for Chrome App).
+//    On iOS Chrome/Safari (not for web app !?) method 1) does not work
 function printForms () {
   // open the print window in time to prevent popup blocking
   if (!chromeApp.active) {
-    /**
-    if (window.navigator.standalone) {
-      // create and click <a> for standalone
-      var a = document.createElement('a');
-      a.href = url;
-      a.target = '_blank';
-      a.click();
-    }*/
-    var win = window.open ('',"printForms",'width=800,height=600,' +
-      'top=50,location=no,menubar=no,scrollbars=yes,status=no,toolbar=no');
+
+    // for Standalone and Android, don't open a new window
+    if (window.navigator.standalone || /Android/i.test(navigator.userAgent)) {
+      // update the print style with margins
+      var style = document.getElementById ('printStyle');
+      style.innerHTML = '@page {size: auto; margin: ' +
+        document.getElementById ('marginTop').value + 'mm ' +
+        document.getElementById ('marginRight').value + 'mm ' +
+        document.getElementById ('marginBottom').value + 'mm ' +
+        document.getElementById ('marginLeft').value + 'mm}' +
+        'body {width: initial; margin: 0; padding: 0;}' +
+        '#noPrint {display: none;}' +
+        '.breakAfter {position: relative; vertical-align: top; display: inline-block; ' +
+        'page-break-inside: avoid; break-inside: avoid; page-break-after:always; ' +
+        'width: 100%; height: 100%;' +
+        'svg {position: absolute; top: 0; height: 100%;}';
+
+      var printBody = buildForms (window);
+      // get and clear the noScreen div
+      var div = document.getElementById ('noScreen');
+      div.innerHTML = '';
+      // add all nodes that will be printed to noScreen div
+      while (printBody.childNodes.length > 0) {
+        div.appendChild (printBody.childNodes[0]);
+      }
+      
+      window.print();
+      return;
+    } else {
+      var win = window.open ('',"printForms",'width=800,height=600,' +
+        'top=50,location=no,menubar=no,scrollbars=yes,status=no,toolbar=no');
+    }
+        
   }
   // set a short default wait
   var wait = 50;
@@ -14697,7 +15026,7 @@ function printForms () {
       win.document.title = activeFileName();
       var style = win.document.createElement ('style');
       style.type = 'text/css';
-      style.media = 'print';
+      //style.media = 'print';
       style.innerHTML = '@page {size: auto; margin: ' +
         document.getElementById ('marginTop').value + 'mm ' +
         document.getElementById ('marginRight').value + 'mm ' +
@@ -14744,7 +15073,7 @@ function buildForms (win) {
   // save the current logo
   var logoSave = document.getElementById('logo').value;
   
-  var filename = activeFileName() || 'sequence';
+  var fname = activeFileName() || 'sequence';
 
   // make sure no figure is selected
   selectFigure (false);
@@ -14815,9 +15144,9 @@ function buildForms (win) {
     for (var i = 0; i < pages.length; i++) {
       if (document.getElementById('printForm' + pages[i]).checked) {
         activeForm = pages[i];
-        if ((activeForm == 'B') && document.getElementById('printMiniFormAonB').checked) {
+        if ((activeForm === 'B') && document.getElementById('printMiniFormAonB').checked) {
           miniFormA = true;
-        } else if ((activeForm == 'C') && document.getElementById('printMiniFormAonC').checked) {
+        } else if ((activeForm === 'C') && document.getElementById('printMiniFormAonC').checked) {
           miniFormA = true;
         } else {
           miniFormA = false;
@@ -14833,18 +15162,17 @@ function buildForms (win) {
         draw ();
         // reset activeForm for buildForm
         activeForm = pages[i];
-        divClass = (i < (pages.length - 1))? 'breakAfter' : '';
         
         var formSVG = buildForm (SVGRoot, win);
         
         if (win) {
           
           var div = win.document.createElement('div');
-          div.setAttribute ('class', divClass);
+          div.setAttribute ('class', 'breakAfter');
           div.innerHTML = formSVG;
           // make sure we only keep the svg images in the div
           var nodes = div.childNodes;
-          for (var k = 0; k < nodes.length; k++) {
+          for (var k = nodes.length - 1; k >= 0; k--) {
             if (!/svg/i.test(nodes[k].tagName)) div.removeChild (nodes[k]);
           }
           body.appendChild (div);
@@ -14945,6 +15273,7 @@ function buildForm (svg, print) {
     case 'Grid':
       mySVG.setAttribute("width", '100%');
       mySVG.setAttribute("height", '100%');
+      mySVG.setAttribute("viewBox", '0 0 800 1130');
       break;
       
     case 'PilotCards':
@@ -15218,7 +15547,7 @@ function buildForm (svg, print) {
   }
   
   // remove height when printing
-  if (print) mySVG.setAttribute("height", '');
+  if (print) mySVG.removeAttribute("height");
 
   // Add the notes to the top when checked. This will result in a
   // "vertical flattening" of the entire form
@@ -15564,8 +15893,8 @@ function addFormElementsLR (svg, print) {
   var maxScale = document.getElementById ('maxScaling').value / 100;
   var sequence = svg.getElementById('sequence');
   bBox = sequence.getBBox();
-  scaleX = Math.min (480 / bBox.width, maxScale);
-  var scaleY = Math.min ((seqBottom - 130) / bBox.height, maxScale);
+  scaleX = roundTwo (Math.min (480 / bBox.width, maxScale));
+  var scaleY = roundTwo (Math.min ((seqBottom - 130) / bBox.height, maxScale));
   if (scaleX < scaleY) {
     // stretch height up to 5%
     scaleY = ((scaleX * 1.05) < scaleY) ? scaleX * 1.05 : scaleY;
@@ -15576,6 +15905,15 @@ function addFormElementsLR (svg, print) {
     scaleX = ((scaleY * 1.05) < scaleX) ? scaleY * 1.05 : scaleX;
     sequence.setAttribute('transform', 'translate(' + (-bBox.x * scaleX + 260 - (bBox.width * scaleX) / 2) +
       ',' + (115 - (bBox.y * scaleY)) + ') scale(' + scaleX + ',' + scaleY + ')');
+  }
+
+  // when downscaling more than 10%, adjust roll font size and redraw
+  if (scaleX < 0.9) {
+    redrawSVG = adjustRollFontSize (scaleX);
+    // remove wind arrow
+    var el = redrawSVG.getElementById('windArrow');
+    if (el) el.parentNode.removeChild(el);
+    sequence.innerHTML = redrawSVG.getElementById ('sequence').innerHTML;
   }
   
   // penalty block
@@ -15975,23 +16313,23 @@ function buildCornertab (svg) {
 // default file name. The result is appended with 'append' when supplied
 function activeFileName (append) {
   append = append || '';
-  if (!fileName.value) {
-    var filename = document.getElementById('location').value+' ';
+  if (!fileName.innerText) {
+    var fname = document.getElementById('location').value+' ';
     if (document.getElementById('class').value == 'glider') {
-      filename += 'Glider ';
+      fname += 'Glider ';
     }
-    filename += document.getElementById('category').value+' '+
+    fname += document.getElementById('category').value+' '+
       document.getElementById('program').value+' '+
       document.getElementById('pilot').value;
-    filename = filename.replace(/\s\s+/g, ' ');
-    filename = filename.replace(/^\s+|\s+$/g, '');
-    fileName.value = filename;
-    storeLocal ('fileName', fileName.value);
+    fname = fname.replace(/\s\s+/g, ' ');
+    fname = fname.replace(/^\s+|\s+$/g, '');
+    fileName.innerText = fname;
+    storeLocal ('fileName', fname);
   } else {
-    filename = fileName.value;
+    fname = fileName.innerText;
   }
-  filename += append;
-  return filename;
+  fname += append;
+  return fname;
 }
 
 // saveImageSizeAdjust will adjust the "Saving PNG or SVG" width or
@@ -16072,7 +16410,7 @@ function savePNG () {
 // saveFigs will save all the figures in the sequence separately in a
 // single zip file
 function saveFigs () {
-  var filename = activeFileName(' Form '+activeForm);
+  var fname = activeFileName(' Form '+activeForm);
   // save selectedFigure.id
   var id = selectedFigure.id;
   // create new zip object
@@ -16127,7 +16465,7 @@ function saveFigs () {
 
   saveFile(
     data,
-    filename,
+    fname,
     '.zip',
     {'name':'ZIP file', 'filter':'*.zip'},
     'application/zip'
@@ -17747,7 +18085,8 @@ function updateSequence (figNr, figure, replace, fromFigSel, force) {
   }
 
   // remove last added space, update field
-  sequenceText.value = string.replace (/ $/, '');
+  console.log('update space');
+  sequenceText.innerText = string.replace (/ $/, '');
 
   // check for sequence changes
   checkSequenceChanged (force);
@@ -17818,8 +18157,8 @@ function updateXYFlip (m, n) {
       text += s + ' ';
     }
     // remove last space if this was not present in sequenceText
-    if (sequenceText.value[sequenceText.value.length - 1] !== ' ') {
-      sequenceText.value = text.replace(/ $/, '');
+    if (sequenceText.innerText[sequenceText.innerText.length - 1] !== ' ') {
+      sequenceText.innerText = text.replace(/ $/, '');
     }
   }
 }
@@ -18251,5 +18590,6 @@ function parseSequence () {
   }
 }
 
-// do initialization when all DOM content has been loaded
-document.addEventListener("DOMContentLoaded", doOnLoad, false);
+// do initialization when all DOM content has been loaded. Wrap this in
+// a setTimeout to assure splash screen shows immediately
+document.addEventListener("DOMContentLoaded", setTimeout(doOnLoad, 100), false);

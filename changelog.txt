@@ -1,3 +1,29 @@
+2017.2.4
+* added "vector-effect: non-scaling-stroke" to drawing styles to prevent thin lines on large sequences adn downscaling
+* fixed roll font scaling for large sequences that are downscaled on print
+* changed figure number size to match figure-number-in-circle size, improving readability
+* fixed issue with Grid form printing over Form A when both are selected
+* fixed tabbing through Sequence Info start and end
+* fixed printing to work correctly on all systems, including standalone web app
+* disabled apple-touch-startup-image, as this does not function until iOS 11
+* added splash screen and removed "This may take a few seconds..." message on upgrade
+* changed "Save as link" dialog link to textbox and added copy to clipboard button to improve copying
+* overhauled menu structure and layout, including addition of special mobile device menus and icons
+* moved "Mobile version" selection to Settings
+* improved Sequence info layout
+* increased Form A size on small mobile devices
+* removed Mini Form A on small mobile devices
+* fixed fileName display in Sequence info
+* expanded Free Unknown designer to also support Free Knowns
+* addFormElements was changed to fix small sequence on mobile scaling
+* fixed issue where selecting a figure could lead to (0,0) move line
+* fixed Grid View Aresti numbers and K becoming too small on smallMobile view
+* maximized Grid columns to 5 for smallMobile
+* removed Figures/Queue button and improved logic and layout for Figure Selector
+* removed "* Figure Queue" from figure selector in Free (Un)known designer
+* updated sequence string field behaviour including better highlighting
+* updated manuals and integrated in main window for mobile devices
+
 2017.2.3
 * updated AAC rules for 2017
 * switched figure rows 8.6.18 and 8.6.19 as they were not according latest Aresti catalog

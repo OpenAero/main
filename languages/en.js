@@ -92,7 +92,7 @@ lang.en = {
 'addFigureText' : 'Click to add figure',
 'addingFigure' : 'Add new figure',
 // changed 2016.1
-'Additional' : 'Additional',
+'additional' : 'Additional',
 'addToQueue' : 'Add to Queue',
 'acreg': 'Aircraft registration',
 'actype': 'Aircraft type',
@@ -172,7 +172,7 @@ lang.en = {
 'clickChangeFigure' : 'Click to change/add figure',
 'closeAlert' : 'Close',
 'closeIt' : 'Close',
-'columns' : 'Columns',
+'columns' : 'Grid columns',
 'comments' : 'Comments',
 'confirmBoxYes' : 'Yes',
 'confirmBoxNo' : 'No',
@@ -185,12 +185,12 @@ lang.en = {
 'convertingToPng' : 'Converting forms to PNG image.<br>This may take ' +
   'some time. Please wait...',
 'convertingTitle' : 'Converting...',
+// new 2017.2.4
+'copyClipboard' : 'Copy to clipboard',
 'date' : 'Date',
 'demo' : 'Demo',
-'desktopVersion' : 'Desktop version',
 'disqualified' : 'Disqual Fig',
 'download' : 'Download',
-// changed 2016.3.2
 'downloadHTML5' : 'You can save your file by choosing a name ' +
   'and clicking <i>Save File</i> below.<br>Depending on your browser: ' +
   '<ul><li>' +
@@ -243,7 +243,9 @@ lang.en = {
 'figureString' : 'Figure string',
 'file' : 'File',
 'fileName' : 'File name',
-'finalizeSequence' : 'Finalize sequence & exit Free Unknown Designer',
+'finalizeSequence' : 'Finalize sequence',
+'FKstartOnLoad' : 'The sequence appears to be a figures file for Free ' +
+  'Known. Do you want to start the Free (Un)known designer?',
 'flightNr' : 'Flight #',
 'flipYAxis' : 'Flip Y-axis',
 'forElement' : ' for element ',
@@ -252,21 +254,22 @@ lang.en = {
 'formC' : 'Form C',
 'formL' : 'Form L',
 'formR' : 'Form R',
+'free' : 'Free',
 'freeUnknownFig' : 'Letter ',
 // changed 2016.1
 'freeUnknownAdditional' : 'Free unknown Additional',
-'FUconfirmExit' : 'The Free Unknown designer may not restart ' +
+'FUconfirmExit' : 'The Free (Un)known designer may not restart ' +
   'succesfully in this situation without re-opening the sequence. ' +
-  'Confirm you want to exit the Free Unknown designer',
-'fuDesigner' : 'Free Unknown Designer',
+  'Confirm you want to exit the Free (Un)known designer',
+'fuDesigner' : 'Free (Un)known Designer',
 'fuFiguresTab' : 'Figures',
 'FUfigOptionsDisabled' : 'Some options disabled for lettered figures',
-'FUDesignletterMulti' : 'Free Unknown letter %s used multiple times. ' +
-  'Unable to start Free Unknown Designer',
-'FUDesignMissingLetters' : 'Free Unknown letter(s) <strong>%s</strong> ' +
-  'are missing. Unable to start Free Unknown Designer',
+'FUDesignletterMulti' : 'Free (Un)known letter %s used multiple times. ' +
+  'Unable to start Free (Un)known Designer',
+'FUDesignMissingLetters' : 'Free (Un)known letter(s) <strong>%s</strong> ' +
+  'are missing. Unable to start Free (Un)known Designer',
 'FUDesignNotFreeUnknown' : 'Sequence rules are not set for Free ' +
-  'Unknown. Unable to start Free Unknown Designer',
+  'Known or Unknown. Unable to start Free (Un)known Designer',
 'FUerrorsDetected' : 'Error(s) in sequence detected, as shown below:',
 'FUfinalizing' : 'Finalizing sequence. This may take a while. Please ' +
   'wait...',
@@ -277,10 +280,10 @@ lang.en = {
 'fuSelectFigureFirst' : 'Click a figure on one of the subsequences ' +
   'to edit it. You can drag & drop figures and Additional figures ' + 
   'from the <i>Figures</i> tab to the subsequence(s).',
-'FUstarting' : 'Starting Free Unknown designer. This may take a while. ' +
+'FUstarting' : 'Starting Free (Un)known designer. This may take a while. ' +
   'Please wait...',
 'FUstartOnLoad' : 'The sequence appears to be a figures file for Free ' +
-  'Unknown. Do you want to start the Free Unknown designer?',
+  'Unknown. Do you want to start the Free (Un)known designer?',
 'FUexitEntryMatch' : 'Some figure exit / entry attitudes do not match',
 'gaps' : 'Gaps',
 'general' : 'General',
@@ -382,7 +385,6 @@ lang.en = {
 'missingInfo' : 'There seems to be essential Sequence Info missing.</br>' +
   'Are you sure you want to save or print the file without:',
 'missingInfoTitle' : 'Sequence info missing',
-'mobileVersion' : 'Mobile version',
 'multiNoSequence' : 'One or more files do not appear to be OpenAero ' +
   'or OLAN sequence files. They have not been added to the list',
 'multiOverrideRules' : 'Override sequence rules with current rules ' +
@@ -524,7 +526,7 @@ lang.en = {
 'referenceSequenceClose' : 'Close',
 'referenceSequenceExplain' : 'In the box below you can enter a ' +
   'sequence string that is used as a reference for checking sequences ' +
-  'with required figures, such as Free ' +
+  'with required figures, such as Free Known and ' +
   'Unknown sequences. Checks are done to confirm correct letters, ' +
   'figure Aresti numbers and entry/exit direction combination.',
 // new 2016.1.1
@@ -532,6 +534,8 @@ lang.en = {
   'changed as it is coupled to the active sequence rules.',
 // changed 2016.1.1
 'referenceSequenceTitle' : 'Reference sequence',
+// new 2017.2.4
+'registration' : 'Registration',
 'remove' : 'Remove',
 'removeLogo' : 'Remove logo',
 'resetStyle' : 'Reset',
@@ -572,8 +576,7 @@ lang.en = {
   'sequence. You can copy it to email, bookmark it etc...<br />' +
   'Use right-click and "Copy Link Address".',
 'saveAsURLFromApp' : 'The link presented below contains your complete ' +
-  'sequence. You can copy it to email, bookmark it etc...<br />' +
-  'Use right-click to copy to your clipboard.',
+  'sequence. You can copy it to email, bookmark it etc...',
 'saveAsURLTitle' : 'Save sequence as link',
 'saveFigsSeparate' : 'Save figs separate',
 'saveFigsSeparateTitle' : 'Save figures separately',
@@ -597,7 +600,6 @@ lang.en = {
 'sequenceTest' : 'Check: ',
 'sequenceNotSavedWarning' : 'Your current sequence has not been ' +
   'saved.\nAre you sure you want to open a new one?',
-'setMobile' : 'Mobile version',
 'settings' : 'Settings',
 'settingsClose' : 'Close',
 'settingsTitle' : 'Settings',
@@ -605,11 +607,12 @@ lang.en = {
 'setInverted' : 'set inverted entry',
 'showFileName' : 'Add sequence file name',
 'showFullLog' : 'Show full log',
-// new 2016.1
 'showHandles' : 'Show figure editing handles (blue circles) when ' +
   'figure is selected',
 'showQueue' : 'Show Queue',
 'signature' : 'Signature',
+// new 2017.2.4
+'smallMobile' : 'Phone layout',
 'styleSettingsHeader' : 'Here you can change various style settings. ' +
   'Please keep in mind that these change the look of ' +
   '<strong>your</strong> version of OpenAero but not how your sequence ' +
@@ -617,7 +620,6 @@ lang.en = {
 'styling' : 'Styling',
 'subSequenceDirection' : 'Sub sequence entry direction',
 'svg' : 'SVG',
-// new 2016.1
 'switchFigures' : 'Figures',
 'switchQueue' : 'Queue',
 'team' : 'Team',
@@ -658,8 +660,7 @@ lang.en = {
   '</strong><br>New features:<ul>%s' +
   '<li>Other bugfixes and improvements (check <a id="changelog">' +
   'changelog.txt</a> if interested)</li>' +
-  '</ul>' +
-  'This may take a few seconds to complete.',
+  '</ul>',
 'view' : 'View',
 // new 2016.2
 'warningNewerVersion' : '<p>This sequence was created with a newer ' +

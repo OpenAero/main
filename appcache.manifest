@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# OpenAero version 2017.2.3.1
+# OpenAero version 2017.2.4
 addtohomescreen/addtohomescreen.css
 addtohomescreen/addtohomescreen.min.js
 arestisystem.html
@@ -44,9 +44,11 @@ canvg/rgbcolor.js
 canvg/StackBlur.js
 config.js
 css/desktop.css
+css/desktop-largeMobile.css
 css/general.css
 css/MaterialIcons-Regular.woff
 css/mobile.css
+css/smallMobile.css
 favicons/favicon16.png
 favicons/favicon24.png
 favicons/favicon32.png
@@ -64,13 +66,9 @@ gpl_files/layout.css
 gpl_files/mini.css
 gpl_files/combo.css
 gpl.htm
-images/arrow_blue_left.png
-images/arrow_blue_left_down.png
-images/arrow_blue_down.png
-images/arrow_blue_right_down.png
-images/arrow_blue_right.png
 images/bg-dot.png
 images/blue_handles.png
+images/compare_arrows_same.svg
 images/ee_ext-figure.png
 images/ee_ext-exit.png
 images/ee_ext-entry.png
@@ -78,12 +76,11 @@ images/fullrolls.png
 images/hesrolls.png
 images/magnifier.png
 images/multirolls.png
-images/OA_FigureAddPanel.gif
+images/OA_FigureAddPanel.png
 images/OA_FigureGrid.gif
 images/OA_FigureInfoPanel.png
-images/OA_FigureSelection.gif
+images/OA_FigureSelection.png
 images/OA_FreeUnknownDesignerMain.png
-images/OA_Queue.gif
 images/PilotCard2.png
 images/PilotCard4.png
 images/PilotCardPercent.png
@@ -105,7 +102,7 @@ manual.html
 OpenAero.js
 print.html
 rules/rules16.js
-rules/rules17-civa.js
+rules/rules18-civa.js
 rules/rules17-aac.js
 rules/rules17-baea.js
 rules/rules17-france.js

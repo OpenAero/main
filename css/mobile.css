@@ -19,360 +19,204 @@
   along with OpenAero.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/* This file defines all the css styles for the mobile version
- * They will override any equivalent css styles in OpenAero.css */
+/* This file defines all the css styles for the mobile device version */
 
-body {
-  width: 320px;
-  overflow-x: hidden;
-  font-size: 1.25em;
-}
-select {
-  background-color: #fff;
+body.menuOpen {
+  overflow-y: hidden;
 }
 #topBlock {
-  position: fixed;
-  top: 0px;
-  left: 0px;
-  background-color: #ede7f6;
-  -moz-box-shadow: 0px 1px 2px rgba(0,0,0,0.5);
-  -webkit-box-shadow: 0px 1px 2px rgba(0,0,0,0.5);
-  box-shadow: 0px 1px 2px rgba(0,0,0,0.5);
-  width: 320px;
-  height: 86px;
-  padding: 0 0 2px 0;
-  z-index: 8;
-}
-#openAeroLogo {
-  display: none;
-}
-.version {
-  display: none;
+	height: 56px;
+	text-align: center; /* for t_finalizeSequence */
 }
 #sequenceTextContainer {
-  position: relative;
-  margin-right: 24px;
-  left: 34px;
+  left: 56px;
 }
 #sequence_text {
-  position: absolute;
-  top: 0px;
-  left: 0px;
-  /* 16px is minimum size to prevent auto-zoom */
-  font-size: 16px;
-  width: 280px;
-  height: 58px;
-  resize: none;
-  /* OpenAero text as SVG background */
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.2" width="320" height="54"><text x="143" y="46" text-anchor="middle" font-family="Verdana" font-size="46" style="fill:#ffebb0;stroke:#ffebb0;letter-spacing:6px;">OpenAero</text></svg>');
-}
-#main {
-	position: absolute;
-  left: 0px;
-  right: 0px;
-  top: 88px;
-  width: 320px;
-}
-#leftBlockContainer {
-  position: absolute;
   top: 2px;
-  left: 0;
-  overflow-x: hidden;
-  overflow-y: visible;
-  width: 320px;
-  margin: 0;
-  padding: 0;
 }
-
-#leftBlock {
-  position: relative;
-  top: 0;
-  left: 0;
-  background: #f4f4f4;
-  width: 320px;
-  padding: 0;
-  z-index: 1;
-  overflow-x: hidden;
-  overflow-y: visible;
-}
-#sequenceInfo {
-  background: -webkit-linear-gradient(top, #f4f4f4, #e0e0ff);
-  font-size: 14px;
-}
-#sequenceInfo input {
-  width: 200px;
-  font-size: 16px;
-}
-#sequenceInfo select {
-  width: 200px;
-  font-size: 16px;
-}
-#pilot {
-  float: left !important;
-  width: 136px !important;
-}
-#team {
-  float: left !important;
-  width: 62px !important;
-  margin-left: 2px;
-}
-#actype, #acreg {
-  float: left !important;
-  width: 99px !important;
-}
-#acreg {
-  margin-left: 2px;
-}
-#referenceSequenceString {
-  width: 99%;
-  height: 8em;
-}
-/* virtual keyboard */
-#virtualKeyboard {
-  top: 44px;
-  left: 4px;
-}
-#leftBlock .tabSelector {
-  width: 320px;
-}
-#leftBlock .tabSelector li {
-  display: inline-block;
-  width: 82px;
-  min-width: 82px;
-  max-width: 82px;
-}
-#svgContainer {
-  position: relative;
-  top: 0;
-  left: 0;
-  width: 312px;
-  background-color:#ffffff;
-  padding: 4px;
-  margin-bottom: 4px;
-/*  z-index: 2;*/
-}
-#gridInfo {
-  display: none;
-}
-#figureSelector {
-  position: absolute;
-  overflow-x: hidden;
-  overflow-y: display;
-  left: -340px;
-  -moz-transition: all 0.2s ease-in-out;
-  -o-transition: all 0.2s ease-in-out;
-  -webkit-transition: all 0.2s ease-in-out;
-  transition: all 0.2s ease-in-out;
-  width: 320px;
-  height: 480px;
-  font-size: 16px;
-  padding: 0;
-  background-color: white;
-  z-index: 2;
-}
-#figureSelector.active {
-  left:0;
-}
-
-/* columns */
-.content3cols {
-  width: 97%;
-}
-.content2cols {
-  width: 97%;
-}
-
-/* buttons */
-.button {
-  margin-left: 5px;
-  margin-right: 5px;
-}
-.smallButton {
-  width: 32px;
-  height: 32px;
-  margin: 1px;
-  /* scale background */
-  background-size: 32px 32px;
+/* left margin to negative half width of hamburgerMenu */
+#t_finalizeSequence {
+	margin: 10px 0 0 -20px !important;
 }
 .undoRedoButton {
-  float: left;
-  margin: 2px 4px 0px 4px;
+  margin: 0 0 0 4px;
+  padding: 16px 12px 16px 4px;
 }
-.minButton {
-	background-image: url('../buttons/minus.png');
-	height: 32px;
-  width: 32px;
+#t_locked {
+  top: 0;
+  left: 56px;
+  right: 0;
 }
-.plusButton {
-	background-image: url('../buttons/plus.png');
-	height: 32px;
-  width: 32px;
-}
-.plusMinText {
-  font-size: 24px;
-  height: 32px;
-}
-#entryExit {
-  min-height: 56px;
-}
-#figEntryButton {
-  background-image: url('../buttons/figStartUp.png');
-}
-#figExitButton {
-  background-image: url('../buttons/figEndUp.png');
-}
-#figEntryButton.inverted {
-  background-image: url('../buttons/figStartInv.png');
-}
-#figExitButton.inverted {
-  background-image: url('../buttons/figEndInv.png');
-}
-#figEntryButton.button {
-  margin-left: 0 !important;
-  margin-right: 2px !important;
-}
-#figExitButton.button {
-  margin-left: 2px !important;
-  margin-right: 0 !important;
-}
-.rollComment {
-  font-size: 2em;
-  float:right;
-  margin-left: 5px;
-  margin-right: 5px;
-  width: 40px;
-  transition: all 0.3s ease-in-out;
-}
-.rollComment:focus {
-  margin-left: -260px;
-  width:290px;
-  opacity: 0.999; /* prevents rollFlip shining through */
-}
-#scale {
-  margin-left: 6px;
-  margin-right: 6px;
-}
-#moveX,#moveY {
-  margin-left: 6px;
-  margin-right: 6px;
-}
-.rollSelect {
-  font-size: 2em;
-}
-#comments {
-  width: 260px;
-  height: 3em;
-}
-
-/* logo chooser */
-#activeLogo {
-  float: right;
-}
-#chooseLogo div {
-  padding: 6px;
-}
-
-/* figure chooser */
-
-#figureChooser {
-  width: 308px;
-  top: 140px;
-}
-table#figureChooserColumns {
-  position: relative;
-  left: 36px;
-  width: 284px;
-}
-table#figureChooserTable td {
-  padding: 1px;
-  border: 1px solid #eee;
-  border-radius: 5px;
-}
-table#figureChooserTable td.selected {
-  border: 1px solid magenta;
-}
-#figureSelector div {
-  margin: 6px;
-}
-#figureSelector div div {
-  margin: 0;
-}
-#figureSelectorOptionsDiv select,#figureSelectorGroupDiv select {
-  font-size: 14px;
-}
-#figureSelectorClose {
-  margin: 12px;
-}
-
-/* message and other boxes */
-.box {
-  top: 1%;
-  left: 1%;
-  width: 95%;
-  overflow-y: scroll;
-  -webkit-overflow-scrolling: touch;
-}
-.box .tabSelector {
-  width: auto;
-}
-.box .tabSelector li {
-  padding-left: 10px;
-  padding-right: 10px;
-  width: auto;
-}
-
-#printDialog {
-  font-size: 0.5em;
+#main {
+	top: 56px;
+  padding: 0 0 5px 0;
 }
 
 /* menu */
-#menu {
-  overflow: hidden;
-}
-#menu a, #menu span {
-  padding: 6px;
-}
-#menu li {
-  width: 45px; /* 320 : 7 */
-  text-align: center;
-  font-size: 14px;
-  letter-spacing: -1px;
-}
-#menu li ul {
+#hamburgerMenu {
+  padding: 16px 16px 12px 16px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  font-size: 24px;
   z-index: 12;
-  margin-top: -3px;
 }
-#menu li ul li {
-  width: auto;
-  text-align: left;
-  letter-spacing: 0;
+#hamburgerMenu i {
+  transition: transform 0.2s;
 }
-/* make the right menus float from right edge to left */
-#menu li ul.right {
-  min-width: 132px;
-  right: 3px;
-}
-#library li a, #library li span {
-  margin-left: 20px;
-}
-#library li ul li a, #library li ul li span {
-  margin-left: 4px;
-}
-#library li ul li ul {
-  min-width: 132px;
-  max-width: 132px;
-  word-wrap: break-word;
-  white-space: normal !important;
-}
-#library li ul li ul li {
-  font-size: 10px;
-}
-/* settings */
-#zipImageFilenamePattern, #styleString {
-  width: 280px;
+#mainMenu.active + #hamburgerMenu i {
+  transform: rotate(-90deg);
 }
 
-#t_locked {
+/* define arrows */
+i.leftArrow:after {
+  content: "chevron_left";
+}
+i.rightArrow:after {
+  content: "chevron_right";
+}
+
+#menu i.leftArrow {
+  float: left;
+  margin: -3px 0 0 -10px;
+}
+
+#menu i.rightArrow {
+  float: right;
+  margin-top: 12px;
+}
+
+/* position menu */
+#mainMenu {
+	position: fixed;
+	overflow: hidden;
+  width: 260px;
+  left: 0;
+  top: 56px;
+  bottom: 0;
   font-size: 16px;
-  padding: 4px;
+  z-index: 10;
+  box-shadow: 2px 0px 4px rgba(0, 0, 0, 0.3);
+  transform: translateX(-266px);
+  transition: transform 0.2s ease-in-out;
+}
+#mainMenu.active {
+  transform: translateX(0);
+}
+
+#mainMenu ul {
+	position: absolute;
+	overflow-x: hidden;
+	overflow-y: visible;
+	top: 0;
+  bottom: 0;
+	width: 100%;
+  background-color: #fafafa;
+  box-shadow: 2px 0px 4px rgba(0, 0, 0, 0.3);
+}
+.menuIcon {
+	position: relative;
+	margin-left: 8px;
+	top: 6px;
+}
+.menuHeader {
+	position: relative;
+  padding-bottom: 2px;
+  background-color: #ffcc80;
+}
+.currentMenu {
+	font-weight: bold !important;
+	color: #512da8 !important;
+	float: right !important;
+}
+#menu ul li span {
+  float: none;
+}
+#menu, #menu ul {
+  padding: 0;
+  margin: 0;
+}
+/*set up a tags*/ 
+#menu span, #menu a {
+  display: inline-block;
+  color: rgba(0,0,0,0.87);
+  text-decoration: none;
+  padding: 16px;
+  margin: 2px 0 -2px 0;
+  cursor: default;
+}
+/*#menu li {
+	background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" version="1.1"><circle cx="50" cy="50" r="50" fill="#ddf" /></svg>');
+	background-size: 0 0;
+	background-repeat: no-repeat;
+	transition: background-size 1s;
+}*/
+#menu li {
+	transition: background-color 0.2s;
+}
+#menu li.active {
+  background-color: #ddf !important;
+}
+
+#menu li.disabled span, #menu li.disabled a {
+  color: rgba(0,0,0,0.38);
+}
+#menu li ul span, #menu li ul a {
+  font-weight: normal;
+  padding: 16px;
+}
+#menu li ul span span {
+  padding: 0;
+}
+#menu .divider {
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+/*position level 1 links vertically*/ 
+#menu li {
+  display: block;
+  width: 100%;
+  text-align: justify;
+}
+#menu li.fileOpening {
+  position: relative;
+}
+
+/*position level 2 and up links vertically and hide*/ 
+#menu li ul {
+  width: 260px;
+  transition: left 0.2s ease-in-out;
+  position: absolute;
+  top: 0;
+  left: -266px;
+  z-index: 1;
+}
+/*unhide level 2 links on li.active from level 1*/ 
+#menu li.active ul {
+  left: 0;
+}
+/*don't unhide level 3 links on li.active from level 1*/
+#menu li.active ul li ul {
+  left: -266px;
+}
+/*unhide level 3 links on li.active from level 2*/
+#menu li.active ul li.active ul {
+  left: 0;
+}
+/*don't unhide level 4 links on li.active from level 1*/
+#menu li.active ul li ul li ul {
+  left: -266px;
+}
+/*don't unhide level 4 links on li.active from level 2*/
+#menu li.active ul li.active ul li ul {
+  left: -266px;
+}
+/*unhide level 4 links on li.active from level 3*/
+#menu li.active ul li.active ul li.active ul {
+  left: 0;
+}
+
+/* documentation */
+.docs {
+	background: transparent !important;
 }

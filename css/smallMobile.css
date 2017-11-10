@@ -1,0 +1,391 @@
+/*
+ smallMobile.css
+ This file is part of OpenAero.
+
+  OpenAero was originally designed by Ringo Massa and built upon ideas
+  of Jose Luis Aresti, Michael Golan, Alan Cassidy and many others. 
+
+  OpenAero is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  OpenAero is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with OpenAero.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/* This file defines all the css styles for the small mobile version
+ * They will override any equivalent css styles in general.css and
+ * mobile.css */
+
+body {
+  width: 320px;
+  overflow-x: hidden;
+}
+body * {
+	-webkit-overflow-scrolling: touch;
+}
+select {
+  background-color: #fff;
+}
+#dlTextField {
+	width: 100%;
+}
+.notSmallMobile {
+	display: none;
+}
+
+/* top block */
+#topBlock {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  background-color: #ede7f6;
+  -moz-box-shadow: 0px 1px 2px rgba(0,0,0,0.5);
+  -webkit-box-shadow: 0px 1px 2px rgba(0,0,0,0.5);
+  box-shadow: 0px 1px 2px rgba(0,0,0,0.5);
+  width: 320px;
+  z-index: 11;
+}
+#openAeroLogo {
+  display: none;
+}
+.version {
+  display: none;
+}
+#sequenceTextContainer {
+  position: relative;
+  left: 34px;
+}
+#sequence_text {
+  position: absolute;
+  left: 0px;
+  /* 16px is minimum size to prevent auto-zoom */
+  font-size: 16px;
+  text-align: left;
+  width: 248px;
+  height: 52px;
+  resize: none;
+  background-color: white;
+  overflow-y: auto;
+}
+#t_locked {
+	font-size: 14px;
+	padding: 8px;
+  left: 32px;
+}
+
+#main {
+	position: absolute;
+	overflow-x: hidden;
+  left: 0px;
+  right: 0px;
+  width: 320px;
+}
+
+#leftBlock {
+  position: relative;
+  top: 0;
+  left: 0;
+  background: #f4f4f4;
+  width: 320px;
+  padding: 0;
+  z-index: 1;
+  overflow-x: hidden;
+  overflow-y: visible;
+}
+
+#sequenceInfo div.form-group {
+	display: inline-block;
+	margin: 16px 4px 16px 0;
+}
+#sequenceInfo div.form-group:first-of-type {
+	width: 140px;
+}
+#sequenceInfo div.form-group:last-of-type {
+  width: 140px;
+  margin-right: 0;
+}
+.narrowRight div.form-group:first-of-type {
+  width: 168px !important;
+}
+.narrowRight div.form-group:last-of-type {
+  width: 112px !important;
+}
+
+#sequenceInfo {
+  position: relative;
+  float: left;
+  width: 312px;
+  -webkit-transform: translateX(0);
+  transform: translateX(0);
+  transition: all 0.3s ease-in-out;
+}
+#sequenceInfo.hidden {
+  -webkit-transform: translateX(-320px);
+  transform: translateX(-320px);
+  visibility: visible;
+}
+#figureInfo {
+  position: relative;
+  float: left;
+  left: 0;
+  width: 312px;
+  -webkit-transform: translateX(0);
+  transform: translateX(0);
+  transition: all 0.3s ease-in-out;
+}
+#figureInfo.hidden {
+  transform: translateX(320px);
+  visibility: visible;
+}
+#figureInfo.hidden.left {
+	transform: translateX(-320px);
+}
+
+#referenceSequenceString {
+  width: 99%;
+  height: 8em;
+}
+
+#alerts {
+	width: 312px;
+}
+/* virtual keyboard */
+#virtualKeyboard {
+  top: 4px;
+  left: 0;
+}
+#leftBlock .tabSelector {
+  width: 320px;
+}
+#leftBlock .tabSelector li {
+  display: inline-block;
+  width: 82px;
+  min-width: 82px;
+  max-width: 82px;
+}
+#svgContainer {
+  position: relative;
+  float: left;
+  left: 0;
+  width: 312px;
+  background-color:#ffffff;
+  padding: 4px;
+  margin-bottom: 4px;
+	text-align: center;
+	transition: all 0.3s ease-in-out;
+}
+#svgContainer.hidden {
+	transform: translateX(320px);
+}
+#gridInfo {
+  display: none;
+}
+#t_gridView {
+	display: none;
+}
+#figureSelector {
+  position: absolute;
+  overflow-x: hidden;
+  overflow-y: display;
+  left: -340px;
+  -moz-transition: all 0.2s ease-in-out;
+  -o-transition: all 0.2s ease-in-out;
+  -webkit-transition: all 0.2s ease-in-out;
+  transition: all 0.2s ease-in-out;
+  width: 320px;
+  height: 480px;
+  font-size: 16px;
+  padding: 0;
+  background-color: white;
+  z-index: 2;
+  right: auto;
+  left: -340px;
+}
+#figureSelector.active {
+  left: 0;
+}
+#hideFigureSelector:after {
+  content: "arrow_back";
+}
+#hideIllegalFigures span {
+  display: inline-block;
+  max-width: 254px;
+  margin: 8px 4px;
+}
+#hideIllegalFigures span.material-switch {
+	float: right;
+}
+/* columns */
+.content3cols {
+  width: 97%;
+}
+.content2cols {
+  width: 97%;
+}
+
+/* buttons */
+.button {
+  margin-left: 5px;
+  margin-right: 5px;
+}
+.smallButton {
+  width: 32px;
+  height: 32px;
+  margin: 1px;
+  /* scale background */
+  background-size: 32px 32px;
+}
+.undoRedoButton {
+  margin: 3px 4px -1px 4px;
+  padding: 0;
+}
+#redo {
+	clear: left;
+}
+.minButton {
+	background-image: url('../buttons/minus.png');
+	height: 32px;
+  width: 32px;
+}
+.plusButton {
+	background-image: url('../buttons/plus.png');
+	height: 32px;
+  width: 32px;
+}
+.plusMinText {
+  font-size: 24px;
+  height: 32px;
+}
+#entryExit {
+  min-height: 56px;
+}
+#figEntryButton {
+  background-image: url('../buttons/figStartUp.png');
+}
+#figExitButton {
+  background-image: url('../buttons/figEndUp.png');
+}
+#figEntryButton.inverted {
+  background-image: url('../buttons/figStartInv.png');
+}
+#figExitButton.inverted {
+  background-image: url('../buttons/figEndInv.png');
+}
+#figEntryButton.button {
+  margin-left: 0 !important;
+  margin-right: 2px !important;
+}
+#figExitButton.button {
+  margin-left: 2px !important;
+  margin-right: 0 !important;
+}
+.rollComment {
+  font-size: 2em;
+  float:right;
+  margin-left: 5px;
+  margin-right: 5px;
+  width: 40px;
+  transition: all 0.3s ease-in-out;
+}
+.rollComment:focus {
+  margin-left: -260px;
+  width:290px;
+  opacity: 0.999; /* prevents rollFlip shining through */
+}
+#scale {
+  margin-left: 6px;
+  margin-right: 6px;
+}
+#moveX,#moveY {
+  margin-left: 6px;
+  margin-right: 6px;
+}
+.rollSelect {
+  font-size: 2em;
+}
+#comments {
+  width: 260px;
+  height: 3em;
+}
+
+/* logo chooser */
+#activeLogo {
+  float: right;
+}
+#chooseLogo div {
+  padding: 6px;
+}
+
+/* figure chooser */
+
+#figureChooser {
+  width: 308px;
+  bottom: 0;
+}
+table#figureChooserColumns {
+  position: relative;
+  left: 36px;
+  width: 284px;
+}
+table#figureChooserTable td {
+  padding: 1px;
+  border: 1px solid #eee;
+  border-radius: 5px;
+}
+table#figureChooserTable td.selected {
+  border: 1px solid magenta;
+}
+#figureSelector div {
+  margin: 6px;
+}
+#figureSelector div div {
+  margin: 0;
+}
+#figureSelectorOptionsDiv select,#figureSelectorGroupDiv select {
+  font-size: 14px;
+}
+#figureSelectorClose {
+	position: absolute;
+	top: 8px;
+	left: 4px;
+}
+
+/* message and other boxes */
+.box {
+  top: 1%;
+  left: 1%;
+  width: 95%;
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+}
+.box .tabSelector {
+  width: auto;
+}
+.box .tabSelector li {
+  padding-left: 10px;
+  padding-right: 10px;
+  width: auto;
+}
+
+/* help box */
+#helpBox .box {
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	border-radius: 0;
+}
+
+/* menu */
+#hamburgerMenu {
+	padding: 16px 7px 6px 4px;
+}
+
