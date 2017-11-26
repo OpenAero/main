@@ -24,6 +24,9 @@
 #topBlock {
 	height: 77px;
 }
+.fuDesigner #topBlock {
+	height: 30px;
+}
 #undoRedo {
 	top: 28px;
 }
@@ -62,6 +65,9 @@
 	top: 76px;
   padding: 0 0 5px 0;
 }
+.fuDesigner #main {
+	top: 32px;
+}
 #svgContainer {
   top: 20px;
 }
@@ -82,7 +88,7 @@
 	position: relative;
 	margin-left: 8px;
 	margin-right: -12px;
-	top: 4px;
+	top: 3px;
 	font-size: 16px;
 }
 img.menuIcon {

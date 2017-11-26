@@ -43,12 +43,12 @@ select {
 /* top block */
 #topBlock {
   position: fixed;
-  top: 0px;
-  left: 0px;
+  top: 0;
+  left: 0;
   background-color: #ede7f6;
-  -moz-box-shadow: 0px 1px 2px rgba(0,0,0,0.5);
-  -webkit-box-shadow: 0px 1px 2px rgba(0,0,0,0.5);
-  box-shadow: 0px 1px 2px rgba(0,0,0,0.5);
+  -moz-box-shadow: 0 1px 2px rgba(0,0,0,0.5);
+  -webkit-box-shadow: 0 1px 2px rgba(0,0,0,0.5);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.5);
   width: 320px;
   z-index: 11;
 }
@@ -64,7 +64,7 @@ select {
 }
 #sequence_text {
   position: absolute;
-  left: 0px;
+  left: 0;
   /* 16px is minimum size to prevent auto-zoom */
   font-size: 16px;
   text-align: left;
@@ -83,11 +83,15 @@ select {
 #main {
 	position: absolute;
 	overflow-x: hidden;
-  left: 0px;
-  right: 0px;
+  left: 0;
+  right: 0;
   width: 320px;
+  max-width: 320px;
 }
-
+#leftBlockContainer {
+	position: relative;
+	width: 320px;
+}
 #leftBlock {
   position: relative;
   top: 0;
@@ -98,6 +102,7 @@ select {
   z-index: 1;
   overflow-x: hidden;
   overflow-y: visible;
+  min-height: 600px;
 }
 
 #sequenceInfo div.form-group {
@@ -194,13 +199,12 @@ select {
   position: absolute;
   overflow-x: hidden;
   overflow-y: display;
-  left: -340px;
   -moz-transition: all 0.2s ease-in-out;
   -o-transition: all 0.2s ease-in-out;
   -webkit-transition: all 0.2s ease-in-out;
   transition: all 0.2s ease-in-out;
   width: 320px;
-  height: 480px;
+  height: 100%;
   font-size: 16px;
   padding: 0;
   background-color: white;
@@ -250,12 +254,12 @@ select {
 	clear: left;
 }
 .minButton {
-	background-image: url('../buttons/minus.png');
+	background-image: url('../img/buttons/minus.png');
 	height: 32px;
   width: 32px;
 }
 .plusButton {
-	background-image: url('../buttons/plus.png');
+	background-image: url('../img/buttons/plus.png');
 	height: 32px;
   width: 32px;
 }
@@ -267,16 +271,16 @@ select {
   min-height: 56px;
 }
 #figEntryButton {
-  background-image: url('../buttons/figStartUp.png');
+  background-image: url('../img/buttons/figStartUp.png');
 }
 #figExitButton {
-  background-image: url('../buttons/figEndUp.png');
+  background-image: url('../img/buttons/figEndUp.png');
 }
 #figEntryButton.inverted {
-  background-image: url('../buttons/figStartInv.png');
+  background-image: url('../img/buttons/figStartInv.png');
 }
 #figExitButton.inverted {
-  background-image: url('../buttons/figEndInv.png');
+  background-image: url('../img/buttons/figEndInv.png');
 }
 #figEntryButton.button {
   margin-left: 0 !important;
@@ -387,5 +391,9 @@ table#figureChooserTable td.selected {
 /* menu */
 #hamburgerMenu {
 	padding: 16px 7px 6px 4px;
+}
+
+#zoomMenu {
+  display: none !important;
 }
 

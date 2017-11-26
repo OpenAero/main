@@ -95,7 +95,6 @@ img.menuIcon {
   position: relative;
   z-index: 999;
   transition: all 0.3s;
-  background-color: rgba(0, 0, 0, 0.12);
 }
 .navbutton .material-icons:active {
   transition: border-radius 0.05s, margin 0.05s, padding 0.05s, background-color 0s;
@@ -679,6 +678,7 @@ textarea {
   z-index:998;
   user-select: none;
   cursor: pointer;
+  transition: opacity 0.5s;
 }
 
 #loading div {
@@ -691,6 +691,13 @@ textarea {
 #continueAfterLoading {
   color: blue;
   transition: all 0.5s;
+}
+
+#topBlock {
+	text-align: center; /* for t_finalizeSequence */
+}
+#menu {
+	text-align: initial;
 }
 
 /* virtual keyboard */
@@ -764,7 +771,7 @@ html.framed .docs table {
 	margin: 0;
 }
 html.framed ol {
-	padding: 16px;
+	padding: 24px;
 }
 .box div.section, .section, .docs table tr {
   position: relative;
@@ -1265,7 +1272,7 @@ option.used {
 }
 #pilotCardPercent {
   position: relative;
-  background-image: url('../images/PilotCardPercent.png');
+  background-image: url('../img/PilotCardPercent.png');
 }
 #pilotCardPercent span {
   position: absolute;
@@ -1276,10 +1283,10 @@ option.used {
   visibility: hidden;
 }
 #pilotCard2 {
-  background-image: url('../images/PilotCard2.png');
+  background-image: url('../img/PilotCard2.png');
 }
 #pilotCard4 {
-  background-image: url('../images/PilotCard4.png');
+  background-image: url('../img/PilotCard4.png');
 }
 #imageWidth, #imageHeight, #pageSpacing {
   width: 4em;
@@ -1341,13 +1348,9 @@ option.used {
   margin: 0;
 }
 .fileListFileRemove {
-  display: inline-block;
-  width: 16px;
-  height: 16px;
-  background-image: url('../buttons/close.png');
-  background-repeat: no-repeat;
-  background-size: 16px;
-  margin: 0 5px 0 0;
+	position: relative;
+	bottom: -5px;
+  margin: 0 8px 0 0 !important;
 }
 #t_print {
 	margin-left: 4px;
@@ -1443,14 +1446,18 @@ option.used {
 	position: absolute;
 	top: 40px;
 	bottom: 0;
-	width: 100%;
-	overflow-y: hidden;
+	left: 0;
+	right: 0;
+	-webkit-overflow-scrolling: touch;
+	overflow-y: auto;
 }
 #helpContent iframe {
-	position: relative;
+	/*position: relative;*/
 	border: 0;
 	width: 100%;
-	height: 100%;
+	height: 99%;
+	-webkit-overflow-scrolling: touch;
+	overflow-y: auto;
 }
 #saveAsURLArea {
   width: 99%;
@@ -1460,9 +1467,20 @@ option.used {
 }
 #newWindow {
   position: relative;
+  background-color: white;
+  -webkit-touch-callout: text;
+  -webkit-user-select: text;
+  -khtml-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  -o-user-select: text;
+  user-select: text;
   overflow: auto;
-  width: 99%;
-  height: 24em;
+	left: 0;
+	right: 0;
+	height: 24em;
+	padding: 8px 16px;
+	box-shadow: inset 0 0 5px grey;
 }
 #dlTextField {
   float: left;
@@ -1483,15 +1501,18 @@ option.used {
 
 /* Settings dialog */
 #settingsDialog .form-group {
+	display: inline-block;
+	margin: 0 0 8px 0;
+}
+#settingsDialog .right {
 	width: 96px !important;
 	float: right;
-	display: inline-block;
-	margin: 0;
 }
 
 #styles {
 	float: none !important;
 }
+
 #saveFigsSeparateWidth,#saveFigsSeparateHeight {
   width: 3em;
 }
@@ -1699,34 +1720,34 @@ option.used {
   margin: 0.2em;
 }
 #switchFirstRoll {
-  background-image: url('../buttons/switchFirstRoll.png');
+  background-image: url('../img/buttons/switchFirstRoll.png');
 }
 #switchX {
-  background-image: url('../buttons/switchX.png');
+  background-image: url('../img/buttons/switchX.png');
 }
 #switchY {
-  background-image: url('../buttons/switchY.png');
+  background-image: url('../img/buttons/switchY.png');
 }
 #deleteFig {
-  background-image: url('../buttons/trash.png');
+  background-image: url('../img/buttons/trash.png');
 }
 #flipYAxis {
-  background-image: url('../buttons/flipYAxis.png');
+  background-image: url('../img/buttons/flipYAxis.png');
 }
 #magMin {
-  background-image: url('../buttons/magmin.png');
+  background-image: url('../img/buttons/magmin.png');
 }
 #magPlus {
-  background-image: url('../buttons/magplus.png');
+  background-image: url('../img/buttons/magplus.png');
 }
 #moveForward {
-  background-image: url('../buttons/moveforward.png');
+  background-image: url('../img/buttons/moveforward.png');
 }
 #straightLine {
-  background-image: url('../buttons/straightline.png');
+  background-image: url('../img/buttons/straightline.png');
 }
 #curvedLine {
-  background-image: url('../buttons/curvedline.png');
+  background-image: url('../img/buttons/curvedline.png');
 }
 #scale {
   float: left;
@@ -1754,31 +1775,31 @@ option.used {
   float: left;
 }
 #subSequence {
-  background-image: url('../buttons/subsequence.png');
+  background-image: url('../img/buttons/subsequence.png');
 }
 .rollSelect {
   float: left;
 }
 .rollFlip {
-  background-image: url('../buttons/flipOff.png');
+  background-image: url('../img/buttons/flipOff.png');
   float: left;
 }
 .rollFlip.on {
-  background-image: url('../buttons/flipOn.png');
+  background-image: url('../img/buttons/flipOn.png');
 }
 .rollFlipTwo {
-  background-image: url('../buttons/flipTwoOff.png');
+  background-image: url('../img/buttons/flipTwoOff.png');
   float: left;
 }
 .rollFlipTwo.on {
-  background-image: url('../buttons/flipTwoOn.png');
+  background-image: url('../img/buttons/flipTwoOn.png');
 }
 .numberFlip {
-  background-image: url('../buttons/numberFlipOff.png');
+  background-image: url('../img/buttons/numberFlipOff.png');
   float: left;
 }
 .numberFlip.on {
-  background-image: url('../buttons/numberFlipOn.png');
+  background-image: url('../img/buttons/numberFlipOn.png');
 }
 .rollComment {
   float: left;
@@ -1835,7 +1856,7 @@ option.used {
 .minButton {
   float: left;
   margin-left: 5px;
-	background-image: url('../buttons/smallMinus.png');
+	background-image: url('../img/buttons/smallMinus.png');
 	background-color: transparent;
 	background-repeat: no-repeat;
 	background-position: 0 0; /* equivalent to 'top left' */
@@ -1846,7 +1867,7 @@ option.used {
 }
 .plusButton {
   float:left;
-	background-image: url('../buttons/smallPlus.png');
+	background-image: url('../img/buttons/smallPlus.png');
 	background-color: transparent;
 	background-repeat: no-repeat;
 	background-position: 0 0; /* equivalent to 'top left' */
@@ -1918,6 +1939,7 @@ table#figureChooserTable td {
   padding: 1px;
   border: 2px solid #eee;
   border-radius: 5px;
+  vertical-align: top;
   text-align: right;
   font-size: 12px;
 }
@@ -1929,6 +1951,7 @@ table#figureChooserColumns td {
 }
 table#figureChooserTable td.arestiRow {
   position: relative;
+  vertical-align: middle;
   border: 0;
   left: -4px;
   color: navy;

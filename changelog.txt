@@ -1,5 +1,5 @@
-2017.2.4
-* added "vector-effect: non-scaling-stroke" to drawing styles to prevent thin lines on large sequences adn downscaling
+2018.1
+* added "vector-effect: non-scaling-stroke" to drawing styles to prevent thin lines on large sequences
 * fixed roll font scaling for large sequences that are downscaled on print
 * changed figure number size to match figure-number-in-circle size, improving readability
 * fixed issue with Grid form printing over Form A when both are selected
@@ -9,7 +9,7 @@
 * added splash screen and removed "This may take a few seconds..." message on upgrade
 * changed "Save as link" dialog link to textbox and added copy to clipboard button to improve copying
 * overhauled menu structure and layout, including addition of special mobile device menus and icons
-* moved "Mobile version" selection to Settings
+* moved "Mobile version" selection to Settings -> Phone version
 * improved Sequence info layout
 * increased Form A size on small mobile devices
 * removed Mini Form A on small mobile devices
@@ -23,6 +23,13 @@
 * removed "* Figure Queue" from figure selector in Free (Un)known designer
 * updated sequence string field behaviour including better highlighting
 * updated manuals and integrated in main window for mobile devices
+* changed OpenAero file structure to improve clarity and Cordova compatibility
+* added 2018 CIVA Free Known figure sets
+* updated figures according 2018 Aresti Catalogue
+* fixed issue where trying to open a file that is not a sequence would change the displayed file name
+* added automatic switching to French when detecting French language on first install
+* added pilot_id and flight_nb fields for automatic insertion of pilot ID and Flight Nr by organisers
+* moved check log to dialog window as external window is giving problems in new Chrome
 
 2017.2.3
 * updated AAC rules for 2017

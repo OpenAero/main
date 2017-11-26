@@ -26,8 +26,8 @@
     <!-- set Google verification tag, essential for installing App from site -->
     <meta name="google-site-verification" content="19PeFg_VefT13gYXLO6E-IJKXjPbzjF3f_iZ2T8pa9E" />
     <!-- set viewport for smallMobile browsers -->
+    <!--<meta name="viewport" id="viewport" content="">-->
     <meta name="viewport" id="viewport" content="">
-    <!-- <meta name="viewport" id="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0" /> -->
     <!-- set web app capable for Chrome homescreen links -->
     <meta name="smallMobile-web-app-capable" content="yes">
     <meta name="application-name" content="OpenAero">
@@ -41,28 +41,28 @@
     <link rel="stylesheet" type="text/css" href="css/general.css" id="generalCSS">
     <link rel="stylesheet" type="text/css" href="css/desktop.css" id="desktopCSS">
     <link rel="stylesheet" type="text/css" href="css/desktop-largeMobile.css" id="desktopLargeMobileCSS">
-    <link rel="stylesheet" type="text/css" href="addtohomescreen/addtohomescreen.css">
+    <link rel="stylesheet" type="text/css" href="css/addtohomescreen.css">
     <!-- styles -->
     <style type="text/css" media="print" id="printStyle"></style>
     <style type="text/css" media="screen">#noScreen {display: none;}</style>
     <!-- favicons -->
-    <link rel="shortcut icon" type="image/png" sizes="16x16" href="favicons/favicon16.png">
-    <link rel="shortcut icon" type="image/png" sizes="24x24" href="favicons/favicon24.png">
-    <link rel="shortcut icon" type="image/png" sizes="32x32" href="favicons/favicon32.png">
-    <link rel="shortcut icon" type="image/png" sizes="57x57" href="favicons/favicon57.png">
-    <link rel="shortcut icon" type="image/png" sizes="72x72" href="favicons/favicon72.png">
-    <link rel="shortcut icon" type="image/png" sizes="96x96" href="favicons/favicon96.png">
-    <link rel="shortcut icon" type="image/png" sizes="114x114" href="favicons/favicon114.png">
-    <link rel="shortcut icon" type="image/png" sizes="128x128" href="favicons/favicon128.png">
-    <link rel="shortcut icon" type="image/png" sizes="195x195" href="favicons/favicon195.png">
+    <link rel="shortcut icon" type="image/png" sizes="16x16" href="img/favicons/favicon16.png">
+    <link rel="shortcut icon" type="image/png" sizes="24x24" href="img/favicons/favicon24.png">
+    <link rel="shortcut icon" type="image/png" sizes="32x32" href="img/favicons/favicon32.png">
+    <link rel="shortcut icon" type="image/png" sizes="57x57" href="img/favicons/favicon57.png">
+    <link rel="shortcut icon" type="image/png" sizes="72x72" href="img/favicons/favicon72.png">
+    <link rel="shortcut icon" type="image/png" sizes="96x96" href="img/favicons/favicon96.png">
+    <link rel="shortcut icon" type="image/png" sizes="114x114" href="img/favicons/favicon114.png">
+    <link rel="shortcut icon" type="image/png" sizes="128x128" href="img/favicons/favicon128.png">
+    <link rel="shortcut icon" type="image/png" sizes="195x195" href="img/favicons/favicon195.png">
     <!-- apple web app icon and startup image -->
-    <link rel="apple-touch-icon" href="favicons/favicon195.png">
+    <link rel="apple-touch-icon" href="img/favicons/favicon195.png">
     <!-- DISABLED, does not work until iOS 11 !
-    <link rel="apple-touch-startup-image" href="favicons/favicon195.png">
-    <link rel="apple-touch-startup-image" href="images/startup.jpg">
-    <link rel="apple-touch-startup-image" href="images/startup_retina.jpg" media="(max-device-width: 480px) and (-webkit-min-device-pixel-ratio: 2)" >
-    <link rel="apple-touch-startup-image" href="images/startup_ipad_landscape.jpg" media="screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:landscape)" />
-    <link rel="apple-touch-startup-image" href="images/startup_ipad_portrait.jpg" media="screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:portrait)" />
+    <link rel="apple-touch-startup-image" href="img/favicons/favicon195.png">
+    <link rel="apple-touch-startup-image" href="img/startup.jpg">
+    <link rel="apple-touch-startup-image" href="img/startup_retina.jpg" media="(max-device-width: 480px) and (-webkit-min-device-pixel-ratio: 2)" >
+    <link rel="apple-touch-startup-image" href="img/startup_ipad_landscape.jpg" media="screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:landscape)" />
+    <link rel="apple-touch-startup-image" href="img/startup_ipad_portrait.jpg" media="screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:portrait)" />
     -->
     <!--Import Google Icon Font-->
     <!-- <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> -->
@@ -72,62 +72,63 @@
     <script type="text/javascript" src="js/jquery-3.0.0.min.js"></script>
     <script type="text/javascript" src="js/materialize.min.js"></script>
     -->
+    <script src="cordova.js" type="text/javascript"></script>
     <!-- configuration, must be first OpenAero js -->
-    <script src="config.js" type="text/javascript"></script>
+    <script src="js/config.js" type="text/javascript"></script>
     <!-- interface languages -->
-    <script src="languages/en.js" type="text/javascript"></script>
-    <script src="languages/fr.js" type="text/javascript"></script>
+    <script src="js/languages/en.js" type="text/javascript"></script>
+    <script src="js/languages/fr.js" type="text/javascript"></script>
     <!-- logos -->
-    <script src="logo.js" type="text/javascript"></script>
+    <script src="js/logo.js" type="text/javascript"></script>
     <!-- figure definitions -->
-    <script src="figures17.js" type="text/javascript"></script>
+    <script src="js/figures18.js" type="text/javascript"></script>
     <!-- sequence rules -->
-    <script src="rules/rules16.js" type="text/javascript"></script>
-    <script src="rules/rules18-civa.js" type="text/javascript"></script>
-    <script src="rules/rules17-glider-civa.js" type="text/javascript"></script>
-    <script src="rules/rules17-aac.js" type="text/javascript"></script>
-    <script src="rules/rules17-baea.js" type="text/javascript"></script>
-    <script src="rules/rules17-france.js" type="text/javascript"></script>
-    <script src="rules/rules15-ga.js" type="text/javascript"></script>
-    <script src="rules/rules17-iac.js" type="text/javascript"></script>
-    <script src="rules/rules16-vink.js" type="text/javascript"></script>
-    <script src="rules/rules18-nzac.js" type="text/javascript"></script>
-    <script src="rules/rules18-nzac-civa.js" type="text/javascript"></script>
-    <script src="rules/rules16-sac.js" type="text/javascript"></script>
+    <script src="js/rules/rules16.js" type="text/javascript"></script>
+    <script src="js/rules/rules18-civa.js" type="text/javascript"></script>
+    <script src="js/rules/rules18-glider-civa.js" type="text/javascript"></script>
+    <script src="js/rules/rules17-aac.js" type="text/javascript"></script>
+    <script src="js/rules/rules17-baea.js" type="text/javascript"></script>
+    <script src="js/rules/rules17-france.js" type="text/javascript"></script>
+    <script src="js/rules/rules15-ga.js" type="text/javascript"></script>
+    <script src="js/rules/rules17-iac.js" type="text/javascript"></script>
+    <script src="js/rules/rules16-vink.js" type="text/javascript"></script>
+    <script src="js/rules/rules18-nzac.js" type="text/javascript"></script>
+    <script src="js/rules/rules18-nzac-civa.js" type="text/javascript"></script>
+    <script src="js/rules/rules16-sac.js" type="text/javascript"></script>
     <!-- library -->
-    <script src="library.js" type="text/javascript"></script>
+    <script src="js/library.js" type="text/javascript"></script>
     <!-- improve look of XML output -->
     <!-- https://github.com/vkiryukhin/vkBeautify 0.99.00 beta-->
-    <script src="vkbeautify.js" type="text/javascript"></script>
+    <script src="js/vkbeautify.js" type="text/javascript"></script>
     <!-- create zip files. Used for individual figure image output -->
     <!-- https://github.com/Stuk/jszip 23 mar 2015 -->
-    <script src="jszip.min.js" type="text/javascript"></script>
+    <script src="js/jszip.min.js" type="text/javascript"></script>
     <!-- sprintf for javascript, for formatted language strings -->
     <!-- https://github.com/alexei/sprintf.js 30 sep 2014 -->
-    <script src="sprintf.min.js" type="text/javascript"></script>
+    <script src="js/sprintf.min.js" type="text/javascript"></script>
     <!-- canvg transforms svg to canvas, used for png output -->
     <!-- https://github.com/gabelerner/canvg 23 mar 2015 -->
-    <script src="canvg/rgbcolor.js" type="text/javascript"></script>
-    <script src="canvg/StackBlur.js" type="text/javascript"></script>
-    <script src="canvg/canvg.js" type="text/javascript"></script>
+    <script src="js/canvg/rgbcolor.js" type="text/javascript"></script>
+    <script src="js/canvg/StackBlur.js" type="text/javascript"></script>
+    <script src="js/canvg/canvg.js" type="text/javascript"></script>
     <!-- all the country flags -->
-    <script src="flags.js" type="text/javascript"></script>
+    <script src="js/flags.js" type="text/javascript"></script>
     <!-- add to homescreen for iOS and Android -->
     <!-- https://github.com/cubiq/add-to-homescreen 15 sep 2016 -->
-    <script src="addtohomescreen/addtohomescreen.min.js"></script>
+    <script src="js/addtohomescreen.min.js"></script>
     
     <!-- jsconsole script for debugging only !!! -->
-    <!-- <script src="http://jsconsole.com/remote.js?8C1754EF-DB29-4859-B5CC-87978E718150"></script> -->
+    <!-- <script src="js/http://jsconsole.com/remote.js?8C1754EF-DB29-4859-B5CC-87978E718150"></script> -->
     
     <!-- The main script. Put it at the end when everything else is loaded --> 
-    <script src="OpenAero.js" type="text/javascript"></script>
+    <script src="js/main.js" type="text/javascript"></script>
   </head>
   <body>
     <div id="noPrint">
       <!-- overlay div for loading -->
       <div id="loading">
         <div>
-          <p><img src="favicons/favicon195.png"></p>
+          <p><img src="img/favicons/favicon195.png"></p>
           <p>OpenAero</p>
           <!-- Continue option appears after 5 seconds -->
           <p id="continueAfterLoading" style="opacity: 0;">
@@ -429,11 +430,6 @@
           </span>
           <div class="content divider">
             <label>
-              <span class="userText" id="t_showFullLog"></span>
-              <input type="checkbox" id="multiFullLog" class="material-switch-input">
-              <span class="material-switch"></span>
-            </label>
-            <label>
               <span class="userText" id="t_multiOverrideRules"></span>
               <span id="multiCurrentRules"></span>
               <input type="checkbox" id="multiOverrideRules" class="material-switch-input" checked="checked">
@@ -442,6 +438,11 @@
             <label>
               <span class="userText" id="t_checkMultiUseReference"></span>
               <input type="checkbox" id="multiUseReference" class="material-switch-input" checked="checked">
+              <span class="material-switch"></span>
+            </label>
+            <label>
+              <span class="userText" id="t_showFullLog"></span>
+              <input type="checkbox" id="multiFullLog" class="material-switch-input">
               <span class="material-switch"></span>
             </label>
           </div>
@@ -504,7 +505,7 @@
           <div id="general">
             <div class="content divider">
               <span class="userText" id="t_language"></span>  
-              <span class="form-group">
+              <span class="form-group right">
                 <select id="language"></select><i class="bar"></i>
               </span>
             </div>
@@ -518,7 +519,7 @@
             <div class="content divider">
               <span class="userText" id="t_queueLabel"></span>
               <span class="userText" id="t_queueColumns"></span>
-              <span class="form-group">
+              <span class="form-group right">
                 <select id="queueColumns">
                   <option value="2">2</option>
                   <option value="3" selected>3</option>
@@ -551,14 +552,23 @@
               <div class="clearBoth"></div>
               <span>
                 <span class="userText" id="t_imageSize"></span>
-                <input type="text" id="saveFigsSeparateWidth" value="600">
+                <div class="form-group">
+	                <input type="text" id="saveFigsSeparateWidth" value="600">
+	                <i class="bar"></i>
+	              </div>
                 X
-                <input type="text" id="saveFigsSeparateHeight" value="600">
+                <div class="form-group">
+	                <input type="text" id="saveFigsSeparateHeight" value="600">
+	                <i class="bar"></i>
+	              </div>
               </span>
               <div class="clearBoth"></div>
               <span>
                 <span class="userText" id="t_zipImageFilenamePattern"></span>
-                <input type="text" id="zipImageFilenamePattern">
+                <div class="form-group">
+	                <input type="text" id="zipImageFilenamePattern">
+	                <i class="bar"></i>
+	              </div>
               </span>
             </div>
             <div class="content">
@@ -578,7 +588,7 @@
             <div class="content">
               <span>
                 <span class="userText" id="t_rollTextSize"></span>
-                <span class="form-group">
+                <span class="form-group right">
 	                <select id="rollFontSize">
 	                  <option id="t_rollSmall" class="userText"></option>
 	                  <option id="t_rollMedium" class="userText"></option>
@@ -602,8 +612,14 @@
               <span>
                 <span class="userText" id="t_drawingStylesExplain"></span>
                 <span>
-                  <select id="styles"></select>
-                  <input type="text" id="styleString" size="40">
+									<div class="form-group">
+	                  <select id="styles"></select>
+	                  <i class="bar"></i>
+	                </div>
+                  <div class="form-group">
+	                  <input type="text" id="styleString" size="40">
+	                  <i class="bar"></i>
+	                </div>
                 </span>
                 <span style="display:inline-block;">
                   <span class="textButton userText" id="t_changeStyle"></span>
@@ -795,7 +811,7 @@
 									<span class="userText" id="t_upwindEntry"></span>
 								</li>
                 <li class="entryOption lock">
-									<img  class="material-icons menuIcon" src="images/compare_arrows_same.svg">
+									<img  class="material-icons menuIcon" src="img/compare_arrows_same.svg">
 									<span class="userText" id="t_downwindEntry"></span>
 								</li>
                 <li class="entryOption lock">
@@ -927,6 +943,10 @@
 									<i class="material-icons menuIcon">multiline_chart</i>
 									<span class="userText" id="t_arestiSystem"></span>
 								</li>
+								<li>
+									<i class="material-icons menuIcon">explore</i>
+									<span class="userText" id="t_freeKnownGuidance"></span>
+								</li>
                 <li>
 									<i class="material-icons menuIcon">feedback</i>
 									<a class="userText" id="t_feedback" href="https://github.com/OpenAero/main/wiki/Feedback" target="_blank"></a>
@@ -938,12 +958,12 @@
               </ul>
             </li>
           </ul>
-          <span id="t_finalizeSequence" class="textButton userText noDisplay"></span>
+          <span id="t_finalizeSequence" class="textButton userText"></span>
         </div>
         <div class="clearBoth"></div>
         <!-- Sequence text -->
         <div id="sequenceTextContainer" class="disableFUdesigner">
-          <div id="sequenceTextClone"></div>
+          <!--<div id="sequenceTextClone"></div>-->
           <div id="sequence_text" contenteditable="true" spellcheck="false" autocapitalize="off" class="lock"></div>
         </div>
         <!-- fu_figures is used when saving from Free Unknown designer -->
@@ -999,8 +1019,6 @@
               <span class="userText" id="t_figureString"></span>
               <input type="text" id="figureStringInput">
             </div>
-            <!-- debug block -->
-            <div id="debug"></div>
             <div class="tabSelector">
               <ul>
                 <li id="tab-sequenceInfo" class="activeTab disableFUdesigner">
@@ -1024,7 +1042,7 @@
 								<div class="section">
 	                <div class="item narrowRight">
 										<div class="form-group">
-	                    <input type=text name=pilot id=pilot maxlength="30" class="lock">
+	                    <input type="text" id="pilot" maxlength="30" class="lock">
 	                    <label class="control-label userText" id="t_pilot" for="input"></label><i class="bar"></i>
 										</div>
 										<div class="form-group">
@@ -1128,6 +1146,8 @@
 	                <input type=hidden id="oa_version">
 	                <input type=hidden id="default_view">
 	                <input type=hidden id="lock_sequence">
+	                <input type=hidden id="pilot_id">    <!-- Ajout Modif GG 2017 -->
+		              <input type=hidden id="flight_nb">   <!-- Ajout Modif GG 2017 -->
 	              </div>
               </div>
               <!-- Figure Editor -->
@@ -1159,27 +1179,27 @@
                 <div id="figureInfoTop">
                   <div id="figureOptions">
                     <div class="disableFUdesigner">
-                      <div id="subSequence" class="button"><img src="buttons/mask.png"></div>
-                      <div id="deleteFig" class="button"><img src="buttons/mask.png"></div>
-                      <div id="flipYAxis" class="button"><img src="buttons/mask.png"></div>
+                      <div id="subSequence" class="button"><img src="img/buttons/mask.png"></div>
+                      <div id="deleteFig" class="button"><img src="img/buttons/mask.png"></div>
+                      <div id="flipYAxis" class="button"><img src="img/buttons/mask.png"></div>
                       <div class=clearSpace></div>
                     </div>
                     <div>
-                      <div id="switchFirstRoll" class="button disableFUfig"><img src="buttons/mask.png"></div>
-                      <div id="switchY" class="button"><img src="buttons/mask.png"></div>
-                      <div id="switchX" class="button"><img src="buttons/mask.png"></div>
+                      <div id="switchFirstRoll" class="button disableFUfig"><img src="img/buttons/mask.png"></div>
+                      <div id="switchY" class="button"><img src="img/buttons/mask.png"></div>
+                      <div id="switchX" class="button"><img src="img/buttons/mask.png"></div>
                       <div class=clearSpace></div>
                     </div>
                     <div class="disableFUdesigner">
-                      <div id="magMin" class="button"><img src="buttons/mask.png"></div>
+                      <div id="magMin" class="button"><img src="img/buttons/mask.png"></div>
                       <input type="text" name="scale" id="scale" value="0">
-                      <div id="magPlus" class="button"><img src="buttons/mask.png"></div>
+                      <div id="magPlus" class="button"><img src="img/buttons/mask.png"></div>
                       <div class=clearSpace></div>
                     </div>
                     <div class="disableFUdesigner">
-                      <div id="moveForward" class="button"><img src="buttons/mask.png"></div>
-                      <div id="straightLine" class="button"><img src="buttons/mask.png"></div>     
-                      <div id="curvedLine" class="button"><img src="buttons/mask.png"></div>
+                      <div id="moveForward" class="button"><img src="img/buttons/mask.png"></div>
+                      <div id="straightLine" class="button"><img src="img/buttons/mask.png"></div>     
+                      <div id="curvedLine" class="button"><img src="img/buttons/mask.png"></div>
                       <div class=clearBoth></div>
                       <!-- IMPORTANT : keep following div and span attached -->
                       <div id="moveXCont"><span>X </span>
@@ -1207,7 +1227,7 @@
                   <div class="contentLabel userText" id="t_entryExitAttExt"></div>
                   <span id="figEntryButton" class="smallButton disableFUfig"><div class="ttRight"><div></div></div></span>
                   <span id="entryExt" class="plusMin"></span>
-                  <span><img src="images/ee_ext-figure.png"></span>
+                  <span><img src="img/ee_ext-figure.png"></span>
                   <span id="exitExt" class="plusMin"></span>
                   <span id="figExitButton" class="smallButton disableFUfig"><div><div></div></div></span>
                   &nbsp;
@@ -1259,7 +1279,7 @@
           </table>
         </div>
 				<!-- Grid info -->
-        <div id="gridInfo" class="expansion-panel draggablePanel expanded disableFUdesigner">
+        <div id="gridInfo" class="expansion-panel draggablePanel disableFUdesigner">
 					<span class="contentLabel">
 	          <span id="t_gridInfo" class="userText"></span>
 	          <i class="material-icons expand-toggle">expand_more</i>
@@ -1267,7 +1287,7 @@
           <div id="gridInfoContents">
             <div id="gridColumnsContainer">
               <span class="userText" id="t_columns"></span>
-              <span class="form-group">
+              <span class="form-group right">
 	              <select id="gridColumns">
 	                <option value="2">2</option>
 	                <option value="3">3</option>
@@ -1331,7 +1351,7 @@
         <div id="svgContainer" class="disableFUdesigner"></div>
         <div id="svgContainerPlacing" class="noDisplay"></div>
         <!-- Div containing Free Unknown subsequences in FU Designer -->
-        <div id="fuSequence" class="fuSequence noDisplay">
+        <div id="fuSequence" class="fuSequence">
         </div>
       </div>
       <!-- Container for SVGs for the figure chooser -->

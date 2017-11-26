@@ -42,6 +42,9 @@ body {
   z-index: 11;
 	transition: height 0.2s ease-in-out;
 }
+#t_finalizeSequence {
+	display: none;
+}
 .version {
   position: absolute;
   top:5px;
@@ -105,7 +108,7 @@ body {
 #sequenceInfo {
   position: relative;
   float: left;
-  width: 266px;
+  width: 268px;
   -webkit-transform: translateX(0);
   transform: translateX(0);
   transition: all 0.3s ease-in-out;
@@ -118,8 +121,8 @@ body {
 #figureInfo {
   position: relative;
   float: left;
-  left: -266px;
-  width: 266px;
+  left: -268px;
+  width: 268px;
   -webkit-transform: translateX(0);
   transform: translateX(0);
   transition: all 0.3s ease-in-out;
@@ -129,16 +132,19 @@ body {
   margin: 7px 5px 7px 5px !important;
   visibility: visible;
 }
-#figureInfo.fuDesigner.hidden {
+.fuDesigner #figureInfo.hidden {
   -webkit-transform: translateX(-280px);
   transform: translateX(-280px);
+}
+.fuDesigner #t_finalizeSequence {
+	display: inline-block;
 }
 #fuFigures {
   position: relative;
   z-index: 4; /* put above figureString */
   top: 0;
   left: -542px;
-  width: 266px;
+  width: 268px;
   -webkit-transform: translateX(0);
   transform: translateX(0);
   transition: all 0.3s ease-in-out;
@@ -171,7 +177,7 @@ body {
 }
 
 #alerts {
-	width: 266px;
+	width: 268px;
 }
 
 /* virtual keyboard */
@@ -189,6 +195,7 @@ body {
   min-width: 118px;
   max-width: 118px;
 }
+
 #svgContainer {
   position: absolute;
   right: 0px;
@@ -499,16 +506,16 @@ table#figureChooserColumns {
   margin: 1px;
 }
 #figEntryButton {
-  background-image: url('../buttons/smallFigStartUp.png');
+  background-image: url('../img/buttons/smallFigStartUp.png');
 }
 #figExitButton {
-  background-image: url('../buttons/smallFigEndUp.png');
+  background-image: url('../img/buttons/smallFigEndUp.png');
 }
 #figEntryButton.inverted {
-  background-image: url('../buttons/smallFigStartInv.png');
+  background-image: url('../img/buttons/smallFigStartInv.png');
 }
 #figExitButton.inverted {
-  background-image: url('../buttons/smallFigEndInv.png');
+  background-image: url('../img/buttons/smallFigEndInv.png');
 }
 #figEntryButton.smallButton {
   margin-right: 6px;
@@ -547,6 +554,10 @@ table#figureChooserColumns {
   height: 99%;
 	overflow-y: auto;
   z-index: -1;
+  display: none;
+}
+.fuDesigner #fuSequence {
+	display: block;
 }
 .fuSequence table {
   position: relative;

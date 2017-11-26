@@ -26,13 +26,15 @@ body.menuOpen {
 }
 #topBlock {
 	height: 56px;
-	text-align: center; /* for t_finalizeSequence */
 }
 #sequenceTextContainer {
   left: 56px;
 }
 #sequence_text {
   top: 2px;
+  -webkit-user-select: text;
+  user-select: text;
+  -webkit-user-modify: read-write;
 }
 /* left margin to negative half width of hamburgerMenu */
 #t_finalizeSequence {
@@ -90,14 +92,14 @@ i.rightArrow:after {
 #mainMenu {
 	position: fixed;
 	overflow: hidden;
-  width: 260px;
+  width: 276px;
   left: 0;
   top: 56px;
   bottom: 0;
   font-size: 16px;
   z-index: 10;
   box-shadow: 2px 0px 4px rgba(0, 0, 0, 0.3);
-  transform: translateX(-266px);
+  transform: translateX(-282px);
   transition: transform 0.2s ease-in-out;
 }
 #mainMenu.active {
@@ -184,11 +186,11 @@ i.rightArrow:after {
 
 /*position level 2 and up links vertically and hide*/ 
 #menu li ul {
-  width: 260px;
+  width: 276px;
   transition: left 0.2s ease-in-out;
   position: absolute;
   top: 0;
-  left: -266px;
+  left: -282px;
   z-index: 1;
 }
 /*unhide level 2 links on li.active from level 1*/ 
@@ -197,7 +199,7 @@ i.rightArrow:after {
 }
 /*don't unhide level 3 links on li.active from level 1*/
 #menu li.active ul li ul {
-  left: -266px;
+  left: -282px;
 }
 /*unhide level 3 links on li.active from level 2*/
 #menu li.active ul li.active ul {
@@ -205,11 +207,11 @@ i.rightArrow:after {
 }
 /*don't unhide level 4 links on li.active from level 1*/
 #menu li.active ul li ul li ul {
-  left: -266px;
+  left: -282px;
 }
 /*don't unhide level 4 links on li.active from level 2*/
 #menu li.active ul li.active ul li ul {
-  left: -266px;
+  left: -282px;
 }
 /*unhide level 4 links on li.active from level 3*/
 #menu li.active ul li.active ul li.active ul {
@@ -219,4 +221,9 @@ i.rightArrow:after {
 /* documentation */
 .docs {
 	background: transparent !important;
+}
+
+/* Free Unknown Designer */
+#fuFiguresTable td {
+	padding: 4px;
 }
