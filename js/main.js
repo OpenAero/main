@@ -2247,6 +2247,7 @@ function combo(id,h,l) {
       self.list[self.sel].style.backgroundColor = self.l;
       self.inp.value = self.list[--self.sel].firstChild.data;
       self.list[self.sel].style.backgroundColor = self.h;
+      changeCombo (self.inp.id);
     }
     return false;
   };
@@ -4489,27 +4490,25 @@ function drawArestiText(figNr, aresti) {
 
 // doOnLoad is only called on initial loading of the page
 function doOnLoad () {
+
+	var loading = document.getElementById ('loading');
   
   // define DOM variables
-  try {
-    if (chrome && chrome.fileSystem) {
-      chromeApp.active = true;
-      console.log('Running as Chrome app');
-    }
-  } catch (e) {};
-  
-	document.addEventListener ("deviceready", function() {
-		if (typeof cordova !== 'undefined') cordovaApp = true;
-	});
-
+	if ((typeof chrome !== 'undefined') && chrome.fileSystem) {
+		chromeApp.active = true;
+		console.log('Running as Chrome app');
+	}
   sequenceText = document.getElementById('sequence_text');
   sportingClass = document.getElementById('class');
   fileName = document.getElementById('fileName');
   getLocal ('fileName', function(value) {fileName.innerText = value});
   newTurnPerspective = document.getElementById('newTurnPerspective');
-    
-  // add all listeners for clicks, keyup etc
-  addEventListeners();
+
+	document.addEventListener ("deviceready", function() {
+		if (typeof cordova !== 'undefined') cordovaApp = true;
+		// Cordova has it's own splash screen
+		if (loading) loading.parentNode.removeChild (loading);
+	});
 
   // check if Chrome App is installed
   checkForApp();
@@ -4522,20 +4521,52 @@ function doOnLoad () {
 
   // set correct options and menu items in various places
   setOptions();
+
+  // Parse the figures file
+  parseFiguresFile();
+  
   /** Define the default language and userText now as they are used
    *  In other functions during load
    */
   updateUserTexts();
+  
+  /** userText is now defined, continue */
+
   // load settings from storage
   loadSettingsStorage();
   loadPrintDialogStorage();
-  
-  /** userText is now defined, continue */
+
+	// when smallMobile is checked (loaded from settings), or when screen
+	// width is small and no setting is found, switch to smallMobile
+	if (document.getElementById ('smallMobile').checked) {
+		switchSmallMobile ();
+	} else if (window.screen.availWidth < 761) {
+
+		function f(settings) {
+			if (!/\bsmallMobile\b/.test (settings)) {
+				document.getElementById ('smallMobile').checked = 'checked';
+				switchSmallMobile ();
+			}
+		}
+		
+		if (storage) getLocal ('settings', f); else f();			 
+		
+	}
+
+  if (mobileDevice || smallMobile) mobileInterface();
+    
+  // add all listeners for clicks, keyup etc
+  addEventListeners();
 
   // Add a listener for HTML5 app cache updates
   if (!chromeApp.active) {
     addUpdateListener();
+    // Check for the latest version every 10 minutes
+    window.setInterval(function(){latestVersion()},600000);
+	  // activate addtohomescreen for smallMobile devices
+	  addToHomescreen();
   }
+  
   // show loading overlay and circles
   /**
   var el = document.getElementById('alertBoxOverlay');
@@ -4559,23 +4590,6 @@ function doOnLoad () {
   // check browser and capabilities
   var err = checkBrowser();
   if (err) errors.push (err);
-
-	// when smallMobile is checked (loaded from settings), or when screen
-	// width is small and no setting is found, switch to smallMobile
-	if (document.getElementById ('smallMobile').checked) {
-		switchSmallMobile ();
-	} else if (window.screen.availWidth < 761) {
-
-		function f(settings) {
-			if (!/\bsmallMobile\b/.test (settings)) {
-				document.getElementById ('smallMobile').checked = 'checked';
-				switchSmallMobile ();
-			}
-		}
-		
-		if (storage) getLocal ('settings', f); else f();			 
-		
-	}
 	
   // by default, do not allow drag & drop of files to OpenAero
   document.body.addEventListener('dragover', noDragOver);
@@ -4601,8 +4615,6 @@ function doOnLoad () {
   window.matchMedia('(orientation: portrait)').addListener (windowResize);
   window.matchMedia('(orientation: landscape)').addListener (windowResize);
   
-  // Parse the figures file
-  parseFiguresFile();
   // Parse the rules
   parseRules();
   // set default Form to B
@@ -4652,9 +4664,9 @@ function doOnLoad () {
     
   // Add combo box functions for rules/category/program input fields
   // but make sure we don't change the logo (true)
-  new combo('rules','#cc9','#ffc');
-  new combo('category','#cc9','#ffc');
-  new combo('program','#cc9','#ffc');
+  new combo('rules','#ddf','transparent');
+  new combo('category','#ddf','transparent');
+  new combo('program','#ddf','transparent');
   changeCombo('program');
   
   // check if the sequence displayed is the one in the input field
@@ -4663,6 +4675,7 @@ function doOnLoad () {
   // need to do this to make sure the sequence is drawn when loaded
   // from localStorage or url
   selectForm(activeForm);
+
   if (smallMobile) selectTab('tab-sequenceInfo');
   
   // add submenu showing/hiding
@@ -4704,10 +4717,6 @@ function doOnLoad () {
 		}
   }
     
-  // Check for the latest version every 10 minutes
-  if (!chromeApp.active) {
-    window.setInterval(function(){latestVersion()},600000);
-  }
   // check if we are running from a file (DEPRECATED)
   if (window.location.protocol === 'file:') {
     if (presentFileError) errors.push (userText.runFromFile);
@@ -4733,20 +4742,14 @@ function doOnLoad () {
   if (!(chromeApp.active || window.location.hostname.match(/^(.+\.)?openaero.net$/))) {
     latestVersion();
   }
-
-  if (mobileDevice || smallMobile) mobileInterface();
-  
-  // activate addtohomescreen for smallMobile devices
-  if (!chromeApp.active) addToHomescreen();
   
   // retrieve queue from storage
   queueFromStorage ();
 
   // load (mostly) completed, remove loading icon in 1 second
-	var el = document.getElementById ('loading');
-  if (el) {
-		setTimeout (function() {el.style = 'opacity: 0.01;';}, 500);
-		setTimeout (function() {el.parentNode.removeChild (el);}, 1000);
+  if (loading) {
+		setTimeout (function() {loading.style = 'opacity: 0.01;';}, 500);
+		setTimeout (function() {loading.parentNode.removeChild (loading);}, 1000);
 	}
   
   // load Google Analytics
@@ -4885,6 +4888,7 @@ function addEventListeners () {
   document.getElementById('t_saveSequence').parentNode.addEventListener('mousedown', saveSequence, false);
   document.getElementById('t_emailSequence').parentNode.addEventListener('mousedown', emailSequence, false);
   document.getElementById('t_saveAsLink').parentNode.addEventListener('mousedown', saveAsURL, false);
+  document.getElementById('exitDesigner').addEventListener('mousedown', function(){exitFuDesigner(false)}, false);
   document.getElementById('t_saveFigsSeparate').parentNode.addEventListener('mousedown', saveFigs, false);
   document.getElementById('t_printSaveForms').parentNode.addEventListener('mousedown', function(){printDialog(true)}, false);
   
@@ -5008,7 +5012,7 @@ function addEventListeners () {
   }, false);
 
   document.getElementById('subSequenceDirection').addEventListener('change', updateFigure, false);
-  document.getElementById('t_addFigureText').addEventListener('mousedown', showFigureSelector, false);
+  document.getElementById('addFigureText').addEventListener('mousedown', showFigureSelector, false);
   document.getElementById('subSequence').addEventListener('click', clickButton, false);
   document.getElementById('deleteFig').addEventListener('click', clickButton, false);
   document.getElementById('flipYAxis').addEventListener('click', clickButton, false);
@@ -6250,6 +6254,7 @@ function loadPrintDialogStorage () {
 // changeLanguage will change the interface language
 function changeLanguage () {
   updateUserTexts();
+  updateFigureSelectorOptions ();
   if (mobileDevice) mobileMenuHeader ();
   saveSettingsStorage();
   checkSequenceChanged(true);
@@ -6479,6 +6484,7 @@ function updateFigureOptions (figureId) {
   document.getElementById ('figureString').classList.add ('noDisplay');
 
   if (selectedFigure.id === null) {
+		document.getElementById('figureInfo').classList.add ('noFigure');
     if (activeForm !== 'FU') {
       // clear figure box
       document.getElementById('selectedFigure').classList.remove('active');
@@ -6493,17 +6499,16 @@ function updateFigureOptions (figureId) {
     //document.getElementById('figureOptions').classList.add('noDisplay');
     document.getElementById('unknownFigure').classList.add('noDisplay');
     document.getElementById('entryExit').classList.add('noDisplay');
-    // hide comments box
-    document.getElementById('commentSection').classList.add('noDisplay');
     // hide Free (Un)known disabled options warning
     document.getElementById('FUfigOptionsDisabled').classList.add ('noDisplay');
   } else {
+		document.getElementById('figureInfo').classList.remove ('noFigure');
     // activate figure box
     document.getElementById('selectedFigure').classList.add('active');
     if ((activeForm === 'FU') && f.unknownFigureLetter && (f.unknownFigureLetter !== 'L')) {
-      document.getElementById ('t_addFigureText').classList.add ('noDisplay');
+      document.getElementById ('addFigureText').classList.add ('noDisplay');
     } else {
-      document.getElementById ('t_addFigureText').classList.remove ('noDisplay');
+      document.getElementById ('addFigureText').classList.remove ('noDisplay');
     }
     
     if ((activeForm === 'FU') && ((f.unknownFigureLetter === 'L') || !f.unknownFigureLetter)) {
@@ -6722,7 +6727,6 @@ function updateFigureOptions (figureId) {
     document.getElementById('exitExt-value').value = f.exitExt || 0;
     // show comments box
     var el = document.getElementById('commentSection');
-    el.classList.remove('noDisplay');
     if (f.comments || (document.activeElement.id === 'comments')) {
       el.classList.add ('expanded');
     } else el.classList.remove ('expanded');
@@ -7418,7 +7422,7 @@ function changeSequenceInfo () {
         if (activeSequence.xml) {
           activeSequence.undo.push (activeSequence.xml);
           // maximum 100 undos
-          if (activeSequence.undo.length > 100) {
+          while (activeSequence.undo.length > 100) {
             activeSequence.undo.shift();
           }
         }
@@ -7840,7 +7844,8 @@ function parseFiguresFile () {
   // add an option for the group to the figure selector
   var option = document.createElement('option');
   option.setAttribute('value', 0);
-  option.text = '* ' + userText.figureQueue;
+  option.id = 't_figureQueue';
+  option.classList.add ('userText');
   if (figGroupSelector) figGroupSelector.appendChild(option);
 
   var figMainGroup = '';
@@ -8169,8 +8174,6 @@ function loadRules() {
     return false;
   }
 
-  document.getElementById ('rulesActive').classList.add ('good');
-
   var year = rulesYear (ruleName);
 
   // return true if rules were already loaded
@@ -8178,7 +8181,11 @@ function loadRules() {
     return true;
   }
 
+	// unload previous rules
 	unloadRules();
+
+  document.getElementById ('rulesActive').classList.add ('good');
+
   // Set parseSection to true to match the global rules
   var parseSection = true;
   var ruleSection = ruleName + ' ' + catName + ' ' + programName;
@@ -9321,7 +9328,7 @@ function checkAlert (value, type, figNr, rule) {
       if (rule) {
         if (checkRule[rule] && checkRule[rule].rule) {
           alertRule = checkRule[rule].rule;
-        } else alertRule = rule;
+        }// else alertRule = rule;
       }
   }
   if (alertRule) alertMsgRules [alertMsgs[alertMsgs.length - 1]] = alertRule;
@@ -9610,9 +9617,7 @@ function updateFigureSelectorOptions (selectedOption) {
   var container = document.getElementById('figureSelectorOptionsDiv');
   if (container) {
     // clear container
-    while (container.childNodes.length) {
-      container.removeChild (container.lastChild);
-    }
+    while (container.firstChild) container.removeChild (container.firstChild);
     // find first and last (if any) real figures
     var firstFigure = false;
     var lastFigure = false;
@@ -9643,10 +9648,13 @@ function updateFigureSelectorOptions (selectedOption) {
       for (var i = 0; i < options.length; i++) {
         var option = document.createElement ('option');
         option.value = options[i];
-        if (options[i] == selectedOption) option.selected = 'selected';
+        if (options[i] == selectedOption) {
+					option.setAttribute('selected', 'selected');
+				}
         option.text = userText[options[i]];
         select.appendChild (option);
       }
+      select.value = selectedOption;
       container.appendChild (select);
     } else {
       // otherwise, make a placeholder
@@ -9670,7 +9678,7 @@ function changeFigureString () {
 // changeHideIllegal is executed when the hideIllegal checkbox is toggled
 function changeHideIllegal() {
   availableFigureGroups();
-  changeFigureGroup (document.getElementById('figureGroup'));
+  changeFigureGroup ();
 }
 
 // availableFigureGroups selects the available figure groups. May be
@@ -10263,7 +10271,7 @@ function selectFigure (e) {
     if (e && e.parentNode.classList) {
       e.parentNode.classList.add ('selected');
     }
-    elFT.parentNode.classList.add ('hoverdisplay');
+    elFT.parentNode.parentNode.classList.add ('hoverdisplay');
     elFT.innerHTML = userText.clickChangeFigure;
     
     // with figure loaded from chooser, remove any unknown figure letters
@@ -10329,7 +10337,7 @@ function selectFigure (e) {
       updateFigureSelectorOptions();
       // correctly set the figure change/edit block
       document.getElementById('selectedFigureSvg').innerHTML = "";
-      elFT.parentNode.classList.remove ('hoverdisplay');
+      elFT.parentNode.parentNode.classList.remove ('hoverdisplay');
       elFT.innerHTML = userText.clickAddFigure;
       document.getElementById('figureHeader').innerHTML = '';
     }
@@ -10351,7 +10359,7 @@ function selectFigureFu (id) {
 
   var elFT = document.getElementById('t_addFigureText');
 
-  elFT.parentNode.classList.add ('hoverdisplay');
+  elFT.parentNode.parentNode.classList.add ('hoverdisplay');
   elFT.innerHTML = userText.clickChangeFigure;
 
   setFigureSelected(id);
@@ -11210,15 +11218,19 @@ function clearPositioningOption () {
 
 // clearPositioning removes all figure positioning elements
 function clearPositioning () {
+	var changesMade = false;
   // make sure no figure is selected
   selectFigure (false);
   // remove all moveTo, curveTo and moveForward figures
   for (var i = 0; i < figures.length; i++) {
     if (figures[i].moveTo || figures[i].curveTo || figures[i].moveForward) {
       updateSequence (i, '', true);
+      if (changesMade) activeSequence.undo.pop();
+      changesMade = true;
       i--;
     }
   }
+  return changesMade;
 }
 
 // separateFigure will make sure figures are separated from previous and
@@ -11266,8 +11278,13 @@ function separateFigure (id) {
 // separateFigures separates all the figures from each other. This is
 // done vertically with a curveTo
 function separateFigures (noConfirm) {
+	
   function f () {
-    clearPositioning();
+		// clearPositioning is false when no changes were made. In this
+		// case, add undo
+    if (!clearPositioning()) {
+			activeSequence.undo.push (activeSequence.xml);
+		}
     // start a loop that will continue until nothing's done any more
     do {
       var breakLoop = false;
@@ -11282,12 +11299,12 @@ function separateFigures (noConfirm) {
 
   // only do this when on Form B or C
   if ((activeForm === 'B') || (activeForm === 'C')) {
-    if (noConfirm) {
+    if (noConfirm === true) {
       f();
     } else {
       // confirm clearing the position formatting. When confirmed, the
       // function f is executed
-      confirmBox (userText.clearPositioningConfirm,
+      confirmBox (userText.separateFiguresConfirm,
         userText.separateFigures, f);
     }
   } else {
@@ -11342,7 +11359,10 @@ function moveClear (i) {
       //        for (j = i; j < figures.length; j++) {
       //          if (figures[j].bBox) figures[j].bBox.y = figures[j].bBox.y + (moveDown * lineElement)
       //        }
+      var xml = activeSequence.xml;
       updateSequence(i - 1, '(0,' + moveDown + ')', false);
+      // don't add undo for this
+      activeSequence.undo.pop();
       breakLoop = true;
       return true;
     }
@@ -11757,6 +11777,11 @@ function exitFuDesigner (newSequence) {
       } else {
         selectFigure (false);
         selectForm ('B');
+        
+        // remove unassigned Free figures
+        sequenceText.innerText = sequenceText.innerText.replace (/X/g, '');
+        checkSequenceChanged ();
+        
         separateFigures (true);
         sequenceText.innerText = sequenceText.innerText.trim().replace(/ e(u|d|j|ja)$/, '').replace(/^eu[ ]*/, '');
   
@@ -11930,7 +11955,7 @@ function handleFreeDrop (e) {
     string = string.replace (regexSub, '');
     updateSequence (figures.length - 1, string + ' eu');
     // when dropping Additional, select and open figure editor
-    if (string.match (/\@L/)) {
+    if (string.match (/\@L/) || (string === 'X')) {
       selectFigureFu (figures.length - 2);
     }
   } else {
@@ -13705,26 +13730,32 @@ function updateDefaultView (queue) {
 /******************************************
  * Functions for opening and saving files */
 
-// clearSequence will start a new blank sequence
+// clearSequence will start a new blank sequence, or just clear the
+// sequenceText in Free (Un)Known designer
 function clearSequence () {
   function clear() {
-    // clear all input fields
-    var fields = document.getElementsByTagName('input');
-    var length = fields.length;
-    while (length--) {
-      if (fields[length].type === 'text') fields[length].value = '';
-    }
-    var fields = document.getElementsByTagName('textarea');
-    var length = fields.length;
-    while (length--) fields[length].value = '';
-    sequenceText.innerText = '';
-
-    document.getElementById ('fu_figures').value = '';
-    document.getElementById ('default_view').value = '';
-    document.getElementById ('pilot_id').value = '';	// Ajout Modif GG 2017
-    document.getElementById ('flight_nb').value = '';	// Ajout Modif GG 2017
-    // reload sequence
-    unloadRules();
+		if (activeForm !== 'FU') {
+	    // clear all input fields
+	    var fields = document.getElementsByTagName('input');
+	    var length = fields.length;
+	    while (length--) {
+	      if (fields[length].type === 'text') fields[length].value = '';
+	    }
+	    var fields = document.getElementsByTagName('textarea');
+	    var length = fields.length;
+	    while (length--) fields[length].value = '';
+	    sequenceText.innerText = '';
+	
+	    document.getElementById ('fu_figures').value = '';
+	    document.getElementById ('default_view').value = '';
+	    document.getElementById ('pilot_id').value = '';	// Ajout Modif GG 2017
+	    document.getElementById ('flight_nb').value = '';	// Ajout Modif GG 2017
+	    // reload sequence
+	    unloadRules();
+		} else {
+			sequenceText.innerText = 'eu';
+		}
+			
     checkSequenceChanged();
     displayAlerts();
     sequenceSaved = true;

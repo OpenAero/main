@@ -75,6 +75,9 @@ body {
 .material-icons.md-18 {
   font-size: 18px;
 }
+.material-icons.md-48 {
+  font-size: 48px;
+}
 .material-icons.inText {
   position: relative;
   top: 3px;
@@ -696,10 +699,18 @@ textarea {
 #topBlock {
 	text-align: center; /* for t_finalizeSequence */
 }
+#t_finalizeSequence {
+	display: none;
+}
 #menu {
 	text-align: initial;
 }
-
+#exitDesigner {
+	display: none !important;
+}
+.fuDesigner #exitDesigner {
+	display: block !important;
+}
 /* virtual keyboard */
 #virtualKeyboard {
   position: absolute;
@@ -877,8 +888,8 @@ html.framed ol {
 
 .docs {
   background: #f8f8f8;
-  background: -webkit-linear-gradient(315deg, #ffe090, #fff8e0);
-  background: linear-gradient(315deg, #ffe090, #fff8e0);
+  background: -webkit-linear-gradient(315deg, #ffe0b2, #fff3e0);
+  background: linear-gradient(315deg, #ffe0b2, #fff3e0);
 }
 .docs table {
   margin: 16px;
@@ -1300,6 +1311,9 @@ option.used {
   float: left;
   border-left: 1px solid #ccc;
 }
+#printDialog .expansion-panel {
+	line-height: 32px;
+}
 #maxScalingSpan {
   float: right;
   display: inline-block;
@@ -1308,10 +1322,11 @@ option.used {
   width: 4em;
   text-align: right;
 }
-#saveImageVariables input {
+#saveImageVariables .form-group {
   float: right;
+}
+#saveImageVariables input {
   text-align: right;
-  padding-right: 3px;
 }
 #printMargins td {
   text-align: center;
@@ -1690,19 +1705,26 @@ option.used {
 .hoverdisplay:hover div {
   display: block;
 }
-#t_addFigureText {
+#addFigureText {
   position: absolute;
   padding-top: 0.5em;
   top: 0;
   left: 0;
   bottom: 0;
   right: 0;
-  background: white;
-  opacity: 0.7;
+  background: rgba(255,255,255,0.7);
   z-index: 1;
   font-size: 2em;
-  color: black;
+  color: rgba(0,0,0,0.7);
   text-align: center;
+  vertical-align: center;
+}
+t_addFigureText {
+	opacity: 0.7;
+}
+#addFigureText .material-icons {
+	font-size: 48px;
+	color: #673ab7;
 }
 
 /* buttons */
@@ -1803,10 +1825,13 @@ option.used {
 }
 .rollComment {
   float: left;
-  width: 80px;
+  width: 76px;
 }
 #commentSection {
   padding-top: 0;
+}
+.noFigure .hideNoFigure {
+  display: none;
 }
 /* button tooltips, disabled for mobile */
 .tooltip {
@@ -1976,7 +2001,7 @@ table#figureChooserTable div {
   background: #fff;
 }
 .familyB {
-  background: #f8f8f8;
+  background: #fff9f0;
 }
 .removeFigureButton {
   position: absolute !important;
@@ -2075,9 +2100,10 @@ table#figureChooserTable div {
 }
 .combo li {
   display:block;
-  padding: 4px;
-  margin-left: 1em;
-  text-indent: -1em;
+  padding: 4px 16px 4px 32px;
+  margin-left: -8px;
+  margin-right: -8px;
+  text-indent: -16px;
 }
 
 ::-webkit-input-placeholder {

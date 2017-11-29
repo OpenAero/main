@@ -32,13 +32,11 @@ lang.en = {
 // Subsequent keys are alphabetical.
 'en' : 'English',
 'about' : 'About',
-// changed 2016.1
 'aboutNewer' : 'You are running a newer version than Stable. You have ' +
   'all the latest features but may run into more bugs. If you do, ' +
   'you can help OpenAero development by adding them to ' +
   '<a href="https://github.com/OpenAero/main/issues" target="_blank">' +
   'the Issues list</a>.',
-// changed 2016.1
 'aboutOlder' : '<font color="red">You are running an outdated version. ' +
   '</font><br /><ul>' +
   '<li>If you are using the Chrome app, open Chrome and enter ' +
@@ -89,9 +87,8 @@ lang.en = {
 // end new
 'addAllToQueueWait' : 'Adding all figures in sequence to queue. This ' +
   'may take a while. Please wait...',
-'addFigureText' : 'Click to add figure',
+'addFigureText' : 'Add figure',
 'addingFigure' : 'Add new figure',
-// changed 2016.1
 'additional' : 'Additional',
 'addToQueue' : 'Add to Queue',
 'acreg': 'Aircraft registration',
@@ -104,7 +101,6 @@ lang.en = {
     'elements allowed',
   'noCrossoverSpin' : 'Crossover spins are not allowed',
   'spinFirst' : 'No roll allowed before spin on same line',
-  // new 2016.2.1
   'spinsStartHorizontal' : 'Spins should start from horizontal flight',
   'unlinkedSameNotAllowed' : 'Unlinked rolls of the same type and ' +
     'the same direction are not allowed'
@@ -122,7 +118,6 @@ lang.en = {
 'cancelPrint' : 'Cancel',
 'cancelSave' : 'Cancel',
 'category' : 'Category',
-// new 2016.1.5
 'changedFigureK' : 'Standard Aresti K of figure %s changed ' +
   'according rules %s',
 'changedFigureKMulti' : 'Standard Aresti K of figures %s changed ' +
@@ -148,7 +143,6 @@ lang.en = {
 'checkMultiCounter' : 'Checking sequence %s of %s<br>%s<br>This may ' +
   'take some time. Please wait...',
 'checkMultipleSeq' : 'Check multiple seq',
-// changed 2016.1.1
 'checkMultiUseReference' : 'Use <a href="#">reference sequence</a> ' +
   'for Free (Un)known',
 'checkMultiWait' : 'Checking %s sequences.<br>This may ' +
@@ -168,8 +162,8 @@ lang.en = {
 'clearQueue' : 'Clear Queue',
 'clearQueueConfirm' : 'Are you sure you want to remove all figures from queue?',
 'clearSequence' : 'Clear sequence',
-'clickAddFigure' : 'Click to add figure',
-'clickChangeFigure' : 'Click to change/add figure',
+'clickAddFigure' : 'Add figure',
+'clickChangeFigure' : 'Change/add figure',
 'closeAlert' : 'Close',
 'closeIt' : 'Close',
 'columns' : 'Grid columns',
@@ -185,7 +179,7 @@ lang.en = {
 'convertingToPng' : 'Converting forms to PNG image.<br>This may take ' +
   'some time. Please wait...',
 'convertingTitle' : 'Converting...',
-// new 2017.2.4
+// new 2018.1
 'copyClipboard' : 'Copy to clipboard',
 'date' : 'Date',
 'demo' : 'Demo',
@@ -222,6 +216,7 @@ lang.en = {
 'emailSequence' : 'Email sequence',
 'END' : 'END',
 'entryExitAttExt' : 'Entry/exit attitude & extension',
+'exitDesigner' : 'Exit Designer',
 'expert' : 'Expert',
 'feedback' : 'Feedback',
 'fileOpeningNotSupported' : 'File opening is not supported in ' +
@@ -233,13 +228,11 @@ lang.en = {
 'figSelectorReplace' : 'Replace active figure',
 'figsInGrid' : 'Figs in grid',
 'figureAlreadyInQueue' : 'This figure is already in the queue',
-// changed 2016.3
 'figureEditor' : 'Figure editor',
 'figureK' : 'Figure K',
-// new 2016.1.3
 'figureLetterNotAllowed' : '(%s) Figure letter %s is not allowed',
 'figurePositioning' : 'Figure positioning',
-'figureQueue' : 'Figure Queue',
+'figureQueue' : '* Figure Queue',
 'figureString' : 'Figure string',
 'file' : 'File',
 'fileName' : 'File name',
@@ -250,14 +243,13 @@ lang.en = {
 'flipYAxis' : 'Flip Y-axis',
 'forElement' : ' for element ',
 'formA' : 'Form A',
-'formB' : 'Form B',
-'formC' : 'Form C',
+'formB' : 'Form B / Wind Right',
+'formC' : 'Form C / Wind Left',
 'formL' : 'Form L',
 'formR' : 'Form R',
 'free' : 'Free',
 'freeKnownGuidance' : 'Free Known Guidance',
 'freeUnknownFig' : 'Letter ',
-// changed 2016.1
 'freeUnknownAdditional' : 'Free unknown Additional',
 'FUconfirmExit' : 'The Free (Un)known designer may not restart ' +
   'succesfully in this situation without re-opening the sequence. ' +
@@ -277,7 +269,6 @@ lang.en = {
 'FUletterMulti' : '(%s) figure letter %s used multiple times',
 'FUmultipleSubsequences' : 'The sequence has %s subsequences. There ' +
   'should be only one',
-// changed 2016.1
 'fuSelectFigureFirst' : 'Click a figure on one of the subsequences ' +
   'to edit it. You can drag & drop figures and Additional figures ' + 
   'from the <i>Figures</i> tab to the subsequence(s).',
@@ -316,7 +307,6 @@ lang.en = {
 'importRulesFile' : 'Import rules file',
 'insertions' : 'Insertions',
 'installation' : 'Installation',
-// changed 2016.1.3
 'installChromeApp' : '<p>OpenAero has now been installed ' +
   'in this browser and will automatically receive updates. It is ' +
   'available online and offline at <a href="http://%1\$s" target="_blank">' +
@@ -333,7 +323,6 @@ lang.en = {
   'access it by opening a new tab in Chrome. By right-clicking you ' +
   'add the App to your desktop.',
 'installChromeAppTitle' : 'Install Chrome App',
-// new 2016.1.3
 'installed' : '<p>OpenAero has now been installed ' +
   'in this browser and will automatically receive updates. It is ' +
   'available online and offline at <a href="http://%1\$s" target="_blank">' +
@@ -347,7 +336,6 @@ lang.en = {
 'iOSprintExplain' : 'Select what you would like to print or save, then ' +
   'tap <strong>Save PNG image</strong>',
 'iOSsaveFile' : 'Show sequence image',
-// changed 2016.3.2
 'iOSsaveFileMessage' : '<p>By clicking the <i>Save file</i> ' +
   'button a new window or browser tab will be opened. You ' +
   'can then tap the <span class="iOSsaveIcon"></span> button to print ' +
@@ -361,26 +349,23 @@ lang.en = {
 'language' : 'Language',
 // new 2017.1
 'library' : 'Library',
-// changed 2016.1.3
 'loadNewVersion' : 'A new version is available and will automatically ' +
   'be loaded next time you start OpenAero. Load it now?',
 'loadNewVersionNoCookies' : 'A new version of OpenAero is available. ' +
 	'Load it? If you have a sequence open now it will be cleared.',
 'loadNewVersionTitle' : 'New version',
 'location' : 'Location',
-// new 2016.1.3
 'locked' : 'This sequence is locked. To unlock, choose <i>Unlock</i> ' +
   'from the Sequence menu',
 'lockSequence' : 'Lock',
 'logo' : 'Logo',
-// new 2016.3
 'logoChooserCancel' : 'Cancel',
 'logoChooserTitle' : 'Choose logo',
 'logoExplain' : 'Upload your own logo by clicking on the file ' +
   'chooser below, or select one of the displayed logos.',
 'manual' : 'Manual',
 'maxAdditionals' : 'Maximum additional figures allowed: %s',
-'maxScaling' : 'Max small seq. scaling',
+'maxScaling' : 'Max small seq. scaling %',
 'missedSlot' : 'Missed Slot',
 // changed 2017.1
 'missingInfo' : 'There seems to be essential Sequence Info missing.</br>' +
@@ -394,9 +379,6 @@ lang.en = {
 'multiRemoveLogo' : 'Remove logo',
 'multiOriginalLogo' : 'Use original logo',
 'newCopySubsequence' : 'New / copy subsequence',
-/** removed in 2016.1.3
-'newReplacementsABC' : 'New style replacements for A/B/C forms',
-*/
 'newTurnPerspective' : 'Realistic-looking perspective for turns ' +
   '<font color=red>EXPERIMENTAL, DO NOT USE FOR COMPETITION SEQUENCES!' +
   '</font>',
@@ -412,7 +394,6 @@ lang.en = {
   'sequence text <i>41h4,f,4 66</i>)',
 'none' : 'None',
 'noRollAllowed' : 'No roll allowed according Aresti Catalog',
-// changed 2016.2.2
 'noRules' : 'No sequence validity checking rules active.',
 'notes' : 'Notes',
 'notOnFormBC' : 'This function is only available when Form ' +
@@ -450,7 +431,6 @@ lang.en = {
 'openSequenceLinkTitle' : 'Open sequence from link',
 'orFileDrop' : 'Or drag & drop your files here',
 'orFileDropPrint' : 'Or drag & drop your files here',
-// new 2016.1.1
 'otherNote' : 'Other(note...)',
 'pageSpacing' : 'Page spacing',
 'pilot' : 'Pilot',
@@ -480,7 +460,6 @@ lang.en = {
 'printFormGrid' : 'Figures in grid',
 'printFormL' : 'Form L',
 'printFormR' : 'Form R',
-// new 2016.3.2
 'printMargins' : 'Print margins',
 'printMiniFormAonB' : 'with mini Form A',
 'printMiniFormAonC' : 'with mini Form A',
@@ -530,12 +509,10 @@ lang.en = {
   'with required figures, such as Free Known and ' +
   'Unknown sequences. Checks are done to confirm correct letters, ' +
   'figure Aresti numbers and entry/exit direction combination.',
-// new 2016.1.1
 'referenceSequenceFixed' : 'This reference sequence can not be ' +
   'changed as it is coupled to the active sequence rules.',
-// changed 2016.1.1
 'referenceSequenceTitle' : 'Reference sequence',
-// new 2017.2.4
+// new 2018.1
 'registration' : 'Registration',
 'remove' : 'Remove',
 'removeLogo' : 'Remove logo',
@@ -563,7 +540,6 @@ lang.en = {
   'Please go to <a href="http://openaero.net">openaero.net</a>. ' +
   'OpenAero will automatically install in your browser and will also ' +
   'be available offline.',
-// new 2016.3.4
 'runOverHttp' : 'Your link to OpenAero seems to be outdated. Please ' +
   'make sure you use ' +
   '<a href="https://openaero.net">https://openaero.net</a>.<br>' +
@@ -591,6 +567,10 @@ lang.en = {
 'selectCategoryFirst' : 'Select Category first',
 'selectRulesFirst' : 'Select Rules first',
 'separateFigures' : 'Separate figures',
+// new 2018.1
+'separateFiguresConfirm' : 'This will separate the figures ' +
+	'from each other and remove all previous sequence position ' +
+  'formatting. Are you sure you want to continue?',
 'sequence' : 'Sequence',
 'sequenceCheckLog' : 'OpenAero Sequence check log',
 'sequenceCorrect' : 'Sequence is correct',
@@ -612,7 +592,7 @@ lang.en = {
   'figure is selected',
 'showQueue' : 'Show Queue',
 'signature' : 'Signature',
-// new 2017.2.4
+// new 2018.1
 'smallMobile' : 'Phone layout',
 'styleSettingsHeader' : 'Here you can change various style settings. ' +
   'Please keep in mind that these change the look of ' +
@@ -636,7 +616,6 @@ lang.en = {
   //exitExt' : 'Change figure exit line length',
   'figEntryButton' : 'Switch figure entry upright/inverted',
   'figExitButton' : 'Switch figure exit upright/inverted',
-  // new 2016.2
   'flipYAxis' : 'Flip Y-axis',
   'magMin' : 'Make figure smaller',
   'magPlus' : 'Make figure larger',
@@ -648,7 +627,6 @@ lang.en = {
   'switchY' : 'Switch Y exit direction'
 }, // end tooltip sub-array
 'totalK' : 'Total K',
-// new 2016.1.1
 'trgViolation' : 'Trg Violation',
 'unknownFileType' : 'File opening is not supported in this browser.',
 'unlockSequence' : 'Unlock',
@@ -663,7 +641,6 @@ lang.en = {
   'changelog.txt</a> if interested)</li>' +
   '</ul>',
 'view' : 'View',
-// new 2016.2
 'warningNewerVersion' : '<p>This sequence was created with a newer ' +
   'version of OpenAero than you are running. It may contain new ' +
   'features. Please double check the sequence is correct.</p>',
@@ -679,7 +656,6 @@ lang.en = {
   'OpenAero version older than 1.3.7. Some snap rolls started from knife ' +
   'edge flight may have had the wrong Aresti number and K. They should be ' +
   'correct now. Please check if applicable.</p>',
-// new 2016.1
 'warningPre20161' : '<p>The file you just opened was created with an ' +
   'OpenAero version older than 2016.1. Also, the following figure was ' +
   'detected:<br>A double humpty bump with one of the radii enlarged, ' +
@@ -687,7 +663,6 @@ lang.en = {
   'the second line.<br> This type of figure was handled incorrectly ' +
   'on older versions of OpenAero. Please check that all double ' +
   'Humpty Bump directions are correct.</p>',
-// new 2016.1.1
 'warningPre201611' : '<p>The file you just opened was created with an ' +
   'OpenAero version older than 2016.1.1. Also, it was opened as a ' +
   'Grid and contains a figure exit direction change (^ or > symbol). ' +

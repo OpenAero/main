@@ -83,7 +83,7 @@ lang.fr = {
   'aucune figure à ajouter à la file',
 'addAllToQueueWait' : 'Ajout de toutes les figures à la file. Ceci ' +
   'peut prendre du temps. Patentiez, svp…',
-'addFigureText' : 'Cliquer pour ajouter figure',
+'addFigureText' : 'Ajouter figure',
 'addingFigure' : 'Ajouter une nouvelle figure',
 // updated 2017.2.4
 'additional' : 'Supplé&#173;mentaire',
@@ -163,8 +163,8 @@ lang.fr = {
 'clearQueue' : 'Effacer la file',
 'clearQueueConfirm' : 'Etes-vous sur de vouloir effacer toutes les figures de la file ?',
 'clearSequence' : 'Effacer le programme',
-'clickAddFigure' : 'Cliquer pour ajouter figure',
-'clickChangeFigure' : 'Cliquer pour changer ou ajouter une figure',
+'clickAddFigure' : 'Ajouter figure',
+'clickChangeFigure' : 'Changer ou ajouter une figure',
 'closeAlert' : 'Fermer',
 'closeIt' : 'Fermer',
 'columns' : 'Colonnes en tableau',
@@ -221,6 +221,7 @@ lang.fr = {
 'emailSequence' : 'Envoyer par email le programme',
 'END' : 'FIN',
 'entryExitAttExt' : 'Attitude de début/fin et longueur',
+'exitDesigner' : 'Quitter l\'assembleur',
 'expert' : 'Expert',
 'feedback' : 'Retour',
 'fileOpeningNotSupported' : 'L\'ouverture de fichier n\'est pas supportée dans ' +
@@ -237,11 +238,12 @@ lang.fr = {
 // new 2016.1.3
 'figureLetterNotAllowed' : '(%s) La lettre d\'identification %s n\'est pas autorisée',
 'figurePositioning' : 'Positionnement de figure',
-'figureQueue' : 'File / Tampon',
+'figureQueue' : '* File / Tampon',
 'figureString' : 'Texte de la figure',
 'file' : 'Fichier',
 'fileName' : 'Nom du fichier',
-'finalizeSequence' : 'Finaliser le programme et quitter l\'assembleur',
+// changed 2018.1
+'finalizeSequence' : 'Finaliser le programme',
 'flightNr' : 'Vol N°',
 'flipYAxis' : 'Changer d\'axe Y',
 'forElement' : ' pour élément ',
@@ -372,7 +374,7 @@ lang.fr = {
   'ou sélectionnez un des logos déjà affiches.',
 'manual' : 'Manuel OpenAero',
 'maxAdditionals' : 'Maximum de figures supplémentaires permis : %s',
-'maxScaling' : 'Agrandissement Max des petits programmes',
+'maxScaling' : 'Agrandissement Max des petits programmes %',
 'missedSlot' : 'Hors créneau',
 // changed 2017.1
 'missingInfo' : 'Des informations essentielles du programme manquent.</br>' +

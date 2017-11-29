@@ -192,6 +192,7 @@ i.rightArrow:after {
   top: 0;
   left: -282px;
   z-index: 1;
+  box-shadow: none; /* improves rendering speed */
 }
 /*unhide level 2 links on li.active from level 1*/ 
 #menu li.active ul {

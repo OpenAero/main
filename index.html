@@ -309,8 +309,8 @@
               </label>
               <label>
                 <span class="userText" id="t_maxScaling"></span>
-                <span id="maxScalingSpan">
-                  <input type="number" step="10" min="100" value="300" id="maxScaling">%
+                <span id="maxScalingSpan" class="form-group">
+                  <input type="number" step="10" min="100" value="300" id="maxScaling"><i class="bar"></i>
                 </span>
               </label>
             </div>
@@ -323,15 +323,24 @@
                 <div>
                   <label>
                     <span class="userText" id="t_imageWidth"></span>
-                    <input type="number" step="10" value="800" id="imageWidth">
+                    <span class="form-group">
+	                    <input type="number" step="10" value="800" id="imageWidth">
+	                    <i class="bar"></i>
+	                  </span>
                   </label>
                   <label>
                     <span class="userText" id="t_imageHeight"></span>
-                    <input type="number" step="10" value="1130" id="imageHeight">
+                    <span class="form-group">
+	                    <input type="number" step="10" value="1130" id="imageHeight">
+	                    <i class="bar"></i>
+	                  </span>
                   </label>
                   <label>
                     <span class="userText" id="t_pageSpacing"></span>
-                    <input type="number" step="10" value="40" id="pageSpacing">
+                    <span class="form-group">
+	                    <input type="number" step="10" value="40" id="pageSpacing">
+	                    <i class="bar"></i>
+	                  </span>
                   </label>
                 </div>
               </div>
@@ -759,6 +768,10 @@
 									<i class="material-icons menuIcon">link</i>
 									<span class="userText" id="t_saveAsLink"></span>
 								</li>
+								<li id="exitDesigner" class="menuFileItem">
+									<i class="material-icons menuIcon">cancel</i>
+									<span class="userText" id="t_exitDesigner"></span>
+								</li>
                 <li class="divider menuFileItem disableFUdesigner">
 									<i class="material-icons menuIcon">archive</i>
 									<span class="userText disableFUdesigner" id="t_saveFigsSeparate"></span>
@@ -1035,7 +1048,7 @@
                 </li>
               </ul>
             </div>
-            <div class=clearBoth></div>
+            <div class="clearBoth"></div>
             <div id="leftBlockTop">
               <!-- Sequence info -->
               <div id="sequenceInfo">
@@ -1064,7 +1077,7 @@
                 </div>
                 <div class="section expansion-panel expanded">
 									<span class="contentLabel" id="rulesLabel">
-										<i id="rulesActive" class="material-icons status bad"></i>
+										<i id="rulesActive" class="material-icons status"></i>
 										<span id="activeRules"></span>
 										<i class="material-icons expand-toggle">expand_more</i>
 									</span>
@@ -1143,11 +1156,11 @@
 	                <div class="item">
                     <span id="fileName"></span>
 		              </div>
-	                <input type=hidden id="oa_version">
-	                <input type=hidden id="default_view">
-	                <input type=hidden id="lock_sequence">
-	                <input type=hidden id="pilot_id">    <!-- Ajout Modif GG 2017 -->
-		              <input type=hidden id="flight_nb">   <!-- Ajout Modif GG 2017 -->
+	                <input type="hidden" id="oa_version">
+	                <input type="hidden" id="default_view">
+	                <input type="hidden" id="lock_sequence">
+	                <input type="hidden" id="pilot_id">    <!-- Ajout Modif GG 2017 -->
+		              <input type="hidden" id="flight_nb">   <!-- Ajout Modif GG 2017 -->
 	              </div>
               </div>
               <!-- Figure Editor -->
@@ -1182,30 +1195,30 @@
                       <div id="subSequence" class="button"><img src="img/buttons/mask.png"></div>
                       <div id="deleteFig" class="button"><img src="img/buttons/mask.png"></div>
                       <div id="flipYAxis" class="button"><img src="img/buttons/mask.png"></div>
-                      <div class=clearSpace></div>
+                      <div class="clearSpace"></div>
                     </div>
                     <div>
                       <div id="switchFirstRoll" class="button disableFUfig"><img src="img/buttons/mask.png"></div>
                       <div id="switchY" class="button"><img src="img/buttons/mask.png"></div>
                       <div id="switchX" class="button"><img src="img/buttons/mask.png"></div>
-                      <div class=clearSpace></div>
+                      <div class="clearSpace"></div>
                     </div>
                     <div class="disableFUdesigner">
                       <div id="magMin" class="button"><img src="img/buttons/mask.png"></div>
                       <input type="text" name="scale" id="scale" value="0">
                       <div id="magPlus" class="button"><img src="img/buttons/mask.png"></div>
-                      <div class=clearSpace></div>
+                      <div class="clearSpace"></div>
                     </div>
                     <div class="disableFUdesigner">
                       <div id="moveForward" class="button"><img src="img/buttons/mask.png"></div>
                       <div id="straightLine" class="button"><img src="img/buttons/mask.png"></div>     
                       <div id="curvedLine" class="button"><img src="img/buttons/mask.png"></div>
-                      <div class=clearBoth></div>
+                      <div class="clearBoth"></div>
                       <!-- IMPORTANT : keep following div and span attached -->
                       <div id="moveXCont"><span>X </span>
                         <span id="moveX" class="plusMin"></span>
                       </div>
-                      <div class=clearBoth></div>
+                      <div class="clearBoth"></div>
                       <div id="moveYCont">
                         <span>Y </span>
                         <span id="moveY" class="plusMin"></span>
@@ -1215,13 +1228,16 @@
                   </div>
                   <div id="selectedFigure">
                     <svg xmlns="http://www.w3.org/2000/svg" version="1.2" baseProfile="tiny" id="selectedFigureSvg"></svg>
-                    <div id="t_addFigureText" class="userText"></div>
+                    <div id="addFigureText">
+	                    <div id="t_addFigureText" class="userText"></div>
+	                    <div class="material-icons">add_circle</div>
+	                  </div>
                   </div>
                   <div id="unknownFigureChooser">
                     <select id="unknownFigure"></select>
                   </div>
                 </div>
-                <div class="clearBoth divider"></div>
+                <div class="clearBoth divider hideNoFigure"></div>
                 <!-- entry and exit -->
                 <div id="entryExit" class="content divider">
                   <div class="contentLabel userText" id="t_entryExitAttExt"></div>
@@ -1236,7 +1252,7 @@
                 <div id="rollInfo">
                 </div>
                 <!-- comments -->
-                <div id="commentSection" class="content expansion-panel disableFUdesigner">
+                <div id="commentSection" class="content expansion-panel disableFUdesigner hideNoFigure">
 									<span class="contentLabel">
 										<span class="userText" id="t_comments"></span>
 										<i class="material-icons expand-toggle">expand_more</i>
@@ -1337,11 +1353,11 @@
                   <td id="gridExitn"></td>
                   <td id="gridExith"></td>
                 </tr>
+                <tr>
+									<td class="userText" id="t_gridAdditionals"></td>
+									<td colspan="3" id="gridAdditionals"></td>
+                </tr>
               </table>
-            </div>
-            <div>
-              <span class="userText" id="t_gridAdditionals"></span>
-              <span id="gridAdditionals"></span>
             </div>
             <div class="flatTextButton userText" id="t_proposalsCreateGroups"></div>
           </div>

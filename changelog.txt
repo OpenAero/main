@@ -30,6 +30,11 @@
 * added automatic switching to French when detecting French language on first install
 * added pilot_id and flight_nb fields for automatic insertion of pilot ID and Flight Nr by organisers
 * moved check log to dialog window as external window is giving problems in new Chrome
+* changed Undo for Clear Positioning and Separte Figures to work in a single step
+* fixed bug that caused Separate Figures dialogue not to shown and improved text
+* small changes to Aresti System help page
+* added Wind Left/Right text to Form B/C in View menu
+* fixed automatic choosing of placing of new figure by figureSelectorOptions
 
 2017.2.3
 * updated AAC rules for 2017

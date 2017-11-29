@@ -42,9 +42,6 @@ body {
   z-index: 11;
 	transition: height 0.2s ease-in-out;
 }
-#t_finalizeSequence {
-	display: none;
-}
 .version {
   position: absolute;
   top:5px;
@@ -143,7 +140,7 @@ body {
   position: relative;
   z-index: 4; /* put above figureString */
   top: 0;
-  left: -542px;
+  left: -546px;
   width: 268px;
   -webkit-transform: translateX(0);
   transform: translateX(0);
@@ -255,6 +252,7 @@ body {
 #gridInfo td {
   margin: 0;
   padding: 0 16px 0 0;
+	max-width: 112px;
 }
 #gridInfo td:last-child {
   padding: 0;
@@ -264,8 +262,9 @@ body {
 	float: right;
 }
 #gridAdditionals {
-  float: right;
+  text-align: right;
   font-weight: bold;
+  font-size: 24px;
 }
 #gridAdditionals.remaining4 {
   color: #006800;
@@ -444,17 +443,18 @@ table#figureChooserColumns {
   position: absolute;
   z-index:10;
   padding:4px;
+  font-size: 14px;
   text-indent:0;
   margin-top:4px;
   margin-left:-20px;
   width:240px;
-  color:#222;
-  border:1px solid #888;
+  color: #000;
+  border: none;
   border-radius: 2px;
-  background:#f0f0f0;
-  -moz-box-shadow: 5px 5px 8px rgba(0,0,0,0.5);
-  -webkit-box-shadow: 5px 5px 8px rgba(0,0,0,0.5);
-  box-shadow: 5px 5px 8px rgba(0,0,0,0.5);
+  background: #ffcc80;
+  -moz-box-shadow: 2px 2px 6px rgba(0,0,0,0.3);
+  -webkit-box-shadow: 2px 2px 6px rgba(0,0,0,0.3);
+  box-shadow: 2px 2px 6px rgba(0,0,0,0.3);
 }
 .alertMsgRule:hover div {
   display: block;
