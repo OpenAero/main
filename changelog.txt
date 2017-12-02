@@ -9,7 +9,7 @@
 * added splash screen and removed "This may take a few seconds..." message on upgrade
 * changed "Save as link" dialog link to textbox and added copy to clipboard button to improve copying
 * overhauled menu structure and layout, including addition of special mobile device menus and icons
-* moved "Mobile version" selection to Settings -> Phone version
+* moved "Mobile version" selection to Settings -> Phone version, not shown for desktop
 * improved Sequence info layout
 * increased Form A size on small mobile devices
 * removed Mini Form A on small mobile devices
@@ -35,6 +35,8 @@
 * small changes to Aresti System help page
 * added Wind Left/Right text to Form B/C in View menu
 * fixed automatic choosing of placing of new figure by figureSelectorOptions
+* removed Zoom menu for browsers that do not support the zoom attribute
+* added delete key functionality to delete whole figure
 
 2017.2.3
 * updated AAC rules for 2017

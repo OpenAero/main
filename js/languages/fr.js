@@ -1,4 +1,4 @@
-﻿// fr.js 2017.2.4
+﻿// fr.js 2018.1
 // This file is part of OpenAero.
 
 //  OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -86,7 +86,7 @@ lang.fr = {
 'addFigureText' : 'Ajouter figure',
 'addingFigure' : 'Ajouter une nouvelle figure',
 // updated 2017.2.4
-'additional' : 'Supplé&#173;mentaire',
+'additional' : 'Liaison(s)',
 //
 'addToQueue' : 'Ajouter à la file',
 'acreg': 'Immat d\'Avion',
@@ -142,8 +142,8 @@ lang.fr = {
   'prendre du temps. Patientez, svp...',
 'checkMultipleSeq' : 'Vérification d\'un groupe de programmes',
 // changed 2016.1.1
-'checkMultiUseReference' : 'Utilisez programme de référence pour ' +
-  '(In)connu-libre',
+'checkMultiUseReference' : 'Utilisez le programme de référence pour ' +
+  '(In)Connu-Libre',
 //
 'checkMultiWait' : 'Vérification des programmes %s .<br>Ceci peut ' +
   'prendre du temps. Patientez, svp...',
@@ -167,7 +167,7 @@ lang.fr = {
 'clickChangeFigure' : 'Changer ou ajouter une figure',
 'closeAlert' : 'Fermer',
 'closeIt' : 'Fermer',
-'columns' : 'Colonnes en tableau',
+'columns' : 'Colonnes',
 'comments' : 'Commentaires',
 'confirmBoxYes' : 'Oui',
 'confirmBoxNo' : 'Non',
@@ -213,15 +213,14 @@ lang.fr = {
   'Exemples : <strong>pos</strong>=ligne positive, ' +
   '<strong>neg</strong>=ligne negative, <strong>rollText</strong>=texte' +
   ' de la rotation (e.g. 2x8).</p>',
-'dropFigureHere' : 'Déplace Figure ici',
+'dropFigureHere' : 'Placez une figure ici',
 'editingFigure' : 'Edition figure',
 'emailHeader' : 'Cliquez sur le lien ci-dessous pour ouvrir le programme avec OpenAero. ' +
-  'Ou, ça ne fonctionne pas, copiez le et collez le (intégralement!) ' +
+  'Ou, si ça ne fonctionne pas, copiez le et collez le (intégralement!) ' +
   'dans la barre d\'adresse de votre navigateur.',
 'emailSequence' : 'Envoyer par email le programme',
 'END' : 'FIN',
 'entryExitAttExt' : 'Attitude de début/fin et longueur',
-'exitDesigner' : 'Quitter l\'assembleur',
 'expert' : 'Expert',
 'feedback' : 'Retour',
 'fileOpeningNotSupported' : 'L\'ouverture de fichier n\'est pas supportée dans ' +
@@ -238,12 +237,13 @@ lang.fr = {
 // new 2016.1.3
 'figureLetterNotAllowed' : '(%s) La lettre d\'identification %s n\'est pas autorisée',
 'figurePositioning' : 'Positionnement de figure',
-'figureQueue' : '* File / Tampon',
+'figureQueue' : 'File / Tampon',
 'figureString' : 'Texte de la figure',
 'file' : 'Fichier',
 'fileName' : 'Nom du fichier',
-// changed 2018.1
-'finalizeSequence' : 'Finaliser le programme',
+'finalizeSequence' : 'Finaliser le programme et quitter l\'assembleur',
+'FKstartOnLoad' : 'Le programme est identifié comme une liste de figures de Connu-Libre. ' +
+  'Voulez-vous lancer l\'assembleur de Connu-Libre?',
 'flightNr' : 'Vol N°',
 'flipYAxis' : 'Changer d\'axe Y',
 'forElement' : ' pour élément ',
@@ -252,34 +252,36 @@ lang.fr = {
 'formC' : 'Forme C',
 'formL' : 'Forme L',
 'formR' : 'Forme R',
+'free' : 'Libres',
+'freeKnownGuidance' : 'Guide du Connu-Libre',
 'freeUnknownFig' : 'Lettre ',
-'freeUnknownAdditional' : 'Supplémentaire Inconnu-Libre',
-'FUconfirmExit' : 'L\'assembleur d\'(in)connu-libre peut ne pas redémarrer ' +
+'freeUnknownAdditional' : 'Liaison Inconnu-Libre',
+'FUconfirmExit' : 'L\'assembleur d\'(In)Connu-Libre peut ne pas redémarrer ' +
   'correctement dans cette situation sans avoir à ré-ouvrir le programme. ' +
-  'Confirmer que vous souhaitez quitter l\'assembleur d\'inconnu-libre.',
-'fuDesigner' : 'Assembleur d\'(in)connu-libre',
+  'Confirmer que vous souhaitez quitter l\'assembleur d\'(In)Connu-libre.',
+'fuDesigner' : 'Assembleur d\'(In)Connu-Libre',
 'fuFiguresTab' : 'Figures',
 // changed 2016.1.3
-'FUfigOptionsDisabled' : 'Certaines options sont invalidées pour l\'inconnu-libre (figures avec lettres)',
-'FUDesignletterMulti' : 'Lettre d\'inconnu-libre %s utilisée plusieurs fois. ' +
-  'Impossible de lancer l\'assembleur d\'inconnu-libre.',
-'FUDesignMissingLetters' : 'Lettre(s) d\'inconnu-libre <strong>%s</strong> ' +
-  'absente(s). Impossible de lancer l\'assembleur d\'inconnu-libre',
+'FUfigOptionsDisabled' : 'Certaines options sont invalidées pour l\'Inconnu-Libre (figures avec lettres)',
+'FUDesignletterMulti' : 'Lettre d\'Inconnu-Libre %s utilisée plusieurs fois. ' +
+  'Impossible de lancer l\'assembleur d\'Inconnu-Libre.',
+'FUDesignMissingLetters' : 'Lettre(s) d\'Inconnu-Libre <strong>%s</strong> ' +
+  'absente(s). Impossible de lancer l\'assembleur d\'Inconnu-Libre',
 'FUDesignNotFreeUnknown' : 'Les règles du programme ne correspondent pas à un ' +
-  'inconnu-libre. Impossible de lancer l\'assembleur d\'inconnu-libre.',
+  'Inconnu-Libre. Impossible de lancer l\'assembleur d\'Inconnu-Libre.',
 'FUerrorsDetected' : 'Erreur(s) détectée(s) dans le programme, voir ci-dessous :',
 'FUfinalizing' : 'Assemblage du programme. Ceci peut prendre du temps. ' +
   'Patientez, svp...',
-'FUletterMulti' : '(%s) lettre(s) du figure %s utilisée(s) plusieurs fois',
+'FUletterMulti' : '(%s) lettre(s) de la figure %s utilisée(s) plusieurs fois',
 'FUmultipleSubsequences' : 'Le programme a %s sous-parties. ' +
   'Il ne devrait y en avoir qu\'un.',
 'fuSelectFigureFirst' : 'Cliquer sur une figure d\'une sous-partie ' +
   'pour l\'éditer. Vous pouvez glisser/déplacer les figures ou les figures ' +
   'de liaison depuis l\'onglet <i>Figures</i> vers la(es) sous-partie(s).',
-'FUstarting' : 'lancement de l\'assembleur d\'(in)connu-libre. Ceci peut prendre du temps. ' +
+'FUstarting' : 'lancement de l\'assembleur d\'(In)Connu-Libre. Ceci peut prendre du temps. ' +
   'Patientez, svp...',
-'FUstartOnLoad' : 'Le programme est identifié comme une liste de figures d\'(In)connu-Libre. ' +
-  'Voulez-vous lancer l\'assembleur d\'(in)connu-libre?',
+'FUstartOnLoad' : 'Le programme est identifié comme une liste de figures d\'Inconnu-Libre. ' +
+  'Voulez-vous lancer l\'assembleur d\'Inconnu-Libre?',
 'FUexitEntryMatch' : 'Certaines attitudes d\'entrée / sortie de figures sont incompatibles',
 //
 'gaps' : 'Espaces',
@@ -297,7 +299,8 @@ lang.fr = {
 'gridPosExit' : 'Sortie ventre',
 'gridSpeed' : 'Vitesse',
 // changed 2017.1
-'gridView' : 'Le choix du nombre de colonnes de la vue en tableau est dans Vue en tableau',
+'gridView' : 'Le choix du nombre de colonnes de la vue "Tableau des figures" est accessible par ' +
+  'le menu Affichage/Tableau des figures puis "infos de la vue en tableau"',
 'harmony' : 'Harmonie',
 'help' : 'Aide',
 'hideIllegalFigures' : 'Masquer les figures non autorisées',
@@ -374,7 +377,7 @@ lang.fr = {
   'ou sélectionnez un des logos déjà affiches.',
 'manual' : 'Manuel OpenAero',
 'maxAdditionals' : 'Maximum de figures supplémentaires permis : %s',
-'maxScaling' : 'Agrandissement Max des petits programmes %',
+'maxScaling' : 'Agrandissement Max des petits programmes',
 'missedSlot' : 'Hors créneau',
 // changed 2017.1
 'missingInfo' : 'Des informations essentielles du programme manquent.</br>' +
@@ -527,7 +530,7 @@ lang.fr = {
 'referenceSequenceClose' : 'Fermer',
 'referenceSequenceExplain' : 'Dans l\'emplacement ci-dessous, vous pouvez ' +
   'entrer le texte de référence des figures obligatoires pour la ' +
-  'construction d\'un programme, tel qu\'un programme d\'(In)connu-Libre. ' +
+  'construction d\'un programme, tel qu\'un programme d\'(In)Connu-Libre. ' +
   'La vérification des lettres, des codes Aresti et des directions ' +
   'relatives d\'entrée / sortie des figures seront alors effectués.',
 //
@@ -536,7 +539,7 @@ lang.fr = {
   'car il est lié aux règles de vérification du programme en cours.',
 // changed 2016.1.3
 'referenceSequenceTitle' : 'Figures de référence pour les ' +
-  'programmes d\'(In)connu-Libre',
+  'programmes d\'(In)Connu-Libre',
 //
 // new 2017.2.4
 'registration' : 'Immat',
@@ -564,7 +567,7 @@ lang.fr = {
   'Depuis la version 1.2.3 (février 2013) ceci est déconseillé ' +
   'car certains fonctions ne sont pas disponibles.<br />' +
   'Allez à <a href="http://openaero.net">openaero.net</a>. ' +
-  'OpenAero sera automatiquement installe dans votre navigateur et sera également ' +
+  'OpenAero sera automatiquement installé dans votre navigateur et sera également ' +
   'disponible hors connexion.',
 // new 2016.3.4
 'runOverHttp' : 'Votre lien vers OpenAero ne semble pas à jour. Vérifiez ' +
@@ -598,7 +601,7 @@ lang.fr = {
 'sequenceCheckLog' : 'Rapport de vérification du programme',
 'sequenceCorrect' : 'Le programme est correct',
 'sequenceHasErrors' : 'Le programme est incorrect :',
-'sequenceInfo' : 'Programme',
+'sequenceInfo' : 'Infos Programme',
 // nouveau 1.4.2
 'sequenceShort' : 'Prog.',
 //
@@ -618,7 +621,8 @@ lang.fr = {
   'une figure est sélectionnée',
 'showQueue' : 'Voir la file',
 'signature' : 'Signature',
-//
+// new 2017.2.4
+'smallMobile' : 'Format téléphone',
 'styleSettingsHeader' : 'Vous pouvez changer ici les paramètres de dessin. ' +
   'Notez bien que ces changements affectent l\'apparence du programme sur ' +
   '<strong>votre<strong> version d\'OpenAero, mais pas ' +
@@ -655,7 +659,7 @@ lang.fr = {
 }, // end tooltip sub-array
 'totalK' : 'K total',
 // new 2016.1.1
-'trgViolation' : 'Ech. Incorrect',
+'trgViolation' : 'Echauf. non OK',
 'unknownFileType' : 'L\'ouverture de ce fichier n\'est pas supportée dans ce navigateur.',
 'unlockSequence' : 'Déverrouiller',
 'unusedFigureLetters' : 'Lettre(s) inutilisée(s) : %s',

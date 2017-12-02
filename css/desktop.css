@@ -242,3 +242,7 @@ i.leftArrow:after, i.rightArrow:after {
   transform: scale(1,1);
 }
 
+/* Settings */
+#smallMobileSetting {
+	display: none;
+}

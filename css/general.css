@@ -299,17 +299,19 @@ fieldset {
   display: none;
 }
 .form-group select,
-.form-group input:disabled,
 .form-group input:focus,
 .form-group input:valid,
 .form-group input.form-file,
 .form-group input.has-value,
-.form-group textarea:disabled,
 .form-group textarea:focus,
 .form-group textarea:valid,
 .form-group textarea.form-file,
 .form-group textarea.has-value {
   color: #333;
+}
+.form-group input:disabled,
+.form-group textarea:disabled {
+  color: #999;
 }
 .form-group select ~ .control-label,
 .form-group input:disabled ~ .control-label,
@@ -346,6 +348,10 @@ fieldset {
 .form-group input:invalid ~ .bar::before {
   color: red;
 }
+.form-group input:disabled ~ .bar {
+	border-bottom: 0.0625rem dashed #999;
+}
+
 .checkbox label,
 .form-radio label {
   position: relative;
@@ -1707,14 +1713,14 @@ option.used {
 }
 #addFigureText {
   position: absolute;
-  padding-top: 0.5em;
+  padding-top: 8px;
   top: 0;
   left: 0;
   bottom: 0;
   right: 0;
   background: rgba(255,255,255,0.7);
   z-index: 1;
-  font-size: 2em;
+  font-size: 24px;
   color: rgba(0,0,0,0.7);
   text-align: center;
   vertical-align: center;

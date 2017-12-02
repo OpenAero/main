@@ -1472,15 +1472,70 @@ if (!HTMLCanvasElement.prototype.toBlob) {
  * 
  *************************************************************/
 
+// cordovaHandleIntent handles opening a sequence file as received from
+// Intent
+function cordovaHandleIntent (intent) {   
+	console.log(intent);
+	if (intent.hasOwnProperty('data')) {
+		window.FilePath.resolveNativePath(intent.data, function(path) {
+			console.log(path);
+			window.resolveLocalFileSystemURL (path, function (fileEntry) {
+				fileEntry.file (function(file) {
+					openFile (file, 'Sequence');
+				});
+			});
+		}, function(error) {alertBox (userText.saveDeviceFirst)});
+	} else {
+		/*
+		window.FilePath.resolveNativePath(intent.clipItems[0].uri, function(path) {
+			console.log(path);
+			openFile(path, 'Sequence');
+		}, function(error) {console.log(error)});
+		*/
+	}
+}
+
 // cordovaSave uses the socialsharing plugin to provide options for
 // saving/exporting a file
 function cordovaSave (blob, filename) {
-	window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fs) {
-	    fs.root.getFile(filename, { create: true, exclusive: false }, function (fileEntry) {
-		    fileEntry.createWriter(function (fileWriter) {
-		        fileWriter.write(blob);
-		    });
-	    });
+
+	var onSuccess = function(result) {
+	  console.log("Share completed? " + result.completed); // On Android apps mostly return false even while it's true
+	  console.log("Shared to app: " + result.app); // On Android result.app is currently empty. On iOS it's empty when sharing is cancelled (result.completed=false)
+	}
+	
+	var onError = function(msg) {
+	  console.log("Sharing failed with message: " + msg);
+	}
+
+	// request filesystem
+	window.requestFileSystem(LocalFileSystem.TEMPORARY, 0, function(fileSystem) {
+		// succes! Create file
+		fileSystem.root.getFile(filename, {create: true}, function(entry) {
+			// succes! Create writer and write
+			entry.createWriter(function(writer) {
+				// write done?
+				writer.onwrite = function(evt) {
+					// Yes! Share file
+					window.plugins.socialsharing.shareWithOptions (
+						{
+							message: filename, // not supported on some apps (Facebook, Instagram)
+						  subject: filename, // fi. for email
+							files: [entry.nativeURL] // an array of filenames either locally or remotely
+						},
+						onSuccess,
+						onError);
+				};
+				writer.write(blob);
+			}, function(error) {
+				console.log(error);
+			});
+		}, function(error){
+			console.log(error);
+		});
+	},
+	function(error){
+		console.log(error);
 	});
 }
 
@@ -4506,8 +4561,18 @@ function doOnLoad () {
 
 	document.addEventListener ("deviceready", function() {
 		if (typeof cordova !== 'undefined') cordovaApp = true;
-		// Cordova has it's own splash screen
-		if (loading) loading.parentNode.removeChild (loading);
+		// handle Intents
+		window.plugins.intent.setNewIntentHandler(cordovaHandleIntent);
+	  // Handle the intent when the app is not open
+	  // This will be executed only when the app starts or wasn't active
+	  // in the background
+	  window.plugins.intent.getCordovaIntent(cordovaHandleIntent);
+	  
+	  if (loading && loading.parentNode) {
+			loading.parentNode.removeChild (loading)
+		}
+		
+		if (loadComplete) navigator.splashscreen.hide();
 	});
 
   // check if Chrome App is installed
@@ -4590,7 +4655,12 @@ function doOnLoad () {
   // check browser and capabilities
   var err = checkBrowser();
   if (err) errors.push (err);
-	
+
+	// remove zoomMenu when zoom is not supported
+	if (!('zoom' in document.body.style)) {
+		document.getElementById ('zoomMenu').classList.add ('noDisplay');
+	}
+			
   // by default, do not allow drag & drop of files to OpenAero
   document.body.addEventListener('dragover', noDragOver);
   document.body.addEventListener('drop', noDrop);
@@ -4747,7 +4817,9 @@ function doOnLoad () {
   queueFromStorage ();
 
   // load (mostly) completed, remove loading icon in 1 second
-  if (loading) {
+  if (cordovaApp) {
+		navigator.splashscreen.hide();
+	} else {
 		setTimeout (function() {loading.style = 'opacity: 0.01;';}, 500);
 		setTimeout (function() {loading.parentNode.removeChild (loading);}, 1000);
 	}
@@ -4825,6 +4897,17 @@ function launchURL (launchData) {
   return false;
 }
 
+// keyListener listens to key strokes for various usages
+function keyListener (e) {
+	// do not handle keys when in input area
+	if( e.target.nodeName == "INPUT" || e.target.nodeName == "TEXTAREA" ) return;
+  if( e.target.isContentEditable ) return;
+	// use delete key for deleting figure
+	if (e.keyCode == 46) {
+		document.getElementById('deleteFig').click();
+	} 
+}
+	
 // appZoom adds zoom functionality to the app and is called by keydown
 function appZoom (e) {
   var zoomSteps = ['0.33', '0.5', '0.67', '0.75', '0.9', '1',
@@ -4855,6 +4938,7 @@ function addEventListeners () {
   if (chromeApp.active || touchDevice) {
     document.addEventListener ('keydown', appZoom, false);
   }
+  document.addEventListener ('keydown', keyListener, false);
   
   // remove all menus when tapping anywhere outside menu
   if (touchDevice) {
@@ -8484,9 +8568,15 @@ function loadRules() {
         // load positioning and harmony K
         var pos = rules[i].match(/[0-9+]+/)[0].split('+');
         var el = document.getElementById('positioning');
-        if (pos[0] > 0) el.value = pos[0];
+        if (pos[0] > 0) {
+					el.value = pos[0];
+	        el.setAttribute ('disabled', true);
+				}
         var el = document.getElementById('harmony');
-        if (pos[1] > 0) el.value = pos[1];
+        if (pos[1] > 0) {
+					el.value = pos[1];
+					el.setAttribute ('disabled', true);
+				}
       } else if (rules[i].match(/^infocheck[ ]*=/)) {
         // define fields that should be checked for not being empty when
         // saving or printing a sequence
@@ -8648,6 +8738,9 @@ function unloadRules () {
   console.log('Clearing rules');
   rulesActive = false;
   document.getElementById ('rulesActive').classList.remove ('good');
+  // remove disable property of positioning and harmony
+  document.getElementById('positioning').removeAttribute ('disabled');
+	document.getElementById('harmony').removeAttribute ('disabled')
   // update sequence
   checkSequenceChanged(true);
   // hide reference sequence button
@@ -13847,7 +13940,7 @@ function openFile (file, handler, params) {
         reader.onload = function(e){loadedFileList (e, params)};
         break;
       case 'Sequence':
-        reader.onload = loadedSequence;
+        reader.onload = function(e){loadedSequence (e, file.name)};
         break;
       case 'Queue':
         reader.onload = loadedQueue;
@@ -14104,7 +14197,8 @@ function checkSequenceMulti(i, body) {
       }
     }
   }
-  pre.appendChild(document.createTextNode('\n--------------------------------------------------------\n'));
+  pre.appendChild(document.createTextNode(
+	  '\n--------------------------------------------------------\n'));
 }
 
 /***********************************************************************
@@ -14114,8 +14208,8 @@ function checkSequenceMulti(i, body) {
  **********************************************************************/
  
 // loadedSequence will be called when a sequence file has been loaded
-function loadedSequence(evt) {
-  
+function loadedSequence(evt, name) {
+
   // Obtain the read file data  
   var xml = loadSequence (evt.target.result);
   if (xml === false) {
@@ -14123,7 +14217,7 @@ function loadedSequence(evt) {
     return;
   }
 
-  updateSaveFilename (document.getElementById('file').files[0].name.replace(/.*\\/, '').replace(/\.[^.]*$/, ''));
+  updateSaveFilename (name.replace(/.*\\/, '').replace(/\.[^.]*$/, ''));
 
   activateXMLsequence (xml, true);
 
@@ -14701,12 +14795,6 @@ function saveFile(data, name, ext, filter, format) {
     });
     return result;
   }
-
-	// 2) Cordova app saving
-	if (cordovaApp) {
-		cordovaSave (new Blob([data], {type: format.replace(/;.+$/, '')}), name + ext);
-		return;
-	}
 	
   // prevent asking confirmation of 'leaving'
   // window.removeEventListener('beforeunload', preventUnload);
@@ -14715,7 +14803,9 @@ function saveFile(data, name, ext, filter, format) {
   
   var a = document.createElement('a');
   
-  if (/i(Pad|Phone|Pod)/i.test (navigator.userAgent)) {
+  if (cordovaApp) {
+		saveDialog (' ', name, ext);
+	} else if (/i(Pad|Phone|Pod)/i.test (navigator.userAgent)) {
     saveDialog (userText.iOSsaveFileMessage, name, ext);
   } else if (typeof a.download !== "undefined") {
     saveDialog (userText.downloadHTML5, name, ext);
@@ -14735,7 +14825,9 @@ function saveFile(data, name, ext, filter, format) {
   });
   button.addEventListener ('mousedown', function(){
     var name = document.getElementById('dlTextField').value;
-    saveAs (blob, name + ext);
+    if (cordovaApp) {
+			cordovaSave (blob, name + ext);
+		} else saveAs (blob, name + ext);
   });
   
   return result;

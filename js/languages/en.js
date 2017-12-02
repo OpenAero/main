@@ -555,6 +555,9 @@ lang.en = {
 'saveAsURLFromApp' : 'The link presented below contains your complete ' +
   'sequence. You can copy it to email, bookmark it etc...',
 'saveAsURLTitle' : 'Save sequence as link',
+// new 2018.1
+'saveDeviceFirst' : 'Unable to open sequence directly. Please save it ' +
+	'to your device first, then open from your device',
 'saveFigsSeparate' : 'Save figs separate',
 'saveFigsSeparateTitle' : 'Save figures separately',
 'saveFile' : 'Save File',
