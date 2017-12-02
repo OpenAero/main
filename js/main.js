@@ -4605,7 +4605,7 @@ function doOnLoad () {
 	// width is small and no setting is found, switch to smallMobile
 	if (document.getElementById ('smallMobile').checked) {
 		switchSmallMobile ();
-	} else if (window.screen.availWidth < 761) {
+	} else if (window.innerWidth < 761) {
 
 		function f(settings) {
 			if (!/\bsmallMobile\b/.test (settings)) {
@@ -7431,9 +7431,12 @@ function checkUpdateDone() {
 		  }
       // Only show the installed box if not on Chrome. If on Chrome, it
       // will be shown by checkForApp
-      if (typeof chrome == "undefined") alertBox (
-        {userText: 'installed', params: [window.location.host]},
-        {userText: 'installation'});
+      // Wait a few seconds to give cordovaApp to be set if applicable
+      if (typeof chrome == "undefined") setTimeout(function(){
+				if (!cordovaApp) alertBox (
+	        {userText: 'installed', params: [window.location.host]},
+	        {userText: 'installation'});
+				}, 3000);
       storeLocal ('version', version);
     } else if (oldVersion !== version) {
       // create version update text
@@ -11198,6 +11201,8 @@ function Drop(evt) {
 	        false,
 	        false,
 	        true);
+			} else {
+				restoreViewBox();
 			}
     } else {
       restoreViewBox();
