@@ -15,8 +15,8 @@
   "url_handlers": {
     "openaero_stable": {
       "matches": [
-        "http://openaero.net/*",
-        "http://www.openaero.net/*"
+        "https://openaero.net/*",
+        "https://www.openaero.net/*"
       ],
       "title": "OpenAero"
     }

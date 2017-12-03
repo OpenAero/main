@@ -7432,7 +7432,8 @@ function checkUpdateDone() {
       // Only show the installed box if not on Chrome. If on Chrome, it
       // will be shown by checkForApp
       // Wait a few seconds to give cordovaApp to be set if applicable
-      if (typeof chrome == "undefined") setTimeout(function(){
+      if ((typeof chrome !== 'undefined') && chrome.fileSystem) chromeApp.active = true;
+      if (!chromeApp.active) setTimeout(function(){
 				if (!cordovaApp) alertBox (
 	        {userText: 'installed', params: [window.location.host]},
 	        {userText: 'installation'});
