@@ -1,3 +1,8 @@
+2018.1.1
+* added banner for getting and updating Android/iOS app
+* removed workaround for getting version
+* fixed printing issues for page sizes other than A4
+
 2018.1
 * added "vector-effect: non-scaling-stroke" to drawing styles to prevent thin lines on large sequences
 * fixed roll font scaling for large sequences that are downscaled on print

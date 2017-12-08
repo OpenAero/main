@@ -37,10 +37,10 @@
     <title>OpenAero</title>
     <!-- stylesheets, these are changed dynamically depending on browser
          and layout. The order matters! -->
-    <link rel="stylesheet" type="text/css" href="css/general.css" id="generalCSS">
-    <link rel="stylesheet" type="text/css" href="css/desktop.css" id="desktopCSS">
-    <link rel="stylesheet" type="text/css" href="css/desktop-largeMobile.css" id="desktopLargeMobileCSS">
-    <link rel="stylesheet" type="text/css" href="css/addtohomescreen.css">
+    <link rel="stylesheet" media="screen" type="text/css" href="css/general.css" id="generalCSS">
+    <link rel="stylesheet" media="screen" type="text/css" href="css/desktop.css" id="desktopCSS">
+    <link rel="stylesheet" media="screen" type="text/css" href="css/desktop-largeMobile.css" id="desktopLargeMobileCSS">
+    <link rel="stylesheet" media="screen" type="text/css" href="css/addtohomescreen.css">
     <!-- styles -->
     <style type="text/css" media="print" id="printStyle"></style>
     <style type="text/css" media="screen">#noScreen {display: none;}</style>
@@ -722,6 +722,14 @@
 					<i id="closeHelp" class="material-icons">close</i>
           <div id="helpContent"><iframe></iframe></div>
          </div>
+      </div>
+      <!-- installApp -->
+      <div id="installApp" class="android">
+				<i id="closeInstallApp" class="material-icons">close</i>
+				<span id="t_getTheApp" class="userText"></span>
+				<a id="playStore" href="https://play.google.com/store/apps/details?id=net.openaero" target="_blank">
+					<img src="img/google-play-badge.png">
+				</a>
       </div>
       <!-- menu hamburger icon -->
       <div id="hamburgerMenu">

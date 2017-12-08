@@ -2199,11 +2199,46 @@ table#figureChooserTable div {
   box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 0 0 16px rgba(89, 189, 255, 0.6);
 }
 
-/* printing styles are mostly in OpenAero.js and print.css */
-'.breakAfter {
-  position: relative;
-  display:block;
-  page-break-inside:avoid;
-  page-break-after:always;
-  height: 100%;
+#installApp {
+	position: fixed;
+	z-index: 9999;
+	height: 24px;
+	padding: 16px 144px 16px 48px;
+	text-align: center;
+	font-size: 20px;
+	left: 0;
+	bottom: -60px;
+	right: 0;
+	background-color: #ffcc80;
+	opacity: 0.2;
+	box-shadow: 0 0 4px rgba(0,0,0,0.38);
+	transition: all 0.3s ease-in-out;
+}
+#installApp.show {
+	bottom: 0;
+	opacity: 1;
+}
+#installApp.update {
+	background-color: #ff9800;
+} 
+#closeInstallApp {
+	position: absolute;
+	top: 0;
+	left: 0;
+	padding: 16px;
+}
+#closeInstallApp:active {
+	background-color: rgba(0,0,0,0.38);
+} 
+#installApp img {
+	position: absolute;
+	top: 0;
+	right: 0;
+	height: 56px;
+}
+#installApp.ios #playStore {
+	display: none;
+}
+#installApp.android #appStore {
+	display: none;
 }

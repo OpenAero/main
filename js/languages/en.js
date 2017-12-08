@@ -282,6 +282,7 @@ lang.en = {
 'getChrome' : 'For optimum use of OpenAero, please download the ' +
   'latest version of the <a href="https://www.google.com/intl/en/chrome/browser/">' +
   'Google Chrome</a> browser.',
+'getTheApp' : 'OpenAero is available as an app',
 'glider' : 'Glider',
 // new 2017.1
 'gridAdditionals' : 'Additionals needed',
@@ -635,6 +636,7 @@ lang.en = {
 'unlockSequence' : 'Unlock',
 'unusedFigureLetters' : 'Unused figure letter(s): %s',
 'update' : 'Update',
+'updateApp' : 'OpenAero update %s is available',
 'upwind' : 'Upwind',
 'upwindEntry' : 'Upwind entry',
 'version' : 'Version: %s',

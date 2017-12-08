@@ -397,3 +397,8 @@ table#figureChooserTable td.selected {
   display: none !important;
 }
 
+#t_getTheApp {
+	position: relative;
+	top: -14px;
+	font-size: 14px;
+}

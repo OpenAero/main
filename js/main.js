@@ -2202,35 +2202,15 @@ function aboutDialog () {
       userText.about);
   }
   
-  // We use a workaround to obtain the latest version.
-  // openaero.php will return an image with size aacc x bbdd, where
-  // version is aa.bb.cc.dd
-  var img = document.createElement('img');
-  if (chromeApp.active) {
-    var xhr = new XMLHttpRequest();
-    xhr.responseType = 'blob';
-    xhr.onload = function() {
-      img.src = window.URL.createObjectURL(xhr.response);
-    }
-    xhr.open('GET', 'https://openaero.net/openaero.php?f=v', true);
-    xhr.send();
-  } else {
-    img.src = 'https://openaero.net/openaero.php?f=v';
-  }
-  img.onload = function() {
-    var v1 = parseInt(this.width / 100);
-    var v2 = parseInt(this.height / 100);
-    var v3 = this.width - (v1 * 100);
-    var v4 = this.height - (v2 * 100);
-    var stableVersion = v1 + '.' + v2 + '.' + v3 + '.' + v4;
-    // remove trailing zeroes
-    stableVersion = stableVersion.replace (/(\.0)+$/, '');
-    show (stableVersion);
-  }
-  // onerror will be triggered when offline
-  img.onerror = function() {
-    show ('-');
-  }
+	var xhr = new XMLHttpRequest();
+	xhr.open('GET', 'https://openaero.net/openaero.php?v', true);
+	xhr.timeout = 5000;
+	xhr.onload = function() {
+		show (xhr.response);
+	}
+  // onerror or ontimeout will be triggered when offline
+  xhr.onerror = xhr.ontimeout = function() {show ('-');};
+	xhr.send();
 }
 
 /** End dialogs and windows */
@@ -4627,9 +4607,19 @@ function doOnLoad () {
   if (!chromeApp.active) {
     addUpdateListener();
     // Check for the latest version every 10 minutes
-    window.setInterval(function(){latestVersion()},600000);
-	  // activate addtohomescreen for smallMobile devices
-	  addToHomescreen();
+    // window.setInterval(function(){latestVersion()},600000);
+    // Give Cordova five seconds to start, then...
+    setTimeout(function() {
+			if (!cordovaApp) {
+		    if (/Android/i.test(navigator.userAgent)) {
+					// getTheApp popup for Android devices
+					getTheApp ();
+				} else {
+				  // activate addtohomescreen for other mobile devices
+				  addToHomescreen();
+				}
+			}
+		}, 5000);
   }
   
   // show loading overlay and circles
@@ -4808,9 +4798,9 @@ function doOnLoad () {
 
   loadComplete = true;
 
-  // also check for latest version now
+  // check for latest version in a few seconds
   if (!(chromeApp.active || window.location.hostname.match(/^(.+\.)?openaero.net$/))) {
-    latestVersion();
+    setTimeout(latestVersion, 3000);
   }
   
   // retrieve queue from storage
@@ -5017,7 +5007,7 @@ function addEventListeners () {
     }, false);
 	
   document.getElementById('t_freeKnownGuidance').parentNode.addEventListener('mousedown', function(){
-      helpWindow('doc/Power CIVA Free Known Guidance.pdf', 'CIVA Free Known Guidance');
+      helpWindow('doc/Power_CIVA_Free_Known_Guidance.pdf', 'CIVA Free Known Guidance');
     }, false);
 
   document.getElementById('t_about').parentNode.addEventListener('mousedown',
@@ -5221,18 +5211,23 @@ function addEventListeners () {
   document.getElementById('printFormR').addEventListener('change', saveImageSizeAdjust, false);
   document.getElementById('printFormL').addEventListener('change', saveImageSizeAdjust, false);
   document.getElementById('printFormPilotCards').addEventListener('change', setPilotCardForm, false);
-  document.getElementById('pilotCardPercent').addEventListener('click', setPilotCardLayout, false);
-  document.getElementById('pilotCard2').addEventListener('click', setPilotCardLayout, false);
-  document.getElementById('pilotCard4').addEventListener('click', setPilotCardLayout, false);
+  document.getElementById('pilotCardPercent').addEventListener('mousedown', setPilotCardLayout, false);
+  document.getElementById('pilotCard2').addEventListener('mousedown', setPilotCardLayout, false);
+  document.getElementById('pilotCard4').addEventListener('mousedown', setPilotCardLayout, false);
   document.getElementById('printFormGrid').addEventListener('change', saveImageSizeAdjust, false);
   document.getElementById('imageWidth').addEventListener('change', saveImageSizeAdjust, false);
   document.getElementById('imageHeight').addEventListener('change', saveImageSizeAdjust, false);
   document.getElementById('pageSpacing').addEventListener('change', saveImageSizeAdjust, false);
-  document.getElementById('t_print').addEventListener('click', printForms, false);
-  document.getElementById('t_saveAsPNG').addEventListener('click', savePNG, false);
-  document.getElementById('t_saveAsSVG').addEventListener('click', saveSVG, false);
-  document.getElementById('t_cancelPrint').addEventListener('click', function(){printDialog()}, false);
+  document.getElementById('t_print').addEventListener('mousedown', printForms, false);
+  document.getElementById('t_saveAsPNG').addEventListener('mousedown', savePNG, false);
+  document.getElementById('t_saveAsSVG').addEventListener('mousedown', saveSVG, false);
+  document.getElementById('t_cancelPrint').addEventListener('mousedown', function(){printDialog()}, false);
   
+  // installApp banner
+  document.getElementById ('closeInstallApp').addEventListener(
+		'mousedown', function(){
+			removeBanner (document.getElementById ('installApp'));
+		});
 }
 
 // addMenuEventListeners adds event listeners for showing and hiding 
@@ -5535,7 +5530,7 @@ function checkBrowser () {
 // if not available, some functions are disabled and a warning is returned
 function fileSupport () {
   if (window.File && window.FileReader && window.FileList && window.Blob) {
-    console.log('File reading support confirmed');
+    //console.log('File reading support confirmed');
     return true;
   } else {
     // disable file reading functions
@@ -6206,20 +6201,31 @@ function loadSettingsStorage (location) {
   
   function f (settings) {
     if (settings) {
-      settings = settings.split('|');
-      for (var i = settings.length - 1; i >= 0; i--) {
-        var setting = settings[i].split('=');
-        var el = document.getElementById (setting[0]);
-        var value = decodeURI(setting[1]);
+			if (!/[\[\{]/.test(settings.charAt(0))) {
+				// settings conversion to JSON. Can be removed in 2019.1
+				console.log ('Old settings format, converting to JSON...');
+				var settingObj = {};
+				settings = settings.split('|');
+				for (var i = settings.length - 1; i >= 0; i--) {
+					var setting = settings[i].split('=');
+					settingObj[setting[0]] = decodeURI(setting[1]);
+				}
+				settings = JSON.stringify (settingObj);
+				saveSettingsStorage (location);
+			}
+      settings = JSON.parse (settings);
+      for (var settingKey in settings) {
+        var el = document.getElementById (settingKey);
+        var value = settings[settingKey];
         if (el.type === 'checkbox') {
-          if (setting[1] == 1) {
+          if (value == 1) {
             el.setAttribute ('checked', 'checked');
           } else {
             el.removeAttribute ('checked');
           }
         } else if (el.type.match (/^select/)) {
           // only set values that are in the list in a select
-          var el = document.getElementById (setting[0]);
+          var el = document.getElementById (settingKey);
           var nodes = el.childNodes;
           for (var key in nodes) {
             // see if exact value is in there and set and break if so
@@ -6252,20 +6258,23 @@ function loadSettingsStorage (location) {
 // saveSettingsStorage will save the settings to storage
 // When location is not set it will default to 'settings'
 function saveSettingsStorage (location) {
+	var
+		settings = {},
+		value;
+
   location = location || 'settings';
 
   if (storage) {
-    var settings = [];
     for (var i = saveSettings.length - 1; i >=0; i--) {
       var el = document.getElementById(saveSettings[i]);
       if (el.type === 'checkbox') {
-        var value = el.checked ? 1 : 0;
+        value = el.checked ? 1 : 0;
       } else {
-        var value = encodeURI(el.value);
+        value = el.value;
       }
-      settings.push (el.id + '=' + value);
+      settings[el.id] = value;
     }
-    storeLocal (location, settings.join('|'));
+    storeLocal (location, JSON.stringify (settings));
   }
 }
 
@@ -6385,7 +6394,6 @@ function restoreDefaultSettings () {
     userText.restoreDefaultSettings,
     function(){
       storeLocal ('settings', '');
-      // window.removeEventListener('beforeunload', preventUnload);
       // reload the page, sequence will be provided by localStorage
       window.location.reload(true);
     }
@@ -7374,7 +7382,19 @@ function latestVersion() {
   if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
     // Check for appcache when using http
     if (window.applicationCache) window.applicationCache.update();
-  } else {
+  } else if (cordovaApp) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', 'https://openaero.net/openaero.php?v', true);
+    xhr.onload = function() {
+      if (compVersion (version, xhr.response) == -1) {
+				document.getElementById('t_getTheApp').innerHTML =
+					sprintf(userText.updateApp, xhr.response);
+				var banner = document.getElementById('installApp');
+				banner.classList.add ('update');
+				banner.classList.add ('show');
+			}
+		};
+    xhr.send();
   }
 }
 
@@ -7398,12 +7418,9 @@ function addUpdateListener () {
         var t = storage ? userText.loadNewVersion : userText.loadNewVersionNoCookies;
         confirmBox (t, userText.loadNewVersionTitle, function(){
           sequenceSaved = true;
-          // window.removeEventListener('beforeunload', preventUnload);
           // reload the page, sequence will be provided by localStorage
           window.location.reload(true);
         });
-      } else {
-        // Manifest didn't change. Nothing new to serve.
       }
     }, false);
   }
@@ -7467,6 +7484,32 @@ function checkUpdateDone() {
   
   // this only works when storage is enabled
   if (storage) getLocal ('version', f);
+}
+
+// getTheApp shows the banner for getting the app under certain conditions
+// Currently only for Android
+function getTheApp () {
+	getLocal ('installAppAsked', function(timestamp) {
+
+		var
+			platform = 'android',
+			banner = document.getElementById ('installApp'),
+			t = parseInt ((new Date()).getTime());
+
+		if (timestamp) { // do not ask the first time
+			if (timestamp < (t - 86400 * 7)) { // ask once a week
+				storeLocal ('installAppAsked', t);
+				banner.classList.add ('show');
+				setTimeout (function(){removeBanner (banner)}, 10000);
+			}
+		} else storeLocal ('installAppAsked', 1);
+	});
+}
+
+// removeBanner hides and then removes banner
+function removeBanner (banner) {
+	banner.classList.remove ('show');
+	setTimeout (function(){banner.classList.add ('noDisplay')}, 2000);
 }
 
 // changeSequenceInfo is called whenever any part of the sequence info
@@ -13666,7 +13709,6 @@ function checkSequenceChanged (force) {
   // Prevent OpenAero from being left unintentionally
   if (activeSequence.text != sequenceText.innerText) {
     sequenceSaved = false;
-    // window.addEventListener('beforeunload', preventUnload);
   }
 
   if ((activeSequence.text != sequenceText.innerText.replace(/\u00a0/g, ' ')) || (force === true)) {
@@ -13675,10 +13717,7 @@ function checkSequenceChanged (force) {
     activeSequence.text = sequenceText.innerText.replace(/\u00a0/g, ' ');
     var string = activeSequence.text;
     // whenever the string is empty, consider it 'saved'
-    if (string === '') {
-      sequenceSaved = true;
-      // window.removeEventListener('beforeunload', preventUnload);
-    }
+    if (string === '') sequenceSaved = true;
 
     var figure = [];
     var thisFigure = {'string':'', 'stringStart':0, 'stringEnd':0};
@@ -14234,9 +14273,8 @@ function loadedSequence(evt, name) {
     activeSequence.text = '';
     checkSequenceChanged();
   }
-  // changeSequenceInfo();
+
   sequenceSaved = true;
-  // window.removeEventListener('beforeunload', preventUnload);
 
   // Activate the loading of the checking rules (if any)
   changeCombo('program');
@@ -14486,7 +14524,6 @@ function activateXMLsequence (xml, noLoadRules) {
   if (!noLoadRules) checkFuFiguresFile();
 
   // sequence was just loaded, so also saved
-  // window.removeEventListener('beforeunload', preventUnload);
   sequenceSaved = true;
   
   return true;
@@ -14801,9 +14838,6 @@ function saveFile(data, name, ext, filter, format) {
     });
     return result;
   }
-	
-  // prevent asking confirmation of 'leaving'
-  // window.removeEventListener('beforeunload', preventUnload);
   
   var blob = new Blob ([data], {type: format.replace(/;.+$/, '')});
   
@@ -14895,8 +14929,6 @@ function saveQueue () {
   var fname = activeFileName('QUEUE');
   // Beautify the output.
   var xml = vkbeautify.xml (activeSequence.xml);
-  // prevent "leaving" warning
-  // window.removeEventListener('beforeunload', preventUnload);
   saveFile (
     xml,
     fname,
@@ -14904,10 +14936,7 @@ function saveQueue () {
     {'name':'OpenAero Queue', 'filter':'*.seq'},
     'text/xhtml+xml;utf8'
   );
-  if (!sequenceSaved) {
-    // Prevent OpenAero from being left unintentionally
-    // window.addEventListener('beforeunload', preventUnload);
-  }
+
   // restore sequence
   sequenceText.innerText = sequenceString;
   updateDefaultView();
@@ -15003,8 +15032,7 @@ function emailSequence () {
     // also replace single ticks (') and + as they may break the link
     var body = userText.emailHeader + '\n\n' + 
       'https://openaero.net/?s=' + encodeBase64Url(activeSequence.xml);
-    var subject =  activeFileName();
-    if (subject === '') subject = 'Sequence';
+    var subject = activeFileName() || 'Sequence';
     el.setAttribute('href', 'mailto:%20?subject=' + encodeURI(subject) +
       '&body=' + encodeURI(body));
     // click again to make sure this also gets triggerred after
@@ -15098,11 +15126,10 @@ function parseAircraft (t) {
 
 // printForms will print selected forms
 // Depending on the system a method will be chosen:
-// 1) Standalone web app: integrate print into main page and use screen
-//    and media print styles. Opening a new window is not possible!
-// 2) Android: same as Standalone web app
-// 3) Others: open window and print from that (also for Chrome App).
-//    On iOS Chrome/Safari (not for web app !?) method 1) does not work
+// 1) Chrome app: open window and print from that. This actually uses
+//    a Quirks mode "fix" for height layout. HACK!
+// 2) Integrate print into main page and use screen and media print styles
+
 function printForms () {
   // set a short default wait
   var wait = 50;
@@ -15114,154 +15141,86 @@ function printForms () {
     wait = 1000;
   }
 
-	setTimeout (function() {
-      // update the print style with margins
-      var style = document.getElementById ('printStyle');
-      style.innerHTML = '@page {size: auto; margin: ' +
-        document.getElementById ('marginTop').value + 'mm ' +
-        document.getElementById ('marginRight').value + 'mm ' +
-        document.getElementById ('marginBottom').value + 'mm ' +
-        document.getElementById ('marginLeft').value + 'mm}' +
-        'body {width: initial; margin: 0; padding: 0;}' +
-        '#noPrint {display: none;}' +
-        '.breakAfter {position: relative; vertical-align: top; display: inline-block; ' +
-        'page-break-inside: avoid; break-inside: avoid; page-break-after:always; ' +
-        'width: 100%; height: 100%;' +
-        'svg {position: absolute; top: 0; height: 100%;}';
-
-      var printBody = buildForms (window);
-      // get and clear the noScreen div
-      var div = document.getElementById ('noScreen');
-      div.innerHTML = '';
-      // add all nodes that will be printed to noScreen div
-      while (printBody.childNodes.length > 0) {
-        div.appendChild (printBody.childNodes[0]);
-      }
-      
-      if (cordovaApp) {
-				cordova.plugins.printer.print (div);
-			} else {
-				window.print();				
+	// Print the constructed pages. For the Chrome App an asynchronous callback
+	// is used. For the web version we work synchronous but use
+	// setTimeout to prevent browser blocking.
+	if (chromeApp.active) {
+		chrome.app.window.create ('print.html', {
+			bounds: {
+				width: 800,
+				height: 600
 			}
-    }, wait);
-  
-  return;  
+		}, function(w) {
+			var win = w.contentWindow;
+			var style = win.document.createElement ('style');
+			style.type = 'text/css';
+			style.media = 'print';
+			style.innerHTML = '@page {size: auto; margin: ' +
+				document.getElementById ('marginTop').value + 'mm ' +
+				document.getElementById ('marginRight').value + 'mm ' +
+				document.getElementById ('marginBottom').value + 'mm ' +
+				document.getElementById ('marginLeft').value + 'mm}' +
+				'body {margin: 0;}' +
+				'.breakAfter {position: relative; display:block; ' +
+				'page-break-inside:avoid; page-break-after:always; ' +
+				'height: 100%;}' +
+				'svg {position: absolute; top: 0; height: 100%;}';
 
-/** old code below */
-
-  // open the print window in time to prevent popup blocking
-  if (!chromeApp.active) {
-
-    // for Standalone and Android, don't open a new window
-    if (window.navigator.standalone || /Android/i.test(navigator.userAgent)) {
-      // update the print style with margins
-      var style = document.getElementById ('printStyle');
-      style.innerHTML = '@page {size: auto; margin: ' +
-        document.getElementById ('marginTop').value + 'mm ' +
-        document.getElementById ('marginRight').value + 'mm ' +
-        document.getElementById ('marginBottom').value + 'mm ' +
-        document.getElementById ('marginLeft').value + 'mm}' +
-        'body {width: initial; margin: 0; padding: 0;}' +
-        '#noPrint {display: none;}' +
-        '.breakAfter {position: relative; vertical-align: top; display: inline-block; ' +
-        'page-break-inside: avoid; break-inside: avoid; page-break-after:always; ' +
-        'width: 100%; height: 100%;' +
-        'svg {position: absolute; top: 0; height: 100%;}';
-
-      var printBody = buildForms (window);
-      // get and clear the noScreen div
-      var div = document.getElementById ('noScreen');
-      div.innerHTML = '';
-      // add all nodes that will be printed to noScreen div
-      while (printBody.childNodes.length > 0) {
-        div.appendChild (printBody.childNodes[0]);
-      }
-      
-      if (cordova) {
-				cordova.plugins.printer.print (window.document);
-			} else window.print();
-      return;
-    } else {
-      var win = window.open ('',"printForms",'width=800,height=600,' +
-        'top=50,location=no,menubar=no,scrollbars=yes,status=no,toolbar=no');
-    }
-        
-  }
-
-  // give the wait infoBox some time to be drawn
-  setTimeout (function(){
-    // Print the constructed pages. For the App an asynchronous callback
-    // is used. For the web version we work synchronous but use
-    // setTimeout to prevent browser blocking.
-    if (chromeApp.active) {
-      chrome.app.window.create ('print.html', {
-        bounds: {
-          width: 800,
-          height: 600
-        }
-      }, function(w) {
-        var win = w.contentWindow;
-        var style = win.document.createElement ('style');
-        style.type = 'text/css';
-        style.media = 'print';
-        style.innerHTML = '@page {size: auto; margin: ' +
-          document.getElementById ('marginTop').value + 'mm ' +
-          document.getElementById ('marginRight').value + 'mm ' +
-          document.getElementById ('marginBottom').value + 'mm ' +
-          document.getElementById ('marginLeft').value + 'mm}' +
-          'body {margin: 0;}' +
-          '.breakAfter {position: relative; display:block; ' +
-          'page-break-inside:avoid; page-break-after:always; ' +
-          'height: 100%;}' +
-          'svg {position: absolute; top: 0; height: 100%;}';
-
-        win.onLoad = function() {
-          win.document.title = activeFileName();
-          win.document.body = buildForms (win);
-          win.document.head.appendChild(style);
-          if (win.matchMedia) {
-            var mediaQueryList = win.matchMedia ('print');
-            mediaQueryList.addListener (function (mql) {
-              if (!mql.matches) win.close();
-            });
-          }
-          win.print();
-        };
-      });
-    } else {
-      win.document.body = buildForms (win);
-      win.document.title = activeFileName();
-      var style = win.document.createElement ('style');
-      style.type = 'text/css';
-      //style.media = 'print';
-      style.innerHTML = '@page {size: auto; margin: ' +
-        document.getElementById ('marginTop').value + 'mm ' +
-        document.getElementById ('marginRight').value + 'mm ' +
-        document.getElementById ('marginBottom').value + 'mm ' +
-        document.getElementById ('marginLeft').value + 'mm}' +
-        'body {margin: 0;}' +
-        '.breakAfter {position: relative; display:block; ' +
-        'page-break-inside:avoid; page-break-after:always; ' +
-        'height: 100%;}' +
-        'svg {position: absolute; top: 0; height: 100%;}';
-      win.document.head.appendChild(style);
-
-      // no print on Android, leave it to the user
-      if (!/Android/i.test(navigator.userAgent)) {
-        // use setTimeout for printing to prevent blocking and
-        // associated warnings by the browser
-        setTimeout (function(){
-          if (win.matchMedia) {
-            var mediaQueryList = win.matchMedia ('print');
-            mediaQueryList.addListener (function (mql) {
-              if (!mql.matches) win.close();
-            });
-          }
-          win.print();
-        }, 500);
-      }
-    }
-  }, wait);
+			win.onLoad = function() {
+				win.document.title = activeFileName();
+				win.document.body = buildForms (win);
+				win.document.head.appendChild(style);
+				if (win.matchMedia) {
+					var mediaQueryList = win.matchMedia ('print');
+					mediaQueryList.addListener (function (mql) {
+						if (!mql.matches) win.close();
+					});
+				}
+				win.print();
+			};
+		});
+	} else {
+		setTimeout (function() {
+	      // update the print style with margins
+	      var style = document.getElementById ('printStyle');
+	      style.innerHTML = '@page {size: auto; margin: ' +
+	          document.getElementById ('marginTop').value + 'mm ' +
+	          document.getElementById ('marginRight').value + 'mm ' +
+	          document.getElementById ('marginBottom').value + 'mm ' +
+	          document.getElementById ('marginLeft').value + 'mm}' +
+	          'html {height: 100%;}' +
+	          'body {margin: 0; height: 100%;}' +
+	          '#noPrint {display: none;}' +
+	          '#noScreen {height: 100%;}' +
+	          '.breakAfter {position: relative; display:block; ' +
+	          'page-break-inside:avoid; page-break-after:always; ' +
+	          'height: 100%;}' +
+	          'svg {position: absolute; top: 0; height: 100%;}';
+	
+	      var printBody = buildForms (window);
+	      // clear noScreen div
+	      var div = document.getElementById ('noScreen');
+	      while (div.firstChild) div.removeChild (div.firstChild);
+	      // add all nodes that will be printed
+	      while (printBody.childNodes.length > 0) {
+	        div.appendChild (printBody.childNodes[0]);
+	      }
+	      
+	      // can be improved but works for now...
+	      if (cordovaApp) {
+					cordova.plugins.printer.print (
+						'<html>' + 
+							'<head>' +
+								'<style type="text/css">' + style.innerHTML + '</style>' +
+							'</head><body>' +
+								div.innerHTML +
+							'</body>' +
+						'</html>');
+				} else {
+					window.print();				
+				}
+	    }, wait);
+	}
 }
 
 // buildForms will format selected forms for print or save. When
@@ -15375,7 +15334,7 @@ function buildForms (win) {
         if (win) {
           
           var div = win.document.createElement('div');
-          div.setAttribute ('class', 'breakAfter');
+          div.setAttribute ('class', 'breakAfter noScreen');
           div.innerHTML = formSVG;
           // make sure we only keep the svg images in the div
           var nodes = div.childNodes;
@@ -15754,7 +15713,7 @@ function buildForm (svg, print) {
   }
   
   // remove height when printing
-  if (print) mySVG.removeAttribute("height");
+	if (print) mySVG.removeAttribute("height");
 
   // Add the notes to the top when checked. This will result in a
   // "vertical flattening" of the entire form
