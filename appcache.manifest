@@ -1,7 +1,8 @@
 CACHE MANIFEST
-# OpenAero version 2018.1.1
+# OpenAero version 2018.1.2
 appcache.manifest
 changelog.txt
+cordova.js
 css/addtohomescreen.css
 css/desktop.css
 css/desktop-largeMobile.css
@@ -21,7 +22,6 @@ doc/manual.html
 doc/Power_CIVA_Free_Known_Guidance.pdf
 img/blue_handles.png
 img/buttons/curvedline.png
-img/buttons/.directory
 img/buttons/figEndInv.png
 img/buttons/figEndUp.png
 img/buttons/figStartInv.png
@@ -72,6 +72,7 @@ img/favicons/favicon72.png
 img/favicons/favicon96in128.png
 img/favicons/favicon96.png
 img/fullrolls.png
+img/google-play-badge.png
 img/hesrolls.png
 img/magnifier.png
 img/multirolls.png
@@ -94,12 +95,10 @@ index.html
 js/addtohomescreen.min.js
 js/background.js
 js/canvg/canvg.js
-js/canvg/.directory
 js/canvg/MIT-LICENSE.txt
 js/canvg/rgbcolor.js
 js/canvg/StackBlur.js
 js/config.js
-js/figures17.js
 js/figures18.js
 js/flags.js
 js/jszip.min.js
@@ -115,7 +114,7 @@ js/rules/rules16.js
 js/rules/rules17-aac.js
 js/rules/rules17-baea.js
 js/rules/rules17-france.js
-js/rules/rules17-iac.js
+js/rules/rules18-iac.js
 js/rules/rules18-civa.js
 js/rules/rules18-glider-civa.js
 js/rules/rules18-nzac-civa.js

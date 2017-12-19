@@ -1,5 +1,12 @@
+2018.1.2
+* added automatic x flipping of (x,y), [x,y] and Y-axis when changing upwind or downwind entry
+* fixed scaling issue for rolling turns
+* updated IAC Sportsman K factors for 2018
+* improved save dialog and added filename validity checking
+* fixed issue with Form L drawing with downwind entry and/or move figures
+
 2018.1.1
-* added banner for getting and updating Android/iOS app
+* added banner for getting and updating Android app
 * removed workaround for getting version
 * fixed printing issues for page sizes other than A4
 

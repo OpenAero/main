@@ -183,8 +183,11 @@ var loadComplete = false;
 // savedSeq   : sequence active before starting multi check
 var multi = {'processing':false, 'total':0, 'count':0, 'savedSeq':''};
 
-// variables for OLAN Humpty Bump check. Remove in 2015 with associated
-// code in : OpenAero.js config.js index.html
+// saveData is used to hold data for filesaving
+var saveData = {blob: '', ext: ''};
+
+// variables for OLAN Humpty Bump check. Only used when opening OLAN
+// files
 var OLANBumpBugCheck = false;
 var OLANBumpBugFigs = [];
 var OLANNBugFigs = [];
@@ -895,7 +898,7 @@ var iosDragDropShim = { enableEnterLeave: true,
       this.synthesizeEnterLeave(event);
     },
     synthesizeEnterLeave: function(event) {
-      var target = elementFromTouchEvent((this.copy)? this.copy : this.el, event);
+      var target = elementFromTouchEvent(this.copy ? this.copy : this.el, event);
       if (target != this.lastEnter) {
         if (this.lastEnter) {
           this.dispatchLeave(event);
@@ -920,7 +923,7 @@ var iosDragDropShim = { enableEnterLeave: true,
         this.dispatchLeave(event);
       }
 
-      var target = elementFromTouchEvent((this.copy)? this.copy : this.el,event);
+      var target = elementFromTouchEvent(this.copy ? this.copy : this.el,event);
 
       if (target) {
         log("found drop target " + target.tagName);
@@ -1067,7 +1070,7 @@ var iosDragDropShim = { enableEnterLeave: true,
           }
           return val;
         }.bind(this),
-        dropEffect: (this.copy)? "copy" : "move"
+        dropEffect: this.copy ? "copy" : "move"
       };
       this.el.dispatchEvent(evt);
     }
@@ -1475,7 +1478,6 @@ if (!HTMLCanvasElement.prototype.toBlob) {
 // cordovaHandleIntent handles opening a sequence file as received from
 // Intent
 function cordovaHandleIntent (intent) {   
-	console.log(intent);
 	if (intent.hasOwnProperty('data')) {
 		window.FilePath.resolveNativePath(intent.data, function(path) {
 			console.log(path);
@@ -1498,7 +1500,7 @@ function cordovaHandleIntent (intent) {
 // cordovaSave uses the socialsharing plugin to provide options for
 // saving/exporting a file
 function cordovaSave (blob, filename) {
-
+	
 	var onSuccess = function(result) {
 	  console.log("Share completed? " + result.completed); // On Android apps mostly return false even while it's true
 	  console.log("Shared to app: " + result.app); // On Android result.app is currently empty. On iOS it's empty when sharing is cancelled (result.completed=false)
@@ -1511,7 +1513,7 @@ function cordovaSave (blob, filename) {
 	// request filesystem
 	window.requestFileSystem(LocalFileSystem.TEMPORARY, 0, function(fileSystem) {
 		// succes! Create file
-		fileSystem.root.getFile(filename, {create: true}, function(entry) {
+		fileSystem.root.getFile(filename, {create: true, exclusive: false}, function(entry) {
 			// succes! Create writer and write
 			entry.createWriter(function(writer) {
 				// write done?
@@ -2266,7 +2268,7 @@ function combo(id,h,l) {
     changeCombo(self.inp.id);
   }; 
   self.inp.onkeyup = function(e) {
-    var k = (e)? e.keyCode : event.keyCode;
+    var k = e ? e.keyCode : event.keyCode;
     if (k == 40 || k == 13) {
       if (self.sel == self.list.length-1) {
         self.list[self.sel].style.backgroundColor = self.l;
@@ -2464,7 +2466,7 @@ function dirAttToAngle (dir, att) {
   }
   // No Y-axis correction for pure verticals
   if ((att == 90) || (att == 270)) {
-    theta = ((theta < 90) || (theta > 270))? 0 : 180;
+    theta = ((theta < 90) || (theta > 270)) ? 0 : 180;
   }
 // Check for right or left half, calculate angle and make negative for left half
   if ((theta < 90) || (theta > 270)) {
@@ -2505,7 +2507,7 @@ function changeAtt (value) {
   // double bumps
   if (updateAxisDir) {
     if (((Direction == 0) || (Direction == 180)) && (value != 0)) {
-      goRight = (Direction == 0)? false : true;
+      goRight = (Direction == 0) ? false : true;
       if ((Attitude > 90) && (Attitude < 270)) {
         goRight = !goRight;
       } else if ((Attitude == 90) || (Attitude == 270)) {
@@ -2723,7 +2725,7 @@ function makeLine (Params) {
   } else True_Drawing_Angle = angle;
   return Array({
     'path': 'l ' + dx + ',' + dy,
-    'style': (NegLoad == 0)? 'pos' : 'neg',
+    'style': (NegLoad == 0) ? 'pos' : 'neg',
     'class': 'line',
     'handle': Params[1],
     'dx': dx,
@@ -2750,10 +2752,10 @@ function makeCorner (param) {
   // make sure param is an Integer
   param = parseInt (param);
   changeAtt (param);
-  NegLoad = (param >= 0)? 0 : 1;
+  NegLoad = (param >= 0) ? 0 : 1;
   return Array({
     'path': '',
-    'style': (NegLoad == 0)? 'pos' : 'neg'
+    'style': (NegLoad == 0) ? 'pos' : 'neg'
   });
 }
 
@@ -2829,10 +2831,10 @@ function dirAttToXYAngle (dir, att) {
   while (dir < 0) dir += 360;
   while (dir >= 360) dir -= 360;
   // Create offset for the Y-axis, determined by yAxisOffset
-  var theta = (dir < 180)? 0 : 180;
+  var theta = (dir < 180) ? 0 : 180;
   // No Y-axis correction for pure verticals
   if ((att == 90) || (att == 270)) {
-    theta = ((theta < 90) || (theta > 270))? 0 : 180;
+    theta = ((theta < 90) || (theta > 270)) ? 0 : 180;
   }
   // Check for right or left half, calculate angle and make negative for
   // left half
@@ -2868,7 +2870,7 @@ function dirAttToGGAngle (dir, att) {
   var theta = dir ;  // perspective neutralisation
   // No Y-axis correction for pure verticals
   if ((att == 90) || (att == 270)) {
-    theta = ((theta < 90) || (theta > 270))? 0 : 180;
+    theta = ((theta < 90) || (theta > 270)) ? 0 : 180;
   }
   // Check for right or left half, calculate angle and make negative for
   // left half
@@ -2899,11 +2901,11 @@ function makeCurve (param) {
   // make sure param is an Integer
   param = parseInt (param);
   var Extent = Math.abs(param);
-  var PullPush = (param >= 0)? 0 : 1;
+  var PullPush = (param >= 0) ? 0 : 1;
   NegLoad = PullPush;
-  pathArray.style = (NegLoad == 0)? 'pos' : 'neg';
+  pathArray.style = (NegLoad == 0) ? 'pos' : 'neg';
   var Radius = curveRadius;
-  var longCurve = (Extent > 180)? 1 : 0;
+  var longCurve = (Extent > 180) ? 1 : 0;
   // Calculate at which angle the curve starts
   var radStart = dirAttToAngle (Direction, Attitude);
   var radStartXY = dirAttToXYAngle (Direction, Attitude);
@@ -2914,7 +2916,7 @@ function makeCurve (param) {
   var radStop = dirAttToAngle (Direction, Attitude);
   var radStopXY = dirAttToXYAngle (Direction, Attitude);
   // See if we are curving left or right, depending on radStart and PullPush
-  var curveRight = (radStart >= 0)? 0 : 1;
+  var curveRight = (radStart >= 0) ? 0 : 1;
   if (PullPush == 1) curveRight = 1 - curveRight;
   if (curveRight == 0) {
     var dx = (Math.sin(radStop) - Math.sin(radStart)) * Radius;
@@ -2926,7 +2928,7 @@ function makeCurve (param) {
   var sweepFlag = curveRight;
   // Make the path and move the cursor
   if (((Direction == 90) || (Direction == 270)) && curvePerspective) {
-    var curveRight = (radStartXY >= 0)? 0 : 1;
+    var curveRight = (radStartXY >= 0) ? 0 : 1;
     if (PullPush == 1) curveRight = 1 - curveRight;
     dx = yAxisScaleFactor * ((Math.sin(radStopXY) - Math.sin(radStartXY))) * Radius;
     dy = (Math.cos(radStopXY) - Math.cos(radStartXY)) * Radius;
@@ -2977,7 +2979,7 @@ function makeTurnArc (rad, startRad, stopRad, pathsArray) {
   while (stopRad < 0) stopRad += Math.Tau;
   while (stopRad >= Math.Tau) stopRad -= Math.Tau;
 
-  var sign = (rad >= 0)? 1 : -1;
+  var sign = (rad >= 0) ? 1 : -1;
   
   if (!newTurnPerspective.checked) {
     // calculate where we are in the ellipse
@@ -2998,8 +3000,8 @@ function makeTurnArc (rad, startRad, stopRad, pathsArray) {
     stopY = - (Math.sin (radEllipse) * curveRadius * flattenTurn);
     dx = roundTwo(stopX - startX) * sign;
     dy = roundTwo(stopY - startY) * sign;
-    sweepFlag = (rad > 0)? 0 : 1;
-    longCurve = (Math.abs (rad) < Math.PI)? 0 : 1;
+    sweepFlag = (rad > 0) ? 0 : 1;
+    longCurve = (Math.abs (rad) < Math.PI) ? 0 : 1;
     if ((Attitude > 90) && (Attitude < 270)) {
       pathsArray.push({'path':'a ' + curveRadius + ',' +
         roundTwo(curveRadius * flattenTurn) + ' 0 ' + longCurve + ' ' +
@@ -3018,8 +3020,8 @@ function makeTurnArc (rad, startRad, stopRad, pathsArray) {
     dy = yAxisScaleFactor * (Math.cos(stopRad) - Math.cos(startRad)) ;
     dx = roundTwo((Math.sin(stopRad) - Math.sin(startRad) - dy * Math.cos(yAxisOffset * Math.degToRad)) * curveRadius) * sign;
     dy = roundTwo(dy * Math.sin(yAxisOffset * Math.degToRad) * curveRadius) * sign;
-    sweepFlag = (rad > 0)? 0 : 1;
-    longCurve = (Math.abs (rad) < Math.PI)? 0 : 1;
+    sweepFlag = (rad > 0) ? 0 : 1;
+    longCurve = (Math.abs (rad) < Math.PI) ? 0 : 1;
     if ((Attitude > 90) && (Attitude < 270)) {
       pathsArray.push({'path':'a ' + X_curveRadius + ',' +
         Y_curveRadius + ' ' + Rot_axe_Ellipse + ' ' + longCurve + ' ' +
@@ -3039,7 +3041,7 @@ function makeTurnDots (rad, startRad, stopRad, pathsArray) {
   while (startRad >= Math.Tau) startRad -= Math.Tau;
   while (stopRad >= Math.Tau) stopRad -= Math.Tau;
     
-  sign = (rad >= 0)? 1 : -1;
+  sign = (rad >= 0) ? 1 : -1;
   if (!newTurnPerspective.checked) {
     // calculate where we are in the ellipse
     radEllipse = Math.atan (-1 / (Math.tan(startRad) / flattenTurn));
@@ -3059,7 +3061,7 @@ function makeTurnDots (rad, startRad, stopRad, pathsArray) {
     stopY = - (Math.sin (radEllipse) * curveRadius * flattenTurn);
     dx = (stopX - startX) * sign;
     dy = (stopY - startY) * sign;
-    sweepFlag = (rad > 0)? 0 : 1;
+    sweepFlag = (rad > 0) ? 0 : 1;
     longCurve = (Math.abs (rad) < Math.PI) ? 0 : 1;
     pathsArray.push({'path':'a ' + curveRadius + ',' +
       roundTwo(curveRadius * flattenTurn) + ' 0 ' + longCurve + ' ' +
@@ -3073,7 +3075,7 @@ function makeTurnDots (rad, startRad, stopRad, pathsArray) {
     dy =  yAxisScaleFactor * (Math.cos(stopRad) - Math.cos(startRad)) ;
     dx =  roundTwo((Math.sin(stopRad) - Math.sin(startRad) - dy * Math.cos(yAxisOffset * Math.degToRad)) * curveRadius) * sign;
     dy =  roundTwo(dy * Math.sin(yAxisOffset * Math.degToRad) * curveRadius) * sign;
-    sweepFlag = (rad > 0)? 0 : 1;
+    sweepFlag = (rad > 0) ? 0 : 1;
     longCurve = (Math.abs (rad) < Math.PI) ? 0 : 1;
     pathsArray.push({'path':'a ' + X_curveRadius + ',' +
       Y_curveRadius + ' ' + Rot_axe_Ellipse + ' ' + longCurve + ' ' +
@@ -3115,7 +3117,7 @@ function makeTurnRoll (param, rad) {
     pathsArray.push ({'path':path, 'style':'blackfill'});
   
     // Calculate at which angle the curve starts and stops
-    radPoint = (extent >= 360)? rad - sign * (Math.PI / 6) : rad;
+    radPoint = (extent >= 360) ? rad - sign * (Math.PI / 6) : rad;
     var dx = (Math.cos(radPoint) - radCos) * rollcurveRadius - dxTip;
     var dy = -(Math.sin(radPoint) - radSin) * rollcurveRadius - dyTip;
     // Make the curved path
@@ -3151,7 +3153,7 @@ function makeTurnRoll (param, rad) {
     pathsArray.push ({'path':path, 'style':'blackfill'});
   
     // Calculate at which angle the curve starts and stops
-    radPoint = (extent >= 360)? rad - sign * arrow_length : rad;
+    radPoint = (extent >= 360) ? rad - sign * arrow_length : rad;
     var dx = (Math.cos(radPoint) - radCos) * turn_rollcurveRadius - dxTip;
     var dy = -(Math.sin(radPoint) - radSin) * turn_rollcurveRadius - dyTip;
     el_dx = dx - yAxisScaleFactor * dy * persp_Cos ; 
@@ -3172,7 +3174,7 @@ function makeTurn (draw) {
   var pathsArray = [];
   // Check if we are in an in/out or out/in roll
   regex = /io|IO/;
-  var switchRollDir = (regex.test(draw))? true : false;
+  var switchRollDir = regex.test(draw) ? true : false;
   var sign = 1;
   var numbers = draw.replace(/[^\d]+/g, '');
   var extent = parseInt(numbers.charAt(0)) * 90;
@@ -3182,13 +3184,13 @@ function makeTurn (draw) {
     changeDir (dirChange);
     if ((Direction == 0) || (Direction == 180)) {
       // Set depending on goRight on X axis
-      if ((((Direction == 0) == (Attitude == 0)) != goRight ) == (activeForm != 'C')) {
+      if ((((Direction == 0) == (Attitude == 0)) != goRight ) == (!/^[CL]$/.test(activeForm))) {
         sign = -sign;
         rollDir = -rollDir;
       }
     } else {
       // Set towards viewer on Y axis
-      if (((Direction == 90) == (Attitude == 0)) == (activeForm != 'C')) {
+      if (((Direction == 90) == (Attitude == 0)) == (!/^[CL]$/.test(activeForm))) {
         sign = -sign;
         rollDir = -rollDir;
       }
@@ -3197,13 +3199,13 @@ function makeTurn (draw) {
   } else {
     if ((Direction == 0) || (Direction == 180)) {
       // towards viewer X-to-X axis
-      if (((Direction == 0) == (Attitude < 180)) == (activeForm != 'C')) {
+      if (((Direction == 0) == (Attitude < 180)) == (!/^[CL]$/.test(activeForm))) {
         sign = -sign;
         rollDir = -rollDir;
       }
     } else {
       // according goRight Y-to-Y axis
-      if ((((Direction == 90) == (Attitude == 0)) != goRight ) == (activeForm != 'C')) {
+      if ((((Direction == 90) == (Attitude == 0)) != goRight ) == (!/^[CL]$/.test(activeForm))) {
         sign = -sign;
         rollDir = -rollDir;
       }
@@ -3216,7 +3218,7 @@ function makeTurn (draw) {
   
   // See if we start with an outside roll
   regex = /J/;
-  var rollDir = (regex.test(draw))? -sign : sign;
+  var rollDir = regex.test(draw) ? -sign : sign;
   // See if we start inverted, this will also flip the drawing direction
   if (Attitude == 180) rollDir = -rollDir;
   
@@ -3282,7 +3284,9 @@ function makeTurn (draw) {
       startRad += halfStepSigned;
       rollPos++;
     }
-    pathsArray = makeTurnDots (sign*(Math.Tau - rad), stopRad, startRadSave, pathsArray);
+    if (extent != 360) {
+	    pathsArray = makeTurnDots (sign*(Math.Tau - rad), stopRad, startRadSave, pathsArray);
+		}
     changeDir (sign * extent);
   } else {
     // regular turns
@@ -3440,7 +3444,7 @@ function makeRoll (params) {
     }
     
     // Calculate at which angle the curve starts and stops
-    radPoint = (extent >= 360)? (rad - sign * (Math.PI / 6)) : rad;
+    radPoint = (extent >= 360) ? (rad - sign * (Math.PI / 6)) : rad;
     var dx = (Math.cos(radPoint) - radCos) * rollcurveRadius - dxTip;
     var dy = -(Math.sin(radPoint) - radSin) * rollcurveRadius - dyTip;
     // Make the curved path
@@ -3482,7 +3486,7 @@ function makeRoll (params) {
       dx = pathsArray[pathsArray.length - 1].dx;
       dy = pathsArray[pathsArray.length - 1].dy;
       // glider super slow roll or regular roll
-      var radPoint = (params[3])? rad+sign*(Math.PI/2) : rad+sign*(Math.PI/3);
+      var radPoint = params[3] ? rad+sign*(Math.PI/2) : rad+sign*(Math.PI/3);
 
       dxTip = (((Math.cos(radPoint) * (rollcurveRadius + 2)) - (radCos * rollcurveRadius)));
       dyTip = -(((Math.sin(radPoint) * (rollcurveRadius + 2)) - (radSin * rollcurveRadius)));
@@ -4540,7 +4544,7 @@ function doOnLoad () {
   newTurnPerspective = document.getElementById('newTurnPerspective');
 
 	document.addEventListener ("deviceready", function() {
-		if (typeof cordova !== 'undefined') cordovaApp = true;
+		//if (typeof cordova !== 'undefined') cordovaApp = true;
 		// handle Intents
 		window.plugins.intent.setNewIntentHandler(cordovaHandleIntent);
 	  // Handle the intent when the app is not open
@@ -4549,10 +4553,11 @@ function doOnLoad () {
 	  window.plugins.intent.getCordovaIntent(cordovaHandleIntent);
 	  
 	  if (loading && loading.parentNode) {
-			loading.parentNode.removeChild (loading)
+			loading.parentNode.removeChild (loading);
 		}
 		
-		if (loadComplete) navigator.splashscreen.hide();
+		if (loadComplete) setTimeout(
+			function(){navigator.splashscreen.hide();}, 500);
 	});
 
   // check if Chrome App is installed
@@ -4561,7 +4566,7 @@ function doOnLoad () {
   // Check if localStorage is supported. When running as Chrome app, we
   // assume the local storage support is present
   if (!chromeApp.active) {
-    storage = (typeof(localStorage) != 'undefined')? true : false;
+    storage = (typeof(localStorage) != 'undefined') ? true : false;
   }
 
   // set correct options and menu items in various places
@@ -4582,10 +4587,11 @@ function doOnLoad () {
   loadPrintDialogStorage();
 
 	// when smallMobile is checked (loaded from settings), or when screen
-	// width is small and no setting is found, switch to smallMobile
+	// width is small and no setting is found, switch to smallMobile.
+	// Use screen.width to get CSS pixels
 	if (document.getElementById ('smallMobile').checked) {
 		switchSmallMobile ();
-	} else if (window.innerWidth < 761) {
+	} else if (screen.width < 761) {
 
 		function f(settings) {
 			if (!/\bsmallMobile\b/.test (settings)) {
@@ -5180,7 +5186,16 @@ function addEventListeners () {
   document.getElementById('t_proposalsDialogClose').addEventListener('mousedown', function(){proposalsDialog(false)});
   
   // save dialog
-  document.getElementById('dlTextField').addEventListener('keyup', function(){updateSaveFilename(this.value)}, true);
+  document.getElementById('dlTextField').addEventListener('input', function(){updateSaveFilename(this.value)}, true);
+  // use 'click' to prevent OS save dialog blocking
+  document.getElementById ('t_saveFile').addEventListener ('click', function(){
+	  // close dialog 1 second after click
+    window.setTimeout(function(){saveDialog()}, 1000);
+    var name = sanitizeFileName (document.getElementById('dlTextField').value);
+    if (cordovaApp) {
+			cordovaSave (saveData.blob, name + saveData.ext);
+		} else saveAs (saveData.blob, name + saveData.ext);
+  });
   document.getElementById('t_cancelSave').addEventListener('mousedown', function(){saveDialog()}, false);
   
   // iOS save dialog
@@ -6021,7 +6036,7 @@ function addRollSelectElement (figNr, rollEl, elNr, parent) {
 function createProgramme (year, rnLower, rules, cat, seq, string) {
   var key = year + rules + ' ' + cat + ' ' + seq;
   var sequence = '<sequence><class>';
-  sequence += (rnLower.match(/^glider-/))? 'glider' : 'powered';
+  sequence += rnLower.match(/^glider-/) ? 'glider' : 'powered';
   sequence += '</class><rules>' + rules + '</rules>' +
     '<category>' + cat + '</category>' +
     '<program>' + seq + '</program>' +
@@ -6287,7 +6302,7 @@ function savePrintDialogStorage () {
     for (var i = 0; i < inputs.length; i++) {
       var el = inputs[i];
       if (el.type === 'checkbox') {
-        var value = (el.checked)? 1 : 0;
+        var value = el.checked ? 1 : 0;
       } else {
         var value = encodeURI(el.value);
       }
@@ -6681,7 +6696,7 @@ function updateFigureOptions (figureId) {
       var prevFig = figures[i];
       if (prevFig) {
         if (prevFig.moveTo) {
-          document.getElementById('moveX-value').value = (activeForm === 'C') ?
+          document.getElementById('moveX-value').value = /^[CL]$/.test(activeForm) ?
             -prevFig.moveTo[0] : prevFig.moveTo[0];
           document.getElementById('moveY-value').value = prevFig.moveTo[1];
           document.getElementById('straightLine').firstChild.firstChild.setAttribute('src', mask.on);
@@ -6690,7 +6705,7 @@ function updateFigureOptions (figureId) {
           document.getElementById('moveYCont').classList.remove ('noDisplay');
           break;
         } else if (prevFig.curveTo) {
-          document.getElementById('moveX-value').value = (activeForm === 'C') ?
+          document.getElementById('moveX-value').value = /^[CL]$/.test(activeForm) ?
             -prevFig.curveTo[0] : prevFig.curveTo[0];
           document.getElementById('moveY-value').value = prevFig.curveTo[1];
           document.getElementById('curvedLine').firstChild.firstChild.setAttribute('src', mask.on);
@@ -7147,9 +7162,9 @@ function updateFigure (noRedraw) {
     }
   }
   var moveX = document.getElementById('moveX-value').value;
-  moveX = (moveX)? parseInt(moveX) : 0;
+  moveX = moveX ? parseInt(moveX) : 0;
   var moveY = document.getElementById('moveY-value').value;
-  moveY = (moveY)? parseInt(moveY) : 0;
+  moveY = moveY ? parseInt(moveY) : 0;
   var el1 = document.getElementById('moveForward').firstChild.firstChild;
   var el2 = document.getElementById('straightLine').firstChild.firstChild;
   var el3 = document.getElementById('curvedLine').firstChild.firstChild;
@@ -7312,7 +7327,7 @@ function updateFigure (noRedraw) {
   // update comments, including Free (Un)known letter
   // keep this at the end to prevent disturbing other items
   var val = document.getElementById('unknownFigure').value;
-  var comments = (val != 0)? '@' + val : '';
+  var comments = (val != 0) ? '@' + val : '';
 
   comments += document.getElementById('comments').value;
 
@@ -8366,7 +8381,7 @@ function loadRules() {
     // Check for [section] or (section) to match sequence type specific
     // rules
     if ((rules[i][0] == '[') || (rules[i][0] == '(')) {
-      parseSection = (i == section[ruleSection])? true : false;
+      parseSection = (i == section[ruleSection]) ? true : false;
     } else if (parseSection) {
       // when parseSection = true, continue
       // First we remove any spaces around '=', this makes parsing easier
@@ -8410,7 +8425,7 @@ function loadRules() {
   for (var i = 0; i < rules.length; i++) {
     // Check for [section] or (section) to match sequence type specific rules
     if ((rules[i][0] == '[') || (rules[i][0] == '(')) {
-      parseSection = (i == section[ruleSection])? true : false;
+      parseSection = (i == section[ruleSection]) ? true : false;
     } else if (parseSection) {
       // when parseSection = true, continue
       if (rules[i].match(/^conv-[^=]+=/)) {
@@ -8721,7 +8736,7 @@ function set_rule_K() {
   reset_aresti_K() ;
   // Then, if needed, we set fig with the new K from rule and save aresti K in aresti_K
   if (rule_K.length != 0) {
-    aresti_K_class = (document.getElementById('class').value == 'powered')? 'kpwrd' : 'kglider' ;
+    aresti_K_class = (document.getElementById('class').value == 'powered') ? 'kpwrd' : 'kglider' ;
     var debug = '' ;
     for (var i in rule_K) {
 //      debug = debug + '\n' + rule_K[i].i_fig + '\tfig : ' + fig[rule_K[i].i_fig].aresti + ' (' + rule_K[i].new_K + ') \tau lieu de ' + fig[rule_K[i].i_fig][aresti_K_class];
@@ -8761,7 +8776,7 @@ function aresti2ind(aresti,start) {
     var ind = false ;
     for (var i in fig) if (fig[i].aresti == aresti) {
       if (fig[i].next) {  	// linkage processed. Returns -fig_index if linked and fig_index if otherwise. 
-        ind = (fig[i].next == -1)? i : -i ; 
+        ind = (fig[i].next == -1) ? i : -i ; 
         break ;
       } else { 		// Built the linkage if any.
         if (previous != 0) { fig[previous].next = i ; if (!ind) ind = -previous ; }
@@ -8773,7 +8788,7 @@ function aresti2ind(aresti,start) {
       if (!ind) ind = previous ; 
     }
   } else {
-    ind = (fig[fig[start].next].next == -1)? fig[start].next : -fig[start].next ;
+    ind = (fig[fig[start].next].next == -1) ? fig[start].next : -fig[start].next ;
   }
   return ind ;
 }
@@ -10418,7 +10433,7 @@ function selectFigure (e) {
     // and add queue unknown figure letter if applicable. Don't do this
     // in Free (Un)known designer
     if (fromChooser && (activeForm !== 'FU')) {
-      var uf = (queueFigure)? fig[queueFigure].unknownFigureLetter : false;
+      var uf = queueFigure ? fig[queueFigure].unknownFigureLetter : false;
 
       for (var i = selectedFigure.id - 1; i>=0; i--) {
         if (figures[i].aresti) {
@@ -11238,7 +11253,7 @@ function Drop(evt) {
       var dx = parseInt(dxdy[0] / lineElement)
       var dy = parseInt(dxdy[1] / lineElement)
       // reverse direction for dragging in Form C
-      if (activeForm === 'C') dx = -dx;
+      if (/^[CL]$/.test(activeForm)) dx = -dx;
       if ((dx != 0) || (dy != 0)) {
 	      updateSequence (dragTarget.id.replace('figure', '') - 1,
 	        '(' + dx + ',' + dy + ')',
@@ -11272,17 +11287,41 @@ function Drop(evt) {
  
 // changeEntryDirection alters the entry direction of the sequence
 function changeEntryDirection () {
+	var 
+		prevEntry = '',
+		doFlipY = false;
+		
   // get code
   for (code in entryOptions) {
     if (entryOptions[code] === this.id.replace(/^t_/, '')) break;
   }
   updateSequenceOptions ('');
   if (activeSequence.figures[0] && entryOptions[activeSequence.figures[0].string]) {
-    updateSequence(0, code, true);
-    return;
+		prevEntry = activeSequence.figures[0].string;
   }
-  // put at start when no entry option to replace
-  updateSequence(-1, code);
+
+  // Flip move options if applicable. Would like to do full rotation
+  // support (also ej and eja) but this would result in y -> -y on 180
+  // rotation. So only support for changing directly from upwind to
+  // downwind and vv
+  if ((code + prevEntry) === 'ed') { // match 'ed' + '' and '' + 'ed'
+		for (var i = 0; i < figures.length; i++) {
+			if (regexCurveTo.test (figures[i].string) || regexMoveTo.test (figures[i].string)) {
+			  var dxdy = figures[i].string.replace(/[^0-9\,\-]/g, '').split(',');
+				updateSequence (i,
+					figures[i].string[0] + -parseInt(dxdy[0]) + ',' + dxdy[1] +
+						figures[i].string[figures[i].string.length - 1],
+					true);
+			}
+			// flip Y axis when we have a crossbox inside the sequence
+			if (figures[i].entryAxis === 'Y') doFlipY = true;
+		}
+	}
+
+  // insert before start or replace first
+  updateSequence (prevEntry ? 0 : -1, code, prevEntry ? true : false);
+  
+  if (doFlipY) flipYAxis();
 }
 
 // flipYAxis will flip the drawn direction of the Y axis for the whole
@@ -12108,7 +12147,7 @@ function handleFreeDrop (e) {
     // if unknownFigureLetter is set, drop one figure earlier
     // var previous = (figures[figNr].unknownFigureLetter)? 1 : 0;
     // if aresti is set, drop one figure earlier
-    var previous = (figures[figNr].aresti)? 1 : 0;
+    var previous = (figures[figNr].aresti) ? 1 : 0;
 
     // a subsequence is marked by "n" at the start, where
     // n = subsequence number
@@ -13171,7 +13210,7 @@ function makeFree () {
       X = Y = 0;
       Attitude = figures[id - 1].exitAtt;
       Direction = figures[id - 1].exitDir;
-      NegLoad = ((Attitude > 90) && (Attitude < 270))? 1 : 0;
+      NegLoad = ((Attitude > 90) && (Attitude < 270)) ? 1 : 0;
       
       figures[id].paths = buildShape ('Line', [6], []);
       figures[id].paths = buildShape ('FigStop', false, figures[id].paths);
@@ -13327,16 +13366,16 @@ function makeFree () {
       // adjust column and row
       switch (f.exitDir) {
         case 0:
-          col += (f.exitAtt == 0)? 1 : -1;
+          col += (f.exitAtt == 0) ? 1 : -1;
           break;
         case 90:
-          col += (f.exitAtt == 0)? 1 : -1;
+          col += (f.exitAtt == 0) ? 1 : -1;
           break;
         case 180:
-          col += (f.exitAtt == 0)? -1 : 1;
+          col += (f.exitAtt == 0) ? -1 : 1;
           break;
         case 270:
-          col += (f.exitAtt == 0)? -1 : 1;
+          col += (f.exitAtt == 0) ? -1 : 1;
           break;
       }
       
@@ -13370,7 +13409,7 @@ function makeFree () {
   var td = freeCell (sub, 1, 1);
   freeCellAddHandlers (td);
   tr.appendChild (td);
-  td.innerHTML = (sub === 1)? userText.dropFigureHere : userText.newCopySubsequence;
+  td.innerHTML = (sub === 1) ? userText.dropFigureHere : userText.newCopySubsequence;
   td.classList.add ('fuNewSub');
   
   // mark figures in fuFiguresTable
@@ -13381,7 +13420,7 @@ function makeFree () {
     if (td) {
       var match = sequenceText.innerText.match(RegExp ('"@' + l[i] + '"', 'g'));
       if (match) {
-        var multi = ((l[i] === 'L') && additionalFig.max)? additionalFig.max : 1;
+        var multi = ((l[i] === 'L') && additionalFig.max) ? additionalFig.max : 1;
         if (l[i] === 'L') {
           td.innerHTML = userText.additional + '<br />' + match.length + 'x';
         }
@@ -13503,7 +13542,7 @@ function draw () {
   firstFigure = (activeForm !== 'FU') ? true : false;
   Attitude = X = Y = 0;
   var content = '';
-  if ((activeForm === 'C') || (activeForm === 'L')) {
+  if (/^[CL]$/.test(activeForm)) {
     goRight = false;
     setYAxisOffset (180 - yAxisOffsetDefault);
     Direction = 180;
@@ -13917,8 +13956,7 @@ function openLogoFile () {
 function programme () {
   var key = this.id.replace(/^programme-/, '');
   OLANBumpBugCheck = false;
-  fileName.innerText = '';
-  storeLocal ('fileName', fileName.innerText);
+  updateSaveFilename();
   if (/^<sequence>/.test(library[key])) {
     activateXMLsequence(library[key]);
   } else {
@@ -14684,7 +14722,7 @@ function compVersion (v1, v2, parts) {
   if (!v2) return 1;
   var subV1 = v1.split('.');
   var subV2 = v2.split('.');
-  var count = (subV1.length > subV2.length)? subV1.length : subV2.length;
+  var count = (subV1.length > subV2.length) ? subV1.length : subV2.length;
   if (parts && (parts < count)) count = parts;
   // pad zeroes
   while (subV1.length < count) subV1.push(0);
@@ -14739,10 +14777,28 @@ function loadedRulesFile (evt) {
   }
 }
 
+// sanitizeFileName assures fileName does not contain illegal
+// characters
+function sanitizeFileName (fname) {
+	var
+		illegalRe = /[\/\?<>\\:\*\|":]/g,
+		controlRe = /[\x00-\x1f\x80-\x9f]/g,
+		reservedRe = /^\.+$/,
+		windowsReservedRe = /^(con|prn|aux|nul|com[0-9]|lpt[0-9])(\..*)?$/i;
+
+  var sanitized = fname
+    .replace(illegalRe, '')
+    .replace(controlRe, '')
+    .replace(reservedRe, '')
+    .replace(windowsReservedRe, '');
+  return (sanitized.substring (0, 255));
+}
 // updateSaveFilename gets called when the "Save as" filename is changed
-// and syncs between t_saveFile and fileName elements. It clears when
 function updateSaveFilename (fname) {
-  if (!fname) fname = '';
+	var field = document.getElementById('dlTextField');
+	// make sure the filename is legal
+  fname = fname ? sanitizeFileName (fname) : '';
+  if (field.value !== fname) field.value = fname;
   fileName.innerText = fname;
   storeLocal ('fileName', fname);
 }
@@ -14839,7 +14895,8 @@ function saveFile(data, name, ext, filter, format) {
     return result;
   }
   
-  var blob = new Blob ([data], {type: format.replace(/;.+$/, '')});
+  saveData.blob = new Blob ([data], {type: format.replace(/;.+$/, '')});
+  saveData.ext = ext;
   
   var a = document.createElement('a');
   
@@ -14852,23 +14909,6 @@ function saveFile(data, name, ext, filter, format) {
   } else {
     saveDialog (userText.downloadLegacy, name, ext);
   }
-  
-  // create download button
-  document.getElementById('saveFileButton').innerHTML =
-    '<span class="textButton userText" id="t_saveFile">' +
-    userText.saveFile + '</span>';
-  var button = document.getElementById ('t_saveFile');
-  
-  // close dialog 1 second after mousedown
-  button.addEventListener ('mousedown', function(){
-    window.setTimeout(function(){saveDialog()}, 1000);
-  });
-  button.addEventListener ('mousedown', function(){
-    var name = document.getElementById('dlTextField').value;
-    if (cordovaApp) {
-			cordovaSave (blob, name + ext);
-		} else saveAs (blob, name + ext);
-  });
   
   return result;
 }
@@ -15319,7 +15359,7 @@ function buildForms (win) {
         }
         // set correct drawing Form for pilot cards
         if (activeForm === 'PilotCards') {
-          activeForm = (document.getElementById('pilotCardFormB').checked)? 'B' : 'C';
+          activeForm = document.getElementById('pilotCardFormB').checked ? 'B' : 'C';
         } else if (activeForm === 'L') {
           activeForm = 'C';
         } else if (activeForm === 'R') {
@@ -15904,7 +15944,7 @@ function addFormElementsLR (svg, print) {
   drawText (document.getElementById('rules').value,
     logoWidth + 20, 25, 'formATextLarge', 'start', '', svg);
   drawText (document.getElementById('category').value +
-    ((document.getElementById('class').value === 'glider')? ' Glider' : ''),
+    ((document.getElementById('class').value === 'glider') ? ' Glider' : ''),
     logoWidth / 2 + 250, 25, 'formATextLarge', 'middle' , '', svg);
   drawText (document.getElementById('date').value,
     490, 25, 'formATextLarge', 'end', '', svg);
@@ -16162,7 +16202,7 @@ function buildHeader (svg, logoWidth) {
     // removed "Programme" and added Rules in 1.5.1.6
     drawText (
       document.getElementById('rules').value + ' ' +
-      ((document.getElementById('class').value === 'glider')? 'Glider ' : '') +
+      ((document.getElementById('class').value === 'glider') ? 'Glider ' : '') +
       document.getElementById('category').value + ' ' +
       document.getElementById('program').value,
       475, 105, 'formATextLarge', 'middle', '', svg);
@@ -16492,8 +16532,7 @@ function activeFileName (append) {
       document.getElementById('pilot').value;
     fname = fname.replace(/\s\s+/g, ' ');
     fname = fname.replace(/^\s+|\s+$/g, '');
-    fileName.innerText = fname;
-    storeLocal ('fileName', fname);
+    updateSaveFilename (fname);
   } else {
     fname = fileName.innerText;
   }
@@ -16709,7 +16748,7 @@ function buildIllegal (i) {
 // scaling should not affect movement, so divide by scale
 function buildMoveTo (dxdy, i) {
   var paths = [];
-  if (activeForm === 'C') dxdy[0] = -dxdy[0];
+  if (/^[CL]$/.test(activeForm)) dxdy[0] = -dxdy[0];
   paths.push({'path':'l ' + roundTwo(dxdy[0] * (lineElement / scale)) +
     ',' + roundTwo(dxdy[1] * (lineElement / scale)),
     'style':'dotted',
@@ -16724,7 +16763,7 @@ function buildMoveTo (dxdy, i) {
 // scaling should not affect movement, so divide by scale
 function buildCurveTo (dxdy, i) {
   var paths = [];
-  if (activeForm === 'C') dxdy[0] = -dxdy[0];
+  if (/^[CL]$/.test(activeForm)) dxdy[0] = -dxdy[0];
   var angle = dirAttToAngle (Direction, Attitude);
   var dist = Math.sqrt(dxdy[0]*dxdy[0] + dxdy[1]*dxdy[1]);
   var dx = Math.cos(angle) * (lineElement / scale) * dist / 2;
@@ -16776,7 +16815,7 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
   // vertical down after hammerhead, tailslide or after roll element
   var lowKFlick = false;
   // entryAxis identifies the axis on which the figure starts
-  var entryAxis = ((Direction == 0) || (Direction == 180))? 'X' : 'Y';
+  var entryAxis = ((Direction == 0) || (Direction == 180)) ? 'X' : 'Y';
   var entryAtt = Attitude;
   var entryDir = Direction;
   // goFront is set to true for every new figure that starts to front
@@ -16846,7 +16885,7 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
       };
       var rollPattern = rollPatterns[i];
       rollSums[i] = 0;
-      rollSign = (activeForm === 'C')? -1 : 1;
+      rollSign = (/^[CL]$/.test(activeForm)) ? -1 : 1;
       extent = 0;
       var subRoll = 0;
       var flipRoll = false;
@@ -17269,7 +17308,7 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
     // set correct load
     if ((figureDraw[i] == figpat.longforward) || (figureDraw[i] == figpat.forward)) {
       if ((Attitude != 90) && (Attitude != 270)) {
-        NegLoad = ((Attitude > 90) && (Attitude < 270))? 1 : 0;
+        NegLoad = ((Attitude > 90) && (Attitude < 270)) ? 1 : 0;
       }
     }
     // Sum continuous lines in the figure
@@ -17404,10 +17443,10 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
             if ((roll[rollnr][j].type == 'possnap') || (roll[rollnr][j].type == 'negsnap')) {
               if (((Attitude == 90) || (Attitude == 270)) && lowKFlick) {
                 // Handle snaps on verticals where lowKFlick is set
-                rollAtt = (roll[rollnr][j].type == 'possnap')? '+' + rollAtt : '-' + rollAtt;
+                rollAtt = (roll[rollnr][j].type == 'possnap') ? '+' + rollAtt : '-' + rollAtt;
               } else if (((rollSum % 180) == 0) || (Attitude == 90) || (Attitude == 270)) {
                 // Handle snaps on verticals and from non-knife-edge
-                rollAtt = (NegLoad == 0)? '+' + rollAtt : '-' + rollAtt;
+                rollAtt = (NegLoad == 0) ? '+' + rollAtt : '-' + rollAtt;
               } else {                
                 // Handle snaps from knife edge. Use rollSum to find the
                 // previous amount of roll. Use switches to determine
@@ -17417,7 +17456,7 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
                 inv = (inv == ((rollSum * roll[rollnr][j].extent) > 0));
                 // 1) Foot up for pos start, foot down for neg start
                 // 2) Foot down for pos start, foot up for neg start
-                rollAtt = (inv)? '+' + rollAtt : '-' + rollAtt;
+                rollAtt = inv ? '+' + rollAtt : '-' + rollAtt;
               }
             }
             // set lowKFlick to true after anything but a line
@@ -17616,7 +17655,7 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
               if (((rollSum + 180) % 360) == 0) {
                 Attitude = 180 - Attitude;
                 if (Attitude < 0) Attitude += 360;
-                if (activeForm == 'C') {
+                if (/^[CL]$/.test(activeForm)) {
                   changeDir (-Math.abs(rollSum));
                 } else {
                   changeDir(Math.abs(rollSum));
@@ -17629,7 +17668,7 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
               // check correct load after rolls that are not vertical or
               // in top of loop
               if ((Attitude != 90) && (Attitude != 270) && (!rollTop)) {
-                NegLoad = (((Attitude > 90) && (Attitude < 270)))? 1 : 0;
+                NegLoad = (((Attitude > 90) && (Attitude < 270))) ? 1 : 0;
               }
             }
           }
@@ -17752,7 +17791,7 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
             if (fig[figNr].rolls[rollnr] == 2) {
               rollTopAngleAfter = -rollTopAngleAfter;
             }
-            var topLineAngle = (rollTopAngleAfter > 0)? 45 : -45;
+            var topLineAngle = (rollTopAngleAfter > 0) ? 45 : -45;
             paths = buildShape ('Curve', topLineAngle, paths);
             if (rollPaths.length) {
               // draw the second marker when there was a roll in the top
@@ -17843,10 +17882,10 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
 
         if (regexChangeDir.test (figString)) {
           figures[figStringIndex].switchX = true;
-          var prefix = (activeForm == 'C')? '' : userpat.moveforward;
+          var prefix = (/^[CL]$/.test(activeForm)) ? '' : userpat.moveforward;
         } else {
           figures[figStringIndex].switchX = false;
-          var prefix = (activeForm == 'C')? userpat.moveforward : '';
+          var prefix = (/^[CL]$/.test(activeForm)) ? userpat.moveforward : '';
         }
         paths = buildShape ('Turn', prefix +
           figureDraw.replace(/[^jioJIO\d]+/g, ''), paths);
@@ -17869,7 +17908,7 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
               curveRadius = curveRadius / 2;
             }
             // Check if the next roll should be in the top
-            rollTop = (figureDraw[i + 1] == '!')? true : false;
+            rollTop = (figureDraw[i + 1] == '!') ? true : false;
             if ((Math.abs(angle) < 360) && !rollTop) {
               paths = buildShape ('Curve', angle, paths);
             } else if (rollTop) {
@@ -17884,7 +17923,7 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
               }
               angleTop = (angle / 2) - diffTop;
 
-              var topLineAngle = (angleTop > 0)? 45 : -45;
+              var topLineAngle = (angleTop > 0) ? 45 : -45;
               paths = buildShape ('Curve', angleTop - topLineAngle, paths);
               paths = buildShape ('RollTopLine', '', paths);
               paths = buildShape ('Curve', topLineAngle, paths);
@@ -17897,7 +17936,7 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
             // if applicable, reset curveRadius when done
             if (figureDraw.charAt(i + 1) == '/') curveRadius *= 2;
           }
-          NegLoad = (angle < 0)? 1 : 0;
+          NegLoad = (angle < 0) ? 1 : 0;
           // The lineLength may be necessary for e.g. hammerhead and is
           // set to 0 after any angle
           lineLength = 0;
@@ -17957,7 +17996,7 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
 // Only run one X and one Y switch per figure
 function checkQRollSwitch (figString, figStringIndex, pattern, seqNr, rollSum, figureDraw, fdIndex, roll, rollnr) {
   if (((Attitude == 90) || (Attitude == 270)) && (rollSum % 180)) {
-    if (activeForm == 'C') {
+    if (/^[CL]$/.test(activeForm)) {
       changeDir (-Math.abs(rollSum));
     } else {
       changeDir(Math.abs(rollSum));
@@ -17972,7 +18011,7 @@ function checkQRollSwitch (figString, figStringIndex, pattern, seqNr, rollSum, f
     // var doubleBump = figString.match (/(pb|b)(pb|b)/);
     var verticalRolls = (pattern.match(/&/g)||[]).length;
 
-    var firstRoll = (rollnr == 0)? true : false;
+    var firstRoll = (rollnr == 0) ? true : false;
     for (var i = fdIndex + 1; i < figureDraw.length; i++) {
       if (figureDraw[i] in drawAngles) {
         // found an angle
@@ -18432,7 +18471,7 @@ function parseSequence () {
     // don't know a way to do this with regex...
     var multipleMinus = false;
     // if the figure is only - and extensions, e.g. --, disregard last minus
-    var skipMinus = (figure.match(/^[-~`]*$/))? true : false;
+    var skipMinus = figure.match(/^[-~`]*$/) ? true : false;
     for (var j = figure.length - 1; j >= 0; j--) {
       if (figure[j] == '-') {
         if (multipleMinus) {
@@ -18527,7 +18566,7 @@ function parseSequence () {
         Direction = 270;
       } else if (match === 'ed') {
         // Downwind entry 'figure'
-        if (activeForm == 'C') {
+        if (/^[CL]$/.test(activeForm)) {
           Direction = 0;
           goRight = true;
         } else {
@@ -18536,7 +18575,7 @@ function parseSequence () {
         }
       } else if (match === 'eu') {
         // Upwind entry 'figure'
-        if (activeForm == 'C') {
+        if (/^[CL]$/.test(activeForm)) {
           Direction = 180;
           goRight = false;
         } else {
@@ -18695,7 +18734,7 @@ function parseSequence () {
     }
     
     // set the exitAxis for every figure, including draw only
-    figures[i].exitAxis = ((Direction == 0) || (Direction == 180))? 'X' : 'Y';
+    figures[i].exitAxis = ((Direction == 0) || (Direction == 180)) ? 'X' : 'Y';
     
     // check if this is the changePoint
     if (i === changePoints[1]) {

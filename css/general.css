@@ -1203,9 +1203,11 @@ option.used {
   box-shadow: none;
 }
 #fileExt {
-  font-size: 1.2em;
-  font-weight: bold;
-  margin-right: 8px;
+	position: relative;
+	float: right;
+  font-size: 24px;
+  color: rgba(0,0,0,0.48);
+  top: -29px;
 }
 
 /* iOS save dialog */
@@ -1242,7 +1244,8 @@ option.used {
 }
 #pilotCardPercentValue {
   float: left !important;
-  width: 3em;
+  width: 41px;
+  text-overflow: clip;
 }
 .folded div {
   margin: 0;
@@ -1504,9 +1507,10 @@ option.used {
 	box-shadow: inset 0 0 5px grey;
 }
 #dlTextField {
-  float: left;
-  font-size: 1.25em;
-  width: 50%;
+  font-size: 24px;
+  text-align: right;
+  width: 100%;
+  padding-right: 48px;
 }
 #saveFileFormDiv {
   width:1px;
@@ -2202,12 +2206,12 @@ table#figureChooserTable div {
 #installApp {
 	position: fixed;
 	z-index: 9999;
-	height: 24px;
+	height: 32px;
 	padding: 16px 144px 16px 48px;
 	text-align: center;
-	font-size: 20px;
+	font-size: 28px;
 	left: 0;
-	bottom: -60px;
+	bottom: -72px;
 	right: 0;
 	background-color: #ffcc80;
 	opacity: 0.2;
@@ -2226,6 +2230,7 @@ table#figureChooserTable div {
 	top: 0;
 	left: 0;
 	padding: 16px;
+	font-size: 32px;
 }
 #closeInstallApp:active {
 	background-color: rgba(0,0,0,0.38);
@@ -2234,7 +2239,7 @@ table#figureChooserTable div {
 	position: absolute;
 	top: 0;
 	right: 0;
-	height: 56px;
+	height: 68px;
 }
 #installApp.ios #playStore {
 	display: none;

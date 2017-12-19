@@ -34,7 +34,12 @@ select {
   background-color: #fff;
 }
 #dlTextField {
-	width: 100%;
+	font-size: 16px;
+	padding-right: 32px;
+}
+#fileExt {
+	font-size: 16px;
+	top: -25px;
 }
 .notSmallMobile {
 	display: none;
@@ -397,6 +402,16 @@ table#figureChooserTable td.selected {
   display: none !important;
 }
 
+#installApp {
+	height: 24px;
+	font-size: 20px;
+}
+#closeInstallApp {
+	font-size: 24px;
+}
+#installApp img {
+	height: 56px;
+}
 #t_getTheApp {
 	position: relative;
 	top: -14px;

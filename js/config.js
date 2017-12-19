@@ -36,7 +36,7 @@
 // Where a new x should be used for versions that create sequences not
 // fully backward compatible with the previous version
 
-var version = '2018.1.1';
+var version = '2018.1.2';
 /* versionNew is an object that contains version update information
    The structure is {vvv : [[ttt, n], ...], ...} , where
    vvv = version number
@@ -164,8 +164,9 @@ var chromeApp = {
   'active': false
 }
 
-// cordovaApp is set to true in doOnLoad when running in Cordova
-var cordovaApp = false;
+// cordovaApp is set to true here. It is set to false in cordova.js when
+// not compiled on Cordova
+var cordovaApp = true;
 
 // define the labels (=input field ids) for saving/loading sequences
 var sequenceXMLlabels = [
@@ -582,8 +583,6 @@ var regexAdditional = new RegExp (userpat.additional);
 var regexCurveTo = new RegExp ('^[\(][0-9\-]*,[0-9\-]*[\)]$');
 var regexMoveTo = new RegExp ('^\[[0-9\-]*,[0-9\-]*\]$');
 // regexDrawInstr matches moveTo, curveTo, scale and text
-// incorrect 2016.1 check
-// var regexDrawInstr = /^(\[|\().+(\]|\)$)|([0-9]+\%)|("[^"]*"$)/;
 var regexDrawInstr = /^([\[\(].+[\]\)]|-?[0-9]+\%|"[^"]*")$/;
 var regexLongForward = new RegExp ('\\' + userpat.longforward, 'g');
 var regexEntryShorten = /`+\+(.*[a-zA-Z])/;
@@ -597,7 +596,7 @@ var regexFuFigNr = /\bfuFig(\d+)\b/;
 // match (rolling) turns
 var regexTurn = /[0-9\+\-]j[io0-9\+\-]/;
 // regexOLANBumpBug is used to check for the Humpty Bump direction bug
-// in OLAN. Can be removed (incl relevant code in OpenAero.js) in 2015
+// in OLAN. It is only used when opening OLAN files.
 var regexOLANBumpBug = /(\&b)|(\&ipb)/;
 var regexOLANNBug = /n/;
 // regexRegistration is used to parse out aircraft registration from the
