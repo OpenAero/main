@@ -36,7 +36,7 @@
 // Where a new x should be used for versions that create sequences not
 // fully backward compatible with the previous version
 
-var version = '2018.1.2';
+var version = '2018.1.3';
 /* versionNew is an object that contains version update information
    The structure is {vvv : [[ttt, n], ...], ...} , where
    vvv = version number
@@ -44,6 +44,12 @@ var version = '2018.1.2';
    n   = importance (higher = more important)
 */
 var versionNew = {
+	'2018.1.3' : [
+		['<font style="color:red;">2018 Advanced Free Known figure A was ' +
+		'incorrect in the library of the previous version (snap roll ' +
+		'direction). This is fixed now, but make sure to check sequences ' +
+		'that have already been made</font>', 5]
+	], 
 	'2018.1' : [
 		['CIVA rules and Free Known sequences for 2018', 4],
 		['Aresti Catalogue updates for 2018', 4],

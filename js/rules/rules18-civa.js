@@ -811,7 +811,7 @@ rules.push("allow=^[1-9]");//all figures are allowed for the Free Programme
 
 rules.push("figure-letters=ABCDE");
 
-rules.push('reference="@A" -4,3m6;f "@B" frdb24 "@C" 2dh(8)24 "@D" ````6s..ik4,34- "@E" -2j15');
+rules.push('reference="@A" -4,3m6,f "@B" frdb24 "@C" 2dh(8)24 "@D" ````6s..ik4,34- "@E" -2j15');
 
 // what info should be filled out
 rules.push("infocheck=pilot;actype;acreg;positioning");

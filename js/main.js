@@ -9458,8 +9458,15 @@ function checkAlert (value, type, figNr, rule) {
     case 'min':
     case 'repeat':
     case 'totrepeat':
-      alertMsgs.push(alertFig + sprintf (userText.checkAlert[type],
-        checkCatGroup[value][type], checkName(checkCatGroup[value])));
+			// reduce max total K for floating point
+	    if (value === 'k' && checkCatGroup.floatingPoint) {
+				alertMsgs.push(alertFig + sprintf (userText.checkAlert[type],
+	        checkCatGroup[value][type] - checkCatGroup.floatingPoint,
+	        checkName(checkCatGroup[value])));
+			} else {
+	      alertMsgs.push(alertFig + sprintf (userText.checkAlert[type],
+	        checkCatGroup[value][type], checkName(checkCatGroup[value])));
+	    }
       if (checkCatGroup[value].rule) {
         alertRule = checkCatGroup[value].rule[type];
       }
@@ -13589,12 +13596,14 @@ function windowResize () {
 	if (smallMobile) {
     // set view to device width
 		var initScale = window.screen.availWidth / 320;
-    document.getElementById ('viewport').setAttribute('content',
+    /*document.getElementById ('viewport').setAttribute('content',
 	    'width=' + window.screen.availWidth +
 	    ', initial-scale=' + initScale +
 	    ', minimum-scale=' + initScale +
 	    ', maximum-scale=' + initScale +
-	    ', user-scalable=no');
+	    ', user-scalable=no');*/
+	  document.getElementById ('viewport').setAttribute('content',
+	    'width=321, user-scalable=no');
 	}
 }
 
