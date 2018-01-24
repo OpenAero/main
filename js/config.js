@@ -36,7 +36,7 @@
 // Where a new x should be used for versions that create sequences not
 // fully backward compatible with the previous version
 
-var version = '2018.1.3';
+var version = '2018.1.4';
 /* versionNew is an object that contains version update information
    The structure is {vvv : [[ttt, n], ...], ...} , where
    vvv = version number
@@ -44,6 +44,10 @@ var version = '2018.1.3';
    n   = importance (higher = more important)
 */
 var versionNew = {
+	'2018.1.4' : [
+		['Corrected CIVA 2018 rules regarding required rolling turn in the Free Known', 4],
+		['Added IAC and BAeA Known sequences for 2018', 3]
+	],
 	'2018.1.3' : [
 		['<font style="color:red;">2018 Advanced Free Known figure A was ' +
 		'incorrect in the library of the previous version (snap roll ' +
@@ -164,15 +168,21 @@ var versionNew = {
 // versionNewMax defines the maximum updates to show when upgrading
 var versionNewMax = 10;
 
+// platform holds various platform variables
+var platform = {};
+
+// fix iOS Cordova contenteditable focus bug
+var refocus_prevtarget = null;
+
 // Define chrome app id and if app is active
 var chromeApp = {
   'id': 'gadjhgnenmdfihhmnhgpcijlafpahfbi',
   'active': false
 }
 
-// cordovaApp is set to true here. It is set to false in cordova.js when
-// not compiled on Cordova
-var cordovaApp = true;
+// platform.cordova is set to true here. It is set to false in
+// cordova.js when not compiled on Cordova
+platform.cordova = true;
 
 // define the labels (=input field ids) for saving/loading sequences
 var sequenceXMLlabels = [

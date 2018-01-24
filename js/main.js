@@ -151,18 +151,20 @@ var dragTarget = null;
 // confirmFunction is used as a function reference of confirm dialog
 var confirmFunction;
 
-// mobileDevice is true when running on a mobile device (e.g. tablet)
+// set platform OS for Android and iOS
+platform.android = /Android/i.test(navigator.userAgent);
+platform.ios = /i(Pad|Phone|Pod)/i.test(navigator.userAgent);
+
+// platform.mobile is true when running on a mobile device (e.g. tablet)
 /** SET TO TRUE FOR TESTING !!! */
-var mobileDevice = ((typeof window.orientation !== 'undefined') ||
+platform.mobile = ((typeof window.orientation !== 'undefined') ||
 	(navigator.userAgent.indexOf('IEMobile') !== -1) || false);
 	
-// smallMobile is true when running on a small Mobile browser
-var smallMobile = false;
+// platform.smallMobile is true when running on a small Mobile browser
+platform.smallMobile = false;
 
-// touchDevice is true on touch enabled devices. As it can also be true
-// on touch enabled browsers when using mouse and keyboard, we check
-// again every time a figure is grabbed.
-var touchDevice = (('ontouchstart' in window)
+// platform.touch is true on touch enabled devices
+platform.touch = (('ontouchstart' in window)
   || (navigator.maxTouchPoints > 0)
   || (navigator.msMaxTouchPoints > 0));
 
@@ -281,181 +283,267 @@ var errors = [];
  
 /*
  * classList.js: Cross-browser full element.classList implementation.
- * 2012-11-15
+ * 1.2.20171210
  *
  * By Eli Grey, http://eligrey.com
- * Public Domain.
- * NO WARRANTY EXPRESSED OR IMPLIED. USE AT YOUR OWN RISK.
+ * License: Dedicated to the public domain.
+ *   See https://github.com/eligrey/classList.js/blob/master/LICENSE.md
  */
- 
+
 /*global self, document, DOMException */
- 
-/*! @source http://purl.eligrey.com/github/classList.js/blob/master/classList.js*/
- 
-if (typeof document !== "undefined" && !("classList" in document.createElement("a"))) {
- 
-(function (view) {
- 
-"use strict";
- 
-if (!('HTMLElement' in view) && !('Element' in view)) return;
- 
-var
-      classListProp = "classList"
-    , protoProp = "prototype"
-    , elemCtrProto = (view.HTMLElement || view.Element)[protoProp]
-    , objCtr = Object
-    , strTrim = String[protoProp].trim || function () {
-        return this.replace(/^\s+|\s+$/g, "");
-    }
-    , arrIndexOf = Array[protoProp].indexOf || function (item) {
-        var
-              i = 0
-            , len = this.length
-        ;
-        for (; i < len; i++) {
-            if (i in this && this[i] === item) {
-                return i;
-            }
-        }
-        return -1;
-    }
-    // Vendors: please allow content code to instantiate DOMExceptions
-    , DOMEx = function (type, message) {
-        this.name = type;
-        this.code = DOMException[type];
-        this.message = message;
-    }
-    , checkTokenAndGetIndex = function (classList, token) {
-        if (token === "") {
-            throw new DOMEx(
-                  "SYNTAX_ERR"
-                , "An invalid or illegal string was specified"
-            );
-        }
-        if (/\s/.test(token)) {
-            throw new DOMEx(
-                  "INVALID_CHARACTER_ERR"
-                , "String contains an invalid character"
-            );
-        }
-        return arrIndexOf.call(classList, token);
-    }
-    , ClassList = function (elem) {
-        var
-              trimmedClasses = strTrim.call(elem.className)
-            , classes = trimmedClasses ? trimmedClasses.split(/\s+/) : []
-            , i = 0
-            , len = classes.length
-        ;
-        for (; i < len; i++) {
-            this.push(classes[i]);
-        }
-        this._updateClassName = function () {
-            elem.className = this.toString();
-        };
-    }
-    , classListProto = ClassList[protoProp] = []
-    , classListGetter = function () {
-        return new ClassList(this);
-    }
-;
-// Most DOMException implementations don't allow calling DOMException's toString()
-// on non-DOMExceptions. Error's toString() is sufficient here.
-DOMEx[protoProp] = Error[protoProp];
-classListProto.item = function (i) {
-    return this[i] || null;
-};
-classListProto.contains = function (token) {
-    token += "";
-    return checkTokenAndGetIndex(this, token) !== -1;
-};
-classListProto.add = function () {
-    var
-          tokens = arguments
-        , i = 0
-        , l = tokens.length
-        , token
-        , updated = false
-    ;
-    do {
-        token = tokens[i] + "";
-        if (checkTokenAndGetIndex(this, token) === -1) {
-            this.push(token);
-            updated = true;
-        }
-    }
-    while (++i < l);
- 
-    if (updated) {
-        this._updateClassName();
-    }
-};
-classListProto.remove = function () {
-    var
-          tokens = arguments
-        , i = 0
-        , l = tokens.length
-        , token
-        , updated = false
-    ;
-    do {
-        token = tokens[i] + "";
-        var index = checkTokenAndGetIndex(this, token);
-        if (index !== -1) {
-            this.splice(index, 1);
-            updated = true;
-        }
-    }
-    while (++i < l);
- 
-    if (updated) {
-        this._updateClassName();
-    }
-};
-classListProto.toggle = function (token, forse) {
-    token += "";
- 
-    var
-          result = this.contains(token)
-        , method = result ?
-            forse !== true && "remove"
-        :
-            forse !== false && "add"
-    ;
- 
-    if (method) {
-        this[method](token);
-    }
- 
-    return result;
-};
-classListProto.toString = function () {
-    return this.join(" ");
-};
- 
-if (objCtr.defineProperty) {
-    var classListPropDesc = {
-          get: classListGetter
-        , enumerable: true
-        , configurable: true
-    };
-    try {
-        objCtr.defineProperty(elemCtrProto, classListProp, classListPropDesc);
-    } catch (ex) { // IE 8 doesn't support enumerable:true
-        if (ex.number === -0x7FF5EC54) {
-            classListPropDesc.enumerable = false;
-            objCtr.defineProperty(elemCtrProto, classListProp, classListPropDesc);
-        }
-    }
-} else if (objCtr[protoProp].__defineGetter__) {
-    elemCtrProto.__defineGetter__(classListProp, classListGetter);
-}
- 
-}(self));
- 
-}
-// * End classlist.js
+
+/*! @source http://purl.eligrey.com/github/classList.js/blob/master/classList.js */
+
+if ("document" in self) {
+	
+	// Full polyfill for browsers with no classList support
+	// Including IE < Edge missing SVGElement.classList
+	if (
+		   !("classList" in document.createElement("_")) 
+		|| document.createElementNS
+		&& !("classList" in document.createElementNS("http://www.w3.org/2000/svg","g"))
+	) {
+	
+	(function (view) {
+	
+	"use strict";
+	
+	if (!('Element' in view)) return;
+	
+	var
+		  classListProp = "classList"
+		, protoProp = "prototype"
+		, elemCtrProto = view.Element[protoProp]
+		, objCtr = Object
+		, strTrim = String[protoProp].trim || function () {
+			return this.replace(/^\s+|\s+$/g, "");
+		}
+		, arrIndexOf = Array[protoProp].indexOf || function (item) {
+			var
+				  i = 0
+				, len = this.length
+			;
+			for (; i < len; i++) {
+				if (i in this && this[i] === item) {
+					return i;
+				}
+			}
+			return -1;
+		}
+		// Vendors: please allow content code to instantiate DOMExceptions
+		, DOMEx = function (type, message) {
+			this.name = type;
+			this.code = DOMException[type];
+			this.message = message;
+		}
+		, checkTokenAndGetIndex = function (classList, token) {
+			if (token === "") {
+				throw new DOMEx(
+					  "SYNTAX_ERR"
+					, "The token must not be empty."
+				);
+			}
+			if (/\s/.test(token)) {
+				throw new DOMEx(
+					  "INVALID_CHARACTER_ERR"
+					, "The token must not contain space characters."
+				);
+			}
+			return arrIndexOf.call(classList, token);
+		}
+		, ClassList = function (elem) {
+			var
+				  trimmedClasses = strTrim.call(elem.getAttribute("class") || "")
+				, classes = trimmedClasses ? trimmedClasses.split(/\s+/) : []
+				, i = 0
+				, len = classes.length
+			;
+			for (; i < len; i++) {
+				this.push(classes[i]);
+			}
+			this._updateClassName = function () {
+				elem.setAttribute("class", this.toString());
+			};
+		}
+		, classListProto = ClassList[protoProp] = []
+		, classListGetter = function () {
+			return new ClassList(this);
+		}
+	;
+	// Most DOMException implementations don't allow calling DOMException's toString()
+	// on non-DOMExceptions. Error's toString() is sufficient here.
+	DOMEx[protoProp] = Error[protoProp];
+	classListProto.item = function (i) {
+		return this[i] || null;
+	};
+	classListProto.contains = function (token) {
+		return ~checkTokenAndGetIndex(this, token + "");
+	};
+	classListProto.add = function () {
+		var
+			  tokens = arguments
+			, i = 0
+			, l = tokens.length
+			, token
+			, updated = false
+		;
+		do {
+			token = tokens[i] + "";
+			if (!~checkTokenAndGetIndex(this, token)) {
+				this.push(token);
+				updated = true;
+			}
+		}
+		while (++i < l);
+	
+		if (updated) {
+			this._updateClassName();
+		}
+	};
+	classListProto.remove = function () {
+		var
+			  tokens = arguments
+			, i = 0
+			, l = tokens.length
+			, token
+			, updated = false
+			, index
+		;
+		do {
+			token = tokens[i] + "";
+			index = checkTokenAndGetIndex(this, token);
+			while (~index) {
+				this.splice(index, 1);
+				updated = true;
+				index = checkTokenAndGetIndex(this, token);
+			}
+		}
+		while (++i < l);
+	
+		if (updated) {
+			this._updateClassName();
+		}
+	};
+	classListProto.toggle = function (token, force) {
+		var
+			  result = this.contains(token)
+			, method = result ?
+				force !== true && "remove"
+			:
+				force !== false && "add"
+		;
+	
+		if (method) {
+			this[method](token);
+		}
+	
+		if (force === true || force === false) {
+			return force;
+		} else {
+			return !result;
+		}
+	};
+	classListProto.replace = function (token, replacement_token) {
+		var index = checkTokenAndGetIndex(token + "");
+		if (~index) {
+			this.splice(index, 1, replacement_token);
+			this._updateClassName();
+		}
+	}
+	classListProto.toString = function () {
+		return this.join(" ");
+	};
+	
+	if (objCtr.defineProperty) {
+		var classListPropDesc = {
+			  get: classListGetter
+			, enumerable: true
+			, configurable: true
+		};
+		try {
+			objCtr.defineProperty(elemCtrProto, classListProp, classListPropDesc);
+		} catch (ex) { // IE 8 doesn't support enumerable:true
+			// adding undefined to fight this issue https://github.com/eligrey/classList.js/issues/36
+			// modernie IE8-MSW7 machine has IE8 8.0.6001.18702 and is affected
+			if (ex.number === undefined || ex.number === -0x7FF5EC54) {
+				classListPropDesc.enumerable = false;
+				objCtr.defineProperty(elemCtrProto, classListProp, classListPropDesc);
+			}
+		}
+	} else if (objCtr[protoProp].__defineGetter__) {
+		elemCtrProto.__defineGetter__(classListProp, classListGetter);
+	}
+	
+	}(self));
+	
+	}
+	
+	// There is full or partial native classList support, so just check if we need
+	// to normalize the add/remove and toggle APIs.
+	
+	(function () {
+		"use strict";
+	
+		var testElement = document.createElement("_");
+	
+		testElement.classList.add("c1", "c2");
+	
+		// Polyfill for IE 10/11 and Firefox <26, where classList.add and
+		// classList.remove exist but support only one argument at a time.
+		if (!testElement.classList.contains("c2")) {
+			var createMethod = function(method) {
+				var original = DOMTokenList.prototype[method];
+	
+				DOMTokenList.prototype[method] = function(token) {
+					var i, len = arguments.length;
+	
+					for (i = 0; i < len; i++) {
+						token = arguments[i];
+						original.call(this, token);
+					}
+				};
+			};
+			createMethod('add');
+			createMethod('remove');
+		}
+	
+		testElement.classList.toggle("c3", false);
+	
+		// Polyfill for IE 10 and Firefox <24, where classList.toggle does not
+		// support the second argument.
+		if (testElement.classList.contains("c3")) {
+			var _toggle = DOMTokenList.prototype.toggle;
+	
+			DOMTokenList.prototype.toggle = function(token, force) {
+				if (1 in arguments && !this.contains(token) === !force) {
+					return force;
+				} else {
+					return _toggle.call(this, token);
+				}
+			};
+	
+		}
+	
+		// replace() polyfill
+		if (!("replace" in document.createElement("_").classList)) {
+			DOMTokenList.prototype.replace = function (token, replacement_token) {
+				var
+					  tokens = this.toString().split(" ")
+					, index = tokens.indexOf(token + "")
+				;
+				if (~index) {
+					tokens = tokens.slice(index);
+					this.remove.apply(this, tokens);
+					this.add(replacement_token);
+					this.add.apply(this, tokens.slice(1));
+				}
+			}
+		}
+	
+		testElement = null;
+	}());
+
+}// * End classlist.js
 
 // add getElementsByClassName for older browsers
 if(!document.getElementsByClassName) {
@@ -795,7 +883,7 @@ var iosDragDropShim = { enableEnterLeave: true,
     // var dragDiv = 'draggable' in div;
     // var evts = 'ondragstart' in div && 'ondrop' in div;    
     // var needsPatch = !(dragDiv || evts) || /iPad|iPhone|iPod/.test(navigator.userAgent);
-    var needsPatch = touchDevice;
+    var needsPatch = platform.touch;
     
     log((needsPatch ? "" : "not ") + "patching html5 drag drop");
 
@@ -1048,16 +1136,6 @@ var iosDragDropShim = { enableEnterLeave: true,
         this.el.style["z-index"] = "";
         writeTransform(this.el, 0, 0);
       }
-
-/*      once(this.el, "webkitTransitionEnd", function() {
-        this.el.style["pointer-events"] = "auto";
-        this.el.style["z-index"] = "";
-        this.el.style["-webkit-transition"] = "none";
-      },this);
-      setTimeout(function() {
-        this.el.style["-webkit-transition"] = "all 0.2s";
-        writeTransform(this.el, 0, 0)
-      }.bind(this));*/
     },
     dispatchDragStart: function() {
       var evt = doc.createEvent("Event");
@@ -1164,10 +1242,150 @@ var iosDragDropShim = { enableEnterLeave: true,
 
   main(window.iosDragDropShim);
 
-
 })(document);
 /* end iOS drag & drop support */
-  
+
+/*! iNoBounce - v0.1.5
+* https://github.com/lazd/iNoBounce/
+* Copyright (c) 2013 Larry Davis <lazdnet@gmail.com>; Licensed BSD */
+(function(global) {
+	// Stores the Y position where the touch started
+	var startTouch = {x: 0, y: 0};
+
+	// Store enabled status
+	var enabled = false;
+
+	var handleTouchmove = function(evt) {
+		// Get the element that was scrolled upon
+		var el = evt.target;
+		var doPreventDefault = true;
+
+		// Check all parent elements for scrollability
+		while (el !== document.body && el !== document) {
+			// Get some style properties
+			var style = window.getComputedStyle(el);
+
+			if (!style) {
+				// If we've encountered an element we can't compute the style for, get out
+				break;
+			}
+
+			// Ignore range input element
+			if (el.nodeName === 'INPUT' && el.getAttribute('type') === 'range') {
+				return;
+			}
+
+			var scrolling = style.getPropertyValue('-webkit-overflow-scrolling');
+			var overflowX = style.getPropertyValue('overflow-x');
+			var overflowY = style.getPropertyValue('overflow-y');
+			var height = parseInt(style.getPropertyValue('height'), 10);
+
+			// Determine if the element should scroll
+			var isScrollableX = scrolling === 'touch' &&
+				(overflowX === 'auto' || overflowX === 'scroll');
+			var isScrollableY = scrolling === 'touch' &&
+				(overflowY === 'auto' || overflowY === 'scroll');
+			var canScrollX = el.scrollWidth > el.offsetWidth;
+			var canScrollY = el.scrollHeight > el.offsetHeight;
+
+			if ((isScrollableX && canScrollX) || (isScrollableY && canScrollY)) {
+				// Get the current X and Y position of the touch
+				var curX = evt.touches ? evt.touches[0].screenX : evt.screenX;
+				var curY = evt.touches ? evt.touches[0].screenY : evt.screenY;
+
+				// Determine if the user is trying to scroll past the top or bottom
+				// In this case, the window will bounce, so we have to prevent scrolling completely
+				var isAtTop = (startTouch.y <= curY && el.scrollTop === 0);
+				var isAtBottom = (startTouch.y >= curY && el.scrollHeight - el.scrollTop === height);
+
+				// Stop a bounce bug when at the bottom or top of the scrollable element
+				if (!canScrollY || isAtTop || isAtBottom) {
+					/** evt.preventDefault();*/
+					doPreventDefault = true;
+					// Apply X scroll when applicable
+					if (startTouch.x !== curX) {
+						var dx = startTouch.x - curX;
+						el.scrollLeft += dx;
+						startTouch.x -= dx;
+					}
+				} else doPreventDefault = false;
+
+/**
+				// No need to continue up the DOM, we've done our job
+				return;
+				*/
+				// continue up the DOM to check for scrollable parents
+			}
+
+			// Test the next parent
+			el = el.parentNode;
+		}
+
+		// Stop the bouncing -- no parents are scrollable
+		if (doPreventDefault) evt.preventDefault();
+	};
+
+	var handleTouchstart = function(evt) {
+		// Store the first X and Y position of the touch
+		startTouch.x = evt.touches ? evt.touches[0].screenX : evt.screenX;
+		startTouch.y = evt.touches ? evt.touches[0].screenY : evt.screenY;
+	};
+	
+	var enable = function() {
+		// Listen to a couple key touch events
+		window.addEventListener('touchstart', handleTouchstart, false);
+		window.addEventListener('touchmove', handleTouchmove, false);
+		enabled = true;
+	};
+
+	var disable = function() {
+		// Stop listening
+		window.removeEventListener('touchstart', handleTouchstart, false);
+		window.removeEventListener('touchmove', handleTouchmove, false);
+		enabled = false;
+	};
+
+	var isEnabled = function() {
+		return enabled;
+	};
+
+	// Enable by default if the browser supports -webkit-overflow-scrolling
+	// Test this by setting the property with JavaScript on an element that exists in the DOM
+	// Then, see if the property is reflected in the computed style
+	var testDiv = document.createElement('div');
+	document.documentElement.appendChild(testDiv);
+	testDiv.style.WebkitOverflowScrolling = 'touch';
+	var scrollSupport = 'getComputedStyle' in window && window.getComputedStyle(testDiv)['-webkit-overflow-scrolling'] === 'touch';
+	document.documentElement.removeChild(testDiv);
+
+	if (scrollSupport) {
+		enable();
+	}
+
+	// A module to support enabling/disabling iNoBounce
+	var iNoBounce = {
+		enable: enable,
+		disable: disable,
+		isEnabled: isEnabled
+	};
+
+	if (typeof module !== 'undefined' && module.exports) {
+		// Node.js Support
+		module.exports = iNoBounce;
+	}
+	if (typeof global.define === 'function') {
+		// AMD Support
+		(function(define) {
+			define('iNoBounce', [], function() { return iNoBounce; });
+		}(global.define));
+	}
+	else {
+		// Browser support
+		global.iNoBounce = iNoBounce;
+	}
+}(this));
+/* end iNoBounce.js */
+
 // encode_utf8 returns a string that can be correctly used by btoa
 function encode_utf8(s) {
   return unescape(encodeURIComponent(s));
@@ -1177,84 +1395,6 @@ function encode_utf8(s) {
 function decode_utf8( s ) {
   return decodeURIComponent(escape(s));
 }
-
-/* DOM element resize listener
- * 
- * USAGE :
- * 
- * var myElement = document.getElementById('my_element'),
- * myResizeFn = function(){
-        // do something on resize
- * };
- * addResizeListener(myElement, myResizeFn);
- * removeResizeListener(myElement, myResizeFn);
- */
-
-(function(){
-  var attachEvent = document.attachEvent;
-  var isIE = navigator.userAgent.match(/Trident/);
-
-  var requestFrame = (function(){
-    var raf = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame ||
-        function(fn){ return window.setTimeout(fn, 20); };
-    return function(fn){ return raf(fn); };
-  })();
-  
-  var cancelFrame = (function(){
-    var cancel = window.cancelAnimationFrame || window.mozCancelAnimationFrame || window.webkitCancelAnimationFrame ||
-           window.clearTimeout;
-    return function(id){ return cancel(id); };
-  })();
-  
-  function resizeListener(e){
-    var win = e.target || e.srcElement;
-    if (win.__resizeRAF__) cancelFrame(win.__resizeRAF__);
-    win.__resizeRAF__ = requestFrame(function(){
-      var trigger = win.__resizeTrigger__;
-      trigger.__resizeListeners__.forEach(function(fn){
-        fn.call(trigger, e);
-      });
-    });
-  }
-  
-  function objectLoad(e){
-    this.contentDocument.defaultView.__resizeTrigger__ = this.__resizeElement__;
-    this.contentDocument.defaultView.addEventListener('resize', resizeListener);
-  }
-  
-  window.addResizeListener = function(element, fn){
-    if (!element.__resizeListeners__) {
-      element.__resizeListeners__ = [];
-      if (attachEvent) {
-        element.__resizeTrigger__ = element;
-        element.attachEvent('onresize', resizeListener);
-      }
-      else {
-        if (getComputedStyle(element).position == 'static') element.style.position = 'relative';
-        var obj = element.__resizeTrigger__ = document.createElement('object'); 
-        obj.setAttribute('style', 'display: block; position: absolute; top: 0; left: 0; height: 100%; width: 100%; overflow: hidden; pointer-events: none; z-index: -1;');
-        obj.__resizeElement__ = element;
-        obj.onload = objectLoad;
-        obj.type = 'text/html';
-        if (isIE) element.appendChild(obj);
-        obj.data = 'about:blank';
-        if (!isIE) element.appendChild(obj);
-      }
-    }
-    element.__resizeListeners__.push(fn);
-  };
-  
-  window.removeResizeListener = function(element, fn){
-    element.__resizeListeners__.splice(element.__resizeListeners__.indexOf(fn), 1);
-    if (!element.__resizeListeners__.length) {
-      if (attachEvent) element.detachEvent('onresize', resizeListener);
-      else {
-        element.__resizeTrigger__.contentDocument.defaultView.removeEventListener('resize', resizeListener);
-        element.__resizeTrigger__ = !element.removeChild(element.__resizeTrigger__);
-      }
-    }
-  }
-})();
 
 /* FileSaver.js
  * A saveAs() FileSaver implementation.
@@ -1475,26 +1615,45 @@ if (!HTMLCanvasElement.prototype.toBlob) {
  * 
  *************************************************************/
 
+// cordovaHandleOpenURL handles opening a sequence file as received from
+// URL (iOS)
+function cordovaHandleOpenURL (url) {
+	window.resolveLocalFileSystemURI (
+		url, 
+		function (fileEntry) {
+			fileEntry.file (
+					function (file) {
+						openFile (file, 'Sequence');
+					},
+					function (error) {
+						console.log (error);
+					}
+				)
+			}, 
+			function (error) {
+				console.log(error);
+		}
+	)
+};
+
 // cordovaHandleIntent handles opening a sequence file as received from
-// Intent
-function cordovaHandleIntent (intent) {   
+// Intent (Android)
+function cordovaHandleIntent (intent) {	// intent.action android.intent.action.MAIN
 	if (intent.hasOwnProperty('data')) {
 		window.FilePath.resolveNativePath(intent.data, function(path) {
-			console.log(path);
 			window.resolveLocalFileSystemURL (path, function (fileEntry) {
 				fileEntry.file (function(file) {
 					openFile (file, 'Sequence');
 				});
 			});
 		}, function(error) {alertBox (userText.saveDeviceFirst)});
-	} else {
-		/*
+	} /*else {
 		window.FilePath.resolveNativePath(intent.clipItems[0].uri, function(path) {
 			console.log(path);
 			openFile(path, 'Sequence');
 		}, function(error) {console.log(error)});
-		*/
-	}
+		
+	}*/
 }
 
 // cordovaSave uses the socialsharing plugin to provide options for
@@ -1540,17 +1699,58 @@ function cordovaSave (blob, filename) {
 		console.log(error);
 	});
 }
+/**
+// cordovaPdf opens a pdf in an external viewer
+function cordovaPdf (uri, title) {
+	function copyAndOpen (fileEntry, dirEntry, uri) {
+		fileEntry.copyTo(dirEntry, uri.split('/').pop(), function(newFileEntry) {
+			cordova.plugins.fileOpener2.open(newFileEntry.nativeURL, 'application/pdf');
+    });
+	}		 
+	window.resolveLocalFileSystemURL(cordova.file.applicationDirectory + '/www/' + uri, function(fileEntry) {
+		window.resolveLocalFileSystemURL(cordova.file.cacheDirectory, function(dirEntry) {
+			window.resolveLocalFileSystemURL(cordova.file.cacheDirectory + '/' + uri, function(deleteEntry) {
+				// try to delete the entry. Both on success and faillure copy
+				// and open the file
+				deleteEntry.remove (function() {
+					copyAndOpen (fileEntry, dirEntry, uri);
+				}, function() {
+					copyAndOpen (fileEntry, dirEntry, uri);
+				});
+			});
+	  });
+	});
+}
+*/
 
 // cordovaPdf opens a pdf in an external viewer
 function cordovaPdf (uri, title) {
 	window.resolveLocalFileSystemURL(cordova.file.applicationDirectory + '/www/' + uri, function(fileEntry) {
 		window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory, function(dirEntry) {
 			fileEntry.copyTo(dirEntry, uri.split('/').pop(), function(newFileEntry) {
-				cordova.plugins.fileOpener2.open(newFileEntry.nativeURL, 'application/pdf');
+				var file = newFileEntry.nativeURL;
+				// open file
+				cordova.plugins.fileOpener2.open(file, 'application/pdf');
 	     });
 	  });
 	});
 }
+/*
+function cordovaPdf (uri, title) {
+	window.resolveLocalFileSystemURL(cordova.file.applicationDirectory + '/www/' + uri, function(fileEntry) {
+		fileEntry.file (function(file) {
+	    var reader = new FileReader();
+	    reader.onloadend = function(evt) {
+				var a = document.createElement ('a');
+				a.href = evt.target.result;
+				console.log(a.href);
+	      a.click();
+	    };
+	    reader.readAsDataURL(file);
+		});
+	});
+}
+*/
 
 /************************************************
  * User interface functions
@@ -1558,16 +1758,19 @@ function cordovaPdf (uri, title) {
  
 // switchSmallMobile switches between smallMobile and regular layout
 function switchSmallMobile () {
-  //if (!mobileDevice) return;
+	hideFigureSelector(); /* to prevent leftBlock from being invisible */
 	saveSettingsStorage();
-  smallMobile = !smallMobile;
+  platform.smallMobile = !platform.smallMobile;
   // select no figure
   if (selectedFigure.id !== null) selectFigure (false);
   // load CSS depending on smallMobile, largeMobile or desktop version
   var link = document.getElementById('desktopLargeMobileCSS');
   var svg = document.getElementById('svgContainer');
-  if (smallMobile) {
-    // set view to device width
+  if (platform.smallMobile) {
+		if (platform.cordova && screen.orientation) {
+			screen.orientation.lock('portrait');
+		}
+    // set viewport
     windowResize();
     // hide Free (Un)known designer menu item
     document.getElementById('t_fuDesigner').parentNode.classList.add ('noDisplay');
@@ -1575,20 +1778,26 @@ function switchSmallMobile () {
     link.setAttribute('href', 'css/smallMobile.css');
     // show sequence tab
     document.getElementById('tab-svgContainer').classList.remove ('noDisplay');
-    // hide sequence svg and move to leftBlockTop
+    // hide sequence svg and move to before fuFigures
     svg.classList.add('hidden');
-    document.getElementById('leftBlockTop').appendChild(svg);
-    //svg.setAttribute('style', 'position:absolute;z-index:-1;top:-5000px;');
+    var fuFigures = document.getElementById('fuFigures');
+    fuFigures.parentNode.insertBefore (svg, fuFigures);
     // remove any vertical displacement done by updateSequenceTextHeight
     sequenceText.removeAttribute('style');
     document.getElementById('main').removeAttribute('style');
     // move grid column setting to settings
     var el = document.getElementById ('t_gridView');
     el.parentNode.appendChild (document.getElementById ('gridColumnsContainer'));
-    // don't show mini form A
-    miniFormA = false;
+    // show tiny form A
+    miniFormA = 'tiny';
   } else {
-    document.getElementById('viewport').setAttribute('content', 'width=device-width');
+		if (platform.cordova && screen.orientation) {
+			screen.orientation.unlock();
+		}
+
+		// restore viewport
+    document.getElementById('viewport').setAttribute('content',
+	    'width=device-width,viewport-fit=cover');
 
     document.getElementById('t_fuDesigner').parentNode.classList.remove ('noDisplay');
     link.setAttribute('href', 'css/desktop-largeMobile.css');
@@ -1609,7 +1818,7 @@ function switchSmallMobile () {
     selectTab ('tab-sequenceInfo');
 
     // show mini form A
-    miniFormA = false;
+    miniFormA = true;
     
     checkSequenceChanged();    
   }
@@ -1637,9 +1846,9 @@ function mobileInterface () {
 	document.getElementById('desktopCSS').setAttribute('href', 'css/mobile.css');
 
 	// update menu
-	var menuIcon = document.getElementById ('hamburgerMenu');
+	var topBlock = document.getElementById ('topBlock');
 	var mainMenu = document.getElementById ('mainMenu');
-	menuIcon.parentNode.insertBefore (mainMenu, menuIcon);
+	topBlock.parentNode.insertBefore (mainMenu, topBlock);
 
 	// move some Tools menu items to main and hide Tools menu
 	document.getElementById('menu').insertBefore (
@@ -1676,19 +1885,24 @@ function mobileInterface () {
 	}
 	
   // disable or change some items for iOS
-  if (/i(Pad|Phone|Pod)/i.test (navigator.userAgent)) {
-    // hide all save options
-    document.getElementById('t_saveSequence').parentNode.classList.add ('noDisplay');
-    document.getElementById('t_saveFigsSeparate').parentNode.classList.add ('noDisplay');
-    document.getElementById('t_saveQueueFile').parentNode.classList.add ('noDisplay');
+  if (platform.ios) {
+    // hide all save options, except on Cordova app
+    if (!platform.cordova) {
+	    document.getElementById('t_saveSequence').parentNode.classList.add ('noDisplay');
+	    document.getElementById('t_saveFigsSeparate').parentNode.classList.add ('noDisplay');
+	    document.getElementById('t_saveQueueFile').parentNode.classList.add ('noDisplay');
+		}
     
-    /*document.getElementById('t_printExplain').innerHTML = userText.iOSprintExplain;
-    document.getElementById('t_print').classList.add ('noDisplay');*/
     document.getElementById('t_saveAsSVG').classList.add ('noDisplay');
     
     // print margins
     document.getElementById('saveImageVariables').parentNode.classList.remove ('divider');
     document.getElementById('printMargins').classList.add ('noDisplay');
+    
+    // fix leftblock scroll bug
+    var leftBlock = document.getElementById ('leftBlockContainer');
+    leftBlock.style.height = '1px';
+    setTimeout (function() {leftBlock.style.removeProperty('height');}, 200);
   }
 }
 
@@ -1780,6 +1994,8 @@ function menuTouch () {
       menuInactive (node);
       node = node.parentNode.parentNode;
     }
+	  document.body.classList.remove ('menuOpen');
+	  document.getElementById('hamburgerMenu').classList.remove ('active');
   }, 200);
 }  
 
@@ -1792,6 +2008,7 @@ function menuInactiveAll () {
     el[i].classList.remove ('active');
   }
   document.body.classList.remove ('menuOpen');
+  document.getElementById('hamburgerMenu').classList.remove ('active');
 }
 
 // newSvg creates a new, minimal svg
@@ -1819,7 +2036,7 @@ function rebuildSequenceSvg () {
   // enable figure selection and drag&drop on all forms except A
   if (activeForm != 'A') {
     // set touchDevice actions
-    if (touchDevice) {
+    if (platform.touch) {
       SVGRoot.addEventListener ('touchstart', grabFigure, false);
       SVGRoot.addEventListener ('touchmove', Drag, false);
       SVGRoot.addEventListener ('touchend', Drop, false);    
@@ -2107,14 +2324,18 @@ function helpWindow (url, title) {
 	// set a small delay to make sure the menu is not again activated
 	setTimeout(menuInactiveAll, 100);
 	
-	if (cordovaApp && /\.pdf$/.test (url)) {
-		// for Cordova app, open in external viewer
-		cordovaPdf (url, title);
-	} else if (mobileDevice && !/\.pdf$/.test (url)) {
-		// for mobileDevice, open inline except for PDF
-		document.getElementById('helpTitle').innerText = title;
-		document.getElementById('helpContent').firstChild.src = url;
+	if (platform.cordova) {
+		if (platform.android && /\.pdf$/.test (url)) {
+			cordovaPdf (url, title);
+		} else {
+			cordova.InAppBrowser.open (
+				url, '_blank', 'location=no,hardwareback=no');
+		}
+	} else if (platform.mobile && !platform.ios && !/\.pdf$/.test (url)) {
+		// for platform.mobile, open inline except for PDF
 		document.getElementById ('helpBox').classList.remove ('noDisplay');
+		document.getElementById ('helpTitle').innerText = title;
+		document.getElementById ('helpContent').firstChild.src = url;
 	} else if (chromeApp.active) {
     // use chrome.app.window.create for desktop Chrome app
     chrome.app.window.create (url, {
@@ -2139,9 +2360,11 @@ function helpWindow (url, title) {
     var w = window.open(url, title, 'menubar=no, scrollbars=yes, status=no, toolbar=no, top=30, width=800');
     // set location again after 2 seconds to circumvent Chrome bug
     // regarding anchors later in html
-    setTimeout(function(){
-      w.location = url;
-    }, 2000);
+    if (!/\.pdf$/.test (url)) {
+	    setTimeout(function(){
+	      w.location = url;
+	    }, 2000);
+		}
   }
 }
 
@@ -2167,7 +2390,7 @@ function newWindow (body, title) {
         win.document.body = body;
       };
     });
-  } else {// if (touchDevice) {
+  } else {// if (platform.touch) {
     alertBox ('<div id="newWindow"></div>', title)
     document.getElementById('newWindow').innerHTML = body.innerHTML;
   }/* else {
@@ -2319,8 +2542,8 @@ function selectTab (e) {
   var li = e.target ? this : document.getElementById(e);
   // make sure we only select tabs
   if (!li.id.match(/^tab-/)) return;
-  // check if tabbing in leftBlockTop, for alertBox slide
-  var leftBlockTop = li.id.match (/^tab-(sequenceInfo|figureInfo|svgContainer)$/);
+  // check if tabbing in leftBlock, for alertBox slide
+  var leftBlock = li.id.match (/^tab-(sequenceInfo|figureInfo|svgContainer)$/);
   var tab = document.getElementById(li.id.replace('tab-', ''));
   var ul = li.parentNode;
   var list = ul.getElementsByTagName('li');
@@ -2328,7 +2551,7 @@ function selectTab (e) {
   for (var i = list.length - 1; i >= 0; i--) {
     // only do something when the tab is displayed
     if (!list[i].classList.contains('noDisplay')) {
-      if (leftBlockTop && list[i].classList.contains ('activeTab')) {
+      if (leftBlock && list[i].classList.contains ('activeTab')) {
         var rect = document.getElementById(list[i].id.replace('tab-', '')).getBoundingClientRect();
       }
       list[i].classList.remove('activeTab');
@@ -2348,9 +2571,11 @@ function selectTab (e) {
   li.classList.remove('inactiveTab');
   li.classList.add('activeTab');
   tab.classList.remove('hidden');
-  tab.parentNode.scrollTop = 0;
+  // scroll tab parents to top
+  var t = tab;
+  while (t = t.parentNode) t.scrollTop = 0;
   // slide alertBox and design when relevant
-  if (leftBlockTop && rect) {
+  if (leftBlock && rect) {
     var newRect = tab.getBoundingClientRect();
     
     function slide (el) {
@@ -4542,22 +4767,64 @@ function doOnLoad () {
   fileName = document.getElementById('fileName');
   getLocal ('fileName', function(value) {fileName.innerText = value});
   newTurnPerspective = document.getElementById('newTurnPerspective');
-
+						    
 	document.addEventListener ("deviceready", function() {
-		//if (typeof cordova !== 'undefined') cordovaApp = true;
-		// handle Intents
-		window.plugins.intent.setNewIntentHandler(cordovaHandleIntent);
-	  // Handle the intent when the app is not open
-	  // This will be executed only when the app starts or wasn't active
-	  // in the background
-	  window.plugins.intent.getCordovaIntent(cordovaHandleIntent);
-	  
-	  if (loading && loading.parentNode) {
-			loading.parentNode.removeChild (loading);
+		//if (typeof cordova !== 'undefined') platform.cordova = true;
+		if (platform.cordova) { // make sure we only do this for Cordova app
+			
+			// scroll input field into view where applicable
+			// Supported in Chrome and Safari 2018-01-17
+			window.addEventListener('keyboardDidShow', function () {
+		    document.activeElement.scrollIntoViewIfNeeded();
+		  });
+		  
+			switch (device.platform.toLowerCase()) {
+				case 'ios':
+				  // handle OpenURL for iOS
+					window.handleOpenURL = cordovaHandleOpenURL;
+
+				  // shrink view for iOS when keyboard pops up
+				  Keyboard.shrinkView (true);
+
+					// fix iOS Cordova contenteditable focus bug by setting
+					// contentEditable to false on blur and restoring on focus
+			    sequenceText.addEventListener ('blur', function() {
+						sequenceText.setAttribute ('contentEditable', false);
+					});
+					sequenceText.addEventListener ('touchstart', function() {
+						sequenceText.setAttribute ('contentEditable', true);
+					});
+					sequenceText.addEventListener ('focus', function() {
+						sequenceText.setAttribute ('contentEditable', true);
+					});
+
+			  	// add status bar inside webview
+					var bar = document.getElementById ('cordovaStatusBar');
+					bar.classList.remove ('noDisplay');
+					bar.nextElementSibling.style.top = '20px';
+
+					break;
+				case 'android':
+					// handle Intents for Android
+					window.plugins.intent.setNewIntentHandler(cordovaHandleIntent);
+				  // Handle the Intent when the app is not open
+				  // This will be executed only when the app starts or wasn't active
+				  // in the background
+				  window.plugins.intent.getCordovaIntent(cordovaHandleIntent);
+				  break;
+			}
+						  
+		  if (loading && loading.parentNode) {
+				loading.parentNode.removeChild (loading);
+			}
+			
+			setTimeout(
+				function(){
+					navigator.splashscreen.hide();
+					StatusBar.show();
+					StatusBar.styleDefault();
+				}, 1000);
 		}
-		
-		if (loadComplete) setTimeout(
-			function(){navigator.splashscreen.hide();}, 500);
 	});
 
   // check if Chrome App is installed
@@ -4604,7 +4871,7 @@ function doOnLoad () {
 		
 	}
 
-  if (mobileDevice || smallMobile) mobileInterface();
+  if (platform.mobile || platform.smallMobile) mobileInterface();
     
   // add all listeners for clicks, keyup etc
   addEventListeners();
@@ -4616,10 +4883,12 @@ function doOnLoad () {
     // window.setInterval(function(){latestVersion()},600000);
     // Give Cordova five seconds to start, then...
     setTimeout(function() {
-			if (!cordovaApp) {
-		    if (/Android/i.test(navigator.userAgent)) {
+			if (!platform.cordova) {
+		    if (platform.android) {
 					// getTheApp popup for Android devices
 					getTheApp ();
+				} else if (platform.ios) {
+					// getTheApp will be implemented for iOS devices
 				} else {
 				  // activate addtohomescreen for other mobile devices
 				  addToHomescreen();
@@ -4627,24 +4896,7 @@ function doOnLoad () {
 			}
 		}, 5000);
   }
-  
-  // show loading overlay and circles
-  /**
-  var el = document.getElementById('alertBoxOverlay');
-  el.removeAttribute('style');
-  el.innerHTML = '<svg id="loaderSvg" xmlns:svg=' + svgNS + ' xmlns=' + svgNS +
-    ' xmlns:xlink=' + xlinkNS + ' version="1.1" width="100%" height="40%"' +
-    'viewBox="-19 -19 38 38"><defs><circle id="loaderCircle" cx="10" cy="10" r="4"/></defs>' +
-    '<g id="a"><use xlink:href="#loaderCircle"style="fill:#adadad;fill-opacity:0.5;stroke-width:0" />' +
-    '<use xlink:href="#loaderCircle" transform="rotate(45)" style="fill:#adadad;fill-opacity:0.5;" />' +
-    '<use xlink:href="#loaderCircle" transform="rotate(90)" style="fill:#c1c1c1;fill-opacity:0.56862745;" />' +
-    '<use xlink:href="#loaderCircle" transform="rotate(135)" style="fill:#d7d7d7;fill-opacity:0.67843161;" />' +
-    '<use xlink:href="#loaderCircle" transform="rotate(180)" style="fill:#e9e9e9;fill-opacity:0.78431373;" />' +
-    '<use xlink:href="#loaderCircle" transform="rotate(225)" style="fill:#f4f4f4;fill-opacity:0.89019608;" />' +
-    '<use xlink:href="#loaderCircle" transform="rotate(270)" style="fill:#ffffff;fill-opacity:1;" />' +
-    '<use xlink:href="#loaderCircle" transform="rotate(315)" style="fill:#adadad;fill-opacity:0.5;" />' +
-    '<animateTransform attributeName="transform" attributeType="XML" type="rotate" begin="0s" dur="1s" repeatCount="indefinite" calcMode="discrete" values="0  ;  45;  90; 135; 180; 225; 270; 315"  keyTimes="0.0; 0.13; 0.27; 0.40; 0.53; 0.67; 0.80; 0.93" /></g></svg>';
-  */
+
   // build sequence svg
   rebuildSequenceSvg();
 
@@ -4653,7 +4905,7 @@ function doOnLoad () {
   if (err) errors.push (err);
 
 	// remove zoomMenu when zoom is not supported
-	if (!('zoom' in document.body.style)) {
+	if (!('zoom' in document.body.style) && !platform.mobile) {
 		document.getElementById ('zoomMenu').classList.add ('noDisplay');
 	}
 			
@@ -4670,13 +4922,15 @@ function doOnLoad () {
   dropZone.addEventListener('dragover', handleDragOver, false);
   dropZone.addEventListener('drop', updatePrintMulti, false);
   // Setup the drag n drop listener for file opening
-  document.getElementById('topBlock').addEventListener('dragover', handleDragOver, false);
-  document.getElementById('topBlock').addEventListener('drop', dropSequence);
-  document.getElementById('main').addEventListener('drop', dropSequence);
-  document.getElementById('main').addEventListener('dragover', handleDragOver, false);
+  if (!platform.mobile) {
+	  document.getElementById('topBlock').addEventListener('dragover', handleDragOver, false);
+	  document.getElementById('topBlock').addEventListener('drop', dropSequence);
+	  document.getElementById('main').addEventListener('drop', dropSequence);
+	  document.getElementById('main').addEventListener('dragover', handleDragOver, false);
+	}
   
   // add onresize event for resizing the sequence text window and/or
-  // smallMobile viewport
+  // platform.smallMobile viewport
   window.onresize = windowResize;
   window.matchMedia('(orientation: portrait)').addListener (windowResize);
   window.matchMedia('(orientation: landscape)').addListener (windowResize);
@@ -4742,7 +4996,7 @@ function doOnLoad () {
   // from localStorage or url
   selectForm(activeForm);
 
-  if (smallMobile) selectTab('tab-sequenceInfo');
+  if (platform.smallMobile) selectTab('tab-sequenceInfo');
   
   // add submenu showing/hiding
   addMenuEventListeners();
@@ -4813,8 +5067,8 @@ function doOnLoad () {
   queueFromStorage ();
 
   // load (mostly) completed, remove loading icon in 1 second
-  if (cordovaApp) {
-		navigator.splashscreen.hide();
+  if (platform.cordova) {
+		setTimeout(function(){navigator.splashscreen.hide();}, 1000);
 	} else {
 		setTimeout (function() {loading.style = 'opacity: 0.01;';}, 500);
 		setTimeout (function() {loading.parentNode.removeChild (loading);}, 1000);
@@ -4896,8 +5150,8 @@ function launchURL (launchData) {
 // keyListener listens to key strokes for various usages
 function keyListener (e) {
 	// do not handle keys when in input area
-	if( e.target.nodeName == "INPUT" || e.target.nodeName == "TEXTAREA" ) return;
-  if( e.target.isContentEditable ) return;
+	if (e.target.nodeName == "INPUT" || e.target.nodeName == "TEXTAREA") return;
+  if (e.target.isContentEditable) return;
 	// use delete key for deleting figure
 	if (e.keyCode == 46) {
 		document.getElementById('deleteFig').click();
@@ -4908,7 +5162,13 @@ function keyListener (e) {
 function appZoom (e) {
   var zoomSteps = ['0.33', '0.5', '0.67', '0.75', '0.9', '1',
     '1.1', '1.25', '1.5', '1.75', '2', '2.5', '3'];
-  var zoom = document.body.style.zoom ? document.body.style.zoom : '1';
+  if (platform.mobile) {
+		var zoom = (parseInt (
+			document.getElementById('zoom').textContent.match(/\d+/)[0]) / 
+			100).toString();
+	} else {
+	  var zoom = document.body.style.zoom ? document.body.style.zoom : '1';
+	}
   if ((e.shiftKey && e.ctrlKey && (e.keyCode == 187)) || (e === 1)) {
     var zoom = zoomSteps[zoomSteps.indexOf(zoom) + 1];
   } else if ((!e.shiftKey && e.ctrlKey && (e.keyCode == 189)) || (e === -1)) {
@@ -4917,10 +5177,15 @@ function appZoom (e) {
     // no special appZoom key or click, return true to bubble key
     return true;
   }
+
   // only update zoom when zoom has a valid value
   if (zoom) {
-    document.body.style.zoom = zoom;
     document.getElementById('zoom').textContent = parseInt(zoom * 100) + '%';
+		if (platform.mobile) {
+			checkSequenceChanged (true);
+		} else {
+	    document.body.style.zoom = zoom;
+		}
   }
   // don't bubble key
   return false;
@@ -4931,13 +5196,13 @@ function appZoom (e) {
 // specified as event listeners for Chrome Apps.
 function addEventListeners () {
   // zoom for Chrome app and touch devices
-  if (chromeApp.active || touchDevice) {
+  if (chromeApp.active || platform.touch) {
     document.addEventListener ('keydown', appZoom, false);
   }
   document.addEventListener ('keydown', keyListener, false);
   
   // remove all menus when tapping anywhere outside menu
-  if (touchDevice) {
+  if (platform.touch) {
     document.addEventListener ('touchstart', function(evt){
       var el = evt.target;
       while (el !== this) {
@@ -4947,13 +5212,12 @@ function addEventListeners () {
       setTimeout(menuInactiveAll, 200);
     });
   }
-  
+
   // window listeners
   // drop any dragged object when releasing mouse anywhere
-  if (touchDevice) {
+  if (platform.touch) {
     window.addEventListener ('touchend', Drop);    
-  }
-  window.addEventListener ('mouseup', Drop);
+  } else window.addEventListener ('mouseup', Drop);
   
   // menu
   document.getElementById('hamburgerMenu').addEventListener ('mousedown', menuActive);
@@ -5009,13 +5273,17 @@ function addEventListeners () {
       helpWindow('doc/language.html', 'OpenAero language');
     }, false);
   document.getElementById('t_arestiSystem').parentNode.addEventListener('mousedown', function(){
-      helpWindow('doc/arestisystem.html', 'The Aresti aerocryptographic system');
+      helpWindow('doc/arestisystem.html', 'The Aresti system');
     }, false);
 	
-  document.getElementById('t_freeKnownGuidance').parentNode.addEventListener('mousedown', function(){
-      helpWindow('doc/Power_CIVA_Free_Known_Guidance.pdf', 'CIVA Free Known Guidance');
+  document.getElementById('t_freeKnownGuidancePower').parentNode.addEventListener('mousedown', function(){
+      helpWindow('doc/CIVA-Free-Known-Programme-Guidance-Power-Aircraft-2018-v3.pdf', 'CIVA Free Known Guidance Power');
     }, false);
 
+  document.getElementById('t_freeKnownGuidanceGlider').parentNode.addEventListener('mousedown', function(){
+      helpWindow('doc/CIVA-Free-Known-Programme-Guidance-Glider-Aircraft-2018-v1.pdf', 'CIVA Free Known Guidance Glider');
+    }, false);
+    
   document.getElementById('t_about').parentNode.addEventListener('mousedown',
     aboutDialog, false);
       
@@ -5034,7 +5302,7 @@ function addEventListeners () {
   document.getElementById('virtualKeyboard').addEventListener('mouseup', releaseVirtualKeyboard, false);
 
   // grid info
-  if (touchDevice) {
+  if (platform.touch) {
     document.getElementById('gridInfo').addEventListener ('touchstart', grabFigure);
     document.getElementById('gridInfo').addEventListener ('touchmove', Drag);
   }
@@ -5192,7 +5460,7 @@ function addEventListeners () {
 	  // close dialog 1 second after click
     window.setTimeout(function(){saveDialog()}, 1000);
     var name = sanitizeFileName (document.getElementById('dlTextField').value);
-    if (cordovaApp) {
+    if (platform.cordova) {
 			cordovaSave (saveData.blob, name + saveData.ext);
 		} else saveAs (saveData.blob, name + saveData.ext);
   });
@@ -5252,13 +5520,13 @@ function addMenuEventListeners() {
   function addListeners(e) {
     var li = e.getElementsByTagName ('li');
     for (var i = 0; i < li.length; i++) {
-      if (mobileDevice || smallMobile) {
+      if (platform.mobile || platform.smallMobile) {
 				li[i].addEventListener('mousedown', menuActive);
 			} else {
         li[i].addEventListener('mouseover', menuActive);
         li[i].addEventListener('mouseout', menuInactive); 
       }
-      if (li[i].parentNode && (li[i].parentNode.id !== 'zoomMenu')) {
+      if (!/^zoom.+/.test(li[i].id)) {
         checkUL : {
           var els = li[i].childNodes;
           for (var j in els) {
@@ -5521,12 +5789,10 @@ function checkBrowser () {
     return userText.fileOpeningNotSupported + '<br>' + userText.getChrome;
   }
   // Present a warning if the browser is not
-  // Chrome or Firefox, or Safari on iOS
+  // Chrome, Firefox, Safari or Edge
   // and the warning was not displayed for one week. Use store value
   // for setting the expiry time
-  if (!(BrowserDetect.browser.match(/Chrome|Firefox/) ||
-    (BrowserDetect.browser.match(/^Safari/) &&
-    (BrowserDetect.OS.match(/^i(Pad|Phone)/))))) {
+  if (!BrowserDetect.browser.match(/Chrome|Firefox|Safari|Edge/)) {
     function f(c) {
       var d = new Date();
       var t = parseInt(d.getTime());
@@ -5582,7 +5848,7 @@ function clickButton () {
   switch (divClass) {
     // handle min button
     case 'minButton':
-      if (smallMobile) {
+      if (platform.smallMobile) {
         e.firstChild.setAttribute('src', mask.on);
         window.setTimeout (function(){
           e.firstChild.setAttribute('src', mask.off);
@@ -5597,7 +5863,7 @@ function clickButton () {
       break;
     // handle plus button
     case 'plusButton':
-      if (smallMobile) {
+      if (platform.smallMobile) {
         e.firstChild.setAttribute('src', mask.on);
         window.setTimeout (function(){
           e.firstChild.setAttribute('src', mask.off);
@@ -5820,33 +6086,14 @@ function clickButton () {
   updateFigure();
 }
 
-// addPlusMinElements creates plus/min elements on startup
+// addPlusMinElements creates plus/min elements on startup and when
+// switching smallMobile
 function addPlusMinElements () {
   var el = document.getElementsByClassName('plusMin');
   for (var i = el.length - 1; i >= 0; i--) {
     // clear element
     while (el[i].childNodes.length) el[i].removeChild(el[i].lastChild);
-    
-    var button = document.createElement('span');
-    button.classList.add ('minButton');
-    button.addEventListener ('mousedown', clickButton, false);
-    button.innerHTML = '<img src="' + (smallMobile ? mask.off : mask.smalloff) + '">';
-    el[i].appendChild (button);
-    
-    var value = document.createElement('input');
-    if (smallMobile) value.type = 'number';
-    value.id = el[i].id + '-value';
-    value.size = '2';
-    value.value = '0';
-    value.classList.add ('plusMinText');
-    value.addEventListener ('update', updateFigure, false);
-    el[i].appendChild (value);
-    
-    var button = document.createElement('span');
-    button.classList.add ('plusButton');
-    button.addEventListener ('mousedown', clickButton, false);
-    button.innerHTML = '<img src="' + (smallMobile ? mask.off : mask.smalloff) + '">';
-    el[i].appendChild (button);
+    buildPlusMinElement (el[i].id + '-value', 0, el[i]);
   }
 }
 
@@ -5858,7 +6105,7 @@ function buildButtons () {
     el[i].innerHTML = '<a><img src="' + mask.off + '"><div></div></a>';
   }
   // add tooltips, but not on touchscreen
-  if (!touchDevice) {
+  if (!platform.touch) {
     for (var key in userText.tooltip) {
       var el = document.getElementById(key);
       if (el) {
@@ -5870,18 +6117,20 @@ function buildButtons () {
 }
 
 // build an element with plus/minus buttons and return it
-function buildPlusMinElement (id, value) {
-  var el = document.createElement('span');
+function buildPlusMinElement (id, value, el) {
+  el = el || document.createElement('span');
   
   var span = document.createElement('span');
   span.classList.add('minButton');
   span.addEventListener('click', clickButton, false);
   var img = document.createElement('img');
-  img.setAttribute('src', smallMobile ? mask.off : mask.smalloff);
+  img.setAttribute('src', platform.smallMobile ? mask.off : mask.smalloff);
   span.appendChild(img);
   el.appendChild (span);
   
   var input = document.createElement('input');
+  input.type = 'number';
+  input.step = '1';
   input.setAttribute ('id', id);
   input.setAttribute ('value', value);
   input.classList.add ('plusMinText');
@@ -5892,11 +6141,11 @@ function buildPlusMinElement (id, value) {
   span.classList.add('plusButton');
   span.addEventListener('click', clickButton, false);
   var img = document.createElement('img');
-  img.setAttribute('src', smallMobile ? mask.off : mask.smalloff);
+  img.setAttribute('src', platform.smallMobile ? mask.off : mask.smalloff);
   span.appendChild(img);
   el.appendChild (span);
   
-  if (!smallMobile && (userText.tooltip[id])) {
+  if (!platform.smallMobile && (userText.tooltip[id])) {
     el.classList.add ('tooltip','ttRight');
     var div = document.createElement('div');
     div.innerHTML = userText.tooltip[id];
@@ -6061,7 +6310,7 @@ function addProgrammeToMenu (key) {
       li.setAttribute ('id', 'year' + year);
       li.innerHTML = '<span>' + year + '</span>' +
         '<i class="material-icons ' +
-        (mobileDevice ? 'rightArrow' : 'leftArrow') + '"></i>';
+        (platform.mobile ? 'rightArrow' : 'leftArrow') + '"></i>';
       var ul = document.createElement('ul');
       li.appendChild (ul);
       el.appendChild (li);
@@ -6363,7 +6612,7 @@ function loadPrintDialogStorage () {
 function changeLanguage () {
   updateUserTexts();
   updateFigureSelectorOptions ();
-  if (mobileDevice) mobileMenuHeader ();
+  if (platform.mobile) mobileMenuHeader ();
   saveSettingsStorage();
   checkSequenceChanged(true);
 }
@@ -6491,10 +6740,10 @@ function selectPwrdGlider () {
   var el = document.getElementById ('harmonyField');
   if (el) {
     if (sportingClass.value === 'powered') {
-      el.setAttribute('style', 'opacity:0;');
-      document.getElementById ('harmony').setAttribute ('disabled', 'disabled');
+      el.classList.add ('hidden');
+      document.getElementById ('harmony').setAttribute ('disabled', true);
     } else {
-      el.removeAttribute('style');
+      el.classList.remove ('hidden');
       document.getElementById ('harmony').removeAttribute ('disabled');
     }
   }
@@ -6533,6 +6782,11 @@ function showFigureSelector () {
     document.getElementById('leftBlock').scrollTop = 0;
     document.getElementById('figureString').classList.add('inFigureSelector');
   }
+  if (platform.smallMobile) {
+	  setTimeout (function() {
+			document.getElementById ('leftBlockContainer').classList.add ('hidden');
+		}, 500);
+	}
 }
 
 // hideFigureSelector hides the base figure selector
@@ -6541,6 +6795,9 @@ function showFigureSelector () {
 function hideFigureSelector () {
   document.getElementById('figureSelector').classList.remove('active');
   document.getElementById('figureString').classList.remove('inFigureSelector');
+  if (platform.smallMobile) {
+	  document.getElementById ('leftBlockContainer').classList.remove ('hidden');
+	}
 }
 
 // hideLogoChooser hides the logo chooser
@@ -6942,7 +7199,7 @@ function addRollSelectors (figureId) {
             var divdiv = document.createElement ('div');
             divdiv.classList.add ('rollGaps');
             // only show 'Gaps' text for non-smallMobile
-            if (!smallMobile) {
+            if (!platform.smallMobile) {
               var span = document.createElement('span');
               span.innerHTML = userText.gaps;
               div.appendChild (span);
@@ -6990,7 +7247,7 @@ function setUndoRedo (e, clear) {
 function setEntryExitElements () {
   for (var i = 1; i>= 0; i--) {
     var el = document.getElementById(['figEntryButton', 'figExitButton'][i]);
-    if (smallMobile) {
+    if (platform.smallMobile) {
       el.classList.remove ('smallButton');
       el.classList.add ('button');
       //el.firstChild.firstChild.setAttribute('src', mask.off);
@@ -7397,14 +7654,15 @@ function latestVersion() {
   if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
     // Check for appcache when using http
     if (window.applicationCache) window.applicationCache.update();
-  } else if (cordovaApp) {
+  } else if (platform.cordova) {
     var xhr = new XMLHttpRequest();
     xhr.open('GET', 'https://openaero.net/openaero.php?v', true);
     xhr.onload = function() {
       if (compVersion (version, xhr.response) == -1) {
+				var banner = document.getElementById('installApp');
+				banner.classList.remove ('noDisplay');
 				document.getElementById('t_getTheApp').innerHTML =
 					sprintf(userText.updateApp, xhr.response);
-				var banner = document.getElementById('installApp');
 				banner.classList.add ('update');
 				banner.classList.add ('show');
 			}
@@ -7463,10 +7721,10 @@ function checkUpdateDone() {
 		  }
       // Only show the installed box if not on Chrome. If on Chrome, it
       // will be shown by checkForApp
-      // Wait a few seconds to give cordovaApp to be set if applicable
+      // Wait a few seconds to give platform.cordova to be set if applicable
       if ((typeof chrome !== 'undefined') && chrome.fileSystem) chromeApp.active = true;
       if (!chromeApp.active) setTimeout(function(){
-				if (!cordovaApp) alertBox (
+				if (!platform.cordova) alertBox (
 	        {userText: 'installed', params: [window.location.host]},
 	        {userText: 'installation'});
 				}, 3000);
@@ -7507,15 +7765,15 @@ function getTheApp () {
 	getLocal ('installAppAsked', function(timestamp) {
 
 		var
-			platform = 'android',
 			banner = document.getElementById ('installApp'),
 			t = parseInt ((new Date()).getTime());
 
 		if (timestamp) { // do not ask the first time
 			if (timestamp < (t - 86400 * 7)) { // ask once a week
 				storeLocal ('installAppAsked', t);
+				banner.classList.remove ('noDisplay');
 				banner.classList.add ('show');
-				setTimeout (function(){removeBanner (banner)}, 10000);
+				setTimeout (function(){removeBanner (banner)}, 15000);
 			}
 		} else storeLocal ('installAppAsked', 1);
 	});
@@ -7693,12 +7951,12 @@ function changeCombo(id) {
       e.placeholder = userText.selectRulesFirst;
     }
     e.setAttribute ('disabled', 'disabled');
-    e.nextSibling.innerHTML = '';
+    e.nextElementSibling.innerHTML = '';
   }
   function enable (e) {
     e.placeholder = '';
     e.removeAttribute ('disabled');
-    e.nextSibling.innerHTML = userText[e.id];
+    e.nextElementSibling.innerHTML = userText[e.id];
   }
   
   var rulesActiveSave = rulesActive;
@@ -7764,8 +8022,10 @@ function changeCombo(id) {
 
 // highlight marks part of a text
 function highlight (el, start, end) {
-	var text = el.innerText;
-	var range = saveSelection(el);
+	var
+		text = el.innerText,
+		range = saveSelection(el);
+
 	if (end) {
 		var newHTML = text.substr (0, start) +
 			'<span class="highlight">' + text.substr (start, (end - start)) +
@@ -7774,14 +8034,19 @@ function highlight (el, start, end) {
 		var span = el.getElementsByClassName ('highlight')[0];
 		el.scrollTop = parseInt(span.getBoundingClientRect().top -
 			el.getBoundingClientRect().top);
-	} else el.innerHTML = text;
+	} else if (el.innerHTML != text) el.innerHTML = text;
 	if (document.activeElement === el) restoreSelection (el, range); 
 }
 
 // saveSelection returns the current selection in containerEl
 function saveSelection (containerEl) {
-	var doc = containerEl.ownerDocument, win = doc.defaultView;
+
+	var
+		doc = containerEl.ownerDocument,
+		win = doc.defaultView;
+
 	if (!win.getSelection().anchorNode) return {start: 0, end: 0};
+	
 	var range = win.getSelection().getRangeAt(0);
 	var preSelectionRange = range.cloneRange();
 	preSelectionRange.selectNodeContents(containerEl);
@@ -7789,37 +8054,42 @@ function saveSelection (containerEl) {
 	var start = preSelectionRange.toString().length;
 
 	return {
-			start: start,
-			end: start + range.toString().length
+		start: start,
+		end: start + range.toString().length
 	};
 };
 
 // restoreSelection restores selection savedSel in containerEl
 function restoreSelection (containerEl, savedSel) {
-	var doc = containerEl.ownerDocument, win = doc.defaultView;
-	var charIndex = 0, range = doc.createRange();
+
+	var
+		doc = containerEl.ownerDocument,
+		win = doc.defaultView,
+		charIndex = 0,
+		range = doc.createRange();
+		
 	range.setStart(containerEl, 0);
 	range.collapse(true);
 	var nodeStack = [containerEl], node, foundStart = false, stop = false;
 
 	while (!stop && (node = nodeStack.pop())) {
-			if (node.nodeType == 3) {
-					var nextCharIndex = charIndex + node.length;
-					if (!foundStart && savedSel.start >= charIndex && savedSel.start <= nextCharIndex) {
-							range.setStart(node, savedSel.start - charIndex);
-							foundStart = true;
-					}
-					if (foundStart && savedSel.end >= charIndex && savedSel.end <= nextCharIndex) {
-							range.setEnd(node, savedSel.end - charIndex);
-							stop = true;
-					}
-					charIndex = nextCharIndex;
-			} else {
-					var i = node.childNodes.length;
-					while (i--) {
-							nodeStack.push(node.childNodes[i]);
-					}
+		if (node.nodeType == 3) {
+			var nextCharIndex = charIndex + node.length;
+			if (!foundStart && savedSel.start >= charIndex && savedSel.start <= nextCharIndex) {
+				range.setStart(node, savedSel.start - charIndex);
+				foundStart = true;
 			}
+			if (foundStart && savedSel.end >= charIndex && savedSel.end <= nextCharIndex) {
+				range.setEnd(node, savedSel.end - charIndex);
+				stop = true;
+			}
+			charIndex = nextCharIndex;
+		} else {
+			var i = node.childNodes.length;
+			while (i--) {
+				nodeStack.push(node.childNodes[i]);
+			}
+		}
 	}
 
 	var sel = win.getSelection();
@@ -7876,8 +8146,8 @@ function buildLogoSvg(logoImage, x, y, width, height) {
 // and allow for selection of a logo
 function logoChooser() {
 	// define logo thumbnail width and height
-  var width = smallMobile ? 66 : 80;
-  var height = smallMobile ? 66 : 80;
+  var width = platform.smallMobile ? 66 : 80;
+  var height = platform.smallMobile ? 66 : 80;
   // show the logo chooser container
   var container = document.getElementById('logoChooserContainer');
   container.classList.remove ('noDisplay');
@@ -8628,16 +8898,16 @@ function loadRules() {
         additionalFig.totalK = parseInt(match[3]);
       } else if (rules[i].match(/^posnl/)) {
         // load positioning and harmony K
+        // Editing is disabled and harmony hidden when 0
         var pos = rules[i].match(/[0-9+]+/)[0].split('+');
         var el = document.getElementById('positioning');
-        if (pos[0] > 0) {
-					el.value = pos[0];
-	        el.setAttribute ('disabled', true);
-				}
+				el.value = parseInt(pos[0]) || 0;
+        el.setAttribute ('disabled', true);
         var el = document.getElementById('harmony');
-        if (pos[1] > 0) {
-					el.value = pos[1];
-					el.setAttribute ('disabled', true);
+				el.value = parseInt(pos[1]) || 0;
+        el.setAttribute ('disabled', true);
+        if (el.value == 0) {
+					document.getElementById ('harmonyField').classList.add ('hidden');
 				}
       } else if (rules[i].match(/^infocheck[ ]*=/)) {
         // define fields that should be checked for not being empty when
@@ -8802,7 +9072,10 @@ function unloadRules () {
   document.getElementById ('rulesActive').classList.remove ('good');
   // remove disable property of positioning and harmony
   document.getElementById('positioning').removeAttribute ('disabled');
-	document.getElementById('harmony').removeAttribute ('disabled')
+	document.getElementById('harmony').removeAttribute ('disabled');
+	if (sportingClass.value !== 'powered') {
+		document.getElementById ('harmonyField').classList.remove ('hidden');
+	}
   // update sequence
   checkSequenceChanged(true);
   // hide reference sequence button
@@ -9458,11 +9731,11 @@ function checkAlert (value, type, figNr, rule) {
     case 'min':
     case 'repeat':
     case 'totrepeat':
-			// reduce max total K for floating point
+	    // reduce max total K for floating point
 	    if (value === 'k' && checkCatGroup.floatingPoint) {
 				alertMsgs.push(alertFig + sprintf (userText.checkAlert[type],
-	        checkCatGroup[value][type] - checkCatGroup.floatingPoint,
-	        checkName(checkCatGroup[value])));
+        checkCatGroup[value][type] - checkCatGroup.floatingPoint,
+        checkName(checkCatGroup[value])));
 			} else {
 	      alertMsgs.push(alertFig + sprintf (userText.checkAlert[type],
 	        checkCatGroup[value][type], checkName(checkCatGroup[value])));
@@ -10026,7 +10299,7 @@ function changeFigureGroup() {
           div.innerHTML = '<i class="material-icons">close</i>';
           // make sure we remove on touch devices by using touchstart
           // which fires before mousedown
-          if (touchDevice) {
+          if (platform.touch) {
             div.addEventListener ('touchstart', removeFromQueue);
           }
           div.addEventListener ('mousedown', removeFromQueue);
@@ -10288,7 +10561,7 @@ function selectFigure (e) {
   if (e === null) e = false;
   
   // show figure editor tab
-  if ((e !== false) && !smallMobile) selectTab ('tab-figureInfo');
+  if ((e !== false) && !platform.smallMobile) selectTab ('tab-figureInfo');
   
   var queueFigure = false;
   var fromChooser = typeof e === 'object' ? true : false;
@@ -10422,7 +10695,7 @@ function selectFigure (e) {
     // e!==false => a figure is selected
     // hide the figure selector for smallMobile browsers, but highlight the
     // chosen figure in case the figure selector is shown again
-    if (smallMobile) hideFigureSelector ();
+    if (platform.smallMobile) hideFigureSelector ();
     var table = document.getElementById('figureChooserTable');
     var selected = table.getElementsByClassName('selected');
     // remove selected class for all
@@ -10468,12 +10741,8 @@ function selectFigure (e) {
 	    }
 		}
       
-    // Select the figure in the sequence text when we were not editing
-    // in the text or the comments and we are not on a touch device, as
-    // we assume the latter would have a non-physical keyboard popping
-    // up. Select all the way back to the previous real figure
-    //if ((document.activeElement.id !== sequenceText.id) && 
-    //  (document.activeElement.id !== 'comments') && !touchDevice) {
+    // Highlight the figure in the sequence text when we were not editing
+    // the comments and not in FU designer
     if ((activeForm !== 'FU') && (document.activeElement.id !== 'comments')) {
       var start = figures[selectedFigure.id].stringStart;
       for (var i = selectedFigure.id - 1; i>=0; i--) {
@@ -10586,6 +10855,7 @@ function checkFloatingPoint () {
 // makeMiniFormA creates a mini form A
 // It starts at (x, y) and returns width and height of the block
 function makeMiniFormA (x, y) {  
+
   var blockX = x;
   var blockY = y;
   var figNr = 0;
@@ -10689,6 +10959,114 @@ function makeMiniFormA (x, y) {
   return {'width':152, 'height':blockY - y};
 }
 
+// makeTinyFormA creates a tiny form A (only fig nr, K and total K) for
+// mobile devices
+// It starts at (x, y) and returns width and height of the block
+function makeTinyFormA (x, y) {  
+  var
+	  blockX = x,
+	  blockY = y,
+	  figNr = 0,
+	  figureK = 0,
+	  modifiedK = [];
+
+  // set the header for the correct sporting class
+	drawText ('Fig', blockX + 14, blockY + 17, 'formATextBold', 'middle');
+	drawText ('K', blockX + 46, blockY + 17, 'formATextBold', 'middle');
+	drawRectangle (blockX, blockY, 64, 24, 'formLine');
+	drawLine (blockX + 28, blockY, 0, 24, 'formLine');
+	blockY += 24;
+
+  for (var i = 0; i < figures.length; i++) {
+    var aresti = figures[i].aresti;
+    var k = figures[i].k;
+    if (aresti) {
+      figNr++;
+      var figK = 0;
+      topBlockY = blockY;
+      blockY += 24;
+      for (var j = 0; j < aresti.length; j++) {
+        if (aresti[j] in aresti_K) modifiedK.push (figNr);
+        figK += parseInt(k[j]);
+      }
+      // Adjust figure K for additionals
+      if (figures[i].unknownFigureLetter) {
+        drawText (figNr, blockX + 24, (topBlockY + blockY) / 2 + 4,
+	        'formATextMedium', 'end');
+        if (figures[i].unknownFigureLetter == 'L') {
+          if (additionals <= additionalFig.max) {
+            figK = additionalFig.totalK / additionals;
+          } else {
+            if (additionalFig.max > 0) {
+              figK = additionalFig.totalK / additionalFig.max;
+            }
+            checkAlert (sprintf (userText.maxAdditionals, additionalFig.max),
+              false,
+              figNr);
+          }
+          drawText ('Add.', blockX + 24, (topBlockY + blockY) / 2 + 16,
+	          'formATextBold', 'end');
+        } else {
+          drawText (figures[i].unknownFigureLetter, blockX + 24,
+            (topBlockY + blockY) / 2 + 16, 'formATextBold', 'end');
+        }
+      } else {
+        drawText (figNr, blockX + 24, (topBlockY + blockY) / 2 + 10,
+	        'formATextMedium', 'end');
+      }
+      // adjust figure K for floating point
+      if (figures[i].floatingPoint) {
+        if (topBlockY == blockY) blockY += 12;
+        drawText ('(' + figK + ')', blockX + 60,
+          (topBlockY + blockY) / 2 + 15, 'formATextMedium', 'end');
+        figK -= 1;
+        drawText (figK, blockX + 60, (topBlockY + blockY) / 2 + 5,
+	        'formATextMedium', 'end');
+      } else {
+        drawText (figK, blockX + 60, (topBlockY + blockY) / 2 + 10,
+	        'formATextMedium', 'end');
+      }
+      drawLine (blockX, topBlockY, 64, 0, 'formLine');
+      var vertSize = (blockY - topBlockY + 12);
+      drawLine (blockX, topBlockY, 0, vertSize, 'formLine');
+      drawLine (blockX + 28, topBlockY, 0, vertSize, 'formLine');
+      drawLine (blockX + 64, topBlockY, 0, vertSize, 'formLine');
+      figureK += figK;
+      blockY += 12;
+    }
+  }
+  drawText ('Total K', blockX + 32, blockY + 17, 'formATextMedium', 'middle');
+  drawText (figureK, blockX + 32, blockY + 36, 'formATextLarge', 'middle');
+  // add maximum K (corrected for Floating Point) where applicable
+  if (rulesActive && checkCatGroup.k && checkCatGroup.k.max) {
+    var max = checkCatGroup.k.max;
+    if (checkCatGroup.floatingPoint) max -= checkCatGroup.floatingPoint;
+    drawText ('Max K', blockX + 32, blockY + 54, 'formATextMedium', 'middle');
+    drawText (max, blockX + 32, blockY + 74, 'formATextLarge', 'middle');
+		drawRectangle (blockX, blockY, 64, 80, 'formLine');
+		blockY += 80;
+  } else {
+    drawRectangle (blockX, blockY, 64, 44, 'formLine');
+    blockY += 44;
+  }
+
+  // add text when K has been modified by rules
+  if (modifiedK.length) {
+    var text = drawTextArea (
+      changedFigureKText (modifiedK, rulesActive),
+      blockX + 4,
+      blockY + 4,
+      56,
+      100, // height is determined later but needs to be set for iOS
+      'miniFormAModifiedK'
+    )
+    var h = parseInt(text.firstChild.getBoundingClientRect().height);
+    blockY += h;
+  }
+
+  return {'width':64, 'height':blockY - y};
+}
+
 /**********************************************************************
  * 
  * Functions for drag & drop repositioning
@@ -10782,7 +11160,7 @@ function grabFigure(evt) {
     // clicked somewhere in the SVG container, maybe within figure bBox?
     var svgRect = svg.getBoundingClientRect();
     // svg may be rescaled on smallMobile browser
-    var scale = smallMobile ? svg.getAttribute('width')/viewBox[2] : 1;
+    var scale = platform.smallMobile ? svg.getAttribute('width')/viewBox[2] : 1;
     var margin = 5 * scale;
     GrabPoint.x = TrueCoords.x;
     GrabPoint.y = TrueCoords.y;
@@ -10834,10 +11212,12 @@ function grabFigure(evt) {
     dragTarget.setAttribute('pointer-events', 'none');
 
     // enlarge svg to cover top and left
-    if (!smallMobile) {
+    if (!platform.smallMobile) {
       var svgRect = svg.getBoundingClientRect();
-      var w = parseInt(viewBox[2]) + parseInt(svgRect.left) + parseInt(dragTarget.scrollLeftSave);
-      var h = parseInt(viewBox[3]) + parseInt(svgRect.top) + parseInt(dragTarget.scrollTopSave);
+      var w = parseInt(viewBox[2]) + parseInt(svgRect.left) +
+	      parseInt(dragTarget.scrollLeftSave);
+      var h = parseInt(viewBox[3]) + parseInt(svgRect.top) +
+	      parseInt(dragTarget.scrollTopSave);
       svg.setAttribute ('viewBox',
         (viewBox[0] - svgRect.left - dragTarget.scrollLeftSave) + ' ' +
         (viewBox[1] - svgRect.top - dragTarget.scrollTopSave) + ' ' + w + ' ' + h
@@ -10848,8 +11228,11 @@ function grabFigure(evt) {
       svg.parentNode.classList.add ('sequenceOverlay');
       var main = document.getElementById ('main');
       document.getElementById ('leftBlock').setAttribute ('style',
-        'margin-top: ' + main.offsetTop + 'px');
-      main.setAttribute ('style', 'top: 0;');
+        'margin-top: ' + (main.offsetTop + main.parentNode.offsetTop) + 'px');
+      document.getElementById ('leftBlockTabSelector').setAttribute ('style',
+        'top: ' + (main.offsetTop + main.parentNode.offsetTop) + 'px');
+      main.setAttribute ('style', 'top: ' + (0-main.parentNode.offsetTop) + 'px;');
+
     }
     
     // we need to find the current position and translation of the grabbed element,
@@ -10936,12 +11319,13 @@ function setFigureSelected (figNr) {
 	    // fill selectedFigure with BBox values
 	    var el = SVGRoot.getElementById('figure'+figNr);
 
-      header.innerHTML = userText.editingFigure + figures[figNr].seqNr;
+      header.innerHTML = userText.editingFigure + figures[figNr].seqNr +
+	      ' (' + figures[figNr].k.reduce(function(a, v) { return a + v; }) + 'K)';
       
       if (el) {
 				selectedFigure = el.getBBox();
 	      var showHandles = document.getElementById ('showHandles').checked &&
-	        !(activeForm === 'Grid') && !smallMobile;
+	        !(activeForm === 'Grid') && !platform.smallMobile;
         var nodes = el.childNodes;
         var length = nodes.length;
 				// apply color filter
@@ -10960,7 +11344,7 @@ function setFigureSelected (figNr) {
             drawCircle ({
               'cx': roundTwo(bBox.x + bBox.width / 2),
               'cy': roundTwo(bBox.y + bBox.height / 2),
-              'r': touchDevice ? 12 : 8,
+              'r': platform.touch ? 12 : 8,
               'style': style.selectedFigureHandle,
               'cursor': 'move',
               'id': nodes[i].id + '-handle'
@@ -11000,7 +11384,7 @@ function Drag (evt) {
   if ((activeForm === 'Grid') && !dragTarget.classList.contains  ('draggablePanel')) return;
   
   // put the coordinates of object evt in TrueCoords global
-  if (touchDevice && evt.changedTouches && evt.changedTouches[0] && evt.changedTouches[0].pageX) {
+  if (platform.touch && evt.changedTouches && evt.changedTouches[0] && evt.changedTouches[0].pageX) {
     TrueCoords.x = evt.changedTouches[0].pageX;
     TrueCoords.y = evt.changedTouches[0].pageY;
   } else {
@@ -11012,7 +11396,7 @@ function Drag (evt) {
   if (dragTarget) {
     
     // prevent scrolling on touch devices
-    if (touchDevice) evt.preventDefault();
+    if (platform.touch) evt.preventDefault();
     
     // find out what we are dragging
     if (dragTarget.id.match (/-handle$/)) {
@@ -11200,7 +11584,7 @@ function Drag (evt) {
       w + ' ' +
       h
     );
-    if (!smallMobile) {
+    if (!platform.smallMobile) {
       SVGRoot.setAttribute('width', w);
       SVGRoot.setAttribute('height', h);
     }
@@ -11208,7 +11592,7 @@ function Drag (evt) {
 
 }
 
-// Drop is activated when a figure or handle is dropped at a new position
+// Drop is activated when a figure or handle is dropped
 function Drop(evt) {
   
   // if we aren't currently dragging an element, don't do anything
@@ -11218,7 +11602,7 @@ function Drop(evt) {
     var bBox = SVGRoot.getBBox();
     SVGRoot.setAttribute ('viewBox', bBox.x + ' ' + bBox.y + ' ' +
       (parseInt(bBox.width) + 5) + ' ' + (parseInt(bBox.height) + 5));
-    if (!smallMobile) {
+    if (!platform.smallMobile) {
       SVGRoot.setAttribute ('width', parseInt(bBox.width) + 5);
       SVGRoot.setAttribute ('height', parseInt(bBox.height) + 5);
     }
@@ -11226,7 +11610,7 @@ function Drop(evt) {
   }
 
 	document.getElementById('main').style = '';
-  //if (touchDevice) evt.preventDefault();
+  //if (platform.touch) evt.preventDefault();
 
   // turn the pointer-events back on, so we can grab this item later
   dragTarget.setAttribute('pointer-events', 'all');
@@ -11240,6 +11624,7 @@ function Drop(evt) {
   // restore svgContainer size
   SVGRoot.parentNode.classList.remove ('sequenceOverlay');
   document.getElementById ('leftBlock').removeAttribute ('style');
+  document.getElementById ('leftBlockTabSelector').removeAttribute ('style');
   
   var transform = dragTarget.getAttribute('transform');
   
@@ -11282,7 +11667,7 @@ function Drop(evt) {
   // we grab the next element
   dragTarget = null;
 
-  //if (!touchDevice) sequenceText.focus();
+  //if (!platform.touch) sequenceText.focus();
 
 }
 
@@ -11526,8 +11911,10 @@ function moveClear (i) {
               // set 
               var bBox = bBoxI.nodes[l];
               // check if we have overlap. If so, adjust movedown
-              if (((bBox.right + m) > bBoxK.x) && ((bBox.x - m) < (bBoxK.x + bBoxK.width))) {
-                if (((bBox.bottom + moveDown + m) > bBoxK.y) && ((bBox.y + moveDown - m) < (bBoxK.y + bBoxK.height))) {
+              if (((bBox.right + m) > bBoxK.x) &&
+	              ((bBox.x - m) < (bBoxK.x + bBoxK.width))) {
+                if (((bBox.bottom + moveDown + m) > bBoxK.y) &&
+	                ((bBox.y + moveDown - m) < (bBoxK.y + bBoxK.height))) {
                   moveDown += bBoxK.y + bBoxK.height - (bBox.y + moveDown) + m;
                   repeat = true;
                 }
@@ -11811,7 +12198,7 @@ function startFuDesigner(dontConfirm) {
   
   function f () {
     // Free (Un)known designer will not work in smallMobile browser layout
-    if (smallMobile) switchSmallMobile();
+    if (platform.smallMobile) switchSmallMobile();
 
     // unlock sequence when locked
     if (document.getElementById ('lock_sequence').value) lockSequence();
@@ -11830,7 +12217,7 @@ function startFuDesigner(dontConfirm) {
       // add fuDesigner class to body
       document.body.classList.add ('fuDesigner');
       
-      if (mobileDevice) {
+      if (platform.mobile) {
 				// move items from File menu to main menu for quick access
 				var items = document.getElementsByClassName ('menuFileItem');
 				for (var i = 0; i < items.length; i++) {
@@ -11940,7 +12327,7 @@ function exitFuDesigner (newSequence) {
       // disableFUdesigner
       document.styleSheets[0].deleteRule(0);
 
-			if (mobileDevice) {  
+			if (platform.mobile) {  
 				// move items from main menu back to File menu
 				var ul = document.getElementById ('menuFileUl');
 				var items = document.getElementsByClassName ('menuFileItem');
@@ -11975,6 +12362,8 @@ function exitFuDesigner (newSequence) {
   
         checkSequenceChanged ();
         
+        /** breaks reference sequence. Why did I change this? Unsure,
+         *  removing for now (2018-1-22)
         // put figures with letters in reference sequence field
         var div = document.getElementById('referenceSequenceDialog');
         div.classList.remove ('noDisplay');
@@ -11989,6 +12378,7 @@ function exitFuDesigner (newSequence) {
         }
         changeReferenceSequence();
         div.classList.add ('noDisplay');
+        */
       }
     
       // restore the tabs
@@ -11999,6 +12389,9 @@ function exitFuDesigner (newSequence) {
       selectTab ('tab-figureInfo');
       selectTab ('tab-sequenceInfo');
       document.getElementById ('figureSelector').classList.remove ('left');
+      
+      // clear fuSequence div
+      document.getElementById('fuSequence').innerHTML = '';
   
       availableFigureGroups();
       
@@ -12050,10 +12443,12 @@ function freeCell (sub, col, row) {
 // Free (Un)known designer
 function freeCellAddHandlers (td) {
   td.addEventListener ('dragenter', function() {
+		var nodes = document.getElementById ('fuSequence').getElementsByClassName ('hover');
+		while (nodes.length) nodes[0].classList.remove ('hover');
     this.classList.add ('hover');
   });
-  td.addEventListener ('dragleave', function() {
-    this.classList.remove ('hover');
+  td.addEventListener ('dragleave', function(e) {
+		if (e.target.id === this.id) this.classList.remove ('hover');
   });
   td.addEventListener ('dragover', handleFreeDragOver);
   td.addEventListener ('drop', handleFreeDrop);
@@ -12078,8 +12473,6 @@ function noPropagation (e) {
     e.preventDefault();
   }
 }
-
-var dragSrcEl = null;
 
 // handleFreeDragFigureStart is called when starting to drag a Free (Un)known
 // figure. It will set the figure string in dataTransfer
@@ -12106,13 +12499,8 @@ function handleFreeDragSubStart(e, string) {
 // handleFreeDragOver fires when dragging over Free (Un)known designer figure
 function handleFreeDragOver(e) {
   noPropagation (e); // Necessary. Allows us to drop.
-
-  // fixme
-  // Add hover class. Should be enough to only do this on dragenter but
-  // on td with svg in it the dragleave event fires often when moving
-  // over svg
-  this.classList.add ('hover');
   
+  this.classList.add ('hover');
   e.dataTransfer.dropEffect = 'copy';
 
   return false;
@@ -12362,7 +12750,7 @@ function buildFuFiguresTab() {
   
   // add margin to scroll for touch devices
   var
-	  width = touchDevice ? 110 : 120,
+	  width = platform.touch ? 110 : 120,
 	  height = 100,
 	  maxColCount = 2,
 	  colCount = 0,
@@ -12691,7 +13079,7 @@ function makeFormA() {
   
   // resize svg if we are on a smallMobile browser to hide the scoring
   // columns
-  if (smallMobile) {
+  if (platform.smallMobile) {
     SVGRoot.setAttribute('width', '900px');
     SVGRoot.setAttribute('height', '1125px');
   } else {
@@ -12896,7 +13284,7 @@ function makeFormGrid (cols, width, svg) {
     svg.setAttribute("viewBox", '-1 -13 ' + (width + 2) + ' ' + height);
   } else svg.setAttribute("viewBox", '-1 -1 ' + (width + 2) + ' ' + height);
 
-  if (smallMobile) {
+  if (platform.smallMobile) {
     svg.setAttribute("width", 312);
     svg.setAttribute("height", roundTwo(height * (312 / (width + 2))));
   } else {
@@ -13144,7 +13532,7 @@ function makeFree () {
   Direction = 0;
 
   // make sure the sequence is shown
-  div.classList.remove ('noDisplay');
+  document.body.classList.add ('fuDesigner');
   while (div.firstChild) div.removeChild(div.firstChild);
   var table = document.createElement('table');
   div.appendChild(table);
@@ -13484,7 +13872,7 @@ function addFormElements (form) {
   y -= 40;
   switch (form) {
     case 'B':
-      drawWind ((w + x) + (miniFormA ? 172 : 0), y, 1);
+      drawWind ((w + x) + (miniFormA ? (miniFormA === 'tiny' ? 74 : 172 ) : 0), y, 1);
       break;
     case 'C':
       drawWind (x, y, -1);
@@ -13492,7 +13880,9 @@ function addFormElements (form) {
   }
   // Add mini Form A, but only to Form B or C when miniFormA is set
   if (((form === 'C') || (form === 'B')) && miniFormA) {
-    makeMiniFormA ((w + x) + 20, y + 50);
+		if (miniFormA === 'tiny') {
+	    makeTinyFormA ((w + x) + 10, y + 50);
+		} else makeMiniFormA ((w + x) + 20, y + 50);
   }
 
   var bBox = SVGRoot.getElementById('sequence').getBBox();
@@ -13504,7 +13894,7 @@ function addFormElements (form) {
   SVGRoot.setAttribute("viewBox",
     (x - 3) + ' ' + (y - 3) + ' ' + (w + 5) + ' ' + (h + 5));
   // resize svg if we are smallMobile, to a max factor 2
-  var scaleSvg = smallMobile ? Math.min(312 / (w + 5), 2) : 1;
+  var scaleSvg = platform.smallMobile ? Math.min(312 / (w + 5), 2) : 1;
   
   SVGRoot.setAttribute("width",  scaleSvg * (w + 5));
   SVGRoot.setAttribute("height", scaleSvg * (h + 5));
@@ -13581,7 +13971,7 @@ function draw () {
       break;
     default:
       makeFormGrid(document.getElementById('gridColumns').value,
-	      smallMobile ? 240 * Math.sqrt(document.getElementById('gridColumns').value) : false);
+	      platform.smallMobile ? 240 * Math.sqrt(document.getElementById('gridColumns').value) : false);
   }
   
   // check if selectedFigure.id is still valid
@@ -13593,17 +13983,24 @@ function draw () {
 // windowResize gets called whenever the window is resized or rotated
 function windowResize () {
   updateSequenceTextHeight();
-	if (smallMobile) {
+	if (platform.smallMobile) {
     // set view to device width
-		var initScale = window.screen.availWidth / 320;
-    /*document.getElementById ('viewport').setAttribute('content',
-	    'width=' + window.screen.availWidth +
-	    ', initial-scale=' + initScale +
-	    ', minimum-scale=' + initScale +
-	    ', maximum-scale=' + initScale +
-	    ', user-scalable=no');*/
-	  document.getElementById ('viewport').setAttribute('content',
-	    'width=321, user-scalable=no');
+		var initScale = screen.width / 320;
+
+/*	  if (platform.ios && platform.cordova) {
+			document.getElementById ('viewport').setAttribute('content',
+		    'user-scalable=no, initial-scale=1, width=device-width, '+
+		    'viewport-fit=cover');
+		  document.body.style = 'transform: scale(' + initScale + '); ' +
+			  '-webkit-transform-origin-x: left; ' +
+			  '-webkit-transform-origin-y: top;';
+		} else {*/
+		  document.getElementById ('viewport').setAttribute('content',
+		    'user-scalable=no, viewport-fit=cover, width=321' +
+		    (platform.cordova ? ', initial-scale=' + initScale : '')
+		  );
+		//}
+
 	}
 }
 
@@ -13613,17 +14010,17 @@ function updateSequenceTextHeight () {
 	/** DISABLED IN 2018.1, keep in case we want to re-enable
   var cloneDiv = document.getElementById('sequenceTextClone');
   if (cloneDiv) {
-    if (!smallMobile && (document.activeElement.id === sequenceText.id)) {
+    if (!platform.smallMobile && (document.activeElement.id === sequenceText.id)) {
       // use the clone div to determine the height of the sequence textarea
       // add two characters to make sure the text in the clone is always longer    
       cloneDiv.innerHTML = sequenceText.innerText + '##';
       // set minimum height to 52px or 48 for desktop
       var height = Math.max (cloneDiv.offsetHeight + 6,
-	      mobileDevice ? 52 : 48);
+	      platform.mobile ? 52 : 48);
       sequenceText.setAttribute('style', 'height:' + height + 'px;');
       // also correct topBlock and main, add 25 to account for menu on
       // desktop
-      if (!mobileDevice) height += 25;
+      if (!platform.mobile) height += 25;
       document.getElementById('topBlock').setAttribute (
 	      'style', 'height:' + (height + 4) + 'px;');
 	    // transition is set here in two steps to prevent unwanted
@@ -13637,7 +14034,7 @@ function updateSequenceTextHeight () {
     } else if (!dragTarget) {
       cloneDiv.innerHTML = '';
       sequenceText.removeAttribute ('style');
-      if ((activeForm !== 'FU') || mobileDevice) {
+      if ((activeForm !== 'FU') || platform.mobile) {
 	      document.getElementById('topBlock').removeAttribute ('style');
 	      document.getElementById('main').removeAttribute ('style');
 			} else {
@@ -13655,7 +14052,7 @@ function updateSequenceTextHeight () {
 // special keys for touch devices, except on small mobile
 function virtualKeyboard (e) {
   e.hasfocus = (document.activeElement === sequenceText) ? true : false;
-  if (touchDevice && mobileDevice && !smallMobile) {
+  if (platform.touch && platform.mobile && !platform.smallMobile) {
     var el = document.getElementById('virtualKeyboard');
     if (document.activeElement === sequenceText) {
       el.classList.remove ('noDisplay');
@@ -13733,8 +14130,9 @@ function updateSequenceText (string) {
 // be done
 function checkSequenceChanged (force) {
 
-	var selStart = 0;
-	var selEnd = 0;
+	var
+		selStart = 0,
+		selEnd = 0;
 
   if (document.activeElement === sequenceText) {
 		var range = saveSelection (sequenceText);
@@ -13838,6 +14236,13 @@ function checkSequenceChanged (force) {
     // Redraw sequence
     draw ();
     
+    // scale sequence if zoom is set on mobile
+    if (platform.mobile) {
+			var zoom = parseInt(document.getElementById('zoom').textContent.match(/\d+/)[0]) / 100;
+			SVGRoot.setAttribute('width', parseInt(SVGRoot.getAttribute('width')) * zoom);
+			SVGRoot.setAttribute('height', parseInt(SVGRoot.getAttribute('height')) * zoom);
+		}
+		
     // Select the correct figure when applicable
     if ((selectFigureId !== false) && (selectedFigure.id !== null)) {
       selectFigure (selectFigureId);
@@ -13880,7 +14285,7 @@ function selectForm (form) {
   checkSequenceChanged (true);
   // draw (form);
   if (selectedFigure.id) updateFigureEditor();
-  if (smallMobile) {
+  if (platform.smallMobile) {
     selectTab('tab-svgContainer');
   }
   setFormLayout (form);
@@ -13888,7 +14293,7 @@ function selectForm (form) {
 
 // setFormLayout sets the correct layout for each Form view    
 function setFormLayout (form) {    
-  if ((form === 'Grid') && !smallMobile) {
+  if ((form === 'Grid') && !platform.smallMobile) {
     document.getElementById ('gridInfo').classList.remove ('hidden');
     document.getElementById('svgContainer').classList.add ('grid');
   } else {
@@ -13927,11 +14332,18 @@ function clearSequence () {
 	    while (length--) {
 	      if (fields[length].type === 'text') fields[length].value = '';
 	    }
+
+			var div = document.getElementById('referenceSequenceDialog');
+			div.classList.remove ('noDisplay');
 	    var fields = document.getElementsByTagName('textarea');
 	    var length = fields.length;
 	    while (length--) fields[length].value = '';
+	    console.log(document.getElementById('referenceSequenceString').value);
+	    div.classList.add ('noDisplay');
+	    changeReferenceSequence();
+	    
 	    sequenceText.innerText = '';
-	
+
 	    document.getElementById ('fu_figures').value = '';
 	    document.getElementById ('default_view').value = '';
 	    document.getElementById ('pilot_id').value = '';	// Ajout Modif GG 2017
@@ -13981,7 +14393,6 @@ function dropSequence (evt) {
   if (evt && evt.dataTransfer && evt.dataTransfer.files &&
     evt.dataTransfer.files[0]) {
     noPropagation(evt);
-    //document.getElementById ('file').files = evt.dataTransfer.files;
     openSequence();
   }
 }
@@ -14437,7 +14848,7 @@ function activateXMLsequence (xml, noLoadRules) {
   var freeUnknownSequence = '';
   
   // first rebuild the svg container to free up memory
-  rebuildSequenceSvg();
+  //rebuildSequenceSvg();
   
   // make sure no figure is selected
   if (selectedFigure.id !== null) selectFigure (false);
@@ -14531,10 +14942,10 @@ function activateXMLsequence (xml, noLoadRules) {
   var el = document.getElementById ('harmonyField');
   if (el) {
     if (sportingClass.value === 'powered') {
-      el.setAttribute('style', 'opacity:0;');
-      document.getElementById ('harmony').setAttribute ('disabled', 'disabled');
+      el.classList.add ('hidden');
+      document.getElementById ('harmony').setAttribute ('disabled', true);
     } else {
-      el.removeAttribute('style');
+      el.classList.remove ('hidden');
       document.getElementById ('harmony').removeAttribute ('disabled');
     }
   }
@@ -14582,7 +14993,7 @@ function activateXMLsequence (xml, noLoadRules) {
 // If so, if it may be a Free (Un)known figures file and the user is
 // asked if he wants to open it in the Free (Un)known Designer
 function checkFuFiguresFile() {
-	if (smallMobile) return;
+	if (platform.smallMobile) return;
   var l = figureLetters;
   if (
     l &&
@@ -14599,7 +15010,21 @@ function checkFuFiguresFile() {
       }
     }
     if (l === '') {
-      // all letters used once, ask question
+      // all letters used once, fill referenceSequence and ask question
+			var div = document.getElementById('referenceSequenceDialog');
+			div.classList.remove ('noDisplay');
+			var ref = document.getElementById ('referenceSequenceString');
+			ref.value = '';
+			for (var i = 0; i < figures.length; i++) {
+				if (figures[i].aresti && figures[i].unknownFigureLetter &&
+					(figures[i].unknownFigureLetter !== 'L')) {
+					ref.value += '"@' + figures[i].unknownFigureLetter + '" ' +
+						figures[i].string + ' ';
+				}
+			}
+			changeReferenceSequence();
+			div.classList.add ('noDisplay');
+			
       confirmBox (
         userText[(additionalFig.max ? 'FUstartOnLoad' : 'FKstartOnLoad')],
         userText.openSequence + ' <span class="info" ' +
@@ -14632,7 +15057,6 @@ function handleDragOver(evt) {
   noPropagation(evt);
   evt.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
 }
-
 
 /**********************
  * End file functions */
@@ -14909,9 +15333,9 @@ function saveFile(data, name, ext, filter, format) {
   
   var a = document.createElement('a');
   
-  if (cordovaApp) {
+  if (platform.cordova) {
 		saveDialog (' ', name, ext);
-	} else if (/i(Pad|Phone|Pod)/i.test (navigator.userAgent)) {
+	} else if (platform.ios) {
     saveDialog (userText.iOSsaveFileMessage, name, ext);
   } else if (typeof a.download !== "undefined") {
     saveDialog (userText.downloadHTML5, name, ext);
@@ -15239,7 +15663,7 @@ function printForms () {
 	          document.getElementById ('marginLeft').value + 'mm}' +
 	          'html {height: 100%;}' +
 	          'body {margin: 0; height: 100%;}' +
-	          '#noPrint {display: none;}' +
+	          '.noPrint {display: none;}' +
 	          '#noScreen {height: 100%;}' +
 	          '.breakAfter {position: relative; display:block; ' +
 	          'page-break-inside:avoid; page-break-after:always; ' +
@@ -15256,7 +15680,7 @@ function printForms () {
 	      }
 	      
 	      // can be improved but works for now...
-	      if (cordovaApp) {
+	      if (platform.cordova) {
 					cordova.plugins.printer.print (
 						'<html>' + 
 							'<head>' +
@@ -15282,7 +15706,7 @@ function buildForms (win) {
   var svg = '';
   var translateY = 0;
   // save the miniFormA value and set miniFormA depending on checkbox
-  var miniFormASave = miniFormA ? true : false;
+  var miniFormASave = miniFormA;
   // save the Sequence Notes check
   var sequenceNotesSave = document.getElementById('printNotes').checked;
   // save the current logo
@@ -15450,7 +15874,7 @@ function buildForms (win) {
   }
 
   // Reset the screen to the normal view
-  miniFormA = miniFormASave ? true : false;
+  miniFormA = miniFormASave;
   selectForm (activeFormSave);
   
   return (win ? body : svg);
@@ -18016,8 +18440,6 @@ function checkQRollSwitch (figString, figStringIndex, pattern, seqNr, rollSum, f
     var nextRollExtent = 0;
     var nextRollExtentPrev = 0;
     var switchVert = false;
-    // incorrect pre-2016.1 check
-    // var doubleBump = figString.match (/(pb|b)(pb|b)/);
     var verticalRolls = (pattern.match(/&/g)||[]).length;
 
     var firstRoll = (rollnr == 0) ? true : false;
@@ -18378,16 +18800,19 @@ function updateXYFlip (m, n) {
 
 // parseSequence parses the sequence character string
 function parseSequence () {
+  var
+	  seqNr = 1,
+	  subSequence = false,
+	  comments = false,
+	  figure = '',
+	  formBDirection = 0,
+	  match = false;
+
   // Clear the figCheckLine array
   figCheckLine = [];
   // Clear the figureStart array
   figureStart = [];
-  var seqNr = 1;
-  var subSequence = false;
-  var comments = false;
-  var figure = '';
-  var formBDirection = 0;
-  var match = false;
+
   additionals = 0;
   // Make sure the scale is set to 1 before parsing
   if (scale != 1) {

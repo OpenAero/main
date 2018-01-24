@@ -24,17 +24,19 @@
 body.menuOpen {
   overflow-y: hidden;
 }
+#cordovaStatusBar {
+	position: absolute;
+	top: 0;
+	right: 0;
+	left: 0;
+	height: 20px;
+	background-color: #ede7f6;
+}
 #topBlock {
 	height: 56px;
 }
 #sequenceTextContainer {
   left: 56px;
-}
-#sequence_text {
-  top: 2px;
-  -webkit-user-select: text;
-  user-select: text;
-  -webkit-user-modify: read-write;
 }
 /* left margin to negative half width of hamburgerMenu */
 #t_finalizeSequence {
@@ -51,13 +53,13 @@ body.menuOpen {
 }
 #main {
 	top: 56px;
-  padding: 0 0 5px 0;
+  padding: 0;
 }
 
 /* menu */
 #hamburgerMenu {
   padding: 16px 16px 12px 16px;
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
   font-size: 24px;
@@ -66,7 +68,7 @@ body.menuOpen {
 #hamburgerMenu i {
   transition: transform 0.2s;
 }
-#mainMenu.active + #hamburgerMenu i {
+#hamburgerMenu.active i {
   transform: rotate(-90deg);
 }
 
@@ -90,7 +92,8 @@ i.rightArrow:after {
 
 /* position menu */
 #mainMenu {
-	position: fixed;
+	position: absolute;
+	transform: translateZ(0); /* to assure it is shown when keyboard pops up on iOS */
 	overflow: hidden;
   width: 276px;
   left: 0;
@@ -115,6 +118,7 @@ i.rightArrow:after {
 	width: 100%;
   background-color: #fafafa;
   box-shadow: 2px 0px 4px rgba(0, 0, 0, 0.3);
+	-webkit-overflow-scrolling: touch;
 }
 .menuIcon {
 	position: relative;
@@ -143,7 +147,7 @@ i.rightArrow:after {
   display: inline-block;
   color: rgba(0,0,0,0.87);
   text-decoration: none;
-  padding: 16px;
+  padding: 16px 8px;
   margin: 2px 0 -2px 0;
   cursor: default;
 }

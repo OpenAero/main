@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# OpenAero version 2018.1.3
+# OpenAero version 2018.1.4
 appcache.manifest
 changelog.txt
 cordova.js
@@ -11,6 +11,8 @@ css/MaterialIcons-Regular.woff
 css/mobile.css
 css/smallMobile.css
 doc/arestisystem.html
+doc/CIVA-Free-Known-Programme-Guidance-Glider-Aircraft-2018-v1.pdf
+doc/CIVA-Free-Known-Programme-Guidance-Power-Aircraft-2018-v3.pdf
 doc/gpl_files/combo.css
 doc/gpl_files/gplv3-127x51.png
 doc/gpl_files/layout.css
@@ -19,7 +21,6 @@ doc/gpl_files/print.css
 doc/gpl.htm
 doc/language.html
 doc/manual.html
-doc/Power_CIVA_Free_Known_Guidance.pdf
 img/blue_handles.png
 img/buttons/curvedline.png
 img/buttons/figEndInv.png
@@ -99,6 +100,7 @@ js/canvg/MIT-LICENSE.txt
 js/canvg/rgbcolor.js
 js/canvg/StackBlur.js
 js/config.js
+js/docs.js
 js/figures18.js
 js/flags.js
 js/jszip.min.js

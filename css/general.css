@@ -23,7 +23,17 @@
    mobile versions */
 
 /* General styling */
+/*
+html {
+	position: fixed;
+}
 body {
+	position: absolute;
+}*/
+html, body {
+	height: 100%;
+	width: 100%;
+	overflow: hidden;
   margin: 0;
   padding: 0;
   font-family: Roboto, Helvetica, Verdana, sans-serif;
@@ -130,6 +140,7 @@ img.menuIcon {
 .expansion-panel.expanded div {
   max-height: 280px;
   overflow: visible !important;
+  -webkit-overflow-scrolling: touch;
 }
 .expansion-panel .expand-toggle {
   position: absolute;
@@ -346,6 +357,9 @@ fieldset {
   left: 0;
 }
 .form-group input:invalid ~ .bar::before {
+  color: red;
+}
+.input:invalid ~ .bar::before {
   color: red;
 }
 .form-group input:disabled ~ .bar {
@@ -676,10 +690,11 @@ textarea {
 /* loading */
 #loading {
   font-size: 3em;
-  color: grey;
+  color: white;
   text-align: center;
-  background-color: white;
+  background-color: #7e57c2;
   position: fixed;
+	transform: translateZ(0); /* to assure it is shown when keyboard pops up on iOS */
   top: 0;
   right: 0;
   bottom: 0;
@@ -691,19 +706,39 @@ textarea {
 }
 
 #loading div {
-  position: fixed;
+  position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
 }
 
+#loading img {
+	-webkit-filter: drop-shadow(0 5px 5px rgba(0,0,0,0.5));
+  filter: drop-shadow(0 5px 5px rgba(0,0,0,0.5));
+}
+
 #continueAfterLoading {
-  color: blue;
+  color: #ffcc80;
   transition: all 0.5s;
 }
 
+.fullscreen {
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	overflow: hidden;
+}
+
 #topBlock {
+	position: absolute;
+	transform: translateZ(0); /* to assure it is shown when keyboard pops up on iOS */
+  z-index: 11;
+  top: 0;
+  left: 0;
 	text-align: center; /* for t_finalizeSequence */
+  background-color: #ede7f6;
 }
 #t_finalizeSequence {
 	display: none;
@@ -768,6 +803,10 @@ textarea {
 }
 
 /* sections and documentation */
+html.framed, html.top {
+	overflow-y: auto;
+	height: auto;
+}
 html.framed .docs {
 	background: #fff;
 }
@@ -1038,7 +1077,7 @@ option.used {
 }
 #design {
   position: relative;
-  padding-top:10px;
+  padding: 16px 0;
   text-align:center;
   text-shadow:1px 1px white;
   color:rgba(0,0,0,0.3);
@@ -1056,9 +1095,27 @@ option.used {
 }
 #sequenceTextContainer {
   position: absolute;
-  font-family: monospace;
+  /*font-family: monospace;*/
   font-size: 16px;
 }
+#sequence_text {
+  position: absolute;
+  left: 0;
+  border: 1px solid grey;
+  border-radius: 2px;
+  /* 16px is minimum size to prevent auto-zoom */
+  font-size: 16px;
+  text-align: left;
+  resize: none;
+  background-color: white;
+	overflow-x: hidden;
+  overflow-y: auto;
+  top: 2px;
+  -webkit-user-select: text;
+  user-select: text;
+	-webkit-overflow-scrolling: touch;
+}
+
 #sequenceTextClone {
   color: transparent;
   top: 0px;
@@ -1118,19 +1175,20 @@ option.used {
   background-repeat: no-repeat;
   background-position: center; 
   overflow: auto;
-  position: fixed;
+  /*position: fixed;*/
+  position: absolute;
   top: 0;
   right: 0;
   bottom: 0;
   left: 0;
   z-index:998;
+	-webkit-overflow-scrolling: touch;
 }
 .box {
-  overflow: auto;
-  -webkit-overflow-scrolling: touch;
-  margin: 5px;
+  overflow: hidden;
+  margin: 8px 8px 32px 8px;
   padding: 0;
-  position: absolute;
+  position: relative;
   z-index: 999;
   top: 10%;
   left: 10%;
@@ -1139,8 +1197,17 @@ option.used {
   border-radius: 4px 4px 2px 2px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
 }
+/* add an empty block after box to assure bottom margin */
+.boxbg::after {
+	position:relative;
+	content: "\00a0";
+	display: block;
+	width: 60px;
+	height: 60px;
+}
 .box div {
   overflow: auto;
+	-webkit-overflow-scrolling: touch;
 }
 .box div.content, .section div.content {
   padding: 16px;
@@ -1149,6 +1216,7 @@ option.used {
   overflow: visible;
   margin-left: 0;
   margin-right: 0;
+  -webkit-overflow-scrolling: touch;
 }
 .textButton a {
   text-decoration: none;
@@ -1205,7 +1273,6 @@ option.used {
 #fileExt {
 	position: relative;
 	float: right;
-  font-size: 24px;
   color: rgba(0,0,0,0.48);
   top: -29px;
 }
@@ -1358,6 +1425,7 @@ option.used {
   font-size: 2em;
   text-align: center;
   padding: 1em;
+  -webkit-overflow-scrolling: touch;
 }
 #printMultiFiles {
   width: 15em;
@@ -1386,7 +1454,8 @@ option.used {
   color: #f00;
 }
 #referenceSequenceSvgContainer {
-  overflow-x: auto;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
 }
 /* end reference sequence */
 
@@ -1402,7 +1471,7 @@ option.used {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
   font-weight: bold;
   text-align: center;
-  padding: 6px 2em 3px 2em;
+  padding: 6px 16px 3px 16px;
   bottom: 0;
   z-index: 8;
   transition: all 0.3s ease-in-out;
@@ -1422,7 +1491,8 @@ option.used {
   background: linear-gradient(315deg, rgba(0,0,0,0.4), rgba(0,0,0,0.7));
   background-repeat: no-repeat;
   background-position: center; 
-  position: fixed;
+  /*position: fixed;*/
+  position: absolute;
   top: 0;
   right: 0;
   bottom: 0;
@@ -1472,16 +1542,14 @@ option.used {
 	bottom: 0;
 	left: 0;
 	right: 0;
-	-webkit-overflow-scrolling: touch;
 	overflow-y: auto;
 }
 #helpContent iframe {
-	/*position: relative;*/
 	border: 0;
 	width: 100%;
-	height: 99%;
+	height: 98%;
 	-webkit-overflow-scrolling: touch;
-	overflow-y: auto;
+	overflow-y: visible;
 }
 #saveAsURLArea {
   width: 99%;
@@ -1505,18 +1573,13 @@ option.used {
 	height: 24em;
 	padding: 8px 16px;
 	box-shadow: inset 0 0 5px grey;
+  -webkit-overflow-scrolling: touch;
 }
+
+/* save dialog */
 #dlTextField {
-  font-size: 24px;
   text-align: right;
   width: 100%;
-  padding-right: 48px;
-}
-#saveFileFormDiv {
-  width:1px;
-  height:1px;
-  border:0px;
-  display:none;
 }
 
 /* checkMulti dialog */
@@ -1584,25 +1647,6 @@ option.used {
 /* z-index must be lower than that of .figureStart to prevent blinking */
   z-index: 0;
   position: absolute;
-}
-.largeButton {
-  text-align: center;
-  font-size: 2em;
-  font-weight: bold;
-  text-decoration: none;
-  color: white;
-  border-radius: 8px;
-  padding: 1px 10px 1px 10px;
-  background: rgb(55,176,232); /* non-W3C browsers */
-  background: -webkit-linear-gradient(top, rgba(55,176,232,1) 0%,rgba(6,109,171,1) 100%); /* Chrome10+,Safari5.1+ */
-  background: linear-gradient(to bottom, rgba(55,176,232,1) 0%,rgba(6,109,171,1) 100%); /* W3C */
-}
-.largeButton a {
-  text-decoration: none;
-  color: white;
-}
-.largeButton a:hover {
-  text-decoration: none;
 }
 
 /* tab selector functionality */
@@ -1686,7 +1730,7 @@ option.used {
 }
 #figureString {
   position: absolute;
-  z-index: 3;
+  z-index: 6;
   left: 164px;
   top: 208px;
   width: 102px;
@@ -1798,7 +1842,7 @@ t_addFigureText {
   margin: 2px;
 }*/
 #moveXCont, #moveYCont {
-  font-size: 1.5em;
+  font-size: 20px;
   font-weight: bold;
   float: right;
   margin-right: 2px;
@@ -1920,7 +1964,7 @@ t_addFigureText {
 }
 #figureHeader {
   font-size: 18px;
-  vertical-align: top;
+  vertical-align: middle;
 }
 /* roll selector */
 .posFlickSelectOption {
@@ -1959,8 +2003,9 @@ t_addFigureText {
   position: absolute;
   width: 300px;
   top: 180px;
-  overflow: auto;
   overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 #figureChooser a:hover {
   text-decoration: none;
@@ -2204,7 +2249,7 @@ table#figureChooserTable div {
 }
 
 #installApp {
-	position: fixed;
+  position: absolute;
 	z-index: 9999;
 	height: 32px;
 	padding: 16px 144px 16px 48px;
@@ -2216,7 +2261,7 @@ table#figureChooserTable div {
 	background-color: #ffcc80;
 	opacity: 0.2;
 	box-shadow: 0 0 4px rgba(0,0,0,0.38);
-	transition: all 0.3s ease-in-out;
+	transition: bottom 0.3s, opacity 0.3s;
 }
 #installApp.show {
 	bottom: 0;

@@ -1,3 +1,21 @@
+2018.1.4
+* fixed bug causing restart of Designer to fail on Firefox
+* fixed Save dialog filename positioning for iOS
+* improved Harmony field showing and hiding
+* replaced most "position: fixed" styles by "absolute" for better iOS compatibility
+* updated classList.js shim
+* set position of Sequence/Figure Editor tab selector to fixed
+* set smallMobile to fixed portrait mode for Cordova
+* added figure K to Figure Editor header
+* changed OpenAero start screen to be identical to app (purple background!)
+* changed zoom function for mobile to only zoom sequence
+* added iNoBounce script to improve iOS scrolling
+* corrected CIVA 2018 rules regarding required rolling turn in the Free Known
+* updated config.xml for Cordova 7.0.1
+* fixed reference sequence updating on Designer exit and sequence clearing
+* added 2018 IAC and BAeA Known sequences
+* for Cordova, Help now opens in inAppBrowser except for PDF in Android
+
 2018.1.3
 * corrected Advanced Free Known figure A
 * corrected IAC Sportsman Free K and Alert message in case of Floating Point rules

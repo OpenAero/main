@@ -43,14 +43,13 @@
 }
 #sequenceTextContainer {
   left: 4px !important;
-	right: 16px !important;
+	right: 32px !important;
 }
 #sequenceTextClone {
 	font-size: 16px !important;
 }
 #sequence_text {
 	top: 0;
-	font-size: 16px !important;
 }
 #t_locked {
   top: 28px;
@@ -63,7 +62,7 @@
 }
 #main {
 	top: 76px;
-  padding: 0 0 5px 0;
+  padding: 0;
 }
 .fuDesigner #main {
 	top: 32px;

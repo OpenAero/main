@@ -78,6 +78,9 @@ OpenAero 2016.3.2
 * - fixed A.17.1.3 rule checking for Advanced Unknown
 * 2018.1
 * - updated to 2018 rules and sequences
+* 2018.1.4
+* - removed 2015 rules (Known and Free)
+* - corrected required rolling turns for Free Known 
 */
 
 //#######################################################################################
@@ -94,27 +97,14 @@ rules.push("[CIVA Unlimited Programme4]");
 rules.push("more=CIVA Unlimited Unknown3");
 
 //######################################################################################
-//##### CIVA UNLIMITED KNOWN ###########################################################
-//######################################################################################
-
-rules.push("(CIVA Unlimited Known)");
-rules.push("basefig-min=9");
-rules.push("basefig-max=9");
-rules.push("poslj=10");
-rules.push("posnl=40");
-rules.push("allow=^[1-9]");
-
-rules.push("infocheck=positioning");
-
-//######################################################################################
 //##### CIVA UNLIMITED FREE ############################################################
 //######################################################################################
-
+ 
 rules.push("(CIVA Unlimited Free)");
 rules.push("posnl=40");//assume no line judges
 rules.push("poslj=20");
 rules.push("k-max=420");
-
+ 
 rules.push("more=CIVA/IAC Unlimited Free");
 
 //######################################################################################
@@ -130,9 +120,9 @@ rules.push("roll-repeat=1");
 rules.push("snap-repeat=1");
 rules.push("spin-repeat=1");
 
-rules.push("group-roller=^2\\.(2\\.[3-6]|3\\.[2-5]|4\\.[2-8])");
-rules.push("roller-name=Rolling turn, family 2.2.3 to 2.2.6, 2.3.2 to 2.3.5, 2.4.2 to 2.4.8");
-rules.push("roller-name_fr=Tonneaux en virage, famille 2.2.3 à 2.2.6 ou 2.3.2 à 2.3.5 ou 2.4.2 à 2.4.8");
+rules.push("group-roller=^2\\.(2\\.[3-7]|3\\.[2-6]|4\\.[2-8])");
+rules.push("roller-name=Rolling turn, family 2.2.3 to 2.2.7, 2.3.2 to 2.3.6, 2.4.2 to 2.4.8");
+rules.push("roller-name_fr=Tonneaux en virage, famille 2.2.3 à 2.2.7 ou 2.3.2 à 2.3.6 ou 2.4.2 à 2.4.8");
 
 rules.push("fam1-min=1");
 rules.push("roller-min=1");
@@ -182,9 +172,9 @@ rules.push("roll-repeat=1");
 rules.push("snap-repeat=1");
 rules.push("spin-repeat=1");
 
-rules.push("group-roller=^2\\.(2\\.[3-6]|3\\.[2-5]|4\\.[2-8])");
-rules.push("roller-name=Rolling turn, family 2.2.3 to 2.2.6, 2.3.2 to 2.3.5, 2.4.2 to 2.4.8");
-rules.push("roller-name_fr=Tonneaux en virage, famille 2.2.3 à 2.2.6 ou 2.3.2 à 2.3.5 ou 2.4.2 à 2.4.8");
+rules.push("group-roller=^2\\.(2\\.[3-7]|3\\.[2-6]|4\\.[2-8])");
+rules.push("roller-name=Rolling turn, family 2.2.3 to 2.2.7, 2.3.2 to 2.3.6, 2.4.2 to 2.4.8");
+rules.push("roller-name_fr=Tonneaux en virage, famille 2.2.3 à 2.2.7 ou 2.3.2 à 2.3.6 ou 2.4.2 à 2.4.8");
 
 rules.push("fam1-min=1");
 rules.push("roller-min=1");
@@ -719,59 +709,46 @@ rules.push("(CIVA Advanced 2ndUnknown)");
 rules.push("more=CIVA Advanced Unknown2");
 
 //######################################################################################
-//##### CIVA ADVANCED KNOWN 2015 #######################################################
-//######################################################################################
-
-rules.push("(CIVA Advanced Known)");
-rules.push("basefig-min=9");
-rules.push("basefig-max=9");
-rules.push("poslj=10");
-rules.push("posnl=30");
-rules.push("allow=^([1-8]|9\\.([123489]|1[12]))");
-
-rules.push("infocheck=positioning");
-
-//######################################################################################
 //##### CIVA ADVANCED FREE 2015 ########################################################
 //######################################################################################
-
+ 
 rules.push("(CIVA Advanced Free)");
 rules.push("posnl=30");//no line judges
 rules.push("poslj=10");
 rules.push("k-max=300");
 rules.push("basefig-max=12");
-
+ 
 rules.push("basefig-repeat=1");
 rules.push("roll-repeat=1");
 rules.push("snap-repeat=1");
 rules.push("spin-repeat=1");
-
+ 
 rules.push("group-roller=^2\\.(1\\.[23]|2\\.[2-6]|3\\.[2-5]|4\\.[2-8])");
 rules.push("roller-name=Rolling turn, family 2.1.2 to 2.1.3, 2.2.2 to 2.2.6, 2.3.2 to 2.3.5, 2.4.2 to 2.4.8");
 rules.push("roller-name_fr=Tonneaux en virage, famille 2.1.2, 2.1.3, 2.2.2 à 2.2.6, 2.3.2 à 2.3.5, 2.4.2 à 2.4.8");
-
+ 
 rules.push("roller-min=1");
 rules.push("fam1-min=1");
 rules.push("fam5-min=1");
 rules.push("fam7-min=1");
 rules.push("fam8-min=1");
-
+ 
 rules.push("froll-min=1");
 rules.push("hroll-min=1");
 rules.push("qroll-min=1");
 rules.push("eroll-min=1");
 rules.push("snap-min=2");
 rules.push("spin-min=1");
-
+ 
 rules.push("opposite-min=1");//one opposite roll is required!
-
+ 
 rules.push("allow=^[1-9]");//all figures are allowed for the Free Programme
-
+ 
 // what info should be filled out
 rules.push("infocheck=pilot;actype;acreg;positioning");
-
+ 
 rules.push("more=CIVA AdvYakInt SF");
-
+ 
 //######################################################################################
 //##### CIVA ADVANCED FREE KNOWN #######################################################
 //######################################################################################
@@ -789,8 +766,8 @@ rules.push("snap-repeat=1");
 rules.push("spin-repeat=1");
 
 rules.push("group-roller=^2\\.(1\\.[23]|2\\.[2-6]|3\\.[2-5]|4\\.[2-8])");
-rules.push("roller-name=Rolling turn, family 2.1.2 to 2.1.3, 2.2.2 to 2.2.6, 2.3.2 to 2.3.5, 2.4.2 to 2.4.8");
-rules.push("roller-name_fr=Tonneaux en virage, famille 2.1.2, 2.1.3, 2.2.2 à 2.2.6, 2.3.2 à 2.3.5, 2.4.2 à 2.4.8");
+rules.push("roller-name=Rolling turn, family 2.1.2 to 2.1.3, 2.2.2 to 2.2.7, 2.3.2 to 2.3.6, 2.4.2 to 2.4.8");
+rules.push("roller-name_fr=Tonneaux en virage, famille 2.1.2, 2.1.3, 2.2.2 à 2.2.7, 2.3.2 à 2.3.6, 2.4.2 à 2.4.8");
 
 rules.push("roller-min=1");
 rules.push("fam1-min=1");
@@ -1196,9 +1173,9 @@ rules.push("eroll-min=1");
 rules.push("snap-min=1");
 rules.push("spin-min=1");
 
-rules.push("group-roller=^2\\.(1\\.[23]|2\\.[2-6]|3\\.[2-5]|4\\.[2-8])");
-rules.push("roller-name=Rolling turn, family 2.1.2 to 2.1.3, 2.2.2 to 2.2.6, 2.3.2 to 2.3.5, 2.4.2 to 2.4.8");
-rules.push("roller-name_fr=Tonneaux en virage, famille 2.1.2, 2.1.3, 2.2.2 à 2.2.6, 2.3.2 à 2.3.5, 2.4.2 à 2.4.8");
+rules.push("group-roller=^2\\.(1\\.[23]|2\\.[2-7]|3\\.[2-6]|4\\.[2-8])");
+rules.push("roller-name=Rolling turn, family 2.1.2 to 2.1.3, 2.2.2 to 2.2.7, 2.3.2 to 2.3.6, 2.4.2 to 2.4.8");
+rules.push("roller-name_fr=Tonneaux en virage, famille 2.1.2, 2.1.3, 2.2.2 à 2.2.7, 2.3.2 à 2.3.6, 2.4.2 à 2.4.8");
 rules.push("roller-min=1");
 
 rules.push("emptyline-max=0");
@@ -1221,77 +1198,12 @@ rules.push("infocheck=pilot;actype;acreg;positioning");
 rules.push("[CIVA Intermediate Free Known]");
 rules.push("more=CIVA Yak52 Free Known");
 
-//######################################################################################
-//##### CIVA YAK52 KNOWN 2015 ##########################################################
-//######################################################################################
-
-rules.push("(CIVA Yak52 Known)");
-rules.push("basefig-min=9");
-rules.push("basefig-max=9");
-rules.push("poslj=10");
-rules.push("posnl=30");
-rules.push("allow=^([1-8]|9\\.([123489]|1[12]))");
-
-//######################################################################################
-//##### CIVA INTERMEDIATE KNOWN 2015 ###################################################
-//######################################################################################
-
-rules.push("(CIVA Intermediate Known)");
-rules.push("more=CIVA Yak52 Known");
-
-//######################################################################################
-//##### CIVA YAK52 FREE 2015 ###########################################################
-//######################################################################################
-
-rules.push("(CIVA Yak52 Free)");
-rules.push("posnl=30");
-rules.push("basefig-max=12");
-rules.push("k-max=180");
-
-rules.push("basefig-repeat=1");
-rules.push("roll-repeat=1");
-rules.push("snap-repeat=1");
-rules.push("spin-repeat=1");
-
-rules.push("fam5-min=1");
-rules.push("fam7-min=1");
-rules.push("fam8-min=1");
-rules.push("froll-min=1");
-rules.push("hroll-min=1");
-rules.push("qroll-min=1");
-rules.push("eroll-min=1");
-rules.push("snap-min=1");
-rules.push("spin-min=1");
-
-rules.push("group-roller=^2\\.(1\\.[23]|2\\.[2-6]|3\\.[2-5]|4\\.[2-8])");
-rules.push("roller-name=Rolling turn, family 2.1.2 to 2.1.3, 2.2.2 to 2.2.6, 2.3.2 to 2.3.5, 2.4.2 to 2.4.8");
-rules.push("roller-name_fr=Tonneaux en virage, famille 2.1.2, 2.1.3, 2.2.2 à 2.2.6, 2.3.2 à 2.3.5, 2.4.2 à 2.4.8");
-rules.push("roller-min=1");
-
-rules.push("emptyline-max=0");
-
-rules.push("opposite-min=1"); //one opposite roll is required!
-
-rules.push("allow=^[1-9]"); //all figures are allowed for the Free Programme
-
-// what info should be filled out
-rules.push("infocheck=pilot;actype;acreg;positioning");
-
-rules.push("more=CIVA AdvYakInt SF");
-
 /**********************************************************************
  *           Advanced, Yak52 and Intermediate Super Families          *
  **********************************************************************/
 
 rules.push("(CIVA AdvYakInt SF)");
 rules.push("sf=^9\\.11\\.:3;^9\\.12\\.:3;^9\\.9\\.:4;^9\\.10\\.:4;^2\\.:2;^5\\.:5;^6\\.:6;^1\\.:7;^3\\.:7;^7\\.:7;^8\\.:7;^0\\.:7");
-
-//######################################################################################
-//##### CIVA INTERMEDIATE FREE 2015 ####################################################
-//######################################################################################
-
-rules.push("(CIVA Intermediate Free)");
-rules.push("more=CIVA Yak52 Free");
 
 //######################################################################################
 //##### CIVA YAK52 UNKNOWN #############################################################
@@ -1537,18 +1449,3 @@ rules.push("more=CIVA Yak52 Unknown2");
 
 rules.push("[CIVA Intermediate Unknown3]");
 rules.push("more=CIVA Yak52 Unknown3");
-
-/*******************************************************************
- * 
- * 2015 CIVA rules for Intermediate, Yak 52, Advanced and Unlimited
- * 
- *******************************************************************/
-
-rules.push("[CIVA Intermediate 2015 Free]");
-rules.push("more=CIVA Yak52 Free");
-rules.push("[CIVA Yak52 2015 Free]");
-rules.push("more=CIVA Yak52 Free");
-rules.push("[CIVA Advanced 2015 Free]");
-rules.push("more=CIVA Advanced Free");
-rules.push("[CIVA Unlimited 2015 Free]");
-rules.push("more=CIVA Unlimited Free");

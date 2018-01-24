@@ -248,7 +248,8 @@ lang.en = {
 'formL' : 'Form L',
 'formR' : 'Form R',
 'free' : 'Free',
-'freeKnownGuidance' : 'Free Known Guidance',
+'freeKnownGuidancePower' : 'Free Known Power',
+'freeKnownGuidanceGlider' : 'Free Known Glider',
 'freeUnknownFig' : 'Letter ',
 'freeUnknownAdditional' : 'Free unknown Additional',
 'FUconfirmExit' : 'The Free (Un)known designer may not restart ' +
