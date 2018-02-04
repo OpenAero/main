@@ -225,7 +225,7 @@
 									<span class="userText" id="t_upwindEntry"></span>
 								</li>
                 <li class="entryOption lock">
-									<img  class="material-icons menuIcon" src="img/compare_arrows_same.svg">
+									<img class="material-icons menuIcon" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2ZXJzaW9uPSIxLjEiIHdpZHRoPSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBoZWlnaHQ9IjI0IiBmaWxsPSIjMDAwMDAwIj48ZGVmcyBpZD0iZGVmczQyMDYiPjxwYXRoIGlkPSJhIiBkPSJNMCAwaDI0djI0SDBWMHoiIC8+PC9kZWZzPjxjbGlwUGF0aCBpZD0iYiI+PHVzZSBpZD0idXNlNDIxMCIgeGxpbms6aHJlZj0iI2EiIG92ZXJmbG93PSJ2aXNpYmxlIiAvPjwvY2xpcFBhdGg+PHBhdGggaWQ9InBhdGg0MjIwIiBkPSJtIDUuOTksMTQgNy4wMSwwIDAsMiAtNy4wMSwwIDAsMyAtMy45OSwtNCAzLjk5LC00IDAsMyB6IiAvPjxwYXRoIGlkPSJwYXRoNDIxMiIgZD0ibSAxNC45OSwxMyAwLC0zIDcuMDEsMCAwLC0yIC03LjAxLDAgMCwtMyAtMy45OSw0IDMuOTksNCB6IiAvPjwvc3ZnPiAK">
 									<span class="userText" id="t_downwindEntry"></span>
 								</li>
                 <li class="entryOption lock">
@@ -381,7 +381,6 @@
         <div class="clearBoth"></div>
         <!-- Sequence text -->
         <div id="sequenceTextContainer" class="disableFUdesigner">
-          <!--<div id="sequenceTextClone"></div>-->
           <div id="sequence_text" contenteditable="true" spellcheck="false" autocapitalize="off" class="lock" tabIndex="-1"></div>
         </div>
         <!-- fu_figures is used when saving from Free Unknown designer -->
@@ -518,11 +517,11 @@
                 </div>
                 <div class="item">
 									<div class="form-group combo">
-	                  <input type="text" name="positioning" id="positioning" maxlength="4" class="lock">
+	                  <input type="number" name="positioning" id="positioning" maxlength="4" class="lock">
 	                  <label class="control-label userText" id="t_positioning" for="input"></label><i class="bar"></i>
                   </div>
 									<div id="harmonyField" class="hidden form-group combo">
-	                  <input type="text" name="harmony" id="harmony" maxlength="4" class="lock">
+	                  <input type="number" name="harmony" id="harmony" maxlength="4" class="lock">
 	                  <label class="control-label userText" id="t_harmony" for="input"></label><i class="bar"></i>
 	                </div>
                 </div>
@@ -598,27 +597,27 @@
 							<div id="figureInfoTop">
 								<div id="figureOptions">
 									<div class="disableFUdesigner">
-										<div id="subSequence" class="button"><img src="img/buttons/mask.png"></div>
-										<div id="deleteFig" class="button"><img src="img/buttons/mask.png"></div>
-										<div id="flipYAxis" class="button"><img src="img/buttons/mask.png"></div>
+										<div id="subSequence" class="button"></div>
+										<div id="flipYAxis" class="button"></div>
+										<div id="deleteFig" class="button"><i class="material-icons">delete</i></div>
 										<div class="clearSpace"></div>
 									</div>
 									<div>
-										<div id="switchFirstRoll" class="button disableFUfig"><img src="img/buttons/mask.png"></div>
-										<div id="switchY" class="button"><img src="img/buttons/mask.png"></div>
-										<div id="switchX" class="button"><img src="img/buttons/mask.png"></div>
+										<div id="switchFirstRoll" class="button disableFUfig"></div>
+										<div id="switchY" class="button"></div>
+										<div id="switchX" class="button"></div>
 										<div class="clearSpace"></div>
 									</div>
 									<div class="disableFUdesigner">
-										<div id="magMin" class="button"><img src="img/buttons/mask.png"></div>
-										<input type="text" name="scale" id="scale" value="0">
-										<div id="magPlus" class="button"><img src="img/buttons/mask.png"></div>
+										<div id="magMin" class="button"><i class="material-icons">zoom_out</i></div>
+										<input type="number" name="scale" id="scale" value="0">
+										<div id="magPlus" class="button"><i class="material-icons">zoom_in</i></div>
 										<div class="clearSpace"></div>
 									</div>
 									<div class="disableFUdesigner">
-										<div id="moveForward" class="button"><img src="img/buttons/mask.png"></div>
-										<div id="straightLine" class="button"><img src="img/buttons/mask.png"></div>     
-										<div id="curvedLine" class="button"><img src="img/buttons/mask.png"></div>
+										<div id="moveForward" class="button"></div>
+										<div id="straightLine" class="button"></div>     
+										<div id="curvedLine" class="button"></div>
 										<div class="clearBoth"></div>
 										<!-- IMPORTANT : keep following div and span attached -->
 										<div id="moveXCont"><span>X </span>
@@ -639,20 +638,20 @@
                     <div class="material-icons">add_circle</div>
                   </div>
 								</div>
-								<div id="unknownFigureChooser">
+								<div id="unknownFigureChooser" class="form-group">
 									<select id="unknownFigure"></select>
+									<i class="bar"></i>
 								</div>
 							</div>
 							<div class="clearBoth divider hideNoFigure"></div>
 							<!-- entry and exit -->
 							<div id="entryExit" class="content divider">
 								<div class="contentLabel userText" id="t_entryExitAttExt"></div>
-								<span id="figEntryButton" class="smallButton disableFUfig"><div class="ttRight"><div></div></div></span>
+								<span id="figEntryButton" class="button small disableFUfig ttRight"></span>
 								<span id="entryExt" class="plusMin"></span>
 								<span><img src="img/ee_ext-figure.png"></span>
 								<span id="exitExt" class="plusMin"></span>
-								<span id="figExitButton" class="smallButton disableFUfig"><div><div></div></div></span>
-								&nbsp;
+								<span id="figExitButton" class="button small disableFUfig"></span>
 							</div>
 							<!-- rolls -->
 							<div id="rollInfo">
@@ -664,12 +663,10 @@
 									<i class="material-icons expand-toggle">expand_more</i>
 								</span>
 								<div>
-									<p>
-	                  <textarea name="comments" id="comments"></textarea>
-	                  <span class="info" id="manual.html_figure_comments">
-	                    <i class="material-icons info">info</i>
-	                  </span>
-	                </p>
+                  <textarea id="comments"></textarea>
+                  <span class="info" id="manual.html_figure_comments">
+                    <i class="material-icons info">info</i>
+                  </span>
 								</div>
 							</div>
 						</div>
@@ -818,7 +815,7 @@
 				<div class="content" id="saveFileMessage"></div>
 				<div class="content">
           <span class="form-group">
-            <input type="text" value='' id="dlTextField">
+            <input type="text" value="" id="dlTextField">
             <i class="bar"></i>
             <span id="fileExt"></span>
 					</span>
@@ -918,23 +915,42 @@
 						</span>
 					</div>
 					<div id="pilotCardLayout" class="folded">
-						<div id="pilotCardSpacer"></div>
-						<div class="noWrap">
-							<span>
-								<input type="radio" name="pilotCardForm" value="B" id="pilotCardFormB" checked>
-								<span class="userText" id="t_pilotCardFormB"></span>
-							</span>
-							<span>
-								<input type="radio" name="pilotCardForm" value="C" id="pilotCardFormC">
-								<span class="userText" id="t_pilotCardFormC"></span>
-							</span>
-						</div>
-						<div id="pilotCardSpacer"></div>
 						<div id="pilotCardPercent" class="pilotCardLayout active">
-							<span><input type="number" step="1" value="60" id="pilotCardPercentValue">%</span>
+							<div class="pilotCard">
+								<img id="pilotCardPercentImage" src="img/PilotCard.svg">
+								<div class="pilotCardLetter"></div>
+							</div>
+							<span><input type="number" step="1" value="60" max="100" id="pilotCardPercentValue">%</span>
 						</div>
-						<div id="pilotCard2" class="pilotCardLayout"></div>
-						<div id="pilotCard4" class="pilotCardLayout"></div>
+						<div id="pilotCard2" class="pilotCardLayout">
+							<div class="pilotCard">
+								<img src="img/PilotCard.svg">
+								<div class="pilotCardLetter"></div>
+							</div>
+							<div class="pilotCard">
+								<img src="img/PilotCard.svg">
+								<div class="pilotCardLetter"></div>
+							</div>
+						</div>
+						<div id="pilotCard4" class="pilotCardLayout">
+							<div class="pilotCard">
+								<img src="img/PilotCard.svg">
+								<div class="pilotCardLetter"></div>
+							</div>
+							<div class="pilotCard">
+								<img src="img/PilotCard.svg">
+								<div class="pilotCardLetter"></div>
+							</div>
+							<div class="pilotCard">
+								<img src="img/PilotCard.svg">
+								<div class="pilotCardLetter"></div>
+							</div>
+							<div class="pilotCard">
+								<img src="img/PilotCard.svg">
+								<div class="pilotCardLetter"></div>
+							</div>
+						</div>
+						<div id="t_pilotCardExplain" class="userText"></div>
 					</div>
 				</div>
 				<!-- end print forms -->
@@ -1206,6 +1222,9 @@
 						</span>
 					</div>
 					<div class="content divider">
+						<span class="userText" id="t_gridView"></span>        
+					</div>
+					<div class="content divider">
 						<label>
 							<span class="userText" id="t_positionClearAuto"></span>
 							<input type="checkbox" id="positionClearAuto" class="material-switch-input" checked>
@@ -1217,7 +1236,7 @@
 							<span class="material-switch"></span>
 						</label>
 					</div>
-					<div class="content divider">
+					<div class="content">
 						<span class="contentLabel userText" id="t_saveFigsSeparateTitle"></span>
 						<div class="clearBoth"></div>
 						<span>
@@ -1231,12 +1250,12 @@
 						<span>
 							<span class="userText" id="t_imageSize"></span>
 							<div class="form-group">
-                <input type="text" id="saveFigsSeparateWidth" value="600">
+                <input type="number" id="saveFigsSeparateWidth" value="600">
                 <i class="bar"></i>
               </div>
 							X
 							<div class="form-group">
-                <input type="text" id="saveFigsSeparateHeight" value="600">
+                <input type="number" id="saveFigsSeparateHeight" value="600">
                 <i class="bar"></i>
               </div>
 						</span>
@@ -1248,9 +1267,6 @@
                 <i class="bar"></i>
               </div>
 						</span>
-					</div>
-					<div class="content">
-						<span class="userText" id="t_gridView"></span>        
 					</div>
 				</div>
 				<!-- Styling settings -->
@@ -1394,11 +1410,14 @@
 			 </div>
 		</div>
 		<!-- installApp -->
-		<div id="installApp" class="android noPrint noDisplay">
+		<div id="installApp" class="noPrint noDisplay">
 			<i id="closeInstallApp" class="material-icons">close</i>
 			<span id="t_getTheApp" class="userText"></span>
 			<a id="playStore" href="https://play.google.com/store/apps/details?id=net.openaero" target="_blank">
 				<img src="img/google-play-badge.png">
+			</a>
+			<a id="appStore" href="https://itunes.apple.com/us/app/openaero/id1343773321" target="_blank">
+				<img src="img/ios-appstore-badge.svg">
 			</a>
 		</div>
     <div id="noScreen"></div>

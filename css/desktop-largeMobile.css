@@ -22,7 +22,7 @@
 /* This file defines all the css styles for desktop & tablet version */
 
 .tabSelector li {
-  min-width: 160px;
+  min-width: 60px;
 }
 #topBlock {
   display: block;
@@ -71,6 +71,7 @@
   top: 0;
   bottom: 0;
   min-height: 99%;
+  min-height: calc(100% - 41px);
   background: #f4f4f4;
   background: -webkit-linear-gradient(top, #f4f4f4, #e8e8e8);
   background: linear-gradient(top, #f4f4f4, #e8e8e8);
@@ -110,7 +111,7 @@
 }
 #figureInfo.hidden {
   transform: translateX(280px);
-  margin: 7px 5px 7px 5px !important;
+  /*margin: 7px 5px 7px 5px !important;*/
   visibility: visible;
 }
 .fuDesigner #figureInfo.hidden {
@@ -388,42 +389,6 @@ table#figureChooserColumns {
   width: 99%;
   height: 4em;
 }
-/* button tooltips */
-.tooltip {outline:none; }
-.tooltip strong {line-height:30px;}
-.tooltip:hover {text-decoration:none;} 
-.tooltip div {
-  position: absolute;
-  font-size: 1.2em;
-  z-index:10;
-  display:none;
-  padding:4px;
-  margin-top:-72px;
-  margin-left:-150px;
-  width:144px;
-  color:#003;
-  border:1px solid #e0b070;
-  background:#fff0e0;
-}
-.tooltip:hover div {
-  display:block;
-}
-.tooltip div {
-  border-radius:8px 8px 0 8px;
-  -moz-border-radius: 8px 8px 0 8px;
-  -webkit-border-radius: 8px 8px 0 8px;
-  -moz-box-shadow: 5px 5px 8px rgba(0,0,0,0.5);
-  -webkit-box-shadow: 5px 5px 8px rgba(0,0,0,0.5);
-  box-shadow: 5px 5px 8px rgba(0,0,0,0.5);
-  background: -webkit-linear-gradient(top, rgba(255,250,240,1) 0%,rgba(255,246,220,1) 100%); /* Chrome10+,Safari5.1+ */
-  background: linear-gradient(to bottom, rgba(255,250,240,1) 0%,rgba(255,246,220,1) 100%); /* W3C */
-}
-.ttRight div {
-  margin-left:20px;
-  border-radius:8px 8px 8px 0;
-  -moz-border-radius: 8px 8px 8px 0;
-  -webkit-border-radius: 8px 8px 8px 0;
-}
 
 /* alert message rule popup */
 .alertMsgRule div {
@@ -480,7 +445,7 @@ table#figureChooserColumns {
 
 /* settings */
 #settingsDialog div.box {
-  min-width: 552px;
+  min-width: 260px;
 }
 
 /* save dialog */
@@ -500,28 +465,36 @@ table#figureChooserColumns {
   float: left;
   margin: -1px 4px -1px 4px;
 }
-.smallButton {
+.button.small {
   width: 20px;
   height: 20px;
+  background-size: 20px;
   margin: 1px;
 }
-#figEntryButton {
-  background-image: url('../img/buttons/smallFigStartUp.png');
-}
-#figExitButton {
-  background-image: url('../img/buttons/smallFigEndUp.png');
-}
-#figEntryButton.inverted {
-  background-image: url('../img/buttons/smallFigStartInv.png');
-}
-#figExitButton.inverted {
-  background-image: url('../img/buttons/smallFigEndInv.png');
-}
-#figEntryButton.smallButton {
+#figEntryButton.button.small {
   margin-right: 6px;
 }
-#figExitButton.smallButton {
+#figExitButton.button.small {
   margin-left: 6px;
+}
+.minButton, .plusButton {
+	font-size: 24px !important;
+	height: 20px;
+  width: 20px;
+}
+.minButton {
+	line-height: 17px;
+}
+.plusButton {
+	line-height: 20px;
+}
+.plusMinText {
+  font-size: 12px;
+  height: 20px;
+}
+#figureInfo select {
+	height: 20px !important;
+	line-height: 20px;
 }
 #comments {
   width: 220px;

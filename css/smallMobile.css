@@ -23,9 +23,9 @@
  * They will override any equivalent css styles in general.css and
  * mobile.css */
 
-html, body {
+/*html, body {
 	width: 320px;
-}
+}*/
 /*body * {
 	-webkit-overflow-scrolling: touch;
 }*/
@@ -50,7 +50,8 @@ select {
   -moz-box-shadow: 0 1px 2px rgba(0,0,0,0.5);
   -webkit-box-shadow: 0 1px 2px rgba(0,0,0,0.5);
   box-shadow: 0 1px 2px rgba(0,0,0,0.5);
-  width: 320px;
+  /* width: 320px; */
+  width: 100%;
 }
 #openAeroLogo {
   display: none;
@@ -60,17 +61,22 @@ select {
 }
 #sequenceTextContainer {
   position: relative;
-  left: 34px;
+  /* left: 34px; */
+  left: 0;
+  right: 0;
 }
 #sequence_text {
-  width: 248px;
+  /* width: 248px; */
+  left: 40px;
+  right: 40px;
   height: 50px;
   padding: 0 2px;
 }
 #t_locked {
 	font-size: 14px;
 	padding: 8px;
-  left: 32px;
+  /* left: 32px; */
+  left: 40px;
 }
 
 #main {
@@ -79,14 +85,18 @@ select {
   left: 0;
   right: 0;
   bottom: 0;
+  /*
   width: 320px;
   max-width: 320px;
+  */
+  width: 100%;
 }
 #leftBlockContainer {
 	position: absolute;
   overflow-x: hidden;
   overflow-y: scroll;
-	width: 320px;
+	/*width: 320px;*/
+	width: 100%;
 	height: 100%;
 	-webkit-overflow-scrolling: touch;
 }
@@ -95,7 +105,8 @@ select {
   top: 0;
   left: 0;
   background: #f4f4f4;
-  width: 320px;
+  /*width: 320px;*/
+  width: 100%;
   padding: 40px 0 0 0;
   z-index: 1;
   overflow: hidden;
@@ -107,44 +118,46 @@ select {
 	margin: 16px 4px 16px 0;
 }
 #sequenceInfo div.form-group:first-of-type {
-	width: 140px;
+	width: 47%;
 }
 #sequenceInfo div.form-group:last-of-type {
-  width: 140px;
+  width: 47%;
   margin-right: 0;
 }
 .narrowRight div.form-group:first-of-type {
-  width: 168px !important;
+  width: 54% !important;
 }
 .narrowRight div.form-group:last-of-type {
-  width: 112px !important;
+  width: 40% !important;
 }
 
 #sequenceInfo {
   position: relative;
   float: left;
-  width: 312px;
+  /* width: 312px; */
+  width: 98%;
   transform: translate(0,0,0);
   transition: all 0.3s ease-in-out;
 }
 #sequenceInfo.hidden {
-  transform: translate(-320px,4px);
+  transform: translate(-100vw,4px);
   visibility: visible;
 }
 #figureInfo {
   position: relative;
   float: left;
   left: 0;
-  width: 312px;
+  /* width: 312px; */
+  width: 98%;
   transform: translateX(0);
   transition: all 0.3s ease-in-out;
 }
 #figureInfo.hidden {
-  transform: translateX(320px);
+  transform: translateX(100vw);
   visibility: visible;
 }
 #figureInfo.hidden.left {
-	transform: translate(-320px,4px);
+	transform: translate(-100vw,4px);
 }
 
 #referenceSequenceString {
@@ -153,23 +166,30 @@ select {
 }
 
 #alerts {
-	width: 312px;
+	/* width: 312px; */
+	width: 99%;
 }
 /* virtual keyboard */
 #virtualKeyboard {
   top: 4px;
   left: 0;
 }
+
+.tabSelector ul {
+	display: flex;
+}
+.tabSelector li {
+  flex: 1;
+}
 #leftBlockTabSelector {
 	position: absolute;
 	z-index: 5;
-  width: 320px;
+	/* width: 320px; */
+	width: 100%;
 }
 #leftBlockTabSelector li {
   display: inline-block;
-  width: 82px;
-  min-width: 82px;
-  max-width: 82px;
+  width: 82px; /* for backward compatibility, ignored using flex */
 }
 #leftBlockTop {
 	margin-top: 40px;
@@ -179,15 +199,16 @@ select {
   overflow: hidden;
   float: left;
   left: 0;
-  width: 312px;
+  /* width: 312px; */
+  width: 98%;
   background-color:#ffffff;
   padding: 4px;
-  margin-bottom: 4px;
+  margin: 0 0 4px 0;
 	text-align: center;
 	transition: all 0.3s ease-in-out;
 }
 #svgContainer.hidden {
-	transform: translateX(320px);
+	transform: translateX(100vw);
 }
 #gridInfo {
   display: none;
@@ -210,7 +231,8 @@ select {
   background-color: white;
   z-index: 6;
   right: auto;
-  left: -340px;
+  /* left: -340px; */
+  left: -110vw;
 	-webkit-overflow-scrolling: touch;
 }
 #figureSelector.active {
@@ -240,7 +262,7 @@ select {
   margin-left: 5px;
   margin-right: 5px;
 }
-.smallButton {
+.button.small {
   width: 32px;
   height: 32px;
   margin: 1px;
@@ -248,40 +270,29 @@ select {
   background-size: 32px 32px;
 }
 .undoRedoButton {
-  margin: 3px 4px -1px 4px;
+  margin: 3px 8px -1px 4px;
   padding: 0;
 }
 #redo {
 	clear: left;
 }
+.minButton, .plusButton {
+	font-size: 34px !important;
+	height: 30px;
+  width: 30px;
+}
 .minButton {
-	background-image: url('../img/buttons/minus.png');
-	height: 32px;
-  width: 32px;
+	line-height: 26px;
 }
 .plusButton {
-	background-image: url('../img/buttons/plus.png');
-	height: 32px;
-  width: 32px;
+	line-height: 30px;
 }
 .plusMinText {
-  font-size: 20px;
+  font-size: 16px;
   height: 32px;
 }
 #entryExit {
   min-height: 56px;
-}
-#figEntryButton {
-  background-image: url('../img/buttons/figStartUp.png');
-}
-#figExitButton {
-  background-image: url('../img/buttons/figEndUp.png');
-}
-#figEntryButton.inverted {
-  background-image: url('../img/buttons/figStartInv.png');
-}
-#figExitButton.inverted {
-  background-image: url('../img/buttons/figEndInv.png');
 }
 #figEntryButton.button {
   margin-left: 0 !important;
@@ -291,6 +302,7 @@ select {
   margin-left: 2px !important;
   margin-right: 0 !important;
 }
+/*
 .rollComment {
   font-size: 20px;
   float:right;
@@ -304,6 +316,16 @@ select {
   margin-left: -260px;
   width:290px;
   opacity: 0.999; /* prevents rollFlip shining through */
+/*}
+*/
+.rollComment {
+  font-size: 20px;
+  height: 32px;
+  margin-top: 2px;
+}
+.rollGaps .plusMin {
+	display: inline-block;
+	width: 33%;
 }
 #scale {
   margin-left: 6px;
@@ -313,14 +335,17 @@ select {
   margin-left: 6px;
   margin-right: 6px;
 }
-.rollSelect {
-	height: 32px;
-	max-width: 160px;
+#figureInfo select {
+	height: 32px !important;
+	line-height: 32px;
+	/*max-width: 160px;*/
   font-size: 20px;
 }
 #comments {
+	flex: 1;
   width: 260px;
   height: 32px;
+  margin-right: 16px;
 }
 
 /* logo chooser */
@@ -392,7 +417,7 @@ table#figureChooserTable td.selected {
 
 /* menu */
 #hamburgerMenu {
-	padding: 16px 7px 6px 4px;
+	padding: 16px 8px 6px 8px;
 }
 
 #zoomMenu {

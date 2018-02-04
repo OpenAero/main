@@ -241,6 +241,32 @@ i.leftArrow:after, i.rightArrow:after {
   transform: scale(1,1);
 }
 
+/* button tooltips */
+.tooltip div {
+  position: absolute;
+  font-size: 14px;
+  z-index: 10;
+  display: none;
+  padding: 4px;
+  margin-top: -40px;
+  margin-left: -160px;
+  width: 144px;
+  background: #fff0e0;
+  border-radius: 8px 8px 0 8px;
+  box-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+  background: linear-gradient(to bottom, rgba(255,250,240,1) 0%,rgba(255,246,220,1) 100%);
+}
+.disable.tooltip div {
+  display: none !important;
+}
+.tooltip:hover div {
+  display: block;
+}
+.ttRight div {
+  margin-left: 20px;
+  border-radius: 8px 8px 8px 0;
+}
+
 /* Settings */
 #smallMobileSetting {
 	display: none;

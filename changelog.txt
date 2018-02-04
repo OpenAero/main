@@ -1,3 +1,11 @@
+2018.1.5
+* improved quality and look of Figure Editor buttons
+* improved layout by using CSS flex
+* set automatic selection of smallMobile to below 640px wide screens
+* improved selection of Pilot Cards
+* corrected roll position in several figures of 8.6.17-8.6.24
+* added iOS app references
+
 2018.1.4
 * fixed bug causing restart of Designer to fail on Firefox
 * fixed Save dialog filename positioning for iOS

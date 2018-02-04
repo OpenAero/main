@@ -436,8 +436,8 @@ lang.en = {
 'otherNote' : 'Other(note...)',
 'pageSpacing' : 'Page spacing',
 'pilot' : 'Pilot',
-'pilotCardFormB' : 'Form B',
-'pilotCardFormC' : 'Form C',
+// new 2018.1.5
+'pilotCardExplain' : 'Choose and tap again to flip wind R-L',
 'pilotID' : 'Pilot ID',
 'pilotNo' : 'Pilot\'s No.',
 'pilotnumberIAC1' : "pilot\'s",

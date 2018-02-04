@@ -36,7 +36,7 @@
 // Where a new x should be used for versions that create sequences not
 // fully backward compatible with the previous version
 
-var version = '2018.1.4';
+var version = '2018.1.5';
 /* versionNew is an object that contains version update information
    The structure is {vvv : [[ttt, n], ...], ...} , where
    vvv = version number
@@ -44,6 +44,10 @@ var version = '2018.1.4';
    n   = importance (higher = more important)
 */
 var versionNew = {
+	'2018.1.5' : [
+		['Corrected roll position in several figures of 8.6.17-8.6.24', 4],
+		['iOS app now available in the App Store', 4]
+	],
 	'2018.1.4' : [
 		['Corrected CIVA 2018 rules regarding required rolling turn in the Free Known', 4],
 		['Added IAC and BAeA Known sequences for 2018', 3]
@@ -412,19 +416,6 @@ var style = {
   'selectedFigureHandle' : 'stroke: #0000ff; stroke-width: 1; fill: #0000ff; fill-opacity: 0.2'
 }
 
-// ***************
-// Set png masks for buttons
-// ***************
-
-var mask = {
-  'off' : 'img/buttons/mask.png',
-  'on' : 'img/buttons/mask-on.png',
-  'disable' : 'img/buttons/mask-disable.png',
-  'smalloff' : 'img/buttons/smallMask.png',
-  'smallon' : 'img/buttons/smallMask-on.png',
-  'smalldisable' : 'img/buttons/smallMask-disable.png'
-}
-
 /**********************************************************************
  * 
  * Aresti and roll handling configuration
@@ -545,7 +536,7 @@ var userpat = {
   'moveto' : '[',
   'opproll' : ',',
   'rollext' : '.',
-  'rollextshort' : '\'',
+  'rollextshort' : "'",
   'sameroll' : ';',
   'scale' : '%',
   'subSequence' : '//',
@@ -585,44 +576,60 @@ var rollAttitudes = {'0':'', '45':'d', '90':'v', '135':'d',
 // define Regex patterns for drawing and sequence parsing
 // ****************
 
-var regexRollFontSize = /font-size:[ ]*([\d]+)px/;
-var regexChangeDir = new RegExp ('[' + userpat.switchDirX + '\\' + userpat.switchDirY + ']');
-// match all comments
-var regexComments = /"[^"]*"/g;
-var regexSwitchDirX = new RegExp ('\\' + userpat.switchDirX);
-var regexSwitchDirY = new RegExp ('\\' + userpat.switchDirY);
-var regexMoveForward = new RegExp ('^[0-9]*' + userpat.moveforward + '+');
-var regexMoveDown = new RegExp ('^[0-9]*\\' + userpat.movedown + '+');
-var regexMoveFwdDn = new RegExp ('^[0-9]*(' + userpat.moveforward +
-  '|\\' + userpat.movedown + ')+');
-var regexAdditional = new RegExp (userpat.additional);
-var regexCurveTo = new RegExp ('^[\(][0-9\-]*,[0-9\-]*[\)]$');
-var regexMoveTo = new RegExp ('^\[[0-9\-]*,[0-9\-]*\]$');
-// regexDrawInstr matches moveTo, curveTo, scale and text
-var regexDrawInstr = /^([\[\(].+[\]\)]|-?[0-9]+\%|"[^"]*")$/;
-var regexLongForward = new RegExp ('\\' + userpat.longforward, 'g');
-var regexEntryShorten = /`+\+(.*[a-zA-Z])/;
-var regexExitShorten = /([a-zA-Z].*)\+`+/;
-var regexEntryShortenNeg = /`+(-.*[a-zA-Z])/;
-var regexExitShortenNeg = /([a-zA-Z].*-)`+/;
-// match the Y axis flip symbol
-var regexFlipYAxis = /(^|[^\/])\/([^\/]|$)/;
-// match a Free Unknown figure number
-var regexFuFigNr = /\bfuFig(\d+)\b/;
-// match (rolling) turns
-var regexTurn = /[0-9\+\-]j[io0-9\+\-]/;
-// regexOLANBumpBug is used to check for the Humpty Bump direction bug
-// in OLAN. It is only used when opening OLAN files.
-var regexOLANBumpBug = /(\&b)|(\&ipb)/;
-var regexOLANNBug = /n/;
-// regexRegistration is used to parse out aircraft registration from the
-// combined A/C type & reg field
-var regexRegistration = [];
-regexRegistration.push (/N[1-9][0-9A-Z]+/);
-regexRegistration.push (/(C|C-|G|G-|D|D-|F|F-)[A-Z]{4}/);
-regexRegistration.push (/(PH|PH-)[A-Z]{3}/);
-regexRegistration.push (/X(A|A-|B|B-|C|C-)[A-Z]{3}/);
-
+var
+	regexRollFontSize = /font-size:[ ]*([\d]+)px/,
+	regexChangeDir = new RegExp ('[\\' + userpat.switchDirX + '\\' + userpat.switchDirY + ']'),
+	// match all comments
+	regexComments = new RegExp ('\\' + userpat.comment + '[^\\' +
+		userpat.comment + ']*\\' + userpat.comment, 'g'),
+	regexSwitchDirX = new RegExp ('\\' + userpat.switchDirX, 'g'),
+	regexSwitchDirY = new RegExp ('\\' + userpat.switchDirY, 'g'),
+	regexMoveForward = new RegExp ('^[0-9]*\\' + userpat.moveforward + '+'),
+	regexMoveDown = new RegExp ('^[0-9]*\\' + userpat.movedown + '+'),
+	regexMoveFwdDn = new RegExp ('^[0-9]*(\\' + userpat.moveforward +
+	  '|\\' + userpat.movedown + ')+'),
+	regexAdditional = new RegExp ('\\' + userpat.additional),
+	regexCurveTo = new RegExp ('^[\(][0-9\-]*,[0-9\-]*[\)]$'),
+	regexMoveTo = new RegExp ('^\[[0-9\-]*,[0-9\-]*\]$'),
+	// regexDrawInstr matches moveTo, curveTo, scale and text
+	regexDrawInstr = /^([\[\(].+[\]\)]|-?[0-9]+\%|"[^"]*")$/,
+	regexLongForward = new RegExp ('\\' + userpat.longforward, 'g'),
+	regexEntryShorten = /`+\+(.*[a-zA-Z])/,
+	regexExitShorten = /([a-zA-Z].*)\+`+/,
+	regexEntryShortenNeg = /`+(-.*[a-zA-Z])/,
+	regexExitShortenNeg = /([a-zA-Z].*-)`+/,
+	regexExtendShorten = new RegExp ('[\\' + userpat.longforward + '\\' +
+		userpat.forward + '\\' + userpat.rollext + '\\' +
+		userpat.rollextshort + '\\' + userpat.lineshorten + ']', 'g');
+	// match the Y axis flip symbol
+	regexFlipYAxis = /(^|[^\/])\/([^\/]|$)/,
+	// match a Free Unknown figure number
+	regexFuFigNr = /\bfuFig(\d+)\b/,
+	// match (rolling) turns
+	regexTurn = /[0-9\+\-]j[io0-9\+\-]/,
+	// regexOLANBumpBug is used to check for the Humpty Bump direction bug
+	// in OLAN. It is only used when opening OLAN files.
+	regexOLANBumpBug = /(\&b)|(\&ipb)/,
+	regexOLANNBug = /n/,
+	regexPlusFullAnyRoll = new RegExp('[\\+\\' + figpat.fullroll + '\\' +
+		figpat.anyroll + ']', 'g'),
+	// regexRegistration is used to parse out aircraft registration from the
+	// combined A/C type & reg field
+	regexRegistration = [
+		/N[1-9][0-9A-Z]+/,
+		/(C|C-|G|G-|D|D-|F|F-)[A-Z]{4}/,
+		/(PH|PH-)[A-Z]{3}/,
+		/X(A|A-|B|B-|C|C-)[A-Z]{3}/
+	],
+	regexRollBeforeBase = new RegExp ('^[\\+-][\\' + figpat.halfroll +
+		'\\'  + figpat.fullroll + '\\' + figpat.anyroll + '\\' +
+		figpat.longforward + ']'); // /^[\+\-][_\^\&~]/ 
+	regexRolls = new RegExp ('[\\' + figpat.halfroll + '\\' +
+		figpat.fullroll + '\\' + figpat.anyroll + ']', 'g'),
+	regexTurnsAndRolls = new RegExp ('[\\d\\(\\)\\' + figpat.halfroll +
+		'\\' + figpat.fullroll + '\\' + figpat.anyroll + '\\' +
+		figpat.longforward + ']+', 'g'); // /[\d\(\)_\^\&~]+/g
+	
 // also accept deprecated 'connectors' for additional figures
 var regexRulesAdditionals = /^(connectors|additionals)=([0-9]+)\/([0-9]+)/;
 var regexSequenceOptions = /^(ed|eu|ej|eja|\/\/)$/;

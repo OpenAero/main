@@ -68,7 +68,7 @@ body.menuOpen {
 #hamburgerMenu i {
   transition: transform 0.2s;
 }
-#hamburgerMenu.active i {
+.menuOpen #hamburgerMenu i {
   transform: rotate(-90deg);
 }
 

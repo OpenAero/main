@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# OpenAero version 2018.1.4
+# OpenAero version 2018.1.5a
 appcache.manifest
 changelog.txt
 cordova.js
@@ -22,45 +22,7 @@ doc/gpl.htm
 doc/language.html
 doc/manual.html
 img/blue_handles.png
-img/buttons/curvedline.png
-img/buttons/figEndInv.png
-img/buttons/figEndUp.png
-img/buttons/figStartInv.png
-img/buttons/figStartUp.png
-img/buttons/flipOff.png
-img/buttons/flipOn.png
-img/buttons/flipTwoOff.png
-img/buttons/flipTwoOn.png
-img/buttons/flipYAxis.png
-img/buttons/magmin.png
-img/buttons/magplus.png
-img/buttons/mask-disable.png
-img/buttons/mask-on.png
-img/buttons/mask.png
-img/buttons/minus.png
-img/buttons/moveforward.png
-img/buttons/numberFlipOff.png
-img/buttons/numberFlipOn.png
-img/buttons/plus.png
-img/buttons/smallFigEndInv.png
-img/buttons/smallFigEndUp.png
-img/buttons/smallFigStartInv.png
-img/buttons/smallFigStartUp.png
-img/buttons/smallMask-disable.png
-img/buttons/smallMask-on.png
-img/buttons/smallMask.png
-img/buttons/smallMinus.png
-img/buttons/smallPlus.png
-img/buttons/straightline.png
-img/buttons/subsequence.png
-img/buttons/switchFirstRoll.png
-img/buttons/switchX.png
-img/buttons/switchY.png
-img/buttons/trash.png
-img/compare_arrows_same.svg
-img/compare_arrows.svg
-img/ee_ext-entry.png
-img/ee_ext-exit.png
+img/chrome-webstore-badge.png
 img/ee_ext-figure.png
 img/favicons/favicon114.png
 img/favicons/favicon128.png
@@ -75,6 +37,7 @@ img/favicons/favicon96.png
 img/fullrolls.png
 img/google-play-badge.png
 img/hesrolls.png
+img/ios-appstore-badge.svg
 img/magnifier.png
 img/multirolls.png
 img/OA_FigureAddPanel.png
@@ -83,12 +46,7 @@ img/OA_FigureInfoPanel.png
 img/OA_FigureSelection.png
 img/OA_FreeUnknownDesignerMain.png
 img/OA_GridInfo.png
-img/PilotCard2.png
-img/PilotCard2.svg
-img/PilotCard4.png
-img/PilotCard4.svg
-img/PilotCardPercent.png
-img/PilotCardPercent.svg
+img/PilotCard.svg
 img/sequence_info.png
 img/snaprolls.png
 img/spinrolls.png

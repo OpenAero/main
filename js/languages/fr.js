@@ -221,6 +221,8 @@ lang.fr = {
 'emailSequence' : 'Envoyer par email le programme',
 'END' : 'FIN',
 'entryExitAttExt' : 'Attitude de début/fin et longueur',
+// new 2018.1.5 by Massa
+'exitDesigner' : 'Quitter l\'assembleur',
 'expert' : 'Expert',
 'feedback' : 'Retour',
 'fileOpeningNotSupported' : 'L\'ouverture de fichier n\'est pas supportée dans ' +
@@ -289,6 +291,8 @@ lang.fr = {
 'getChrome' : 'Pour une utilisation optimale d\OpenAero, téléchargez la ' +
   'dernière version du navigateur <a href="https://www.google.com/intl/en/chrome/browser/">' +
   'Google Chrome</a>.',
+// new 2018.1.5 by Massa
+'getTheApp' : 'OpenAero est disponible en tant qu\'application',
 'glider' : 'Planeur',
 // new 2017.1
 'gridAdditionals' : 'Informations requises',
@@ -455,8 +459,6 @@ lang.fr = {
 'otherNote' : 'Autre(noter...)',
 'pageSpacing' : 'Espacement entre pages',
 'pilot' : 'Pilote',
-'pilotCardFormB' : 'Forme B',
-'pilotCardFormC' : 'Forme C',
 'pilotID' : 'Pilote ID',
 'pilotNo' : 'Pilote N°.',
 'pilotnumberIAC1' : "pilote",
@@ -585,6 +587,10 @@ lang.fr = {
 'saveAsURLFromApp' : 'Le lien ci-dessous contient votre programme. ' +
   'Vous pouvez le copier dans un émail, en faire un favori, etc...',
 'saveAsURLTitle' : 'Enregistrement du programme en tant que lien',
+// new 2018.1.5 by Massa
+'saveDeviceFirst' : 'Impossible d\'ouvrir la programme directement. ' +
+	'Veuillez d\'abord l\'enregistrer sur votre appareil, puis ' +
+	'l\'ouvrir à partir de votre appareil',
 'saveFigsSeparate' : 'Enregistrer chaque figure',
 'saveFigsSeparateTitle' : 'Enregistrement individuel des figures',
 'saveFile' : 'Enregistrer',
@@ -597,6 +603,10 @@ lang.fr = {
 'selectCategoryFirst' : 'Sélectionnez la Catégorie',
 'selectRulesFirst' : 'Sélectionnez les Règles',
 'separateFigures' : 'Espacer les figures',
+// new 2018.1.5 by Massa
+'separateFiguresConfirm' : 'Ceci séparera les figures les uns des ' +
+	'autres et supprimera le positionnement des figures. ' +
+  'Voulez-vous continuer ?',
 'sequence' : 'Programme',
 'sequenceCheckLog' : 'Rapport de vérification du programme',
 'sequenceCorrect' : 'Le programme est correct',
@@ -664,6 +674,8 @@ lang.fr = {
 'unlockSequence' : 'Déverrouiller',
 'unusedFigureLetters' : 'Lettre(s) inutilisée(s) : %s',
 'update' : 'Mise à jour',
+// new 2018.1.5 by Massa
+'updateApp' : 'La mise à jour OpenAero %s est disponible',
 'upwind' : 'vent de face',
 'upwindEntry' : 'Débuter vent de face',
 'version' : 'Version : %s',
