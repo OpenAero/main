@@ -1,3 +1,7 @@
+2018.1.6
+* improved logo layout
+* fixed bug that made it impossible to choose a free figure in the Designer
+
 2018.1.5
 * improved quality and look of Figure Editor buttons
 * improved layout by using CSS flex
@@ -6,6 +10,7 @@
 * corrected roll position in several figures of 8.6.17-8.6.24
 * added iOS app references
 
+<a href="https://itunes.apple.com/us/app/openaero/id1343773321?mt=8"><img src="https://linkmaker.itunes.apple.com/assets/shared/badges/en-us/appstore-lrg.svg"></a>
 2018.1.4
 * fixed bug causing restart of Designer to fail on Firefox
 * fixed Save dialog filename positioning for iOS

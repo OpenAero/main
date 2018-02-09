@@ -1815,7 +1815,7 @@ option.used {
 }
 #figureString {
   position: absolute;
-  z-index: 6;
+  z-index: 6; /* just below fuFigures */
   left: 164px;
   top: 208px;
   width: 102px;

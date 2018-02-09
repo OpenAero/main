@@ -123,9 +123,9 @@
 }
 #fuFigures {
   position: relative;
-  z-index: 4; /* put above figureString */
+  z-index: 7; /* put above figureString */
   top: 0;
-  margin: -8px 4px 8px 4px;
+  margin: 6px 4px 8px 4px;
   /*left: -546px;*/
   width: 268px;
   -webkit-transform: translateX(0);
@@ -135,7 +135,7 @@
 #fuFigures.hidden {
   -webkit-transform: translateX(280px);
   transform: translateX(280px);
-  margin: 7px 5px 7px 5px !important;
+  margin: -6px 5px 7px 5px !important;
   visibility: visible;
 }
 #sequenceInfo div.form-group {

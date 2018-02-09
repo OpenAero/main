@@ -6810,7 +6810,7 @@ function updateFigureOptions (figureId) {
   // hide figureStringInput by default
   document.getElementById ('figureString').classList.add ('noDisplay');
 
-  if (!f || (f && !f.aresti)) selectedFigure.id = null;
+  if ((activeForm !== 'FU') && (!f || (f && !f.aresti))) selectedFigure.id = null;
   
   if (selectedFigure.id === null) {
 		document.getElementById('figureInfo').classList.add ('noFigure');
