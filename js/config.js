@@ -36,7 +36,7 @@
 // Where a new x should be used for versions that create sequences not
 // fully backward compatible with the previous version
 
-var version = '2018.1.6';
+var version = '2018.1.7';
 /* versionNew is an object that contains version update information
    The structure is {vvv : [[ttt, n], ...], ...} , where
    vvv = version number
@@ -44,8 +44,11 @@ var version = '2018.1.6';
    n   = importance (higher = more important)
 */
 var versionNew = {
+	'2018.1.7' : [
+		['Added French rules and sequences for 2018', 3]
+	],
 	'2018.1.6' : [
-		['fixed bug that made it impossible to choose a free figure in the Designer', 4]
+		['Fixed bug that made it impossible to choose a free figure in the Designer', 4]
 	],
 	'2018.1.5' : [
 		['Corrected roll position in several figures of 8.6.17-8.6.24', 4],
@@ -585,8 +588,8 @@ var
 	// match all comments
 	regexComments = new RegExp ('\\' + userpat.comment + '[^\\' +
 		userpat.comment + ']*\\' + userpat.comment, 'g'),
-	regexSwitchDirX = new RegExp ('\\' + userpat.switchDirX, 'g'),
-	regexSwitchDirY = new RegExp ('\\' + userpat.switchDirY, 'g'),
+	regexSwitchDirX = new RegExp ('\\' + userpat.switchDirX),
+	regexSwitchDirY = new RegExp ('\\' + userpat.switchDirY),
 	regexMoveForward = new RegExp ('^[0-9]*\\' + userpat.moveforward + '+'),
 	regexMoveDown = new RegExp ('^[0-9]*\\' + userpat.movedown + '+'),
 	regexMoveFwdDn = new RegExp ('^[0-9]*(\\' + userpat.moveforward +

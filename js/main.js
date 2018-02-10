@@ -7602,6 +7602,7 @@ function latestVersion() {
     // Check for appcache when using http
     if (window.applicationCache) window.applicationCache.update();
   } else if (platform.cordova) {
+		// check for update on Cordova
     var xhr = new XMLHttpRequest();
     xhr.open('GET', 'https://openaero.net/openaero.php?v', true);
     xhr.onload = function() {
@@ -7610,6 +7611,7 @@ function latestVersion() {
 				banner.classList.remove ('noDisplay');
 				document.getElementById('t_getTheApp').innerHTML =
 					sprintf(userText.updateApp, xhr.response);
+				banner.classList.add (platform.android ? 'android' : 'ios');
 				banner.classList.add ('update');
 				banner.classList.add ('show');
 			}

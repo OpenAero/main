@@ -162,7 +162,25 @@ var library = {
   '<default_view>grid:5</default_view>' +
   '<oa_version>2017.1</oa_version>' +
   '</sequence>',
-
+  
+  '2017 France Espoirs connu':
+  'https://openaero.net/?s=PGNhdGVnb3J5PkVzcG9pcnM8Lz48Y2xhc3M-cG93ZXJlZDwvPjxwcm9ncmFtPmNvbm51PC8-PHJ1bGVzPkZyYW5jZTwvPjxwb3NpdGlvbmluZz4xMDwvPjxoYXJtb255PjA8Lz48c2VxdWVuY2VfdGV4dD52LSBgYC1pZDIrYGAgMz4gbTIgYGBgK2l2Li4ncy4uIGBtMS1-fiAxMCUgNj4gYGAtMmotIC0sMjIsMiBgYGBjLicnLDIuLi4nJyBoLicnIG88Lz48bG9nbz5GRkF2b2x0aWdlPC8-PG9hX3ZlcnNpb24-MjAxOC4xLjc8Lz4',
+  
+  '2017 France Desavois/promotion connu':
+  'https://openaero.net/?s=PGNhdGVnb3J5PkRlc2F2b2lzL3Byb21vdGlvbjwvPjxjbGFzcz5wb3dlcmVkPC8-PHByb2dyYW0-Y29ubnU8Lz48cnVsZXM-RnJhbmNlPC8-PHBvc2l0aW9uaW5nPjE1PC8-PGhhcm1vbnk-MDwvPjxzZXF1ZW5jZV90ZXh0Pn5iLi0gNz4gLW0gYCtpdnMuLi4uIG05LS0gMTIlIDQ-IGBgYGAtMmoyLWBgYGBgIC0nJyw0OH4gMj4gaCcnLDQuJyBgYCssNHBiIGBgYGBgK2RiMiAoMSwxOCkgYGBgKzJnIDEzJSAzPiBgYCsyaitgIGY8Lz48bG9nbz5GRkF2b2x0aWdlPC8-PG9hX3ZlcnNpb24-MjAxOC4xLjc8Lz4',
+  
+  '2017 France National_2 connu 1':
+  'https://openaero.net/?s=PGNhdGVnb3J5Pk5hdGlvbmFsXzI8Lz48Y2xhc3M-cG93ZXJlZDwvPjxwcm9ncmFtPmNvbm51IDE8Lz48cnVsZXM-RnJhbmNlPC8-PHBvc2l0aW9uaW5nPjIwPC8-PGhhcm1vbnk-MDwvPjxzZXF1ZW5jZV90ZXh0PmBgcGIuLi4tIDU-IC1tMi0gYGAtaXYnJ2lzLi4uLiBgbScsZiwyMi1gYCA2PiBgYC0zamlvMy0tLS0tLS1-fiA1PiAtaDQuJycrK34-ICsrLDI0cGIuLicnIC00JSB-fitkYi4uLi4uLi4uJy0gPiB-LSw0YmAsNC4uLicnKyt-IDI0ZzEgMmYsMS08Lz48bG9nbz5GRkF2b2x0aWdlPC8-PG9hX3ZlcnNpb24-MjAxOC4xLjc8Lz4',
+  
+  '2017 France National_2 connu 2':
+  'https://openaero.net/?s=PGNhdGVnb3J5Pk5hdGlvbmFsXzI8Lz48Y2xhc3M-cG93ZXJlZDwvPjxwcm9ncmFtPmNvbm51IDI8Lz48cnVsZXM-RnJhbmNlPC8-PHBvc2l0aW9uaW5nPjIwPC8-PGhhcm1vbnk-MDwvPjxzZXF1ZW5jZV90ZXh0PmVqIH5-LTRoKyA1PiAnJ202K2AgaXYuLic2cy4nICw4cGIuLjQrKysgMjRgZzItICgwLDEyKSA3JSBgYGAtMmppbzItYGAgLTJpZiwyMiBoLi4uKyt-IDY-IH5-MmIuLi4uKyBvZiBtNCwzNDwvPjxsb2dvPkZGQXZvbHRpZ2U8Lz48b2FfdmVyc2lvbj4yMDE4LjEuNzwvPg',
+  
+  '2017 France Doret/excellence connu 1':
+  'https://openaero.net/?s=PGNhdGVnb3J5PkRvcmV0L2V4Y2VsbGVuY2U8Lz48Y2xhc3M-cG93ZXJlZDwvPjxwcm9ncmFtPmNvbm51IDE8Lz48cnVsZXM-RnJhbmNlPC8-PHBvc2l0aW9uaW5nPjM1PC8-PGhhcm1vbnk-MDwvPjxzZXF1ZW5jZV90ZXh0PmVkIDltNmlmLDItIH5-LS0tLWBgcG4oLi4uLi4uLi4uLiksZi0tfiA0PiBgLS42aWYnJ2l0LicsOCcnLS0tIDU-IGAtYDVpcy4uJ2liYihgYGBgYGAsMykuJycsMycrXj4gMz4gLDIydGEyNC4nJytgYCBgMmcyZi1gYCAoMCwxNykgYGBgLTNqMy0tLS0tfiAtJyc0JydoLi4nIDc-ICwyNHJwMyw1PC8-PGxvZ28-RkZBdm9sdGlnZTwvPjxvYV92ZXJzaW9uPjIwMTguMS43PC8-',
+  
+  '2017 France Doret/excellence connu 2':
+  'https://openaero.net/?s=PGNhdGVnb3J5PkRvcmV0L2V4Y2VsbGVuY2U8Lz48Y2xhc3M-cG93ZXJlZDwvPjxwcm9ncmFtPmNvbm51IDI8Lz48cnVsZXM-RnJhbmNlPC8-PHBvc2l0aW9uaW5nPjM1PC8-PGhhcm1vbnk-MDwvPjxzZXF1ZW5jZV90ZXh0PmBgK2RoKCwzKScnM2lmLisgNz4gYGBgKycnMWl0YScsMjQuJycrYGAgJ2lmaC4uJyA2bWYsMSAoOSw4KSBuKC4uLi4uJywyNC4uLi4nJyk0OCsgNT4gYGArJzVzJydpYkIoYCknMytgYF4-IGBgKywzZmIuLi4nJzQuLi4nIDU-IGBgYGAsNGAsMy4nZ2YgYGBgYCszamlvMTUtPjwvPjxsb2dvPkZGQXZvbHRpZ2U8Lz48b2FfdmVyc2lvbj4yMDE4LjEuNzwvPg',
+  
   '2017 IAC Primary Known':
   '<sequence>' +
   '<category>Primary</category>' +

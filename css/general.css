@@ -1808,11 +1808,6 @@ option.used {
   cursor: pointer;
   transition: all 0.3s ease-in-out;
 }
-#selectedFigure.active {
-	/* include boder in box size */
-  width: 144px;
-  height: 144px;
-}
 #figureString {
   position: absolute;
   z-index: 6; /* just below fuFigures */
@@ -1832,7 +1827,6 @@ option.used {
 #unknownFigureChooser {
 	display: flex;
 	float: left;
-  width: 144px;
   margin-top: 6px;
   margin-bottom: 6px;
   padding: 0 0 0 4px;
@@ -1875,6 +1869,7 @@ t_addFigureText {
 .button {
 	position: relative;
 	display: inline-block;
+	box-sizing: border-box;
 	vertical-align: top;
   width: 32px;
   height: 32px;
@@ -1885,7 +1880,7 @@ t_addFigureText {
 	border-left: 1px solid #fff;
 	border-radius: 6px;
 	background-color: #ffe0b2;
-	background-size: 32px;
+	background-size: 30px;
 }
 .button.on {
 	border-top: 1px solid #888;

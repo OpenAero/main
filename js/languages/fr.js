@@ -1,4 +1,4 @@
-﻿// fr.js 2018.1
+﻿// fr.js 2018.1.5
 // This file is part of OpenAero.
 
 //  OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -256,6 +256,8 @@ lang.fr = {
 'formR' : 'Forme R',
 'free' : 'Libres',
 'freeKnownGuidance' : 'Guide du Connu-Libre',
+'freeKnownGuidancePower' : 'Guide du Connu-Libre Avion',
+'freeKnownGuidanceGlider' : 'Guide du Connu-Libre Planeur',
 'freeUnknownFig' : 'Lettre ',
 'freeUnknownAdditional' : 'Liaison Inconnu-Libre',
 'FUconfirmExit' : 'L\'assembleur d\'(In)Connu-Libre peut ne pas redémarrer ' +
@@ -459,6 +461,8 @@ lang.fr = {
 'otherNote' : 'Autre(noter...)',
 'pageSpacing' : 'Espacement entre pages',
 'pilot' : 'Pilote',
+// new 2018.1.5
+'pilotCardExplain' : 'Sélectionnez et cliquez à nouveau pour inverser le vent R-L',
 'pilotID' : 'Pilote ID',
 'pilotNo' : 'Pilote N°.',
 'pilotnumberIAC1' : "pilote",
@@ -588,7 +592,7 @@ lang.fr = {
   'Vous pouvez le copier dans un émail, en faire un favori, etc...',
 'saveAsURLTitle' : 'Enregistrement du programme en tant que lien',
 // new 2018.1.5 by Massa
-'saveDeviceFirst' : 'Impossible d\'ouvrir la programme directement. ' +
+'saveDeviceFirst' : 'Impossible d\'ouvrir le programme directement. ' +
 	'Veuillez d\'abord l\'enregistrer sur votre appareil, puis ' +
 	'l\'ouvrir à partir de votre appareil',
 'saveFigsSeparate' : 'Enregistrer chaque figure',
@@ -604,7 +608,7 @@ lang.fr = {
 'selectRulesFirst' : 'Sélectionnez les Règles',
 'separateFigures' : 'Espacer les figures',
 // new 2018.1.5 by Massa
-'separateFiguresConfirm' : 'Ceci séparera les figures les uns des ' +
+'separateFiguresConfirm' : 'Ceci séparera les figures les unes des ' +
 	'autres et supprimera le positionnement des figures. ' +
   'Voulez-vous continuer ?',
 'sequence' : 'Programme',

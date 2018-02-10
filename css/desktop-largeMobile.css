@@ -466,8 +466,8 @@ table#figureChooserColumns {
   margin: -1px 4px -1px 4px;
 }
 .button.small {
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
   background-size: 20px;
   margin: 1px;
 }
@@ -495,6 +495,15 @@ table#figureChooserColumns {
 #figureInfo select {
 	height: 20px !important;
 	line-height: 20px;
+	font-size: 16px;
+}
+#selectedFigure.active {
+	/* include border in box size */
+  width: 144px;
+  height: 144px;
+}
+#unknownFigureChooser {
+  width: 144px;
 }
 #comments {
   width: 220px;

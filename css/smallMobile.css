@@ -263,11 +263,7 @@ select {
   margin-right: 5px;
 }
 .button.small {
-  width: 32px;
-  height: 32px;
   margin: 1px;
-  /* scale background */
-  background-size: 32px 32px;
 }
 .undoRedoButton {
   margin: 3px 8px -1px 4px;
@@ -291,8 +287,18 @@ select {
   font-size: 16px;
   height: 32px;
 }
+#selectedFigure.active {
+	/* include border in box size */
+  width: 160px;
+  height: 144px;
+  padding: 0 8px;
+}
+#unknownFigureChooser {
+  width: 160px;
+}
 #entryExit {
   min-height: 56px;
+  padding-left: 6px !important;
 }
 #figEntryButton.button {
   margin-left: 0 !important;
@@ -328,8 +334,8 @@ select {
 	width: 33%;
 }
 #scale {
-  margin-left: 6px;
-  margin-right: 6px;
+  margin-left: 5px;
+  margin-right: 5px;
 }
 #moveX,#moveY {
   margin-left: 6px;
@@ -426,13 +432,13 @@ table#figureChooserTable td.selected {
 
 #installApp {
 	height: 24px;
-	font-size: 20px;
+	font-size: 20px !important;
 }
 #closeInstallApp {
 	font-size: 24px;
 }
 #installApp img {
-	height: 56px;
+	height: 40px;
 }
 #t_getTheApp {
 	position: relative;
