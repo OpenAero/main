@@ -158,7 +158,10 @@
 #entryExit {
   min-height: 46px;
 }
-
+.rollComment {
+  font-size: 16px;
+  height: 22px;
+}
 #alerts {
 	width: 268px;
 }
@@ -489,8 +492,10 @@ table#figureChooserColumns {
 	line-height: 20px;
 }
 .plusMinText {
-  font-size: 12px;
-  height: 20px;
+  font-size: 16px;
+  box-sizing: border-box;
+  margin-top: 1px;
+  height: 22px;
 }
 #figureInfo select {
 	height: 20px !important;
@@ -504,10 +509,6 @@ table#figureChooserColumns {
 }
 #unknownFigureChooser {
   width: 144px;
-}
-#comments {
-  width: 220px;
-  height: 22px;
 }
 
 /* Free Unknown Designer */

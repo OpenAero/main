@@ -58,7 +58,7 @@
 			<p>OpenAero is aerobatic sequence design software available from
 			<a href="https://openaero.net/" target="_blank">OpenAero.net</a> that
 	    runs inside your web browser. This makes it available on practically
-	    any computer, tablet and even Smartphone. For the best experience the
+	    any computer, tablet and even smartphone. For the best experience the
 			<a href="http://www.google.com/intl/en_uk/chrome/browser/" target="_blank">Google Chrome</a> 
 			web browser is recommended, and currently
 			<a href="http://www.ez-download.com/mozilla-firefox" target="_blank">Mozilla Firefox</a> 
@@ -70,7 +70,7 @@
 			online, and will be installed automatically. Once you have visted
 			<a href="https://openaero.net/" target="_blank">openaero.net</a> your
 	    current version of the software will also be available to you when
-	    you are offline. For small tablets and Smartphones it will help to
+	    you are offline. For small tablets and smartphones it will help to
 	    select <i>Phone layout</i> in <i>Settings</i> so the layout will be adjusted
 	    to fit the narrower screen format.</p>
 	    <p>OpenAero should update automatically to the latest version
@@ -116,9 +116,10 @@
 	<div class="documentation">
 		<span>
 		<h3 id="creating_sequences">Creating sequences</h3>
-		<p>Aerobatic sequences can be created within OpenAero in either of two 
+		<p>Aerobatic sequences can be created within OpenAero in one of three 
 		ways:</p>
 		<ul>
+			<li>By starting and using the Free (Un)Known Designer (not available in phone layout)</li>
 			<li>By selecting and editing figures with the <i>Figure Editor</i></li>
 			<li>By writing the figures in code in the text line above the 
 			sequence</li>
@@ -134,8 +135,16 @@
       <h3>Beginning a sequence</h3>
       <img src="../img/sequence_info.png">
       <p>
-        Always start by filling in the Sequence Info panel. The <i>Rules, 
-        Category</i> and <i>Program</i> information will be used for determining sequence 
+				When opening a Free Known or Unknown figures file you will be
+				asked if you want to start the Free (Un)Known Designer. If you
+				do, you will fill out the Sequence Info panel later.<br />
+				Please refer to chapter <a href="free_unknown_designer">
+				The Free (Un)Known Designer</a>.
+			</p>
+			<p>
+        In all other cases, always start by filling in the Sequence
+        Info panel. The <i>Rules, Category</i> and <i>Program</i>
+        information will be used for determining sequence 
         validity. If actual rule checking is active for the chosen
         combination, <i class="material-icons status good"></i> will be
         shown at the top of the Rules card. Otherwise it will show
@@ -172,7 +181,7 @@
     <i>Hide illegal figs</i>.</p>
 		<p>
 		When a figure is added or selected it becomes active and is drawn in 
-		magenta in the sequence area. The Form-B table is always updated to display 
+		magenta in the sequence area. The Aresti/K table is always updated to display 
 		all the Aresti element codes and K-factors. Base figures and elements that are 
 		not &#39;legal&#39; according to the rules in effect are shown in that table 
 		with zero K.</p>
@@ -180,14 +189,19 @@
 		<img src="../img/OA_FigureInfoPanel.png">
 		<p>The current figure is also shown in the figure editing area where you can:</p>
 		<ul>
-			<li>
-			Switch 
-			X-axis or Y-axis exit direction (for some figures)</li>
-			<li>Delete the figure</li>
+			<li>Set the figure as start of a sub-sequence</li>
 			<li>Change the Y-axis direction</li>
+			<li>Delete the figure</li>
+			<li>Switch X-axis or Y-axis in-figure and exit direction (for some figures)</li>
 			<li>Zoom the figure larger or smaller</li>
 			<li>Move the figure to a different position - with no line, or with 
 			a straight or curved dotted connecting line</li>
+			<li>Extend or shorten the entry and exit lines, or the lengths
+      before and after the rolls</li>
+			<li>Click the figure-start and -end symbols to reverse the current 
+			erect / inverted setting</li>
+			<li>For Free Unknown sequences designate the figure with letters A 
+			to J, or as a connecting figure</li>
 			<li>Add / delete / change rolls, and:
         <ul>
           <li>Flip their left / right orientation to avoid location over
@@ -197,14 +211,6 @@
           applicable)</li>
         </ul>
       </li>
-			<li>Extend or shorten the entry and exit lines, or the lengths
-      before and after the rolls</li>
-			<li>Click the figure-start and -end symbols to reverse the current 
-			erect / inverted setting</li>
-			<li>Set the figure as the start of a new sub-sequence for easier 
-			sequence composition</li>
-			<li>For Free Unknown sequences designate the figure with letters A 
-			to J, or as a connecting figure</li>
       <li>Add / delete / change figure comments</li>
 		</ul>
     <p><strong>Some of these options are not available for figures that
@@ -451,13 +457,15 @@
       <p>To open an existing sequence, choose <i>Open sequence</i> in
       the <i>File menu</i> and navigate to locate and open the required
       sequence file. Sequence files can end in &quot;.seq&quot; or
-      &quot;.png&quot;. You can also drag a sequence file from
-      your system's file browser to the OpenAero window to open it.<br />
+      &quot;.png&quot;. <span class="noCordova">You can also drag a
+      sequence file from your system's file browser to the OpenAero
+      window to open it.</span><br />
       Alternatively, by using <i>Open sequence link</i>, you can open a
       sequence link provided to you by email or other means.
       </p>
       <h4>Saving sequences</h4>
-      <p>To save the current sequence as a <i>&quot;filename.seq&quot;</i>
+      <p class="noCordova">To save the current sequence as a
+      <i>&quot;filename.seq&quot;</i>
       file, choose <i>Save sequence</i> in the <i>File menu</i>. Depending
       on how you have set your browser, your computer will ask 
       for a file name to save the sequence; in Chrome be sure to use the
@@ -465,11 +473,13 @@
       the Settings item so that you can tick "Ask where to save each
       file before downloading" on the Advanced Settings page. Always be
       sure to give the sequence a file name ending in <i>&quot;.seq&quot; 
-      - </i>these files can subsequently be opened only by OpenAero and not by OLAN.</p>
+      - </i>these files can subsequently be opened only by OpenAero.</p>
+      <p>The OpenAero app for mobile has a variety of options for saving
+      and sharing your sequence under <i>File ... Save/share sequence</i>
+      </p>
       <p>To create a link that holds your complete sequence, choose <i>Save as 
-      link</i> in the <i>File menu</i>. It is useful to right-click here and choose 
-      <i>&quot;Copy Link Address&quot;</i> to transfer this link to your computer&#39;s clipboard.</p>
-      <h4 id="save_print"  >Saving or Printing sequences</h4>
+      link</i> in the <i>File menu</i>.</p>
+      <h4 id="save_print">Saving or Printing sequence forms</h4>
       <p>To save or print some or all of the sequence forms, choose
       <i>Print/save forms</i> in the <i>File menu</i>, and select the
       appropriate options. To save the forms as a PDF file in Windows you
@@ -585,7 +595,7 @@
       </p>
       <p>
         It may be useful to add the submitting Team name or IOC country code 
-        to the figure comments. This can be done in the figure editor or
+        to the figure comments. This can be done in the Figure Editor or
         by typing it between inverted marks into the sequence string
         after any Free Unknown identification letter
         &quot;@A&quot;, &quot;@B&quot; etc. and before the figure code - 
@@ -619,14 +629,15 @@
         <li>General
         <ul>
           <li>Change the interface language</li>
-          <li>Set phone or normal layout</li>
-          <li>Change the number of columns in Grid View</li>
+          <li>Set phone or normal layout (only for mobile devices)</li>
           <li>Change the number of columns in the queue figure chooser</li>
+          <li>Change the number of columns in Grid View when using phone layout</li>
           <li>Choose if new or changed figures should be positioned
           clear of previous and subsequent figures automatically. This
           will only be done when the figure is completely new or not
           similar to a replaced figure and only when selected from the
           figure chooser</li>
+          <li>Choose to display the blue handles when editing figures or not</li>
           <li>Change the image format (png or svg) and the image size for
           saving all figures as separate images in a ZIP file</li>
           <li>Change the filename pattern for saving all figures as
@@ -659,7 +670,7 @@
       </ul>
       <p>Please keep in mind that when somebody opens your sequence
       on another system it will look different from your version if you
-      change some of the styling values!</p>
+      change some of the Styling or Expert values!</p>
     </span>
 	</div>
 </body>

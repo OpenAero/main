@@ -24,11 +24,6 @@ document.addEventListener("DOMContentLoaded", load, false);
 function load() {
 	// append class to HTML element when in a frame
 	document.documentElement.classList.add (window.self == window.top ? "top" : "framed");
-	// hide some elements when in Cordova
-	if (window.cordova) {
-		var els = document.getElementsByClassName ('noCordova');
-		for (var i = 0; i < els.length; i++) els[i].classList.add ('noDisplay');
-	}
 }
 
 /*

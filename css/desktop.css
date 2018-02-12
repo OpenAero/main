@@ -83,6 +83,9 @@
 #mainMenu ul {
   float: left;
 }
+#mainMenu div {
+	display: inline-block;
+}
 .menuIcon {
 	position: relative;
 	margin-left: 8px;
@@ -93,6 +96,10 @@
 img.menuIcon {
 	width: 16px;
 	height: 16px;
+}
+#zoomMenu .material-icons {
+  position: relative;
+  top: 6px;
 }
 /* menu dropdown functionality */
 /*set up ul tags*/ 

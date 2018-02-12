@@ -90,6 +90,8 @@ lang.en = {
 'addFigureText' : 'Add figure',
 'addingFigure' : 'Add new figure',
 'additional' : 'Additional',
+// new 2018.1.9
+'addSequenceLink' : 'Add sequence link',
 'addToQueue' : 'Add to Queue',
 'acreg': 'Aircraft registration',
 'actype': 'Aircraft type',
@@ -210,9 +212,10 @@ lang.en = {
   'font (e.g. 2x8).</p>',
 'dropFigureHere' : 'Drop Figure here',
 'editingFigure' : 'Edit figure ',
+// updated 2018.1.9
 'emailHeader' : 'Click the link below to open the sequence in OpenAero. ' +
-  'Or, if clicking doesn\'t work, copy and paste it (completely!) in ' +
-  'your browser address bar.',
+  'Or you can copy the link and use "File -> Open sequence link" ' +
+  'in your OpenAero app.', 
 'emailSequence' : 'Email sequence',
 'END' : 'END',
 'entryExitAttExt' : 'Entry/exit attitude & extension',
@@ -327,6 +330,14 @@ lang.en = {
 'installChromeAppTitle' : 'Install Chrome App',
 'installed' : '<p>OpenAero has now been installed ' +
   'in this browser and will automatically receive updates. It is ' +
+  'available online and offline at <a href="http://%1\$s" target="_blank">' +
+  '%1\$s</a>. You can add a link to this address to your desktop for ' +
+  'easy access.</p>' +
+  '<p>An extensive manual is available under <i>Help -> Manual</i>. ' +
+  'Please take some time to read it!</p>',
+// new 2018.1.9
+'installedFile' : '<p>OpenAero has now been installed ' +
+  'in this browser. It is ' +
   'available online and offline at <a href="http://%1\$s" target="_blank">' +
   '%1\$s</a>. You can add a link to this address to your desktop for ' +
   'easy access.</p>' +
@@ -569,6 +580,10 @@ lang.en = {
 'saveImageVariables' : 'Saving PNG or SVG image',
 'saveQueueFile' : 'Save queue file',
 'saveSequence' : 'Save sequence',
+// new 2018.1.9
+'saveShareFile' : 'Save/share file',
+'saveShareSequence' : 'Save/share sequence',
+// end new
 'selectCategoryFirst' : 'Select Category first',
 'selectRulesFirst' : 'Select Rules first',
 'separateFigures' : 'Separate figures',

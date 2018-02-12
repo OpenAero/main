@@ -1,3 +1,12 @@
+2018.1.9
+* Cordova: merged Save and Email sequence to Save/share sequence
+* improved sending sequence on iOS Cordova
+* updated Figure Editor Comments look
+* added installation message and update banner for download installs (not recommended)
+* improved mobile menu layout for long menu item texts
+* enabled blue figure editing handles option for Phone layout
+* updated manual
+
 2018.1.7
 * fixed bug causing Android App users to get update banner for iOS
 * fixed font/image size issues in install/update banner on smallMobile

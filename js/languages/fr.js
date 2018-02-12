@@ -85,9 +85,9 @@ lang.fr = {
   'peut prendre du temps. Patentiez, svp…',
 'addFigureText' : 'Ajouter figure',
 'addingFigure' : 'Ajouter une nouvelle figure',
-// updated 2017.2.4
 'additional' : 'Liaison(s)',
-//
+// new 2018.1.9 by Massa
+'addSequenceLink' : 'Ajouter un lien de programme',
 'addToQueue' : 'Ajouter à la file',
 'acreg': 'Immat d\'Avion',
 'actype': 'Avion',
@@ -221,7 +221,6 @@ lang.fr = {
 'emailSequence' : 'Envoyer par email le programme',
 'END' : 'FIN',
 'entryExitAttExt' : 'Attitude de début/fin et longueur',
-// new 2018.1.5 by Massa
 'exitDesigner' : 'Quitter l\'assembleur',
 'expert' : 'Expert',
 'feedback' : 'Retour',
@@ -293,7 +292,6 @@ lang.fr = {
 'getChrome' : 'Pour une utilisation optimale d\OpenAero, téléchargez la ' +
   'dernière version du navigateur <a href="https://www.google.com/intl/en/chrome/browser/">' +
   'Google Chrome</a>.',
-// new 2018.1.5 by Massa
 'getTheApp' : 'OpenAero est disponible en tant qu\'application',
 'glider' : 'Planeur',
 // new 2017.1
@@ -340,6 +338,14 @@ lang.fr = {
 // new 2016.1.3
 'installed' : '<p>OpenAero est maintenant installé avec ce ' +
   'navigateur et les mises à jour seront automatiques. Il est disponible ' +
+  'en ligne,mais aussi hors connexion à <a href="http://%1\$s" target="_blank">' +
+  '%1\$s</a>. Vous pouvez ajouter un raccourci vers cette adresse sur votre ' +
+  'bureau pour un accès direct.</p>' +
+  '<p>Un Mode d\'emploi complet est disponible a <i>Aide -> Manuel ' +
+  'OpenAero</i>. S\'il vous plait, prenez le temps de le lire !</p>',
+// new 2018.1.10
+'installedFile' : '<p>OpenAero est maintenant installé avec ce ' +
+  'navigateur. Il est disponible ' +
   'en ligne,mais aussi hors connexion à <a href="http://%1\$s" target="_blank">' +
   '%1\$s</a>. Vous pouvez ajouter un raccourci vers cette adresse sur votre ' +
   'bureau pour un accès direct.</p>' +
@@ -591,7 +597,6 @@ lang.fr = {
 'saveAsURLFromApp' : 'Le lien ci-dessous contient votre programme. ' +
   'Vous pouvez le copier dans un émail, en faire un favori, etc...',
 'saveAsURLTitle' : 'Enregistrement du programme en tant que lien',
-// new 2018.1.5 by Massa
 'saveDeviceFirst' : 'Impossible d\'ouvrir le programme directement. ' +
 	'Veuillez d\'abord l\'enregistrer sur votre appareil, puis ' +
 	'l\'ouvrir à partir de votre appareil',
@@ -604,10 +609,12 @@ lang.fr = {
 'saveImageVariables' : 'Enregistrement d\'une image en PNG ou SVG',
 'saveQueueFile' : 'Enregistrer la file',
 'saveSequence' : 'Enregistrer le programme',
+// new 2018.1.9 by Massa
+'saveShareFile' : 'Enregistrer/partager',
+'saveShareSequence' : 'Enregistrer/partager le programme',
 'selectCategoryFirst' : 'Sélectionnez la Catégorie',
 'selectRulesFirst' : 'Sélectionnez les Règles',
 'separateFigures' : 'Espacer les figures',
-// new 2018.1.5 by Massa
 'separateFiguresConfirm' : 'Ceci séparera les figures les unes des ' +
 	'autres et supprimera le positionnement des figures. ' +
   'Voulez-vous continuer ?',
@@ -678,7 +685,6 @@ lang.fr = {
 'unlockSequence' : 'Déverrouiller',
 'unusedFigureLetters' : 'Lettre(s) inutilisée(s) : %s',
 'update' : 'Mise à jour',
-// new 2018.1.5 by Massa
 'updateApp' : 'La mise à jour OpenAero %s est disponible',
 'upwind' : 'vent de face',
 'upwindEntry' : 'Débuter vent de face',

@@ -141,8 +141,8 @@
               <span class="userText" id="t_file"></span>
               <ul id="menuFileUl">
                 <li class="fileOpening menuFileItem">
+									<i class="material-icons menuIcon">file_download</i>
                   <div class="openSequence">
-										<i class="material-icons menuIcon">file_download</i>
                     <span class="userText" id="t_openSequence"></span>
                     <form id="fileForm">
                       <input type="file" id="file" size=1>
@@ -164,6 +164,10 @@
                 <li class="menuFileItem">
 									<i class="material-icons menuIcon">email</i>
 									<a class="userText" id="t_emailSequence" target="_blank"></a>
+								</li>
+                <li class="menuFileItem noDisplay">
+									<i class="material-icons menuIcon">file_upload</i>
+									<span class="userText" id="t_saveShareSequence"></span>
 								</li>
                 <li class="divider menuFileItem">
 									<i class="material-icons menuIcon">link</i>
@@ -193,7 +197,7 @@
 									<span class="userText" id="t_formA"></span>
 								</li>
                 <li>
-									<i class="material-icons menuIcon" style="transform: rotate(180deg)">forward</i>
+									<i class="material-icons menuIcon" style="transform: rotate(180deg); transform-origin: 50%;">forward</i>
 									<span class="userText" id="t_formB"></span>
 								</li>
                 <li>
@@ -284,13 +288,13 @@
 									<span class="userText" id="t_clearQueue"></span>
 								</li>
                 <li class="fileOpening">
+									<i class="material-icons menuIcon">file_download</i>
                   <div class="openFile">
-										<i class="material-icons menuIcon">file_download</i>
                     <span class="userText" id="t_openQueueFile"></span>
                     <form id="queueForm">
                       <input type="file" id="queue" size=1>
                     </form>
-                  <div>
+                  </div>
                 </li>
                 <li>
 									<i class="material-icons menuIcon">save</i>
@@ -657,14 +661,14 @@
 							<div id="rollInfo">
 							</div>
 							<!-- comments -->
-							<div id="commentSection" class="content expansion-panel disableFUdesigner hideNoFigure">
-								<span class="contentLabel">
-									<span class="userText" id="t_comments"></span>
-									<i class="material-icons expand-toggle">expand_more</i>
-								</span>
+							<div id="commentSection" class="content disableFUdesigner hideNoFigure">
 								<div>
-                  <textarea id="comments"></textarea>
-                  <span class="info" id="manual.html_figure_comments">
+									<div class="form-group">
+	                  <textarea id="comments"></textarea>
+	                  <label class="control-label userText" id="t_comments" for="comments"></label>
+	                  <i class="bar"></i>
+	                </div>
+	                <span class="info" id="manual.html_figure_comments">
                     <i class="material-icons info">info</i>
                   </span>
 								</div>
@@ -813,6 +817,13 @@
 			<div class="box">
 				<span class="boxTitle userText" id="t_saveFileTitle"></span>
 				<div class="content" id="saveFileMessage"></div>
+				<div class="content noDisplay" id="saveFileAddSequenceLink">
+					<label>
+						<span class="userText" id="t_addSequenceLink"></span>
+						<input type="checkbox" id="addSequenceLink" class="material-switch-input" tabIndex="-1">
+						<span class="material-switch"></span>
+					</label>
+				</div>
 				<div class="content">
           <span class="form-group">
             <input type="text" value="" id="dlTextField">

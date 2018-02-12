@@ -36,7 +36,7 @@
 // Where a new x should be used for versions that create sequences not
 // fully backward compatible with the previous version
 
-var version = '2018.1.7';
+var version = '2018.1.9';
 /* versionNew is an object that contains version update information
    The structure is {vvv : [[ttt, n], ...], ...} , where
    vvv = version number
@@ -44,6 +44,10 @@ var version = '2018.1.7';
    n   = importance (higher = more important)
 */
 var versionNew = {
+	'2018.1.9' : [
+		['Enabled blue figure editing handles option for Phone layout (can be disabled in Settings)', 1],
+		['Improved saving and sharing sequences from mobile app', 3]
+	],
 	'2018.1.7' : [
 		['Added French rules and sequences for 2018', 3]
 	],

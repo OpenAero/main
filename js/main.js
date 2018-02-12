@@ -156,7 +156,7 @@ platform.android = /Android/i.test(navigator.userAgent);
 platform.ios = /i(Pad|Phone|Pod)/i.test(navigator.userAgent);
 
 // platform.mobile is true when running on a mobile device (e.g. tablet)
-/** SET TO TRUE FOR TESTING */
+/** SET TO TRUE FOR TESTING MOBILE */
 platform.mobile = ((typeof window.orientation !== 'undefined') ||
 	(navigator.userAgent.indexOf('IEMobile') !== -1) || false);
 
@@ -1659,7 +1659,7 @@ function cordovaHandleIntent (intent) {	// intent.action android.intent.action.M
 // cordovaSave uses the socialsharing plugin to provide options for
 // saving/exporting a file
 function cordovaSave (blob, filename) {
-	
+	/**
 	var onSuccess = function(result) {
 	  console.log("Share completed? " + result.completed); // On Android apps mostly return false even while it's true
 	  console.log("Shared to app: " + result.app); // On Android result.app is currently empty. On iOS it's empty when sharing is cancelled (result.completed=false)
@@ -1668,7 +1668,25 @@ function cordovaSave (blob, filename) {
 	var onError = function(msg) {
 	  console.log("Sharing failed with message: " + msg);
 	}
-
+	*/
+	
+	// use socialsharing to save or send file through dataURL.
+	var reader = new FileReader();
+	reader.onload = function(evt) {
+		var options = {
+			subject: filename,
+			// Add filename to dataURL with df:
+			files: ['df:' + filename + ';' + evt.target.result]
+		}
+		if (document.getElementById ('addSequenceLink').checked) {
+			options.message = userText.emailHeader + '\r\n\r\n' +
+				'https://openaero.net/?s=' + encodeBase64Url(activeSequence.xml);
+		}
+		window.plugins.socialsharing.shareWithOptions (options);
+	}
+	reader.readAsDataURL (blob);
+	
+	/** before 2018.1.9 strategy: create file and share
 	// request filesystem
 	window.requestFileSystem(LocalFileSystem.TEMPORARY, 0, function(fileSystem) {
 		// succes! Create file
@@ -1678,9 +1696,11 @@ function cordovaSave (blob, filename) {
 				// write done?
 				writer.onwrite = function(evt) {
 					// Yes! Share file
+					var message = userText.emailHeader + '\n\n' + 
+			      'https://openaero.net/?s=' + encodeBase64Url(activeSequence.xml);
 					window.plugins.socialsharing.shareWithOptions (
 						{
-							message: filename, // not supported on some apps (Facebook, Instagram)
+							message: message, // not supported on some apps (Facebook, Instagram)
 						  subject: filename, // fi. for email
 							files: [entry.nativeURL] // an array of filenames either locally or remotely
 						},
@@ -1698,30 +1718,8 @@ function cordovaSave (blob, filename) {
 	function(error){
 		console.log(error);
 	});
+	*/
 }
-/**
-// cordovaPdf opens a pdf in an external viewer
-function cordovaPdf (uri, title) {
-	function copyAndOpen (fileEntry, dirEntry, uri) {
-		fileEntry.copyTo(dirEntry, uri.split('/').pop(), function(newFileEntry) {
-			cordova.plugins.fileOpener2.open(newFileEntry.nativeURL, 'application/pdf');
-    });
-	}		 
-	window.resolveLocalFileSystemURL(cordova.file.applicationDirectory + '/www/' + uri, function(fileEntry) {
-		window.resolveLocalFileSystemURL(cordova.file.cacheDirectory, function(dirEntry) {
-			window.resolveLocalFileSystemURL(cordova.file.cacheDirectory + '/' + uri, function(deleteEntry) {
-				// try to delete the entry. Both on success and faillure copy
-				// and open the file
-				deleteEntry.remove (function() {
-					copyAndOpen (fileEntry, dirEntry, uri);
-				}, function() {
-					copyAndOpen (fileEntry, dirEntry, uri);
-				});
-			});
-	  });
-	});
-}
-*/
 
 // cordovaPdf opens a pdf in an external viewer
 function cordovaPdf (uri, title) {
@@ -1735,22 +1733,6 @@ function cordovaPdf (uri, title) {
 	  });
 	});
 }
-/*
-function cordovaPdf (uri, title) {
-	window.resolveLocalFileSystemURL(cordova.file.applicationDirectory + '/www/' + uri, function(fileEntry) {
-		fileEntry.file (function(file) {
-	    var reader = new FileReader();
-	    reader.onloadend = function(evt) {
-				var a = document.createElement ('a');
-				a.href = evt.target.result;
-				console.log(a.href);
-	      a.click();
-	    };
-	    reader.readAsDataURL(file);
-		});
-	});
-}
-*/
 
 /************************************************
  * User interface functions
@@ -1766,12 +1748,13 @@ function switchSmallMobile () {
   // load CSS depending on smallMobile, largeMobile or desktop version
   var link = document.getElementById('desktopLargeMobileCSS');
   var svg = document.getElementById('svgContainer');
+  var showHandles = document.getElementById('showHandles');
   if (platform.smallMobile) {
 		if (platform.cordova && screen.orientation) {
 			screen.orientation.lock('portrait');
 		}
     // set viewport
-    windowResize();
+    // windowResize();
     // hide Free (Un)known designer menu item
     document.getElementById('t_fuDesigner').parentNode.classList.add ('noDisplay');
     // set smallMobile css
@@ -1787,6 +1770,8 @@ function switchSmallMobile () {
     el.parentNode.appendChild (document.getElementById ('gridColumnsContainer'));
     // show tiny form A
     miniFormA = 'tiny';
+    // don't show blue figure handles  by default
+    showHandles.removeAttribute ('checked');
   } else {
 		if (platform.cordova && screen.orientation) {
 			screen.orientation.unlock();
@@ -1817,7 +1802,7 @@ function switchSmallMobile () {
     // show mini form A
     miniFormA = true;
     
-    checkSequenceChanged();    
+    checkSequenceChanged();
   }
   // set correctly sized plus min elements
   addPlusMinElements();
@@ -2205,6 +2190,9 @@ function saveDialog (message, name, ext) {
     document.getElementById('saveFileMessage').innerHTML = message;
     document.getElementById('dlTextField').value = name;
     document.getElementById('fileExt').innerHTML = ext;
+    if (platform.cordova) {
+			document.getElementById('t_saveFile').innerText = userText.saveShareFile;
+		}
   } else {
     document.getElementById('saveDialog').classList.add ('noDisplay');
   }
@@ -2321,8 +2309,15 @@ function helpWindow (url, title) {
 		if (platform.android && /\.pdf$/.test (url)) {
 			cordovaPdf (url, title);
 		} else {
-			cordova.InAppBrowser.open (
+			var win = window.open (
 				url, '_blank', 'location=no,hardwareback=no');
+			win.addEventListener( "loadstop", function() {
+				// hide elements with class noCordova
+				win.executeScript ({code:
+					"var els = document.getElementsByClassName ('noCordova');" +
+					"for (var i = 0; i < els.length; i++) els[i].classList.add ('noDisplay');"
+				})
+			});
 		}
 	} else if (platform.mobile && !platform.ios && !/\.pdf$/.test (url)) {
 		// for platform.mobile, open inline except for PDF
@@ -4762,7 +4757,7 @@ function doOnLoad () {
   newTurnPerspective = document.getElementById('newTurnPerspective');
 						    
 	document.addEventListener ("deviceready", function() {
-		//if (typeof cordova !== 'undefined') platform.cordova = true;
+		if (typeof cordova !== 'undefined') platform.cordova = true; // should already have been set
 		if (platform.cordova) { // make sure we only do this for Cordova app
 			
 			// scroll input field into view where applicable
@@ -4770,6 +4765,12 @@ function doOnLoad () {
 			window.addEventListener('keyboardDidShow', function () {
 		    document.activeElement.scrollIntoViewIfNeeded();
 		  });
+		  
+		  // set File menu and dialog items
+		  document.getElementById ('t_saveSequence').parentNode.classList.add ('noDisplay');
+		  document.getElementById ('t_emailSequence').parentNode.classList.add ('noDisplay');
+		  document.getElementById ('t_saveShareSequence').parentNode.classList.remove ('noDisplay');
+		  document.getElementById ('saveFileAddSequenceLink').classList.remove ('noDisplay');
 		  
 			switch (device.platform.toLowerCase()) {
 				case 'ios':
@@ -4920,9 +4921,9 @@ function doOnLoad () {
   
   // add onresize event for resizing the sequence text window and/or
   // platform.smallMobile viewport
-  window.onresize = windowResize;
-  window.matchMedia('(orientation: portrait)').addListener (windowResize);
-  window.matchMedia('(orientation: landscape)').addListener (windowResize);
+  // window.onresize = windowResize;
+  // window.matchMedia('(orientation: portrait)').addListener (windowResize);
+  // window.matchMedia('(orientation: landscape)').addListener (windowResize);
   
   // Parse the rules
   parseRules();
@@ -5055,12 +5056,10 @@ function doOnLoad () {
   // retrieve queue from storage
   queueFromStorage ();
 
-  // load (mostly) completed, remove loading icon in 1 second
-  if (platform.cordova) {
-		setTimeout(function(){navigator.splashscreen.hide();}, 1000);
-	} else {
-		setTimeout (function() {loading.style = 'opacity: 0.01;';}, 500);
-		setTimeout (function() {loading.parentNode.removeChild (loading);}, 1000);
+  // load (mostly) completed, remove loading icon in 1/2 second
+  if (!platform.cordova) {
+		setTimeout (function() {loading.style = 'opacity: 0.01;';}, 100);
+		setTimeout (function() {loading.parentNode.removeChild (loading);}, 500);
 	}
   
   // load Google Analytics, but not on Cordova
@@ -5229,6 +5228,7 @@ function addEventListeners () {
   document.getElementById('t_clearSequence').parentNode.addEventListener('mousedown', clearSequence, false);
   document.getElementById('t_saveSequence').parentNode.addEventListener('mousedown', saveSequence, false);
   document.getElementById('t_emailSequence').parentNode.addEventListener('mousedown', emailSequence, false);
+  document.getElementById('t_saveShareSequence').parentNode.addEventListener('mousedown', saveSequence, false);
   document.getElementById('t_saveAsLink').parentNode.addEventListener('mousedown', saveAsURL, false);
   document.getElementById('exitDesigner').addEventListener('mousedown', function(){exitFuDesigner(false)}, false);
   document.getElementById('t_saveFigsSeparate').parentNode.addEventListener('mousedown', saveFigs, false);
@@ -7601,8 +7601,8 @@ function latestVersion() {
   if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
     // Check for appcache when using http
     if (window.applicationCache) window.applicationCache.update();
-  } else if (platform.cordova) {
-		// check for update on Cordova
+  } else {
+		// check for update on non-http(s)
     var xhr = new XMLHttpRequest();
     xhr.open('GET', 'https://openaero.net/openaero.php?v', true);
     xhr.onload = function() {
@@ -7611,7 +7611,8 @@ function latestVersion() {
 				banner.classList.remove ('noDisplay');
 				document.getElementById('t_getTheApp').innerHTML =
 					sprintf(userText.updateApp, xhr.response);
-				banner.classList.add (platform.android ? 'android' : 'ios');
+				if (platform.android) banner.classList.add ('android');
+				if (platform.ios) banner.classList.add ('ios');
 				banner.classList.add ('update');
 				banner.classList.add ('show');
 			}
@@ -7673,10 +7674,20 @@ function checkUpdateDone() {
       // Wait a few seconds to give platform.cordova to be set if applicable
       if ((typeof chrome !== 'undefined') && chrome.fileSystem) chromeApp.active = true;
       if (!chromeApp.active) setTimeout(function(){
-				if (!platform.cordova) alertBox (
-	        {userText: 'installed', params: [window.location.host]},
-	        {userText: 'installation'});
-				}, 3000);
+				if (!platform.cordova) {
+					if (window.location.host) {
+						alertBox (
+			        {userText: 'installed', params: [window.location.host]},
+			        {userText: 'installation'}
+			      );
+					} else {
+						alertBox (
+			        {userText: 'installedFile', params: [location.pathname]},
+			        {userText: 'installation'}
+			      );
+					}
+				} 
+			}, 3000);
       storeLocal ('version', version);
     } else if (oldVersion !== version) {
       // create version update text
@@ -7723,7 +7734,8 @@ function getTheApp () {
 			if (timestamp < (t - 86400 * 7)) { // ask once a week
 				storeLocal ('installAppAsked', t);
 				banner.classList.remove ('noDisplay');
-				banner.classList.add (platform.android ? 'android' : 'ios');
+				if (platform.android) banner.classList.add ('android');
+				if (platform.ios) banner.classList.add ('ios');
 				// use setTimeout before showing to allow subtle entry
 				setTimeout (function(){banner.classList.add ('show')},500);
 				setTimeout (function(){removeBanner (banner)}, 15000);
@@ -11278,7 +11290,7 @@ function setFigureSelected (figNr) {
       if (el) {
 				selectedFigure = el.getBBox();
 	      var showHandles = document.getElementById ('showHandles').checked &&
-	        !(activeForm === 'Grid') && !platform.smallMobile;
+	        !(activeForm === 'Grid');
         var nodes = el.childNodes;
         var length = nodes.length;
 				// apply color filter
@@ -13932,29 +13944,31 @@ function draw () {
   displayAlerts ();
 }
 
+/**
 // windowResize gets called whenever the window is resized or rotated
 function windowResize () {
-	return;
+
 	if (platform.smallMobile) {
     // set view to device width
 		var initScale = screen.width / 320;
 
-/*	  if (platform.ios && platform.cordova) {
+	  if (platform.ios && platform.cordova) {
 			document.getElementById ('viewport').setAttribute('content',
 		    'user-scalable=no, initial-scale=1, width=device-width, '+
 		    'viewport-fit=cover');
 		  document.body.style = 'transform: scale(' + initScale + '); ' +
 			  '-webkit-transform-origin-x: left; ' +
 			  '-webkit-transform-origin-y: top;';
-		} else {*/
+		} else {
 		  document.getElementById ('viewport').setAttribute('content',
 		    'user-scalable=no, viewport-fit=cover, width=321' +
 		    (platform.cordova ? ', initial-scale=' + initScale : '')
 		  );
-		//}
+		}
 
 	}
 }
+*/
 
 // virtualKeyboard shows or hides the virtual keyboard for
 // special keys for touch devices, except on small mobile
@@ -15410,7 +15424,7 @@ function emailSequence () {
   function email() {
     // create body with descriptive text, newlines and sequence URL
     // also replace single ticks (') and + as they may break the link
-    var body = userText.emailHeader + '\n\n' + 
+    var body = userText.emailHeader + '\r\n\r\n' + 
       'https://openaero.net/?s=' + encodeBase64Url(activeSequence.xml);
     var subject = activeFileName() || 'Sequence';
     el.setAttribute('href', 'mailto:%20?subject=' + encodeURI(subject) +

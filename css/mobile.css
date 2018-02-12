@@ -71,7 +71,14 @@ body.menuOpen {
 .menuOpen #hamburgerMenu i {
   transform: rotate(-90deg);
 }
-
+#zoomMin, #zoomPlus {
+	position: relative;
+	top: -4px;
+}
+#zoom {
+	position: relative;
+	top: -10px;
+}
 /* define arrows */
 i.leftArrow:after {
   content: "chevron_left";
@@ -86,7 +93,8 @@ i.rightArrow:after {
 }
 
 #menu i.rightArrow {
-  float: right;
+  position: absolute;
+  right: 0;
   margin-top: 12px;
 }
 
@@ -123,7 +131,8 @@ i.rightArrow:after {
 .menuIcon {
 	position: relative;
 	margin-left: 8px;
-	top: 6px;
+	top: 15px;
+	height: 24px;
 }
 .menuHeader {
 	position: relative;
@@ -151,15 +160,6 @@ i.rightArrow:after {
   margin: 2px 0 -2px 0;
   cursor: default;
 }
-/*#menu li {
-	background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" version="1.1"><circle cx="50" cy="50" r="50" fill="#ddf" /></svg>');
-	background-size: 0 0;
-	background-repeat: no-repeat;
-	transition: background-size 1s;
-}*/
-#menu li {
-	transition: background-color 0.2s;
-}
 #menu li.active {
   background-color: #ddf !important;
 }
@@ -180,9 +180,9 @@ i.rightArrow:after {
 }
 /*position level 1 links vertically*/ 
 #menu li {
-  display: block;
+  display: flex;
   width: 100%;
-  text-align: justify;
+	transition: background-color 0.2s;
 }
 #menu li.fileOpening {
   position: relative;
