@@ -771,7 +771,7 @@ textarea {
 	display: none !important;
 }
 .fuDesigner #exitDesigner {
-	display: block !important;
+	display: flex !important;
 }
 /* virtual keyboard */
 #virtualKeyboard {
@@ -1352,19 +1352,19 @@ option.used {
   margin: 4px;
   padding: 4px !important;
   overflow-y: hidden;
+  border: 2px solid #fff;
   border-radius: 2px;
 	background-color: #fff;
   -webkit-transform: scale(0.8,0.8);
   transform: scale(0.8,0.8);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-  transition: all 0.3s ease-in-out;
-  transition: background-color 0.3s ease;
+  transition: all 0.1s ease-in-out;
 }
 .pilotCardLayout.active {
   -webkit-transform: scale(1,1);
   transform: scale(1,1);
   box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.5);
-  background-color: #f4b;
+  border-color: #f4b;
 }
 .pilotCard {
 	display: inline-block;
@@ -1790,16 +1790,17 @@ option.used {
 }
 #figureString {
   position: absolute;
-  z-index: 6; /* just below fuFigures */
+  z-index: 8; /* just below fuFigures */
   left: 164px;
   top: 208px;
+  margin-top: 16px;
   width: 102px;
-  font-size: 16px;
+  /* font-size: 16px; */
   transition: all 0.5s ease-in-out;
 }
-#figureString.inFigureSelector {
-  left: 42px;
-  top: 4px;
+#figureSelector #figureString {
+  left: 48px;
+  top: 24px;
 }
 #figureStringInput {
   width: 100px;
@@ -1877,7 +1878,7 @@ t_addFigureText {
   margin: 0.2em;
 }
 .button .material-icons {
-	margin: 2px;
+	margin: 0;
 	font-size: 30px;
 	color: rgba(0,0,0,0.8);
 }
@@ -2150,9 +2151,10 @@ table#figureChooserColumns td {
 }
 table#figureChooserTable td.arestiRow {
   position: relative;
+  width: auto;
   vertical-align: middle;
   border: 0;
-  left: -4px;
+  padding: 0 4px;
   color: navy;
 }
 table#figureChooserTable td.selected {
@@ -2317,6 +2319,7 @@ table#figureChooserTable div {
   border-radius: 50px;
   background: #bbb;
   box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+  max-width: 36px;
   width: 36px;
   height: 14px;
   outline: 0;

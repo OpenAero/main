@@ -1,3 +1,20 @@
+2018.2
+* adjusted figure editing handles to maintain size in phone layout
+* added option to add Sequence Info at top of Grid print (Issue #208)
+* changed figures18.js and logic to define which roll positions can have spins
+* changed figure chooser to show all possible roll positions
+* corrected drawing of 7.8.21.3-4
+* corrected coding and drawing of 7.8.22.1-4
+* changed Designer free Figure String to Material design
+* fixed caret jumping to end when editing Figure String on iOS
+* changed rule Alert to "exactly" when min and max are the same in rules
+* increased size of Notes text on printed forms
+* changed insertRule code for fuDesigner CSS to update inline style in index.html
+* fixed figure jumping on reposition in Microsoft Edge
+* fixed iOS scroll bug (mostly) by adding {passive: false} to handleTouchMove
+* fixed "Exit Designer" menu icon position
+* fixed Figure String disappearing in figure selector on iOS
+
 2018.1.9
 * Cordova: merged Save and Email sequence to Save/share sequence
 * improved sending sequence on iOS Cordova
@@ -307,7 +324,6 @@
 * removed gap adjustment for rolls in the top from the figure editor
 * changed 'Link' to 'Additional' for Free Unknowns according CIVA
 * updated all 'link' and 'connectors' references in code to 'additional'
-* added CIVA rules for 2016
 * added "2015" Free rules to NZAC and CIVA
 * added support for Programs consisting of multiple words (e.g. Free Known)
 * disabled deselecting of "Super Family numbers" for sequences with superfamilies defined in rules (Issue #181)

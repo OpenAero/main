@@ -160,9 +160,6 @@ platform.ios = /i(Pad|Phone|Pod)/i.test(navigator.userAgent);
 platform.mobile = ((typeof window.orientation !== 'undefined') ||
 	(navigator.userAgent.indexOf('IEMobile') !== -1) || false);
 
-// platform.smallMobile is true in phone layout
-platform.smallMobile = false; // start false, determine later
-
 // platform.touch is true on touch enabled devices
 platform.touch = (('ontouchstart' in window)
   || (navigator.maxTouchPoints > 0)
@@ -226,7 +223,8 @@ base    : the pattern for each figure as it's written in the sequence,
            with + and - but without any rolls
 aresti  : the Aresti number for each figure 
 rolls   : shows which roll positions are possible for each figure
-          types are 1=full roll, 2=half roll, 3=any roll
+          types are:
+          1=full roll, 2=half roll, 3=any roll, 4=any roll or spin, 9=no roll(~)
 kpwrd   : the powered K factor for each figure
 kglide  : the glider K factor for each figure
 draw    : the drawing instructions for each figure
@@ -889,6 +887,8 @@ var iosDragDropShim = { enableEnterLeave: true,
 
     if(!needsPatch) return;
 
+		iosDragDropShim.enabled = true;
+		
     if(!config.enableEnterLeave) {
       DragDrop.prototype.synthesizeEnterLeave = noop;
     }
@@ -1334,14 +1334,14 @@ var iosDragDropShim = { enableEnterLeave: true,
 	var enable = function() {
 		// Listen to a couple key touch events
 		window.addEventListener('touchstart', handleTouchstart, false);
-		window.addEventListener('touchmove', handleTouchmove, false);
+		window.addEventListener('touchmove', handleTouchmove, {passive: false}); // add {passive: false} to fig iOS 11.3 bug
 		enabled = true;
 	};
 
 	var disable = function() {
 		// Stop listening
 		window.removeEventListener('touchstart', handleTouchstart, false);
-		window.removeEventListener('touchmove', handleTouchmove, false);
+		window.removeEventListener('touchmove', handleTouchmove);
 		enabled = false;
 	};
 
@@ -1768,10 +1768,12 @@ function switchSmallMobile () {
     // move grid column setting to settings
     var el = document.getElementById ('t_gridView');
     el.parentNode.appendChild (document.getElementById ('gridColumnsContainer'));
+    // move figureSelector to previous sibling of main
+    document.getElementById ('main').parentNode.insertBefore (
+	    document.getElementById ('figureSelector'),
+	    document.getElementById ('main'));
     // show tiny form A
     miniFormA = 'tiny';
-    // don't show blue figure handles  by default
-    showHandles.removeAttribute ('checked');
   } else {
 		if (platform.cordova && screen.orientation) {
 			screen.orientation.unlock();
@@ -1799,6 +1801,11 @@ function switchSmallMobile () {
 
     selectTab ('tab-sequenceInfo');
 
+    // move figureSelector to previous sibling of main
+    document.getElementById ('main').insertBefore (
+	    document.getElementById ('figureSelector'),
+	    document.getElementById ('main').firstChild);
+	    
     // show mini form A
     miniFormA = true;
     
@@ -3600,6 +3607,7 @@ function makeRollText (extent, stops, sign, comment, radSin, radCos) {
 // [3] is optional glider super slow roll argument, true = slow roll
 // [4] is optional autocorrect roll argument, true = autocorrect roll
 // [5] is optional comment
+// [6] is optional generic roll symbol	1 = roll, 2 = half roll, 3 = any roll, 4 = any roll or spin
 // Example: (270,4) would be a 3x4 roll
 function makeRoll (params) {
   var pathsArray = [];
@@ -3638,7 +3646,8 @@ function makeRoll (params) {
     dx = (((Math.cos(radPoint) * (rollcurveRadius - 4)) - (radCos * rollcurveRadius))) - dx - dxTip;
     dy = -(((Math.sin(radPoint) * (rollcurveRadius - 4)) - (radSin * rollcurveRadius))) - dy - dyTip;
     path += 'l ' + roundTwo(dx) + ',' + roundTwo(dy) + ' z';
-    pathsArray.push ({'path':path, 'style':style[0]});
+    // only show arrow tip when params[6] is not trueish
+    if (!params[6]) pathsArray.push ({'path':path, 'style':style[0]});
 
     // Make the second tip for glider super slow rolls
     if (params[3]) {
@@ -3657,7 +3666,9 @@ function makeRoll (params) {
     }
     
     // Calculate at which angle the curve starts and stops
-    radPoint = (extent >= 360) ? (rad - sign * (Math.PI / 6)) : rad;
+		radPoint = (extent >= 360) ?
+	    rad - sign * (Math.PI / (params[6] ? 3.5 : 6)) : // make roll symmetrical or not
+	    rad;
     var dx = (Math.cos(radPoint) - radCos) * rollcurveRadius - dxTip;
     var dy = -(Math.sin(radPoint) - radSin) * rollcurveRadius - dyTip;
     // Make the curved path
@@ -3665,7 +3676,25 @@ function makeRoll (params) {
       rollcurveRadius + ',' + rollcurveRadius + ' 0 0 ' + sweepFlag +
       ' ' + roundTwo(dx) + ',' + roundTwo(dy) + ' ';
     pathsArray.push ({'path':path, 'style':style[1]});
-        
+
+    if (params[6] > 2) {	// if "any roll" or spin => Draw the 2 little lines for "any rolls" and, if spin, the drawing "spin allowed".
+       var
+	       G_len = roundTwo (rollcurveRadius / 2),
+	       G_pos = roundTwo (rollcurveRadius / 5);	// Length and spacing of the 2 little lines for "any rolls".
+       path = 'm ' + (dxTip + (dxTip > 0 ? G_pos : -G_pos)) +
+	       ',' + (dyTip + 0.5 * G_len) + ' v ' + -G_len +
+	       ' m ' + (dxTip > 0 ? G_pos : -G_pos) + ',0 v ' + G_len;
+       pathsArray.push ({'path':path, 'style':style[1]});
+       if (params[6] == 4) {	// Draw the drawing "spin allowed".
+				 G_pos = rollcurveRadius / 15 ;
+	    	 path = 'm ' + roundTwo(-dxTip +
+		    	 (dx > 0 ? 2 * G_len + G_pos : -2 * G_len -G_pos)) + ',' +
+		    	 roundTwo(dy - 0.7 * G_len) + ' h ' + roundTwo(2*G_len) +
+		    	 ' l ' + roundTwo(-2*G_len) + ',' + roundTwo(G_len);
+	    	 pathsArray.push ({'path':path, 'style':style[1]});
+       }
+    }
+            
     // Where necessary, show the roll numbers after completing the first
     // roll point and arc.
     // This is only necessary for rolls that are not multiples of 180 or
@@ -5421,7 +5450,9 @@ function addEventListeners () {
   document.getElementById('smallMobile').addEventListener('change', switchSmallMobile, false);
   document.getElementById('queueColumns').addEventListener('change', changeQueueColumns, false);
   document.getElementById('positionClearAuto').addEventListener('change', function(){saveSettingsStorage()}, false);
-  document.getElementById('showHandles').addEventListener('change', function(){saveSettingsStorage()}, false);
+  document.getElementById('showHandles').addEventListener('change', function(){
+		setFigureSelected (selectedFigure.id);
+		saveSettingsStorage()}, false);
   document.getElementById('imageFormatPNG').addEventListener('change', function(){saveSettingsStorage()}, false);
   document.getElementById('imageFormatSVG').addEventListener('change', function(){saveSettingsStorage()}, false);
   document.getElementById('saveFigsSeparateWidth').addEventListener('change', function(){saveSettingsStorage()}, false);
@@ -5518,7 +5549,7 @@ function addMenuEventListeners() {
   function addListeners(e) {
     var li = e.getElementsByTagName ('li');
     for (var i = 0; i < li.length; i++) {
-      if (platform.mobile || platform.smallMobile) {
+      if (platform.mobile) {
 				li[i].addEventListener('mousedown', menuActive);
 			} else {
         li[i].addEventListener('mouseover', menuActive);
@@ -6126,20 +6157,25 @@ function addRollSelectElement (figNr, rollEl, elNr, parent) {
     if (roll[0] == pattern) html += ' selected="selected"';
     html += '>'+roll[1]+'</option>';
   }
-  // build the positive spin options
-  for (var i = 0; i < posSpinTypes.length; i++) {
-    var roll = posSpinTypes[i].split(':');
-    html += '<option value="'+roll[0]+'" class="posSpinSelectOption"';
-    if (roll[0] == pattern) html += ' selected="selected"';
-    html += '>'+roll[1]+'</option>';
-  }
-  // build the negative spin options
-  for (var i = 0; i < negSpinTypes.length; i++) {
-    var roll = negSpinTypes[i].split(':');
-    html += '<option value="'+roll[0]+'" class="negSpinSelectOption"';
-    if (roll[0] == pattern) html += ' selected="selected"';
-    html += '>'+roll[1]+'</option>';
-  }
+  // add spins when rollcode = 4 AND in first element, OR nonArestiRolls
+  // is enabled
+  if ((fig[figures[figNr].figNr].rolls[rollEl] === 4 && (elNr === 0)) ||
+	  document.getElementById('nonArestiRolls').checked) {
+	  // build the positive spin options
+	  for (var i = 0; i < posSpinTypes.length; i++) {
+	    var roll = posSpinTypes[i].split(':');
+	    html += '<option value="'+roll[0]+'" class="posSpinSelectOption"';
+	    if (roll[0] == pattern) html += ' selected="selected"';
+	    html += '>'+roll[1]+'</option>';
+	  }
+	  // build the negative spin options
+	  for (var i = 0; i < negSpinTypes.length; i++) {
+	    var roll = negSpinTypes[i].split(':');
+	    html += '<option value="'+roll[0]+'" class="negSpinSelectOption"';
+	    if (roll[0] == pattern) html += ' selected="selected"';
+	    html += '>'+roll[1]+'</option>';
+	  }
+	}
   // build the glider slow roll options
   if (sportingClass.value === 'glider') {
     for (var i = 0; i < gliderRollTypes.length; i++) {
@@ -6607,6 +6643,7 @@ function restoreDefaultSettings () {
 function updateNonArestiRolls() {
   saveSettingsStorage();
   draw();
+  selectFigure (false);
 }
 
 // updateNumberInCircle is called when "number in circle" is changed in
@@ -6735,29 +6772,28 @@ function updateFigureEditor () {
 // showFigureSelector displays the base figure selector
 // for some reason sliding only works from the left for smallMobile !?
 function showFigureSelector () {
+	var figureSelector = document.getElementById('figureSelector');
   updateFigureSelectorOptions ();
-  document.getElementById('figureSelector').classList.add('active');
+  figureSelector.classList.add('active');
   if (activeForm === 'FU') {
     // set figureString correctly, using positioning relative to leftBlock
     document.getElementById('leftBlock').scrollTop = 0;
-    document.getElementById('figureString').classList.add('inFigureSelector');
+    figureSelector.insertBefore (
+	    document.getElementById('figureString'),
+	    figureSelector.firstChild);
+    //document.getElementById('figureString').classList.add('inFigureSelector');
   }
-  /*if (platform.smallMobile) {
-	  setTimeout (function() {
-			document.getElementById ('leftBlockContainer').classList.add ('hidden');
-		}, 500);
-	}*/
 }
 
 // hideFigureSelector hides the base figure selector
 // but because we do need it to be available for various operations
 // we hide it by removing the CSS class that shows it on screen
 function hideFigureSelector () {
-  document.getElementById('figureSelector').classList.remove('active');
-  document.getElementById('figureString').classList.remove('inFigureSelector');
-  /*if (platform.smallMobile) {
-	  document.getElementById ('leftBlockContainer').classList.remove ('hidden');
-	}*/
+  document.getElementById ('figureSelector').classList.remove('active');
+  document.getElementById ('leftBlock').insertBefore (
+	  document.getElementById('figureString'),
+	  document.getElementById('leftBlock').firstChild);
+  //document.getElementById('figureString').classList.remove('inFigureSelector');
 }
 
 // hideLogoChooser hides the logo chooser
@@ -6845,7 +6881,9 @@ function updateFigureOptions (figureId) {
     
     if ((activeForm === 'FU') && ((f.unknownFigureLetter === 'L') || !f.unknownFigureLetter)) {
       // update and show figureStringInput
-      document.getElementById ('figureStringInput').value = (!/[LX]/.test(f.string)) ? f.string : '';
+      if (document.getElementById ('figureStringInput').value !== f.string) {
+	      document.getElementById ('figureStringInput').value = (!/[LX]/.test(f.string)) ? f.string : '';
+			}
       document.getElementById ('figureString').classList.remove ('noDisplay');
     }
 
@@ -7125,8 +7163,8 @@ function addRollSelectors (figureId) {
           divdiv.classList.add ('contentLabel');
           divdiv.innerHTML = userText.rollPos[rollNr];
           div.appendChild (divdiv);
-          // roll positions of type 4 only allow changing line length 
-          if (rolls[i] != 4) {
+          // roll positions of type 9 only allow changing line length 
+          if (rolls[i] != 9) {
             // loop until max rolls per element + 1
             for (var j = 0; j < rollsPerRollElement + 1; j++) {
               var pattern = figures[figureId].rollInfo[i].pattern[j-1];
@@ -7217,9 +7255,7 @@ function updateFigure (noRedraw) {
 	  base = fig[figNr].base,
 	  // update the original pattern for entry/exit changes
 	  entry = document.getElementById('figEntryButton'),
-	  exit = document.getElementById('figExitButton'),
-	  matchRollOrLine = RegExp ('[\\' + figpat.halfroll + figpat.fullroll +
-		  '\\' + figpat.anyroll + figpat.longforward + ']');
+	  exit = document.getElementById('figExitButton');
 
   if (entry.classList.contains ('inverted')) {
     pattern = '-' + pattern.substring(1);
@@ -7264,7 +7300,7 @@ function updateFigure (noRedraw) {
   var rollEl = 0;
   // start at roll 1 for figures that don't have roll element 0
   if (!document.getElementById('roll0')) rollEl = 1;
-  while (pattern.match(matchRollOrLine)) {
+  while (pattern.match(regexRollsAndLines)) {
     var rolls = '';
     for (var rollNr = 0; rollNr <= rollsPerRollElement; rollNr++) {
       // apply gaps
@@ -7311,7 +7347,7 @@ function updateFigure (noRedraw) {
         rolls += ';' + userpat.switchDirX;
       }
     } 
-    pattern = pattern.replace(matchRollOrLine, rolls);
+    pattern = pattern.replace(regexRollsAndLines, rolls);
     rollEl++;
   }
   // pattern is empty, assume horizontal line (figure 1.1.1.1)
@@ -8316,8 +8352,11 @@ function parseFiguresFile () {
               case (figpat.anyroll):
                 fig[i].rolls[r] = 3;
                 break;
+              case (figpat.spinroll):
+	              fig[i].rolls[r] = 4;
+	              break;
               case (figpat.longforward):
-                fig[i].rolls[r] = 4;
+                fig[i].rolls[r] = 9;
                 break;
               default:
                 fig[i].rolls[r] = 0;
@@ -8692,16 +8731,16 @@ function loadRules() {
             '" does not exist');
         }
       } else if (rules[i].match(/^allow=/)) {
-      // Apply 'allow' rules
+	      // Apply 'allow' rules
         var newCatLine = rules[i].replace(/^allow=/, '');
         var newCat = newCatLine.match(/^[^\s]*/g);
         var newRules = newCatLine.replace(newCat, '').split(';');
         for (var j = 0; j<newRules.length; j++) {
           newRules[j] = newRules[j].replace(/^\s+|\s+$/g, '');
         }
-        checkAllowRegex.push ({'regex':RegExp(newCat, 'g'), 'rules':newRules});
+        checkAllowRegex.push ({'regex':RegExp(newCat, ''), 'rules':newRules});
       } else if (rules[i].match(/^allow-defrules=/)) {
-      // Apply 'allow-defrules' rules
+	      // Apply 'allow-defrules' rules
         var newCatLine = rules[i].replace(/^allow-defrules=/, '');
         defRules = newCatLine.replace(/[\s]+/g, '').split(';');
       } else if (rules[i].match(/^[0-9]+\./)) {
@@ -8709,17 +8748,15 @@ function loadRules() {
         // The key of checkAllowCatId is equal to the figure number
         // The value is an array of rules that have to be applied
         var newCatLine = rules[i];
-// Modif GG v2016.1.4 Start
         var newCat = newCatLine.match(/^[^\s\(]*/g)[0];
         // Extract in the array newK the specified K if any
         var newK = newCatLine.match(/\([0-9,:\s]*\)/);	  
         if (newK) {
           newCatLine = newCatLine.replace(newK[0], '');
-      // change from ':' to ',' is not necessary since rules file doesn't mix powered and glider
-      //	  newK = newK[0].replace(/[\(\)\s]*/g,'').replace(/:/g,',').split(',');
+		      // change from ':' to ',' is not necessary since rules file
+		      // doesn't mix powered and glider
           newK = newK[0].replace(/[\(\)\s]*/g,'').split(',');
         } 
-// Modif GG v2016.1.4 End
         // Create an array with rules that have to be applied to the figure
         var newRules = newCatLine.replace(newCat, '').replace(/[\s]+/g, '').split(';');
         // When there are no rules we want an empty array, whereas split
@@ -8730,7 +8767,6 @@ function loadRules() {
         var multiple = newCat.match(/[0-9]+\-[0-9]+$/);
         if (multiple) {
           multiple = multiple[0];
-// Modif GG v2016.1.4 Start	  a check could be added to verify that the "size" of multiple and newK match.
           for (var j = multiple.split('-')[0]; j < (parseInt(multiple.split('-')[1]) + 1); j++) {
             checkAllowCatId[newCat.replace(multiple, '') + j] = newRules;
           if (newK && (newK[j - multiple.split('-')[0]] != '')) {
@@ -8753,7 +8789,6 @@ function loadRules() {
             rule_K.push({'i_fig':i_fig,'new_K':newK[0]}) ;			
           }
         }
-// Modif GG v2016.1.4 End
       } else if (rules[i].match(/[^-]+-min=\d+$/)) {
       // Apply [group]-min rules
         var group = rules[i].replace(/-min/, '').split('=');
@@ -8906,6 +8941,28 @@ function loadRules() {
       }
     }
   }
+  
+  // Ajout GG 2018 checkAllowRegex start
+	if (checkAllowRegex) {
+    for (var i = 0 ; i < checkAllowRegex.length ; i++) {
+			for (var j in fig) {
+				if (fig[j].aresti &&
+					checkAllowRegex[i].regex.test(fig[j].aresti) &&
+					!(fig[j].aresti in checkAllowCatId)) {
+						checkAllowCatId[fig[j].aresti] =
+							(checkAllowRegex[i].rules.length == 0) ? [] : checkAllowRegex[i].rules;
+						}
+		  }
+      for (var j in rollAresti) {
+				if (checkAllowRegex[i].regex.test(rollAresti[j]) &&
+					!(rollAresti[j] in checkAllowCatId)) {
+					checkAllowCatId[rollAresti[j]] = [];
+				}
+	    }
+	  }
+	}
+	// Ajout GG 2018 checkAllowRegex end
+
   // set rules active
   rulesActive = year + ruleName + ' ' + catName + ' ' + programName;
 
@@ -9075,15 +9132,17 @@ function checkRules () {
   
   // var t = Date.now(); // used for checking execution time. Typical less than 50ms
   
-  var figNr = 0;
-  var figureK = 0;
-  var additionals = 0;
-  var groupMatch = [];
-  var figCount = [];
-  var elemCount = [];
-  var log = [];
-  var logLine = '';
-  var errFigs;
+  var
+	  figNr = 0,
+	  figureK = 0,
+	  additionals = 0,
+	  groupMatch = [],
+	  figCount = [],
+	  elemCount = [],
+	  log = [],
+	  logLine = '',
+	  errFigs;
+  
   log.push ('Testing sequence:' + activeSequence.text);
   
   // first we check for rules that are ALWAYS valid, i.e. Aresti
@@ -9124,6 +9183,7 @@ function checkRules () {
     log.push ('Rules: no');
     return log;
   }
+  
   for (var i = 0; i < figures.length; i++) {
     var aresti = figures[i].aresti;
     if (aresti) {
@@ -9198,13 +9258,17 @@ function checkRules () {
                   log.push ('group-' + checkCatGroup[group].name +
                     ': Count=' + groupFigMatch[group].length +
                     ' Elem count=' + elemCount[aresti[j]]);
+                  if (checkCatGroup[group].minperfig &&
+	                  (groupFigMatch[group].length < checkCatGroup[group].minperfig)) {
+										if (('maxperfig' in checkCatGroup[group]) &&
+											(checkCatGroup[group].minperfig === checkCatGroup[group].maxperfig)) {
+											checkAlert(group, 'exactlyperfig');
+										} else checkAlert(group, 'minperfig', figNr);
+                    log.push('Minimum of ' + checkCatGroup[group].minperfig + ' elements of this group not reached');
+                  }
                   if (checkCatGroup[group].maxperfig && (groupFigMatch[group].length > checkCatGroup[group].maxperfig)) {
                     checkAlert(group, 'maxperfig', figNr);
                     log.push('Maximum of ' + checkCatGroup[group].maxperfig + ' elements of this group exceeded');
-                  }
-                  if (checkCatGroup[group].minperfig && (groupFigMatch[group].length < checkCatGroup[group].minperfig)) {
-                    checkAlert(group, 'minperfig', figNr);
-                    log.push('Minimum of ' + checkCatGroup[group].minperfig + ' elements of this group not reached');
                   }
                 }
               }
@@ -9226,7 +9290,7 @@ function checkRules () {
           //log.push ('Checking rules on specific allowed figures');
           var arestiNr = figString.split(' ')[0];
           //console.log(arestiNr);
-          if (arestiNr in checkAllowCatId) {
+          if ((arestiNr in checkAllowCatId) && (checkAllowCatId[arestiNr][0] !== '')) {
             //log.push('Allowed base figure:' + arestiNr);
             // Apply rules to the figure
             // Run the checks on the rolls
@@ -9385,7 +9449,10 @@ function checkRules () {
         }
         if ('minperfig' in checkCatGroup.k) {
           if (figK < checkCatGroup.k.minperfig) {
-            checkAlert('k', 'minperfig', figNr);
+						if (('maxperfig' in checkCatGroup.k) &&
+							(checkCatGroup.k.minperfig === checkCatGroup.k.maxperfig)) {
+							checkAlert('k', 'exactlyperfig', figNr);
+						} else checkAlert('k', 'minperfig', figNr);
           }
         }
         if ('maxperfig' in checkCatGroup.k) {
@@ -9403,7 +9470,12 @@ function checkRules () {
   }
   // check for total min/max K
   if ('min' in checkCatGroup.k) {
-    if (figureK < checkCatGroup.k.min) checkAlert('k', 'min');
+		if (figureK < checkCatGroup.k.min) {
+			if (('max' in checkCatGroup.k) &&
+				(checkCatGroup.k.min === checkCatGroup.k.max)) {
+				checkAlert ('k', 'exactly');
+			} else checkAlert('k', 'min');
+		}
   }
   if ('max' in checkCatGroup.k) {
     if (figureK > checkCatGroup.k.max) checkAlert('k', 'max');
@@ -9432,7 +9504,10 @@ function checkRules () {
         log.push ('testing group ' + group + '-min=' +
           checkCatGroup[group].min + ' val=' + groupMatch[group].length);
         if (groupMatch[group].length < checkCatGroup[group].min) {
-          checkAlert(group, 'min');
+					if (('max' in checkCatGroup[group]) &&
+						(checkCatGroup[group].min === checkCatGroup[group].max)) {
+						checkAlert(group, 'exactly');
+					} else checkAlert(group, 'min');
           log.push ('*** Error: Minimum ' + checkCatGroup[group].min +
             ' of group ' + group);
         }
@@ -9485,7 +9560,10 @@ function checkRules () {
     } else {
       // No occurrences of this group, was there a minimum?
       if ((group != 'k') && (checkCatGroup[group].min)) {
-        checkAlert(group, 'min');
+				if (('max' in checkCatGroup[group]) &&
+					(checkCatGroup[group].min === checkCatGroup[group].max)) {
+					checkAlert(group, 'exactly');
+				} else checkAlert(group, 'min');
         log.push ('*** Error: Minimum ' + checkCatGroup[group].min +
           ' of group ' + group);
       }
@@ -9496,19 +9574,22 @@ function checkRules () {
   for (group in checkFigGroup) {
     // Did we have a match on this group?
     if (groupMatch[group]) {
-      // Check for max and min occurrences of the group
+      // Check for min and max occurrences of the group
+      if (('min' in checkFigGroup[group]) &&
+        (groupMatch[group].length < checkFigGroup[group].min)) {
+				if (('max' in checkFigGroup[group]) &&
+					(checkFigGroup[group].min === checkFigGroup[group].max)) {
+					checkAlert(group, 'figexactly');
+				} else checkAlert(group, 'figmin');
+        log.push ('*** Error: Minimum ' + checkFigGroup[group].min +
+          ' of group ' + group);
+      }
       if (('max' in checkFigGroup[group]) &&
         (groupMatch[group].length > checkFigGroup[group].max)) {
         errFigs = figureNumbers (groupMatch[group]);
         checkAlert(group, 'figmax', errFigs);
         log.push ('*** Error: Maximum ' + checkFigGroup[group].max +
           ' of group ' + group + '(' + errFigs + ')');
-      }
-      if (('min' in checkFigGroup[group]) &&
-        (groupMatch[group].length < checkFigGroup[group].min)) {
-        checkAlert(group, 'figmin');
-        log.push ('*** Error: Minimum ' + checkFigGroup[group].min +
-          ' of group ' + group);
       }
       // Check for repeats of the exact same figure when necessary
       if ('repeat' in checkFigGroup[group]) {
@@ -9538,7 +9619,10 @@ function checkRules () {
     } else {
       // No occurrences of this group, was there a minimum?
       if ('min' in checkFigGroup[group]) {
-        checkAlert(group, 'figmin');
+				if (('max' in checkFigGroup[group]) &&
+					(checkFigGroup[group].min === checkFigGroup[group].max)) {
+					checkAlert(group, 'figexactly');
+				} else checkAlert(group, 'figmin');
         log.push ('*** Error: Minimum ' + checkFigGroup[group].min +
           ' of group ' + group);
       }
@@ -9686,37 +9770,42 @@ function checkRuleText (obj) {
 // value : a value for processing
 // type  : the type of checking error
 // rule  : optional, the rulebook rule that invoked this as in xxx-rule
+//         or literal text
 function checkAlert (value, type, figNr, rule) {
   var alertRule = false;
   var alertFig = figNr ? '(' + figNr + ') ' : '';
   switch (type) {
     case 'maxperfig':
     case 'minperfig':
+    case 'exactlyperfig':
     case 'max':
     case 'min':
+    case 'exactly':
     case 'repeat':
     case 'totrepeat':
 	    // reduce max total K for floating point
 	    if (value === 'k' && checkCatGroup.floatingPoint) {
 				alertMsgs.push(alertFig + sprintf (userText.checkAlert[type],
-        checkCatGroup[value][type] - checkCatGroup.floatingPoint,
+        checkCatGroup[value][type.replace (/^exactly/, 'max')] - checkCatGroup.floatingPoint,
         checkName(checkCatGroup[value])));
 			} else {
 	      alertMsgs.push(alertFig + sprintf (userText.checkAlert[type],
-	        checkCatGroup[value][type], checkName(checkCatGroup[value])));
+	        checkCatGroup[value][type.replace (/^exactly/, 'max')],
+	        checkName(checkCatGroup[value])));
 	    }
       if (checkCatGroup[value].rule) {
-        alertRule = checkCatGroup[value].rule[type];
+        alertRule = checkCatGroup[value].rule[type.replace (/^exactly/, 'max')];
       }
       break;
     case 'figmax':
     case 'figmin':
+    case 'figexactly':
     case 'figrepeat':
       alertMsgs.push(alertFig + sprintf (userText.checkAlert[type],
-        checkFigGroup[value][type.replace (/^fig/, '')],
+        checkFigGroup[value][type.replace (/^fig/, '').replace (/exactly$/, 'max')],
         checkName(checkFigGroup[value])));
       if (checkFigGroup[value].rule) {
-        alertRule = checkFigGroup[value].rule[type.replace (/^fig/, '')];
+        alertRule = checkFigGroup[value].rule[type.replace (/^fig/, '').replace (/exactly$/, 'max')];
       }
       break;
     case 'notAllowed':
@@ -9728,7 +9817,7 @@ function checkAlert (value, type, figNr, rule) {
       if (rule) {
         if (checkRule[rule] && checkRule[rule].rule) {
           alertRule = checkRule[rule].rule;
-        }// else alertRule = rule;
+        } else alertRule = rule;
       }
   }
   if (alertRule) alertMsgRules [alertMsgs[alertMsgs.length - 1]] = alertRule;
@@ -10068,11 +10157,17 @@ function updateFigureSelectorOptions (selectedOption) {
 
 // changeFigureString is executed when the figureString in the Figure
 // Selector is changed
-function changeFigureString () {
-  var string = this.value.replace (/ /g, '');
-  this.value = string;
+function changeFigureString (e) {
+	
+	var string = this.value.replace (/ /g, '');
+
+	if (e.inputType === 'insertText') {
+		if (e.data === ' ') return false;
+	} else this.value = string;
+	
   string = string || (additionalFig.max ? 'L' : 'X');
   updateSequence (selectedFigure.id, string, true, true);
+  this.focus();
 }
 
 // changeHideIllegal is executed when the hideIllegal checkbox is toggled
@@ -10154,8 +10249,10 @@ function changeFigureGroup() {
         if (!fig[i].svg) {
           // The figure has not been drawn in this session, go ahead and
           // draw it. First we take the original base and remove + and
-          // full/any roll symbols
-          var figure = fig[i].pattern.replace(regexPlusFullAnyRoll, '');
+          // replace full/any roll/spin symbols by '1'
+					var figure = fig[i].pattern.replace(/[\+]/g, '').replace(
+						RegExp('[\\' + figpat.fullroll + '\\' + figpat.anyroll +
+						'\\' + figpat.spinroll + ']', 'g'), '1') ;
           // next we replace half roll symbols by actual half rolls
           figure = figure.replace(RegExp('\\' + figpat.halfroll, 'g'), '2');
           figures[-1] = [];
@@ -10169,7 +10266,7 @@ function changeFigureGroup() {
           if (fig[i].string) {
             buildFigure ([i], fig[i].string, false, -1);
           } else {
-            buildFigure ([i], figure, false, -1);
+            buildFigure ([i], figure, false, -1, true);
           }
           // clear the svg
           prepareSvg(svg);
@@ -10233,7 +10330,10 @@ function changeFigureGroup() {
               rollK = -1;
               break;
             }
-            rollK += rollKGlider[fig[i].rollAresti[j]];
+            // only count half rolls and rolls in queue figures
+            if (fig[i].string || (fig[i].rolls[j] == 2)) {
+	            rollK += rollKGlider[fig[i].rollAresti[j]];
+						}
           }
         } else {
           var k = fig[i].kpwrd;
@@ -10244,15 +10344,20 @@ function changeFigureGroup() {
               rollK = -1;
               break;
             }
-            rollK += rollKPwrd[fig[i].rollAresti[j]];
+            // only count half rolls and rolls in queue figures
+            if (fig[i].string || (fig[i].rolls[j] == 2)) {
+	            rollK += rollKPwrd[fig[i].rollAresti[j]];
+						}
           }
         }
+
         if (rollK > 0) {
           k += '(+' + rollK + ')';
         } else if (rollK < 0) {
           k += '<font color="red">(N/A)</font>';
         }
         fig[i].rollK = rollK;
+
         inner.innerHTML += 'K:' + k;
         
         // extra for figures in queueGroup
@@ -10266,8 +10371,9 @@ function changeFigureGroup() {
           // which fires before mousedown
           if (platform.touch) {
             div.addEventListener ('touchstart', removeFromQueue);
-          }
-          div.addEventListener ('mousedown', removeFromQueue);
+          } else {
+	          div.addEventListener ('mousedown', removeFromQueue);
+					}
           inner.appendChild(div);
           // add the unknownFigureLetter where defined
           if (fig[i].unknownFigureLetter) {
@@ -11184,8 +11290,8 @@ function grabFigure(evt) {
       var h = parseInt(viewBox[3]) + parseInt(svgRect.top) +
 	      parseInt(dragTarget.scrollTopSave);
       svg.setAttribute ('viewBox',
-        (viewBox[0] - svgRect.left - dragTarget.scrollLeftSave) + ' ' +
-        (viewBox[1] - svgRect.top - dragTarget.scrollTopSave) + ' ' + w + ' ' + h
+        roundTwo(viewBox[0] - svgRect.left - dragTarget.scrollLeftSave) + ' ' +
+        roundTwo(viewBox[1] - svgRect.top - dragTarget.scrollTopSave) + ' ' + w + ' ' + h
       );
       svg.setAttribute ('width', w);
       svg.setAttribute ('height', h);
@@ -11256,6 +11362,7 @@ function setFigChooser (figNr) {
 
 // setFigureSelected sets the active figure and applies color filter
 function setFigureSelected (figNr) {
+
   if (figNr === false) figNr = null;
   // define header element for info
   var header = document.getElementById('figureHeader');
@@ -11288,11 +11395,14 @@ function setFigureSelected (figNr) {
 	      ' (' + figures[figNr].k.reduce(function(a, v) { return a + v; }) + 'K)';
       
       if (el) {
+	      var
+		      svgScale = roundTwo (SVGRoot.viewBox.baseVal.width /
+			      SVGRoot.width.baseVal.value) || 1,
+		      showHandles = document.getElementById ('showHandles').checked &&
+		        !(activeForm === 'Grid'),
+	        nodes = el.childNodes,
+	        length = nodes.length;
 				selectedFigure = el.getBBox();
-	      var showHandles = document.getElementById ('showHandles').checked &&
-	        !(activeForm === 'Grid');
-        var nodes = el.childNodes;
-        var length = nodes.length;
 				// apply color filter
         for (var i = 0 ; i < length; i++) {
           var s = nodes[i].getAttribute('style');
@@ -11303,13 +11413,13 @@ function setFigureSelected (figNr) {
           }
           // add editing handles where applicable. They are centered on
           // the element. Somewhat larger circles for touch devices to
-          // improve grabbing
+          // improve grabbing, corrected for svg scaling
           if (nodes[i].id && showHandles) {
             var bBox = nodes[i].getBBox();
             drawCircle ({
               'cx': roundTwo(bBox.x + bBox.width / 2),
               'cy': roundTwo(bBox.y + bBox.height / 2),
-              'r': platform.touch ? 12 : 8,
+              'r': platform.touch ? 12 * svgScale : 8,
               'style': style.selectedFigureHandle,
               'cursor': 'move',
               'id': nodes[i].id + '-handle'
@@ -11321,11 +11431,11 @@ function setFigureSelected (figNr) {
           drawImage ({
             x: selectedFigure.x + selectedFigure.width - 6,
             y: selectedFigure.y - 9,
-            width: 20,
-            height: 20,
+            width: 28 * svgScale,
+            height: 28 * svgScale,
             'id': 'magnifier',
             cursor: 'move',
-            href: 'img/magnifier.png'}, el);
+            href: 'img/magnifier.svg'}, el);
         }
 
       }
@@ -11462,16 +11572,19 @@ function Drag (evt) {
         // Do this by first removing it, then determining the bBox and
         // putting it back
         dragTarget.parentNode.removeChild(dragTarget.parentNode.lastChild);
-        var bBox = dragTarget.parentNode.getBBox();
+        var
+	        bBox = dragTarget.parentNode.getBBox(),
+	        svgScale = roundTwo (SVGRoot.viewBox.baseVal.width /
+		        SVGRoot.width.baseVal.value) || 1;
         // add scale handle
         drawImage ({
           x: bBox.x + bBox.width - 10,
           y: bBox.y - 10,
-          width: 20,
-          height: 20,
+          width: 28 * svgScale,
+          height: 28 * svgScale,
           'id': 'magnifier',
           cursor: 'move',
-          href: 'img/magnifier.png'}, dragTarget.parentNode);
+          href: 'img/magnifier.svg'}, dragTarget.parentNode);
       }
     } else if (dragTarget.id === 'magnifier') {
       
@@ -11538,10 +11651,11 @@ function Drag (evt) {
     
 
     // Adjust sequence SVG size
-    var bBox = SVGRoot.getElementById ('sequence').getBBox();
-    var viewBox = SVGRoot.getAttribute('viewBox').split(' ');
-    var w = roundTwo((bBox.x - viewBox[0]) + bBox.width + 5);
-    var h = roundTwo((bBox.y - viewBox[1]) + bBox.height + 5);
+    var
+	    bBox = SVGRoot.getElementById ('sequence').getBBox(),
+	    viewBox = SVGRoot.getAttribute('viewBox').split(' '),
+	    w = roundTwo((bBox.x - viewBox[0]) + bBox.width + 5),
+	    h = roundTwo((bBox.y - viewBox[1]) + bBox.height + 5);
     SVGRoot.setAttribute ('viewBox',
       viewBox[0] + ' ' +
       viewBox[1] + ' ' +
@@ -11564,8 +11678,9 @@ function Drop(evt) {
   
   function restoreViewBox () {
     var bBox = SVGRoot.getBBox();
-    SVGRoot.setAttribute ('viewBox', bBox.x + ' ' + bBox.y + ' ' +
-      (parseInt(bBox.width) + 5) + ' ' + (parseInt(bBox.height) + 5));
+    SVGRoot.setAttribute ('viewBox', roundTwo(bBox.x) + ' ' +
+	    roundTwo(bBox.y) + ' ' + (parseInt(bBox.width) + 5) + ' ' +
+	    (parseInt(bBox.height) + 5));
     if (!platform.smallMobile) {
       SVGRoot.setAttribute ('width', parseInt(bBox.width) + 5);
       SVGRoot.setAttribute ('height', parseInt(bBox.height) + 5);
@@ -11604,6 +11719,8 @@ function Drop(evt) {
     
     // create curveTo for dragged elements when not in grid view
     if (transform && (activeForm !== 'Grid')) {
+		  // make sure a comma is used for x y separation in transform
+			transform = transform.replace (/ /, ',');
       var dxdy = transform.match(/[0-9\-\.]*,[0-9\-\.]*/)[0].split(',');
       var dx = parseInt(dxdy[0] / lineElement)
       var dy = parseInt(dxdy[1] / lineElement)
@@ -12255,7 +12372,8 @@ function startFuDesigner(dontConfirm) {
       // add new stylesheet rule 0 to hide all elements with class
       // disableFUdesigner. Only do this after checkSequenceChanged as
       // otherwise it may break some bBox routines!
-      document.styleSheets[0].insertRule('.disableFUdesigner{display:none !important;}', 0);
+      document.getElementById ('fuDesignerStyle').innerHTML =
+	      '.disableFUdesigner{display:none !important;}';
   
       selectForm('FU');
       availableFigureGroups();
@@ -12287,9 +12405,9 @@ function exitFuDesigner (newSequence) {
       // remove fuDesigner class from body
       document.body.classList.remove ('fuDesigner');
       
-      // delete stylesheet rule 0 to show all elements with class
+      // delete fuDesignerStyle rule to show all elements with class
       // disableFUdesigner
-      document.styleSheets[0].deleteRule(0);
+      document.getElementById ('fuDesignerStyle').innerHTML = '';
 
 			if (platform.mobile) {  
 				// move items from main menu back to File menu
@@ -12550,74 +12668,25 @@ function handleFreeRemove (e, el) {
 
   noPropagation(e); // Stops some browsers from redirecting.
   
-  handleFreeDeselect (e);
+  el.parentNode.style.transform = 'scale(0.01)';
   
-  var figNr = el.parentNode.className.match(regexFuFigNr)[1];
-  
-  // remove figureletter first when applicable
-  if (/^\"\@[A-Z]/.test(figures[figNr - 1].string)) {
-    updateSequence (figNr - 1, '', true);
-    updateSequence (figNr - 1, '', true);
-  } else updateSequence (figNr, '', true);
-
-  // remove any double entry options, keeping last one
-  sequenceText.innerText = sequenceText.innerText.replace (/e[udj] (e[udj])/, '$1');
-  checkSequenceChanged();
+  // wait for remove animation to complete
+  setTimeout (function() {
+	  handleFreeDeselect (e);
+	  
+	  var figNr = el.parentNode.className.match(regexFuFigNr)[1];
+	  
+	  // remove figureletter first when applicable
+	  if (/^\"\@[A-Z]/.test(figures[figNr - 1].string)) {
+	    updateSequence (figNr - 1, '', true);
+	    updateSequence (figNr - 1, '', true);
+	  } else updateSequence (figNr, '', true);
+	
+	  // remove any double entry options, keeping last one
+	  sequenceText.innerText = sequenceText.innerText.replace (/e[udj] (e[udj])/, '$1');
+	  checkSequenceChanged();
+	}, 300);
 }
-
-/**
-// handleFreeFlipExit flips exit direction for Free (Un)known figures
-function handleFreeFlipExit (e) {
-  if (e.stopPropagation) {
-    e.stopPropagation(); // Stops some browsers from redirecting.
-  }
-
-  var figNr = this.parentNode.className.match(regexFuFigNr)[1];
-  var s = figures[figNr].string;
-  if (figures[figNr].exitAxis === 'X') {
-    if (s.match (/[a-z].*>/)) {
-      s = s.replace (/([a-z].*)>/, '$1');
-    } else s += '>';
-    if (figures[figNr].switchFirstRoll) {
-      s = s.replace (/;[\^>]/, '');
-    } else if (figures[figNr].switchFirstRoll === false) {
-      s = s.replace (
-    }// else s = s.replace (/;;
-  } else {
-    var string = (figures[figNr].string + '^').replace (/\^\^$/, '');
-  }
-  updateSequence (figNr, s, true);
-}
-
-// handleFreeSubEntry changes entry direction of the subsequence
-function handleFreeSubEntry (e) {
-  if (e.stopPropagation) {
-    e.stopPropagation(); // Stops some browsers from redirecting.
-  }
-
-  var figNr = this.parentNode.className.match(regexFuFigNr)[1];
-  var replace = false;
-  // go back until first subsequence figure
-  for (var i = figNr - 1; i >= 0; i--) {
-    var match = figures[i].string.match(regexSequenceOptions);
-    if (match) break;
-  }
-  switch (match[1]) {
-    case 'eu':
-      var entry = 'ej';
-      break;
-    case 'ej':
-      var entry = 'ed';
-      break;
-    case 'ed':
-      var entry = 'eja';
-      break;
-    default:
-      var entry = 'eu';
-  }
-  updateSequence (i, entry, true);
-}
-*/
 
 // handleFreeDeselect is called when an Additional figure is deselected
 function handleFreeDeselect (e) {
@@ -12633,7 +12702,12 @@ function handleFreeDeselect (e) {
 }
   
 // handleFreeSelect is called by mousedown on a Free (Un)known figure
-function handleFreeSelect () {
+function handleFreeSelect (evt) {
+	// need to do this to fix temporary selection on iOS
+	if (evt.target && evt.target.parentNode &&
+		evt.target.parentNode.classList.contains ('removeFigureButton')) {
+		return;
+	}
   var match = this.className.match(regexFuFigNr);
   if (match) {
     selectFigureFu (this.className.match(regexFuFigNr)[1]);
@@ -13246,10 +13320,6 @@ function makeFormGrid (cols, width, svg) {
   if (platform.smallMobile) {
 		svg.setAttribute("width", 'auto');
     svg.setAttribute("height", 'auto');
-		/**
-    svg.setAttribute("width", 312);
-    svg.setAttribute("height", roundTwo(height * (312 / (width + 2))));
-    */
   } else {
     svg.setAttribute("width", (width + 2));
     svg.setAttribute("height", height);
@@ -13386,10 +13456,11 @@ function getFigureSets (sets, maxSize) {
 // getFigureSets.
 // It is used to create groups from a large number of Unknown figures
 function createFigureProposals () {
-  var realFigs = [];
-  var sets = [];
-  var proposals = [];
-  var size = document.getElementById ('gridColumns').value;
+  var
+	  realFigs = [],
+	  sets = [],
+	  proposals = [],
+	  size = document.getElementById ('gridColumns').value;
   
   // create an array holding the indexes of real figures
   for (var i = 0; i < figures.length; i++) {
@@ -13632,7 +13703,10 @@ function makeFree () {
     var div = document.createElement('div');
     div.classList.add ('removeFigureButton');
     div.innerHTML = '<i class="material-icons">close</i>';
-    div.addEventListener ('mousedown', handleFreeRemove);
+    // in iOS, remove is handled by touchstart
+    if (!iosDragDropShim.enabled) {
+			div.addEventListener ('mousedown', handleFreeRemove);
+		}
     container.appendChild (div);
   }
   
@@ -13848,11 +13922,12 @@ function addFormElements (form) {
 		} else makeMiniFormA ((w + x) + 20, y + 50);
   }
 
-  var bBox = SVGRoot.getElementById('sequence').getBBox();
-  var x = parseInt(bBox.x) ;
-  var y = parseInt(bBox.y);
-  var w = parseInt(bBox.width);
-  var h = parseInt(bBox.height);
+  var
+	  bBox = SVGRoot.getElementById('sequence').getBBox(),
+	  x = parseInt(bBox.x),
+	  y = parseInt(bBox.y),
+	  w = parseInt(bBox.width),
+	  h = parseInt(bBox.height);
   // Change the viewBox to make the sequence fit
   SVGRoot.setAttribute("viewBox",
     (x - 3) + ' ' + (y - 3) + ' ' + (w + 5) + ' ' + (h + 5));
@@ -14156,7 +14231,7 @@ function checkSequenceChanged (force) {
     draw ();
     
     // scale sequence if zoom is set on mobile
-    if (platform.mobile) {
+    if (platform.mobile && (activeForm !== 'FU')) {
 			var zoom = parseInt(document.getElementById('zoom').textContent.match(/\d+/)[0]) / 100;
 			SVGRoot.setAttribute('width', parseInt(SVGRoot.getAttribute('width')) * zoom);
 			SVGRoot.setAttribute('height', parseInt(SVGRoot.getAttribute('height')) * zoom);
@@ -15826,15 +15901,14 @@ function buildForm (print) {
   switch (activeForm) {
     
     case 'Grid':
-      mySVG.setAttribute("width", '100%');
-      mySVG.setAttribute("height", '100%');
-      mySVG.setAttribute("viewBox", '0 0 800 1130');
+	    addFormElementsGrid (mySVG);
       break;
       
     case 'PilotCards':
       // 1 to 4 pilot cards on a sheet
-      var rotate = false;
-      var flipSecond = el.classList.contains ('formRL') ? true : false;
+      var
+	      rotate = false,
+	      flipSecond = el.classList.contains ('formRL') ? true : false;
       switch (el.id) {
         case 'pilotCard2':
           var copies = 2;
@@ -16127,10 +16201,10 @@ function buildForm (print) {
       t.appendChild (tspan(lines[i], dy));
     }
     var box = t.getBBox();
-    var vScale = (1130 - box.height) / 1130;
+    var vScale = (1126 - box.height) / 1130;
     t.setAttribute ('transform', 'translate(' + (-box.x) + ',' +
       (-box.y) + ')');
-    g.setAttribute ('transform', 'translate (0,' + box.height +
+    g.setAttribute ('transform', 'translate (0,' + (box.height + 4) +
       ') scale (1,' + vScale + ')');
     mySVG.appendChild (g);
   }
@@ -16550,9 +16624,8 @@ function buildHeader (svg, logoWidth) {
     drawText ('Form ' + activeForm, 760, 33, 'formATextLarge', 'middle', '', svg);
     drawRectangle (logoWidth, 65, 80, 65, 'formLine', svg);
     drawText (userText.pilotID, logoWidth + 5, 75, 'miniFormA', 'start', '', svg);
-    drawText (document.getElementById('pilot_id').value, logoWidth + 40, 115, 'formATextHuge', 'middle', '', svg);	// Ajout Modif GG 2017
+    drawText (document.getElementById('pilot_id').value, logoWidth + 40, 115, 'formATextHuge', 'middle', '', svg);
     drawRectangle (logoWidth + 80, 65, 640 - logoWidth, 65, 'formLine', svg);
-    // removed "Programme" and added Rules in 1.5.1.6
     drawText (
       document.getElementById('rules').value + ' ' +
       ((document.getElementById('class').value === 'glider') ? 'Glider ' : '') +
@@ -16561,7 +16634,7 @@ function buildHeader (svg, logoWidth) {
       475, 105, 'formATextLarge', 'middle', '', svg);
     drawRectangle (720, 65, 80, 65, 'formLine', svg);
     drawText (userText.flightNr, 725, 75, 'miniFormA', 'start', '', svg);
-    drawText (document.getElementById('flight_nb').value, 760, 115, 'formATextHuge', 'middle', '', svg);	// Ajout Modif GG 2017
+    drawText (document.getElementById('flight_nb').value, 760, 115, 'formATextHuge', 'middle', '', svg);
   } else {
     // IAC Forms
     if (activeForm === 'A') {
@@ -16646,6 +16719,45 @@ function buildHeader (svg, logoWidth) {
   }
 }
 
+// buildGridHeader appends a header to the Grid form
+function addFormElementsGrid (svg) {
+	svg.setAttribute("width", '100%');
+	svg.setAttribute("height", '100%');
+	svg.setAttribute("viewBox", '0 0 800 1130');
+
+	if (document.getElementById ('formGridHeader').checked) {
+		var children = svg.childNodes;
+		for (var i = 0; i < children.length; i++) {
+			children[i].setAttribute('transform', 'translate(0,140)');
+		}
+	
+		var logoWidth = 0;
+		if (logoImg) {
+			var logoSvg = buildLogoSvg(logoImg, 0, 0, 200, 120);
+			svg.appendChild(logoSvg);
+			logoWidth = parseInt(logoSvg.getBBox().width) + 32;
+		}
+		drawText (document.getElementById('location').value + ' ' +
+			document.getElementById('date').value, logoWidth, 24, 'formATextHuge', 'start', '', svg);
+		// scale down if needed
+		var scale = roundTwo ((800 - logoWidth) / svg.lastChild.getBBox().width);
+		if (scale < 1) {
+			svg.lastChild.setAttribute (
+				'transform', 'scale(' + scale + ') translate(' + (logoWidth / scale - logoWidth) +
+				',0)');
+		}
+		
+		drawText (
+			document.getElementById('rules').value + ' ' +
+			((document.getElementById('class').value === 'glider') ? 'Glider ' : '') +
+			document.getElementById('category').value + ' ' +
+			document.getElementById('program').value,
+			logoWidth, 60, 'formATextXL', 'start', '', svg);
+	
+		drawText (document.getElementById('notes').value, logoWidth, 96, 'formATextXL', 'start', '', svg);
+	}
+}
+	
 // buildScoreColumn will append the righthand scoring column
 function buildScoreColumn (svg) {
   if (iacForms) {
@@ -17158,7 +17270,9 @@ function buildMoveDown (extent, i) {
 // figString      = User defined string for figure
 // seqNr          = Sequence figure number
 // figStringIndex = index of figure (figures[figStringIndex])
-function buildFigure (figNrs, figString, seqNr, figStringIndex) {
+// figure_chooser = Optional argument, true if we are building the
+//                  figure for the figure chooser
+function buildFigure (figNrs, figString, seqNr, figStringIndex, figure_chooser) {
   var figNr = figNrs[0];
   var roll = [];
   var rollSums = [];
@@ -17537,18 +17651,18 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
     if (figNrs.length > 1) {
       // Set rollCorrMin to infinity to start with so the
       // first correction will allways be smaller
-      rollCorrMin = Infinity;
+      var rollCorrMin = Infinity;
       for (var i = 0; i < figNrs.length; i++) {
-        rollCorr = 0;
+        var rollCorr = 0;
         for (var j = 0; j < roll.length; j++) {
           if (fig[figNrs[i]].rolls[j] == 2) {
             // half roll symbol at this position in fig[xx].rolls[yy]
             rollCorr += Math.abs((rollSums[j] + 180) % 360);
-          } else if (fig[figNrs[i]].rolls[j] != 3) {
+          } else if (/[^34]/.test (fig[figNrs[i]].rolls[j])) {
             // full or no roll symbol at this position in fig[xx].rolls[yy]
             // 'no roll' can be no roll line at all (rolls[j] undefined)
             // or only line without roll allowed as in some P-loops
-            // (rolls[j] = 4)
+            // (rolls[j] = 9)
             rollCorr += Math.abs(rollSums[j] % 360);
           }
         }
@@ -17576,7 +17690,7 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
   
   // consolidate gaps for lines without rolls
   for (var i = 0; i < roll.length; i++) {
-    if (fig[figNr].rolls[i] === 4) {
+    if (fig[figNr].rolls[i] === 9) {
       for (var j = 0; j < roll[i].length; j++) {
         if (roll[i][j].type !== 'line') {
           roll[i].splice (j, 1);
@@ -17816,28 +17930,26 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
             if (roll[rollnr][j].type !== 'line') lowKFlick = true;
 
             if (!document.getElementById('nonArestiRolls').checked) {
-              // Check if posspin and negspin are on correctly loaded line
-              // Crossover spins will create alert when nonArestiRolls is
-              // not checked (Aresti Catalogue item 26)
-              if (((roll[rollnr][j].type == 'posspin') && !NegLoad) ||
-                ((roll[rollnr][j].type == 'negspin') && NegLoad)) {
-                checkAlert (userText.alert.noCrossoverSpin, false, seqNr);
-              }
-              // Check if spin is started on horizontal. This is done by
-              // confirming the spin on vertical down is preceded by
-              // 90 degree change of line angle (v/V in figure pattern)
-              if (roll[rollnr][j].type.match(/^(pos|neg)spin$/)) {
-                if (!figureDraw.substring(0, i-1).match(/[vV][^a-zA-Z=]*$/)) {
-                  checkAlert (
-                    userText.alert.spinsStartHorizontal,
-                    false,
-                    seqNr,
-                    (sportingClass.value === 'glider') ?
-                      'Sporting Code Section 6 Part II, B.9.27.2' :
-                      'Sporting Code Section 6 Part I, B.9.29.1'
-                  );
-                }
-              }
+              // Check if spin is allowed on this roll position
+              if (roll[rollnr][j].type.match(/^(pos|neg)spin$/) &&
+                (fig[figNr].rolls[rollnr] != 4)) {
+								checkAlert (
+									userText.alert.spinsStartHorizontal,
+									false,
+									seqNr,
+									(sportingClass.value === 'glider') ?
+										'Sporting Code Section 6 Part II, B.9.27.2' :
+										'Sporting Code Section 6 Part I, B.9.29.1'
+								);
+              } else {
+	              // Check if posspin and negspin are on correctly loaded line
+	              // Crossover spins will create alert when nonArestiRolls is
+	              // not checked (Aresti Catalogue item 26)
+	              if (((roll[rollnr][j].type == 'posspin') && !NegLoad) ||
+	                ((roll[rollnr][j].type == 'negspin') && NegLoad)) {
+	                checkAlert (userText.alert.noCrossoverSpin, false, seqNr);
+	              }
+							}
             }
             var rollI = rollBase.indexOf(rollAtt + roll[rollnr][j].pattern);
             if (rollI >= 0) {
@@ -17890,12 +18002,15 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex) {
               // Build roll elements
               case ('roll'):
                 rollPaths = buildShape('Roll', Array(
-                  roll[rollnr][j].extent,
-                  roll[rollnr][j].stops,
-                  rollTop,
-                  false,
-                  false,
-                  roll[rollnr][j].comment), rollPaths);
+	                  roll[rollnr][j].extent,
+	                  roll[rollnr][j].stops,
+	                  rollTop,
+	                  false,
+	                  false,
+	                  roll[rollnr][j].comment,
+	                  figure_chooser ? fig[figNr].rolls[rollnr] : false
+                  ),
+                  rollPaths);
                 lineLength += parseInt((Math.abs(roll[rollnr][j].extent) - 1) / 360) * (10 / lineElement);
                 break;
               case ('slowroll'):
@@ -18360,7 +18475,9 @@ function checkQRollSwitch (figString, figStringIndex, pattern, seqNr, rollSum, f
     var nextRollExtent = 0;
     var nextRollExtentPrev = 0;
     var switchVert = false;
-    var verticalRolls = (pattern.match(RegExp ('\\' + figpat.anyroll, 'g'))||[]).length;
+    var verticalRolls = (pattern.match (
+	    RegExp ('[\\' + figpat.anyroll + '\\' +
+	    figpat.spinroll + ']', 'g')) || []).length;
 
     var firstRoll = (rollnr == 0) ? true : false;
     for (var i = fdIndex + 1; i < figureDraw.length; i++) {

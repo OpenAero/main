@@ -138,7 +138,7 @@ rules.push("osnap-min=2");
 
 rules.push("opposite-min=1");//one opposite roll is required!
 
-rules.push("allow=^[1-9]");//all figures are allowed for the Free Programme
+// rules.push("allow=^[1-9]");//all figures are allowed for the Free Programme
 
 // what info should be filled out
 rules.push("infocheck=pilot;actype;acreg;positioning");
@@ -190,7 +190,7 @@ rules.push("osnap-min=2");
 
 rules.push("opposite-min=1");//one opposite roll is required!
 
-rules.push("allow=^[1-9]");//all figures are allowed for the Free Programme
+// rules.push("allow=^[1-9]");//all figures are allowed for the Free Programme
 
 rules.push("figure-letters=ABCDE");
 
@@ -742,7 +742,7 @@ rules.push("spin-min=1");
  
 rules.push("opposite-min=1");//one opposite roll is required!
  
-rules.push("allow=^[1-9]");//all figures are allowed for the Free Programme
+// rules.push("allow=^[1-9]");//all figures are allowed for the Free Programme
  
 // what info should be filled out
 rules.push("infocheck=pilot;actype;acreg;positioning");
@@ -784,7 +784,7 @@ rules.push("spin-min=1");
 
 rules.push("opposite-min=1");//one opposite roll is required!
 
-rules.push("allow=^[1-9]");//all figures are allowed for the Free Programme
+// rules.push("allow=^[1-9]");//all figures are allowed for the Free Programme
 
 rules.push("figure-letters=ABCDE");
 
@@ -1182,7 +1182,7 @@ rules.push("emptyline-max=0");
 
 rules.push("opposite-min=1"); //one opposite roll is required!
 
-rules.push("allow=^[1-9]"); //all figures are allowed for the Free Programme
+// rules.push("allow=^[1-9]"); //all figures are allowed for the Free Programme
 
 rules.push("figure-letters=ABCDE");
 

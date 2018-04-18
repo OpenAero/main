@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# OpenAero version 2018.1.9
+# OpenAero version 2018.2a
 appcache.manifest
 changelog.txt
 cordova.js
@@ -38,7 +38,7 @@ img/fullrolls.png
 img/google-play-badge.png
 img/hesrolls.png
 img/ios-appstore-badge.svg
-img/magnifier.png
+img/magnifier.svg
 img/multirolls.png
 img/OA_FigureAddPanel.png
 img/OA_FigureGrid.gif

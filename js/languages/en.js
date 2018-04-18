@@ -125,15 +125,19 @@ lang.en = {
 'changedFigureKMulti' : 'Standard Aresti K of figures %s changed ' +
   'according rules %s',
 'changeStyle' : 'Change',
+// changed 2018.2
 // checkAlert forms a sub-array
 'checkAlert' : {
+	'exactlyperfig' : 'Exactly %s of %s per figure',
   'maxperfig' : 'Not more than %s of %s per figure',
   'minperfig' : 'At least %s of %s per figure',
+  'exactly'   : 'Exactly %s of %s required',
   'max'       : 'Not more than %s of %s allowed',
   'min'       : 'At least %s of %s required',
   'repeat'    : 'Not more than %s exact repetitions of %s allowed',
   'totrepeat' : 'Not more than %s instances of exact repetitions of ' +
     '%s allowed',
+  'figexactly': 'Exactly %s of %s required',
   'figmax'    : 'Not more than %s of %s allowed',
   'figmin'    : 'At least %s of %s required',
   'figrepeat' : 'Not more than %s exact repetitions of %s allowed',
@@ -248,6 +252,7 @@ lang.en = {
 'formA' : 'Form A',
 'formB' : 'Form B / Wind Right',
 'formC' : 'Form C / Wind Left',
+'formGridSequenceInfo' : 'with sequence info',
 'formL' : 'Form L',
 'formR' : 'Form R',
 'free' : 'Free',

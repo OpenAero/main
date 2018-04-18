@@ -1,4 +1,4 @@
-﻿// fr.js 2018.1.5
+﻿// fr.js
 // This file is part of OpenAero.
 
 //  OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -32,7 +32,6 @@ lang.fr = {
 // Subsequent keys are alphabetical.
 'fr' : 'Français',
 'about' : 'A propos',
-// changed 2016.1
 'aboutNewer' : 'Vous travaillez avec une version plus récente que la version courante. ' +
   'Vous disposez des dernières améliorations, mais vous pouvez rencontrer des bugs. ' +
   'Si c\'est le cas, vous aiderez à l\'amélioration d\' OpenAero en les ajoutant à ' +
@@ -47,7 +46,6 @@ lang.fr = {
   'et <strong>Supprimez</strong> toutes les entrées contenant OpenAero.',
 'aboutUnknown' : 'Impossible de déterminer la derniere version. ' +
   'Vous travaillez probablement hors connexion.',
-// changed 2016.1.3
 'aboutText' : '<div class="divider">' +
   '<p>Cette&nbsp;version:<strong>%s</strong> &nbsp; ' +
   'Version&nbsp;courante:<strong>%s</strong></p>%s</div>' +
@@ -76,7 +74,6 @@ lang.fr = {
   '<tr><td><strong>Christian Falck</strong></td>' +
   '<td>Codage des règles</td></tr>' +
   '</table></p></div>',
-// end new
 'ac' : 'Avion',
 'addAllToQueue' : 'Ajouter tout à la file',
 'addAllToQueueNoFigures' : 'Il n\'y a pas de figure dans ce programme, donc ' +
@@ -115,21 +112,24 @@ lang.fr = {
 'cancelPrint' : 'Annuler',
 'cancelSave' : 'Annuler',
 'category' : 'Catégorie',
-// new 2016.1.5
 'changedFigureK' : 'Le K Aresti normal de la figure %s a été changé ' +
   'selon le réglement %s',
 'changedFigureKMulti' : 'Les K Aresti normaux des figures %s ont été ' +
   'changés selon le réglement %s',
 'changeStyle' : 'Changer',
+// changed 2018.2 by Massa
 // checkAlert forms a sub-array
 'checkAlert' : {
+	'exactlyperfig' : 'Exactement %s %s par figure',
   'maxperfig' : 'Pas plus de %s %s par figure',
   'minperfig' : 'Au moins %s %s par figure',
+  'exactly'   : 'Exactement %s %s obligatoire(s)',
   'max'       : 'Pas plus de %s %s autorisé(es)',
   'min'       : 'Au moins %s %s obligatoire(s)',
   'repeat'    : 'Pas plus de %s répétition(s) de %s autorisée(s)',
   'totrepeat' : 'Pas plus de %s répétition(s) de répétitions de ' +
     '%s autorisée(s)',
+  'figexactly': 'Exactement %s %s obligatoire(s)',
   'figmax'    : 'Pas plus de %s %s autorisé(es)',
   'figmin'    : 'Au moins %s %s obligatoire(s)',
   'figrepeat' : 'Pas plus de %s répétition(s) de %s autorisée(s)',
@@ -141,13 +141,10 @@ lang.fr = {
 'checkMultiCounter' : 'Vérification du programme %s of %s<br>%s<br>Ceci peut ' +
   'prendre du temps. Patientez, svp...',
 'checkMultipleSeq' : 'Vérification d\'un groupe de programmes',
-// changed 2016.1.1
 'checkMultiUseReference' : 'Utilisez le programme de référence pour ' +
   '(In)Connu-Libre',
-//
 'checkMultiWait' : 'Vérification des programmes %s .<br>Ceci peut ' +
   'prendre du temps. Patientez, svp...',
-// changed 2016.1.3
 'checkSequence' : 'Vérifier le programme',
 'checkSequenceLog' : 'Voir le détail',
 'checkSequenceOK' : 'OK',
@@ -186,7 +183,6 @@ lang.fr = {
 'demo' : 'Exemples',
 'disqualified' : 'Disqualifié',
 'download' : 'Télécharger',
-// changed 2016.3.2
 'downloadHTML5' : 'Vous pouvez enregistrer en choisissant un nom ' +
   'et en cliquant <i>Enregistrer fichier</i> ci-dessous.' +
   'En fonction de votre navigateur: '+
@@ -200,7 +196,6 @@ lang.fr = {
   'dans paramétrage <b>avancé</b>  (accessible via le bouton Chrome ' +
   '<i class="material-icons md-18 inText">more_vert</i>) ' +
   'et cochez la case "Demander où sauvegarder ..."</p>',
-//
 'downloadLegacy' : 'Vous pouvez enregistrer en choisissant un nom ' +
   'et/ou faire un clic droit sur <i>Enregistrer</i> ci-dessous ' +
   'et choisir "Enregistrer la cible du lien sous... " ou "Copier ' +
@@ -251,6 +246,7 @@ lang.fr = {
 'formA' : 'Forme A',
 'formB' : 'Forme B',
 'formC' : 'Forme C',
+'formGridSequenceInfo' : 'avec informations du programme',
 'formL' : 'Forme L',
 'formR' : 'Forme R',
 'free' : 'Libres',
@@ -264,7 +260,6 @@ lang.fr = {
   'Confirmer que vous souhaitez quitter l\'assembleur d\'(In)Connu-libre.',
 'fuDesigner' : 'Assembleur d\'(In)Connu-Libre',
 'fuFiguresTab' : 'Figures',
-// changed 2016.1.3
 'FUfigOptionsDisabled' : 'Certaines options sont invalidées pour l\'Inconnu-Libre (figures avec lettres)',
 'FUDesignletterMulti' : 'Lettre d\'Inconnu-Libre %s utilisée plusieurs fois. ' +
   'Impossible de lancer l\'assembleur d\'Inconnu-Libre.',
@@ -286,7 +281,6 @@ lang.fr = {
 'FUstartOnLoad' : 'Le programme est identifié comme une liste de figures d\'Inconnu-Libre. ' +
   'Voulez-vous lancer l\'assembleur d\'Inconnu-Libre?',
 'FUexitEntryMatch' : 'Certaines attitudes d\'entrée / sortie de figures sont incompatibles',
-//
 'gaps' : 'Espaces',
 'general' : 'Général',
 'getChrome' : 'Pour une utilisation optimale d\OpenAero, téléchargez la ' +
@@ -319,7 +313,6 @@ lang.fr = {
 'importRulesFile' : 'Importer un fichier de règles',
 'insertions' : 'Insertions',
 'installation' : 'Installation',
-// changed 2016.1.3
 'installChromeApp' : '<p>OpenAero est maintenant installé avec ce ' +
   'navigateur et les mises à jour seront automatiques. Il est disponible ' +
   'en ligne,mais aussi hors connexion à <a href="http://%1\$s" target="_blank">' +
@@ -335,7 +328,6 @@ lang.fr = {
   'accéder en ouvrant une nouvelle rubrique dans Chrome. Par un clic droit ' +
   'vous pouvez ajouter l\'application sur votre bureau.',
 'installChromeAppTitle' : 'Installer l\'application Chrome',
-// new 2016.1.3
 'installed' : '<p>OpenAero est maintenant installé avec ce ' +
   'navigateur et les mises à jour seront automatiques. Il est disponible ' +
   'en ligne,mais aussi hors connexion à <a href="http://%1\$s" target="_blank">' +
@@ -357,7 +349,6 @@ lang.fr = {
 'iOSprintExplain' : 'Selectionnez ce que vous voulez imprimer ou sauvegarder ' +
   'puis cliquez <strong>Enregistrer une image PNG</strong>',
 'iOSsaveFile' : 'Voir l\'image du programme',
-// changed 2016.3.2
 'iOSsaveFileMessage' : '<p>En cliquant sur le bouton <i>Enregistrer</i> ' +
   'une nouvelle fenêtre ou un onglet s\'ouvrira. Vous ' +
   'pouvez alors cliquer sur le bouton <span class="iOSsaveIcon"></span> pour ' +
@@ -376,13 +367,10 @@ lang.fr = {
   'Si un programme est ouvert, il sera effacé.',
 'loadNewVersionTitle' : 'Nouvelle version',
 'location' : 'Lieu',
-// new 2016.1.3
 'locked' : 'Ce programme est verrouillé. Pour le déverrouiller, cliquez sur <i>Déverrouiller</i> ' +
   'dans le menu Programme',
 'lockSequence' : 'Verrouiller',
-//
 'logo' : 'Logo',
-// new 2016.3
 'logoChooserCancel' : 'Annuler',
 'logoChooserTitle' : 'Choisir un logo',
 'logoExplain' : 'Chargez votre logo en cliquant sur parcourir..., ' +
@@ -402,9 +390,6 @@ lang.fr = {
 'multiRemoveLogo' : 'Supprimer le logo', 
 'multiOriginalLogo' : 'Utiliser le logo d\'origine',
 'newCopySubsequence' : 'Créer / Copier sous-partie',
-/** removed in 2016.1.3
-'newReplacementsABC' : 'Nouveau format pour les formes A/B/C',
-*/
 'newTurnPerspective' : 'Vraie perspective pour les virages ' +
   '<font color=red>EXPERIMENTAL, A EVITER EN COMPETITION INTERNATIONALE!' +
   '</font>',
@@ -415,12 +400,10 @@ lang.fr = {
   '<strong>chrome://chrome/settings/content</strong><br />' +
   'et choisissez <i>Autoriser l\'enregistrement de données locales</i>',
 'noFigureLetterAssigned' : '(%s) Pas de lettre affectée',
-// changed 2016.1.3
 'noFreeUnknownFig' : 'Pas de lettre',
 'nonArestiRolls' : 'Autoriser les rotations et combinaisons ' +
   'non-Aresti (essayer <i>41h4,f,4 66</i>)',
 'none' : 'Aucune',
-// new 2016.1.3
 'noRollAllowed' : 'Rotation interdite par l\'Aresti',
 'noRules' : 'Pas de règle de vérification disponible.',
 'notes' : 'Notes',
@@ -429,7 +412,6 @@ lang.fr = {
 'notSequenceFile' : 'Ce n\'est pas le fichier d\'un programme ' +
   'OpenAero ou OLAN',
 'number' : 'Numéro',
-//
 'numberInCircle' : 'Numéros de figure dans un cercle',
 'ok' : 'OK',
 'OLANBumpBugWarning' : ' a été détecté comme étant un comme retournement vertical ' +
@@ -493,7 +475,6 @@ lang.fr = {
 'printFormGrid' : 'Tableau des figures',
 'printFormL' : 'Forme L',
 'printFormR' : 'Forme R',
-// new 2016.3.2
 'printMargins' : 'Marges d\'impression',
 'printMiniFormAonB' : 'avec mini Forme A',
 'printMiniFormAonC' : 'avec mini Forme A',
@@ -532,7 +513,6 @@ lang.fr = {
 //
 'queueNotSaved' : 'Les figures de la file ont été enregistrées',
 'queueSaved' : 'Les figures de la file N\'ONT PAS été enregistrées',
-// changed 2016.1.3
 'referenceFigureDifferent' : 'La figure %s n\'est pas dans le programme de référence',
 'referenceFigureExitOpp' : 'La figure %s devrait sortir en sens inverse ' +
 	'de l\'entrée',
@@ -581,7 +561,6 @@ lang.fr = {
   'Allez à <a href="http://openaero.net">openaero.net</a>. ' +
   'OpenAero sera automatiquement installé dans votre navigateur et sera également ' +
   'disponible hors connexion.',
-// new 2016.3.4
 'runOverHttp' : 'Votre lien vers OpenAero ne semble pas à jour. Vérifiez ' +
   'que vous utilisez bien ' +
   '<a href="https://openaero.net">https://openaero.net</a>.<br>' +
@@ -623,9 +602,7 @@ lang.fr = {
 'sequenceCorrect' : 'Le programme est correct',
 'sequenceHasErrors' : 'Le programme est incorrect :',
 'sequenceInfo' : 'Infos Programme',
-// nouveau 1.4.2
 'sequenceShort' : 'Prog.',
-//
 'sequenceTab' : 'Programme',
 'sequenceTest' : 'Vérification :',
 'sequenceNotSavedWarning' : 'Le programme n\'a pas été enregistré.\n' +
@@ -637,7 +614,6 @@ lang.fr = {
 'setInverted' : 'entrée dos',
 'showFileName' : 'Ajouter le nom du fichier',
 'showFullLog' : 'Voir le rapport de vérification complet',
-// new 2016.1
 'showHandles' : 'Montre les points d\'édition (cercles bleu) quand ' +
   'une figure est sélectionnée',
 'showQueue' : 'Voir la file',
@@ -651,7 +627,6 @@ lang.fr = {
 'styling' : 'Style',
 'subSequenceDirection' : 'Débuter la sous partie :',
 'svg' : 'SVG',
-// new 2016.1
 'switchFigures' : 'Figures',
 'switchQueue' : 'File',
 'team' : 'Equipe',
@@ -667,7 +642,6 @@ lang.fr = {
   // exitExt' : 'Changer la ligne de sortie',
   'figEntryButton' : 'Change l\'entrée ventre <=> dos',
   'figExitButton' : 'Change la sortie ventre <=> dos',
-  // new 2016.2
   'flipYAxis' : 'Changer d\'axe Y',
   'magMin' : 'réduit la taille de la figure',
   'magPlus' : 'Agrandit la figure',
@@ -679,7 +653,6 @@ lang.fr = {
   'switchY' : 'Change le sens de la sortie sur l\'axe Y'
 }, // end tooltip sub-array
 'totalK' : 'K total',
-// new 2016.1.1
 'trgViolation' : 'Echauf. non OK',
 'unknownFileType' : 'L\'ouverture de ce fichier n\'est pas supportée dans ce navigateur.',
 'unlockSequence' : 'Déverrouiller',
@@ -695,12 +668,10 @@ lang.fr = {
   'changelog.txt</a> si intéressé)</li>' +
   '</ul>',
 'view' : 'Affichage',
-// new 2016.2
 'warningNewerVersion' : '<p>Ce programme a été créé avec une version ' +
   'd\'OpenAero plus récente que celle que vous utilisez actuellement. ' +
   'Il utilise peut être de nouvelles fonctions. Vérifiez ' +
   'attentivement que le programme est correct et correctement dessiné.</p>',
-// changed 2016.1.3
 'warningPre' : '<p> Lors de la prochaine sauvegarde, cet ' +
   'avertissement n\'apparaîtra plus.</p>',
 'warningPre123' : '<p> Le programme que vous venez d\'ouvrir a été créé ' +
@@ -713,14 +684,12 @@ lang.fr = {
   'avec une version d\'OpenAero antérieure à 1.3.7. Certains déclenchés débutés tranche ' +
   'peuvent avoir un code Aresti et un K incorrect. Ceci devrait être corrigé maintenant. ' +
   'vérifiez bien, si vous êtes dans cette situation.</p>',
-// new 2016.1
 'warningPre20161' : '<p>Le fichier que vous venez d\'ouvrir a été créé avec une ' +
   'version d\'OpenAero antérieure à 2016.1 et la figure suivante a été détecté :<br>' +
   'Un double retournement vertical avec un grand rayon, un nombre impair de ' +
   'quarts de rotation dans la première ligne et une rotation dans la seconde.<br>' +
   'Ce type de figure était traitée incorrectement dans les anciennes versions d\'OpenAero. ' +
   'Vérifiez bien que toutes les orientations (sens) de cette figure sont correctes.</p>',
-// new 2016.1.3
 'warningPre201611' : '<p>Le fichier que vous venez d\'ouvrir a été créé avec ' +
   'une version d\'OpenAero antérieure à 2016.1.1. Il a été ouvert avec la vue ' +
   '"Tableau des figures" et contient une ou plusieurs figures avec des ' +

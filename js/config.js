@@ -36,7 +36,7 @@
 // Where a new x should be used for versions that create sequences not
 // fully backward compatible with the previous version
 
-var version = '2018.1.9';
+var version = '2018.2';
 /* versionNew is an object that contains version update information
    The structure is {vvv : [[ttt, n], ...], ...} , where
    vvv = version number
@@ -44,8 +44,11 @@ var version = '2018.1.9';
    n   = importance (higher = more important)
 */
 var versionNew = {
+	'2018.2' : [
+		['Changed figure chooser to show all possible roll positions', 3]
+	],
 	'2018.1.9' : [
-		['Enabled blue figure editing handles option for Phone layout (can be disabled in Settings)', 1],
+		['Enabled blue figure editing handles option for phone layout (can be disabled in Settings)', 1],
 		['Improved saving and sharing sequences from mobile app', 3]
 	],
 	'2018.1.7' : [
@@ -184,9 +187,6 @@ var versionNewMax = 10;
 
 // platform holds various platform variables
 var platform = {};
-
-// fix iOS Cordova contenteditable focus bug
-var refocus_prevtarget = null;
 
 // Define chrome app id and if app is active
 var chromeApp = {
@@ -418,7 +418,7 @@ var style = {
   // Print styles
   'formBackground' : 'fill: white;',
   'modifiedK' : 'font-family: monospace; font-size: 8px; color: red; fill: red;',
-  'printNotes' : 'font-family: verdana, helvetica, sans; font-size: 14px; fill: black;',
+  'printNotes' : 'font-family: verdana, helvetica, sans; font-size: 24px; fill: black;',
   'sequenceString' : 'font-family: monospace; font-size: 8px; color: blue; fill: blue; word-wrap: break-word;',
   'windArrow' : 'stroke: black; stroke-width: 1.5px; fill: white;',
   // Selection styles
@@ -564,13 +564,14 @@ var figpat = {
   'fullroll' : '_',
   'halfroll' : '^',
   'anyroll' : '&',
+  'spinroll' : '>',
   'hammer' : 'h',
   'pushhammer' : 'H',
   'tailslidecanopy' : 't',
   'tailslidewheels' : 'T',
   'pointTip' : 'u',
   'pushPointTip' : 'U'
-}
+};
 
 var drawAngles = {
   'd':45, 'v':90, 'z':135, 'm':180,
@@ -580,7 +581,8 @@ var drawAngles = {
 };
 
 var rollAttitudes = {'0':'', '45':'d', '90':'v', '135':'d',
-  '180':'', '225':'id', '270':'iv', '315':'id'};
+  '180':'', '225':'id', '270':'iv', '315':'id'
+};
 
 // ****************
 // define Regex patterns for drawing and sequence parsing
@@ -622,7 +624,7 @@ var
 	regexOLANBumpBug = /(\&b)|(\&ipb)/,
 	regexOLANNBug = /n/,
 	regexPlusFullAnyRoll = new RegExp('[\\+\\' + figpat.fullroll + '\\' +
-		figpat.anyroll + ']', 'g'),
+		figpat.anyroll + '\\' + figpat.spinroll + ']', 'g'),
 	// regexRegistration is used to parse out aircraft registration from the
 	// combined A/C type & reg field
 	regexRegistration = [
@@ -633,12 +635,16 @@ var
 	],
 	regexRollBeforeBase = new RegExp ('^[\\+-][\\' + figpat.halfroll +
 		'\\'  + figpat.fullroll + '\\' + figpat.anyroll + '\\' +
-		figpat.longforward + ']'); // /^[\+\-][_\^\&~]/ 
+		figpat.spinroll + '\\' + figpat.longforward + ']'); // /^[\+\-][_\^\&\>\~]/ 
 	regexRolls = new RegExp ('[\\' + figpat.halfroll + '\\' +
-		figpat.fullroll + '\\' + figpat.anyroll + ']', 'g'),
+		figpat.fullroll + '\\' + figpat.anyroll + '\\' + 
+		figpat.spinroll + ']', 'g'),
+	regexRollsAndLines = new RegExp ('[\\' + figpat.halfroll + '\\' +
+		  figpat.fullroll + '\\' + figpat.anyroll + '\\' +
+		  figpat.spinroll + '\\' + figpat.longforward + ']');
 	regexTurnsAndRolls = new RegExp ('[\\d\\(\\)\\' + figpat.halfroll +
 		'\\' + figpat.fullroll + '\\' + figpat.anyroll + '\\' +
-		figpat.longforward + ']+', 'g'); // /[\d\(\)_\^\&~]+/g
+		figpat.spinroll + '\\' + figpat.longforward + ']+', 'g'); // /[\d\(\)_\^\&\>\~]+/g
 	
 // also accept deprecated 'connectors' for additional figures
 var regexRulesAdditionals = /^(connectors|additionals)=([0-9]+)\/([0-9]+)/;

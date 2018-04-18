@@ -44,6 +44,7 @@
     <!-- styles -->
     <style type="text/css" media="print" id="printStyle"></style>
     <style type="text/css" media="screen">#noScreen {display: none;}</style>
+    <style type="text/css" id="fuDesignerStyle"></style>
     <!-- favicons -->
     <link rel="shortcut icon" type="image/png" sizes="16x16" href="img/favicons/favicon16.png">
     <link rel="shortcut icon" type="image/png" sizes="24x24" href="img/favicons/favicon24.png">
@@ -452,9 +453,9 @@
         <div id="leftBlockContainer">
           <!-- Left main block -->
           <div id="leftBlock">
-            <div id="figureString" class="noDisplay">
-              <span class="userText" id="t_figureString"></span>
-              <input type="text" id="figureStringInput">
+            <div id="figureString" class="noDisplay form-group">
+              <input type="text" id="figureStringInput" autocapitalize="off">
+              <label class="userText control-label" id="t_figureString" for="input"></label><i class="bar"></i>
             </div>
             <div class="clearBoth"></div>
 						<!-- Sequence info -->
@@ -582,14 +583,17 @@
 							</div>
 							<!-- sub sequence direction -->
 							<div id="subSequenceDirection" class="divider noDisplay">
-								<div class="contentLabel userText" id="t_subSequenceDirection"></div>
-								<select id="subSequenceDirections">
-									<option class="userText disableFUdesigner" value="//" id="t_sameAsBefore"></option>
-									<option class="userText" value="eu" id="t_upwind"></option>
-									<option class="userText" value="ed" id="t_downwind"></option>
-									<option class="userText" value="ej" id="t_xBox"></option>
-									<option class="userText" value="eja" id="t_xBoxAway"></option>
-								</select>
+								<div class="form-group">
+									<div class="contentLabel userText" id="t_subSequenceDirection"></div>
+									<select id="subSequenceDirections">
+										<option class="userText disableFUdesigner" value="//" id="t_sameAsBefore"></option>
+										<option class="userText" value="eu" id="t_upwind"></option>
+										<option class="userText" value="ed" id="t_downwind"></option>
+										<option class="userText" value="ej" id="t_xBox"></option>
+										<option class="userText" value="eja" id="t_xBoxAway"></option>
+									</select>
+									<i class="bar"></i>
+								</div>
 							</div>
 							<!-- figure box and option buttons -->
 							<div id="FUfigOptionsDisabled">
@@ -916,8 +920,14 @@
 						</div>
 					</span>
 					<div class="clearBoth">
-						<input type="checkbox" id="printFormGrid">
-						<span class="userText" id="t_printFormGrid"></span>
+						<span>
+							<input type="checkbox" id="printFormGrid">
+							<span class="userText" id="t_printFormGrid"></span>
+						</span>
+						<span>
+							<input type="checkbox" id="formGridHeader" checked>
+							<span class="userText" id="t_formGridSequenceInfo"></span>
+						</span>
 					</div>
 					<div class="clearBoth">
 						<span>
@@ -1274,7 +1284,7 @@
 						<span>
 							<span class="userText" id="t_zipImageFilenamePattern"></span>
 							<div class="form-group">
-                <input type="text" id="zipImageFilenamePattern">
+                <input type="text" id="zipImageFilenamePattern" autocapitalize="off">
                 <i class="bar"></i>
               </div>
 						</span>
@@ -1322,7 +1332,7 @@
                   <i class="bar"></i>
                 </div>
 								<div class="form-group">
-                  <input type="text" id="styleString" size="40">
+                  <input type="text" id="styleString" size="40" autocapitalize="off">
                   <i class="bar"></i>
                 </div>
 							</span>

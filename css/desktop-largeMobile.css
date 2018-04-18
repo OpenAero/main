@@ -121,9 +121,15 @@
 .fuDesigner #t_finalizeSequence {
 	display: inline-block;
 }
+.fuDesigner #figureSelectorGroupDiv {
+	margin-top: 16px;
+}
+.fuDesigner #figureChooser {
+	top: 116px;
+}
 #fuFigures {
   position: relative;
-  z-index: 7; /* put above figureString */
+  z-index: 9; /* put above figureString */
   top: 0;
   margin: 6px 4px 8px 4px;
   /*left: -546px;*/
@@ -340,9 +346,6 @@
 }
 #figureSelector.left #figureGroup {
 	margin-top: 8px;
-}
-#figureSelector.left #figureChooser {
-	top: 100px;
 }
 #figureSelector.active {
   right: 0;
@@ -575,16 +578,20 @@ table#figureChooserColumns {
 .fuSequence .additionalFigure {
   background-color: #f0f4ff;
   border: 2px solid #9090ff;
+  transition: transform 0.3s;
 }
 .fuSequence .additionalFigureMulti {
   background-color: #f0f4ff;
   border: 2px solid #ff9060;
+  transition: transform 0.3s;
 }
 .fuSequence .fuFigure {
   border: 2px solid #70f070;
+  transition: transform 0.3s;
 }
 .fuSequence .fuFigureMulti {
   border: 2px solid #ff9060;
+  transition: transform 0.3s;
 }
 .fuSequence .endBlock {
   border: 2px solid #c0c0c0;
