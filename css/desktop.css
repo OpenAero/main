@@ -70,6 +70,9 @@
 #svgContainer {
   top: 20px;
 }
+#printDialog {
+	overflow: scroll; /* prevents width changing when toggling panels */
+}
 
 /* menu */
 #hamburgerMenu {

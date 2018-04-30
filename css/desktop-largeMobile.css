@@ -394,6 +394,7 @@ table#figureChooserColumns {
 #referenceSequenceString {
   width: 99%;
   height: 4em;
+  margin: 16px 0;
 }
 
 /* alert message rule popup */

@@ -193,11 +193,11 @@ body *::before {
 
 .container {
   position: relative;
-  max-width: 40rem;
-  margin: 5rem auto;
+  max-width: 640px;
+  margin: 80px auto;
   background: #fff;
   width: 100%;
-  padding: 3rem 5rem 0;
+  padding: 48px 80px 0;
   border-radius: 1px;
 }
 .container::before {
@@ -226,7 +226,7 @@ body *::before {
 }
 
 fieldset {
-  margin: 0 0 3rem;
+  margin: 0 0 48px;
   padding: 0;
   border: none;
 }
@@ -234,8 +234,8 @@ fieldset {
 .form-radio,
 .form-group {
   position: relative;
-  margin-top: 2.25rem;
-  margin-bottom: 2.25rem;
+  margin-top: 36px;
+  margin-bottom: 36px;
 }
 
 .form-inline > .form-group,
@@ -245,10 +245,10 @@ fieldset {
 }
 
 .form-help {
-  margin-top: 0.125rem;
-  margin-left: 0.125rem;
+  margin-top: 2px;
+  margin-left: 2px;
   color: #b3b3b3;
-  font-size: 0.8rem;
+  font-size: 12px;
 }
 .checkbox .form-help, .form-radio .form-help, .form-group .form-help {
   position: absolute;
@@ -259,20 +259,20 @@ fieldset {
   margin-bottom: 1rem;
 }
 .form-radio .form-help {
-  padding-top: 0.25rem;
-  margin-top: -1rem;
+  padding-top: 4px;
+  margin-top: -16px;
 }
 
 .form-group input {
-  height: 1.9rem;
+  height: 30px;
 }
 .form-group textarea {
   resize: none;
 }
 .form-group select {
   width: 100%;
-  font-size: 1rem;
-  height: 1.9rem;
+  font-size: 16px;
+  height: 30px;
   padding: 0 4px;
   background: none;
   border: none;
@@ -281,27 +281,27 @@ fieldset {
 }
 .form-group .control-label {
   position: absolute;
-  top: 0.25rem;
+  top: 4px;
   pointer-events: none;
-  padding-left: 0.125rem;
+  padding-left: 2px;
   z-index: 1;
   color: #b3b3b3;
-  font-size: 1rem;
+  font-size: 16px;
   font-weight: normal;
   -webkit-transition: all 0.28s ease;
   transition: all 0.28s ease;
 }
 .form-group .bar {
   position: relative;
-  border-bottom: 0.0625rem solid #999;
+  border-bottom: 1px solid #999;
   display: block;
 }
 .form-group .bar::before {
   content: "";
-  height: 0.125rem;
+  height: 2px;
   width: 0;
   left: 50%;
-  bottom: -0.0625rem;
+  bottom: -1px;
   position: absolute;
   background: #337ab7;
   -webkit-transition: left 0.28s ease, width 0.28s ease;
@@ -312,7 +312,7 @@ fieldset {
 .form-group textarea {
   display: block;
   background: none;
-  padding: 0.125rem 0.125rem 0.0625rem;
+  padding: 2px 2px 1px;
   font-size: 16px;
   border-width: 0;
   border-color: transparent;
@@ -356,9 +356,9 @@ fieldset {
 .form-group textarea:valid ~ .control-label,
 .form-group textarea.form-file ~ .control-label,
 .form-group textarea.has-value ~ .control-label {
-  font-size: 0.8rem;
+  font-size: 13px;
   color: rgba(0,0,0,0.54);
-  top: -1rem;
+  top: -15px;
   left: 0;
 }
 .form-group select:focus,
@@ -384,14 +384,14 @@ fieldset {
   color: red;
 }
 .form-group input:disabled ~ .bar {
-	border-bottom: 0.0625rem dashed #999;
+	border-bottom: 1px dashed #999;
 }
 
 .checkbox label,
 .form-radio label {
   position: relative;
   cursor: pointer;
-  padding-left: 2rem;
+  padding-left: 32px;
   text-align: left;
   color: #333;
   display: block;
@@ -405,15 +405,15 @@ fieldset {
 }
 
 .radio {
-  margin-bottom: 1rem;
+  margin-bottom: 16px;
 }
 .radio .helper {
   position: absolute;
-  top: -0.25rem;
-  left: -0.25rem;
+  top: -4px;
+  left: -4px;
   cursor: pointer;
   display: block;
-  font-size: 1rem;
+  font-size: 16px;
   -webkit-user-select: none;
      -moz-user-select: none;
       -ms-user-select: none;
@@ -425,15 +425,15 @@ fieldset {
   position: absolute;
   left: 0;
   top: 0;
-  margin: 0.25rem;
-  width: 1rem;
-  height: 1rem;
+  margin: 4px;
+  width: 16px;
+  height: 16px;
   -webkit-transition: -webkit-transform 0.28s ease;
   transition: -webkit-transform 0.28s ease;
   transition: transform 0.28s ease;
   transition: transform 0.28s ease, -webkit-transform 0.28s ease;
   border-radius: 50%;
-  border: 0.125rem solid currentColor;
+  border: 2px solid currentColor;
 }
 .radio .helper::after {
   -webkit-transform: scale(0);
@@ -453,45 +453,45 @@ fieldset {
 }
 
 .checkbox {
-  margin-top: 3rem;
-  margin-bottom: 1rem;
+  margin-top: 48px;
+  margin-bottom: 16px;
 }
 .checkbox .helper {
   color: #999;
   position: absolute;
   top: 0;
   left: 0;
-  width: 1rem;
-  height: 1rem;
+  width: 16px;
+  height: 16px;
   z-index: 0;
-  border: 0.125rem solid currentColor;
-  border-radius: 0.0625rem;
+  border: 2px solid currentColor;
+  border-radius: 1px;
   -webkit-transition: border-color 0.28s ease;
   transition: border-color 0.28s ease;
 }
 .checkbox .helper::before, .checkbox .helper::after {
   position: absolute;
   height: 0;
-  width: 0.2rem;
+  width: 3px;
   background-color: #337ab7;
   display: block;
   -webkit-transform-origin: left top;
           transform-origin: left top;
-  border-radius: 0.25rem;
+  border-radius: 4px;
   content: "";
   -webkit-transition: opacity 0.28s ease, height 0s linear 0.28s;
   transition: opacity 0.28s ease, height 0s linear 0.28s;
   opacity: 0;
 }
 .checkbox .helper::before {
-  top: 0.65rem;
-  left: 0.38rem;
+  top: 10px;
+  left: 5px;
   -webkit-transform: rotate(-135deg);
           transform: rotate(-135deg);
-  box-shadow: 0 0 0 0.0625rem #fff;
+  box-shadow: 0 0 0 1px #fff;
 }
 .checkbox .helper::after {
-  top: 0.3rem;
+  top: 5px;
   left: 0;
   -webkit-transform: rotate(-45deg);
           transform: rotate(-45deg);
@@ -508,17 +508,17 @@ fieldset {
   transition: height 0.28s ease;
 }
 .checkbox input:checked ~ .helper::after {
-  height: 0.5rem;
+  height: 8px;
 }
 .checkbox input:checked ~ .helper::before {
-  height: 1.2rem;
+  height: 20px;
   -webkit-transition-delay: 0.28s;
           transition-delay: 0.28s;
 }
 
 .radio + .radio,
 .checkbox + .checkbox {
-  margin-top: 1rem;
+  margin-top: 16px;
 }
 
 .has-error .legend.legend, .has-error.form-group .control-label.control-label {
@@ -1090,6 +1090,16 @@ option.used {
 .hasLogo.expanded #notesItem {
 	margin-top: 80px;
 }
+#notesHeader .userText, #t_fileName {
+	font-size: 13px;
+	color: rgba(0,0,0,0.54);
+}
+#notesHeader .material-switch {
+	float: right;
+}
+#notesItem .form-group {
+	margin-top: 0 !important;
+}
 #sequenceInfo {
 	z-index: 1;
   padding: 4px;
@@ -1288,7 +1298,7 @@ option.used {
 #fileExt {
 	position: relative;
 	float: right;
-  color: rgba(0,0,0,0.48);
+  color: rgba(0,0,0,0.54);
   top: -29px;
 }
 
@@ -1344,6 +1354,7 @@ option.used {
 }
 #pilotCardLayout.folded {
   margin: 4px;
+  opacity: 0;
 }
 .pilotCardLayout {
   display: inline-block;
@@ -1358,12 +1369,14 @@ option.used {
   -webkit-transform: scale(0.8,0.8);
   transform: scale(0.8,0.8);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  opacity: 0.8;
   transition: all 0.1s ease-in-out;
 }
 .pilotCardLayout.active {
   -webkit-transform: scale(1,1);
   transform: scale(1,1);
   box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.5);
+  opacity: 1;
   border-color: #f4b;
 }
 .pilotCard {
@@ -1476,6 +1489,7 @@ option.used {
 .fileDrop {
   overflow: auto !important;
   position: relative;
+  margin-top: 16px;
   left: 0px;
   right: 0px;
   height: 6em;
@@ -1488,11 +1502,14 @@ option.used {
   padding: 1em;
   -webkit-overflow-scrolling: touch;
 }
+#printMultiFileForm {
+	margin-top: 8px;
+}
 #printMultiFiles {
-  width: 15em;
+  width: 240px;
 }
 #fileDropFiles, #fileDropPrintFiles {
-  margin-left: 0.5em;
+  margin-left: 8px;
   color: #000;
   font-size: 16px;
   text-align: left;
@@ -2284,15 +2301,15 @@ table#figureChooserTable div {
 
 ::-webkit-input-placeholder {
   font-size: 12px;
-  line-height: 1.7rem;
+  line-height: 28px;
 }
 ::-moz-placeholder {
   font-size: 12px;
-  line-height: 1.7rem;
+  line-height: 28px;
 }
 :-ms-input-placeholder {
   font-size: 12px;
-  line-height: 1.7rem;
+  line-height: 28px;
 }
 
 /* material design form elements */

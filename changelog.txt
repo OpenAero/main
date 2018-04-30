@@ -1,3 +1,14 @@
+2018.2.1
+* fixed spin symbol shown in figure chooser for tailslides
+* corrected 2018 France rules
+* fixed US National logo not showing correctly in chooser
+* updated all 7.8.21-22 figures to show which loop comes first (different from Aresti!)
+* added Location to form L & R
+* added switch to select Notes print to Sequence Info
+* added "File name" text to Sequence Info
+* changed all css use of "rem" to "px"
+* removed "OpenAero - " from start of filename when saving forms
+
 2018.2
 * adjusted figure editing handles to maintain size in phone layout
 * added option to add Sequence Info at top of Grid print (Issue #208)

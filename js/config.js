@@ -36,7 +36,7 @@
 // Where a new x should be used for versions that create sequences not
 // fully backward compatible with the previous version
 
-var version = '2018.2';
+var version = '2018.2.1';
 /* versionNew is an object that contains version update information
    The structure is {vvv : [[ttt, n], ...], ...} , where
    vvv = version number
@@ -44,6 +44,9 @@ var version = '2018.2';
    n   = importance (higher = more important)
 */
 var versionNew = {
+	'2018.2.1' : [
+		['Improved printing and printing options of several forms', 2]
+	],
 	'2018.2' : [
 		['Changed figure chooser to show all possible roll positions', 3]
 	],

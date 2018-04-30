@@ -413,7 +413,8 @@ lang.en = {
 'none' : 'None',
 'noRollAllowed' : 'No roll allowed according Aresti Catalog',
 'noRules' : 'No sequence validity checking rules active.',
-'notes' : 'Notes',
+// changed 2018.2.1
+'notes' : 'Notes (top of pages)',
 'notOnFormBC' : 'This function is only available when Form ' +
   'B or C  is being viewed.',
 'notSequenceFile' : 'This does not appear to be an OpenAero or OLAN ' +
@@ -488,7 +489,8 @@ lang.en = {
 'printMultipleSeq' : 'Print multiple seq',
 'printMultiWait' : 'Printing %s sequences.<br>This may ' +
   'take some time. Please wait...',
-'printNotes' : 'Sequence Notes (top of pages)',
+// changed 2018.2.1
+'printNotes' : 'Notes (top of pages)',
 'printPilotCards' : 'Pilot cards',
 'printSaveForms' : 'Print/save forms',
 'printSF' : 'Super Family numbers',

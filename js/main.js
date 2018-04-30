@@ -2211,6 +2211,8 @@ function printDialog(show) {
   // hide all menus
   menuInactiveAll();
   
+  document.getElementById ('printNotesCopy').checked = document.getElementById ('printNotes').checked;
+  
   if (show) {
     missingInfoCheck(function(){
 
@@ -5534,6 +5536,9 @@ function addEventListeners () {
   document.getElementById('t_saveAsPNG').addEventListener('mousedown', savePNG, false);
   document.getElementById('t_saveAsSVG').addEventListener('mousedown', saveSVG, false);
   document.getElementById('t_cancelPrint').addEventListener('mousedown', function(){printDialog()}, false);
+  document.getElementById ('printNotesCopy').addEventListener('change', function(){
+		document.getElementById ('printNotes').checked = document.getElementById ('printNotesCopy').checked;
+	});
   
   // installApp banner
   document.getElementById ('closeInstallApp').addEventListener(
@@ -8113,12 +8118,14 @@ function buildLogoSvg(logoImage, x, y, width, height) {
   svg.setAttribute("xmlns:xlink", xlinkNS);
   // svg images are included inline and scaled
   if (logoImage.match(/<svg/)) {
-    var parser = new DOMParser();
-    var doc = parser.parseFromString(logoImage, "image/svg+xml");
-    var svgBase = doc.getElementsByTagName('svg')[0];
-    var scale = Math.min (width / svgBase.getAttribute('width'),
-      height / svgBase.getAttribute('height'));
-    var group = document.createElementNS(svgNS, "g");
+    var
+	    parser = new DOMParser(),
+	    doc = parser.parseFromString(logoImage, "image/svg+xml"),
+	    svgBase = doc.getElementsByTagName('svg')[0],
+	    scale = Math.min (width / svgBase.getAttribute('width'),
+	      height / svgBase.getAttribute('height')),
+	    group = document.createElementNS(svgNS, "g");
+
     group.setAttribute('transform', 'translate(' + x + ',' + y + 
       ') scale(' + scale.toFixed(4) + ')');
     group.appendChild(svgBase);
@@ -10012,15 +10019,12 @@ function changeReferenceSequence (auto) {
       remaining = remaining.replace (figureLetters[i], '');
     }
   }
-  div.innerHTML = remaining ? sprintf (userText.unusedFigureLetters, remaining) : '';
+  div.innerHTML = remaining ?
+	  sprintf (userText.unusedFigureLetters, remaining.split('').join(' ')) : '';
 
   // restore sequence
-  alertMsgs = [];
-  alertMsgRules = [];
-
-  activeSequence.figures = [];
-  activeSequence.text = savedText;
-  sequenceText.innerText = savedText;
+  alertMsgs = alertMsgRules = activeSequence.figures = [];
+  activeSequence.text = sequenceText.innerText = savedText;
   
   checkSequenceChanged (true);
 
@@ -14169,7 +14173,7 @@ function checkSequenceChanged (force) {
           var match = thisFigure.string.match (regexMoveForward);
           // Create a separate 'figure' for moveForward (x>) at the
           // beginning of a figure.
-          // OLAN has it coupled to a figure but OpenAero keeps sequence
+          // OLAN had it coupled to a figure but OpenAero keeps sequence
           // drawing instructions separate
           if (match) {
             figure.push ({
@@ -15343,7 +15347,7 @@ function saveFile(data, name, ext, filter, format) {
 }
   
 // saveSequence will save a sequence to a .seq file
-// the .seq file is standard xml, so not OLAN compatible
+// the .seq file is standard xml
 function saveSequence () {
   function save() {
     var fname = activeFileName();
@@ -15376,7 +15380,7 @@ function saveSequence () {
 }
 
 // saveQueue will save the current queue to a .seq file
-// the .seq file is standard xml, so not OLAN compatible
+// the .seq file is standard xml
 function saveQueue () {
   var sequenceString = sequenceText.innerText;
   var queueFigs = [];
@@ -15665,7 +15669,8 @@ function printForms () {
 	          'page-break-inside:avoid; page-break-after:always; ' +
 	          'height: 100%;}' +
 	          'svg {position: absolute; top: 0; height: 100%;}';
-	
+
+				window.document.title = '';	
 	      var printBody = buildForms (window);
 	      // clear noScreen div
 	      var div = document.getElementById ('noScreen');
@@ -15673,7 +15678,8 @@ function printForms () {
 	      // add all nodes that will be printed
 	      while (printBody.childNodes.length > 0) {
 	        div.appendChild (printBody.childNodes[0]);
-	      }
+	      }	
+				window.document.title = activeFileName();
 	      
 	      // can be improved but works for now...
 	      if (platform.cordova) {
@@ -15688,6 +15694,8 @@ function printForms () {
 				} else {
 					window.print();				
 				}
+				// restore title
+				changeSequenceInfo();
 	    }, wait);
 	}
 }
@@ -16377,6 +16385,8 @@ function addFormElementsLR (svg, print) {
     490, 25, 'formATextLarge', 'end', '', svg);
   drawText (document.getElementById('program').value,
     logoWidth + 20, 60, 'formATextLarge', 'start', '', svg);
+	drawText (document.getElementById('location').value,
+    490, 60, 'formATextLarge', 'end', '', svg);
     
   drawRectangle (510, 2, 50, 98, 'formLine', svg);
   drawText (userText.figureK, 535, 15, 'formATextSmall', 'middle', '', svg);

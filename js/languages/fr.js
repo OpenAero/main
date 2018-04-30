@@ -83,7 +83,7 @@ lang.fr = {
 'addFigureText' : 'Ajouter figure',
 'addingFigure' : 'Ajouter une nouvelle figure',
 'additional' : 'Liaison(s)',
-// new 2018.1.9 by Massa
+// new 2018.1.9
 'addSequenceLink' : 'Ajouter un lien de programme',
 'addToQueue' : 'Ajouter à la file',
 'acreg': 'Immat d\'Avion',
@@ -117,7 +117,7 @@ lang.fr = {
 'changedFigureKMulti' : 'Les K Aresti normaux des figures %s ont été ' +
   'changés selon le réglement %s',
 'changeStyle' : 'Changer',
-// changed 2018.2 by Massa
+// changed 2018.2
 // checkAlert forms a sub-array
 'checkAlert' : {
 	'exactlyperfig' : 'Exactement %s %s par figure',
@@ -406,7 +406,8 @@ lang.fr = {
 'none' : 'Aucune',
 'noRollAllowed' : 'Rotation interdite par l\'Aresti',
 'noRules' : 'Pas de règle de vérification disponible.',
-'notes' : 'Notes',
+// changed 2018.2.1
+'notes' : 'Annotations (haut de page)',
 'notOnFormBC' : 'Cette fonction est seulement disponible lorsque ' +
   'la forme B ou C est affichée.',
 'notSequenceFile' : 'Ce n\'est pas le fichier d\'un programme ' +
@@ -588,7 +589,7 @@ lang.fr = {
 'saveImageVariables' : 'Enregistrement d\'une image en PNG ou SVG',
 'saveQueueFile' : 'Enregistrer la file',
 'saveSequence' : 'Enregistrer le programme',
-// new 2018.1.9 by Massa
+// new 2018.1.9
 'saveShareFile' : 'Enregistrer/partager',
 'saveShareSequence' : 'Enregistrer/partager le programme',
 'selectCategoryFirst' : 'Sélectionnez la Catégorie',

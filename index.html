@@ -558,12 +558,20 @@
                 </div>
                 <div class="clearSpace"></div>
                 <div id="notesItem" class="item">
-	                <div class="form-group">
+									<label id="notesHeader">
+										<span class="userText" id="t_notes"></span>
+										<input type="checkbox" id="printNotes" class="material-switch-input">
+										<span class="material-switch"></span>
+									</label>
+									<div class="form-group">
 	                  <textarea name="notes" id="notes" class="lock"></textarea>
-	                  <label class="control-label userText" id="t_notes" for="textarea"></label><i class="bar"></i>
+	                  <i class="bar"></i>
 	                </div>
 	              </div>
                 <div class="item">
+									<div>
+										<span class="userText" id="t_fileName"></span>
+									</div>
 									<span id="fileName"></span>
 	              </div>
                 <input type="hidden" id="oa_version" tabIndex="-1">
@@ -993,9 +1001,9 @@
 							<input type="checkbox" id="printCheck" class="material-switch-input">
 							<span class="material-switch"></span>
 						</label>
-						<label class="divider">
-							<span class="userText" id="t_printNotes"></span>
-							<input type="checkbox" id="printNotes" class="material-switch-input">
+						<label class="divider" id="notesSelection">
+							<span class="userText control-label" id="t_printNotes"></span>
+							<input type="checkbox" id="printNotesCopy" class="material-switch-input">
 							<span class="material-switch"></span>
 						</label>
 						<label>
@@ -1097,7 +1105,7 @@
 							<option class="userText" id="t_multiActiveLogo" value="active"></option>
 						</select>
 					</label>
-					<label>
+					<label class="divider">
 						<span class="userText" id="t_printMultiOverrideRules"></span>
 						<span id="printMultiCurrentRules"></span>
 						<input type="checkbox" id="printMultiOverrideRules" class="material-switch-input" checked="checked">
@@ -1163,8 +1171,8 @@
 				</div>
 				<div class="content">
 					<div>
-						<span class="userText" id="t_chooseFiles"></span>
 						<form id="checkMultiFileForm">
+							<span class="userText" id="t_chooseFiles"></span>
 							<input type="file" id="checkMultiFiles" multiple>
 						</form>
 					</div>
