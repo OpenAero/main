@@ -81,6 +81,8 @@ OpenAero 2016.3.2
 * 2018.1.4
 * - removed 2015 rules (Known and Free)
 * - corrected required rolling turns for Free Known 
+* 2018.3
+* - changed Advanced Free Known reference sequence again
 */
 
 //#######################################################################################
@@ -788,7 +790,7 @@ rules.push("opposite-min=1");//one opposite roll is required!
 
 rules.push("figure-letters=ABCDE");
 
-rules.push('reference="@A" -4,3m6,f "@B" frdb24 "@C" 2dh(8)24 "@D" ````6s..ik4,34- "@E" -2j15');
+rules.push('reference="@A" -4,3m,6;f "@B" frdb24 "@C" 2dh(8)24 "@D" ````6s..ik4,34- "@E" -2j15');
 
 // what info should be filled out
 rules.push("infocheck=pilot;actype;acreg;positioning");

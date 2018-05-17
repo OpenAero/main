@@ -54,6 +54,8 @@
  * u pointed top (non-Aresti)
  * j a turn (jo=outside, jio=inside-outside, joi=outside-inside)
  * _ roll location
+ * « hide small part of entry line and loop entry segment
+ * » hide small part of loop exit and exit line segment
 
  change angle/draw arc:
  45d  90v 135z 180m  225c  270p  315r  360o
@@ -1088,16 +1090,16 @@ var figs = [
 "-^ioo^- 7.8.20.4(19:0) ~m_o_m~",
 
 // 7.8.21.1-4
-"+ooo+ 7.8.21.1(22:0) ~o''O~",
-"-ooo- 7.8.21.2(23:0) ~O''o~",
-"+iooo+ 7.8.21.3(22:0) ~O''o~",
-"-iooo- 7.8.21.4(23:0) ~o''O~",
+"+ooo+ 7.8.21.1(22:0) ~o«O»~",
+"-ooo- 7.8.21.2(23:0) ~O«o»~",
+"+iooo+ 7.8.21.3(22:0) ~O«o»~",
+"-iooo- 7.8.21.4(23:0) ~o«O»~",
 
 // 7.8.22.1-4
-"+ooo^- 7.8.22.1(18:0) ~o'_'o~",
-"-ooo^+ 7.8.22.2(26:0) ~O'_'O~",
-"+iooo^- 7.8.22.3(26:0) ~O'_'O~",
-"-iooo^+ 7.8.22.4(18:0) ~o'_'o~",
+"+ooo^- 7.8.22.1(18:0) ~o«_o»~",
+"-ooo^+ 7.8.22.2(26:0) ~O«_O»~",
+"+iooo^- 7.8.22.3(26:0) ~O«_O»~",
+"-iooo^+ 7.8.22.4(18:0) ~o«_o»~",
 
 //
 // Family 8. Combinations of lines, angles and loops

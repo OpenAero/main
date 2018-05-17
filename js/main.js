@@ -1780,8 +1780,8 @@ function switchSmallMobile () {
 		}
 
 		// restore viewport
-    document.getElementById('viewport').setAttribute('content',
-	    'width=device-width,viewport-fit=cover');
+    //document.getElementById('viewport').setAttribute('content',
+	  //  'width=device-width,viewport-fit=cover');
 
     document.getElementById('t_fuDesigner').parentNode.classList.remove ('noDisplay');
     link.setAttribute('href', 'css/desktop-largeMobile.css');
@@ -2923,6 +2923,7 @@ function makeVertSpace (extent) {
 // Params:
 // 0: line length
 // 1: handle
+// 2: style
 function makeLine (Params) {
   var Extent = Params[0];
   var angle = dirAttToAngle (Direction, Attitude);
@@ -2947,7 +2948,7 @@ function makeLine (Params) {
   } else True_Drawing_Angle = angle;
   return Array({
     'path': 'l ' + dx + ',' + dy,
-    'style': (NegLoad == 0) ? 'pos' : 'neg',
+    'style': Params[2] ? Params[2] : (NegLoad == 0) ? 'pos' : 'neg',
     'class': 'line',
     'handle': Params[1],
     'dx': dx,
@@ -3118,19 +3119,33 @@ function dirAttToGGAngle (dir, att) {
 // This is used for all looping shapes
 // param is the angle in whole degrees
 function makeCurve (param) {
-  // Define some variables
-  var pathArray = [];
   // make sure param is an Integer
-  param = parseInt (param);
-  var Extent = Math.abs(param);
-  var PullPush = (param >= 0) ? 0 : 1;
+  if (param.angle) {
+		var params = param;
+		param = parseInt (param.angle);
+	} else {
+		var params = {};
+		param = parseInt (param);
+	}
+
+  // Define some variables
+  var
+	  pathArray = [],
+	  Extent = Math.abs(param),
+	  PullPush = (param >= 0) ? 0 : 1,
+	  Radius = curveRadius,
+	  longCurve = (Extent > 180) ? 1 : 0,
+	  // Calculate at which angle the curve starts
+	  radStart = dirAttToAngle (Direction, Attitude),
+	  radStartXY = dirAttToXYAngle (Direction, Attitude);
+
   NegLoad = PullPush;
-  pathArray.style = (NegLoad == 0) ? 'pos' : 'neg';
-  var Radius = curveRadius;
-  var longCurve = (Extent > 180) ? 1 : 0;
-  // Calculate at which angle the curve starts
-  var radStart = dirAttToAngle (Direction, Attitude);
-  var radStartXY = dirAttToXYAngle (Direction, Attitude);
+  
+  if (params.style) {
+		pathArray.style = params.style;
+	} else {
+	  pathArray.style = (NegLoad == 0) ? 'pos' : 'neg';
+	}
 
   changeAtt (param);
   
@@ -3184,8 +3199,7 @@ function makeRollTopLine () {
   pathArray.path = 'l ' + dx + ',' + dy + ' l ' + (-2 * dx) +
     ',' + (-2 * dy);
   pathArray.style = 'pos';
-  pathArray.dx = 0;
-  pathArray.dy = 0;
+  pathArray.dx = pathArray.dy = 0;
   return Array(pathArray);
 }
 
@@ -6874,6 +6888,10 @@ function updateFigureOptions (figureId) {
 		// remove all disable classes
 		var disable = figureOptions.getElementsByClassName ('disable');
 		while (disable.length) disable[0].classList.remove ('disable');
+    var els = document.getElementsByClassName ('disableFUfig');
+		for (var i = els.length - 1; i >= 0; i--) {
+      els[i].classList.remove ('disable');
+		}
 		
 		document.getElementById('figureInfo').classList.remove ('noFigure');
     // activate figure box
@@ -7119,7 +7137,7 @@ function updateFigureOptions (figureId) {
     
     // the DOM may need some time to update classes, so wait before
     // enabling/disabling
-    setTimeout (function(){
+    //setTimeout (function(){
       var els = document.getElementsByClassName ('disableFUfig');
       for (var i = els.length - 1; i >= 0; i--) {
         if (disable) {
@@ -7136,7 +7154,7 @@ function updateFigureOptions (figureId) {
         }
       }
       
-    }, 200);
+    //}, 200);
 
   }
 }
@@ -13936,7 +13954,6 @@ function addFormElements (form) {
   SVGRoot.setAttribute("viewBox",
     (x - 3) + ' ' + (y - 3) + ' ' + (w + 5) + ' ' + (h + 5));
   // resize svg if we are smallMobile, to a max factor 2
-  /** var scaleSvg = platform.smallMobile ? Math.min(312 / (w + 5), 2) : 1; */
   var scaleSvg = platform.smallMobile ? Math.min((window.innerWidth - 8) / (w + 5), 2) : 1;
   
   SVGRoot.setAttribute("width",  scaleSvg * (w + 5));
@@ -14283,9 +14300,7 @@ function selectForm (form) {
   checkSequenceChanged (true);
   // draw (form);
   if (selectedFigure.id) updateFigureEditor();
-  if (platform.smallMobile) {
-    selectTab('tab-svgContainer');
-  }
+  if (platform.smallMobile) selectTab('tab-svgContainer');
   setFormLayout (form);
 }
 
@@ -17757,21 +17772,23 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex, figure_chooser) 
   }
 
   // Now we go through the drawing instructions
-  var lineLength = 0;
-  var lineSum = 0;
-  var lineDraw = false;
-  var rollTop = false;
-  var afterRoll = false;
-  var comment = false;
-  
-  // Build the start of figure symbol
-  var paths = buildShape('FigStart',
-    {
-      'seqNr':seqNr,
-      'first':firstFigure
-    },
-    paths);
-  var entryLine = true;
+  var
+	  lineLength = 0,
+	  lineSum = 0,
+	  lineDraw = false,
+	  rollTop = false,
+	  afterRoll = false,
+	  comment = false,
+	  hiddenCurvePaths = [],
+	  smallCurve = 0,
+	  // Build the start of figure symbol
+	  paths = buildShape('FigStart',
+	    {
+	      'seqNr':seqNr,
+	      'first':firstFigure
+	    },
+	    paths),
+	  entryLine = true;
   
   // add any paths that were already provided
   // (e.g. for autocorrect red circle)
@@ -18298,6 +18315,7 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex, figure_chooser) 
               'dy':-dy-(dyRolls/2)
             });
           }
+          
           // Add all the roll paths
           for (var k = 0; k < rollPaths.length; k++) {
             paths.push(rollPaths[k]);
@@ -18407,9 +18425,34 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex, figure_chooser) 
               paths = buildShape ('Curve', topLineAngle, paths);
               var rollTopAngleAfter = angle - angleTop;
             } else {
-              // Split full loops in two parts for drawing.
-              paths = buildShape ('Curve', angle / 2, paths);
-              paths = buildShape ('Curve', angle / 2, paths);
+              // Split full loops in several parts for drawing. Only used
+              // for loops without a roll in the top. Useful for vertical 8s
+              
+              // Option 1: We add an invisible part to clarify initial loop.
+              
+              if (figureDraw.charAt(i + 1) == '«') {
+								paths = buildShape ('Line', [2, false, 'hiddenCurve'], paths);
+	              paths = buildShape ('Curve', {angle: angle * 0.05, style: 'hiddenCurve'}, paths);
+	              paths = buildShape ('Curve', angle * 0.95, paths);
+							} else if (figureDraw.charAt(i + 1) == '»') {
+	              paths = buildShape ('Curve', angle * 0.95, paths);								
+	              paths = buildShape ('Curve', {angle: angle * 0.05, style: 'hiddenCurve'}, paths);
+								paths = buildShape ('Line', [2, false, 'hiddenCurve'], paths);
+							} else {
+								paths = buildShape ('Curve', {angle: angle * 0.5}, paths);
+								paths = buildShape ('Curve', {angle: angle * 0.5}, paths);
+							}
+              
+              /*
+              // Option 2: Vary curve size in each half
+              if (figureDraw.charAt(i + 1) == '@') smallCurve++;
+              if (smallCurve === 1) curveRadius -= 1.5;
+	            paths = buildShape ('Curve', angle * 0.5, paths);
+	            if (smallCurve === 1) curveRadius += 1.5;
+							if (smallCurve === 2) curveRadius -= 1.5;
+              paths = buildShape ('Curve', angle * 0.5, paths);
+              if (smallCurve === 2) curveRadius += 1.5;
+              */
             }
             // if applicable, reset curveRadius when done
             if (figureDraw.charAt(i + 1) == '/') curveRadius *= 2;
@@ -18423,6 +18466,29 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex, figure_chooser) 
         }
     }
   }
+  
+  /*
+  // Check for hiddenCurvePaths and set first and last back to normal.
+  // This will ensure the middle ones hidden in case of some
+  // vertical 8 figures
+  if (hiddenCurvePaths.length) {
+		paths [hiddenCurvePaths[0]].style =
+			paths [hiddenCurvePaths[0] + 1].style;
+		paths [hiddenCurvePaths[hiddenCurvePaths.length - 1]].style =
+			paths [hiddenCurvePaths[hiddenCurvePaths.length - 1] - 1].style;
+	}
+	*/
+	
+	// Check for hiddenCurvePaths and set middle two to normal.
+  // This will ensure the middle ones hidden in case of some
+  // vertical 8 figures
+  if (hiddenCurvePaths.length) {
+		paths [hiddenCurvePaths[1]].style =
+			paths [hiddenCurvePaths[1] - 1].style;
+		paths [hiddenCurvePaths[hiddenCurvePaths.length - 2]].style =
+			paths [hiddenCurvePaths[hiddenCurvePaths.length - 2] + 1].style;
+	}
+
   // Draw any remaining line, we can leave the variables 'dirty' because
   // there is no more processing after this
   if (lineDraw) {

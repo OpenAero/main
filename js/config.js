@@ -36,7 +36,7 @@
 // Where a new x should be used for versions that create sequences not
 // fully backward compatible with the previous version
 
-var version = '2018.2.1';
+var version = '2018.3';
 /* versionNew is an object that contains version update information
    The structure is {vvv : [[ttt, n], ...], ...} , where
    vvv = version number
@@ -44,6 +44,12 @@ var version = '2018.2.1';
    n   = importance (higher = more important)
 */
 var versionNew = {
+	'2018.3' : [
+		['<font style="color:red;">2018 Advanced Free Known figure A was ' +
+		'changed by CIVA in early may (snap roll direction now the same ' +
+		'as 1 1/2 roll). Make sure to check sequences that have already ' +
+		'been made</font>', 5]
+	], 
 	'2018.2.1' : [
 		['Improved printing and printing options of several forms', 2]
 	],
@@ -68,12 +74,6 @@ var versionNew = {
 		['Corrected CIVA 2018 rules regarding required rolling turn in the Free Known', 4],
 		['Added IAC and BAeA Known sequences for 2018', 3]
 	],
-	'2018.1.3' : [
-		['<font style="color:red;">2018 Advanced Free Known figure A was ' +
-		'incorrect in the library of the previous version (snap roll ' +
-		'direction). This is fixed now, but make sure to check sequences ' +
-		'that have already been made</font>', 5]
-	], 
 	'2018.1' : [
 		['CIVA rules and Free Known sequences for 2018', 4],
 		['Aresti Catalogue updates for 2018', 4],
@@ -374,6 +374,8 @@ var style = {
   'negfillBW' : 'stroke: black; stroke-width: 1.5px; fill: black;',
   // Dotted path style
   'dotted' : 'stroke-dasharray: 1, 3; stroke: black; stroke-width: 1px; fill: none; vector-effect: non-scaling-stroke;',
+	// hiddenCurve
+	'hiddenCurve' : 'stroke: transparent; stroke-width: 0; fill: none;',
   // Illegal figure cross style
   'illegalCross' : 'stroke: red; stroke-width: 3px; fill: none;',
   // Illegal figure box style
