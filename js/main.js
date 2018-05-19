@@ -5320,7 +5320,7 @@ function addEventListeners () {
     }, false);
 	
   document.getElementById('t_freeKnownGuidancePower').parentNode.addEventListener('mousedown', function(){
-      helpWindow('doc/CIVA-Free-Known-Programme-Guidance-Power-Aircraft-2018-v3.pdf', 'CIVA Free Known Guidance Power');
+      helpWindow('doc/CIVA-Free-Known-Programme-Guidance-Power-Aircraft-2018-v3a.pdf', 'CIVA Free Known Guidance Power');
     }, false);
 
   document.getElementById('t_freeKnownGuidanceGlider').parentNode.addEventListener('mousedown', function(){
@@ -8392,7 +8392,13 @@ function parseFiguresFile () {
           // assure only half rolls remain
           entryExitSplit = entryExit.split ('_');
           for (var j = 0; j < entryExitSplit.length; j++) {
-            if (fig[i].rolls[j] === 2) entryExitSplit[j] += '^';
+						// if first roll does not exist, combine this drawing part
+						// with the next roll (e.g. +id^-)
+						if (fig[i].rolls[0] === 0) {
+	            if (fig[i].rolls[j + 1] === 2) entryExitSplit[j] += '^';
+						} else {
+							if (fig[i].rolls[j] === 2) entryExitSplit[j] += '^';
+						}
           }
           // add attitude info
           entryExit = theBase.charAt(0) + entryExitSplit.join('') +
@@ -17848,7 +17854,7 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex, figure_chooser) 
             roll[rollnr - 1].lineLengthAfter = lineSum; 
           }
           if (entryLine) {
-            params.push ('entry');
+            //params.push ('entry');
             figures[figStringIndex].entryLength = lineSum;
             entryLine = false;
           }
@@ -18482,13 +18488,15 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex, figure_chooser) 
 	// Check for hiddenCurvePaths and set middle two to normal.
   // This will ensure the middle ones hidden in case of some
   // vertical 8 figures
+  /*
   if (hiddenCurvePaths.length) {
 		paths [hiddenCurvePaths[1]].style =
 			paths [hiddenCurvePaths[1] - 1].style;
 		paths [hiddenCurvePaths[hiddenCurvePaths.length - 2]].style =
 			paths [hiddenCurvePaths[hiddenCurvePaths.length - 2] + 1].style;
 	}
-
+	*/
+	
   // Draw any remaining line, we can leave the variables 'dirty' because
   // there is no more processing after this
   if (lineDraw) {

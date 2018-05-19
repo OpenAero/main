@@ -1,3 +1,9 @@
+2018.3.1
+* removed "step=10" for several input fields to prevent field from becoming empty
+* updated CIVA Free Known Guidance for Power to v3a
+* fixed entry line disappearing on Q loop (and others) without roll on entry line
+* fixed Grid Info exit speed detection for figures with only one roll position (Issue #224)
+
 2018.3
 * fixed bug that caused entry/exit attitude inverting to be disabled for other figures after selecting figure with letter
 * fixed iOS zoom issue by expanding HTML viewport rules
@@ -5,7 +11,6 @@
 * removed 2018.1.3 update message because of figure A changing back
 * updated all 7.8.21-22 figures again with emphasis on center part
 * added options for hidden loop start/exit in figures.js
-* removed "step=10" for several input fields to prevent field from becoming empty
 
 2018.2.1
 * fixed spin symbol shown in figure chooser for tailslides
