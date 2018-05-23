@@ -1,3 +1,9 @@
+2018.3.2
+* fixed blue handle disappearing on entry line after 2018.3.1 fix
+* updated several xxx-rule Sporting Code references
+* changed checkAlert rule handling
+* updated CIVA Glider rules for 2018, including Sporting Code references
+
 2018.3.1
 * removed "step=10" for several input fields to prevent field from becoming empty
 * updated CIVA Free Known Guidance for Power to v3a

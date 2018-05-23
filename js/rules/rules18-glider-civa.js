@@ -69,6 +69,9 @@ OpenAero 2016.1
 *   exit lines of figures in columns 1 and 2
 * 2018.1
 * - updated reference sequences for 2018
+* 2018.3.2
+* - improved detection of upright exit for seqcheck-upend to accept ^ character
+* - major update to conform to Sporting Code 2018 chapters and wording
 */
 //###################################################################################
 //################################ CIVA GLIDERS FREE ################################
@@ -81,11 +84,11 @@ rules.push("(glider-CIVA Unlimited Known)");// specific rules for the Unlimited 
 // what info should be filled out
 rules.push("infocheck=positioning");
 
-// Maximum K-Factor acc. to Ch. 4.3.6
+// Maximum K-Factor acc. to Ch. 2.3.1.2
 //===================================
 rules.push("k-max=190");// maximum k-factor including floating points
 
-// Positioning k-Factors acc. to Ch. 4.3.6
+// Positioning k-Factors acc. to Ch. 2.3.1.2
 //====================================================
 rules.push("poslj=15");// positioning k-factor assuming line judges
 rules.push("posnl=15");// positioning k-factor assuming no line judges
@@ -104,38 +107,38 @@ rules.push('reference="@A" kif- "@B" -\'\',4\'\'irp--~ "@C" `-iao6-` "@D" `-48ig
 // what info should be filled out
 rules.push("infocheck=pilot;actype;acreg;positioning");
 
-// Repeations of base-figures acc. to CIVA Section 6 part II Ch. 4.3.3.1 (a)
+// Repetitions of base-figures acc. to CIVA Section 6 part II Ch. 2.2.1.4
 //==========================================================================
 rules.push("basefigex11-repeat=1");// base figures except of 1.1.1. and 9.1
 // may not be repeated in sequence
 
-// Repetitions of rolls acc. to CIVA Section 6 part II Ch. 4.3.3.1 (a)
+// Repetitions of rolls acc. to CIVA Section 6 part II Ch. 2.2.1.4
 //==========================================================================
 rules.push("hesroll-repeat=1");
 rules.push("snap-repeat=1");
 rules.push("spin-repeat=1");
 
-// Maximum K-Factor and number of figures acc. to CIVA Section 6 part II Ch. 4.3.3.1 (b)
+// Maximum K-Factor and number of figures acc. to CIVA Section 6 part II Ch. 2.2.1.5
 //======================================================================================
 rules.push("k-max=233");	// maximum k-factor including maximum floating points
 rules.push("basefig-min=10");	// exactly 10 base figures per sequence
 rules.push("basefig-max=10");
 rules.push("floating-point=3");	// 3 points may be reduced
 
-// Versatility acc. to CIVA Section 6 part II Ch. 4.3.3.2
+// Versatility acc. to CIVA Section 6 part II Ch. 2.2.1.6
 //=======================================================
 rules.push("fam5-min=1");// minimum one figure from family 5
 rules.push("fam6-min=1");
 rules.push("fam7-min=1");
 rules.push("fam8-min=1");
 
-// 4.3.3.2 a)
+// 2.2.1.6 a)
 //-----------
 rules.push("group-roller=^(2\\.1\\.3|2\\.2\\.[2-6]|2\\.3\\.[2-5]|2\\.4\\.[3-8])");// new definition acc. new catIDs
 rules.push("roller-name=Rolling Turn with at least one full roll");
 rules.push("roller-min=1");
 
-// 4.3.3.2 b)
+// 2.2.1.6 b)
 //-----------
 // i)
 rules.push("group-froll2=^9\\.1\\.\\d\\.[^1]");
@@ -151,12 +154,12 @@ rules.push("isnap-min=1");// minimum one inside snap roll element
 // iv)
 rules.push("osnap-min=1");// minimum one outside snap roll element
 
-// Sequence entry and exit attitudes acc. to Ch. 4.3.3.4
+// Sequence entry and exit attitudes acc. to Ch. 2.2.1.8
 //======================================================
-rules.push("seqcheck-upend=[\\da-z][~+`'()\"\.]*>?\\s*$");// Sequence exit must be in positive attitude
+rules.push("seqcheck-upend=[\\da-z][~+`'()\"\.>^]*\\s*$");// Sequence exit must be in positive attitude
 rules.push("upend-name=Sequence must end flying upright");
 
-// Positioning k-factors acc. to Ch. 4.3.6
+// Positioning k-factors acc. to Ch. 2.3.1.2
 //====================================================
 rules.push("poslj=15");// positioning k-factor assuming line judges
 rules.push("posnl=15");// positioning k-factor assuming no line judges
@@ -174,7 +177,7 @@ rules.push("infocheck=pilot;actype;acreg;positioning");
 // Super Families
 rules.push("sf=^9\\.11\\.:3;^9\\.12\\.:3;^9\\.9\\.:4;^9\\.10\\.:4;^2\\.:2;^5\\.:5;^6\\.:6;^1\\.:7;^3\\.:7;^7\\.:7;^8\\.:7;^0\\.:7");
 
-// Repeations of base-figures acc. to CIVA Section 6 part II Ch. 4.3.3.1 (a)
+// Repetitions of base-figures acc. to CIVA Section 6 part II Ch. 4.3.3.1 (a)
 //==========================================================================
 rules.push("basefigex11-repeat=1");// base figures except of 1.1.1. and 9.1
 // may not be repeated in sequence
@@ -191,20 +194,20 @@ rules.push("k-max=233");	// maximum k-factor including maximum floating points
 rules.push("basefig-max=10");	// maximum 10 base figures per sequence
 rules.push("floating-point=3");	// 3 points may be reduced
 
-// Versatility acc. to CIVA Section 6 part II Ch. 4.3.3.2
+// Versatility acc. to CIVA Section 6 part II Ch. 2.2.1.6
 //=======================================================
 rules.push("fam5-min=1");// minimum one figure from family 5
 rules.push("fam6-min=1");
 rules.push("fam7-min=1");
 rules.push("fam8-min=1");
 
-// 4.3.3.2 a)
+// 2.2.1.6 a)
 //-----------
 rules.push("group-roller=^(2\\.1\\.3|2\\.2\\.[2-6]|2\\.3\\.[2-5]|2\\.4\\.[3-8])");// new definition acc. new catIDs
 rules.push("roller-name=Rolling Turn with at least one full roll");
 rules.push("roller-min=1");
 
-// 4.3.3.2 b)
+// 2.2.1.6 b)
 //-----------
 // i)
 rules.push("group-froll2=^9\\.1\\.\\d\\.[^1]");
@@ -220,12 +223,12 @@ rules.push("isnap-min=1");// minimum one inside snap roll element
 // iv)
 rules.push("osnap-min=1");// minimum one outside snap roll element
 
-// Sequence entry and exit attitudes acc. to Ch. 4.3.3.4
+// Sequence entry and exit attitudes acc. to Ch. 2.2.1.8
 //======================================================
-rules.push("seqcheck-upend=[\\da-z][~+`'()\"\.]*>?\\s*$");// Sequence exit must be in positive attitude
+rules.push("seqcheck-upend=[\\da-z][~+`'()\"\.>^]*\\s*$");// Sequence exit must be in positive attitude
 rules.push("upend-name=Sequence must end flying upright");
 
-// Positioning k-factors acc. to Ch. 4.3.6
+// Positioning k-factors acc. to Ch. 2.3.1.2
 //====================================================
 rules.push("poslj=15");// positioning k-factor assuming line judges
 rules.push("posnl=15");// positioning k-factor assuming no line judges
@@ -236,7 +239,7 @@ rules.push("more=glider-CIVA Unlimited arestibase");
 //######################
 rules.push("(glider-CIVA Unlimited arestibase)");
 //######################
-// Allowed Figures for KNOWN and FREE acc. to Ch. 4.3.2.2 (c) # "acc. to the Aresti-System, Glider Version"
+// Allowed Figures for KNOWN and FREE acc. to Ch. 2.2.1.6 and 2.2.1.7  # "acc. to the Aresti-System, Glider Version"
 //=========================================================================================================
 rules.push("1.1.1.1-4");
 rules.push("1.1.2.1-4");
@@ -276,9 +279,7 @@ rules.push("2.2.3.1-4");
 rules.push("2.2.4.1-4");
 rules.push("2.2.5.1-4");
 rules.push("2.2.6.1-4");
-// new 1.5.0
 rules.push("2.2.7.1-4");
-//
 rules.push("2.3.1.1-2");
 rules.push("2.3.2.1-4");
 rules.push("2.3.3.1-4");
@@ -467,10 +468,6 @@ rules.push("9.10.9.2-8");
 rules.push("9.10.10.2-8");
 rules.push("9.11.1.4-8");
 rules.push("9.12.1.4-8");
-// Super Slow Roll removed from Glider competition at 2015 CIVA meeting
-// rules.push("9.13.3.2");
-// rules.push("9.13.3.4");
-// rules.push("9.13.3.6");
 
 //###################
 rules.push("[glider-CIVA Unlimited Unknown1]");
@@ -484,7 +481,7 @@ rules.push("[glider-CIVA Unlimited FreeUnknown]");
 // what info should be filled out
 rules.push("infocheck=positioning");
 
-// Maximum K-Factor and number of figures acc. to CIVA Section 6 part II Ch. 4.3.6
+// Maximum K-Factor and number of figures acc. to CIVA Section 6 part II Ch. 2.3.1.2
 //================================================================================
 rules.push("figure-letters=ABCDEFG");
 rules.push("k-max=200");	// 2014 : maximum k-factor + 3 floating points
@@ -493,7 +490,7 @@ rules.push("basefig-max=7");	// max. 7 base figures per sequence (+ max 2 links)
 //rules.push("floating-point=3");	// 3 points may be reduced (4.3.4.6 last sentence -applies to P3,5 and 6 only)
 rules.push("additionals=2/10"); 	// max 2 additionals with 10K total
 
-// Positioning k-factors acc. to Ch. 4.3.6
+// Positioning k-factors acc. to Ch. 2.3.1.2
 //====================================================
 rules.push("poslj=15");// positioning k-factor assuming line judges
 rules.push("posnl=15");// positioning k-factor assuming no line judges
@@ -522,14 +519,14 @@ rules.push("[glider-CIVA Unlimited Unknown3]");
 rules.push("infocheck=positioning");
 
 //###################
-// Maximum K-Factor and number of figures acc. to CIVA Section 6 part II Ch. 4.3.6
+// Maximum K-Factor and number of figures acc. to CIVA Section 6 part II Ch. 2.3.1.2
 //================================================================================
 rules.push("k-max=193");		// maximum k-factor + maximum floating points
 rules.push("k-min=175");		// minimum k-factor
 rules.push("basefig-max=9");		// maximum 9 base figures per sequence (7 chosen + max 2 additional)
 rules.push("floating-point = 3");	// maximum floating points (4.3.4.6 last sentence)
 
-// Positioning k-factors acc. to Ch. 4.3.6
+// Positioning k-factors acc. to Ch. 2.3.1.2
 //====================================================
 rules.push("poslj=15");	// positioning k-factor assuming line judges
 rules.push("posnl=15");	// positioning k-factor assuming no line judges
@@ -549,41 +546,42 @@ rules.push("more=glider-CIVA Unlimited Unknownbase");
 //###################
 rules.push("[glider-CIVA Unlimited Unknown0]");
 //###################
-rules.push("basefig-max=28");
+rules.push("basefig-max=35");
 
-// 4.3.4.2 Sentence 1:
-// "Four figures maximum can be chosen in each of Families 2, 5, 6, 9.9, 9.10 and 9.11/12."
+// 2.3.1.2 Sentence 1:
+// "Five figures maximum can be chosen in each of Families 2, 5, 6, 9.9, 9.10 and 9.11/12."
 
-rules.push("fam2-max = 4");
-rules.push("fam5-max = 4");
-rules.push("fam6-max = 4");
-rules.push("isnap-max = 4");
-rules.push("osnap-max = 4");
-rules.push("spin-max = 4");
+rules.push("fam2-max = 5");
+rules.push("fam5-max = 5");
+rules.push("fam6-max = 5");
+rules.push("isnap-max = 5");
+rules.push("osnap-max = 5");
+rules.push("spin-max = 5");
 
-// 4.3.4.2. a) In Unlimited, the minimum acceptable K per figure is 15
+// 2.3.1.2. a) In Unlimited, the minimum acceptable K per figure is 15
 
 rules.push("k-minperfig=15");// 2014 : minimum K for every figure
 
-// 4.3.4.2. b) No figure may be selected with a K higher than 40 (AG 35)
+// 2.3.1.2. b) No figure may be selected with a K higher than 40 (AG 35)
 
 rules.push("k-maxperfig=40");// 2014 : maximum K for every figure
 
-// 4.3.4.2. c) In the case of teams which select two or more figures, one must be a reversing figure
+// 2.3.1.3. c) In the case of teams which select two or more figures, one must be a reversing figure
 //		and the sum of coefficients of the figures proposed by a NAC must not exceed:
 //		60 (AG 55) for two figures
 //		80 (AG 70) for three figures
 //		95 (AG 85) for four figures
+//     110 (AG 95) for five figures
 
 // --- implemented only by warning ---
 
-// 4.3.4.2 c) Needs to be checked manually. Alert displays when there
+// 2.3.1.3 c) Needs to be checked manually. Alert displays when there
 // are spaces in the sequence string
 
 rules.push("seqcheck-twoormore=^[^ ]*$");
-rules.push("twoormore-name=manual check required: section 6 part II 4.3.4.2&nbsp;c)");
+rules.push("twoormore-name=manual check required: section 6 part II 2.3.1.3&nbsp;c)");
 
-// 4.3.4.2 d) The same catalogue number may only be used once, except of fam. 9
+// 2.3.1.3 d) The same catalogue number may only be used once, except of fam. 9
 
 rules.push("basefig-repeat=1");
 
@@ -597,34 +595,40 @@ rules.push("(glider-CIVA Unlimited Unknownbase)");// specific rules for the Unli
 //===========================
 //## basic rules "NR", "NF" and "NOU" see basic rules file
 
-//## Opposite slow or hesitation rolls are allowed on horizontal lines
+//## Opposite aileron hesitation rolls are allowed on horizontal lines
 //>>> implemented by rule-NOU
+rules.push("rule-NOAH=roll:[1248],[1248]");
+rules.push("why-NOAH=no opposite aileron or hesitation rolls allowed");
+rules.push("NOAH-rule=Sporting Code section 6 part 2 A.2.1.1");
 
-rules.push("rule-NHR=roll:[248]");//## new rule added ### checked
+rules.push("rule-NHR=roll:[248]");
 rules.push("why-NHR=no hesitation roll allowed");
 
-// acc. to 9.1.1.22:
-// Full horizontal positive flick rolls only at the appex of upward looping figures
+// acc. to A.21.1.1
+// Full horizontal positive flick rolls only at the apex of upward looping figures
 
 rules.push("conv-hpflick=^9\\.9\\.3\\.4=o ; ^9\\.=r ; ^0\\.=z");//## new converions added ### works perfect
-rules.push("rule-nfpf=hpflick:o");//## new rule added  ### checked
-rules.push("why-nfpf=Rule 9.1.1.22 Full horizontal positive flick rolls only at the appex of upward looping figures!");
+rules.push("rule-nfpf=hpflick:o");
+rules.push("why-nfpf=Full horizontal positive flick 9.9.3.4 only at the apex of upward looping figures");
+rules.push("nfpf-rule=Sporting Code section 6 part 2 A.21.1.1");
 
-// acc. to 9.1.1.23 and acc. to 9.1.1.25::
+// acc. to A.21.1.2 and acc. to A.22.1.2:
 // Positive half flick on negative line 9.8.8.2 only with figures 7.2.2.2 and 7.2.4.1
 // Negative half flick on positive line 9.10.8.2 only with figures 7.2.2.1 and 7.2.4.2
 
-rules.push("conv-fignhf=^9\\.9\\.8\\.2=p ;^9\\.10\\.8\\.2=n ; ^9\\.=r ; ^0\\.=z");//## new conversion added ### checked
-rules.push("rule-nhfonl=fignhf: [pn]");//## new rule added  ### checked
-rules.push("why-nhfonl=Rule 9.1.1.23/25 Positive/Negative half flick on line 9.9.8.2/9.10.8.2 only with 7.2.2.2 and 7.2.4.1");
+rules.push("conv-fignhf=^9\\.9\\.8\\.2=p ;^9\\.10\\.8\\.2=n ; ^9\\.=r ; ^0\\.=z");
+rules.push("rule-nhfonl=fignhf: [pn]");
+rules.push("why-nhfonl=Positive/Negative half flick on line 9.9.8.2/9.10.8.2 only with 7.2.2.2 and 7.2.4.1");
+rules.push("nhfonl-rule=Sporting Code section 6 part 2 A.21.1.2/A.22.1.2");
 
-rules.push("conv-hnfvd=^9\\.10\\.(5\\.[34]|10\\.[34])=o ; ^9\\.=r ; ^0\\.=z");//## new conversion added ### checked
+rules.push("conv-hnfvd=^9\\.10\\.(5\\.[34]|10\\.[34])=o ; ^9\\.=r ; ^0\\.=z");
 rules.push("rule-nopushout=hnfvd:o$");
-rules.push("why-nopushout=Rule 9.1.1.24 No inverted exit after more than 1/2 negative flick roll vertically down");
+rules.push("why-nopushout=No inverted exit after more than 1/2 negative flick vertically down");
+rules.push("nopushout-rule=Sporting Code section 6 part 2 A.22.1.1");
 
 // Allowed figures for all Unlimited Unknowns (glider)
 //====================================================
-//## "figures will be chosen from section 9 of sporting code" (acc. to 4.3.4.1)
+//## "figures will be chosen from Appendix A of sporting code" (acc. to 2.3.1.1)
 
 // Single Lines
 //-------------
@@ -633,16 +637,16 @@ rules.push("1.1.2.1-2 NR");
 rules.push("1.1.2.3-4 NOU");
 rules.push("1.1.3.1-4 NOU");
 rules.push("1.1.6.1  NOU");
-rules.push("1.1.6.3  NOU");
-rules.push("1.1.6.4  NOU ; nopushout");
+rules.push("1.1.6.3  NOAH");
+rules.push("1.1.6.4  NOAH ; nopushout");
 rules.push("1.1.7.1  NOU");
-rules.push("1.1.7.3  NOU ; nopushout");
-rules.push("1.1.7.4  NOU");
+rules.push("1.1.7.3  NOAH ; nopushout");
+rules.push("1.1.7.4  NOAH");
 
 // Two Lines
 //----------
-// no vertical roll in fig. of column 4, or column 2 of 1.2.5-8 ### acc. to Ch. 9.1.1.3
-// no hesitation rolls on 45°lines of lines 1.2.5-8  ### acc. to Ch. 9.1.1.4
+// no vertical roll in fig. of column 4, or column 2 of 1.2.5-8 ### acc. to Ch. A.4.1.1
+// no hesitation rolls on 45°lines of lines 1.2.5-8
 rules.push("1.2.1.1  NOU ; NR:1");
 rules.push("1.2.1.2  NOU  ; NR:1 ; nopushout");
 rules.push("1.2.2.1  NOU ; NR:1 ; nopushout");
@@ -678,7 +682,7 @@ rules.push("2.4.1.1-2");
 
 // Stall-Turns
 //------------
-// Rolling elements may only be added where indicated  ### acc. to 9.1.1.5
+// Rolling elements may only be added where indicated  ### acc. to A.6.1.1
 rules.push("5.2.1.1  NOU");
 rules.push("5.2.1.2  NOU ; NR:1 ; nopushout");
 rules.push("5.2.1.3  NOU ; nopushout");
@@ -686,7 +690,7 @@ rules.push("5.2.1.4  NOU  ; NR:1");
 
 // Tail-Slides
 //------------
-//Rolling elements may only be added where indicated  ### acc. to 9.1.1.6
+//Rolling elements may only be added where indicated  ### acc. to A.7.1.1
 rules.push("6.2.1.1  NOU");
 rules.push("6.2.1.2  NOU ; NR:1 ; nopushout");
 rules.push("6.2.1.3  NOU ; nopushout");
@@ -698,24 +702,24 @@ rules.push("6.2.2.4  NOU  ; NR:1");
 
 // Immelmann and Split-S
 //----------------------
-// no flick rolls on entries in 7.2.1-4.1-2 nor on exits in 7.2.1-4.3-4 ### acc. to 9.1.1.7
-// no negative flick rolls on 7.2.2.2 or 7.2.4.1    ### acc. to 9.1.1.8
-// no positive flick rolls on 7.2.2.1 or 7.2.4.2    ### acc. to 9.1.1.8
+// no flick rolls on entries in 7.2.1-4.1-2 nor on exits in 7.2.1-4.3-4 ### acc. to A.8.1.1
+// no negative flick rolls on 7.2.2.2 or 7.2.4.1    ### acc. to A.8.1.2
+// no positive flick rolls on 7.2.2.1 or 7.2.4.2    ### acc. to A.8.1.2
 
-rules.push("rule-NNF=roll:S");//## new rule added ### checked
+rules.push("rule-NNF=roll:S");
 rules.push("why-NNF=no negative flick roll on 7.2.2.2 or 7.2.4.1");
-rules.push("rule-NPF=roll:S");//## new rule added ### checked
+rules.push("rule-NPF=roll:S");
 rules.push("why-NPF=no positive flick roll on 7.2.2.1 or 7.2.4.2");
 
-rules.push("7.2.1.1-2 NF:1 ; nfpf");// Rule 9.1.1.7
-rules.push("7.2.1.3-4 NF:2 ; nfpf");// Rule 9.1.1.7
-rules.push("7.2.2.1  NF:1 ; NPF:2  ; nfpf");// Rule 9.1.1.7 ; 9.1.1.8
-rules.push("7.2.2.2  NF:1 ; NNF:2  ; nfpf");// Rule 9.1.1.7 ; 9.1.1.8
-rules.push("7.2.2.3-4 NF:2 ; nfpf ; nhfonl");// Rule 9.1.1.7
-rules.push("7.2.3.1-2 NF:1 ; nfpf ; nhfonl");// Rule 9.1.1.7
+rules.push("7.2.1.1-2 NF:1 ; nfpf");
+rules.push("7.2.1.3-4 NF:2 ; nfpf");
+rules.push("7.2.2.1  NF:1 ; NPF:2  ; nfpf");
+rules.push("7.2.2.2  NF:1 ; NNF:2  ; nfpf");
+rules.push("7.2.2.3-4 NF:2 ; nfpf ; nhfonl");
+rules.push("7.2.3.1-2 NF:1 ; nfpf ; nhfonl");
 rules.push("7.2.3.3-4 NF:2 ; nfpf ; nhfonl");
-rules.push("7.2.4.1  NF:1 ; NNF:1 ; NNF:2");// Rule 9.1.1.7 ; 9.1.1.8 ; 9.1.1.8
-rules.push("7.2.4.2  NF:1 ; NPF:1 ; NPF:2 ; nhfonl");// Rule 9.1.1.7 ; 9.1.1.8 ; 9.1.1.8
+rules.push("7.2.4.1  NF:1 ; NNF:1 ; NNF:2");
+rules.push("7.2.4.2  NF:1 ; NPF:1 ; NPF:2 ; nhfonl");
 rules.push("7.2.4.3-4 NF:2 ; nhfonl");
 
 // Goldfishes
@@ -727,22 +731,16 @@ rules.push("7.3.4.1-4 NOU");
 
 // Loops
 //------
-// no rolls on 7.4.1.3-4      ### acc. to 9.1.1.9
-// no superslow rolls in 7.4.1.1-2 and 7.4.2.1   ### acc. to 9.1.1.10
-// no hesitation roll in 7.4.1.2     ### acc. to 9.1.1.11
+// no rolls on 7.4.1.3-4      ### acc. to A.9.1.1
+// no hesitation roll in 7.4.1.2     ### acc. to A.9.1.2
 
-rules.push("rule-nossr=roll:t");//## new rule added ### checked
-rules.push("why-nossr=no super slow roll allowed");
-
-rules.push("7.4.1.1  nossr");
-rules.push("7.4.1.2  NHR ; nossr");
+rules.push("7.4.1.2  NHR");
 rules.push("7.4.1.3-4 NR");
-rules.push("7.4.2.1  nossr");
 
 // horizontal Eights = Full Cuban Eights
 //--------------------------------------
-// no flick rolls on hor. entries in figures 7.8.1-4.1-2  ### acc. to 9.1.1.12
-// no flick rolls on hor. exits in figures 7.8.5-8.1-2  ### acc. to 9.1.1.13
+// no flick rolls on hor. entries in figures 7.8.1-4.1-2  ### acc. to A.10.1.1
+// no flick rolls on hor. exits in figures 7.8.5-8.1-2  ### acc. to A.10.1.2
 // no rolls on diagonal lines acc. to Ch. 9 page 90
 rules.push("7.8.1.1-2 NOU ;NF:1");
 rules.push("7.8.1.3-4 NOU ;NR:1 ; NR:2 ; nfpf");
@@ -763,7 +761,7 @@ rules.push("7.8.8.3-4 NOU ;nfpf");
 
 // Super-Eights
 //-------------
-// no rolls on diagonal lines acc. to Ch. 9 page 91
+// no rolls on diagonal lines
 rules.push("7.8.9.1-2 NOU ;NR:1 ; NR:2 ; NR:3");
 rules.push("7.8.9.3-4 NOU");
 rules.push("7.8.10.1-2 NOU ;NR:2 ; NR:3");
@@ -790,8 +788,8 @@ rules.push("8.4.4.2 NOU");
 
 // Diagonal bumps
 //---------------
-// no flick rolls on diagonal down lines in 8.4.15-16.2, 8.4.17-18.1 ### acc. to 9.1.1.14
-// no rolls on lines acc. to Ch. 9 page 92 and 93
+// no flick rolls on diagonal down lines in 8.4.15-16.2, 8.4.17-18.1 ### acc. to A.12.1.2
+// no rolls on lines
 rules.push("8.4.13.1-2 NOU ; NR:1");
 rules.push("8.4.14.1-2 NOU ; NR:1");
 rules.push("8.4.15.1 NOU");
@@ -809,7 +807,7 @@ rules.push("8.4.18.3 NOU");
 
 // Half Cuban Eight, diagonal lines first
 //---------------------------------------
-// no flick rolls on hor. exits in fig. 8.5.1-4.1-2   ### acc. to 9.1.1.15
+// no flick rolls on hor. exits in fig. 8.5.1-4.1-2   ### acc. to A.13.1.1
 // no rolls on lines acc. to Ch. 9 page 93
 rules.push("8.5.1.1-2 NF:2 ; NR:1 ; nfpf");
 rules.push("8.5.1.3-4 NOU:1 ; nfpf");
@@ -822,7 +820,7 @@ rules.push("8.5.4.3-4 NOU:1 ; nhfonl");
 
 // Half Cuban Eight, diagonal lines last
 //--------------------------------------
-// no flick rolls on hor. entries in fig. 8.5.5-8.1-2   ### acc. to 9.1.1.16
+// no flick rolls on hor. entries in fig. 8.5.5-8.1-2   ### acc. to A.13.1.2
 // no rolls on lines acc. to Ch. 9 page 94
 rules.push("8.5.5.1-2 NF:1 ; NOU:2 ; nfpf");
 rules.push("8.5.5.3-4 NR:2 ; nfpf");
@@ -833,42 +831,42 @@ rules.push("8.5.7.3-4 NR:2");
 rules.push("8.5.8.1-2 NF:1 ; NOU:2");
 rules.push("8.5.8.3-4 NOU:2");
 
-// P-Loops with full rolls in appex
+// P-Loops with full rolls in apex
 //---------------------------------
-// no superslow rolls in the top of 8.6.1|3.1    ### acc. to 9.1.1.17
-// no rolls on top of 8.6.1|3.1 after roll on the up line  ### acc. to 9.1.1.18
+// no rolls on top of 8.6.1|3.1 after roll on the up line  ### acc. to A.14.1.1
 // no rolls on lines acc. to Ch. 9 page 94-95
-// no superslow rolls in the top of 8.6.5-8.1-2    ### acc. to 9.1.1.19
-// no flicks on vert. down lines in 8.6.5-8.1-2 after hesitation in loop ### acc. to 9.1.1.20
+// no flicks on vert. down lines in 8.6.5-8.1-2 after hesitation in loop ### acc. to A.14.1.2
 
-rules.push("rule-NLRAULR=roll: [12348fFSt] ([12348fFSt])");//## new rule added ### checked
-rules.push("why-NLRAULR=no rolls on top of loop after roll on up line (see Ch. 9.1.1.18)");
+rules.push("rule-NLRAULR=roll: [12348fFSt] ([12348fFSt])");
+rules.push("why-NLRAULR=no rolls on top of loop after roll on up line");
+rules.push("NLRAULR-rule=Sporting Code section 6 part 2 A.14.1.1");
 
-rules.push("rule-NFALHR=roll: (.[,;].|[248]) [fFS]$");//## new rule added ### checked
+rules.push("rule-NFALHR=roll: (.[,;].|[248]) [fFS]$");
 rules.push("why-NFALHR=no flick roll on vertical down line after hesitation roll in loop segment");
+rules.push("NFALHR-rule=Sporting Code section 6 part 2 A.14.1.2");
 
-rules.push("8.6.1.1  nossr:2 ; NLRAULR ; NOU:1 ; NOU:2 ; NF:3");
-rules.push("8.6.1.4  NOU:1 ; nfpf:3");
+rules.push("8.6.1.1  NLRAULR ; NOU:1 ; NOU:2 ; NF:3");
+rules.push("8.6.1.4  NOAH:1 ; nfpf:3");
 rules.push("8.6.2.1  NR:1 ; NR:2 ; NF:3");
-rules.push("8.6.2.4  NOU:1");
-rules.push("8.6.3.1  nossr:2 ; NLRAULR  ; NOU:1 ; NOU:2 ; NF:3");
-rules.push("8.6.3.3  NOU:1 ; nfpf:3");
+rules.push("8.6.2.4  NOAH:1");
+rules.push("8.6.3.1  NLRAULR  ; NOU:1 ; NOU:2 ; NF:3");
+rules.push("8.6.3.3  NOAH:1 ; nfpf:3");
 rules.push("8.6.4.1  NR:1 ; NR:2  ; NF:3");
-rules.push("8.6.4.3  NOU:1 ; nhfonl");
-rules.push("8.6.5.1  nossr:2 ; NFALHR  ; NOU:2 ; NOU:3 ; NF:1");
+rules.push("8.6.4.3  NOAH:1 ; nhfonl");
+rules.push("8.6.5.1  NFALHR  ; NOU:2 ; NOU:3 ; NF:1");
 rules.push("8.6.5.4  NOU:2 ; nfpf:1");
-rules.push("8.6.6.1  nossr:2 ; NFALHR  ; NOU:2 ; NOU:3 ; NF:1 ; nopushout");
-rules.push("8.6.6.2  nossr:2 ; NFALHR  ; NOU:2 ; NOU:3 ; NF:1");
+rules.push("8.6.6.1  NFALHR  ; NOU:2 ; NOU:3 ; NF:1 ; nopushout");
+rules.push("8.6.6.2  NFALHR  ; NOU:2 ; NOU:3 ; NF:1");
 rules.push("8.6.6.4  NOU:2 ; nfpf:1");
-rules.push("8.6.7.2  nossr:2 ; NFALHR  ; NOU:2 ; NOU:3 ; NF:1");
+rules.push("8.6.7.2  NFALHR  ; NOU:2 ; NOU:3 ; NF:1");
 rules.push("8.6.7.3  NOU:2 ; nhfonl");
-rules.push("8.6.8.1  nossr:2 ; NFALHR  ; NOU:2 ; NOU:3 ; NF:1");
-rules.push("8.6.8.2  nossr:2 ; NFALHR  ; NOU:2 ; NOU:3 ; NF:1 ; nopushout");
+rules.push("8.6.8.1  NFALHR  ; NOU:2 ; NOU:3 ; NF:1");
+rules.push("8.6.8.2  NFALHR  ; NOU:2 ; NOU:3 ; NF:1 ; nopushout");
 rules.push("8.6.8.3  NOU:2 ; nhfonl");
 
 // "reversing P-Loops" or Porpoise
 //--------------------------------
-// no rolls on lines acc. to Ch. 9 page 96
+// no rolls on lines
 rules.push("8.6.13.1 NR:1 ; NR:2 ; NOU:3");
 rules.push("8.6.13.2 NR:1 ; NR:2 ; NOU:3 ; nopushout");
 rules.push("8.6.13.3 NR:1 ; NR:2 ; NOU:3");
@@ -888,8 +886,8 @@ rules.push("8.6.23.1-2 NF:1 ; NOU:2 ; NR:3");
 
 // Q-Loops
 //--------
-// no hesitation rolls on top of 8.7.5|6.2    ### acc. to 9.1.1.21
-// no rolls on lines acc. to Ch. 9 page 96
+// no hesitation rolls on top of 8.7.5|6.2    ### acc. to A.16.1.2
+// no rolls on lines
 rules.push("8.7.5.1  NOU:2 ; NOU:3 ; nfpf:1");
 rules.push("8.7.5.2  NHR:2 ; NOU:2 ; NOU:3 ; nfpf:1");
 rules.push("8.7.5.4  NR:2 ; NR:3 ; nfpf:1");
@@ -939,10 +937,6 @@ rules.push("9.11.1.4-6");
 
 rules.push("9.12.1.4-6");
 
-// Super Slow Roll removed from Glider competition at 2015 CIVA meeting
-// rules.push("9.13.3.2");
-// rules.push("9.13.3.4");
-
 //########################################################################################
 
 //#################### End of Rules for GLIDER UNLIMITED #################################
@@ -956,11 +950,11 @@ rules.push("(glider-CIVA Advanced Known)");// specific rules for the Advanced Kn
 // what info should be filled out
 rules.push("infocheck=positioning");
 
-// Maximum K-Factor acc. to Ch. 4.3.6
+// Maximum K-Factor acc. to Ch. 2.3.1.2
 //===================================
 rules.push("k-max=145");// maximum k-factor including floating points
 
-// Positioning k-Factors acc. to Ch. 4.3.6
+// Positioning k-Factors acc. to Ch. 2.3.1.2
 //====================================================
 rules.push("poslj=15");// positioning k-factor assuming line judges
 rules.push("posnl=15");// positioning k-factor assuming no line judges
@@ -979,36 +973,36 @@ rules.push('reference="@A" -2irc1- "@B" ta``4+`` "@C" m48 "@D" -2t "@E" -io-');
 // what info should be filled out
 rules.push("infocheck=pilot;actype;acreg;positioning");
 
-// Repeations of base-figures acc. to CIVA Section 6 part II Ch. 4.3.3.1 (a)
+// Repetitions of base-figures acc. to CIVA Section 6 part II Ch. 2.2.1.4
 //==========================================================================
-rules.push("basefigex11-repeat=1");// base figures except of 1.1.1. and 9.1  ### Checken!!!
+rules.push("basefigex11-repeat=1");// base figures except of 1.1.1. and 9.1
 // may not be repeated in sequence
 
-// Repetitions of rolls acc. to CIVA Section 6 part II Ch. 4.3.3.1 (a)
+// Repetitions of rolls acc. to CIVA Section 6 part II Ch. 2.2.1.4
 //==========================================================================
 rules.push("hesroll-repeat=1");
 rules.push("snap-repeat=1");
 rules.push("spin-repeat=1");
 
-// Maximum K-Factor and number of figures acc. to CIVA Section 6 part II Ch. 4.3.3.1 (b)
+// Maximum K-Factor and number of figures acc. to CIVA Section 6 part II Ch. 2.2.1.5
 //======================================================================================
 rules.push("k-max=178");	// 2014 : maximum k-factor + maximum floating points
 rules.push("basefig-min=10");	// exactly 10 base figures per sequence
 rules.push("basefig-max=10");
 rules.push("floating-point=3");	// 3 points may be reduced
 
-// Versatility acc. to CIVA Section 6 part II Ch. 4.3.3.3
+// Versatility acc. to CIVA Section 6 part II Ch. 2.2.1.7
 //=======================================================
 rules.push("fam5-min=1");// minimum one figure from family 5
 rules.push("fam6-min=1");
 rules.push("fam7-min=1");
 rules.push("fam8-min=1");
 
-// 4.3.3.3 a)
+// 2.2.1.7 a)
 //-----------
 rules.push("group-roller=^(2\\.[1-4]\\.1|2\\.1\\.3\\.1)");// new definition acc. new catIDs
 
-// 4.3.3.3 b)
+// 2.2.1.7 b)
 //-----------
 // i)
 rules.push("group-froll2=^9\\.1\\.\\d\\.[^1]");
@@ -1018,12 +1012,12 @@ rules.push("froll2-min=1");
 // ii)
 rules.push("hesroll-min=1");// a hesitation roll of any extent
 
-// Sequence entry and exit attitudes acc. to Ch. 4.3.3.4
+// Sequence entry and exit attitudes acc. to Ch. 2.2.1.8
 //======================================================
-rules.push("seqcheck-upend=[\\da-z][~+`'()\"\.]*>?\\s*$");// Sequence exit must be in positive attitude
-rules.push("upend-name=Sequence must end flying upright (Section 6, Ch. 4.3.3.4)");
+rules.push("seqcheck-upend=[\\da-z][~+`'()\"\.>^]*\\s*$");// Sequence exit must be in positive attitude
+rules.push("upend-name=Sequence must end flying upright (Section 6, Ch. 2.2.1.8)");
 
-// Positioning k-factors acc. to Ch. 4.3.6
+// Positioning k-factors acc. to Ch. 2.3.1.2
 //====================================================
 rules.push("poslj=15");// positioning k-factor assuming line judges
 rules.push("posnl=15");// positioning k-factor assuming no line judges
@@ -1041,9 +1035,9 @@ rules.push("infocheck=pilot;actype;acreg;positioning");
 // Super Families
 rules.push("sf=^9\\.11\\.:3;^9\\.12\\.:3;^9\\.9\\.:4;^9\\.10\\.:4;^2\\.:2;^5\\.:5;^6\\.:6;^1\\.:7;^3\\.:7;^7\\.:7;^8\\.:7;^0\\.:7");
 
-// Repeations of base-figures acc. to CIVA Section 6 part II Ch. 4.3.3.1 (a)
+// Repetitions of base-figures acc. to CIVA Section 6 part II Ch. 4.3.3.1 (a)
 //==========================================================================
-rules.push("basefigex11-repeat=1");// base figures except of 1.1.1. and 9.1  ### Checken!!!
+rules.push("basefigex11-repeat=1");// base figures except of 1.1.1. and 9.1
 // may not be repeated in sequence
 
 // Repetitions of rolls acc. to CIVA Section 6 part II Ch. 4.3.3.1 (a)
@@ -1058,21 +1052,21 @@ rules.push("k-max=178");	// 2014 : maximum k-factor + maximum floating points
 rules.push("basefig-max=10");	// maximum 10 base figures per sequence
 rules.push("floating-point=3");	// 3 points may be reduced
 
-// Versatility acc. to CIVA Section 6 part II Ch. 4.3.3.3
+// Versatility acc. to CIVA Section 6 part II Ch. 2.2.1.7
 //=======================================================
 rules.push("fam5-min=1");// minimum one figure from family 5
 rules.push("fam6-min=1");
 rules.push("fam7-min=1");
 rules.push("fam8-min=1");
 
-// 4.3.3.3 a)
+// 2.2.1.7 a)
 //-----------
 rules.push("group-roller=^(2\\.[1-4]\\.1|2\\.1\\.3\\.1)");// new definition acc. new catIDs
 // 2014 : requirement for roller deleted
 //rules.push("roller-name=Turn with at least 90&deg; or 2.1.3.1");
 //rules.push("roller-min=1");
 
-// 4.3.3.3 b)
+// 2.2.1.7 b)
 //-----------
 // i)
 rules.push("group-froll2=^9\\.1\\.\\d\\.[^1]");
@@ -1082,12 +1076,12 @@ rules.push("froll2-min=1");
 // ii)
 rules.push("hesroll-min=1");// a hesitation roll of any extent
 
-// Sequence entry and exit attitudes acc. to Ch. 4.3.3.4
+// Sequence entry and exit attitudes acc. to Ch. 2.2.1.8
 //======================================================
-rules.push("seqcheck-upend=[\\da-z][~+`'()\"\.]*>?\\s*$");// Sequence exit must be in positive attitude
-rules.push("upend-name=Sequence must end flying upright (Section 6, Ch. 4.3.3.4)");
+rules.push("seqcheck-upend=[\\da-z][~+`'()\"\.>^]*\\s*$");// Sequence exit must be in positive attitude
+rules.push("upend-name=Sequence must end flying upright (Section 6, Ch. 2.2.1.8)");
 
-// Positioning k-factors acc. to Ch. 4.3.6
+// Positioning k-factors acc. to Ch. 2.3.1.2
 //====================================================
 rules.push("poslj=15");// positioning k-factor assuming line judges
 rules.push("posnl=15");// positioning k-factor assuming no line judges
@@ -1098,7 +1092,7 @@ rules.push("more=glider-CIVA Advanced arestibase");
 //#####################
 rules.push("(glider-CIVA Advanced arestibase)");
 //#####################
-// Allowed Figures for KNOWN and FREE acc. to Ch. 4.3.2.2 (c) # "acc. to the Aresti-System, Glider Version"
+// Allowed Figures for KNOWN and FREE acc. to Ch. 2.2.1.6 and 2.2.1.7 # "acc. to the Aresti-System, Glider Version"
 //=========================================================================================================
 //no full negative loops, no high speed negative part loops of more than 45°
 rules.push("1.1.1.1-4");
@@ -1314,10 +1308,6 @@ rules.push("9.8.3.1-8");
 rules.push("9.8.4.1-2");
 rules.push("9.8.5.1");
 rules.push("9.11.1.4-8");
-// Super Slow Roll removed from Glider competition at 2015 CIVA meeting
-// rules.push("9.13.3.2");
-// rules.push("9.13.3.4");
-// rules.push("9.13.3.6");
 
 //###################
 rules.push("[glider-CIVA Advanced Unknown1]");
@@ -1332,7 +1322,7 @@ rules.push("[glider-CIVA Advanced FreeUnknown]");
 rules.push("infocheck=positioning");
 
 //######################
-// Maximum K-Factor and number of figures acc. to CIVA Section 6 part II Ch. 4.3.6
+// Maximum K-Factor and number of figures acc. to CIVA Section 6 part II Ch. 2.3.1.2
 //================================================================================
 rules.push("figure-letters=ABCDEFG");
 rules.push("k-max=160");		// 2014 : maximum k-factor without maximum floating points
@@ -1340,16 +1330,16 @@ rules.push("k-min=140");		// 2014 : minimum k-factor
 rules.push("basefig-max=7");		// maximum 7 base figures per sequence (max 2 links)
 rules.push("additionals=2/10");		// max 2 additionals with 10K total
 
-// Positioning k-factors acc. to Ch. 4.3.6
+// Positioning k-factors acc. to Ch. 2.3.1.2
 //====================================================
 rules.push("poslj=15");// positioning k-factor assuming line judges
 rules.push("posnl=15");// positioning k-factor assuming no line judges
 rules.push("poselec=15");// positioning k-factor assuming electric telemetry
 
-// Sequence exit must be positive upright acc. to Ch. 4.3.4.8
+// Sequence exit must be positive upright acc. to Ch. 2.3.3.2
 //===========================================================
-rules.push("seqcheck-upend=[\\da-z][~+`'()\"\.]*>?\\s*$");// Sequence exit must be in positive attitude
-rules.push("upend-name=Sequence must end flying upright (Section 6, Ch. 4.3.4.8)");
+rules.push("seqcheck-upend=[\\da-z][~+`'()\"\.>^]*\\s*$");// Sequence exit must be in positive attitude
+rules.push("upend-name=Sequence must end flying upright (Section 6, Ch. 2.3.3.2)");
 
 
 rules.push("more=glider-CIVA Advanced Unknownbase");
@@ -1366,14 +1356,14 @@ rules.push("[glider-CIVA Advanced Unknown3]");
 rules.push("infocheck=positioning");
 
 //###################
-// Maximum K-Factor and number of figures acc. to CIVA Section 6 part II Ch. 4.3.6
+// Maximum K-Factor and number of figures acc. to CIVA Section 6 part II Ch. 2.3.1.2
 //================================================================================
 rules.push("k-max=148");		// maximum k-factor including maximum floating points
 rules.push("k-min=130");		// minimum k-factor
 rules.push("basefig-max=9");		// maximum 9 base figures per sequence (7 chosen + max 2 additional)
 rules.push("floating-point=3");		// 3 points may be reduced
 
-// Positioning k-factors acc. to Ch. 4.3.6
+// Positioning k-factors acc. to Ch. 2.3.1.2
 //====================================================
 rules.push("poslj=15");	// positioning k-factor assuming line judges
 rules.push("posnl=15");	// positioning k-factor assuming no line judges
@@ -1384,27 +1374,28 @@ rules.push("more=glider-CIVA Advanced Unknownbase");
 //###################
 rules.push("[glider-CIVA Advanced Unknown0]");
 //###################
-rules.push("basefig-max=28");
-rules.push("basefig-min=28");
+rules.push("basefig-max=35");
+rules.push("basefig-min=35");
 
-// 4.3.4.2 Four figures maximum can be chosen in each of Families 2,5,6,9.9,9.10,9.11/12
+// 2.3.1.2 Sentence 1:
+// "Five figures maximum can be chosen in each of Families 2, 5, 6 and 9.11/12."
 
-rules.push("fam2-max=4");	// max 4 of fam 2
-rules.push("fam5-max=4");	// max 4 of fam 5
-rules.push("fam6-max=4");	// max 4 of fam 6
-rules.push("spin-max=4");	// max 4 of spins
+rules.push("fam2-max=5");	// max 5 of fam 2
+rules.push("fam5-max=5");	// max 5 of fam 5
+rules.push("fam6-max=5");	// max 5 of fam 6
+rules.push("spin-max=5");	// max 5 of spins
 
-// 4.3.4.2 b) No figure may be selected with a K higher than 40 (AG 35).
+// 2.3.1.2 b) No figure may be selected with a K higher than 40 (AG 35).
 
 rules.push("k-maxperfig=35");
 
-// 4.3.4.2 c) Needs to be checked manually. Alert displays when there
+// 2.3.1.2 c) Needs to be checked manually. Alert displays when there
 // are spaces in the sequence string
 
 rules.push("seqcheck-twoormore=^[^ ]*$");
-rules.push("twoormore-name=manual check required: section 6 part II 4.3.4.2&nbsp;c)");
+rules.push("twoormore-name=manual check required: section 6 part II 2.3.1.2&nbsp;c)");
 
-// 4.3.4.2 d) The same catalogue number cannot be chosen again except for Family 9 ("AG"
+// 2.3.1.2 d) The same catalogue number cannot be chosen again except for Family 9 ("AG"
 //		Families 5, 6 and 9)
 
 rules.push("group-basefigex569=^([1-4]|[7-8])");
@@ -1424,12 +1415,12 @@ rules.push("(glider-CIVA Advanced Unknownbase)");// specific rules for the Advan
 //## Opposite slow or hesitation rolls are allowed on horizontal lines
 //>>> implemented by rule-NOU
 
-rules.push("rule-NHR=roll:[248]");//## new rule added ### checked
+rules.push("rule-NHR=roll:[248]");
 rules.push("why-NHR=no hesitation roll allowed");
 
 // Allowed figures for all Unlimited Unknowns (glider)
 //====================================================
-//## "figures will be chosen from section 9 of sporting code" (acc. to 4.3.4.1)
+//## "figures will be chosen from appendix A of sporting code" (acc. to 2.3.1.1)
 
 // Single Lines
 //-------------
@@ -1443,7 +1434,7 @@ rules.push("1.1.7.4  NOU");
 
 // Two Lines
 //----------
-// no vertical roll in fig. of column 4, or column 2 of 1.2.5-8 ### acc. to Ch. 9.1.1.3
+// no vertical roll in fig. of column 4, or column 2 of 1.2.5-8 ### acc. to Ch. A.4.1.1
 // no hesitation rolls on 45°lines of lines 1.2.5-8  ### acc. to Ch. 9.1.1.4
 rules.push("1.2.1.1  NOU ; NR:1");
 rules.push("1.2.2.2  NOU ; NR:1");
@@ -1465,12 +1456,12 @@ rules.push("2.4.1.1-2");
 
 // Stall-Turns
 //------------
-// Rolling elements may only be added where indicated  ### acc. to 9.1.1.5
+// Rolling elements may only be added where indicated  ### acc. to A.6.1.1
 rules.push("5.2.1.1  NR:1 ; NOU");
 
 // Tail-Slides
 //------------
-//Rolling elements may only be added where indicated  ### acc. to 9.1.1.6
+//Rolling elements may only be added where indicated  ### acc. to A.7.1.1
 rules.push("6.2.1.1  NR:1 ; NOU");
 rules.push("6.2.2.1  NR:1 ; NOU");
 
@@ -1494,19 +1485,15 @@ rules.push("7.3.4.4  NOU");
 
 // Loops
 //------
-// no roll on 7.4.1.4      ### acc. to 9.1.1.9
-// no superslow roll in 7.4.1.1-2 and 7.4.2.1   ### acc. to 9.1.1.10
-// no hesitation roll in 7.4.1.2     ### acc. to 9.1.1.11
+// no roll on 7.4.1.3-4      ### acc. to A.9.1.1
+// no hesitation roll in 7.4.1.2     ### acc. to A.9.1.2
 
-rules.push("rule-nossr=roll:t");//## new rule added ### checked
-rules.push("why-nossr=no super slow roll allowed");
-
-rules.push("7.4.1.1  nossr");
-rules.push("7.4.1.4  NR");
+rules.push("7.4.1.3-4 NR");
+rules.push("7.4.1.2 NHR");
 
 // horizontal Eights = Full Cuban Eights
 //--------------------------------------
-// no rolls on diagonal lines acc. to Ch. 9 page 90
+// no rolls on diagonal lines
 rules.push("7.8.3.1  NR:3 ; NOU");
 rules.push("7.8.3.4  NR:3 : NOU");
 rules.push("7.8.4.1  NOU");
@@ -1518,7 +1505,7 @@ rules.push("7.8.8.4  NOU");
 
 // Super-Eights
 //-------------
-// no rolls on diagonal lines acc. to Ch. 9 page 91
+// no rolls on diagonal lines
 rules.push("7.8.11.2-3 NOU ;NR:1 ; NR:3");
 rules.push("7.8.15.3 NOU");
 
@@ -1529,7 +1516,7 @@ rules.push("8.4.3.1  NR:1 ; NOU");
 
 // Diagonal bumps
 //---------------
-// no rolls on lines acc. to Ch. 9 page 92 and 93
+// no rolls on lines
 rules.push("8.4.13.1  NR");
 rules.push("8.4.14.1  NOU ; NR:1");
 rules.push("8.4.15.1  NOU ; NR:2");
@@ -1541,7 +1528,7 @@ rules.push("8.4.18.2-3 NOU  ; NR:1");
 
 // Half Cuban Eight, diagonal lines first
 //---------------------------------------
-// no rolls on lines acc. to Ch. 9 page 93
+// no rolls on lines
 rules.push("8.5.1.2-3 NR:1");
 rules.push("8.5.2.1  NOU:1");
 rules.push("8.5.2.4  NOU:1");
@@ -1551,7 +1538,7 @@ rules.push("8.5.4.4  NOU:1");
 
 // Half Cuban Eight, diagonal lines last
 //--------------------------------------
-// no rolls on lines acc. to Ch. 9 page 94
+// no rolls on lines
 rules.push("8.5.5.1  NR:2");
 rules.push("8.5.5.4  NR:2");
 rules.push("8.5.6.1  NOU:2");
@@ -1561,10 +1548,8 @@ rules.push("8.5.8.2-3 NOU:2");
 
 // P-Loops
 //--------
-// no superslow rolls in the top of 8.6.1|3.1    ### acc. to 9.1.1.17
-// no rolls on top of 8.6.1|3.1 after roll on the up line  ### acc. to 9.1.1.18
-// no rolls on lines acc. to Ch. 9 page 94-95
-// no superslow rolls in the top of 8.6.5-8.1-2    ### acc. to 9.1.1.19
+// no rolls on top of 8.6.1|3.1 after roll on the up line  ### acc. to A.14.1.1
+// no rolls on lines
 
 rules.push("8.6.1.1  NR:1 ; NR:2 ; NF:3");
 rules.push("8.6.1.4  NOU:1");
@@ -1572,16 +1557,16 @@ rules.push("8.6.2.1  NR:1 ; NR:2 ; NF:3");
 rules.push("8.6.2.4  NR:1");
 rules.push("8.6.3.3  NOU:1");
 rules.push("8.6.4.3  NOU:1");
-rules.push("8.6.5.1  NF:1 ; nossr:2 ; NOU:2 ; NOU:3");
+rules.push("8.6.5.1  NF:1 ; NOU:2 ; NOU:3");
 rules.push("8.6.5.4  NR:2");
 rules.push("8.6.6.4  NR:2");
-rules.push("8.6.7.2  NF:1 ; nossr:2 ; NOU:2 ; NOU:3");
+rules.push("8.6.7.2  NF:1 ; NOU:2 ; NOU:3");
 rules.push("8.6.7.3  NR:2");
 rules.push("8.6.8.3  NR:2");
 
 // "reversing P-Loops" or Porpoise
 //--------------------------------
-// no rolls on lines acc. to Ch. 9 page 96
+// no rolls on lines
 rules.push("8.6.13.1  NR:1 ; NR:2 ; NOU:3");
 rules.push("8.6.13.3  NR");
 rules.push("8.6.14.3  NR");
@@ -1594,8 +1579,8 @@ rules.push("8.6.22.1 NR:1 ; NOU:2 ; NR:3");
 
 // Q-Loops
 //--------
-// no hesitation rolls on top of 8.7.5|6.2    ### acc. to 9.1.1.21
-// no rolls on lines acc. to Ch. 9 page 96
+// no hesitation rolls on top of 8.7.5|6.2    ### acc. to A.16.1.2
+// no rolls on lines
 rules.push("8.7.5.1  NOU:2 ; NR:3");
 rules.push("8.7.5.4  NR:2 ; NR:3");
 
@@ -1619,10 +1604,6 @@ rules.push("9.4.4.2");
 rules.push("9.8.3.2");
 
 rules.push("9.11.1.4-6");
-
-// Super Slow Roll removed from Glider competition at 2015 CIVA meeting
-// rules.push("9.13.3.2");
-// rules.push("9.13.3.4");
 
 //######################################################################
 

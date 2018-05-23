@@ -801,15 +801,17 @@ rules.push("infocheck=pilot;actype;acreg;positioning");
 
 rules.push("[CIVA Advanced Unknown1]");
 rules.push("k-maxperfig=30");
+rules.push("k-maxperfig-rule=Sporting Code Section 6 Part I, 2.3.1.1");
 rules.push("more=CIVA Advanced Unknownall");
 
 rules.push("[CIVA Advanced Unknown2]");
 rules.push("k-maxperfig=35");
+rules.push("k-maxperfig-rule=Sporting Code Section 6 Part I, 2.3.1.1");
 rules.push("more=CIVA Advanced Unknownall");
 
 rules.push("[CIVA Advanced Unknown3]");
 rules.push("k-maxperfig=40");
-rules.push("k-maxperfig-rule=Sporting Code Section 6 Part I, 4.3.4.1");
+rules.push("k-maxperfig-rule=Sporting Code Section 6 Part I, 2.3.1.1");
 
 rules.push("more=CIVA Advanced Unknownall");
 
@@ -817,10 +819,10 @@ rules.push("(CIVA Advanced Unknownall)");
 rules.push("poslj=10");
 rules.push("posnl=30");
 
-// general rules for AWAC: 10-14 figures,
+// general rules for Advanced: 10-14 figures,
 // limit on figure types (max1 spin etc)
 // limit on snaps (2-4 total), (one max per figure)
-// figures 10-14. Kfactor 15-35.
+// figures 10-14. Kfactor 15-40.
 
 // at most one of 1.2.3-4.3-4 and one of 7.8.1-8.*
 
@@ -830,7 +832,7 @@ rules.push("group-two=^7\\.8\\.[1-8]");
 rules.push("k-minperfig=15");
 
 rules.push("snap-maxperfig=1");
-rules.push("snap-maxperfig-rule=Sporting Code Section 6 Part I, 4.3.4.4 b)");
+rules.push("snap-maxperfig-rule=Sporting Code Section 6 Part I, 2.3.1.4 b)");
 rules.push("snap-min=2");
 rules.push("snap-max=4");
 
@@ -851,9 +853,9 @@ rules.push("two-name_fr=famille 7.8.1-8 (noeuds de savoie)");
 rules.push("two-max=1");
 
 rules.push("basefig-min=10");
-rules.push("basefig-min-rule=Sporting Code Section 6 Part I, 4.3.4.1");
+rules.push("basefig-min-rule=Sporting Code Section 6 Part I, 2.3.1.4");
 rules.push("basefig-max=10");
-rules.push("basefig-max-rule=Sporting Code Section 6 Part I, 4.3.4.1");
+rules.push("basefig-max-rule=Sporting Code Section 6 Part I, 2.3.1.4");
 
 rules.push("basefig-repeat=1");
 rules.push("roll-repeat=1");

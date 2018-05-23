@@ -273,7 +273,7 @@ fieldset {
   width: 100%;
   font-size: 16px;
   height: 30px;
-  padding: 0 4px;
+  padding: 0 20px 0 4px;
   background: none;
   border: none;
   line-height: 1.6;

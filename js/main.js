@@ -2948,7 +2948,7 @@ function makeLine (Params) {
   } else True_Drawing_Angle = angle;
   return Array({
     'path': 'l ' + dx + ',' + dy,
-    'style': Params[2] ? Params[2] : (NegLoad == 0) ? 'pos' : 'neg',
+    'style': style[Params[2]] ? Params[2] : (NegLoad == 0) ? 'pos' : 'neg',
     'class': 'line',
     'handle': Params[1],
     'dx': dx,
@@ -9370,7 +9370,7 @@ function checkRules () {
               }
               if (checkRule[rule].regex) {
                 if (checkLine.match(checkRule[rule].regex)) {
-                  checkAlert (why(rule) + forElement, 'rule', figNr, rule);
+                  checkAlert (why(rule) + forElement, 'rule', figNr, checkRule[rule].rule);
                   log.push ('*** Error: Fig ' + figNr + ': ' + checkRule[rule].why + forElement);
                 }
               } else if (checkRule[rule].less) {
@@ -9381,7 +9381,7 @@ function checkRules () {
                   }
                   if ((check[l] == ' ') || (l == 0)) {
                     if (sum >= parseInt (checkRule[rule].less)) {
-                      checkAlert (why(rule) + forElement, 'rule', figNr, rule);
+                      checkAlert (why(rule) + forElement, 'rule', figNr, checkRule[rule].rule);
                       log.push ('*** Error: Fig ' + figNr + ': ' + checkRule[rule].why + forElement);
                     }
                     sum = 0;
@@ -9395,7 +9395,7 @@ function checkRules () {
                   }
                 }
                 if (sum >= parseInt (checkRule[rule].totalLess)) {
-                  checkAlert (why(rule) + forElement, 'rule', figNr, rule);
+                  checkAlert (why(rule) + forElement, 'rule', figNr, checkRule[rule].rule);
                   log.push ('*** Error: Fig ' + figNr + ': ' + checkRule[rule].why + forElement);
                 }
               }
@@ -9433,7 +9433,7 @@ function checkRules () {
                   }
                   if (checkRule[rule].regex) {
                     if (checkLine.match(checkRule[rule].regex)) {
-                      checkAlert (why(rule), 'rule', figNr, rule);
+                      checkAlert (why(rule), 'rule', figNr, checkRule[rule].rule);
                       log.push ('*** Error: Fig ' + figNr + ': ' + checkRule[rule].why);
                     }
                   } else if (checkRule[rule].less) {
@@ -9444,7 +9444,7 @@ function checkRules () {
                       }
                       if ((check[l] == ' ') || (l == 0)) {
                         if (sum >= parseInt (checkRule[rule].less)) {
-                          checkAlert (why(rule), 'rule', figNr, rule);
+                          checkAlert (why(rule), 'rule', figNr, checkRule[rule].rule);
                           log.push ('*** Error: Fig ' + figNr + ': ' + checkRule[rule].why);
                         }
                         sum = 0;
@@ -9458,7 +9458,7 @@ function checkRules () {
                       }
                     }
                     if (sum >= parseInt (checkRule[rule].totalLess)) {
-                      checkAlert (why(rule), 'rule', figNr, rule);
+                      checkAlert (why(rule), 'rule', figNr, checkRule[rule].rule);
                       log.push ('*** Error: Fig ' + figNr + ': ' + checkRule[rule].why);
                     }
 
@@ -9800,8 +9800,8 @@ function checkRuleText (obj) {
 // checkAlert adds an alert resulting from sequence checking
 // value : a value for processing
 // type  : the type of checking error
-// rule  : optional, the rulebook rule that invoked this as in xxx-rule
-//         or literal text
+// rule  : optional, literal text for the rulebook rule that invoked
+//         this as in xxx-rule
 function checkAlert (value, type, figNr, rule) {
   var alertRule = false;
   var alertFig = figNr ? '(' + figNr + ') ' : '';
@@ -9846,9 +9846,7 @@ function checkAlert (value, type, figNr, rule) {
     default:
       alertMsgs.push(alertFig + value);
       if (rule) {
-        if (checkRule[rule] && checkRule[rule].rule) {
-          alertRule = checkRule[rule].rule;
-        } else alertRule = rule;
+        alertRule = rule;
       }
   }
   if (alertRule) alertMsgRules [alertMsgs[alertMsgs.length - 1]] = alertRule;
@@ -17854,7 +17852,7 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex, figure_chooser) 
             roll[rollnr - 1].lineLengthAfter = lineSum; 
           }
           if (entryLine) {
-            //params.push ('entry');
+            params.push ('entry');
             figures[figStringIndex].entryLength = lineSum;
             entryLine = false;
           }
@@ -17980,7 +17978,10 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex, figure_chooser) 
 	              // not checked (Aresti Catalogue item 26)
 	              if (((roll[rollnr][j].type == 'posspin') && !NegLoad) ||
 	                ((roll[rollnr][j].type == 'negspin') && NegLoad)) {
-	                checkAlert (userText.alert.noCrossoverSpin, false, seqNr);
+	                checkAlert (userText.alert.noCrossoverSpin,
+		                false,
+		                seqNr,
+		                'Aresti Catalogue item 26');
 	              }
 							}
             }

@@ -36,7 +36,7 @@
 // Where a new x should be used for versions that create sequences not
 // fully backward compatible with the previous version
 
-var version = '2018.3.1';
+var version = '2018.3.2';
 /* versionNew is an object that contains version update information
    The structure is {vvv : [[ttt, n], ...], ...} , where
    vvv = version number
@@ -44,6 +44,10 @@ var version = '2018.3.1';
    n   = importance (higher = more important)
 */
 var versionNew = {
+	'2018.3.2' : [
+		['Updated CIVA Glider rules for 2018, including Sporting Code ' +
+		'references', 3]
+	],
 	'2018.3' : [
 		['<font style="color:red;">2018 Advanced Free Known figure A was ' +
 		'changed by CIVA in early may (snap roll direction now the same ' +
@@ -357,6 +361,7 @@ var rollFont = {'small': 15, 'medium': 20, 'large': 25};
 var styleSave = [];
 
 // style holds the style objects
+// !!! don't use 'entry' or 'exit', they are reserved !!!
 var style = {
   // Positive line style
   'pos' : 'stroke: black; stroke-width: 1.5px; fill: none; vector-effect: non-scaling-stroke;',
