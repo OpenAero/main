@@ -293,15 +293,15 @@ lang.en = {
   'Google Chrome</a> browser.',
 'getTheApp' : 'OpenAero is available as an app',
 'glider' : 'Glider',
-// new 2017.1
 'gridAdditionals' : 'Additionals needed',
 'gridInfo' : 'Grid info',
 'gridNegEntry' : 'Negative entry',
 'gridNegExit' : 'Negative exit',
+// new 2018.3.3
+'gridOrderBy' : 'Order by',
 'gridPosEntry' : 'Positive entry',
 'gridPosExit' : 'Positive exit',
 'gridSpeed' : 'Speed',
-// changed 2017.1
 'gridView' : 'The Grid view column setting can be found on the Grid view',
 'harmony' : 'Harmony',
 'help' : 'Help',
@@ -448,12 +448,17 @@ lang.en = {
   'paste it in the box below',
 'openSequenceLinkOpen' : 'Open',
 'openSequenceLinkTitle' : 'Open sequence from link',
+// new 2018.3.3
+'orderCountry' : 'Country',
+'orderFigureNr' : 'Figure Nr',
+'orderK' : 'K factor',
+'orderLetter' : 'Figure letter',
+// end new
 'orFileDrop' : 'Or drag & drop your files here',
 'orFileDropPrint' : 'Or drag & drop your files here',
 'otherNote' : 'Other(note...)',
 'pageSpacing' : 'Page spacing',
 'pilot' : 'Pilot',
-// new 2018.1.5
 'pilotCardExplain' : 'Choose and tap again to flip wind R-L',
 'pilotID' : 'Pilot ID',
 'pilotNo' : 'Pilot\'s No.',

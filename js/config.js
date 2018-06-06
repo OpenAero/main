@@ -36,7 +36,7 @@
 // Where a new x should be used for versions that create sequences not
 // fully backward compatible with the previous version
 
-var version = '2018.3.2';
+var version = '2018.3.3';
 /* versionNew is an object that contains version update information
    The structure is {vvv : [[ttt, n], ...], ...} , where
    vvv = version number
@@ -44,6 +44,12 @@ var version = '2018.3.2';
    n   = importance (higher = more important)
 */
 var versionNew = {
+	'2018.3.3' : [
+		['Improved Grid display options and figure group creation for ' +
+		'glider competition', 4],
+		['Fixed bug which caused switching the first roll of 3-roll ' +
+		'figures to behave erratically', 3]
+	],
 	'2018.3.2' : [
 		['Updated CIVA Glider rules for 2018, including Sporting Code ' +
 		'references', 3]
@@ -445,34 +451,37 @@ var style = {
 // Superfamily definitions
 // For every category the list of SF is defined below. The order MATTERS!
 // The SF will be decided by the first aresti fig nr match
-var superFamilies = [];
-superFamilies.unlimited = [
-  [/^2\./,'2'],
-  [/^5\./,'5'],
-  [/^6\./,'6'],
-  [/^1\./,'7'],
-  [/^3\./,'7'],
-  [/^7\./,'7'],
-  [/^8\./,'7'],
-  [/^0\./,'7']
-  ];
-superFamilies.advanced = [
-  [/^9\.11\./,'3'],
-  [/^9\.12\./,'3'],
-  [/^9\.9\./, '4'],
-  [/^9\.10\./,'4'],
-  [/^2\./,    '2'],
-  [/^5\./,    '5'],
-  [/^6\./,    '6'],
-  [/^1\./,    '7'],
-  [/^3\./,    '7'],
-  [/^7\./,    '7'],
-  [/^8\./,    '7'],
-  [/^0\./,    '7']
-  ];
+// Superfamilies are also used for creation of figure group proposals
+var superFamilies = {
+	unlimited : [
+	  [/^2\./,'2'],
+	  [/^5\./,'5'],
+	  [/^6\./,'6'],
+	  [/^1\./,'7'],
+	  [/^3\./,'7'],
+	  [/^7\./,'7'],
+	  [/^8\./,'7'],
+	  [/^0\./,'7']
+	  ],
+	advanced : [
+	  [/^9\.11\./,'3'],
+	  [/^9\.12\./,'3'],
+	  [/^9\.9\./, '4'],
+	  [/^9\.10\./,'4'],
+	  [/^2\./,    '2'],
+	  [/^5\./,    '5'],
+	  [/^6\./,    '6'],
+	  [/^1\./,    '7'],
+	  [/^3\./,    '7'],
+	  [/^7\./,    '7'],
+	  [/^8\./,    '7'],
+	  [/^0\./,    '7']
+  ]
+};
 superFamilies.yak52 = superFamilies.advanced;
 superFamilies.intermediate = superFamilies.advanced;
 superFamilies.glider = superFamilies.advanced;
+
 // available rolls
 var rollTypes = [
   ':none',
@@ -561,7 +570,8 @@ var userpat = {
   'scale' : '%',
   'subSequence' : '//',
   'switchDirX' : '>',
-  'switchDirY' : '^'
+  'switchDirY' : '^',
+  'switchFirstRoll' : ';>'
 }
 
 // ***************
@@ -574,7 +584,7 @@ var figpat = {
   'fullroll' : '_',
   'halfroll' : '^',
   'anyroll' : '&',
-  'spinroll' : '>',
+  'spinroll' : '$',
   'hammer' : 'h',
   'pushhammer' : 'H',
   'tailslidecanopy' : 't',
@@ -643,9 +653,12 @@ var
 		/(PH|PH-)[A-Z]{3}/,
 		/X(A|A-|B|B-|C|C-)[A-Z]{3}/
 	],
+	regexFullAnySpinRoll = new RegExp('[\\' + figpat.fullroll + '\\' +
+		figpat.anyroll + '\\' + figpat.spinroll + ']', 'g'),
+	regexHalfRoll = new RegExp ('\\' + figpat.halfroll, 'g'),
 	regexRollBeforeBase = new RegExp ('^[\\+-][\\' + figpat.halfroll +
 		'\\'  + figpat.fullroll + '\\' + figpat.anyroll + '\\' +
-		figpat.spinroll + '\\' + figpat.longforward + ']'); // /^[\+\-][_\^\&\>\~]/ 
+		figpat.spinroll + '\\' + figpat.longforward + ']'); // /^[\+\-][_\^\&\$\~]/ 
 	regexRolls = new RegExp ('[\\' + figpat.halfroll + '\\' +
 		figpat.fullroll + '\\' + figpat.anyroll + '\\' + 
 		figpat.spinroll + ']', 'g'),
@@ -654,7 +667,7 @@ var
 		  figpat.spinroll + '\\' + figpat.longforward + ']');
 	regexTurnsAndRolls = new RegExp ('[\\d\\(\\)\\' + figpat.halfroll +
 		'\\' + figpat.fullroll + '\\' + figpat.anyroll + '\\' +
-		figpat.spinroll + '\\' + figpat.longforward + ']+', 'g'); // /[\d\(\)_\^\&\>\~]+/g
+		figpat.spinroll + '\\' + figpat.longforward + ']+', 'g'); // /[\d\(\)_\^\&\$\~]+/g
 	
 // also accept deprecated 'connectors' for additional figures
 var regexRulesAdditionals = /^(connectors|additionals)=([0-9]+)\/([0-9]+)/;

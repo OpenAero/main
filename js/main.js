@@ -1819,6 +1819,7 @@ function switchSmallMobile () {
   for (var i = 0; i < fig.length; i++) {
     if (fig[i]) delete fig[i].svg;
   }
+  setFormLayout (activeForm);
   // redraw sequence
   draw();
   // Activate the first figure selection group
@@ -2222,18 +2223,7 @@ function printDialog(show) {
       document.getElementById('printForms').classList.remove ('content3cols');
       document.getElementById('printOptions').classList.add ('content2cols');
       document.getElementById('printOptions').classList.remove ('content3cols');
-  
-      // by default, disable "Print Super Family", but enable change
-      var el = document.getElementById('printSF');
-      el.checked = false;
-      el.disabled = false;
-      // enable when rules with sf definition active and disable change
-      if (rulesActive) {
-        if (ruleSuperFamily.length) {
-          el.checked = true;
-          el.disabled = true;
-        }
-      }
+
     });
   } else {
     // clear fileList in case we were in printMultiDialog
@@ -2643,7 +2633,10 @@ function sanitizeSpaces (line, noLT) {
 // getSuperFamily returns the superfamily for a category of the figure
 // described by an array of Aresti numbers
 function getSuperFamily (aresti, category) {
-  var superFamily = [];
+  var
+	  superFamily = [],
+	  returnValue = '';
+	  
   // Set default Super Family. First check if a matching category is
   // active, otherwise use "advanced".
   category = category.toLowerCase();
@@ -2653,7 +2646,6 @@ function getSuperFamily (aresti, category) {
     superFamily = ruleSuperFamily;
   }
 
-  var returnValue = '';
   // Only search if superFamilies are defined for the category
   if (superFamily !== []) {
     for (var i = 0; i < superFamily.length; i++) {
@@ -5351,6 +5343,7 @@ function addEventListeners () {
   document.getElementById('gridInfo').addEventListener ('mousedown', grabFigure);
   document.getElementById('gridInfo').addEventListener ('mousemove', Drag);
   document.getElementById('gridColumns').addEventListener('change', updateGridColumns);
+  document.getElementById('gridOrderBy').addEventListener('change', function(){selectForm('Grid');});
   document.getElementById('manual_html_grid_system').addEventListener('mousedown', function(){
     helpWindow('doc/manual.html#grid_system', 'Grid system');
   }, false);
@@ -7364,11 +7357,10 @@ function updateFigure (noRedraw) {
         }
       }
     }
-    if (rollEl == 0) {
+    if ((rollEl == 0) &&
       // set switchFirstRoll
-		  if (document.getElementById('switchFirstRoll').classList.contains ('on')) {
-        rolls += ';' + userpat.switchDirX;
-      }
+		  document.getElementById('switchFirstRoll').classList.contains ('on')) {
+			rolls += userpat.switchFirstRoll;
     } 
     pattern = pattern.replace(regexRollsAndLines, rolls);
     rollEl++;
@@ -7891,14 +7883,10 @@ function buildFigureXML () {
           letter.appendChild(document.createTextNode(figures[i].unknownFigureLetter));
         }
       }
-      if (document.getElementById('class').value == 'glider') {
-        var superFamily = getSuperFamily (aresti, 'glider');
-      } else {
-        var superFamily = getSuperFamily (aresti, document.getElementById('category').value);
-      }
-      if (superFamily) {
+
+      if (figures[i].superFamily) {
         var sf = f.appendChild(document.createElement('sf'));
-        sf.appendChild(document.createTextNode(superFamily));
+        sf.appendChild(document.createTextNode(figures[i].superFamily));
       }
 
       for (var j = 0; j < aresti.length; j++) {
@@ -8275,11 +8263,12 @@ function removeLogo() {
 // parseFiguresFile parses the figures file and stores it in several
 // arrays for fast retrieval
 function parseFiguresFile () {
-  var groupRegex = new RegExp('^F[0-9]');
-  var figGroupSelector = document.getElementById('figureGroup');
-  var figGroupNr = 0;
-  var entryExit = '';
-  var entryExitSplit = [];
+  var
+	  groupRegex = new RegExp('^F[0-9]'),
+	  figGroupSelector = document.getElementById('figureGroup'),
+	  figGroupNr = 0,
+	  entryExit = '',
+	  entryExitSplit = [];
   
   // add the Queue 'figure group' at the beginning
   figGroup[0] = {'family':'*', 'name':userText.figureQueue};
@@ -9017,7 +9006,17 @@ function loadRules() {
 
   // update reference sequence
   changeReferenceSequence(true);
-  
+
+	// by default, disable "Print Super Family", but enable change
+	var el = document.getElementById('printSF');
+	el.checked = false;
+	el.disabled = false;
+	// enable when rules with sf definition active and disable change
+	if (rulesActive && ruleSuperFamily.length) {
+		el.checked = true;
+		el.disabled = true;
+	}
+        
   return true;
 }
 
@@ -9118,9 +9117,15 @@ function aresti2ind(aresti,start) {
  
 // unloadRules will set rules to inactive and do some checks
 function unloadRules () {
-  reset_aresti_K() ; // reset aresti K if needed
-// Modif GG v2016.1.4 End
   console.log('Clearing rules');
+  
+  reset_aresti_K() ; // reset aresti K if needed
+
+	// by default, disable "Print Super Family", but enable change
+	var el = document.getElementById('printSF');
+	el.checked = false;
+	el.disabled = false;
+
   rulesActive = false;
   document.getElementById ('rulesActive').classList.remove ('good');
   // remove disable property of positioning and harmony
@@ -9186,23 +9191,35 @@ function checkRules () {
         // check for more than two roll elements on a roll position
         // Aresti Catalogue Part I - 17
         if (figCheckLine[seqNr].replace(/[^,; ]/g, '').match(/[,;][,;]/)) {
-          checkAlert (userText.alert.maxTwoRotationElements, false, seqNr);
+          checkAlert (userText.alert.maxTwoRotationElements,
+          false,
+          seqNr,
+          'Aresti Catalogue');
         }
         // check for same direction same type unlinked rolls
         // Aresti Catalogue Part I - 19
         if (regexUnlinkedRolls.test(figCheckLine[seqNr])) {
-          checkAlert (userText.alert.unlinkedSameNotAllowed, false, seqNr);
+          checkAlert (userText.alert.unlinkedSameNotAllowed,
+          false,
+          seqNr,
+          'Aresti Catalogue');
         }
         // check if a spin is preceded by another roll element
         // Aresti Catalogue 27
         if (figCheckLine[seqNr].match(/[,;]9\.1[12]\./)) {
-          checkAlert (userText.alert.spinFirst, false, seqNr);
+          checkAlert (userText.alert.spinFirst,
+          false,
+          seqNr,
+          'Aresti Catalogue');
         }
       }
       // check if there is a roll on family 1.1.1
       // Aresti Catalogue 7.2
       if (figCheckLine[seqNr].match(/^1\.1\.1[^0]+0\.0\.0\.0$/)) {
-        checkAlert (userText.alert.family111RollMissing, false, seqNr);
+        checkAlert (userText.alert.family111RollMissing,
+        false,
+        seqNr,
+        'Aresti Catalogue');
       }
     }
   }
@@ -10277,10 +10294,9 @@ function changeFigureGroup() {
           // draw it. First we take the original base and remove + and
           // replace full/any roll/spin symbols by '1'
 					var figure = fig[i].pattern.replace(/[\+]/g, '').replace(
-						RegExp('[\\' + figpat.fullroll + '\\' + figpat.anyroll +
-						'\\' + figpat.spinroll + ']', 'g'), '1') ;
+						regexFullAnySpinRoll, '1') ;
           // next we replace half roll symbols by actual half rolls
-          figure = figure.replace(RegExp('\\' + figpat.halfroll, 'g'), '2');
+          figure = figure.replace(regexHalfRoll, '2');
           figures[-1] = [];
           if (figure[0] != '-') {
             Attitude = Direction = 0;
@@ -10722,7 +10738,7 @@ function selectFigure (e) {
         // Special case, put 0 for a horizontal line (figure 1.1.1.1)
         if (fig[e.id].pattern === '+_+') figure = '0';
         // replace half roll symbols by actual half rolls
-        figure = figure.replace(RegExp ('\\' + figpat.halfroll, 'g'), '2');
+        figure = figure.replace(regexHalfRoll, '2');
         // remove non-necessary roll elements in parenthesis, but only when
         // there are no active rolls in parenthesis
         // result is e.g.: n or n(2)-
@@ -12150,7 +12166,7 @@ function addToQueue () {
       i--;
     } else break;
   }
-  // append the figure to the fig array
+  // append the figure to the fig object
   fig[figLen] = {'aresti':aresti,
                 'base':fig[figNr].base,
                 'rolls':fig[figNr].rolls,
@@ -13079,19 +13095,13 @@ function makeFormA() {
                 'formATextLarge',
                 'middle');
             }
-            if (document.getElementById('printSF').checked === true) {     
-              if (document.getElementById('class').value == 'glider') {
-                var superFamily = getSuperFamily (aresti, 'glider');
-              } else {
-                var superFamily = getSuperFamily (aresti, document.getElementById('category').value);
-              }
-              if (superFamily) {
-                drawText('SF ' + superFamily,
-                  x + columnWidths[column] / 2,
-                  y + rowHeight - 10,
-                  'formAText',
-                  'middle');
-              }
+            if ((document.getElementById('printSF').checked === true) &&     
+              (figures[i].superFamily)) {
+							drawText('SF ' + figures[i].superFamily,
+								x + columnWidths[column] / 2,
+								y + rowHeight - 10,
+								'formAText',
+								'middle');
             }
             // check if mark as additional or specific unknown figure
             if (figures[i].additional) {
@@ -13172,16 +13182,25 @@ function makeFormGrid (cols, width, svg) {
   svg = svg || SVGRoot;
   width = width || 800;
 
-  var cw = parseInt(width / cols);
-  var ch = parseInt(cw * Math.GR);
-  var x = 0;
-  var y = 0;
-  var col = 0;
-  var scaleMin = Infinity; // high number, will hold the smallest Fig scale
-  var modifiedK = [];
-  var entryExit = {Entry : {l: 0, n: 0, h: 0, L: 0, N: 0, H: 0},
-                    Exit : {l: 0, n: 0, h: 0, L: 0, N: 0, H: 0}}
-  // draw all real figures
+  var
+	  cw = parseInt(width / cols),
+	  ch = parseInt(cw * Math.GR),
+	  x = 0,
+	  y = 0,
+	  col = 0,
+	  scaleMin = Infinity, // high number, will hold the smallest Fig scale
+	  modifiedK = [],
+	  entryExit = {Entry : {l: 0, n: 0, h: 0, L: 0, N: 0, H: 0},
+	               Exit : {l: 0, n: 0, h: 0, L: 0, N: 0, H: 0}};
+	               
+  // draw all real figures, ordered as selected
+	var orderBy = document.getElementById('gridOrderBy').value;
+  figures.sort (function(a, b) {
+		if (!a[orderBy] && !b[orderBy]) return 0;
+		if (!a[orderBy] || (a[orderBy] > b[orderBy])) return 1;
+		if (!b[orderBy] || (b[orderBy] > a[orderBy])) return -1;
+		return 0;
+  });
   for (var i = 0; i < figures.length; i++) {
     if (figures[i].aresti) {
 
@@ -13224,28 +13243,8 @@ function makeFormGrid (cols, width, svg) {
       // draw comments
       if (f.comments) {
         var flagWidth = 0;
-        var code = false;
-        // check for three-letter flag code in separate "word"
-        var match = f.comments.match(/\b[A-Z]{3}\b/g);
-        if (match) {
-          for (var j = match.length - 1; j >= 0; j--) {
-            // check for IOC codes first
-            if (iocCountriesReverse[match[j]]) {
-              code = iocCountriesReverse[match[j]].toLowerCase();
-              if (flags[code]) {
-                break;
-              } else code = false; 
-            }
-            // next check for iso codes
-            if (isoCountriesReverse[match[j]]) {
-              code = isoCountriesReverse[match[j]].toLowerCase();
-              if (flags[code]) {
-                break;
-              } else code = false; 
-            }
-          }
-        }
-        if (code) {
+        
+        if (f.country) {
           // set scale for flag
           var scale = Math.min (roundTwo((cw - tw - 10) / 56), 1);
           var flag = drawImage ({
@@ -13254,7 +13253,7 @@ function makeFormGrid (cols, width, svg) {
             x: x + cw - (52 * scale),
             y: y + ch - (48 * scale),
             'id': 'flag' + i,
-            href: 'data:image/png;base64,' + flags[code]}, svg);
+            href: 'data:image/png;base64,' + flags[f.country]}, svg);
           flagWidth = 56 * scale;
         }
 
@@ -13430,7 +13429,7 @@ function makeFormGrid (cols, width, svg) {
  */
 
 function getFigureSets (sets, maxSize) {
-  maxSize = maxSize * 2 || Infinity;
+  maxSize = maxSize * 2 || Infinity; // *2 because every figure = 2 letters
   
   var setFigs = [];
   for (var i = 0; i < sets.length; i++) setFigs.push([i]);
@@ -13478,39 +13477,245 @@ function getFigureSets (sets, maxSize) {
   return setFigs;
 }
 
+/* getFigureSets creates sets of figures that match.
+ * 
+ * In parseFiguresFile all figures get a two letter code describing
+ * entry and exit attitude and speed. Letters used are L(ow),
+ * N(eutral) and H(igh). Lowercase is used for inverted attitudes.
+ * Speeds are determined by selection defined in config.js.
+ * 
+ * Here we match these until no more matches are possible.
+ * 
+ * sets    : starts as figures entry/exit of form [xx, xx, xx, ...],
+ *           later becomes full set (e.g. lhhhhl)
+ * maxSize : maximum size per set (defaults to Infinity)
+ * realFigs: maps temporary (e.g. random) figure numbers to real figures
+ * families: an object of which the keys are regex family matches and
+ *           the values are the count of this match over all sets
+ * 
+ * The return is an array of the form
+ * [[fignr, fignr, ...], [fignr, fignr, ...], ...]
+ */
+
+/*
+function getFigureSets (sets, maxSize, realFigs, superFamilies, mustCompleteToSize) {
+  maxSize = maxSize * 2 || false; // *2 because every figure = 2 letters
+
+  var
+	  setFigs = [],
+	  setFamilies = [],
+	  distributionOK,
+    matchNeutral = false, // first match correct speeds, then match with
+	  completeToSize = false;  // neutral, then complete to fixed size
+  
+  for (var i = 0; i < sets.length; i++) {
+		setFigs.push([i]);
+		if (realFigs) {
+			setFamilies[i] = {};
+			for (var k in superFamilies) {
+				setFamilies[i][k] = 0;
+			}
+			setFamilies[i][figures[realFigs[i]].superFamily] = 1;
+		}
+	}
+
+  if (sets.length > 1) {
+    do {
+      do {
+        var join = false;
+        for (var i = 0; i < (sets.length - 1); i++) {
+          for (var j = i + 1; j < sets.length; j++) {
+            // stop matching for this set when reaching maxSize
+            if (sets[i] && maxSize && (sets[i].length >= maxSize)) break;
+						distributionOK = true;
+						if (realFigs) {
+							var sf = figures[realFigs[j]].superFamily;
+							if ((setFamilies[i][sf] >=
+								(superFamilies[sf] / (realFigs.length / (maxSize / 2))))) {
+								distributionOK = false;
+							}
+						}
+            // match at the beginning of set i 
+            if (distributionOK && (j < sets.length) &&
+	            (!maxSize || sets[i].length < maxSize) && 
+              ((sets[j][sets[j].length - 1] === sets[i][0]) ||
+              (matchNeutral &&
+              (sets[j][sets[j].length - 1] + sets[i][0]).match(/^(n[hl]|N[HL]|[hl]n|[HL]N)$/)) ||
+              completeToSize)) {
+console.log(completeToSize);
+							// add superFamilies if applicable
+							if (realFigs) setFamilies[i][figures[realFigs[j]].superFamily]++;
+							// merge set j to i
+              sets[i] = sets[j] + sets[i];
+              sets.splice (j, 1);
+              setFigs[i].unshift (setFigs[j][0]);
+              setFigs[j].splice (0, 1);
+              if (!setFigs[j].length) setFigs.splice (j, 1);
+              join = true;
+
+            }
+            
+            // match at the end of set i
+            if (distributionOK && (j < sets.length) &&
+	            (!maxSize || (sets[i].length < maxSize)) && 
+              ((sets[j][0] === sets[i][sets[i].length - 1]) ||
+              (matchNeutral &&
+              (sets[j][0] + sets[i][sets[i].length - 1]).match(/^(n[hl]|N[HL]|[hl]n|[HL]N)$/)) ||
+              completeToSize)) {
+
+							// add superFamilies if applicable
+							if (realFigs) setFamilies[i][figures[realFigs[j]].superFamily]++;
+							// merge set j to i
+              sets[i] += sets[j];
+              sets.splice (j, 1);
+              setFigs[i].push (setFigs[j][0]);
+              setFigs[j].splice (0, 1);
+              if (!setFigs[j].length) setFigs.splice (j, 1);
+              join = true;
+
+            }
+          }
+        }
+      } while (join);
+      if (!completeToSize) matchNeutral = !matchNeutral;
+      if (!matchNeutral && mustCompleteToSize) completeToSize = !completeToSize;
+    } while (matchNeutral || completeToSize);
+  }
+
+  return setFigs;
+}
+*/
+
+// shuffle accepts an array and returns it's shuffled version
+function shuffle (array) {
+  for (var i = array.length - 1; i > 0; i--) {
+    var j = Math.floor (Math.random() * (i + 1));
+    var temp = array[i];
+    array[i] = array[j];
+    array[j] = temp;
+  }
+  return array;
+}
+	
 // createFigureProposals creates groups of figures, based on matching by
 // getFigureSets.
 // It is used to create groups from a large number of Unknown figures
 function createFigureProposals () {
   var
 	  realFigs = [],
-	  sets = [],
+	  superFamilyRatio = {}, 
 	  proposals = [],
 	  size = document.getElementById ('gridColumns').value;
-  
+		  
   // create an array holding the indexes of real figures
   for (var i = 0; i < figures.length; i++) {
-    if (figures[i].aresti) realFigs.push (i);
+    if (figures[i].aresti) {
+			realFigs.push (i);
+			superFamilyRatio[figures[i].superFamily] = 0;
+		}
   }
+  var propCount = Math.floor (realFigs.length / size);
+  
   // randomize figure order. The realFig holds the true figure index
   // and needs to be consulted after all is done
-  for (var i = realFigs.length - 1; i > 0; i--) {
-    var j = Math.floor (Math.random() * (i + 1));
-    var temp = realFigs[i];
-    realFigs[i] = realFigs[j];
-    realFigs[j] = temp;
-  }
+  realFigs = shuffle (realFigs);
 
+	// now sort by Superfamily. This prevents filling up proposals before
+	// "difficult" Superfamilies are spread out
+	realFigs.sort (function (a, b) {
+		return (figures[a].superFamily - figures[b].superFamily);
+	});
+  
+  // build empty proposals
+  for (var i = 0; i < propCount; i++) {
+		proposals.push({figures: [], sf: JSON.parse(JSON.stringify(superFamilyRatio))});
+	}
+
+	var figsInProposals = propCount * size;
+	// count specific families to ensure equal distibution
+	for (var i = 0; i < figsInProposals; i++) {
+		superFamilyRatio[figures[realFigs[i]].superFamily] += 1 / propCount;
+	}
+	  
+  // go through figures and build proposals
+  for (var i = 0; i < figsInProposals; i++) {
+		var f = figures[realFigs[i]];
+		// shuffle proposals on every figure so we don't start by adding
+		// everything to the same proposal
+		proposals = shuffle (proposals);
+		// match 1) exact, 2) neutral, 3) all
+		for (var matchType = 1; matchType <= 3; matchType++) {
+			// look at each proposal
+			for (var prop = 0; prop < propCount; prop++) {
+				var match = false;
+				var p = proposals[prop];
+				// check if the proposal is not full, and distribution of
+				// Superfamily, except family 7
+				if ((p.figures.length < size) && ((f.superFamily == 7) ||
+					(p.sf[f.superFamily] <superFamilyRatio[f.superFamily]))) {
+					// match at the beginning of proposal
+					if (!p.length || // always add to empty proposal
+						(fig[f.figNr].entryExit[1] === fig[realFigs[p.figures[0]].figNr].entryExit[0]) ||
+						((matchType == 2) &&
+						(fig[f.figNr].entryExit[1] + fig[realFigs[p.figures[0]].figNr].entryExit[0]).match(/^(n[hl]|N[HL]|[hl]n|[HL]N)$/)) ||
+						(matchType == 3)) {
+						proposals[prop].figures.unshift (i);
+						// add superFamily
+						proposals[prop].sf[f.superFamily]++;
+						match = true;
+					} else 
+					// match at the end of proposal
+					if ((fig[f.figNr].entryExit[0] === fig[realFigs[p.figures[p.figures.length - 1]].figNr].entryExit[1]) ||
+						((matchType == 2) &&
+						(fig[f.figNr].entryExit[0] + fig[realFigs[p.figures[[p.figures.length - 1]]].figNr].entryExit[1]).match(/^(n[hl]|N[HL]|[hl]n|[HL]N)$/))) {
+						proposals[prop].figures.push (i);
+						// add superFamily
+						proposals[prop].sf[f.superFamily]++;
+						match = true;
+					}
+				}
+				if (match) break;
+			}
+			if (match) break;
+		}		
+	}
+	
+	// if we have figures remaining, add those to the last partial "proposal"
+  document.getElementById ('t_proposalsIncomplete').classList.add ('noDisplay');
+	if (figsInProposals < realFigs.length) {
+		document.getElementById ('t_proposalsIncomplete').classList.remove ('noDisplay');
+		proposals.push ({figures: []});
+		for (var i = figsInProposals; i < realFigs.length; i++) {
+			proposals[proposals.length - 1].figures.push (i);
+		}
+	}
+	
+  /*
   // push the sets according realFig index
   for (var i = 0; i < realFigs.length; i++) {
     sets.push (fig[figures[realFigs[i]].figNr].entryExit);
   }  
+	*/
 
+/*
   // create sets and sort from long to short 
-  sets = getFigureSets (sets, size).sort (function(a, b) {
-    return b.length - a.length;
-  });
-
+  sets = getFigureSets (sets, size, realFigs, superFamilies, true).sort (
+	  function(a, b) {return b.length - a.length;}
+	);
+*/
+/*
+	var setFamilies = {};
+  for (var i = 0; i < sets.length; i++) {
+		setFamilies[i] = {};
+		for (var k in superFamilies) {
+			setFamilies[i][k] = 0;
+		}
+		for (var j = 0; j < sets[i].length; j++) {
+			setFamilies[i][figures[realFigs[sets[i][j]]].superFamily] += 1;
+		}
+	}
+*/
+/*	
   // combine sets. Take the first (longest) set and add short sets until
   // reaching correct size
   document.getElementById ('t_proposalsIncomplete').classList.add ('noDisplay');
@@ -13529,14 +13734,14 @@ function createFigureProposals () {
     }
     proposals.push (sets.splice (0, 1)[0]);
   }
-      
+*/      
   // build a sequence string for each proposal
   var content = '';
   sequenceText.innerHTML = '';
   for (var i = 0; i < proposals.length; i++) {
     var string = "";
-    for (var j = 0; j < proposals[i].length; j++) {
-      var f = figures[realFigs[proposals[i][j]]];
+    for (var j = 0; j < proposals[i].figures.length; j++) {
+      var f = figures[realFigs[proposals[i].figures[j]]];
       if (f.comments || f.unknownFigureLetter) string += '"' + 
         (f.unknownFigureLetter ? '@' + f.unknownFigureLetter : '') +
         (f.comments ? f.comments : '') + '" ';
@@ -13548,9 +13753,13 @@ function createFigureProposals () {
 
   document.getElementById ('proposals').textContent = content;
 
+	// set Grid rendering options
   activeSequence.figures = [];
   var savedText = activeSequence.text;
-
+  var savedOrder = document.getElementById('gridOrderBy').value;
+	document.getElementById('gridOrderBy').value = 'seqNr';
+	
+	// build Grid image for proposals
   checkSequenceChanged (true);
   
   var svg = document.getElementById ('proposalsSequenceSvg');
@@ -13561,9 +13770,11 @@ function createFigureProposals () {
   svg.setAttribute ('width', svg.getAttribute ('width') * (h / svg.getAttribute ('height')));
   svg.setAttribute ('height', h);
   
+  // restore normal Grid view
   activeSequence.figures = [];
   activeSequence.text = savedText;
   sequenceText.innerHTML = savedText;
+  document.getElementById('gridOrderBy').value = savedOrder;
   
   checkSequenceChanged (true);
 }
@@ -13972,7 +14183,10 @@ function displayAlerts () {
     while (container.childNodes.length > 1) {
       container.removeChild(container.lastChild);
     }
-    // Add a message to the top to warn no rules are loaded
+    // sort messages alphabetically/by number. Specific figure messages
+    // will be shown first as '(' comes before all letters
+    alertMsgs.sort();
+    // Add a message to the top to warn if no rules are loaded
     if (!rulesActive) alertMsgs.unshift (userText.noRules);
     // Display messages
     for (var i = 0; i < alertMsgs.length; i++) {
@@ -16480,17 +16694,10 @@ function addFormElementsLR (svg, print) {
       if (figures[i].floatingPoint) figK -= 1;
 
       totalK += figK;
-      if (document.getElementById('printSF').checked === true) {   
-        if (document.getElementById('class').value == 'glider') {
-          var superFamily = getSuperFamily (figures[i].aresti, 'glider');
-        } else {
-          var superFamily = getSuperFamily (figures[i].aresti,
-            document.getElementById('category').value);
-        }
-        if (superFamily) {
-          drawText('SF ' + superFamily,
-            x, 27 + rows * 12, 'miniFormABold', 'start', '', g);
-        }
+      if ((document.getElementById('printSF').checked === true) &&
+	      (figures[i].superFamily)) {
+				drawText('SF ' + figures[i].superFamily,
+					x, 27 + rows * 12, 'miniFormABold', 'start', '', g);
       }
       if (figures[i].floatingPoint) figK = '(-1)' + figK;
       drawText (figK, x + 70, 27 + rows * 12, 'miniFormABold', 'end', '', g);
@@ -18535,6 +18742,9 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex, figure_chooser) 
   figures[figStringIndex].exitDir = Direction;
   figures[figStringIndex].unknownFigureLetter = unknownFigureLetter;
   figures[figStringIndex].checkLine = figCheckLine[seqNr];
+  figures[figStringIndex].superFamily = getSuperFamily (arestiNrs,
+	  (document.getElementById('class').value == 'glider') ?
+	  'glider' : document.getElementById('category').value);
   unknownFigureLetter = false;
       
   // set inFigureXSwitchFig (used for OLAN sequence autocorrect) to
@@ -19266,6 +19476,34 @@ function parseSequence () {
         // add comments when applicable
         if (comments) {
           figures[i].comments = comments;
+          
+          // add country when applicable
+          var country = false;
+	        // check for three-letter flag country in separate "word"
+	        var match = comments.match(/\b[A-Z]{3}\b/g);
+	        if (match) {
+	          for (var j = match.length - 1; j >= 0; j--) {
+	            // check for IOC countries first
+	            if (iocCountriesReverse[match[j]]) {
+	              country = iocCountriesReverse[match[j]].toLowerCase();
+	              if (flags[country]) {
+	                break;
+	              } else country = false; 
+	            }
+	            // next check for iso countries
+	            if (isoCountriesReverse[match[j]]) {
+	              country = isoCountriesReverse[match[j]].toLowerCase();
+	              if (flags[country]) {
+	                break;
+	              } else country = false; 
+	            }
+	          }
+	        }
+	        figures[i].country = country;
+	        if (country) {
+						figures[i].iocCountry = iocCountries[country.toUpperCase()];
+					}
+	        
           comments = false;
         }
         

@@ -254,7 +254,7 @@
 #gridInfo td:last-child {
   padding: 0;
 }
-#gridColumnsContainer span.form-group {
+#gridColumnsContainer div span.form-group {
 	margin: -10px 0 0 0;
 	float: right;
 }

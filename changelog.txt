@@ -1,3 +1,14 @@
+2018.3.3
+* fixed Superfamilies not displaying in IAC Form A before print dialog is opened
+* added ordering of Grid figures by number, country or letter
+* further updated CIVA Glider rules, allowing multiple non-aileron rolls on the same line
+* added alphabetical/numerical sorting of Alert Messages
+* updated superFamily code
+* fixed non-Aresti hammer-p-loop figures
+* completely rewrote createFigureProposals to create better balanced proposals
+* changed figures.js spin/anyroll symbol to $ as > was causing trouble with switchFirstRoll (Issue #226)
+* improved naming of "vertical snap" to "vertically climbing snap" in rules18-civa.js
+
 2018.3.2
 * fixed blue handle disappearing on entry line after 2018.3.1 fix
 * updated several xxx-rule Sporting Code references

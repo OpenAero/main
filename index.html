@@ -722,6 +722,7 @@
 	        </span>
           <div id="gridInfoContents">
             <div id="gridColumnsContainer">
+							<div>
               <span class="userText" id="t_columns"></span>
               <span class="form-group right">
 	              <select id="gridColumns">
@@ -735,7 +736,20 @@
 	              </select>
 	              <i class="bar"></i>
               </span>
-            </div>
+              </div>
+							<div>
+              <span class="userText" id="t_gridOrderBy"></span>
+              <span class="form-group right">
+								<select id="gridOrderBy">
+									<option class="userText" id="t_orderFigureNr" value="seqNr" selected></option>
+									<option class="userText" id="t_orderCountry" value="iocCountry"></option>
+									<option class="userText" id="t_orderLetter" value="unknownFigureLetter"></option>
+									<!-- <option class="userText" id="t_orderK" value="K"></option> -->
+								</select>
+	              <i class="bar"></i>
+              </span>
+              </div>
+						</div>
             <div>
               <table>
                 <tr>

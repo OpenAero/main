@@ -216,6 +216,9 @@ select {
 #t_gridView {
 	display: none;
 }
+#gridColumnsContainer div {
+	clear: both;
+}
 #figureSelector {
   position: absolute;
   overflow-x: hidden;
