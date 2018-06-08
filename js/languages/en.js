@@ -37,21 +37,28 @@ lang.en = {
   'you can help OpenAero development by adding them to ' +
   '<a href="https://github.com/OpenAero/main/issues" target="_blank">' +
   'the Issues list</a>.',
-'aboutOlder' : '<font color="red">You are running an outdated version. ' +
-  '</font><br /><ul>' +
-  '<li>If you are using the Chrome app, open Chrome and enter ' +
-  '<strong>chrome://extensions</strong> in your address bar. Then, ' +
-  'choose "Developer mode" and click "Update extensions now".</li>' +
-  '<li>If you are using openaero.net on Google Chrome (but not as an ' +
-  'app) it may help to clear the appCache. Enter ' +
+// changed 2018.3.4
+'aboutOlder' : '<font color="red">You are running an outdated version.' +
+  '</font><br />',
+// new 2018.3.4
+'aboutOlderAndroid' : '<a href="https://play.google.com' +
+	'/store/apps/details?id=net.openaero" target="_blank">' +
+	'<img src="img/google-play-badge.png" width="200"></a>',
+'aboutOlderCache' : 'If you are using openaero.net on Google Chrome ' +
+	'(but not as an app) it may help to clear the appCache. Enter ' +
   '<strong>chrome://appcache-internals</strong> in your address bar ' +
-  'and <strong>Remove</strong> all entries that contain OpenAero.</li>' +
-  '<li>If you are running from a local file, please check instructions at ' +
+  'and <strong>Remove</strong> all entries that contain OpenAero.',
+'aboutOlderChrome' : 'It seems you are using the Chrome app, open Chrome and enter ' +
+  '<strong>chrome://extensions</strong> in your address bar. Then, ' +
+  'choose "Developer mode" and click "Update extensions now".',
+'aboutOlderCopy' : 'It seems you are running a copy of OpenAero, please check instructions at ' +
   '<a href="https://github.com/OpenAero/main/wiki/Installation" target="_blank">' +
-  'the Installation wiki</a>.</li></ul>',
+  'the Installation wiki</a>.',
+'aboutOlderIos' : '<a href="https://itunes.apple.com' +
+	'/us/app/openaero/id1343773321" target="_blank">' +
+	'<img src="img/ios-appstore-badge.svg" width="200"></a>',
 'aboutUnknown' : 'Unable to determine Stable version. You are ' +
   'probably offline.',
-// changed 2017.1
 'aboutText' : '<div class="divider">' +
   '<p>This&nbsp;version:<strong>%s</strong> &nbsp; ' +
   'Stable&nbsp;version:<strong>%s</strong></p>%s</div>' +
@@ -441,8 +448,8 @@ lang.en = {
 'openSequenceLink' : 'Open sequence link',
 'openSequenceLinkCancel' : 'Cancel',
 'openSequenceLinkError' : '<p>There was an error opening the sequence ' +
-  'link. This was the link you provided:<br>%s</p><p>Please check you ' +
-  'have copied the <strong>entire</strong> link',
+  'link. This was the link you provided:<br>%s</p><p>Please check if ' +
+  'you have copied the <strong>entire</strong> link',
 'openSequenceLinkMessage' : 'To open a sequence that has been provided ' +
   'to you as a link (e.g. through email), copy it completely. Then ' +
   'paste it in the box below',

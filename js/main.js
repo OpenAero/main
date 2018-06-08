@@ -2404,6 +2404,20 @@ function aboutDialog () {
       switch (compVersion (version, stableVersion)) {
         case -1:
           compText = userText.aboutOlder;
+          if (platform.cordova && platform.ios) {
+						compText += userText.aboutOlderIos;
+					} else
+					if (platform.cordova && platform.android) {
+						compText += userText.aboutOlderAndroid;
+					} else
+					if (platform.chrome) {
+						compText += userText.aboutOlderChrome;
+					} else
+					if (!window.location.hostname.match(/^(.+\.)?openaero.net$/)) {
+						compText += userText.aboutOlderCopy;
+					} else {
+						compText += userText.aboutOlderCache;
+					}
           break;
         case 1:
           compText = userText.aboutNewer;
@@ -4785,6 +4799,7 @@ function doOnLoad () {
   // define DOM variables
 	if ((typeof chrome !== 'undefined') && chrome.fileSystem) {
 		chromeApp.active = true;
+		platform.chrome = true;
 		console.log('Running as Chrome app');
 	}
   sequenceText = document.getElementById('sequence_text');
@@ -6878,9 +6893,11 @@ function updateFigureOptions (figureId) {
     // hide Free (Un)known disabled options warning
     document.getElementById('FUfigOptionsDisabled').classList.add ('noDisplay');
   } else {
-		// remove all disable classes
-		var disable = figureOptions.getElementsByClassName ('disable');
-		while (disable.length) disable[0].classList.remove ('disable');
+		// remove all 'disable' and 'on' classes
+		var els = figureOptions.getElementsByClassName ('disable');
+		while (els.length) els[0].classList.remove ('disable');
+		var els = figureOptions.getElementsByClassName ('on');
+		while (els.length) els[0].classList.remove ('on');
     var els = document.getElementsByClassName ('disableFUfig');
 		for (var i = els.length - 1; i >= 0; i--) {
       els[i].classList.remove ('disable');
@@ -10368,7 +10385,8 @@ function changeFigureGroup() {
           for (var j = 1; j < fig[i].rollAresti.length; j++) {
             // Set rollK to -1 when this roll has 0K -> illegal
             // Can only happen for queue figures
-            if (rollKGlider[fig[i].rollAresti[j]] == 0) {
+            if ((rollKGlider[fig[i].rollAresti[j]] == 0) &&
+	            (figureGroup == 0)) {
               rollK = -1;
               break;
             }
@@ -10382,7 +10400,8 @@ function changeFigureGroup() {
           for (var j = 1; j < fig[i].rollAresti.length; j++) {
             // Set rollK to -1 when this roll has 0K -> illegal
             // Can only happen for queue figures
-            if (rollKPwrd[fig[i].rollAresti[j]] == 0) {
+            if ((rollKPwrd[fig[i].rollAresti[j]] == 0) &&
+	            (figureGroup == 0)) {
               rollK = -1;
               break;
             }
@@ -11404,7 +11423,7 @@ function setFigChooser (figNr) {
 
 // setFigureSelected sets the active figure and applies color filter
 function setFigureSelected (figNr) {
-
+	
   if (figNr === false) figNr = null;
   // define header element for info
   var header = document.getElementById('figureHeader');
@@ -11428,7 +11447,7 @@ function setFigureSelected (figNr) {
 			}
     }
           
-    if (figNr !== null) {
+    if (figNr !== null && figures[figNr].aresti) {
 
 	    // fill selectedFigure with BBox values
 	    var el = SVGRoot.getElementById('figure'+figNr);
@@ -11935,6 +11954,7 @@ function clearPositioning () {
 function separateFigure (id) {
   if (figures[id]) {
     var selectFig = selectedFigure.id;
+
     // remove any previous move 'figure'
     var i = id - 1;
     if (figures[i]) {
@@ -11952,8 +11972,9 @@ function separateFigure (id) {
       i++;
       selectFig++;
     }
+
     // select correct figure
-    setFigureSelected (selectFig);
+		setFigureSelected(selectFig);
     // find the next real figure and separate that one
     i++;
     while (figures[i]) {
@@ -13195,12 +13216,14 @@ function makeFormGrid (cols, width, svg) {
 	               
   // draw all real figures, ordered as selected
 	var orderBy = document.getElementById('gridOrderBy').value;
+	/** DISABLED, causing trouble!
   figures.sort (function(a, b) {
 		if (!a[orderBy] && !b[orderBy]) return 0;
 		if (!a[orderBy] || (a[orderBy] > b[orderBy])) return 1;
 		if (!b[orderBy] || (b[orderBy] > a[orderBy])) return -1;
 		return 0;
   });
+  */
   for (var i = 0; i < figures.length; i++) {
     if (figures[i].aresti) {
 
@@ -13369,7 +13392,7 @@ function makeFormGrid (cols, width, svg) {
       }
     }
   }
-
+	
   // list entry and exit speeds and attitudes
   for (var key in {Entry: '', Exit: ''}) {
     for (var attSpd in entryExit[key]) {
@@ -13410,6 +13433,7 @@ function makeFormGrid (cols, width, svg) {
       Math.min (additionalFig.max - gridAdditionals.textContent, 4), -1));
     gridAdditionals.textContent += ' / ' + additionalFig.max;
   } else gridAdditionals.setAttribute('class', '');
+  
 }  
 
 /* getFigureSets creates sets of figures that match.
@@ -19044,16 +19068,16 @@ function updateSequence (figNr, figure, replace, fromFigSel, force) {
   // with a negative figNr the fig is placed at the beginning
   if (figNr < 0) string = figure + separator + string;
 
-  // check if the selected figure id has te be changed
+  // check if the selected figure id has to be changed
   if ((selectedFigure.id !== null) && updateSelected) {
-    if (selectedFigure.id > figNr) {
+		if (replace && (figure === '') && (selectedFigure.id === figNr)) {
+		  selectFigure(false);
+    } else if (selectedFigure.id > figNr) {
       if (replace) {
         if (figure === '') selectedFigure.id--;
       } else {
         selectedFigure.id++;
       }
-    } else if (replace && (figure === '') && (selectedFigure.id === figNr)) {
-      selectFigure(false);
     }
   }
 
@@ -19077,7 +19101,8 @@ function updateSequence (figNr, figure, replace, fromFigSel, force) {
   }
   
   // reselect correct figure
-  if ((selectedFigure.id !== null) && updateSelected) {
+  if ((selectedFigure.id !== null) &&
+	  figures[selectedFigure.id].aresti && updateSelected) {
     selectFigure (selectedFigure.id);
   }
 

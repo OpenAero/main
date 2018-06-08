@@ -1,3 +1,10 @@
+2018.3.4
+* fixed selection issue of new figures with "automatic positioning clear of others" active
+* fixed issue where switch buttons in Figure Editor stayed "on" when selecting new figure
+* removed "(N/A)" code in Figure chooser for non-queue figures
+* updated About dialog to show platform specific messages for outdated OpenAero version (Issue #227)
+* disabled grid sorting as it had bugs, need more testing and coding
+
 2018.3.3
 * fixed Superfamilies not displaying in IAC Form A before print dialog is opened
 * added ordering of Grid figures by number, country or letter
