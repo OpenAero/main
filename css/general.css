@@ -148,7 +148,7 @@ input[type=number] {
   transition: all 0.2s ease-in-out;
 }
 .expansion-panel.expanded div {
-  max-height: 280px;
+  max-height: 300px;
   overflow: visible !important;
   -webkit-overflow-scrolling: touch;
 }

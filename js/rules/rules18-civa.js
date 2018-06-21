@@ -232,7 +232,7 @@ rules.push("group-two=^8\\.(4\\.[1-4]|4\\.[7-9]|4\\.10|5\\.[1-2]|6\\.[1-2])\\.[3
 rules.push("two-name=family 8.4.1-4,8.4.7-10,8.5.1-2,8.6.1-2 columns 3&4");
 rules.push("two-name_fr=famille 8.4.1-4,8.4.7-10,8.5.1-2,8.6.1-2 colonnes 3 et 4");
 rules.push("group-vsnap=^9\\.(9|10)\\.[16]\\.");
-rules.push("vsnap-name=vertically climbing snap");
+rules.push("vsnap-name=vertically climbing flick");
 rules.push("vsnap-name_fr=déclenché ascendant vertical");
 //rules.push("vsnap-rule=Sporting Code Section 6 Part 1 2.3.1.4");
 rules.push("one-max=2");
@@ -243,7 +243,6 @@ rules.push("vsnap-min=1");
 rules.push("snap-max=6");
 
 rules.push("snap-maxperfig=1");
-
 
 rules.push("k-minperfig=22");
 
@@ -304,7 +303,7 @@ rules.push("why-VUP4S  = a maximum of 4 stops are allowed on vertical up opposit
 rules.push("why_fr-VUP4S  = un maximum de 4 arrets est permis sur les rotations alternées verticales montantes");
 
 rules.push("rule-DIAGUP4S = diagupstop:<5");
-rules.push("why-DIAGUP4S  = a maximum of 4 stops (3 if snap) are allowed on diagonal up opposite rolls");
+rules.push("why-DIAGUP4S  = a maximum of 4 stops (3 if flick) are allowed on diagonal up opposite rolls");
 rules.push("why_fr-DIAGUP4S  = un maximum de 4 arrets (3 si déclenché) est permis sur les rotations combinées à 45° montant");
 
 //note +<6 indicates the total count is less than 6 ... all climbing rolls combined

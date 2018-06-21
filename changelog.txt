@@ -1,3 +1,16 @@
+2018.3.6
+* fixed Grid sorting bugs, reenabled
+* added 7.4.1.1 (Adv and Unl) and 7.4.2.1 (Unl) to CIVA Glider Unknown allowed figures
+* removed inline Chrome App installation: https://blog.chromium.org/2018/06/improving-extension-transparency-for.html
+* fixed figure block overlapping tab selector in Designer
+* removed nuisance "No figure letter assigned" warning in Designer
+* updated 2019 NZAC sequences and rules
+* fixed dropping of Free figure before other Free figure in Designer
+* changed "First roll position" to "First roll/spin position"
+* changed interface usage of "snap" to "flick" in accordance with Aresti catalog. Still need to change most coding...
+* fixed Grid Info box always moving with cursor on combined touch/mouse devices
+* disabled hiding of illegal figures in queue
+
 2018.3.4
 * fixed selection issue of new figures with "automatic positioning clear of others" active
 * fixed issue where switch buttons in Figure Editor stayed "on" when selecting new figure

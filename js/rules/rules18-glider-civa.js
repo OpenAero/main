@@ -75,6 +75,8 @@ OpenAero 2016.1
 * 2018.3.3
 * - corrected "manual check" warning to 2.3.1.2 c)
 * - allowed multiple non-aileron rolls on the same line (NOAH i.s.o. NOU) in many figures
+* 2018.3.5
+* - added 7.4.1.1 (Adv and Unl) and 7.4.2.1 (Unl) to Unknown
 */
 //###################################################################################
 //################################ CIVA GLIDERS FREE ################################
@@ -737,8 +739,10 @@ rules.push("7.3.4.1-4 NOAH");
 // no rolls on 7.4.1.3-4      ### acc. to A.9.1.1
 // no hesitation roll in 7.4.1.2     ### acc. to A.9.1.2
 
+rules.push("7.4.1.1");
 rules.push("7.4.1.2  NHR");
 rules.push("7.4.1.3-4 NR");
+rules.push("7.4.2.1");
 
 // horizontal Eights = Full Cuban Eights
 //--------------------------------------
@@ -1491,6 +1495,7 @@ rules.push("7.3.4.4  NOAH");
 // no roll on 7.4.1.3-4      ### acc. to A.9.1.1
 // no hesitation roll in 7.4.1.2     ### acc. to A.9.1.2
 
+rules.push("7.4.1.1");
 rules.push("7.4.1.3-4 NR");
 rules.push("7.4.1.2 NHR");
 

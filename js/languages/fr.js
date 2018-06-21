@@ -406,7 +406,6 @@ lang.fr = {
 'none' : 'Aucune',
 'noRollAllowed' : 'Rotation interdite par l\'Aresti',
 'noRules' : 'Pas de règle de vérification disponible.',
-// changed 2018.2.1
 'notes' : 'Annotations (haut de page)',
 'notOnFormBC' : 'Cette fonction est seulement disponible lorsque ' +
   'la forme B ou C est affichée.',
@@ -431,7 +430,6 @@ lang.fr = {
 'openaeroLanguage' : 'Syntaxe OpenAero',
 'openQueueFile' : 'Ouvrir un fichier file',
 'openSequence' : 'Ouvrir un programme',
-// changed 2016.1.3
 'openSequenceLink' : 'Ouvrir le lien vers un programme',
 'openSequenceLinkCancel' : 'Annuler',
 'openSequenceLinkError' : '<p>Il y a eu une erreur à l\'ouverture du programme ' +
@@ -440,17 +438,13 @@ lang.fr = {
 'openSequenceLinkMessage' : 'Pour ouvrir le programme qui vous a été indiqué ' +
   'par un lien (par exemple, par email), copiez le intégralement et ' +
   'placez le dans l\'emplacement ci-dessous :',
-//
 'openSequenceLinkOpen' : 'Ouvrir',
 'openSequenceLinkTitle' : 'Ouvrir le programme à partir du lien',
-//
 'orFileDrop' : 'Ou glisser/déplacer vos fichiers ici',
 'orFileDropPrint' : 'Ou glisser/déplacer vos fichiers ici',
-// new 2016.1.1
 'otherNote' : 'Autre(noter...)',
 'pageSpacing' : 'Espacement entre pages',
 'pilot' : 'Pilote',
-// new 2018.1.5
 'pilotCardExplain' : 'Sélectionnez et cliquez à nouveau pour inverser le vent R-L',
 'pilotID' : 'Pilote ID',
 'pilotNo' : 'Pilote N°.',
@@ -492,7 +486,6 @@ lang.fr = {
 'printSF' : 'Numéro de Super Famille',
 'printString' : 'Texte du programme',
 'program' : 'Programme',
-// new 2017.1
 'programme' : 'Programme',
 'proposalsCreate' : 'Nouvelles propositions',
 'proposalsCreateGroups' : 'Créer des groupes',
@@ -511,7 +504,6 @@ lang.fr = {
 'queueColumns' : 'Colonnes',
 'queueEmpty' : 'Pas de figure à enregistrer dans la file',
 'queueLabel' : 'File/Tampon',
-//
 'queueNotSaved' : 'Les figures de la file ont été enregistrées',
 'queueSaved' : 'Les figures de la file N\'ONT PAS été enregistrées',
 'referenceFigureDifferent' : 'La figure %s n\'est pas dans le programme de référence',
@@ -526,15 +518,10 @@ lang.fr = {
   'construction d\'un programme, tel qu\'un programme d\'(In)Connu-Libre. ' +
   'La vérification des lettres, des codes Aresti et des directions ' +
   'relatives d\'entrée / sortie des figures seront alors effectués.',
-//
-// new 2016.1.3
 'referenceSequenceFixed' : 'Ce programme de référence ne peut pas être changé ' +
   'car il est lié aux règles de vérification du programme en cours.',
-// changed 2016.1.3
 'referenceSequenceTitle' : 'Figures de référence pour les ' +
   'programmes d\'(In)Connu-Libre',
-//
-// new 2017.2.4
 'registration' : 'Immat',
 'remove' : 'Supprimer',
 'removeLogo' : 'Supprimer le logo',
@@ -546,7 +533,12 @@ lang.fr = {
   'remis à sa valeur d\'origine. Voulez vous continuer?',
 'rollLarge' : 'Grand',
 'rollMedium' : 'Moyen',
-'rollPos' : ['Première série de rotations','Deuxième série de rotations','Troisième série de rotations','Quatrième série de rotations'],
+// changed 2018.3.5
+'rollPos' : [
+	'Première série de rotations/vrilles',
+	'Deuxième série de rotations',
+	'Troisième série de rotations',
+	'Quatrième série de rotations'],
 'rollSmall' : 'Petit',
 'rollTextSize' : 'Taille du texte des rotations',
 'rules' : 'Règles',

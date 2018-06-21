@@ -227,9 +227,9 @@ rules.push("k-name=K factor");//special, counts actual K instead of figures coun
 rules.push("basefig-name=base figures");
 rules.push("basefigex11-name=base figures except 1.1.1.x");
 rules.push("roll-name=roll family");
-rules.push("snap-name=snap roll");
-rules.push("isnap-name=inside (positive) snap roll");
-rules.push("osnap-name=outside (negative) snap roll");
+rules.push("snap-name=flick roll");
+rules.push("isnap-name=inside (positive) flick roll");
+rules.push("osnap-name=outside (negative) flick roll");
 rules.push("spin-name=spin family");
 rules.push("uspin-name=upright spin family");
 

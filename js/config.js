@@ -36,7 +36,7 @@
 // Where a new x should be used for versions that create sequences not
 // fully backward compatible with the previous version
 
-var version = '2018.3.4';
+var version = '2018.3.6';
 /* versionNew is an object that contains version update information
    The structure is {vvv : [[ttt, n], ...], ...} , where
    vvv = version number
@@ -44,6 +44,9 @@ var version = '2018.3.4';
    n   = importance (higher = more important)
 */
 var versionNew = {
+	'2018.3.6' : [
+		['Updated NZAC Power rules and sequences for 2018/2019', 3]
+	],
 	'2018.3.3' : [
 		['Improved Grid display options and figure group creation for ' +
 		'glider competition', 4],

@@ -5354,9 +5354,10 @@ function addEventListeners () {
   if (platform.touch) {
     document.getElementById('gridInfo').addEventListener ('touchstart', grabFigure);
     document.getElementById('gridInfo').addEventListener ('touchmove', Drag);
-  }
-  document.getElementById('gridInfo').addEventListener ('mousedown', grabFigure);
-  document.getElementById('gridInfo').addEventListener ('mousemove', Drag);
+  } else {
+	  document.getElementById('gridInfo').addEventListener ('mousedown', grabFigure);
+	  document.getElementById('gridInfo').addEventListener ('mousemove', Drag);
+	}
   document.getElementById('gridColumns').addEventListener('change', updateGridColumns);
   document.getElementById('gridOrderBy').addEventListener('change', function(){selectForm('Grid');});
   document.getElementById('manual_html_grid_system').addEventListener('mousedown', function(){
@@ -5617,12 +5618,6 @@ function checkForApp () {
         // Stable is automatically redirected to the App through the
         // url_handlers directive in manifest.json
         
-        // Create <head> link for direct install
-        var head = document.getElementsByTagName ('head')[0];
-        var link = document.createElement ('link');
-        link.rel = 'chrome-webstore-item';
-        link.href = 'https://chrome.google.com/webstore/detail/' + chromeApp.id;
-        head.appendChild (link);
         // Show link in tools menu
         document.getElementById('installChromeApp').classList.remove ('noDisplay');
           
@@ -5657,21 +5652,10 @@ function checkForApp () {
 
 }
 
-// installChromeApp will perform Chrome App installation after called
+// installChromeApp will open Chrome App installation page after called
 function installChromeApp() {
-  chrome.webstore.install (
-    undefined,
-    function() {
-      // install succesfull
-      alertBox (userText.installChromeAppComplete, userText.installChromeAppTitle);
-      // hide menu link
-      document.getElementById('installChromeApp').classList.add ('noDisplay');
-    },
-    function(e) {
-      // install unsuccesfull
-      console.log(e);
-    }
-  );
+  helpWindow ('https://chrome.google.com/webstore/detail/openaero/' +
+	  chromeApp.id);
 }
 
 // Functions for interpreting user input and variables
@@ -6268,17 +6252,13 @@ function addRollSelectElement (figNr, rollEl, elNr, parent) {
   html += '">';
   span.innerHTML = html;
   parent.appendChild (span);
-  // give browser time to build the DOM from innerHTML before adding
-  // events
-  window.setTimeout (function(){
-    var el = document.getElementById('roll' + rollEl + '-' + elNr);
-    if (el) {
-      el.addEventListener('change', updateFigure, false);
-      document.getElementById('roll' + rollEl + '-' + elNr + '-flip').addEventListener('click', clickButton, false);
-      document.getElementById('roll' + rollEl + '-' + elNr + '-flipNumber').addEventListener('click', clickButton, false);
-      document.getElementById('roll' + rollEl + '-' + elNr + '-comment').addEventListener('change', updateFigure, false);
-    }
-  }, 200);
+	var el = document.getElementById('roll' + rollEl + '-' + elNr);
+	if (el) {
+		el.addEventListener('change', updateFigure, false);
+		document.getElementById('roll' + rollEl + '-' + elNr + '-flip').addEventListener('click', clickButton, false);
+		document.getElementById('roll' + rollEl + '-' + elNr + '-flipNumber').addEventListener('click', clickButton, false);
+		document.getElementById('roll' + rollEl + '-' + elNr + '-comment').addEventListener('change', updateFigure, false);
+	}
 }
 
 // createProgramme will build a programme and add it to
@@ -6791,8 +6771,8 @@ function setYAxisOffset (offset) {
 function updateFigureEditor () {
   if (document.getElementById('figureInfo')) {
     displaySelectedFigure();
-    updateFigureOptions(selectedFigure.id);
     addRollSelectors(selectedFigure.id);
+    updateFigureOptions(selectedFigure.id);
   }
 }
 
@@ -6819,7 +6799,7 @@ function hideFigureSelector () {
   document.getElementById ('figureSelector').classList.remove('active');
   document.getElementById ('leftBlock').insertBefore (
 	  document.getElementById('figureString'),
-	  document.getElementById('leftBlock').firstChild);
+	  document.getElementById('figureInfo').nextSibling);
   //document.getElementById('figureString').classList.remove('inFigureSelector');
 }
 
@@ -7144,27 +7124,22 @@ function updateFigureOptions (figureId) {
         el.classList.remove ('noDisplay');
       }
     }
-    
-    // the DOM may need some time to update classes, so wait before
-    // enabling/disabling
-    //setTimeout (function(){
-      var els = document.getElementsByClassName ('disableFUfig');
-      for (var i = els.length - 1; i >= 0; i--) {
-        if (disable) {
-          els[i].classList.add ('disable');
-        }
-      }
-  
-      var els = document.getElementsByClassName ('disableRollFUfig');
-      for (var i = els.length - 1; i >= 0; i--) {
-        if (disable) {
-          els[i].setAttribute ('disabled', 'disabled');
-        } else {
-          els[i].removeAttribute ('disabled');
-        }
-      }
-      
-    //}, 200);
+	
+		var els = document.getElementsByClassName ('disableFUfig');
+		for (var i = els.length - 1; i >= 0; i--) {
+			if (disable) {
+				els[i].classList.add ('disable');
+			}
+		}
+
+		var els = document.getElementsByClassName ('disableRollFUfig');
+		for (var i = els.length - 1; i >= 0; i--) {
+			if (disable) {
+				els[i].setAttribute ('disabled', 'disabled');
+			} else {
+				els[i].removeAttribute ('disabled');
+			}
+		}
 
   }
 }
@@ -7189,6 +7164,7 @@ function addRollSelectors (figureId) {
           !((rolls[i] == 4) && figures[figureId].rollInfo[i].rollTop)) {
           var rollInfo = figures[figureId].rollInfo[i];
           var div = document.createElement('div');
+          myEl.appendChild(div);
           div.id = 'roll' + i;
           div.classList.add ('content');
           div.classList.add ('divider');
@@ -7248,7 +7224,6 @@ function addRollSelectors (figureId) {
           var divdiv = document.createElement ('div');
           divdiv.classList.add ('clearBoth');
           div.appendChild (divdiv);
-          myEl.appendChild(div);
           rollNr++;
         }
       }
@@ -9757,7 +9732,8 @@ function checkRules () {
         figs.push (figures[i].seqNr);
       }
     }
-    if (figs.length) {
+    // nuisance warning in Designer, so hide there
+    if (figs.length && (activeForm !== 'FU')) {
       var msg = sprintf(userText.noFigureLetterAssigned, figs.join(','));
       alertMsgs.push (msg);
       log.push ('*** Error: ' + msg);
@@ -10610,7 +10586,8 @@ function markNotAllowedFigures () {
     anyLegal = true;
   }
   function illegalFigure () {
-    if (document.getElementById('hideIllegal').checked == true) {
+    if ((document.getElementById('hideIllegal').checked == true) &&
+	    (document.getElementById('figureGroup').value != 0)) {
       td[j].firstChild.classList.add ('hidden');
       td[j].classList.remove ('matchingFigure');
     } else {
@@ -10650,7 +10627,8 @@ function markNotAllowedFigures () {
       }
     }
     // hide row when no legal figures present
-    if ((document.getElementById('hideIllegal').checked == true) && !anyLegal) {
+    if ((document.getElementById('hideIllegal').checked == true) &&
+	    (document.getElementById('figureGroup').value != 0) && !anyLegal) {
       tr[i].classList.add ('noDisplay');
     }
   }
@@ -12685,10 +12663,13 @@ function handleFreeDrop (e) {
     var string = e.dataTransfer.getData('text');
 
     // if unknownFigureLetter is set, drop one figure earlier
-    // var previous = (figures[figNr].unknownFigureLetter)? 1 : 0;
+    var previous = figures[figNr].unknownFigureLetter ? 1 : 0;
+    /** next part was added in 2018.1.2. Why? Does not seem to work.
+     *  fixed in 2018.3.5
     // if aresti is set, drop one figure earlier
-    var previous = (figures[figNr].aresti) ? 1 : 0;
-
+    //var previous = figures[figNr].aresti ? 1 : 0;
+		*/
+		
     // a subsequence is marked by "n" at the start, where
     // n = subsequence number
     var match = string.match (regexSub);
@@ -13209,151 +13190,154 @@ function makeFormGrid (cols, width, svg) {
 	  x = 0,
 	  y = 0,
 	  col = 0,
-	  scaleMin = Infinity, // high number, will hold the smallest Fig scale
+	  scaleMin = Infinity, // will hold the smallest Fig scale
 	  modifiedK = [],
+	  sortFigures = [],
 	  entryExit = {Entry : {l: 0, n: 0, h: 0, L: 0, N: 0, H: 0},
 	               Exit : {l: 0, n: 0, h: 0, L: 0, N: 0, H: 0}};
 	               
   // draw all real figures, ordered as selected
 	var orderBy = document.getElementById('gridOrderBy').value;
-	/** DISABLED, causing trouble!
-  figures.sort (function(a, b) {
-		if (!a[orderBy] && !b[orderBy]) return 0;
-		if (!a[orderBy] || (a[orderBy] > b[orderBy])) return 1;
-		if (!b[orderBy] || (b[orderBy] > a[orderBy])) return -1;
-		return 0;
-  });
-  */
-  for (var i = 0; i < figures.length; i++) {
-    if (figures[i].aresti) {
+	for (var i = 0; i < figures.length; i++) {
+    if (figures[i].aresti) sortFigures.push ({id: i, orderBy: figures[i][orderBy]});
+	}
 
-      var f = figures[i];
+	if (orderBy !== 'seqNr') {
+	  sortFigures.sort (function(a, b) {
+			// when equal or non-existant, sort by id
+			if (!a.orderBy && !b.orderBy) return (a.id - b.id);
+			if (!a.orderBy || (a.orderBy > b.orderBy)) return 1;
+			if (!b.orderBy || (b.orderBy > a.orderBy)) return -1;
+			return (a.id - b.id);
+	  });
+	}
 
-      // draw rectangle
-      drawRectangle (x, y, cw, ch, 'formLine', svg);
-      // draw figure Ks, Arestis and Figure Letter
-      var textWidth = 0;
-      var figK = 0;
-      // yy is used to determine the top of all Aresti nrs, comments etc
-      var yy = y + ch - 10;
-      for (var j = f.k.length - 1; j>=0; j--) figK += parseInt(f.k[j]);
-      drawText('K: ' + figK,  x + 5, yy, 'formATextBold', 'start', '', svg);
-      for (var j = f.k.length - 1; j>=0; j--) {
-        if (f.aresti[j] in aresti_K) modifiedK.push (figures[i].seqNr);
-        yy -= 15;
-        drawText(f.aresti[j] + '(' + f.k[j] + ')',
-          x + 5,
-          yy,
-          'formAText',
-          'start',
-          'Fig' + i + 'Aresti' + j,
-          svg);
-        var bBox = svg.lastChild.getBBox();
-        var tw = bBox.width;
-        if (tw > textWidth) textWidth = tw;
-      }
-      if (f.unknownFigureLetter) {
-        yy -= 15;
-        drawText('Fig ' + f.unknownFigureLetter,
-          x + 5,
-          yy,
-          'formATextBold',
-          'start',
-          '',
-          svg);
-      }
-      
-      // draw comments
-      if (f.comments) {
-        var flagWidth = 0;
-        
-        if (f.country) {
-          // set scale for flag
-          var scale = Math.min (roundTwo((cw - tw - 10) / 56), 1);
-          var flag = drawImage ({
-            width: 48 * scale,
-            height: 48 * scale,
-            x: x + cw - (52 * scale),
-            y: y + ch - (48 * scale),
-            'id': 'flag' + i,
-            href: 'data:image/png;base64,' + flags[f.country]}, svg);
-          flagWidth = 56 * scale;
-        }
+  for (var i = 0; i < sortFigures.length; i++) {
 
-        var paths = makeTextBlock (f.comments);
-        // create group for comments
-        var g = svg.appendChild(document.createElementNS (svgNS, 'g'));
-        for (var j = 0; j < paths.length; j++) {
-          // don't draw box, only text
-          if (!paths[j].path) drawShape (paths[j], g);
-        }
-        var bBox = g.getBBox();
-        // check if comments fit right of Aresti nrs, scale if necessary
-        if (flag && (((y + ch) - yy) > bBox.height)) {
-          var scale = Math.min ((cw - tw - 40) / bBox.width, 1);
-        } else {
-          var scale = Math.min ((cw - tw - flagWidth - 40) / bBox.width, 1);
-        }
-        if (scale < 0.67) {
-          // would get too small, put above Aresti nrs and scale to
-          // column width, upto factor 0.67
-          scale = Math.max (Math.min ((cw - 40) / bBox.width, 1), 0.67);
-          yy -= (bBox.height + 10);
-          g.setAttribute ('transform', 'translate(' +
-            roundTwo(x - (bBox.x * scale) + 5) + ',' +
-            roundTwo(yy - (bBox.y * scale)) + ') scale(' +
-            roundTwo(scale) + ')');
-        } else {
-          // put right bottom and scale
-          if (flag) {
-            yy = Math.min (y + ch + 15 - (bBox.height * scale) - flag.getAttribute('height'), yy);
-            g.setAttribute ('transform', 'translate(' +
-              roundTwo((x - ((bBox.x + bBox.width) * scale)) + cw - 10) + ',' + 
-              roundTwo((y + ch + 3 - ((bBox.y + bBox.height) * scale) - flag.getAttribute('height'))) + ') scale(' +
-              roundTwo(scale) + ')');
-          } else {
-            yy = Math.min (y + ch + 15 - (bBox.height * scale), yy);
-            g.setAttribute ('transform', 'translate(' +
-              roundTwo((x - ((bBox.x + bBox.width) * scale)) + cw - 10) + ',' + 
-              roundTwo((y + ch - 2 - ((bBox.y + bBox.height) * scale))) + ') scale(' +
-              roundTwo(scale) + ')');
-          }
-        }
-      }
-        
-      // draw figure
-      var fh = yy - y - 10;
-      // set X and Y to 0 to prevent roundoff errors in figure drawing
-      // and scaling
-      X = Y = 0;
-      drawFullFigure(i, f.paths[0].figureStart, svg);
-      var bBox = f.bBox;
-      var thisFig = svg.getElementById('figure' + i);
-      // set figure size to column width - 20
-      var scale = Math.min ((cw - 20) / bBox.width, (fh - 20) / bBox.height);
-      if (scale < scaleMin) scaleMin = scale;
-      // move each figure to grid element center and scale appropriately
-      figures[i].tx = roundTwo(x - (bBox.x * scale) + ((cw - bBox.width * scale) / 2));
-      figures[i].ty = roundTwo(y - (bBox.y * scale) + ((fh - bBox.height * scale) / 2));
-      figures[i].fh = roundTwo(fh);
-      figures[i].viewScale = roundTwo(scale);
-      thisFig.setAttribute ('transform', 'translate(' +
-        figures[i].tx + ',' + 
-        figures[i].ty + ') scale(' + 
-        figures[i].viewScale + ')');
-      if (i < (figures.length - 1)) {
-        x += cw;
-        col++;
-        if (col >= cols) {
-          x = col = 0;
-          y += ch;
-        }
-      }
-      
-      entryExit.Entry[fig[figures[i].figNr].entryExitPower[0]]++;
-      entryExit.Exit[fig[figures[i].figNr].entryExitPower[1]]++;
-            
-    }
+		var f = figures[sortFigures[i].id];
+
+		// draw rectangle
+		drawRectangle (x, y, cw, ch, 'formLine', svg);
+		// draw figure Ks, Arestis and Figure Letter
+		var textWidth = 0;
+		var figK = 0;
+		// yy is used to determine the top of all Aresti nrs, comments etc
+		var yy = y + ch - 10;
+		for (var j = f.k.length - 1; j>=0; j--) figK += parseInt(f.k[j]);
+		drawText('K: ' + figK,  x + 5, yy, 'formATextBold', 'start', '', svg);
+		for (var j = f.k.length - 1; j>=0; j--) {
+			if (f.aresti[j] in aresti_K) modifiedK.push (f.seqNr);
+			yy -= 15;
+			drawText(f.aresti[j] + '(' + f.k[j] + ')',
+				x + 5,
+				yy,
+				'formAText',
+				'start',
+				'Fig' + i + 'Aresti' + j,
+				svg);
+			var bBox = svg.lastChild.getBBox();
+			var tw = bBox.width;
+			if (tw > textWidth) textWidth = tw;
+		}
+		if (f.unknownFigureLetter) {
+			yy -= 15;
+			drawText('Fig ' + f.unknownFigureLetter,
+				x + 5,
+				yy,
+				'formATextBold',
+				'start',
+				'',
+				svg);
+		}
+		
+		// draw comments
+		if (f.comments) {
+			var flagWidth = 0;
+			
+			if (f.country) {
+				// set scale for flag
+				var scale = Math.min (roundTwo((cw - tw - 10) / 56), 1);
+				var flag = drawImage ({
+					width: 48 * scale,
+					height: 48 * scale,
+					x: x + cw - (52 * scale),
+					y: y + ch - (48 * scale),
+					'id': 'flag' + i,
+					href: 'data:image/png;base64,' + flags[f.country]}, svg);
+				flagWidth = 56 * scale;
+			}
+
+			var paths = makeTextBlock (f.comments);
+			// create group for comments
+			var g = svg.appendChild(document.createElementNS (svgNS, 'g'));
+			for (var j = 0; j < paths.length; j++) {
+				// don't draw box, only text
+				if (!paths[j].path) drawShape (paths[j], g);
+			}
+			var bBox = g.getBBox();
+			// check if comments fit right of Aresti nrs, scale if necessary
+			if (flag && (((y + ch) - yy) > bBox.height)) {
+				var scale = Math.min ((cw - tw - 40) / bBox.width, 1);
+			} else {
+				var scale = Math.min ((cw - tw - flagWidth - 40) / bBox.width, 1);
+			}
+			if (scale < 0.67) {
+				// would get too small, put above Aresti nrs and scale to
+				// column width, upto factor 0.67
+				scale = Math.max (Math.min ((cw - 40) / bBox.width, 1), 0.67);
+				yy -= (bBox.height + 10);
+				g.setAttribute ('transform', 'translate(' +
+					roundTwo(x - (bBox.x * scale) + 5) + ',' +
+					roundTwo(yy - (bBox.y * scale)) + ') scale(' +
+					roundTwo(scale) + ')');
+			} else {
+				// put right bottom and scale
+				if (flag) {
+					yy = Math.min (y + ch + 15 - (bBox.height * scale) - flag.getAttribute('height'), yy);
+					g.setAttribute ('transform', 'translate(' +
+						roundTwo((x - ((bBox.x + bBox.width) * scale)) + cw - 10) + ',' + 
+						roundTwo((y + ch + 3 - ((bBox.y + bBox.height) * scale) - flag.getAttribute('height'))) + ') scale(' +
+						roundTwo(scale) + ')');
+				} else {
+					yy = Math.min (y + ch + 15 - (bBox.height * scale), yy);
+					g.setAttribute ('transform', 'translate(' +
+						roundTwo((x - ((bBox.x + bBox.width) * scale)) + cw - 10) + ',' + 
+						roundTwo((y + ch - 2 - ((bBox.y + bBox.height) * scale))) + ') scale(' +
+						roundTwo(scale) + ')');
+				}
+			}
+		}
+			
+		// draw figure
+		var fh = yy - y - 10;
+		// set X and Y to 0 to prevent roundoff errors in figure drawing
+		// and scaling
+		X = Y = 0;
+		drawFullFigure(sortFigures[i].id, f.paths[0].figureStart, svg);
+		var bBox = f.bBox;
+		var thisFig = svg.getElementById('figure' + sortFigures[i].id);
+		// set figure size to column width - 20
+		var scale = Math.min ((cw - 20) / bBox.width, (fh - 20) / bBox.height);
+		if (scale < scaleMin) scaleMin = scale;
+		// move each figure to grid element center and scale appropriately
+		f.tx = roundTwo(x - (bBox.x * scale) + ((cw - bBox.width * scale) / 2));
+		f.ty = roundTwo(y - (bBox.y * scale) + ((fh - bBox.height * scale) / 2));
+		f.fh = roundTwo(fh);
+		f.viewScale = roundTwo(scale);
+		thisFig.setAttribute ('transform', 'translate(' +
+			f.tx + ',' + f.ty + ') scale(' + f.viewScale + ')');
+		if (i < (sortFigures.length - 1)) {
+			x += cw;
+			col++;
+			if (col >= cols) {
+				x = col = 0;
+				y += ch;
+			}
+		}
+		
+		entryExit.Entry[fig[f.figNr].entryExitPower[0]]++;
+		entryExit.Exit[fig[f.figNr].entryExitPower[1]]++;
+
   }
   
   // update viewbox and svg height
@@ -13375,22 +13359,20 @@ function makeFormGrid (cols, width, svg) {
 
   // go through the figures again, set maximum scale to scaleMin * 2
   // and recenter horizontally when necessary
-  for (var i = 0; i < figures.length; i++) {
-    var f = figures[i];
-    if (f.aresti) {
-      var thisFig = svg.getElementById('figure' + i);
-      var scale = f.viewScale;
-      if (scale > (scaleMin * 2)) {
-        var scale = scaleMin * 2;
-        var bBox = f.bBox;
-        var x = roundTwo(f.tx + (bBox.x * f.viewScale) - ((cw - bBox.width * f.viewScale) / 2));
-        var y = roundTwo(f.ty + (bBox.y * f.viewScale) - ((f.fh - bBox.height * f.viewScale) / 2));
-        thisFig.setAttribute ('transform', 'translate(' +
-          roundTwo(x - (bBox.x * scale) + ((cw - bBox.width * scale) / 2)) +
-          ',' + roundTwo(y - (bBox.y * scale) + ((f.fh - bBox.height * scale) / 2)) +
-          ') scale(' + roundTwo(scale) + ')');
-      }
-    }
+  for (var i = 0; i < sortFigures.length; i++) {
+		var f = figures[sortFigures[i].id];
+		var thisFig = svg.getElementById('figure' + sortFigures[i].id);
+		var scale = f.viewScale;
+		if (scale > (scaleMin * 2)) {
+			var scale = scaleMin * 2;
+			var bBox = f.bBox;
+			var x = roundTwo(f.tx + (bBox.x * f.viewScale) - ((cw - bBox.width * f.viewScale) / 2));
+			var y = roundTwo(f.ty + (bBox.y * f.viewScale) - ((f.fh - bBox.height * f.viewScale) / 2));
+			thisFig.setAttribute ('transform', 'translate(' +
+				roundTwo(x - (bBox.x * scale) + ((cw - bBox.width * scale) / 2)) +
+				',' + roundTwo(y - (bBox.y * scale) + ((f.fh - bBox.height * scale) / 2)) +
+				') scale(' + roundTwo(scale) + ')');
+		}
   }
 	
   // list entry and exit speeds and attitudes
@@ -13758,19 +13740,29 @@ function createFigureProposals () {
     }
     proposals.push (sets.splice (0, 1)[0]);
   }
-*/      
-  // build a sequence string for each proposal
-  var content = '';
+*/
+	
+  // build a sequence string and count total K for each proposal
+  var
+	  content = '',
+	  propK,
+	  string;
+
+	document.getElementById('proposalsTotalK').innerHTML = userText.proposalsTotalK;
   sequenceText.innerHTML = '';
   for (var i = 0; i < proposals.length; i++) {
-    var string = "";
+		propK = 0;
+    string = "";
     for (var j = 0; j < proposals[i].figures.length; j++) {
       var f = figures[realFigs[proposals[i].figures[j]]];
       if (f.comments || f.unknownFigureLetter) string += '"' + 
         (f.unknownFigureLetter ? '@' + f.unknownFigureLetter : '') +
         (f.comments ? f.comments : '') + '" ';
       string += f.string + ' ';
+      for (var k = f.k.length - 1; k>=0; k--) propK += parseInt(f.k[k]);
     }
+    document.getElementById('proposalsTotalK').innerHTML += propK +
+	    '&nbsp;&nbsp;'
     content += string.trim() + '\n';
     sequenceText.innerHTML += string;
   }
@@ -15336,7 +15328,7 @@ function checkOpenAeroVersion () {
     }
   }
   
-  // before 1.3.7: check for snaps started from knife edge
+  // before 1.3.7: check for flicks started from knife edge
   if (compVersion (oa_version.value, '1.3.7') < 0) {
     if (sequenceText.innerText.match (/((^|[^0-9])(4|[357]4?))[if\.'`]*[,;][\.'`]*[357]i?f/)) {
       alerts += userText.warningPre137;
@@ -16998,13 +16990,14 @@ function addFormElementsGrid (svg) {
 			logoWidth = parseInt(logoSvg.getBBox().width) + 32;
 		}
 		drawText (document.getElementById('location').value + ' ' +
-			document.getElementById('date').value, logoWidth, 24, 'formATextHuge', 'start', '', svg);
+			document.getElementById('date').value,
+			logoWidth, 24, 'formATextHuge', 'start', '', svg);
 		// scale down if needed
 		var scale = roundTwo ((800 - logoWidth) / svg.lastChild.getBBox().width);
 		if (scale < 1) {
 			svg.lastChild.setAttribute (
-				'transform', 'scale(' + scale + ') translate(' + (logoWidth / scale - logoWidth) +
-				',0)');
+				'transform', 'scale(' + scale + ') ' + 
+				'translate(' + (logoWidth / scale - logoWidth) + ',0)');
 		}
 		
 		drawText (
@@ -17014,7 +17007,8 @@ function addFormElementsGrid (svg) {
 			document.getElementById('program').value,
 			logoWidth, 60, 'formATextXL', 'start', '', svg);
 	
-		drawText (document.getElementById('notes').value, logoWidth, 96, 'formATextXL', 'start', '', svg);
+		drawText (document.getElementById('notes').value, logoWidth, 96,
+			'formATextXL', 'start', '', svg);
 	}
 }
 	
@@ -17597,7 +17591,7 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex, figure_chooser) 
       }
     }
     
-    // Parse the roll patterns and find out where to put rolls, snaps,
+    // Parse the roll patterns and find out where to put rolls, flicks,
     // spins and tumbles
     // We need to do this before building the figure because it can
     // affect our choice of figure
@@ -17656,7 +17650,7 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex, figure_chooser) 
               case 'e':
               case 'u':
               case 'l':
-                // Add single snaps, spins and tumbles
+                // Add single flicks, spins and tumbles
                 // When there was a roll before, add a line first
                 var type = {
                   'f': 'possnap',
@@ -17685,7 +17679,7 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex, figure_chooser) 
                 rollInfo[i].gap[subRoll] = 0;
                 break;
               case 'i':
-                // Add single inverted snaps, spins and tumbles
+                // Add single inverted flicks, spins and tumbles
                 // When there was a roll before, add a line first
                 var type = {
                   'f': 'negsnap',

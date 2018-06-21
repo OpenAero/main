@@ -129,7 +129,7 @@
 }
 #fuFigures {
   position: relative;
-  z-index: 9; /* put above figureString */
+  z-index: 4;
   top: 0;
   margin: 6px 4px 8px 4px;
   /*left: -546px;*/
@@ -231,7 +231,7 @@
 }
 #gridInfo.hidden {
   height: auto !important;
-  transform: translateY(-320px) !important;
+  transform: translateY(-360px) !important;
   visibility: visible;
 }
 #gridInfo .expand-toggle {
@@ -353,6 +353,9 @@
 #figureSelector.left.active {
 	right: auto;
 	left: 0;
+}
+#figureInfo.hidden + #figureString {
+	display: none;
 }
 #hideFigureSelector:after {
   content: "arrow_forward";

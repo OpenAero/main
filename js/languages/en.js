@@ -91,13 +91,11 @@ lang.en = {
 'addAllToQueue' : 'Add all to Queue',
 'addAllToQueueNoFigures' : 'There are no figures in the sequence, so ' +
   'no figures to add to queue',
-// end new
 'addAllToQueueWait' : 'Adding all figures in sequence to queue. This ' +
   'may take a while. Please wait...',
 'addFigureText' : 'Add figure',
 'addingFigure' : 'Add new figure',
 'additional' : 'Additional',
-// new 2018.1.9
 'addSequenceLink' : 'Add sequence link',
 'addToQueue' : 'Add to Queue',
 'acreg': 'Aircraft registration',
@@ -192,7 +190,6 @@ lang.en = {
 'convertingToPng' : 'Converting forms to PNG image.<br>This may take ' +
   'some time. Please wait...',
 'convertingTitle' : 'Converting...',
-// new 2018.1
 'copyClipboard' : 'Copy to clipboard',
 'date' : 'Date',
 'demo' : 'Demo',
@@ -347,7 +344,6 @@ lang.en = {
   'easy access.</p>' +
   '<p>An extensive manual is available under <i>Help -> Manual</i>. ' +
   'Please take some time to read it!</p>',
-// new 2018.1.9
 'installedFile' : '<p>OpenAero has now been installed ' +
   'in this browser. It is ' +
   'available online and offline at <a href="http://%1\$s" target="_blank">' +
@@ -372,7 +368,6 @@ lang.en = {
 'iOSsaveFileTitle' : 'Save File',
 'judgesName' : 'Judges Name',
 'language' : 'Language',
-// new 2017.1
 'library' : 'Library',
 'loadNewVersion' : 'A new version is available and will automatically ' +
   'be loaded next time you start OpenAero. Load it now?',
@@ -523,6 +518,8 @@ lang.en = {
   'are insufficient figures in the active sequence',
 'proposalsTitle' : 'Create figure group proposals',
 'proposalsToGrid' : 'Load to Grid',
+// new 2018.3.5
+'proposalsTotalK' : 'Total K for each proposal: ',
 'queue' : 'Queue',
 'queueColumns' : 'Columns',
 'queueEmpty' : 'There are no figures in the queue to save',
@@ -544,7 +541,6 @@ lang.en = {
 'referenceSequenceFixed' : 'This reference sequence can not be ' +
   'changed as it is coupled to the active sequence rules.',
 'referenceSequenceTitle' : 'Reference sequence',
-// new 2018.1
 'registration' : 'Registration',
 'remove' : 'Remove',
 'removeLogo' : 'Remove logo',
@@ -556,7 +552,12 @@ lang.en = {
   'restored to their default settings. Do you want to continue?',
 'rollLarge' : 'Large',
 'rollMedium' : 'Medium',
-'rollPos' : ['First roll position', 'Second roll position', 'Third roll position', 'Fourth roll position'],
+// changed 2018.3.5
+'rollPos' : [
+	'First roll/spin position',
+	'Second roll position',
+	'Third roll position',
+	'Fourth roll position'],
 'rollSmall' : 'Small',
 'rollTextSize' : 'Roll text size',
 'rules' : 'Rules',
@@ -587,7 +588,6 @@ lang.en = {
 'saveAsURLFromApp' : 'The link presented below contains your complete ' +
   'sequence. You can copy it to email, bookmark it etc...',
 'saveAsURLTitle' : 'Save sequence as link',
-// new 2018.1
 'saveDeviceFirst' : 'Unable to open sequence directly. Please save it ' +
 	'to your device first, then open from your device',
 'saveFigsSeparate' : 'Save figs separate',
@@ -599,14 +599,11 @@ lang.en = {
 'saveImageVariables' : 'Saving PNG or SVG image',
 'saveQueueFile' : 'Save queue file',
 'saveSequence' : 'Save sequence',
-// new 2018.1.9
 'saveShareFile' : 'Save/share file',
 'saveShareSequence' : 'Save/share sequence',
-// end new
 'selectCategoryFirst' : 'Select Category first',
 'selectRulesFirst' : 'Select Rules first',
 'separateFigures' : 'Separate figures',
-// new 2018.1
 'separateFiguresConfirm' : 'This will separate the figures ' +
 	'from each other and remove all previous sequence position ' +
   'formatting. Are you sure you want to continue?',
@@ -631,7 +628,6 @@ lang.en = {
   'figure is selected',
 'showQueue' : 'Show Queue',
 'signature' : 'Signature',
-// new 2018.1
 'smallMobile' : 'Phone layout',
 'styleSettingsHeader' : 'Here you can change various style settings. ' +
   'Please keep in mind that these change the look of ' +
@@ -693,7 +689,7 @@ lang.en = {
   'OpenAero version older than 1.2.4. Please check that all double ' +
   'Humpty Bump directions are correct.</p>', 
 'warningPre137' : '<p>The file you just opened was created with an ' +
-  'OpenAero version older than 1.3.7. Some snap rolls started from knife ' +
+  'OpenAero version older than 1.3.7. Some flick rolls started from knife ' +
   'edge flight may have had the wrong Aresti number and K. They should be ' +
   'correct now. Please check if applicable.</p>',
 'warningPre20161' : '<p>The file you just opened was created with an ' +
