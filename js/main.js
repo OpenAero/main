@@ -5430,6 +5430,9 @@ function addEventListeners () {
   document.getElementById('figExitButton').addEventListener('click', clickButton, false);
   // document.getElementById('comments').addEventListener('change', updateFigureComments);
   document.getElementById('comments').addEventListener('input', updateFigureComments);
+  document.getElementById('moveFwd').addEventListener('click', clickButton, false);
+  document.getElementById('moveBack').addEventListener('click', clickButton, false);
+
     
   // figure selector
   document.getElementById('manual.html_the_figure_chooser').addEventListener('mousedown', function(){
@@ -5904,6 +5907,8 @@ function clickButton () {
       // activate the correct click action
       switch (e.id) {
         // temporary depression buttons
+        case 'moveFwd':
+        case 'moveBack':
         case 'deleteFig':
         case 'flipYAxis':
         case 'magMin':
@@ -5956,6 +5961,20 @@ function clickButton () {
       }
       // don't continue. Not a figure function
       return;
+    case 'moveFwd':
+        var a = parseInt(selectedFigure.id);
+        var b = a+1;
+        if (b >= figures.length)
+            break;
+        swapFigure(a,b);
+      break;
+    case 'moveBack':
+        var a = parseInt(selectedFigure.id);
+        var b = a-1;
+        if (b >= 0)
+            break;
+        swapFigure(a,b);
+      break;
     case 'deleteFig':
       if (selectedFigure.id !== null) {
         var flipY = activeSequence.text.replace(regexComments, '').match(regexFlipYAxis);
@@ -19151,6 +19170,28 @@ function updateXYFlip (m, n) {
     }
     updateSequenceText (text);
   }
+}
+
+function swapFigure(figa,figb){
+    if ( (figa<0) || (figa>=figures.length) ){
+        console.log("Out of bounds "+i);
+        return;
+    }
+
+    if ( (figb<0) || (figb>=figures.length) ){
+        console.log("Out of bounds "+i);
+        return;
+    }
+    var tmp = figa;
+    if (figa > figb){
+        figa = figb;
+        figb = tmp;
+        }
+
+    var tmp = figures[figa].string;
+    updateSequence(figa, figures[figb].string, true);
+    updateSequence(figb, tmp, true);
+    selectFigure(figb);
 }
 
 // parseSequence parses the sequence character string

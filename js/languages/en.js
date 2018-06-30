@@ -713,6 +713,7 @@ lang.en = {
 'xBoxEntry' : 'X-box entry',
 'xBoxEntryAway' : 'X-box entry away',
 'zipImageFilenamePattern' : 'Separate fig images filename pattern',
-'zoom' : 'Zoom'
+'zoom' : 'Zoom',
+'rearrange' : 'Rearrange'
 // end of key-value pairs. No comma after last
 };
