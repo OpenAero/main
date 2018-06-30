@@ -5971,7 +5971,7 @@ function clickButton () {
     case 'moveBack':
         var a = parseInt(selectedFigure.id);
         var b = a-1;
-        if (b >= 0)
+        if (b < 0)
             break;
         swapFigure(a,b);
       break;
@@ -19172,7 +19172,10 @@ function updateXYFlip (m, n) {
   }
 }
 
+// Swaps two figures in the sequence, they are specified by their respective 
+// ids.
 function swapFigure(figa,figb){
+    var swap_ab = false;
     if ( (figa<0) || (figa>=figures.length) ){
         console.log("Out of bounds "+i);
         return;
@@ -19182,16 +19185,25 @@ function swapFigure(figa,figb){
         console.log("Out of bounds "+i);
         return;
     }
-    var tmp = figa;
-    if (figa > figb){
+    // Make sure we swap the appropriate elements not movements,
+    // therefore first order figa < figb
+    if ( figa > figb ) {
+        var tmp = figa;
         figa = figb;
         figb = tmp;
-        }
+        swap_ab = true;
+    }
+    // Now find non-movements to left
+    while ( ( figa > 0 ) && ( "curveTo" in figures[figa] )) figa--;
+    while ( ( figb < figures.length ) && ( "curveTo" in figures[figb] )) figb++;
 
     var tmp = figures[figa].string;
     updateSequence(figa, figures[figb].string, true);
     updateSequence(figb, tmp, true);
-    selectFigure(figb);
+    if (swap_ab)
+        selectFigure(figa);
+    else
+        selectFigure(figb);
 }
 
 // parseSequence parses the sequence character string
