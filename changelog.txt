@@ -1,3 +1,7 @@
+2018.3.7
+* corrected NZAC 2019 sequence positioning K factors
+* fixed #main style.top setting after Drop for iOS 9
+
 2018.3.6
 * fixed Grid sorting bugs, reenabled
 * added 7.4.1.1 (Adv and Unl) and 7.4.2.1 (Unl) to CIVA Glider Unknown allowed figures

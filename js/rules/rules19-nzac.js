@@ -334,13 +334,6 @@ rules.push("1.2.8.1-2");
 rules.push("1.2.8.3");
 rules.push("1.2.8.4 NORF:2");
 
-// ~[21]jo?1~   ~2j(|o|io|oi)2~ ~4j(|o|io|oi)[234]~ ~3j(|o|io|oi)3~
-//              ~2j(|o|oi)15~        ~3j(|o|io|oi)15~
-
-//2.11.1-2 # Suppression NZAC 2013
-//2.21.1-2 # Suppression NZAC 2013
-//2.31.1-2 # Suppression NZAC 2013
-
 rules.push("2.1.3.1-4");
 rules.push("2.2.2.1-4");
 
@@ -360,8 +353,6 @@ rules.push("2.3.2.1-4");
 rules.push("2.2.4.1-4");
 rules.push("2.3.3.1-4");
 
-// ~%h%~ ~%i?ta%~
-
 rules.push("5.2.1.1-4");
 rules.push("5.3.1.1-4  NF:1 ; NF:2 ; CLIMB4S ; CLIMB450");
 rules.push("5.3.2.1-4  NF:1 ; NF:2 ; CLIMB4S ; CLIMB450");
@@ -369,7 +360,6 @@ rules.push("6.2.1.1-4  NF:1");
 rules.push("6.2.2.1-4  NF:1");
 
 //half loops
-// ~%a%~ ~%m%~ ~o%~ io% -io%-  ~i?qo%~ %dq% -%idq%- qq -iqq-
 
 rules.push("7.2.1.1-2  NF:1");
 rules.push("7.2.2.1-2  NF:1");
@@ -795,13 +785,6 @@ rules.push("1.2.7.4 NOU");
 rules.push("1.2.8.1 NOU");
 rules.push("1.2.8.3 NOU");
 
-//2.34.1.xx # Correction à faire3-4
-//2.12.1.xx # Correction à faire1-4
-//2.11.1-2 # Suppression NZAC 2013
-//2.21.1-2 # Suppression NZAC 2013
-//2.31.1-2 # Suppression NZAC 2013
-
-//2.13.1  # Suppression NZAC 2013
 rules.push("2.1.3.2-4");
 rules.push("2.2.3.1-4");
 rules.push("2.2.5.1-4");
@@ -887,7 +870,7 @@ rules.push("8.4.18.1-2 NOU ; NF:2");
 rules.push("8.5.1.1-2 NOU:1; NF:2");
 rules.push("8.5.2.1-2 NOU:1; NF:2");
 rules.push("8.5.1.3 NOU:1");
-rules.push("8.5.1.4 NOU:1 ; FAM91:1"); // Correction NZAC 2013
+rules.push("8.5.1.4 NOU:1 ; FAM91:1");
 rules.push("8.5.2.3-4 NOU:1");
 
 rules.push("8.5.3.1-2 NOU:1; NF:2");
@@ -997,7 +980,7 @@ rules.push("infocheck=positioning");
 //######################################################################################
 
 rules.push("(NZAC Yak52 Free Known)");
-rules.push("posnl=30");//no line judges
+rules.push("posnl=20");//no line judges
 rules.push("poslj=10");
 rules.push("k-max=200");
 rules.push("basefig-min=10");
@@ -1065,7 +1048,7 @@ rules.push("(NZAC Yak52 Unknownall)");
 rules.push("k-minperfig=12");
 
 rules.push("poslj=10");
-rules.push("posnl=30");
+rules.push("posnl=20");
 
 // general rules for AWAC: 10-14 figures,
 // limit on figure types (max1 spin etc)
