@@ -9359,53 +9359,56 @@ function checkRules () {
                 forElement = userText.forElement + ruleSplit[1];
               }
               // Apply conversions to the Aresti number before checking the rule
-              if (checkRule[rule].conv) {
-                var conversion = checkRule[rule].conv;
-                log.push ('Apply: ' + checkRule[rule].conv);
-                logLine = 'Converted: ' + check.join('') + ' => ';
-                for (var l = 0; l < checkConv[conversion].length; l++) {
-                  for (var m = 0; m < check.length; m++) {
-                    if (!check[m].match(/[ ,;]/)) {
-                      check[m] = check[m].replace(checkConv[conversion][l].regex,
-                      checkConv[conversion][l].replace);
-                    }
-                  }
-                }
-                checkLine = check.join('');
-
-                log.push (logLine + checkLine);
-              }
-              if (checkRule[rule].regex) {
-                if (checkLine.match(checkRule[rule].regex)) {
-                  checkAlert (why(rule) + forElement, 'rule', figNr, checkRule[rule].rule);
-                  log.push ('*** Error: Fig ' + figNr + ': ' + checkRule[rule].why + forElement);
-                }
-              } else if (checkRule[rule].less) {
-                var sum = 0;
-                for (var l = check.length - 1; l >= 0; l--) {
-                  if (check[l].match(/^[0-9]/)) {
-                    sum += parseInt (check[l]);
-                  }
-                  if ((check[l] == ' ') || (l == 0)) {
-                    if (sum >= parseInt (checkRule[rule].less)) {
-                      checkAlert (why(rule) + forElement, 'rule', figNr, checkRule[rule].rule);
-                      log.push ('*** Error: Fig ' + figNr + ': ' + checkRule[rule].why + forElement);
-                    }
-                    sum = 0;
-                  }
-                }
-              } else if (checkRule[rule].totalLess) {
-                var sum = 0;
-                for (var l = check.length - 1; l >= 0; l--) {
-                  if (check[l].match(/^[0-9]/)) {
-                    sum += parseInt (check[l]);
-                  }
-                }
-                if (sum >= parseInt (checkRule[rule].totalLess)) {
-                  checkAlert (why(rule) + forElement, 'rule', figNr, checkRule[rule].rule);
-                  log.push ('*** Error: Fig ' + figNr + ': ' + checkRule[rule].why + forElement);
-                }
-              }
+              if (checkRule[rule]) { // make sure rule was defined
+	              if (checkRule[rule].conv) {
+	                var conversion = checkRule[rule].conv;
+	                log.push ('Apply: ' + checkRule[rule].conv);
+	                logLine = 'Converted: ' + check.join('') + ' => ';
+	                for (var l = 0; l < checkConv[conversion].length; l++) {
+	                  for (var m = 0; m < check.length; m++) {
+	                    if (!check[m].match(/[ ,;]/)) {
+	                      check[m] = check[m].replace(checkConv[conversion][l].regex,
+	                      checkConv[conversion][l].replace);
+	                    }
+	                  }
+	                }
+	                checkLine = check.join('');
+	
+	                log.push (logLine + checkLine);
+	              }
+	              if (checkRule[rule].regex) {
+	                if (checkLine.match(checkRule[rule].regex)) {
+	                  checkAlert (why(rule) + forElement, 'rule', figNr, checkRule[rule].rule);
+	                  log.push ('*** Error: Fig ' + figNr + ': ' + checkRule[rule].why + forElement);
+	                }
+	              } else if (checkRule[rule].less) {
+	                var sum = 0;
+	                for (var l = check.length - 1; l >= 0; l--) {
+	                  if (check[l].match(/^[0-9]/)) {
+	                    sum += parseInt (check[l]);
+	                  }
+	                  if ((check[l] == ' ') || (l == 0)) {
+	                    if (sum >= parseInt (checkRule[rule].less)) {
+	                      checkAlert (why(rule) + forElement, 'rule', figNr, checkRule[rule].rule);
+	                      log.push ('*** Error: Fig ' + figNr + ': ' + checkRule[rule].why + forElement);
+	                    }
+	                    sum = 0;
+	                  }
+	                }
+	              } else if (checkRule[rule].totalLess) {
+	                var sum = 0;
+	                for (var l = check.length - 1; l >= 0; l--) {
+	                  if (check[l].match(/^[0-9]/)) {
+	                    sum += parseInt (check[l]);
+	                  }
+	                }
+	                if (sum >= parseInt (checkRule[rule].totalLess)) {
+	                  checkAlert (why(rule) + forElement, 'rule', figNr, checkRule[rule].rule);
+	                  log.push ('*** Error: Fig ' + figNr + ': ' + checkRule[rule].why + forElement);
+	                }
+	              }
+							} else console.log ("Referenced rule \"" + rule +
+								"\" does not exist");
               
             }
             // Check default rules when applicable

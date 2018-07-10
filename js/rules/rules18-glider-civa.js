@@ -1419,6 +1419,10 @@ rules.push("(glider-CIVA Advanced Unknownbase)");// specific rules for the Advan
 //===========================
 //## basic rules "NR", "NF" and "NOU" see basic rules file
 
+rules.push("rule-NOAH=roll:[1248],[1248]");
+rules.push("why-NOAH=no opposite aileron or hesitation rolls allowed");
+rules.push("NOAH-rule=Sporting Code section 6 part 2 A.2.1.1");
+
 //## Opposite slow or hesitation rolls are allowed on horizontal lines
 //>>> implemented by rule-NOU
 

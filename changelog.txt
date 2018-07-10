@@ -1,3 +1,6 @@
+2018.3.8
+* fixed glider CIVA Advanced rule issue breaking sequence checking and drawing
+
 2018.3.7
 * corrected NZAC 2019 sequence positioning K factors
 * fixed #main style.top setting after Drop for iOS 9
