@@ -1,5 +1,8 @@
 2018.3.8
 * fixed glider CIVA Advanced rule issue breaking sequence checking and drawing
+* fixed incorrect coding that prevented start of Free Unknown Designer in some cases
+* fixed several issues on devices with both touchscreen and mouse
+* disabled sequence background enlarging on Grid as dragging is not allowed there
 
 2018.3.7
 * corrected NZAC 2019 sequence positioning K factors
