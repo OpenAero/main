@@ -1163,8 +1163,8 @@ var iosDragDropShim = { enableEnterLeave: true,
         new DragDrop(evt,el);
       } else if (iosDragDropShim.openaero) {
         if (el.classList.contains ('removeFigureButton')) {
+					// event handler is on button
           evt.preventDefault();
-          handleFreeRemove (evt, el);
           return false;
         } else if (el.classList.contains ('fuFigure') ||
           el.classList.contains ('fuFigureMulti') ||
@@ -13958,10 +13958,7 @@ function makeFree () {
     var div = document.createElement('div');
     div.classList.add ('removeFigureButton');
     div.innerHTML = '<i class="material-icons">close</i>';
-    // in iOS, remove is handled by touchstart
-    //if (!iosDragDropShim.enabled) {
-			div.addEventListener ('mousedown', handleFreeRemove);
-		//}
+		div.addEventListener ('mousedown', handleFreeRemove);
     container.appendChild (div);
   }
   
