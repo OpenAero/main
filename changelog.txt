@@ -1,3 +1,8 @@
+2018.3.9
+* fixed issue that caused print window to immediately close on Chrome app
+* fixed issue that caused sequenceText caret to jump to beginning when editing on Firefox (highlighting)
+* fixed issue which made changing boxes on Grid Info impossible
+
 2018.3.8
 * fixed glider CIVA Advanced rule issue breaking sequence checking and drawing
 * fixed incorrect coding that prevented start of Free Unknown Designer in some cases

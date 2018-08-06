@@ -8032,9 +8032,9 @@ function highlight (el, start, end) {
 		range = saveSelection(el);
 
 	if (end) {
-		var newHTML = text.substr (0, start) +
+		var newHTML = (text.substr (0, start) +
 			'<span class="highlight">' + text.substr (start, (end - start)) +
-			'</span>' + text.substr (end);
+			'</span>' + text.substr (end)).replace (/(\r\n|\n|\r)/gm, '');
 		if (el.innerHTML !== newHTML) el.innerHTML = newHTML;
 		var span = el.getElementsByClassName ('highlight')[0];
 		el.scrollTop = parseInt(span.getBoundingClientRect().top -
@@ -11190,7 +11190,7 @@ function grabFigure(evt) {
   // disable when sequence locked
   if (document.getElementById ('lock_sequence').value) return;
   
-  evt.preventDefault();
+  // do not preventDefault as gridInfo may need inside clicks!
   
   // Put the coordinates of object evt in TrueCoords global.
   if (evt.changedTouches && evt.changedTouches[0] && ('pageX' in evt.changedTouches[0])) {
@@ -11497,7 +11497,7 @@ function Drag (evt) {
 
   if (!dragTarget) return;
   
-  evt.preventDefault();
+  evt.preventDefault(); // prevent default dag & drop and scrolling on touch devices
   
   // don't drag figures when in grid view
   if ((activeForm === 'Grid') && !dragTarget.classList.contains  ('draggablePanel')) return;
@@ -11515,7 +11515,7 @@ function Drag (evt) {
   if (dragTarget) {
     
     // prevent scrolling on touch devices
-    if (platform.touch) evt.preventDefault();
+    // if (platform.touch) evt.preventDefault();
     
     // find out what we are dragging
     if (dragTarget.id.match (/-handle$/)) {
@@ -14353,6 +14353,7 @@ function releaseVirtualKeyboard(e) {
 
 // updateSequenceText updates the sequence text and keeps caret location
 function updateSequenceText (string) {
+
   if (document.activeElement === sequenceText) {
 		// focussed, maintain caret position
 		
@@ -14366,8 +14367,9 @@ function updateSequenceText (string) {
 	  // put caret back in correct place
 		var range = document.createRange();
 		var sel = window.getSelection();
-		range.setStart(sequenceText.childNodes[0], selStart);
-		range.setEnd(sequenceText.childNodes[0], selEnd);
+
+		range.setStart(sequenceText.firstChild, selStart);
+		range.setEnd(sequenceText.firstChild, selEnd);
 		sel.removeAllRanges();
 		sel.addRange(range);
 	} else {
@@ -14380,7 +14382,7 @@ function updateSequenceText (string) {
 // When force is set to true (e.g. after drag & drop) redraw will always
 // be done
 function checkSequenceChanged (force) {
-
+	
 	var
 		selStart = 0,
 		selEnd = 0;
@@ -15865,7 +15867,8 @@ function printForms () {
 	// Print the constructed pages. For the Chrome App an asynchronous callback
 	// is used. For the web version we work synchronous but use
 	// setTimeout to prevent browser blocking.
-	if (chromeApp.active) {
+	/** DISABLED TO USE THE REGULAR INLINE PRINT */
+	if (false && chromeApp.active) {
 		chrome.app.window.create ('print.html', {
 			bounds: {
 				width: 800,
@@ -15892,9 +15895,8 @@ function printForms () {
 				win.document.body = buildForms (win);
 				win.document.head.appendChild(style);
 				if (win.matchMedia) {
-					var mediaQueryList = win.matchMedia ('print');
-					mediaQueryList.addListener (function (mql) {
-						if (!mql.matches) win.close();
+					win.matchMedia ('screen').addListener (function (mql) {
+						if (mql.matches) win.close();
 					});
 				}
 				win.print();
@@ -15909,8 +15911,8 @@ function printForms () {
 	          document.getElementById ('marginRight').value + 'mm ' +
 	          document.getElementById ('marginBottom').value + 'mm ' +
 	          document.getElementById ('marginLeft').value + 'mm}' +
-	          'html {height: 100%;}' +
-	          'body {margin: 0; height: 100%;}' +
+	          'html {height: 100%; overflow: initial;}' +
+	          'body {margin: 0; height: 100%; overflow: initial;}' +
 	          '.noPrint {display: none;}' +
 	          '#noScreen {height: 100%;}' +
 	          '.breakAfter {position: relative; display:block; ' +
@@ -15942,6 +15944,7 @@ function printForms () {
 				} else {
 					window.print();				
 				}
+
 				// restore title
 				changeSequenceInfo();
 	    }, wait);
