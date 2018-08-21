@@ -6934,7 +6934,12 @@ function updateFigureOptions (figureId) {
       el.classList.add ('disable');
     }
     // set switchX
-    var el = document.getElementById('switchX');
+    /** Need to improve this
+    if (f.entryAxisFormB) {
+			var el = document.getElementById('switchY');
+		} else var el = document.getElementById('switchX');
+		*/
+		var el = document.getElementById('switchX');
     //el.classList.remove ('disable');
     if (f.switchX) {
       el.classList.add ('on');
@@ -6950,7 +6955,12 @@ function updateFigureOptions (figureId) {
       el.classList.add ('disableFUfig');
     }
     // set switchY
-    var el = document.getElementById('switchY');
+    /** Need to improve this
+    if (f.entryAxisFormB) {
+			var el = document.getElementById('switchX');
+		} else var el = document.getElementById('switchY');
+		*/
+		var el = document.getElementById('switchY');
     //el.classList.remove ('disable');
     if (f.switchY) {
       el.classList.add ('on');
@@ -13235,7 +13245,9 @@ function makeFormGrid (cols, width, svg) {
   // draw all real figures, ordered as selected
 	var orderBy = document.getElementById('gridOrderBy').value;
 	for (var i = 0; i < figures.length; i++) {
-    if (figures[i].aresti) sortFigures.push ({id: i, orderBy: figures[i][orderBy]});
+    if (figures[i].aresti) {
+			sortFigures.push ({id: i, orderBy: figures[i][orderBy]});
+		}
 	}
 
 	if (orderBy !== 'seqNr') {
@@ -15989,19 +16001,20 @@ function printForms () {
 // win=true, a body is created in window win and returned (for print).
 // Otherwise an SVG holding the forms is returned.
 function buildForms (win) {
-  var pages = ['A', 'B', 'C', 'R', 'L', 'PilotCards', 'Grid'];
-  iacForms = document.getElementById('iacForms').checked;
-  var activeFormSave = activeForm;
-  var svg = '';
-  var translateY = 0;
-  // save the miniFormA value and set miniFormA depending on checkbox
-  var miniFormASave = miniFormA;
-  // save the Sequence Notes check
-  var sequenceNotesSave = document.getElementById('printNotes').checked;
-  // save the current logo
-  var logoSave = document.getElementById('logo').value;
+  var
+	  pages = ['A', 'B', 'C', 'R', 'L', 'PilotCards', 'Grid'];
+		activeFormSave = activeForm,
+	  svg = '',
+	  translateY = 0,
+	  // save the miniFormA value and set miniFormA depending on checkbox
+	  miniFormASave = miniFormA,
+	  // save the Sequence Notes check
+	  sequenceNotesSave = document.getElementById('printNotes').checked,
+	  // save the current logo
+	  logoSave = document.getElementById('logo').value, 
+	  fname = activeFileName() || 'sequence';
   
-  var fname = activeFileName() || 'sequence';
+  iacForms = document.getElementById('iacForms').checked;
 
   // make sure no figure is selected
   selectFigure (false);
@@ -19223,7 +19236,8 @@ function parseSequence () {
   for (var i = 0; i < figures.length; i++) {
     // make sure all paths are empty
     figures[i].paths = [];
-    
+
+    figure = figures[i].string;    
     // always start figure LTR for Figures in grid view. But this means
     // we have to correct direction switchers if the figure would start
     // on Y axis on Form B
@@ -19232,15 +19246,13 @@ function parseSequence () {
       if (formBDirection >= 360) formBDirection -= 360;
       if ((formBDirection === 90) || (formBDirection === 270)) {
         // switch > and ^. Use temporary placeholder #
-        figures[i].string = figures[i].string.replace(regexSwitchDirY, '#').
+        figure = figures[i].string.replace(regexSwitchDirY, '#').
 			    replace(regexSwitchDirX, userpat.switchDirY).
 			    replace(/#/g, userpat.switchDirX);
         figures[i].entryAxisFormB = 'Y';
       }
       Direction = (Attitude == 0) ? 0 : 180;
     }
-
-    figure = figures[i].string;
 
     // See if there is a y-axis flip symbol and activate it, except when 
     // - it matches the subSequence code which is similar (/ or //)

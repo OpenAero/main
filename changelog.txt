@@ -1,3 +1,6 @@
+2018.3.13
+* fixed issue where printing a Grid could incorrectly flip figure exit direction
+
 2018.3.11
 * fixed layout problems when printing Grid with header
 * added support for checking app version on app store for iOS
