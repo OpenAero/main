@@ -158,7 +158,7 @@ platform.ios = /i(Pad|Phone|Pod)/i.test(navigator.userAgent);
 // platform.mobile is true when running on a mobile device (e.g. tablet)
 /** SET TO TRUE FOR TESTING MOBILE */
 platform.mobile = ((typeof window.orientation !== 'undefined') ||
-	(navigator.userAgent.indexOf('IEMobile') !== -1) || true);
+	(navigator.userAgent.indexOf('IEMobile') !== -1) || false);
 
 // platform.touch is true on touch enabled devices
 platform.touch = (('ontouchstart' in window)
