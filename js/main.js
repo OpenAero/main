@@ -158,7 +158,7 @@ platform.ios = /i(Pad|Phone|Pod)/i.test(navigator.userAgent);
 // platform.mobile is true when running on a mobile device (e.g. tablet)
 /** SET TO TRUE FOR TESTING MOBILE */
 platform.mobile = ((typeof window.orientation !== 'undefined') ||
-	(navigator.userAgent.indexOf('IEMobile') !== -1) || false);
+	(navigator.userAgent.indexOf('IEMobile') !== -1) || true);
 
 // platform.touch is true on touch enabled devices
 platform.touch = (('ontouchstart' in window)
@@ -1646,7 +1646,17 @@ function cordovaHandleIntent (intent) {	// intent.action android.intent.action.M
 					openFile (file, 'Sequence');
 				});
 			});
-		}, function(error) {alertBox (userText.saveDeviceFirst)});
+		}, function(error) {
+			if (platform.android) {
+				window.plugins.webintent.getUri(
+					function (uri) {
+				    if (uri.match (/^https:\/\/openaero.net\/\?s=/)) {
+							launchURL ({url : uri});
+						} else alertBox (userText.saveDeviceFirst);
+					}
+				);
+			} else alertBox (userText.saveDeviceFirst);
+		});
 	} /*else {
 		window.FilePath.resolveNativePath(intent.clipItems[0].uri, function(path) {
 			console.log(path);
@@ -2398,8 +2408,9 @@ function newWindow (body, title) {
 function aboutDialog () {
   function show (stableVersion) {
     var compText = '';
-    if (stableVersion === '-') {
+    if (!stableVersion) {
       compText = userText.aboutUnknown;
+      stableVersion = '-';
     } else {
       switch (compVersion (version, stableVersion)) {
         case -1:
@@ -2428,6 +2439,8 @@ function aboutDialog () {
       userText.about);
   }
   
+  getStableVersion (show);
+  /**
 	var xhr = new XMLHttpRequest();
 	xhr.open('GET', 'https://openaero.net/openaero.php?v', true);
 	xhr.timeout = 5000;
@@ -2435,8 +2448,9 @@ function aboutDialog () {
 		show (xhr.response);
 	}
   // onerror or ontimeout will be triggered when offline
-  xhr.onerror = xhr.ontimeout = function() {show ('-');};
+  xhr.onerror = xhr.ontimeout = function() {show (false);};
 	xhr.send();
+	*/
 }
 
 /** End dialogs and windows */
@@ -7646,23 +7660,43 @@ function latestVersion() {
     // Check for appcache when using http
     if (window.applicationCache) window.applicationCache.update();
   } else {
-		// check for update on non-http(s)
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', 'https://openaero.net/openaero.php?v', true);
-    xhr.onload = function() {
-      if (compVersion (version, xhr.response) == -1) {
+		getStableVersion (function(latestVersion) {
+			if (compVersion (version, latestVersion) == -1) {
 				var banner = document.getElementById('installApp');
 				banner.classList.remove ('noDisplay');
 				document.getElementById('t_getTheApp').innerHTML =
-					sprintf(userText.updateApp, xhr.response);
+					sprintf(userText.updateApp, latestVersion);
 				if (platform.android) banner.classList.add ('android');
 				if (platform.ios) banner.classList.add ('ios');
 				banner.classList.add ('update');
 				banner.classList.add ('show');
 			}
-		};
-    xhr.send();
+		});
   }
+}
+
+// getStableVersion returns whichever version is currently on
+// openaero.net or the iOS app store. Function f is
+// executed when version is loaded
+function getStableVersion (f) {
+	
+	if (platform.cordova && platform.ios) {
+		window.AppUpdate.checkAppUpdate(
+			function(latestVersion){
+				f (latestVersion);
+			},
+			function(fail){
+				f (false);
+			}, 'OpenAero', {}
+		);
+	} else {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', 'https://openaero.net/openaero.php?v', true);
+    xhr.timeout = 5000;
+    xhr.onload = function(){f (xhr.response)};
+    xhr.onerror = xhr.ontimeout = function() {f (false)};
+    xhr.send();
+	}
 }
 
 // preventUnload is used to set a question asking the user if he wants
@@ -16982,7 +17016,9 @@ function addFormElementsGrid (svg) {
 	if (document.getElementById ('formGridHeader').checked) {
 		var children = svg.childNodes;
 		for (var i = 0; i < children.length; i++) {
-			children[i].setAttribute('transform', 'translate(0,140)');
+			children[i].setAttribute('transform',
+				'translate(0,140) ' +
+				(children[i].getAttribute('transform') || ''));
 		}
 	
 		var logoWidth = 0;
@@ -16993,7 +17029,7 @@ function addFormElementsGrid (svg) {
 		}
 		drawText (document.getElementById('location').value + ' ' +
 			document.getElementById('date').value,
-			logoWidth, 24, 'formATextHuge', 'start', '', svg);
+			logoWidth, 32, 'formATextHuge', 'start', '', svg);
 		// scale down if needed
 		var scale = roundTwo ((800 - logoWidth) / svg.lastChild.getBBox().width);
 		if (scale < 1) {

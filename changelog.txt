@@ -1,3 +1,10 @@
+2018.3.11
+* fixed layout problems when printing Grid with header
+* added support for checking app version on app store for iOS
+* fixed opening of app from sequence link on Android
+* corrected tailslide in IAC 2018 and NZAC 2019 Unlimited Known
+* adjusted disabled menu items icon opacity (Issue #234)
+
 2018.3.9
 * fixed issue that caused print window to immediately close on Chrome app
 * fixed issue that caused sequenceText caret to jump to beginning when editing on Firefox (highlighting)

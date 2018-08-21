@@ -164,8 +164,11 @@ i.rightArrow:after {
   background-color: #ddf !important;
 }
 
-#menu li.disabled span, #menu li.disabled a {
+#menu li.disabled span, #menu li.disabled a, #menu li.disabled .material-icons {
   color: rgba(0,0,0,0.38);
+}
+#menu li.disabled img.material-icons {
+	opacity: 0.38;
 }
 #menu li ul span, #menu li ul a {
   font-weight: normal;
