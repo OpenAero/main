@@ -10002,17 +10002,18 @@ function lockSequence (lock) {
 // changed
 function changeReferenceSequence (auto) {
 
-  // remove all line breaks from the sequence reference
-  string = document.getElementById ('referenceSequenceString').value.replace (/(\r\n|\n|\r)/gm, ' ');
-  
-  if (auto !== true) savedReference = string;
-  
-  var match;
-  activeSequence.figures = [];
-  var savedText = activeSequence.text;
+	var 
+	  // remove all line breaks from the sequence reference
+	  string = document.getElementById ('referenceSequenceString').value.replace (/(\r\n|\n|\r)/gm, ' '),
+	  match,
+	  savedText = activeSequence.text,
+	  thisFigure = {'string':'', 'stringStart':0, 'stringEnd':0},
+	  inText = false,
+	  activeFormSave = activeForm;
 
-  var thisFigure = {'string':'', 'stringStart':0, 'stringEnd':0};
-  var inText = false;
+  activeSequence.figures = [];
+  if (auto !== true) savedReference = string;
+
   for (var i = 0; i <= string.length; i++) {
     if (string[i] == userpat.comment) inText = !inText;
     if (((string[i] === ' ') || (i === string.length)) && !inText) {
@@ -10043,7 +10044,6 @@ function changeReferenceSequence (auto) {
   }
 
   // Parse sequence
-  var activeFormSave = activeForm;
   activeForm = 'Grid';
   Attitude = Direction = X = Y = 0;
 
@@ -10112,33 +10112,34 @@ function changeReferenceSequence (auto) {
 // sequence and provides appropriate warnings
 function checkReferenceSequence () {
   for (var i = 0; i < figures.length; i++) {
-    if (figures[i].aresti &&
-      figures[i].unknownFigureLetter &&
-      (figures[i].unknownFigureLetter !== 'L') &&
-      referenceSequence.figures[figures[i].unknownFigureLetter]) {
-      var refFig = referenceSequence.figures[figures[i].unknownFigureLetter];
-      if (refFig.checkLine !== figures[i].checkLine) {
+		var f = figures[i];
+    if (f.aresti &&
+      f.unknownFigureLetter &&
+      (f.unknownFigureLetter !== 'L') &&
+      referenceSequence.figures[f.unknownFigureLetter]) {
+      var refFig = referenceSequence.figures[f.unknownFigureLetter];
+      if (refFig.checkLine !== f.checkLine) {
         checkAlert (sprintf (userText.referenceFigureDifferent,
-          figures[i].unknownFigureLetter), false, figures[i].seqNr);
+          f.unknownFigureLetter), false, f.seqNr);
       } else if (refFig.entryDir === refFig.exitDir) {
-        if (figures[i].entryDir !== figures[i].exitDir) {
+        if (f.entryDir !== f.exitDir) {
           if (refFig.entryAtt === refFig.exitAtt) {
             var text = userText.referenceFigureExitSame;
           } else {
             var text = userText.referenceFigureExitOpp;
           }
           checkAlert (sprintf (text,
-           figures[i].unknownFigureLetter), false, figures[i].seqNr);
+           f.unknownFigureLetter), false, f.seqNr);
         }
       } else if (refFig.entryDir !== refFig.exitDir) {
-        if (figures[i].entryDir === figures[i].exitDir) {
+        if (f.entryDir === f.exitDir) {
           if (refFig.entryAtt === refFig.exitAtt) {
             var text = userText.referenceFigureExitOpp;
           } else {
             var text = userText.referenceFigureExitSame;
           }
           checkAlert (sprintf (text,
-           figures[i].unknownFigureLetter), false, figures[i].seqNr);
+           f.unknownFigureLetter), false, f.seqNr);
         }
       }
     }
@@ -12828,7 +12829,7 @@ function buildFuFiguresTab() {
         alertBox (sprintf(userText.FUDesignletterMulti, l), userText.fuDesigner);
         return false;
       }
-      // append the figure to the fig array
+      // append the figure to the fuFig array
       fuFig[l] = {
         'aresti':aresti,
         'base':fig[figNr].base,
@@ -12846,19 +12847,22 @@ function buildFuFiguresTab() {
       // correct X/Y axis switch where necessary. fu figures always
       // start on X axis.
       // When fu_figures has a value, the strings were already converted
-      if ((fu_figures.value == '') && f.entryAxis == 'Y') {
+      if ((fu_figures.value == '') &&
+	      ((f.entryAxis == 'Y') || (f.entryAxisFormB == 'Y'))) {
         string = string.replace(regexSwitchDirY, '#').
 	        replace(regexSwitchDirX, userpat.switchDirY).
 	        replace(/#/g, userpat.switchDirX);
       }
       // Handle the very special case where there's only an upright or
       // inverted spin and the base figure is an iv
-      if (string.match (/(\d|)(s|is)/) && !string.match (/iv/) && fuFig[l].base.match (/iv/)) {
+      if (string.match (/(\d|)(s|is)/) && !string.match (/iv/) &&
+	      fuFig[l].base.match (/iv/)) {
         string = string.replace (/(\d*)(s|is)/, "iv$1$2");
       }
     
       fuFig[l].string = string;
     }
+
   }
 
   // check if we have all required figures. If not, present error
@@ -15311,11 +15315,15 @@ function checkFuFiguresFile() {
 			div.classList.remove ('noDisplay');
 			var ref = document.getElementById ('referenceSequenceString');
 			ref.value = '';
+			// add figures including letter AND any sequence options (to make
+			// sure direction changers work correctly)
 			for (var i = 0; i < figures.length; i++) {
 				if (figures[i].aresti && figures[i].unknownFigureLetter &&
 					(figures[i].unknownFigureLetter !== 'L')) {
 					ref.value += '"@' + figures[i].unknownFigureLetter + '" ' +
 						figures[i].string + ' ';
+				} else if (regexSequenceOptions.test(figures[i].string)) {
+					ref.value += figures[i].string + ' ';
 				}
 			}
 			changeReferenceSequence();
@@ -16524,7 +16532,7 @@ function buildForm (print) {
   path.setAttribute('style',style.formBackground);
   mySVG.insertBefore(path, mySVG.firstChild);
 
-  svg = mySVG;
+  var svg = mySVG;
 
   // For some reason serializeToString may convert the xlink:href to
   // a0:href or just href for the logo image
@@ -17340,10 +17348,8 @@ function saveImageSizeAdjust () {
     
 // saveSVG will save an SVG image as selected in print/save dialog
 function saveSVG () {
-  // put the svg in var data
-  var data = buildForms();
   saveFile(
-    data,
+    buildForms(),
     activeFileName(),
     '.svg',
     {'name':'SVG file', 'filter':'*.svg'},
@@ -17353,15 +17359,13 @@ function saveSVG () {
 
 // savePNG will save a PNG image as selected in print/save dialog
 function savePNG () {
-  // put the svg in var data
-  var data = buildForms();
   infoBox (userText.convertingToPng, userText.convertingTitle);
   // use setTimeout to prevent browser hang-up and warning, and to give
   // it time to rebuild the sequence first
   setTimeout(function(){
     // wrap conversion in try, in case it fails
     try {
-      svgToPng (data, function(canvas){
+      svgToPng (buildForms(), function(canvas){
         steg.encode (activeSequence.xml, canvas).toBlob(function(blob){
         
         saveFile(
@@ -17388,17 +17392,19 @@ function savePNG () {
 // saveFigs will save all the figures in the sequence separately in a
 // single zip file
 function saveFigs () {
-  var fname = activeFileName(' Form '+activeForm);
-  // save selectedFigure.id
-  var id = selectedFigure.id;
-  // create new zip object
-  var zip = new JSZip();
-  // get image filename pattern
-  var fPattern = document.getElementById('zipImageFilenamePattern').value;
-  // get image width and height
-  var width = document.getElementById('saveFigsSeparateWidth').value.replace(/[^0-9]/g, '') + 'px';
-  var height = document.getElementById('saveFigsSeparateHeight').value.replace(/[^0-9]/g, '') + 'px';
-  // go through the active form and get each figure from the edit figure
+  var
+	  fname = activeFileName(' Form '+activeForm),
+	  // save selectedFigure.id
+	  id = selectedFigure.id,
+	  // create new zip object
+	  zip = new JSZip(),
+	  // get image filename pattern
+	  fPattern = document.getElementById('zipImageFilenamePattern').value,
+	  // get image width and height
+	  width = document.getElementById('saveFigsSeparateWidth').value.replace(/[^0-9]/g, '') + 'px',
+	  height = document.getElementById('saveFigsSeparateHeight').value.replace(/[^0-9]/g, '') + 'px';
+	
+	// go through the active form and get each figure from the edit figure
   // box
   for (var i = 0; i < figures.length; i++) {
     if (figures[i].figNr) {
@@ -17438,11 +17444,9 @@ function saveFigs () {
       }
     }
   }
-  
-  var data = zip.generate({type: 'blob'});
 
   saveFile(
-    data,
+    zip.generate({type: 'blob'}),
     fname,
     '.zip',
     {'name':'ZIP file', 'filter':'*.zip'},
@@ -19256,7 +19260,7 @@ function parseSequence () {
 
     // See if there is a y-axis flip symbol and activate it, except when 
     // - it matches the subSequence code which is similar (/ or //)
-    // - the previous figure did not exited on X axis (not applicable
+    // - the previous figure did not exit on X axis (not applicable
     //   for Grid)
     flipY: if (figure.replace(regexComments, '').match(regexFlipYAxis)) {
       if (activeForm !== 'Grid') {

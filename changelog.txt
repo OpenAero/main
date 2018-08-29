@@ -1,3 +1,7 @@
+2018.3.14
+* fixed issues with saving png/svg, updated canvg and improved code
+* fixed issue where direction changers would not be interpreted correctly in Reference Sequence and Designer
+
 2018.3.13
 * fixed issue where printing a Grid could incorrectly flip figure exit direction
 

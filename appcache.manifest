@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# OpenAero version 2018.3.13
+# OpenAero version 2018.3.14
 appcache.manifest
 changelog.txt
 cordova.js
@@ -53,10 +53,9 @@ img/spinrolls.png
 index.html
 js/addtohomescreen.min.js
 js/background.js
-js/canvg/canvg.js
-js/canvg/MIT-LICENSE.txt
-js/canvg/rgbcolor.js
-js/canvg/StackBlur.js
+js/canvg/canvg.min.js
+js/canvg/rgbcolor.min.js
+js/canvg/stackblur.min.js
 js/config.js
 js/docs.js
 js/figures18.js
