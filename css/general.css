@@ -1522,7 +1522,7 @@ option.used {
 	bottom: -5px;
   margin: 0 8px 0 0 !important;
 }
-#t_print {
+#t_printSavePdf {
 	margin-left: 4px;
 }
 /* end print dialog */

@@ -1,6 +1,18 @@
+2018.4
+* changed function latestVersion to getLatestVersion
+* fixed iOS 12 app offline crash by wrapping getStableVersion in test for xhr connection
+* updated French language file
+* added separate PDF saving option for iOS app in print/save dialog
+* compressed all canvg js files into single canvg.min.js
+* small updates to French rules file
+* added Libre Voltige logo
+* added conversion of logo to greyscale when Black & white set in the Print Options
+* (temporarily) disabled Google Analytics as it is not used and complicates privacy policy
+
 2018.3.14
 * fixed issues with saving png/svg, updated canvg and improved code
 * fixed issue where direction changers would not be interpreted correctly in Reference Sequence and Designer
+* changed use of screen.width to window.screen.width
 
 2018.3.13
 * fixed issue where printing a Grid could incorrectly flip figure exit direction

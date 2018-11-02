@@ -106,10 +106,13 @@
     <!-- https://github.com/alexei/sprintf.js 30 sep 2014 -->
     <script src="js/sprintf.min.js" type="text/javascript"></script>
     <!-- canvg transforms svg to canvas, used for png output -->
-    <!-- https://github.com/gabelerner/canvg 22 aug 2018 1.5.2 -->
-    <script src="js/canvg/rgbcolor.min.js" type="text/javascript"></script>
-    <script src="js/canvg/stackblur.min.js" type="text/javascript"></script>
-    <script src="js/canvg/canvg.min.js" type="text/javascript"></script>
+    <!-- https://github.com/gabelerner/canvg 22 aug 2018 1.5.3 -->
+    <!-- stackblur.js and rgbcolor.js included -->
+    <!--
+    <script src="js/canvg/rgbcolor.js" type="text/javascript"></script>
+    <script src="js/canvg/stackblur.js" type="text/javascript"></script>
+    -->
+    <script src="js/canvg.min.js" type="text/javascript"></script>
     <!-- all the country flags -->
     <script src="js/flags.js" type="text/javascript"></script>
     <!-- add to homescreen for iOS and Android -->
@@ -1137,7 +1140,9 @@
 				</div>
 				<!-- end print multi -->
 				<div class="clearBoth">
-					<span class="textButton userText" id="t_print"></span>
+					<span class="textButton userText" id="t_printSavePdf"></span>
+					<span class="textButton userText noDisplay" id="t_print"></span>
+					<span class="textButton userText noDisplay" id="t_savePdf"></span>
 					<span class="textButton userText" id="t_saveAsPNG"></span>
 					<span class="textButton userText" id="t_saveAsSVG"></span>
 					<span class="textButton userText close" id="t_cancelPrint"></span>

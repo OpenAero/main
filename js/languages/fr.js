@@ -1,4 +1,4 @@
-﻿// fr.js
+﻿﻿// fr.js version 2018.3.15
 // This file is part of OpenAero.
 
 //  OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -37,13 +37,26 @@ lang.fr = {
   'Si c\'est le cas, vous aiderez à l\'amélioration d\' OpenAero en les ajoutant à ' +
   '<a href="https://github.com/OpenAero/main/issues" target="_blank">la ' +
   'liste des améliorations</a>.',
+// changed 2018.3.4
 'aboutOlder' : '<font color="red">Vous travaillez avec une ancienne version. ' +
-  '</font>Si vous travaillez hors connexion, vérifiez les instructions au ' +
-  '<a href="https://github.com/OpenAero/main/wiki/Installation" target="_blank">' +
-  'site d\'installation Wiki</a>.<br>Si vous utilisez openaero.net avec ' +
-  'Google Chrome il peut être nécessaire d\'effacer le Cache d\'application. Entrez ' +
+  '</font>><br />',
+// new 2018.3.4
+'aboutOlderAndroid' : '<a href="https://play.google.com' +
+  '/store/apps/details?id=net.openaero" target="_blank">' +
+  '<img src="img/google-play-badge.png" width="200"></a>',
+'aboutOlderCache' : 'Si vous utilisez openaero.net avec Google Chrome ' +
+  '(mais pas en tant qu\'appli), il peut être nécessaire d\'effacer le Cache d\'application. Entrez ' +
   '<strong>chrome://appcache-internals</strong> dans la barre d\'adresse ' +
-  'et <strong>Supprimez</strong> toutes les entrées contenant OpenAero.',
+  'et <strong>Supprimer</strong> toutes les entrées contenant OpenAero.',
+'aboutOlderChrome' : 'Vous utilisez probablement une application Chrome, ouvrez Chrome et entrez ' +
+  '<strong>chrome://extensions</strong> dans la barre d\'adresse. Puis, ' +
+  'cochez "Mode dévelopeur" et cliquez "Mettre à jour les extensions maintenant".',
+'aboutOlderCopy' : 'Vous travaillez avec une ancienne version d\'OpenAero, vérifiez les instructions sur ' +
+  '<a href="https://github.com/OpenAero/main/wiki/Installation" target="_blank">' +
+  'le site d\'installation Wiki</a>.',
+'aboutOlderIos' : '<a href="https://itunes.apple.com' +
+	'/us/app/openaero/id1343773321" target="_blank">' +
+	'<img src="img/ios-appstore-badge.svg" width="200"></a>',
 'aboutUnknown' : 'Impossible de déterminer la derniere version. ' +
   'Vous travaillez probablement hors connexion.',
 'aboutText' : '<div class="divider">' +
@@ -120,7 +133,7 @@ lang.fr = {
 // changed 2018.2
 // checkAlert forms a sub-array
 'checkAlert' : {
-	'exactlyperfig' : 'Exactement %s %s par figure',
+  'exactlyperfig' : 'Exactement %s %s par figure',
   'maxperfig' : 'Pas plus de %s %s par figure',
   'minperfig' : 'Au moins %s %s par figure',
   'exactly'   : 'Exactement %s %s obligatoire(s)',
@@ -210,9 +223,10 @@ lang.fr = {
   ' de la rotation (e.g. 2x8).</p>',
 'dropFigureHere' : 'Placez une figure ici',
 'editingFigure' : 'Edition figure',
+// updated 2018.1.9
 'emailHeader' : 'Cliquez sur le lien ci-dessous pour ouvrir le programme avec OpenAero. ' +
-  'Ou, si ça ne fonctionne pas, copiez le et collez le (intégralement!) ' +
-  'dans la barre d\'adresse de votre navigateur.',
+  'ou copiez le lien et utilisez "Fichier -> Ouvrir le lien vers un programme" ' +
+  'du menu d\'OpenAero.',
 'emailSequence' : 'Envoyer par email le programme',
 'END' : 'FIN',
 'entryExitAttExt' : 'Attitude de début/fin et longueur',
@@ -293,6 +307,8 @@ lang.fr = {
 'gridInfo' : 'Infos de la vue en tableau',
 'gridNegEntry' : 'Entrée dos',
 'gridNegExit' : 'Sortie dos',
+// new 2018.3.3
+'gridOrderBy' : 'Trié par',
 'gridPosEntry' : 'Entrée ventre',
 'gridPosExit' : 'Sortie ventre',
 'gridSpeed' : 'Vitesse',
@@ -405,6 +421,7 @@ lang.fr = {
   'non-Aresti (essayer <i>41h4,f,4 66</i>)',
 'none' : 'Aucune',
 'noRollAllowed' : 'Rotation interdite par l\'Aresti',
+// changed 2018.2.1
 'noRules' : 'Pas de règle de vérification disponible.',
 'notes' : 'Annotations (haut de page)',
 'notOnFormBC' : 'Cette fonction est seulement disponible lorsque ' +
@@ -440,6 +457,12 @@ lang.fr = {
   'placez le dans l\'emplacement ci-dessous :',
 'openSequenceLinkOpen' : 'Ouvrir',
 'openSequenceLinkTitle' : 'Ouvrir le programme à partir du lien',
+// new 2018.3.3
+'orderCountry' : 'Pays',
+'orderFigureNr' : 'Numéro',
+'orderK' : 'Coef K',
+'orderLetter' : 'Lettre',
+// end new
 'orFileDrop' : 'Ou glisser/déplacer vos fichiers ici',
 'orFileDropPrint' : 'Ou glisser/déplacer vos fichiers ici',
 'otherNote' : 'Autre(noter...)',
@@ -456,7 +479,7 @@ lang.fr = {
   'espacées les unes des autres',
 'positioning' : 'Cadre(Coef)',
 'powered' : 'Avion',
-'print' : 'Imprimer / Enregistrer PDF',
+'print' : 'Imprimer',
 'printCheck' : 'Résultat de la vérification',
 'printDialog' : 'Options d\'impression',
 'printExplain' : 'Vous pouvez positionner les options d\'impression ci-dessous.<br>' +
@@ -480,9 +503,11 @@ lang.fr = {
 'printMultipleSeq' : 'Impression de plusieurs programmes',
 'printMultiWait' : 'Impression de %s programmes.<br>Ceci peut ' +
   'prendre du temps. Patienter, svp...',
+// changed 2018.2.1
 'printNotes' : 'Annotations (haut de page)',
 'printPilotCards' : 'Fiche pilote',
 'printSaveForms' : 'Imprimer / Enregistrer image',
+'printSavePdf' : 'Imprimer / Enregistrer PDF',
 'printSF' : 'Numéro de Super Famille',
 'printString' : 'Texte du programme',
 'program' : 'Programme',
@@ -500,6 +525,8 @@ lang.fr = {
   'assez de figures dans le programme en cours',
 'proposalsTitle' : 'Génération de propositions d\'enchainements de figures',
 'proposalsToGrid' : 'Transfert dans la vue en tableau',
+// new 2018.3.5
+'proposalsTotalK' : 'K total de chaque proposition: ',
 'queue' : 'File/Tampon',
 'queueColumns' : 'Colonnes',
 'queueEmpty' : 'Pas de figure à enregistrer dans la file',
@@ -579,6 +606,7 @@ lang.fr = {
   'ce texte et choisissez "Enregistrer le lien…" ou "Enregistrer le fichier…"',
 'saveFileTitle' : 'Enregistrement',
 'saveImageVariables' : 'Enregistrement d\'une image en PNG ou SVG',
+'savePdf' : 'Enregistrer PDF',
 'saveQueueFile' : 'Enregistrer la file',
 'saveSequence' : 'Enregistrer le programme',
 // new 2018.1.9

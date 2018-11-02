@@ -36,7 +36,7 @@
 // Where a new x should be used for versions that create sequences not
 // fully backward compatible with the previous version
 
-var version = '2018.3.14';
+var version = '2018.4';
 /* versionNew is an object that contains version update information
    The structure is {vvv : [[ttt, n], ...], ...} , where
    vvv = version number
@@ -44,6 +44,9 @@ var version = '2018.3.14';
    n   = importance (higher = more important)
 */
 var versionNew = {
+	'2018.4' : [
+		['Added saving of sequences to PDF on iOS app', 3]
+	],
 	'2018.3.11' : [
 		['Corrected tailslide in IAC 2018 and NZAC 2019 Unlimited Known', 3]
 	],
@@ -445,6 +448,7 @@ var style = {
   'modifiedK' : 'font-family: monospace; font-size: 8px; color: red; fill: red;',
   'printNotes' : 'font-family: verdana, helvetica, sans; font-size: 24px; fill: black;',
   'sequenceString' : 'font-family: monospace; font-size: 8px; color: blue; fill: blue; word-wrap: break-word;',
+  'sequenceStringBW' : 'font-family: monospace; font-size: 8px; color: grey; fill: grey; word-wrap: break-word;',
   'windArrow' : 'stroke: black; stroke-width: 1.5px; fill: white;',
   // Selection styles
   'selectedFigureBox' : 'stroke: #0000ff; stroke-width: 1; stroke-opacity: 0.7; fill: transparent',

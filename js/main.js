@@ -1879,7 +1879,7 @@ function mobileInterface () {
 			}
 		}
 	}
-	
+
   // disable or change some items for iOS
   if (platform.ios) {
     // hide all save options, except on Cordova app
@@ -1887,6 +1887,11 @@ function mobileInterface () {
 	    document.getElementById('t_saveSequence').parentNode.classList.add ('noDisplay');
 	    document.getElementById('t_saveFigsSeparate').parentNode.classList.add ('noDisplay');
 	    document.getElementById('t_saveQueueFile').parentNode.classList.add ('noDisplay');
+		} else {
+			// update save/print dialog for Cordova
+			document.getElementById('t_printSavePdf').classList.add ('noDisplay');
+			document.getElementById('t_print').classList.remove ('noDisplay');
+			document.getElementById('t_savePdf').classList.remove ('noDisplay');
 		}
     
     document.getElementById('t_saveAsSVG').classList.add ('noDisplay');
@@ -2012,7 +2017,7 @@ function newSvg() {
   var svg = document.createElementNS(svgNS, "svg");
   svg.setAttribute("xmlns", svgNS);
   svg.setAttribute("version", "1.2");
-  svg.setAttribute("baseProfile", "tiny");
+  svg.setAttribute("baseProfile", "basic");
   prepareSvg(svg);
   return svg;
 }
@@ -2440,17 +2445,7 @@ function aboutDialog () {
   }
   
   getStableVersion (show);
-  /**
-	var xhr = new XMLHttpRequest();
-	xhr.open('GET', 'https://openaero.net/openaero.php?v', true);
-	xhr.timeout = 5000;
-	xhr.onload = function() {
-		show (xhr.response);
-	}
-  // onerror or ontimeout will be triggered when offline
-  xhr.onerror = xhr.ontimeout = function() {show (false);};
-	xhr.send();
-	*/
+
 }
 
 /** End dialogs and windows */
@@ -4915,10 +4910,10 @@ function doOnLoad () {
 
 	// when smallMobile is checked (loaded from settings), or when screen
 	// width is small and no setting is found, switch to smallMobile.
-	// Use screen.width to get CSS pixels
+	// Use window.screen.width to get CSS pixels
 	if (document.getElementById ('smallMobile').checked) {
 		switchSmallMobile ();
-	} else if (screen.width < 640) {
+	} else if (window.screen.width < 640) {
 
 		function f(settings) {
 			if (!/\bsmallMobile\b/.test (settings)) {
@@ -5116,7 +5111,7 @@ function doOnLoad () {
 
   // check for latest version in a few seconds
   if (!(chromeApp.active || window.location.hostname.match(/^(.+\.)?openaero.net$/))) {
-    setTimeout(latestVersion, 3000);
+    setTimeout(getLatestVersion, 3000);
   }
   
   // retrieve queue from storage
@@ -5129,10 +5124,10 @@ function doOnLoad () {
 	}
   
   // load Google Analytics, but not on Cordova
+  /** DISABLED, not used at the moment and it complicates privacy policy
   try {
     if (chromeApp.active) {
       var xhr = new XMLHttpRequest();
-      xhr.open('GET', 'https://www.google-analytics.com/analytics.js', true);
       xhr.responseType = 'blob';
       xhr.onload = function(e) {
         (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -5145,6 +5140,7 @@ function doOnLoad () {
         ga('set', 'anonymizeIp', true); // enable IP masking
         ga('send', 'pageview');
       };
+      xhr.open('GET', 'https://www.google-analytics.com/analytics.js', true);
       xhr.send();
     } else if (!platform.cordova) {
       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -5158,6 +5154,7 @@ function doOnLoad () {
       ga('send', 'pageview');
     }
   } catch (e) {};
+  */
 }
 
 // launchURL is run during doOnLoad (web) or on event onLaunched (App)
@@ -5570,7 +5567,9 @@ function addEventListeners () {
   document.getElementById('imageWidth').addEventListener('change', saveImageSizeAdjust, false);
   document.getElementById('imageHeight').addEventListener('change', saveImageSizeAdjust, false);
   document.getElementById('pageSpacing').addEventListener('change', saveImageSizeAdjust, false);
+  document.getElementById('t_printSavePdf').addEventListener('mousedown', printForms, false);
   document.getElementById('t_print').addEventListener('mousedown', printForms, false);
+  document.getElementById('t_savePdf').addEventListener('mousedown', printForms, false);
   document.getElementById('t_saveAsPNG').addEventListener('mousedown', savePNG, false);
   document.getElementById('t_saveAsSVG').addEventListener('mousedown', saveSVG, false);
   document.getElementById('t_cancelPrint').addEventListener('mousedown', function(){printDialog()}, false);
@@ -7663,8 +7662,8 @@ function updateFigureComments () {
   }, 100);
 }
 
-// latestVersion makes sure the latest version is installed
-function latestVersion() {
+// getLatestVersion makes sure the latest version is installed
+function getLatestVersion() {
   
   if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
     // Check for appcache when using http
@@ -7689,24 +7688,30 @@ function latestVersion() {
 // openaero.net or the iOS app store. Function f is
 // executed when version is loaded
 function getStableVersion (f) {
+
+	var xhr = new XMLHttpRequest();
+	xhr.timeout = 5000;
 	
 	if (platform.cordova && platform.ios) {
-		window.AppUpdate.checkAppUpdate(
-			function(latestVersion){
-				f (latestVersion);
-			},
-			function(fail){
-				f (false);
-			}, 'OpenAero', {}
-		);
+		// only check when online as this might crash when offline on iOS 12
+    xhr.onload = function(){
+			window.AppUpdate.checkAppUpdate(
+				function(latestVersion){
+					f (latestVersion);
+				},
+				function(fail){
+					f (false);
+				}, 'OpenAero', {}
+			);
+		};
 	} else {
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', 'https://openaero.net/openaero.php?v', true);
-    xhr.timeout = 5000;
     xhr.onload = function(){f (xhr.response)};
-    xhr.onerror = xhr.ontimeout = function() {f (false)};
-    xhr.send();
 	}
+
+	xhr.onerror = xhr.ontimeout = function() {f (false)};
+	xhr.open('GET', 'https://openaero.net/openaero.php?v', true);
+	xhr.send();
+
 }
 
 // preventUnload is used to set a question asking the user if he wants
@@ -8148,7 +8153,7 @@ function restoreSelection (containerEl, savedSel) {
 
 // buildLogoSvg will create a logo svg from a provided image string,
 // width and height
-function buildLogoSvg(logoImage, x, y, width, height) {
+function buildLogoSvg(logoImage, x, y, width, height, blackWhite) {
   
   function toInt32(bytes) {
     return (bytes[0] << 24) | (bytes[1] << 16) | (bytes[2] << 8) | bytes[3];
@@ -8156,7 +8161,7 @@ function buildLogoSvg(logoImage, x, y, width, height) {
 
   var svg = document.createElementNS(svgNS, "svg");
   svg.setAttribute("version", "1.2");
-  svg.setAttribute("baseProfile", "tiny");
+  svg.setAttribute("baseProfile", "basic");
   svg.setAttribute("xmlns", svgNS);
   svg.setAttribute("xmlns:xlink", xlinkNS);
   // svg images are included inline and scaled
@@ -8169,8 +8174,8 @@ function buildLogoSvg(logoImage, x, y, width, height) {
 	      height / svgBase.getAttribute('height')),
 	    group = document.createElementNS(svgNS, "g");
 
-    group.setAttribute('transform', 'translate(' + x + ',' + y + 
-      ') scale(' + scale.toFixed(4) + ')');
+    group.setAttribute('transform', 'translate(' + roundTwo(x) + ',' +
+	    roundTwo(y) + ') scale(' + scale.toFixed(4) + ')');
     group.appendChild(svgBase);
     svg.appendChild(group);
   // other images are included through an xlink data url
@@ -8190,6 +8195,17 @@ function buildLogoSvg(logoImage, x, y, width, height) {
   svg.setAttribute("class", "logoSvg");
   svg.setAttribute("width", x + width);
   svg.setAttribute("height", y + height);
+  
+  if (blackWhite) {
+		var defs = document.createElementNS (svgNS, 'defs');
+		defs.innerHTML = 
+			'<filter id="blackWhiteFilter">' +
+				'<feColorMatrix in="SourceGraphic" type="saturate" values="0"/>' +
+			'</filter>';
+		svg.firstChild.setAttribute ('filter', 'url(#blackWhiteFilter)');
+		svg.insertBefore (defs, svg.firstChild);
+	}
+	
   return svg;
 }
 
@@ -15906,8 +15922,9 @@ function parseAircraft (t) {
 // 1) Chrome app: open window and print from that. This actually uses
 //    a Quirks mode "fix" for height layout. HACK!
 // 2) Integrate print into main page and use screen and media print styles
+// 3) Check if called from "Save PDF" on Cordova app
 
-function printForms () {
+function printForms (evt) {
   // set a short default wait
   var wait = 50;
   if (fileList.length > 0) {
@@ -15984,17 +16001,25 @@ function printForms () {
 	        div.appendChild (printBody.childNodes[0]);
 	      }	
 				window.document.title = activeFileName();
-	      
-	      // can be improved but works for now...
+
 	      if (platform.cordova) {
-					cordova.plugins.printer.print (
+					var printHtml =
 						'<html>' + 
 							'<head>' +
 								'<style type="text/css">' + style.innerHTML + '</style>' +
 							'</head><body>' +
 								div.innerHTML +
 							'</body>' +
-						'</html>');
+						'</html>';
+					if (evt && evt.target && evt.target.id === 't_savePdf') {
+						pdf.fromData (printHtml, {
+							documentSize: 'A4',
+							type: 'share',
+							fileName: activeFileName() + '.pdf'
+						});
+					} else {
+						cordova.plugins.printer.print (printHtml);
+					}
 				} else {
 					window.print();				
 				}
@@ -16122,8 +16147,8 @@ function buildForms (win) {
             // remove xml declarations
             formSVG = formSVG.replace (/<\?xml[^>]*>/, '');
             // add translated group with formSVG
-            svg += '<g transform="translate (0,' + translateY + ')">' +
-              formSVG + '</g>';
+            svg += '<g transform="translate (0,' +
+	            roundTwo (translateY) + ')">' + formSVG + '</g>';
           }
           translateY += 1130 + parseInt(document.getElementById ('pageSpacing').value);
         }
@@ -16304,8 +16329,8 @@ function buildForm (print) {
         var seq4 = seq2.cloneNode(true);
         seq4.setAttribute('id', 'seq4');
         seq4.setAttribute('transform', 'translate(' +
-              roundTwo(((flipSecond ? -x2 : -x) * scale) + width) + ',' +
-              roundTwo(-y * scale + height) + ') scale(' + scale + ')');
+					roundTwo(((flipSecond ? -x2 : -x) * scale) + width) + ',' +
+					roundTwo(-y * scale + height) + ') scale(' + scale + ')');
         mySVG.appendChild(seq4);
       }
       mySVG.setAttribute ('viewBox', '0 0 800 1130');
@@ -16372,7 +16397,8 @@ function buildForm (print) {
           if ((xScale * w) < 580) xScale = Math.min (580 / w, maxStretch);
     
           mySVG.getElementById('sequence').setAttribute('transform', 'translate(' +
-            (moveRight - (bBox.x * scale)) + ',' + (marginTop - bBox.y * scale) +
+            roundTwo (moveRight - (bBox.x * scale)) + ',' +
+            roundTwo (marginTop - bBox.y * scale) +
             ') scale(' + xScale + ',' + scale + ')');
           mySVG.getElementById('sequence').setAttribute('preserveAspectRatio', 'none');
         } else {
@@ -16380,7 +16406,8 @@ function buildForm (print) {
           drawRectangle (0, 126, 740, 945, 'formLine', mySVG);
   
           mySVG.getElementById('sequence').setAttribute('transform', 'translate(' +
-            (moveRight - (bBox.x * scale)) + ',' + (marginTop - bBox.y * scale) +
+            roundTwo (moveRight - (bBox.x * scale)) + ',' +
+            roundTwo (marginTop - bBox.y * scale) +
             ') scale(' + scale + ')');
         }
         
@@ -16396,9 +16423,11 @@ function buildForm (print) {
         // Add all necessary elements
         if (logoImg) {
           if (activeForm === 'A') {
-            var logoSvg = buildLogoSvg(logoImg, 610, 930, 110, 110);
+            var logoSvg = buildLogoSvg(logoImg, 610, 930, 110, 110,
+	            document.getElementById ('blackWhite').checked);
           } else {
-            var logoSvg = buildLogoSvg(logoImg, 0, 10, 80, 100);
+            var logoSvg = buildLogoSvg(logoImg, 0, 10, 80, 100,
+	            document.getElementById ('blackWhite').checked);
           }        
           mySVG.appendChild(logoSvg);
         }
@@ -16454,18 +16483,21 @@ function buildForm (print) {
           mySVG.getElementById('sequence').setAttribute('preserveAspectRatio', 'none');
     
           mySVG.getElementById('sequence').setAttribute('transform', 'translate(' +
-            (moveRight - (bBox.x * scale)) + ',' + (marginTop - bBox.y * scale) +
+            roundTwo (moveRight - (bBox.x * scale)) + ',' +
+            roundTwo (marginTop - bBox.y * scale) +
             ') scale(' + xScale + ',' + scale + ')');
         } else {
           mySVG.getElementById('sequence').setAttribute('transform', 'translate(' +
-            (moveRight - (bBox.x * scale)) + ',' + (marginTop - bBox.y * scale) +
+            roundTwo (moveRight - (bBox.x * scale)) + ',' +
+            roundTwo (marginTop - bBox.y * scale) +
             ') scale(' + scale + ')');
         }
           
         // Add all necessary elements
         var logoWidth = 0;
         if (logoImg) {
-          var logoSvg = buildLogoSvg(logoImg, 0, 0, 200, 120);
+          var logoSvg = buildLogoSvg(logoImg, 0, 0, 200, 120,
+	          document.getElementById ('blackWhite').checked);
           mySVG.appendChild(logoSvg);
           logoWidth = parseInt(logoSvg.getBBox().width) + 10;
         }
@@ -16516,10 +16548,10 @@ function buildForm (print) {
     }
     var box = t.getBBox();
     var vScale = (1126 - box.height) / 1130;
-    t.setAttribute ('transform', 'translate(' + (-box.x) + ',' +
-      (-box.y) + ')');
-    g.setAttribute ('transform', 'translate (0,' + (box.height + 4) +
-      ') scale (1,' + vScale + ')');
+    t.setAttribute ('transform', 'translate(' + roundTwo (-box.x) + ',' +
+      roundTwo (-box.y) + ')');
+    g.setAttribute ('transform', 'translate (0,' +
+	    roundTwo (box.height + 4) + ') scale (1,' + vScale + ')');
     mySVG.appendChild (g);
   }
   
@@ -16542,7 +16574,7 @@ function buildForm (print) {
     '<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.2//EN" ' +
     '"http://www.w3.org/Graphics/SVG/1.2/DTD/svg12.dtd">\n' + sequenceSVG;
     
-  // create Black & White (sequence drawing only) forms when checked
+  // create Black & White forms when checked
   if (document.getElementById('blackWhite').checked) {
     // replace style neg by negBW
     var regex = RegExp('"' + style.neg + '"', 'g');
@@ -16585,10 +16617,10 @@ function addSequenceString (svg, textBox, print) {
     // copy/paste works correctly and minimum lines are used
     txt = txt.replace (/ /g, '&nbsp;').replace (/-/g, '&#8209;');
     drawTextArea (txt, textBox.x, textBox.y,
-      textBox.width, textBox.height, 'sequenceString', '', svg);
+      textBox.width, textBox.height, document.getElementById('blackWhite').checked ? 'sequenceStringBW' : 'sequenceString', '', svg);
   } else {
     var g = document.createElementNS (svgNS, 'g');
-    drawText(txt, 0, 0, 'sequenceString', '', 'start', g);
+    drawText(txt, 0, 0, document.getElementById('blackWhite').checked ? 'sequenceStringBW' : 'sequenceString', '', 'start', g);
     svg.appendChild(g);
 
     var scaleBox = '';
@@ -16613,15 +16645,15 @@ function addSequenceString (svg, textBox, print) {
         // very long text
         // Split in three equal lines
         drawText(txt.substring (0,parseInt(txt.length / 3)),
-          0, 0, 'sequenceString', '', 'start', g);
+          0, 0, document.getElementById('blackWhite').checked ? 'sequenceStringBW' : 'sequenceString', '', 'start', g);
         drawText(txt.substring (parseInt(txt.length / 3),
           parseInt((txt.length / 3) * 2)),
-          0, 13, 'sequenceString', '', 'start', g);
+          0, 13, document.getElementById('blackWhite').checked ? 'sequenceStringBW' : 'sequenceString', '', 'start', g);
         drawText(txt.substring (parseInt((txt.length / 3) * 2)),
-          0, 26, 'sequenceString', '', 'start', g);
+          0, 26, document.getElementById('blackWhite').checked ? 'sequenceStringBW' : 'sequenceString', '', 'start', g);
       } else {
         for (var i = 0; i < lines.length; i++) {
-          drawText(lines[i], 0, i * 13, 'sequenceString', '', 'start', g);
+          drawText(lines[i], 0, i * 13, document.getElementById('blackWhite').checked ? 'sequenceStringBW' : 'sequenceString', '', 'start', g);
         }
       }
       //  adjust X scale if necessary
@@ -16631,8 +16663,8 @@ function addSequenceString (svg, textBox, print) {
         scaleBox = ' scale (' + scaleX + ',1)';
       }
     }
-    g.setAttribute ('transform', 'translate (' + (textBox.x - box.x) +
-      ',' + ((textBox.y + 40) - (box.y + box.height)) + ')' + scaleBox);
+    g.setAttribute ('transform', 'translate (' + roundTwo (textBox.x - box.x) +
+      ',' +  roundTwo ((textBox.y + 40) - (box.y + box.height)) + ')' + scaleBox);
   }
 }
 
@@ -16652,16 +16684,16 @@ function addCheckResult (svg, pos) {
   g.id = 'checkResult';
   if (!alertMsgs.length) {
     drawText(text + userText.sequenceCorrect, pos.x, pos.y,
-      'sequenceString', '', 'start', g);
+      document.getElementById('blackWhite').checked ? 'sequenceStringBW' : 'sequenceString', '', 'start', g);
   } else {
     var y = pos.y;
     for (var i = alertMsgs.length - 1; i>=0; i--) {
       drawText (alertMsgs[i], pos.x, y,
-        'sequenceString', '', 'start', g);
+        document.getElementById('blackWhite').checked ? 'sequenceStringBW' : 'sequenceString', '', 'start', g);
       y -= 12;
     }
     drawText (text + userText.sequenceHasErrors, pos.x, y,
-      'sequenceString', '', 'start', g);
+      document.getElementById('blackWhite').checked ? 'sequenceStringBW' : 'sequenceString', '', 'start', g);
   }
   svg.appendChild (g);
   alertMsgs = [];
@@ -16675,7 +16707,8 @@ function addFormElementsLR (svg, print) {
   // logo
   var logoWidth = 0;
   if (logoImg) {
-    var logoSvg = buildLogoSvg(logoImg, 0, 0, 120, 70);
+    var logoSvg = buildLogoSvg(logoImg, 0, 0, 120, 70,
+	    document.getElementById ('blackWhite').checked);
     svg.appendChild(logoSvg);
     logoWidth = parseInt(logoSvg.getBBox().width);
   }
@@ -16785,7 +16818,7 @@ function addFormElementsLR (svg, print) {
   }
   // scale width to fit, but don't upscale more than 20%
   var scaleX = Math.min (799 / (bBox.width + 10), 1.2);
-  var blockTop = 1100 - bBox.height;
+  var blockTop = roundTwo (1100 - bBox.height);
   g.setAttribute ('transform', 'translate (0,' + blockTop + ') scale (' + scaleX + ',1)');
 
   // figureK and totalK
@@ -16878,7 +16911,7 @@ function addFormElementsLR (svg, print) {
   drawText (userText.otherNote, 661, blockTop + 96, 'formAText', 'start', '', svg);
   
   // harmony and position
-  blockTop -= 50
+  blockTop -= 50;
   
   if (document.getElementById('harmony').value) {
     drawRectangle (540, blockTop, 127, 40, 'formLine', svg);
@@ -16909,11 +16942,11 @@ function addFormElementsLR (svg, print) {
   drawText ('Grade', 770, 123, 'formATextSmall', 'middle', '', svg);
   
   var y = 130;
-  var dy = roundTwo ((blockTop - 140) / figureNr);
+  var dy = (blockTop - 140) / figureNr;
   for (var i = 1; i <= figureNr; i++) {
     drawLine (510, y, 290, 0, 'formLine', svg);
     drawText (i, 525, y + (dy / 2) + 5, 'formATextLarge', 'middle', '', svg);
-    drawCircle ({cx: 769, cy: y + dy - 15, r: 2, fill: 'black'}, svg);
+    drawCircle ({cx: 769, cy: roundTwo (y + dy - 15), r: 2, fill: 'black'}, svg);
     y += dy;
   }
   
@@ -17044,7 +17077,8 @@ function addFormElementsGrid (svg) {
 	
 		var logoWidth = 0;
 		if (logoImg) {
-			var logoSvg = buildLogoSvg(logoImg, 0, 0, 200, 120);
+			var logoSvg = buildLogoSvg(logoImg, 0, 0, 200, 120,
+				document.getElementById ('blackWhite').checked);
 			svg.appendChild(logoSvg);
 			logoWidth = parseInt(logoSvg.getBBox().width) + 32;
 		}
@@ -17056,7 +17090,7 @@ function addFormElementsGrid (svg) {
 		if (scale < 1) {
 			svg.lastChild.setAttribute (
 				'transform', 'scale(' + scale + ') ' + 
-				'translate(' + (logoWidth / scale - logoWidth) + ',0)');
+				'translate(' + roundTwo(logoWidth / scale - logoWidth) + ',0)');
 		}
 		
 		drawText (
