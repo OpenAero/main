@@ -560,6 +560,9 @@ lang.en = {
 	'Third roll position',
 	'Fourth roll position'],
 'rollSmall' : 'Small',
+// new 2019.1
+'rollsSpinsExplain' : 'To add rolls or spins, select a base figure ' +
+	'(e.g. from family 1) and add the roll or spin onto that',
 'rollTextSize' : 'Roll text size',
 'rules' : 'Rules',
 'rulesImported' : 'Succesfully imported rules from file. Total lines (excluding comments) : ',

@@ -5339,11 +5339,11 @@ function addEventListeners () {
     }, false);
 	
   document.getElementById('t_freeKnownGuidancePower').parentNode.addEventListener('mousedown', function(){
-      helpWindow('doc/CIVA-Free-Known-Programme-Guidance-Power-Aircraft-2018-v3a.pdf', 'CIVA Free Known Guidance Power');
+      helpWindow('doc/CIVA-Free-Known-Programme-Guidance-Power-Aircraft-2019-v1.pdf', 'CIVA Free Known Guidance Power');
     }, false);
 
   document.getElementById('t_freeKnownGuidanceGlider').parentNode.addEventListener('mousedown', function(){
-      helpWindow('doc/CIVA-Free-Known-Programme-Guidance-Glider-Aircraft-2018-v1.pdf', 'CIVA Free Known Guidance Glider');
+      helpWindow('doc/CIVA-Free-Known-Programme-Guidance-Glider-Aircraft-2019-v1.pdf', 'CIVA Free Known Guidance Glider');
     }, false);
     
   document.getElementById('t_about').parentNode.addEventListener('mousedown',
@@ -5550,6 +5550,7 @@ function addEventListeners () {
   for (var i = 0; i < inputs.length; i++) {
     inputs[i].addEventListener('change', savePrintDialogStorage, false);
   }
+  document.getElementById ('multiLogo').addEventListener('change', savePrintDialogStorage, false);
   document.getElementById('manual.html_save_print').addEventListener('mousedown', function(){
       helpWindow('doc/manual.html#save_print', 'OpenAero manual');
     }, false);
@@ -6459,23 +6460,13 @@ function loadSettingsStorage (location) {
   location = location || 'settings';
   
   function f (settings) {
-    if (settings) {
-			if (!/[\[\{]/.test(settings.charAt(0))) {
-				// settings conversion to JSON. Can be removed in 2019.1
-				console.log ('Old settings format, converting to JSON...');
-				var settingObj = {};
-				settings = settings.split('|');
-				for (var i = settings.length - 1; i >= 0; i--) {
-					var setting = settings[i].split('=');
-					settingObj[setting[0]] = decodeURI(setting[1]);
-				}
-				settings = JSON.stringify (settingObj);
-				saveSettingsStorage (location);
-			}
+		// check if settings exist in correct format
+    if (settings && !/[\[\{]/.test(settings.charAt(0))) {
       settings = JSON.parse (settings);
       for (var settingKey in settings) {
-        var el = document.getElementById (settingKey);
-        var value = settings[settingKey];
+        var
+	        el = document.getElementById (settingKey),
+	        value = settings[settingKey];
         if (el.type === 'checkbox') {
           if (value == 1) {
             el.setAttribute ('checked', 'checked');
@@ -6484,7 +6475,6 @@ function loadSettingsStorage (location) {
           }
         } else if (el.type.match (/^select/)) {
           // only set values that are in the list in a select
-          var el = document.getElementById (settingKey);
           var nodes = el.childNodes;
           for (var key in nodes) {
             // see if exact value is in there and set and break if so
@@ -6540,19 +6530,24 @@ function saveSettingsStorage (location) {
 // savePrintDialogStorage will save the print dialog settings to
 // storage
 function savePrintDialogStorage () {
+	var
+		settings = {},
+		value;
+		
   if (storage) {
-    var settings = [];
-    var inputs = document.getElementById('printDialog').getElementsByTagName('input');
-    for (var i = 0; i < inputs.length; i++) {
-      var el = inputs[i];
-      if (el.type === 'checkbox') {
-        var value = el.checked ? 1 : 0;
-      } else {
-        var value = encodeURI(el.value);
-      }
-      settings.push (el.id + '=' + value);
-    }
-    storeLocal ('printDialog', settings.join('|'));
+		for (var inputType in {'input':'', 'select':''}) {
+			var	inputs = document.getElementById('printDialog').getElementsByTagName(inputType);
+	    for (var i = 0; i < inputs.length; i++) {
+	      var el = inputs[i];
+	      if (el.type === 'checkbox') {
+	        value = el.checked ? 1 : 0;
+	      } else {
+	        value = encodeURI(el.value);
+	      }
+	      if (el.type !== 'file') settings[el.id] = value;
+	    }
+		}
+    storeLocal ('printDialog', JSON.stringify (settings));
   }
 }
       
@@ -6562,21 +6557,32 @@ function loadPrintDialogStorage () {
   
   function f (settings) {
     if (!settings) return;
-    settings = settings.split('|');
-    for (var i = 0; i < settings.length; i++) {
-      var setting = settings[i].split('=');
-      var el = document.getElementById (setting[0]);
-      var value = decodeURI(setting[1]);
+		if (!/[\[\{]/.test(settings.charAt(0))) {
+			// settings conversion to JSON. Can be removed in 2020.1
+			console.log ('Old settings format, converting to JSON...');
+			var settingObj = {};
+			settings = settings.split('|');
+			for (var i = settings.length - 1; i >= 0; i--) {
+				var setting = settings[i].split('=');
+				settingObj[setting[0]] = decodeURI(setting[1]);
+			}
+			settings = JSON.stringify (settingObj);
+			storeLocal ('printDialog', settings);
+		}
+		settings = JSON.parse (settings);
+    for (var settingKey in settings) {
+			var
+				el = document.getElementById (settingKey),
+				value = settings[settingKey];
       if (el) {
         if (el.type === 'checkbox') {
-          if (setting[1] == 1) {
+          if (value == 1) {
             el.setAttribute ('checked', 'checked');
           } else {
             el.removeAttribute ('checked');
           }
         } else if (el.type.match (/^select/)) {
           // only set values that are in the list in a select
-          var el = document.getElementById (setting[0]);
           var nodes = el.childNodes;
           for (var key in nodes) {
             // see if exact value is in there and set and break if so
@@ -6592,7 +6598,8 @@ function loadPrintDialogStorage () {
               }
             }
           }
-        } else {
+        } else if (el.type !== 'file') {
+					// don't try to load file field: not allowed 
           el.value = value;
         }
       }
@@ -9015,7 +9022,6 @@ function loadRules() {
     }
   }
   
-  // Ajout GG 2018 checkAllowRegex start
 	if (checkAllowRegex) {
     for (var i = 0 ; i < checkAllowRegex.length ; i++) {
 			for (var j in fig) {
@@ -9034,12 +9040,11 @@ function loadRules() {
 	    }
 	  }
 	}
-	// Ajout GG 2018 checkAllowRegex end
 
   // set rules active
   rulesActive = year + ruleName + ' ' + catName + ' ' + programName;
-
-  set_rule_K();  // Modif GG v2016.1.4 (Change K if needed). To prevent any K changes, just comment this line.
+	// adjust K factors if rules require this
+  set_rule_K(); 
 
   if (figureLetters) {
     // show reference sequence link
@@ -10280,10 +10285,12 @@ function changeHideIllegal() {
 function availableFigureGroups() {
   var options = document.getElementById('figureGroup').childNodes;
   var firstGroup = (activeForm === 'FU') ? 0 : 1;
-  // hide all options
+  // hide all options, except rolls and spins
   for (var i = firstGroup; i < options.length; i++) {
-    options[i].classList.add ('noDisplay');
-    options[i].disabled = 'disabled';
+		if (figGroup[i].family != 9) {
+	    options[i].classList.add ('noDisplay');
+	    options[i].disabled = 'disabled';
+		}
   }
   if ((Object.keys(checkAllowCatId).length > 0) &&
     rulesActive &&
@@ -10324,7 +10331,12 @@ function changeFigureGroup() {
 	  fragment = document.createDocumentFragment();
   
   // set the correct size and row count for the figure thumbnails
-  if (figureGroup != 0) { // normal Aresti group
+  if (figGroup[figureGroup].family == 9) { // rolls and spins group
+		document.getElementById('figureChooserColumns').classList.add('noDisplay');
+		table.innerHTML = '<span class="userText" id="t_rollsSpinsExplain">' +
+			userText['rollsSpinsExplain'] + '</span>';
+		return;
+	} else if (figureGroup != 0) { // normal Aresti group
     var size = 56;
     var newRow = /\.[01]$/;
     var maxColCount = 4;
@@ -10690,7 +10702,9 @@ function markNotAllowedFigures () {
     }
     // hide row when no legal figures present
     if ((document.getElementById('hideIllegal').checked == true) &&
-	    (document.getElementById('figureGroup').value != 0) && !anyLegal) {
+	    (document.getElementById('figureGroup').value != 0) &&
+	    (figGroup[document.getElementById('figureGroup').value].family != 9) &&
+	    !anyLegal) {
       tr[i].classList.add ('noDisplay');
     }
   }
@@ -14654,18 +14668,16 @@ function clearSequence () {
 	    var fields = document.getElementsByTagName('textarea');
 	    var length = fields.length;
 	    while (length--) fields[length].value = '';
-	    console.log(document.getElementById('referenceSequenceString').value);
 	    div.classList.add ('noDisplay');
 	    changeReferenceSequence();
 	    
 	    sequenceText.innerText = '';
 
 	    document.getElementById ('fu_figures').value = '';
-	    document.getElementById ('default_view').value = '';
-	    document.getElementById ('pilot_id').value = '';	// Ajout Modif GG 2017
-	    document.getElementById ('flight_nb').value = '';	// Ajout Modif GG 2017
-	    // reload sequence
+	    document.getElementById ('pilot_id').value = '';
+	    document.getElementById ('flight_nb').value = '';
 	    unloadRules();
+	    updateDefaultView();
 		} else {
 			sequenceText.innerText = 'eu';
 		}
@@ -15225,7 +15237,7 @@ function activateXMLsequence (xml, noLoadRules) {
     // check for default_view
     var view = document.getElementById('default_view').value;
     if (view) {
-      var view = view.split(':');
+      view = view.split(':');
       switch (view[0]) {
         case 'grid':
           document.getElementById('gridColumns').value = view[1];
@@ -15919,10 +15931,8 @@ function parseAircraft (t) {
 
 // printForms will print selected forms
 // Depending on the system a method will be chosen:
-// 1) Chrome app: open window and print from that. This actually uses
-//    a Quirks mode "fix" for height layout. HACK!
-// 2) Integrate print into main page and use screen and media print styles
-// 3) Check if called from "Save PDF" on Cordova app
+// 1) Integrate print into main page and use screen and media print styles
+// 2) Check if called from "Save PDF" on Cordova app
 
 function printForms (evt) {
   // set a short default wait
@@ -15935,99 +15945,60 @@ function printForms (evt) {
     wait = 1000;
   }
 
-	// Print the constructed pages. For the Chrome App an asynchronous callback
-	// is used. For the web version we work synchronous but use
-	// setTimeout to prevent browser blocking.
-	/** DISABLED TO USE THE REGULAR INLINE PRINT */
-	if (false && chromeApp.active) {
-		chrome.app.window.create ('print.html', {
-			bounds: {
-				width: 800,
-				height: 600
-			}
-		}, function(w) {
-			var win = w.contentWindow;
-			var style = win.document.createElement ('style');
-			style.type = 'text/css';
-			style.media = 'print';
-			style.innerHTML = '@page {size: auto; margin: ' +
+	// Print the constructed pages. Use setTimeout to prevent blocking.
+	setTimeout (function() {
+		// update the print style with margins
+		var style = document.getElementById ('printStyle');
+		style.innerHTML = '@page {size: auto; margin: ' +
 				document.getElementById ('marginTop').value + 'mm ' +
 				document.getElementById ('marginRight').value + 'mm ' +
 				document.getElementById ('marginBottom').value + 'mm ' +
 				document.getElementById ('marginLeft').value + 'mm}' +
-				'body {margin: 0;}' +
+				'html {height: 100%; overflow: initial;}' +
+				'body {margin: 0; height: 100%; overflow: initial;}' +
+				'.noPrint {display: none;}' +
+				'#noScreen {height: 100%;}' +
 				'.breakAfter {position: relative; display:block; ' +
 				'page-break-inside:avoid; page-break-after:always; ' +
 				'height: 100%;}' +
 				'svg {position: absolute; top: 0; height: 100%;}';
 
-			win.onLoad = function() {
-				win.document.title = activeFileName();
-				win.document.body = buildForms (win);
-				win.document.head.appendChild(style);
-				if (win.matchMedia) {
-					win.matchMedia ('screen').addListener (function (mql) {
-						if (mql.matches) win.close();
-					});
-				}
-				win.print();
-			};
-		});
-	} else {
-		setTimeout (function() {
-	      // update the print style with margins
-	      var style = document.getElementById ('printStyle');
-	      style.innerHTML = '@page {size: auto; margin: ' +
-	          document.getElementById ('marginTop').value + 'mm ' +
-	          document.getElementById ('marginRight').value + 'mm ' +
-	          document.getElementById ('marginBottom').value + 'mm ' +
-	          document.getElementById ('marginLeft').value + 'mm}' +
-	          'html {height: 100%; overflow: initial;}' +
-	          'body {margin: 0; height: 100%; overflow: initial;}' +
-	          '.noPrint {display: none;}' +
-	          '#noScreen {height: 100%;}' +
-	          '.breakAfter {position: relative; display:block; ' +
-	          'page-break-inside:avoid; page-break-after:always; ' +
-	          'height: 100%;}' +
-	          'svg {position: absolute; top: 0; height: 100%;}';
+		window.document.title = '';	
+		var printBody = buildForms (window);
+		// clear noScreen div
+		var div = document.getElementById ('noScreen');
+		while (div.firstChild) div.removeChild (div.firstChild);
+		// add all nodes that will be printed
+		while (printBody.childNodes.length > 0) {
+			div.appendChild (printBody.childNodes[0]);
+		}	
+		window.document.title = activeFileName();
 
-				window.document.title = '';	
-	      var printBody = buildForms (window);
-	      // clear noScreen div
-	      var div = document.getElementById ('noScreen');
-	      while (div.firstChild) div.removeChild (div.firstChild);
-	      // add all nodes that will be printed
-	      while (printBody.childNodes.length > 0) {
-	        div.appendChild (printBody.childNodes[0]);
-	      }	
-				window.document.title = activeFileName();
+		if (platform.cordova) {
+			var printHtml =
+				'<html>' + 
+					'<head>' +
+						'<style type="text/css">' + style.innerHTML + '</style>' +
+					'</head><body>' +
+						div.innerHTML +
+					'</body>' +
+				'</html>';
+			if (evt && evt.target && evt.target.id === 't_savePdf') {
+				pdf.fromData (printHtml, {
+					documentSize: 'A4',
+					type: 'share',
+					fileName: activeFileName() + '.pdf'
+				});
+			} else {
+				cordova.plugins.printer.print (printHtml);
+			}
+		} else {
+			window.print();				
+		}
 
-	      if (platform.cordova) {
-					var printHtml =
-						'<html>' + 
-							'<head>' +
-								'<style type="text/css">' + style.innerHTML + '</style>' +
-							'</head><body>' +
-								div.innerHTML +
-							'</body>' +
-						'</html>';
-					if (evt && evt.target && evt.target.id === 't_savePdf') {
-						pdf.fromData (printHtml, {
-							documentSize: 'A4',
-							type: 'share',
-							fileName: activeFileName() + '.pdf'
-						});
-					} else {
-						cordova.plugins.printer.print (printHtml);
-					}
-				} else {
-					window.print();				
-				}
-
-				// restore title
-				changeSequenceInfo();
-	    }, wait);
-	}
+		// restore title
+		changeSequenceInfo();
+	}, wait);
 }
 
 // buildForms will format selected forms for print or save. When

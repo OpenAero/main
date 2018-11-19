@@ -567,6 +567,10 @@ lang.fr = {
 	'Troisième série de rotations',
 	'Quatrième série de rotations'],
 'rollSmall' : 'Petit',
+// new 2019.1
+'rollsSpinsExplain' : 'Pour ajouter des rotations ou des vrilles, ' +
+	'sélectionnez un chiffre de base (par exemple, de la famille 1) et ' +
+	'ajoutez la rotation ou la vrille à celui-ci',
 'rollTextSize' : 'Taille du texte des rotations',
 'rules' : 'Règles',
 'rulesImported' : 'Règles importées du fichier avec succès. Nombre de lignes (hors commentaires) :',

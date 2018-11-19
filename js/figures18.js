@@ -616,7 +616,7 @@ var figs = [
 //
 // Family 6. Tail Slides
 //
-"F6 Tail Slides",
+"F6.2 Tail Slides",
 
 // Family 6.2. Two Line Tail Slides
 
@@ -1789,6 +1789,9 @@ var figs = [
 "-_co&+ 8.10.2.2(20) ~~~_Pm''_''V~",
 "+_ico&- 8.10.2.3(19) ~~~_Pm''_''V~",
 "-_ico&+ 8.10.2.4(18) ~~~_pM''_''v~",
+
+/* family 9 placeholder */
+'F9 Rolls and spins',
 
 //############ family 0 figures - non FAI catalog ################
 'F0 non-Aresti catalog',

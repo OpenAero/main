@@ -1,3 +1,11 @@
+2019.1
+* changed family 6 to 6.2 in figure chooser
+* added explanation of rolls and spins to figure chooser
+* added 2019 CIVA Free Known figure sets for Power and Glider
+* fixed issue where crash was caused by trying to load previous files into print multi dialog
+* fixed issue where default_view was not set after "Clear sequence"
+* updated print dialog setting storage to JSON
+
 2018.4
 * changed function latestVersion to getLatestVersion
 * fixed iOS 12 app offline crash by wrapping getStableVersion in test for xhr connection
