@@ -6461,7 +6461,7 @@ function loadSettingsStorage (location) {
   
   function f (settings) {
 		// check if settings exist in correct format
-    if (settings && !/[\[\{]/.test(settings.charAt(0))) {
+    if (settings && /[\[\{]/.test(settings.charAt(0))) {
       settings = JSON.parse (settings);
       for (var settingKey in settings) {
         var

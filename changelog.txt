@@ -1,3 +1,6 @@
+2019.1.1
+* fixed bug in 2019.1 that prevented loading of settings
+
 2019.1
 * changed family 6 to 6.2 in figure chooser
 * added explanation of rolls and spins to figure chooser
