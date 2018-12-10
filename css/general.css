@@ -1492,30 +1492,27 @@ option.used {
   margin-top: 16px;
   left: 0px;
   right: 0px;
-  height: 6em;
+  height: 160px;
   border: 5px dashed #aaa;
   border-radius: 20px;
   background-color: #fff;
-  color: #aaa;
-  font-size: 2em;
   text-align: center;
-  padding: 1em;
+  padding: 16px;
   -webkit-overflow-scrolling: touch;
 }
 #printMultiFileForm {
 	margin-top: 8px;
 }
-#printMultiFiles {
-  width: 240px;
+#printMultiFiles, #checkMultiFiles {
+  display: none;
 }
 #fileDropFiles, #fileDropPrintFiles {
-  margin-left: 8px;
-  color: #000;
-  font-size: 16px;
+  margin-left: 0;
   text-align: left;
 }
 #fileDropFiles div, #fileDropPrintFiles div {
   margin: 0;
+  white-space: nowrap;
 }
 .fileListFileRemove {
 	position: relative;

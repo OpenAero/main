@@ -37,10 +37,8 @@ lang.en = {
   'you can help OpenAero development by adding them to ' +
   '<a href="https://github.com/OpenAero/main/issues" target="_blank">' +
   'the Issues list</a>.',
-// changed 2018.3.4
 'aboutOlder' : '<font color="red">You are running an outdated version.' +
   '</font><br />',
-// new 2018.3.4
 'aboutOlderAndroid' : '<a href="https://play.google.com' +
 	'/store/apps/details?id=net.openaero" target="_blank">' +
 	'<img src="img/google-play-badge.png" width="200"></a>',
@@ -61,7 +59,8 @@ lang.en = {
   'probably offline.',
 'aboutText' : '<div class="divider">' +
   '<p>This&nbsp;version:<strong>%s</strong> &nbsp; ' +
-  'Stable&nbsp;version:<strong>%s</strong></p>%s</div>' +
+  'Stable&nbsp;version:<strong>%s</strong></p><p>%s</p>' +
+  '<a id="viewChangelog">View changelog.txt</a></div>' +
   '<div class="divider">' +
   '<p>OpenAero is aerobatic sequence design software that ' +
   'runs inside your web browser.</p><p>OpenAero is free software: you ' +
@@ -73,9 +72,7 @@ lang.en = {
   'without even the implied warranty of MERCHANTABILITY or FITNESS ' +
   'FOR A PARTICULAR PURPOSE. See the GNU General Public License for ' +
   'more details.</p>' +
-  '<p>To improve user experience we use Google Analytics for gathering ' +
-  'usage data. To protect your privacy this data is anonymized and not ' +
-  'shared with other Google services or third parties.</p></div><div>' +
+  '<a id="privacyPolicy">View our privacy policy</a></div><div>' +
   '<p>OpenAero is designed, built and maintained by ' +
   '<strong>Ringo Massa</strong>, using <strong>Michael Golan</strong>\'s ' +
   'OLAN sequence coding.<br>Many people have contributed, including:' +
@@ -163,8 +160,10 @@ lang.en = {
 'checkSequenceOK' : 'OK',
 'checkSequenceResult' : 'Sequence check result',
 'checkSequences' : 'Check sequences',
-'chooseFiles' : 'Choose your files here:',
-'chooseFilesPrint' : 'Choose your files here:',
+'chooseFiles' : '<strong>Choose your files</strong>',
+'chooseFilesOrDrop' : '<strong>Choose your files</strong> or drag them here',
+'chooseFilesPrint' : '<strong>Choose your files</strong>',
+'chooseFilesOrDropPrint' : '<strong>Choose your files</strong> or drag them here',
 'chooseLogo' : 'Choose logo',
 'class' : 'Class',
 'clearPositioning' : 'Clear positioning',
@@ -456,8 +455,6 @@ lang.en = {
 'orderK' : 'K factor',
 'orderLetter' : 'Figure letter',
 // end new
-'orFileDrop' : 'Or drag & drop your files here',
-'orFileDropPrint' : 'Or drag & drop your files here',
 'otherNote' : 'Other(note...)',
 'pageSpacing' : 'Page spacing',
 'pilot' : 'Pilot',

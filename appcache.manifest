@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# OpenAero version 2019.1.1
+# OpenAero version 2019.1.2
 appcache.manifest
 changelog.txt
 cordova.js
@@ -21,6 +21,7 @@ doc/gpl_files/print.css
 doc/gpl.htm
 doc/language.html
 doc/manual.html
+doc/privacy.html
 img/blue_handles.png
 img/chrome-webstore-badge.png
 img/ee_ext-figure.png

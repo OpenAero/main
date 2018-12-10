@@ -36,7 +36,7 @@
 // Where a new x should be used for versions that create sequences not
 // fully backward compatible with the previous version
 
-var version = '2019.1.1';
+var version = '2019.1.2';
 /* versionNew is an object that contains version update information
    The structure is {vvv : [[ttt, n], ...], ...} , where
    vvv = version number
@@ -44,6 +44,9 @@ var version = '2019.1.1';
    n   = importance (higher = more important)
 */
 var versionNew = {
+	'2019.1.2' : [
+		['Updated CIVA form layouts', 2]
+	],
 	'2019.1' : [
 		['CIVA rules and Free Known sequences for 2019', 4]
 	],

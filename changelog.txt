@@ -1,3 +1,13 @@
+2019.1.2
+* updated steganography for adding sequence data to png file
+* changed sequence file loading to asynchronous
+* updated file selection dialogs
+* fixed issue with Sequence Notes on Form L&R of large sequences
+* improved Mini Form A layout
+* added changelog.txt link to About dialog
+* added privacy policy link to About dialog and removed Google analytics reference
+* updated CIVA form layouts
+
 2019.1.1
 * fixed bug in 2019.1 that prevented loading of settings
 

@@ -61,7 +61,8 @@ lang.fr = {
   'Vous travaillez probablement hors connexion.',
 'aboutText' : '<div class="divider">' +
   '<p>Cette&nbsp;version:<strong>%s</strong> &nbsp; ' +
-  'Version&nbsp;courante:<strong>%s</strong></p>%s</div>' +
+  'Version&nbsp;courante:<strong>%s</strong></p><p>%s</p>' +
+  '<a id="viewChangelog">Lisez changelog.txt</a> (en Anglais)</div>' +
   '<div class="divider">' +
   '<p>OpenAero est un logiciel de conception de programmes de voltige ' +
   'qui s\'exécute dans votre navigateur web.</p><p>OpenAero est un logiciel gratuit: vous ' +
@@ -73,9 +74,8 @@ lang.fr = {
   'sans même une garantie implicite de COMMERCIALISATION ou D\'APTITUDE ' +
   'A UNE TACHE PARTICULIERE. Voir la \'GNU General Public License\' pour ' +
   'plus de détails.</p></div><div>' +
-  '<p>Pour améliorer l\'usage utilisateur, Google Analytics est utilisé pour collecter ' +
-  'les données utilisées. Pour protéger votre vie privée ces données sont rendus anonymes et ' +
-  'ne sont pas partagées avec d\'autres services de Google ou des tierces parties.</p></div><div>' +  
+  '<a id="privacyPolicy">Consultez notre politique de confidentialité</a>'+
+  ' (en Anglais)</div><div>' +  
   '<p>OpenAero est conçu, écrit et maintenu par ' +
   '<strong>Ringo Massa</strong>, sur la base du code des programmes ' +
   'OLAN de <strong>Michael Golan</strong>.<br>Plusieurs personnes ont participée, comme:' +
@@ -163,8 +163,10 @@ lang.fr = {
 'checkSequenceOK' : 'OK',
 'checkSequenceResult' : 'Résultat de vérification',
 'checkSequences' : 'Vérification des programmes',
-'chooseFiles' : 'Choisir les fichiers ici :',
-'chooseFilesPrint' : 'Choisir les fichiers ici :',
+'chooseFiles' : '<strong>Choisir</strong> vos fichiers ici',
+'chooseFilesOrDrop' : '<strong>Choisir</strong> ou glisser/déplacer vos fichiers ici',
+'chooseFilesPrint' : '<strong>Choisir<strong> vos fichiers ici',
+'chooseFilesOrDropPrint' : '<strong>Choisir</strong> ou glisser/déplacer vos fichiers ici',
 'chooseLogo' : 'Choisir un logo',
 'class' : 'Type',
 'clearPositioning' : 'Effacer le positionnement',
@@ -463,8 +465,6 @@ lang.fr = {
 'orderK' : 'Coef K',
 'orderLetter' : 'Lettre',
 // end new
-'orFileDrop' : 'Ou glisser/déplacer vos fichiers ici',
-'orFileDropPrint' : 'Ou glisser/déplacer vos fichiers ici',
 'otherNote' : 'Autre(noter...)',
 'pageSpacing' : 'Espacement entre pages',
 'pilot' : 'Pilote',
