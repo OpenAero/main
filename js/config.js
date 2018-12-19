@@ -36,7 +36,7 @@
 // Where a new x should be used for versions that create sequences not
 // fully backward compatible with the previous version
 
-var version = '2019.1.2';
+var version = '2019.1.3';
 /* versionNew is an object that contains version update information
    The structure is {vvv : [[ttt, n], ...], ...} , where
    vvv = version number
@@ -44,6 +44,9 @@ var version = '2019.1.2';
    n   = importance (higher = more important)
 */
 var versionNew = {
+	'2019.1.3' : [
+		['Improved roll selection to only show allowed rolls from rules and/or Aresti', 3]
+	],
 	'2019.1.2' : [
 		['Updated CIVA form layouts', 2]
 	],
@@ -525,7 +528,7 @@ for (var i = 2; i < 9; i++) {
 var posFlickTypes = [
   '2f:1/2 pos flick',
   '3f:3/4 pos flick',
-  'f:1 pos flick',
+  '1f:1 pos flick',
   '5f:1 1/4 pos flick',
   '6f:1 1/2 pos flick',
   '7f:1 3/4 pos flick',
@@ -533,19 +536,19 @@ var posFlickTypes = [
 var negFlickTypes = [
   '2if:1/2 neg flick',
   '3if:3/4 neg flick',
-  'if:1 neg flick',
+  '1if:1 neg flick',
   '5if:1 1/4 neg flick',
   '6if:1 1/2 neg flick',
   '7if:1 3/4 neg flick',
   '9if:2 neg flick'];
 var posSpinTypes = [
-  's:1 pos spin',
+  '1s:1 pos spin',
   '5s:1 1/4 pos spin',
   '6s:1 1/2 pos spin',
   '7s:1 3/4 pos spin',
   '9s:2 pos spin'];
 var negSpinTypes = [
-  'is:1 neg spin',
+  '1is:1 neg spin',
   '5is:1 1/4 neg spin',
   '6is:1 1/2 neg spin',
   '7is:1 3/4 neg spin',

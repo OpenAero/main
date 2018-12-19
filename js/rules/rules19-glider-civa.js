@@ -77,6 +77,8 @@ OpenAero 2016.1
 * - allowed multiple non-aileron rolls on the same line (NOAH i.s.o. NOU) in many figures
 * 2018.3.5
 * - added 7.4.1.1 (Adv and Unl) and 7.4.2.1 (Unl) to Unknown
+* 2019.1.3
+* - added correct reference sequences for 2019
 */
 //###################################################################################
 //################################ CIVA GLIDERS FREE ################################
@@ -107,7 +109,7 @@ rules.push("[glider-CIVA Unlimited Free Known]");// specific rules for the Unlim
 
 rules.push("figure-letters=ABCDE");
 
-rules.push('reference="@A" kif- "@B" -\'\',4\'\'irp--~ "@C" `-iao6-` "@D" `-48ig2+` "@E" `+\'2f`w');
+rules.push('reference="@A" 2a22 "@B" o2- "@C" ```-ta+``` "@D" 2ft4 "@E" 1jo1');
 
 // what info should be filled out
 rules.push("infocheck=pilot;actype;acreg;positioning");
@@ -975,7 +977,7 @@ rules.push("[glider-CIVA Advanced Free Known]");// specific rules for the Advanc
 
 rules.push("figure-letters=ABCDE");
 
-rules.push('reference="@A" -2irc1- "@B" ta``4+`` "@C" m48 "@D" -2t "@E" -io-');
+rules.push('reference="@A" ,4irp\',"|"24~ "@B" iv4 "@C" 44m- "@D" -id24 "@E" ita``4.');
 
 // what info should be filled out
 rules.push("infocheck=pilot;actype;acreg;positioning");

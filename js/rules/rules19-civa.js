@@ -83,6 +83,8 @@ OpenAero 2016.3.2
 * - corrected required rolling turns for Free Known 
 * 2018.3
 * - changed Advanced Free Known reference sequence again
+* 2019.1.3
+* - added correct reference sequences for 2019
 */
 
 //#######################################################################################
@@ -155,7 +157,7 @@ rules.push("sf=^2\\.:2;^5\\.:5;^6\\.:6;^1\\.:7;^3\\.:7;^7\\.:7;^8\\.:7;^0\\.:7")
 rules.push("[CIVA Unlimited Free Known]");
 rules.push("posnl=40");//assume no line judges
 rules.push("poslj=20");
-rules.push('reference="@A" o3f,3 "@B" 34bb3if-> "@C" -``6is,2irpf,2if "@D" -,6ta`24. "@E" 3jio51-');
+rules.push('reference="@A" ,3fh3\'\'-^> "@B" 4jo2 "@C" -````22,2ac(`6if`)1````- "@D" 6p(if),24 "@E" ``s;2in(,48)1');
 
 rules.push("more=CIVA/IAC Unlimited Free Known");
 
@@ -790,7 +792,7 @@ rules.push("opposite-min=1");//one opposite roll is required!
 
 rules.push("figure-letters=ABCDE");
 
-rules.push('reference="@A" -4,3m,6;f "@B" frdb24 "@C" 2dh(8)24 "@D" ````6s..ik4,34- "@E" -2j15');
+rules.push('reference="@A" 1dh(4)3f\' "@B" ,2pb``,3\'\' "@C" -`is\'\'irp3,34-~ "@D" -6m6f "@E" -2j2-');
 
 // what info should be filled out
 rules.push("infocheck=pilot;actype;acreg;positioning");
@@ -1190,7 +1192,7 @@ rules.push("opposite-min=1"); //one opposite roll is required!
 
 rules.push("figure-letters=ABCDE");
 
-rules.push('reference="@A" 4b "@B" 8h2 "@C" ````24.\'g "@D" ```s\'irp4,3 "@E" -1jo1-');
+rules.push('reference="@A" o22 "@B" ,4h "@C" ````6s.\'ik1 "@D" 1jo1 "@E" mf;24');
 
 // what info should be filled out
 rules.push("infocheck=pilot;actype;acreg;positioning");

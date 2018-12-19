@@ -1,3 +1,7 @@
+2019.1.3
+* improved roll selection to only show allowed rolls from rules and/or Aresti
+* fixed issue with Chrome autocomplete on combo boxes in Sequence Info
+
 2019.1.2
 * updated steganography for adding sequence data to png file
 * changed sequence file loading to asynchronous

@@ -258,6 +258,8 @@ var fuFig = [];
 var figBaseLookup = [];
 // figGroup holds the figure group data
 var figGroup = [];
+// rollFig wild hold all rolls as objects, key = rollBase
+var rollFig = {};
 // rollBase holds the base for each roll (roll, snap, spin) element
 var rollBase = [];
 // rollAresti is the Aresti number for each roll
@@ -6152,66 +6154,115 @@ function buildPlusMinElement (id, value, el) {
 
 // addRollSelectElement adds roll select elements to the parent element
 function addRollSelectElement (figNr, rollEl, elNr, parent) {
-  var thisRoll = figures[figNr].rollInfo[rollEl];
-  var pattern = '';
+  var
+	  thisRoll = figures[figNr].rollInfo[rollEl],
+	  thisAttitude = rollAttitudes[thisRoll.attitude]
+	  ruleCheckRolls = rulesActive && 
+		  (Object.keys(checkAllowCatId).length > 0),
+	  pattern = '',
+	  span = document.createElement ('span'),
+	  html = '<div class="form-group">' +
+		  '<select id="roll' + rollEl + '-' + elNr +
+	    '" class="rollSelect disableRollFUfig">';
+
+  span.classList.add ('rollElement');
+	  
   if (thisRoll.pattern[elNr]) {
     pattern = thisRoll.pattern[elNr];
     // handle special case where (non-standard) 28 is used i.s.o. 8
     if (pattern === '28') pattern = '8';
   }
-  var span = document.createElement ('span');
-  span.classList.add ('rollElement');
-  var html = '<div class="form-group">' +
-	  '<select id="roll' + rollEl + '-' + elNr +
-    '" class="rollSelect disableRollFUfig">';
+
   // build the slow roll options
   for (var i = 0; i < rollTypes.length; i++) {
     var roll = rollTypes[i].split(':');
-    html += '<option value="'+roll[0]+'" class="rollSelectOption"';
-    if (roll[0] == pattern) html += ' selected="selected"';
-    html += '>'+roll[1]+'</option>';
+    // only show no roll, active roll and valid rolls
+    if (i == 0 || roll[0] == pattern || !ruleCheckRolls ||
+	    document.getElementById('nonArestiRolls').checked ||
+	    (rollFig[thisAttitude + roll[0]].aresti) in checkAllowCatId) {
+	    html += '<option value="'+roll[0]+'" class="rollSelectOption"';
+	    if (roll[0] == pattern) html += ' selected="selected"';
+	    html += '>'+roll[1]+'</option>';
+		}
   }
   // build the positive flick options
+  thisAttitude = (thisRoll.negLoad ? '-' : '+') +
+	  rollAttitudes[thisRoll.attitude];
   for (var i = 0; i < posFlickTypes.length; i++) {
-    var roll = posFlickTypes[i].split(':');
-    html += '<option value="'+roll[0]+'" class="posFlickSelectOption"';
-    if (roll[0] == pattern) html += ' selected="selected"';
-    html += '>'+roll[1]+'</option>';
+    var
+	    roll = posFlickTypes[i].split(':'),
+	    rollPattern = roll[0].replace (/^1/, '');
+    if (rollPattern == pattern || !ruleCheckRolls ||
+	    document.getElementById('nonArestiRolls').checked ||
+	    (rollFig[thisAttitude + roll[0]].aresti) in checkAllowCatId) {
+	    html += '<option value="' + rollPattern +
+		    '" class="posFlickSelectOption"';
+	    if (rollPattern == pattern) html += ' selected="selected"';
+	    html += '>'+roll[1]+'</option>';
+		}
   }
   // build the negative flick options
   for (var i = 0; i < negFlickTypes.length; i++) {
-    var roll = negFlickTypes[i].split(':');
-    html += '<option value="'+roll[0]+'" class="negFlickSelectOption"';
-    if (roll[0] == pattern) html += ' selected="selected"';
-    html += '>'+roll[1]+'</option>';
+    var
+	    roll = negFlickTypes[i].split(':'),
+	    rollPattern = roll[0].replace (/^1/, '');
+    if (rollPattern == pattern || !ruleCheckRolls ||
+	    document.getElementById('nonArestiRolls').checked ||
+	    (rollFig[thisAttitude + roll[0]].aresti) in checkAllowCatId) {
+	    html += '<option value="' + rollPattern +
+		    '" class="negFlickSelectOption"';
+	    if (rollPattern == pattern) html += ' selected="selected"';
+	    html += '>'+roll[1]+'</option>';
+		}
   }
   // add spins when rollcode = 4 AND in first element, OR nonArestiRolls
   // is enabled
+  thisAttitude = rollAttitudes[thisRoll.attitude];
   if ((fig[figures[figNr].figNr].rolls[rollEl] === 4 && (elNr === 0)) ||
 	  document.getElementById('nonArestiRolls').checked) {
 	  // build the positive spin options
 	  for (var i = 0; i < posSpinTypes.length; i++) {
-	    var roll = posSpinTypes[i].split(':');
-	    html += '<option value="'+roll[0]+'" class="posSpinSelectOption"';
-	    if (roll[0] == pattern) html += ' selected="selected"';
-	    html += '>'+roll[1]+'</option>';
+	    var
+		    roll = posSpinTypes[i].split(':'),
+		    rollPattern = roll[0].replace (/^1/, '');
+	    if (rollPattern == pattern ||
+		    document.getElementById('nonArestiRolls').checked ||
+		    (thisRoll.negLoad && (!ruleCheckRolls ||
+		    (rollFig[thisAttitude + roll[0]].aresti) in checkAllowCatId))) {
+		    html += '<option value="' + rollPattern +
+		    '" class="posSpinSelectOption"';
+		    if (rollPattern == pattern) html += ' selected="selected"';
+		    html += '>'+roll[1]+'</option>';
+			}
 	  }
 	  // build the negative spin options
 	  for (var i = 0; i < negSpinTypes.length; i++) {
-	    var roll = negSpinTypes[i].split(':');
-	    html += '<option value="'+roll[0]+'" class="negSpinSelectOption"';
-	    if (roll[0] == pattern) html += ' selected="selected"';
-	    html += '>'+roll[1]+'</option>';
+	    var
+		    roll = negSpinTypes[i].split(':'),
+		    rollPattern = roll[0].replace (/^1/, '');
+	    if (rollPattern == pattern ||
+		    document.getElementById('nonArestiRolls').checked ||
+		    (!thisRoll.negLoad && (!ruleCheckRolls ||
+		    (rollFig[thisAttitude + roll[0]].aresti) in checkAllowCatId))) {
+		    html += '<option value="' + rollPattern +
+		    '" class="negSpinSelectOption"';
+		    if (rollPattern == pattern) html += ' selected="selected"';
+		    html += '>'+roll[1]+'</option>';
+			}
 	  }
 	}
   // build the glider slow roll options
   if (sportingClass.value === 'glider') {
     for (var i = 0; i < gliderRollTypes.length; i++) {
       var roll = gliderRollTypes[i].split(':');
-      html += '<option value="'+roll[0]+'" class="rollSelectOption"';
-      if (roll[0] == pattern) html += ' selected="selected"';
-      html += '>'+roll[1]+'</option>';
-    }
+      if (roll[0] == pattern || !ruleCheckRolls ||
+		    document.getElementById('nonArestiRolls').checked ||
+		    (rollFig[thisAttitude + roll[0]].aresti) in checkAllowCatId) {
+	      html += '<option value="' + roll[0] + '" class="rollSelectOption"';
+	      if (roll[0] == pattern) html += ' selected="selected"';
+	      html += '>' + roll[1] + '</option>';
+	    }
+		}
   }
   
   html += '</select><i class="bar"></i></div>';
@@ -8375,7 +8426,7 @@ function parseFiguresFile () {
     } else {
       if (splitLine[0]) {
         // Next we split the Aresti and K-factors part
-        var arestiK = splitLine[1].split("(")
+        var arestiK = splitLine[1].split("(");
         var kFactors = arestiK[1].replace(")","").split(":");
         if (!arestiK[1].match(/:/)) kFactors[1] = kFactors[0];
         // Split K factors on the colon; kFactors[0] is for Powered,
@@ -8478,10 +8529,18 @@ function parseFiguresFile () {
         } else {
         // Handle rolls
           delete (fig[i]); // no fig object for rolls
+          rollFig [splitLine[0]] = {
+						aresti: arestiK[0],
+						kPwrd: parseInt(kFactors[0]),
+	          kGlider: parseInt(kFactors[1])
+					};					
+
+					/** Deprecated use as of 2019 */
           rollBase[i] = splitLine[0];
           rollAresti[i] = arestiK[0];
           rollKPwrd[i] = parseInt(kFactors[0]);
           rollKGlider[i] = parseInt(kFactors[1]);
+
         }
       }
     }
@@ -15476,6 +15535,7 @@ function sanitizeFileName (fname) {
     .replace(windowsReservedRe, '');
   return (sanitized.substring (0, 255));
 }
+
 // updateSaveFilename gets called when the "Save as" filename is changed
 function updateSaveFilename (fname) {
 	var field = document.getElementById('dlTextField');
@@ -17514,18 +17574,20 @@ function buildMoveDown (extent, i) {
 // figure_chooser = Optional argument, true if we are building the
 //                  figure for the figure chooser
 function buildFigure (figNrs, figString, seqNr, figStringIndex, figure_chooser) {
-  var figNr = figNrs[0];
-  var roll = [];
-  var rollSums = [];
-  var rollPatterns = [];
-  var rollInfo = [];
-  // lowKFlick is set when the K for flick should be low:
-  // vertical down after hammerhead, tailslide or after roll element
-  var lowKFlick = false;
-  // entryAxis identifies the axis on which the figure starts
-  var entryAxis = ((Direction == 0) || (Direction == 180)) ? 'X' : 'Y';
-  var entryAtt = Attitude;
-  var entryDir = Direction;
+  var
+	  figNr = figNrs[0],
+	  roll = [],
+	  rollSums = [],
+	  rollPatterns = [],
+	  rollInfo = [],
+	  // lowKFlick is set when the K for flick should be low:
+	  // vertical down after hammerhead, tailslide or after roll element
+		lowKFlick = false,
+	  // entryAxis identifies the axis on which the figure starts
+	  entryAxis = ((Direction == 0) || (Direction == 180)) ? 'X' : 'Y',
+	  entryAtt = Attitude,
+	  entryDir = Direction;
+	  
   // goFront is set to true for every new figure that starts to front
   if (((Direction == 90) && (Attitude == 0)) || ((Direction == 270) && (Attitude == 180))) {
     goFront = false;
@@ -18097,6 +18159,8 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex, figure_chooser) 
         break;
       // Make rolls, including any line lenghthening and/or shortening
       case (figpat.fullroll):
+				rollInfo[rollnr].attitude = Attitude;
+				rollInfo[rollnr].negLoad = NegLoad;
         // Make a space on the figCheckLine before every possible roll
         figCheckLine[seqNr] = figCheckLine[seqNr] + ' ';
         // mark rolls in the top
