@@ -6257,7 +6257,8 @@ function addRollSelectElement (figNr, rollEl, elNr, parent) {
       var roll = gliderRollTypes[i].split(':');
       if (roll[0] == pattern || !ruleCheckRolls ||
 		    document.getElementById('nonArestiRolls').checked ||
-		    (rollFig[thisAttitude + roll[0]].aresti) in checkAllowCatId) {
+		    (rollFig[thisAttitude + roll[0]] && 
+		    (rollFig[thisAttitude + roll[0]].aresti) in checkAllowCatId)) {
 	      html += '<option value="' + roll[0] + '" class="rollSelectOption"';
 	      if (roll[0] == pattern) html += ' selected="selected"';
 	      html += '>' + roll[1] + '</option>';
