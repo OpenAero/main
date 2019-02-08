@@ -1,5 +1,11 @@
+2019.1.6
+* updated url sequence loading to clean url after sequence is loaded
+* moved parseRules earlier in loading to assure correct Library menu on mobile
+* added Federation of Aerobatics Sports of Russia logo
+* removed steganography as it's causing faillure of png generating
+
 2019.1.5
-* added IAC sequences for 2019
+* added IAC Power and Glider Known sequences for 2019
 
 2019.1.4
 * fixed issue with roll selection for Glider created in 2019.1.3

@@ -4923,6 +4923,11 @@ function doOnLoad () {
 		
 	}
 
+  // Parse the rules
+  parseRules();
+  // set default Form to B
+  activeForm = 'B';
+
   if (platform.mobile || platform.smallMobile) mobileInterface();
     
   // add all listeners for clicks, keyup etc
@@ -4989,12 +4994,7 @@ function doOnLoad () {
   // window.onresize = windowResize;
   // window.matchMedia('(orientation: portrait)').addListener (windowResize);
   // window.matchMedia('(orientation: landscape)').addListener (windowResize);
-  
-  // Parse the rules
-  parseRules();
-  // set default Form to B
-  activeForm = 'B';
-    
+      
   // Activate the first figure selection group
   changeFigureGroup();
   document.getElementById('figureHeader').innerHTML = '';
@@ -5024,7 +5024,10 @@ function doOnLoad () {
   document.getElementById ('team').appendChild (fragment);
 
   // Load sequence from URL if sequence GET element is set.
-  launchURL ({'url': window.document.URL});
+  // Reload with clean url if storage is true
+  if (launchURL ({'url': window.document.URL}) && storage) {
+		window.location = window.document.URL.replace (/\?s.+/, '');
+	}
   
   // When no sequence is active yet, load sequence storage (if any).
   // Do this after the rules have been loaded to make sure rules stay
@@ -5173,8 +5176,8 @@ function launchURL (launchData) {
     match = match[0].replace(/^\?(sequence|s)=/, '');
     if (match.match (/^%3Csequence%3E/)) {
       // before 1.5.0    : URI encoded link
-      // Make sure to decode %2B to + character
-      return activateXMLsequence (decodeURI (match.replace(/%2B/g, '+')));
+      // decode %2B to + character
+      var string = decodeURI (match.replace(/%2B/g, '+'));
     } else {
       // 1.5.0 and later : base64url encoded link
       var string = decodeBase64Url (match);
@@ -5196,8 +5199,8 @@ function launchURL (launchData) {
         }
         string = '<sequence>' + parts.join ('<') + '</sequence>';
       }
-      return activateXMLsequence (string);
     }
+		return activateXMLsequence (string);
   }
   return false;
 }
@@ -17359,7 +17362,8 @@ function savePNG () {
     // wrap conversion in try, in case it fails
     try {
       svgToPng (buildForms(), function(canvas){
-        steg.encode (activeSequence.xml, canvas).toBlob(function(blob){
+//        steg.encode (activeSequence.xml, canvas.toDataURL()).toBlob(function(blob){
+        canvas.toBlob(function(blob){
         
         saveFile(
           blob,
