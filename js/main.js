@@ -4859,6 +4859,11 @@ function doOnLoad () {
 				case 'android':
 					// handle Intents for Android
 					window.plugins.intent.setNewIntentHandler(cordovaHandleIntent);
+					window.plugins.webintent.onNewIntent(function (uri) {
+				    if (uri.match (/^https:\/\/openaero.net\/\?s=/)) {
+							launchURL ({url : uri});
+						}
+					});
 				  // Handle the Intent when the app is not open
 				  // This will be executed only when the app starts or wasn't active
 				  // in the background

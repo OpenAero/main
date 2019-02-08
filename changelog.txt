@@ -3,6 +3,7 @@
 * moved parseRules earlier in loading to assure correct Library menu on mobile
 * added Federation of Aerobatics Sports of Russia logo
 * removed steganography as it's causing faillure of png generating
+* fixed loading of sequence links in Android app when app was already open
 
 2019.1.5
 * added IAC Power and Glider Known sequences for 2019
