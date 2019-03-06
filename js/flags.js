@@ -1,4 +1,4 @@
-// flags.js 1.3.4
+// flags.js
 // This file is part of OpenAero.
 
 //  OpenAero was originally designed by Ringo Massa and built upon ideas

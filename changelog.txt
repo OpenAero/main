@@ -1,3 +1,10 @@
+2019.1.7
+* updated AAC logo
+* added AAC rules for 2019
+* added AAC sequences for 2019
+* fixed issue of logo not updating in interface after rule change
+* added Svenska Konstflygförbundet logo
+
 2019.1.6
 * updated url sequence loading to clean url after sequence is loaded
 * moved parseRules earlier in loading to assure correct Library menu on mobile

@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# OpenAero version 2019.1.6
+# OpenAero version 2019.1.7
 appcache.manifest
 changelog.txt
 cordova.js
@@ -68,9 +68,9 @@ js/main.js
 js/rules/rules15-ga.js
 js/rules/rules16-sac.js
 js/rules/rules16.js
-js/rules/rules17-aac.js
 js/rules/rules17-baea.js
 js/rules/rules18-france.js
+js/rules/rules19-aac.js
 js/rules/rules19-iac.js
 js/rules/rules19-civa.js
 js/rules/rules19-glider-civa.js

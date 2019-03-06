@@ -8082,13 +8082,13 @@ function changeCombo(id) {
     e.nextElementSibling.innerHTML = userText[e.id];
   }
   
-  var rulesActiveSave = rulesActive;
-  var rules = document.getElementById('rules');
-  var ruleName = getRuleName();
-  var category = document.getElementById('category');
-  var categoryName = category.value.toLowerCase();
-  var program = document.getElementById('program');
-  var programName = program.value.toLowerCase();
+  var rulesActiveSave = rulesActive,
+	  rules = document.getElementById('rules'),
+	  ruleName = getRuleName(),
+	  category = document.getElementById('category'),
+	  categoryName = category.value.toLowerCase(),
+	  program = document.getElementById('program'),
+	  programName = program.value.toLowerCase();
 
   if (id === 'rules') {
     // set logo
@@ -8320,9 +8320,10 @@ function selectLogo(logo) {
   if (!replace) drawActiveLogo();
   // move the logo smoothly into place from logoChooser
   if (this.getAttribute) {
-    var el = document.getElementById('logoImage');
-    var elBox = el.getBoundingClientRect ();
-    var thisBox = this.firstChild.getBoundingClientRect ();
+    var
+	    el = document.getElementById('logoImage'),
+	    elBox = el.getBoundingClientRect (),
+	    thisBox = this.firstChild.getBoundingClientRect ();
     // set transform for new logo. Take into account that the old logo
     // container may have been moved left from view if no logo was
     // active
@@ -8335,7 +8336,10 @@ function selectLogo(logo) {
       el.style = '';
       hideLogoChooser();
     }, 300);
-  }
+  } else if (replace) {
+		// or just replace if not from logoChooser
+	  drawActiveLogo();
+	}
   changeSequenceInfo();
 }
 
