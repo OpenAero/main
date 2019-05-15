@@ -1,3 +1,19 @@
+2019.2
+* corrected notation of figures 1.2.11.x and 1.2.12.x as their exit attitude notation was swapped
+* moved rule loading and checking to separate Worker for improved performance and extendability
+* included sprintf.js in main.js and rulesWorker.js
+* removed Alert displaying from draw routine as this is handled elsewhere
+* fixed Alert sorting for complete figure number, not just the first digit
+* "Check multiple sequences" now also shows in alertBox on Chrome app
+* "Check sequences" in multi dialog disabled when no sequences in list
+* improved code for changing figure K through rules
+* moved all OLAN (antique...) corrections to a single OLAN variable
+* removed Chrome # anchor bug fix, is now fixed in Chrome browser
+* added automatic selection and 'Copy to clipboard' for sequence check log windows
+* fixed bug in cookie detection to enable running without cookies
+* fixed issue that made it possible to still select a figure that was hidden because of rules
+* fixed issue that caused printing to fail with Pilot Cards selected after Free Unknown Designer was used 
+ 
 2019.1.7
 * updated AAC logo
 * added AAC rules for 2019

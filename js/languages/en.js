@@ -148,22 +148,21 @@ lang.en = {
 'checkingRules' : 'Sequence checking rules',
 'checkMulti' : 'Check multiple sequences',
 'checkMultiClose' : 'Close',
-'checkMultiCounter' : 'Checking sequence %s of %s<br>%s<br>This may ' +
-  'take some time. Please wait...',
+// new 2019.2
+'checkMultiCounter' : 'Checking sequence %s<br><br><strong>%s ' +
+	'remaining</strong>',
 'checkMultipleSeq' : 'Check multiple seq',
 'checkMultiUseReference' : 'Use <a href="#">reference sequence</a> ' +
   'for Free (Un)known',
-'checkMultiWait' : 'Checking %s sequences.<br>This may ' +
-  'take some time. Please wait...',
 'checkSequence' : 'Check sequence',
 'checkSequenceLog' : 'Show log',
 'checkSequenceOK' : 'OK',
 'checkSequenceResult' : 'Sequence check result',
 'checkSequences' : 'Check sequences',
 'chooseFiles' : '<strong>Choose your files</strong>',
-'chooseFilesOrDrop' : '<strong>Choose your files</strong> or drag them here',
+'chooseFilesOrDrop' : 'Choose your files or drag them here',
 'chooseFilesPrint' : '<strong>Choose your files</strong>',
-'chooseFilesOrDropPrint' : '<strong>Choose your files</strong> or drag them here',
+'chooseFilesOrDropPrint' : 'Choose your files or drag them here',
 'chooseLogo' : 'Choose logo',
 'class' : 'Class',
 'clearPositioning' : 'Clear positioning',
@@ -405,8 +404,8 @@ lang.en = {
   'This means some functions of OpenAero will not work.<br>' +
   'To enable cookies in the Chrome browser, please copy the following ' +
   'url to your address bar:<br />' + 
-  '<strong>chrome://chrome/settings/content</strong><br />' +
-  'and choose <i>Allow local data to be set</i>.',
+  '<strong style="user-select: text;">chrome://settings/content/cookies</strong><br />' +
+  'and make sure cookies are not blocked.',
 'noFigureLetterAssigned' : '(%s) No figure letter assigned',
 'noFreeUnknownFig' : 'No figure letter',
 'nonArestiRolls' : 'Allow non-Aresti rolls and combinations (try ' + 
@@ -493,13 +492,15 @@ lang.en = {
 'printMultipleSeq' : 'Print multiple seq',
 'printMultiWait' : 'Printing %s sequences.<br>This may ' +
   'take some time. Please wait...',
-// changed 2018.2.1
 'printNotes' : 'Notes (top of pages)',
 'printPilotCards' : 'Pilot cards',
 'printSaveForms' : 'Print/save forms',
 'printSavePdf' : 'Print / Save PDF',
 'printSF' : 'Super Family numbers',
 'printString' : 'Sequence string',
+// new 2019.2
+'processingMultiCounter' : 'Processing sequence %s<br><br><strong>%s ' +
+	'remaining</strong>',
 'program' : 'Program',
 'programme' : 'Programme',
 'proposalsCreate' : 'Create new proposals',
@@ -706,7 +707,16 @@ lang.en = {
   'Grid and contains a figure exit direction change (^ or > symbol). ' +
   'This is handled differently by older versions of OpenAero. Please ' +
   'check the figures to make sure their exit directions are correct ' +
-  'relative to their start (same or opposite).', 
+  'relative to their start (same or opposite).</p>',
+// new 2019.2
+'warningPre20192' : '<p>The file you just opened was created with an ' +
+  'OpenAero version older than 2019.2. Also, it contains one or ' +
+  'more figures of family 1.2.11 or 1.2.12 (triangle figures with ' +
+  'half roll on 45 line).' +
+  'These were incorrectly coded in older versions of OpenAero. They ' +
+  'have now been automatically corrected. Nevertheless, please ' +
+  'check the sequence to make sure their exit directions and ' +
+  'attitudes are correct.</p>',
 'wind' : 'wind/vent',
 'windIAC' : 'wind direction',
 'wingRocks' : 'Wing Rocks',

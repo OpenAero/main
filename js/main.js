@@ -176,42 +176,44 @@ var storage = true;
 var loadComplete = false;
 
 // multi is used for keeping track of multiple sequence check globals
-// processing : true when one of multiple sequences is processed
-// total      : total number 
-// count      : current number
-// savedSeq   : sequence active before starting multi check
-var multi = {'processing':false, 'total':0, 'count':0, 'savedSeq':''};
+// processing  : false when multiple sequences are not being processed,
+//               otherwise 'check' or 'print'
+// total       : total number 
+// count       : current number
+// savedSeq    : sequence active before starting multi check
+// useReference: use current reference sequence or not
+var multi = {
+	processing: false,
+	total: 0,
+	count: 0,
+	savedSeq: '',
+	useReference: false};
 
 // saveData is used to hold data for filesaving
 var saveData = {blob: '', ext: ''};
 
-// variables for OLAN Humpty Bump check. Only used when opening OLAN
-// files
-var OLANBumpBugCheck = false;
-var OLANBumpBugFigs = [];
-var OLANNBugFigs = [];
-// variables for automatic conversion of roll directions in OLAN files
-var OLANSequence = false;
-var inFigureXSwitchFig = Infinity;
+// variable for OLAN Humpty Bump check, N check and automatic conversion
+// of roll directions. Only used when opening OLAN files
+var OLAN = {
+	bumpBugCheck: false,
+	bumpBugFigs: [],
+	nBugFigs: [],
+	sequence: false,
+	inFigureXSwitchFig: Infinity
+};
 
 // seqCheckAvail indicates if sequence checking is available for a
 // rule/cat/seq combination
-var seqCheckAvail = [];
+var seqCheckAvail = {};
 // variables used for checking sequence validity
-var checkConv = [];        // conversions
-var checkAllowRegex = [];  // regexes for allowed figures
 var checkAllowCatId = [];  // Catalogue Numbers for allowed figures
 var checkCatGroup = [];
-var checkFigGroup = [];
-var checkRule = [];
 var figCheckLine = [];
-var defRules = [];
 var rulesActive = false;   // Are rules active?
 var infoCheck = [];        // Seq info fields to be filled out when saving or printing
 var figureLetters = '';    // Letters that can be assigned to individual figures
 var additionalFig = {'max': 0, 'totalK': 0};    // Additional figures, max and K
 var ruleSuperFamily = [];  // Array of rules for determining figure SF
-var ruleSeqCheck = [];     // rules for checking complete OpenAero seq string
 
 // savedReference saves the active Reference sequence when it is
 // automatically changed by the reference directive in rules
@@ -225,30 +227,18 @@ aresti  : the Aresti number for each figure
 rolls   : shows which roll positions are possible for each figure
           types are:
           1=full roll, 2=half roll, 3=any roll, 4=any roll or spin, 9=no roll(~)
-kpwrd   : the powered K factor for each figure
-kglide  : the glider K factor for each figure
+kPwrd   : the powered K factor for each figure
+kGlider : the glider K factor for each figure
+kRules  : the rule based K factor for each figure (overruling!)
 draw    : the drawing instructions for each figure
 group   : to which group every figure belongs
 unknownFigureLetter : the figure letter, if applicable
-// Modif GG v2016.1.4 Start
-next    : to chain the lines having the same value of .aresti
-            0 or undefined  = not set ; positive value = line number of the next instance ; -1 last instance
 */
 var fig = [];
-
-// rule_K holds the new figure K and the figure index for which a K
-// change has been set in a rule file in the form rule_K[i].xxx where xxx is:
-// .i_fig  : the index in fig for each figure with a changed K
-// .new_K  : the new K factor for the figure
-var rule_K = [];
-// aresti_K holds the original aresti K and the figure index for which a
-// K change has been set in fig array in the form aresti_K[key].xxx
-// where key is Aresti number and xxx is:
-// .i_fig   : the index in fig for each figure with a changed K
-// .saved_K : the saved K factor for the figure
-var aresti_K = [];
-var aresti_K_class ; // "class" (kpwrd or kglider) of the active rules for setting the corresponding K in fig.
-// Modif GG v2016.1.4 End
+// arestiToFig holds all fig index numbers under key of Aresti number
+var arestiToFig = {};
+// rulesKFigures holds Aresti numbers of figures that had K changed in rules
+var rulesKFigures = {};
 
 // fuFig is similar to fig, holding figures for the Free (Un)known Designer
 var fuFig = [];
@@ -260,18 +250,12 @@ var figBaseLookup = [];
 var figGroup = [];
 // rollFig wild hold all rolls as objects, key = rollBase
 var rollFig = {};
-// rollBase holds the base for each roll (roll, snap, spin) element
-var rollBase = [];
-// rollAresti is the Aresti number for each roll
-var rollAresti = [];
-// rollKPwrd is the K factor for each roll for Powered
-var rollKPwrd = [];
-// rollKGlider is the K factor for each roll for gliders
-var rollKGlider = [];
+// rollArestiToFig holds all rollBase values under key of Aresti number
+var rollArestiToFig = {};
 // alertMsgs will hold any alerts about figures and the sequence
 var alertMsgs = [];
 // alertMsgsRules will hold the Rulebook reference for alerts
-var alertMsgRules = [];
+var alertMsgRules = {};
 // errors is used for tracking startup errors
 var errors = [];
 
@@ -831,6 +815,10 @@ Cover.prototype.decode = function(image, options) {
 return new Cover();
 });
 
+/*! sprintf-js | Alexandru Marasteanu <hello@alexei.ro> (http://alexei.ro/) | BSD-3-Clause */
+
+!function(a){function b(){var a=arguments[0],c=b.cache;return c[a]&&c.hasOwnProperty(a)||(c[a]=b.parse(a)),b.format.call(null,c[a],arguments)}function c(a){return Object.prototype.toString.call(a).slice(8,-1).toLowerCase()}function d(a,b){return Array(b+1).join(a)}var e={not_string:/[^s]/,number:/[dief]/,text:/^[^\x25]+/,modulo:/^\x25{2}/,placeholder:/^\x25(?:([1-9]\d*)\$|\(([^\)]+)\))?(\+)?(0|'[^$])?(-)?(\d+)?(?:\.(\d+))?([b-fiosuxX])/,key:/^([a-z_][a-z_\d]*)/i,key_access:/^\.([a-z_][a-z_\d]*)/i,index_access:/^\[(\d+)\]/,sign:/^[\+\-]/};b.format=function(a,f){var g,h,i,j,k,l,m,n=1,o=a.length,p="",q=[],r=!0,s="";for(h=0;o>h;h++)if(p=c(a[h]),"string"===p)q[q.length]=a[h];else if("array"===p){if(j=a[h],j[2])for(g=f[n],i=0;i<j[2].length;i++){if(!g.hasOwnProperty(j[2][i]))throw new Error(b("[sprintf] property '%s' does not exist",j[2][i]));g=g[j[2][i]]}else g=j[1]?f[j[1]]:f[n++];if("function"==c(g)&&(g=g()),e.not_string.test(j[8])&&"number"!=c(g)&&isNaN(g))throw new TypeError(b("[sprintf] expecting number but found %s",c(g)));switch(e.number.test(j[8])&&(r=g>=0),j[8]){case"b":g=g.toString(2);break;case"c":g=String.fromCharCode(g);break;case"d":case"i":g=parseInt(g,10);break;case"e":g=j[7]?g.toExponential(j[7]):g.toExponential();break;case"f":g=j[7]?parseFloat(g).toFixed(j[7]):parseFloat(g);break;case"o":g=g.toString(8);break;case"s":g=(g=String(g))&&j[7]?g.substring(0,j[7]):g;break;case"u":g>>>=0;break;case"x":g=g.toString(16);break;case"X":g=g.toString(16).toUpperCase()}!e.number.test(j[8])||r&&!j[3]?s="":(s=r?"+":"-",g=g.toString().replace(e.sign,"")),l=j[4]?"0"===j[4]?"0":j[4].charAt(1):" ",m=j[6]-(s+g).length,k=j[6]&&m>0?d(l,m):"",q[q.length]=j[5]?s+g+k:"0"===l?s+k+g:k+s+g}return q.join("")},b.cache={},b.parse=function(a){for(var b=a,c=[],d=[],f=0;b;){if(null!==(c=e.text.exec(b)))d[d.length]=c[0];else if(null!==(c=e.modulo.exec(b)))d[d.length]="%";else{if(null===(c=e.placeholder.exec(b)))throw new SyntaxError("[sprintf] unexpected placeholder");if(c[2]){f|=1;var g=[],h=c[2],i=[];if(null===(i=e.key.exec(h)))throw new SyntaxError("[sprintf] failed to parse named argument key");for(g[g.length]=i[1];""!==(h=h.substring(i[0].length));)if(null!==(i=e.key_access.exec(h)))g[g.length]=i[1];else{if(null===(i=e.index_access.exec(h)))throw new SyntaxError("[sprintf] failed to parse named argument key");g[g.length]=i[1]}c[2]=g}else f|=2;if(3===f)throw new Error("[sprintf] mixing positional and named placeholders is not (yet) supported");d[d.length]=c}b=b.substring(c[0].length)}return d};var f=function(a,c,d){return d=(c||[]).slice(0),d.splice(0,0,a),b.apply(null,d)};"undefined"!=typeof exports?(exports.sprintf=b,exports.vsprintf=f):(a.sprintf=b,a.vsprintf=f,"function"==typeof define&&define.amd&&define(function(){return{sprintf:b,vsprintf:f}}))}("undefined"==typeof window?this:window);
+
 /* iOS drag & drop support */
 /*Copyright (c) 2013 Tim Ruffles
 
@@ -1291,7 +1279,6 @@ var iosDragDropShim = { enableEnterLeave: true,
 
 				// Stop a bounce bug when at the bottom or top of the scrollable element
 				if (!canScrollY || isAtTop || isAtBottom) {
-					/** evt.preventDefault();*/
 					doPreventDefault = true;
 					// Apply X scroll when applicable
 					if (startTouch.x !== curX) {
@@ -1301,10 +1288,6 @@ var iosDragDropShim = { enableEnterLeave: true,
 					}
 				} else doPreventDefault = false;
 
-/**
-				// No need to continue up the DOM, we've done our job
-				return;
-				*/
 				// continue up the DOM to check for scrollable parents
 			}
 
@@ -1660,16 +1643,6 @@ function cordovaHandleIntent (intent) {	// intent.action android.intent.action.M
 // cordovaSave uses the socialsharing plugin to provide options for
 // saving/exporting a file
 function cordovaSave (blob, filename) {
-	/**
-	var onSuccess = function(result) {
-	  console.log("Share completed? " + result.completed); // On Android apps mostly return false even while it's true
-	  console.log("Shared to app: " + result.app); // On Android result.app is currently empty. On iOS it's empty when sharing is cancelled (result.completed=false)
-	}
-	
-	var onError = function(msg) {
-	  console.log("Sharing failed with message: " + msg);
-	}
-	*/
 	
 	// use socialsharing to save or send file through dataURL.
 	var reader = new FileReader();
@@ -1686,40 +1659,6 @@ function cordovaSave (blob, filename) {
 		window.plugins.socialsharing.shareWithOptions (options);
 	}
 	reader.readAsDataURL (blob);
-	
-	/** before 2018.1.9 strategy: create file and share
-	// request filesystem
-	window.requestFileSystem(LocalFileSystem.TEMPORARY, 0, function(fileSystem) {
-		// succes! Create file
-		fileSystem.root.getFile(filename, {create: true, exclusive: false}, function(entry) {
-			// succes! Create writer and write
-			entry.createWriter(function(writer) {
-				// write done?
-				writer.onwrite = function(evt) {
-					// Yes! Share file
-					var message = userText.emailHeader + '\n\n' + 
-			      'https://openaero.net/?s=' + encodeBase64Url(activeSequence.xml);
-					window.plugins.socialsharing.shareWithOptions (
-						{
-							message: message, // not supported on some apps (Facebook, Instagram)
-						  subject: filename, // fi. for email
-							files: [entry.nativeURL] // an array of filenames either locally or remotely
-						},
-						onSuccess,
-						onError);
-				};
-				writer.write(blob);
-			}, function(error) {
-				console.log(error);
-			});
-		}, function(error){
-			console.log(error);
-		});
-	},
-	function(error){
-		console.log(error);
-	});
-	*/
 }
 
 // cordovaPdf opens a pdf in an external viewer
@@ -1987,7 +1926,6 @@ function menuTouch () {
       node = node.parentNode.parentNode;
 			document.body.classList.remove ('menuOpen');
     }
-	  //document.getElementById('hamburgerMenu').classList.remove ('active');
   }, 200);
 }  
 
@@ -2000,7 +1938,6 @@ function menuInactiveAll () {
     el[i].classList.remove ('active');
   }
   document.body.classList.remove ('menuOpen');
-  //document.getElementById('hamburgerMenu').classList.remove ('active');
 }
 
 // newSvg creates a new, minimal svg
@@ -2078,7 +2015,8 @@ function infoBox(message, title) {
 // message contains the HTML text. When false, the box is closed
 // The buttons object may contain an array of buttons to be added of
 // form [{name:xxx, function:yyy}, ...]
-function alertBox(message, title, buttons) {
+function alertBox (message, title, buttons) {
+  if (typeof message === "function") message = message ();
   // hide all menus
   menuInactiveAll();
   
@@ -2107,8 +2045,8 @@ function alertBox(message, title, buttons) {
 
 // confirmBox creates a styled confirm box with 'yes' and 'no' options
 // message contains the HTML text. When false, the box is closed
-// f is a function to be executed after confirm
-function confirmBox(message, title, f) {
+// the callback will be executed after confirm
+function confirmBox(message, title, callback) {
   // hide all menus
   menuInactiveAll();
   
@@ -2117,7 +2055,7 @@ function confirmBox(message, title, f) {
     // show box
     div.classList.remove ('noDisplay');
     dialogBuildContents ('confirm', message, title);
-    confirmFunction = f;
+    confirmFunction = callback;
   } else {
     div.classList.add ('noDisplay');
   }
@@ -2144,8 +2082,7 @@ function dialogBuildContents (boxName, message, title) {
   // Make the message
   if (message.userText) {
     message.params = message.params || [];
-    message.params.splice (0, 0, userText[message.userText] +
-      (errors ? '<p>' + errors.join('</p><p>') + '</p>' : ''));
+    message.params.splice (0, 0, userText[message.userText]);
     document.getElementById(boxName + 'Message').innerHTML =
       sprintf.apply (undefined, message.params);
     // add language chooser, assure correct title formatting
@@ -2154,10 +2091,8 @@ function dialogBuildContents (boxName, message, title) {
       message,
       (typeof title === 'object') ? title : {userText: title, params: []});
   } else {
-    document.getElementById(boxName + 'Message').innerHTML = message +
-      (errors ? '<p>' + errors.join('</p><p>') + '</p>' : '');
+    document.getElementById(boxName + 'Message').innerHTML = message;
   }
-  setTimeout (function(){errors = []}, 2000);
 }
 
 // addLanguageChooser adds flags to a supplied element to change the
@@ -2234,6 +2169,7 @@ function printDialog(show) {
   } else {
     // clear fileList in case we were in printMultiDialog
     fileList = [];
+		saveImageSizeAdjust();
 
     document.getElementById('printDialog').classList.add ('noDisplay');
   }
@@ -2247,6 +2183,7 @@ function printMultiDialog() {
 
   // clear the file list
   fileList = [];
+  multi.processing = false;
   clearFileListContainer (document.getElementById('fileDropPrintFiles'));
 
   var el = document.getElementById('printMultiCurrentRules');
@@ -2351,52 +2288,7 @@ function helpWindow (url, title) {
   } else {
     // open new window for all others
     var w = window.open(url, title, 'menubar=no, scrollbars=yes, status=no, toolbar=no, top=30, width=800');
-    // set location again after 2 seconds to circumvent Chrome bug
-    // regarding anchors later in html
-    if (!/\.pdf$/.test (url)) {
-	    setTimeout(function(){
-	      w.location = url;
-	    }, 2000);
-		}
   }
-}
-
-// newWindow will display a window with content from body and title
-// body can also be a function
-function newWindow (body, title) {
-  if (typeof body === "function") body = body();
-  
-  // empty body?
-  if (!body) body = document.createElement ('body');
-  
-  // handling is different for App, touchdevice and web
-  if (chromeApp.active) {
-    chrome.app.window.create ('window.html', {
-      bounds: {
-        width:800,
-        height:600
-      }
-    }, function(w) {
-      var win = w.contentWindow;
-      win.onLoad = function() {
-        win.document.title = title;
-        win.document.body = body;
-      };
-    });
-  } else {// if (platform.touch) {
-    alertBox ('<div id="newWindow"></div>', title)
-    document.getElementById('newWindow').innerHTML = body.innerHTML;
-  }/* else {
-    var w = window.open ('', title, 'width=800,height=600,top=50,' +
-    'location=no,menubar=no,scrollbars=yes,status=no,toolbar=no');
-    // create data uri
-    var uri = 'data:text/html;base64,' +
-      btoa('<title>' + title + '</title>' +
-      new XMLSerializer().serializeToString(body));
-    // open the window with data uri for contents
-    w.location.assign(uri);
-    w.focus();
-  }*/
 }
 
 // aboutDialog will build a complete 'about' dialog. This includes
@@ -2450,9 +2342,6 @@ function aboutDialog () {
 // Combo box
 // The correct values are put in the select list when the box is
 // activated by user
-
-// fixme: replace by HTML5 combo function (<datalist>) when Safari supports
-
 function combo(id,h,l) {
   var self = this; 
   self.h = h; 
@@ -2605,7 +2494,12 @@ function selectTab (e) {
 // e.g. <a></a> or <div></div>
 // where [key] is the key in userText, e.g. "addingFigure"
 function updateUserTexts () {
-  var language = lang[document.getElementById('language').value];
+  var
+	  language = lang[document.getElementById('language').value],
+	  id,
+	  value,
+	  els = document.getElementsByClassName('userText');
+	  
   // add a warning to the console for every missing key. Helps in
   // creating new translations
   for (var key in lang.en) {
@@ -2617,15 +2511,19 @@ function updateUserTexts () {
   // put language values in userText
   for (var key in language) userText[key] = language[key];
 
-  var id;
-  var value;
-  var els = document.getElementsByClassName('userText');
   for (var i = els.length - 1; i >= 0; i--) {
     id = els[i].id.replace (/^t_/, '');
     value = userText[id];
     if (!value) value = '';
     els[i].innerHTML = value;
   }
+  
+  // update userText in rulesWorker
+  rulesWorker.postMessage ({
+		action: 'userText',
+		language: language,
+		userText: userText});
+
   // rebuild buttons and tooltips
   buildButtons();
 }
@@ -2633,6 +2531,11 @@ function updateUserTexts () {
 /************************************************
  * General functions
  ************************************************/
+
+// uniqueId creates a unique ID by combining millisecond time and random
+function uniqueId () {
+	return (new Date().getTime() + Math.random().toString().substring(2));
+}
 
 // roundTwo returns a number rounded to two decimal places.
 // Use for all drawing functions to prevent rendering errors and keep
@@ -2650,6 +2553,27 @@ function sanitizeSpaces (line, noLT) {
   return line;
 }
 
+// simplifyFigures takes the figures global and returns a leaner version
+// for rule checking by Worker
+function simplifyFigures () {
+	var f = [];
+	for (var i = 0; i < figures.length; i++) {
+		f[i] = {
+			additional: figures[i].additional,
+			aresti: figures[i].aresti,
+			checkLine: figures[i].checkLine,
+			entryAtt: figures[i].entryAtt,
+			entryDir: figures[i].entryDir,
+			exitAtt: figures[i].exitAtt,
+			exitDir: figures[i].exitDir,
+			k: figures[i].k,
+			seqNr: figures[i].seqNr,
+			unknownFigureLetter: figures[i].unknownFigureLetter
+		};
+	}
+	return f;
+}
+	
 // getSuperFamily returns the superfamily for a category of the figure
 // described by an array of Aresti numbers
 function getSuperFamily (aresti, category) {
@@ -4810,8 +4734,8 @@ function doOnLoad () {
 	}
   sequenceText = document.getElementById('sequence_text');
   sportingClass = document.getElementById('class');
+	rulesWorker.postMessage ({action: 'sportingClass', class: sportingClass.value});
   fileName = document.getElementById('fileName');
-  getLocal ('fileName', function(value) {fileName.innerText = value});
   newTurnPerspective = document.getElementById('newTurnPerspective');
 						    
 	document.addEventListener ("deviceready", function() {
@@ -4890,8 +4814,12 @@ function doOnLoad () {
   // Check if localStorage is supported. When running as Chrome app, we
   // assume the local storage support is present
   if (!chromeApp.active) {
-    storage = (typeof(localStorage) != 'undefined') ? true : false;
+		try {
+	    storage = (typeof localStorage != 'undefined') ? true : false;
+		} catch {storage = false};
   }
+
+  getLocal ('fileName', function(value) {fileName.innerText = value});
 
   // set correct options and menu items in various places
   setOptions();
@@ -4903,8 +4831,6 @@ function doOnLoad () {
    *  In other functions during load
    */
   updateUserTexts();
-  
-  /** userText is now defined, continue */
 
   // load settings from storage
   loadSettingsStorage();
@@ -4928,12 +4854,25 @@ function doOnLoad () {
 		
 	}
 
+	var
+		scripts = document.getElementsByTagName('script');
+		scriptSrc = [];
+	for (var i = 0; i < scripts.length; i++) {
+		scriptSrc.push (scripts[i].src);
+	}
   // Parse the rules
-  parseRules();
+  rulesWorker.postMessage ({
+		action: 'initialize',
+		arestiToFig, arestiToFig,
+		fig: fig,
+		rollFig: rollFig,
+		rules: rules,
+		scriptSrc: scriptSrc,
+		superFamilies: superFamilies
+	});
+
   // set default Form to B
   activeForm = 'B';
-
-  if (platform.mobile || platform.smallMobile) mobileInterface();
     
   // add all listeners for clicks, keyup etc
   addEventListeners();
@@ -4993,12 +4932,6 @@ function doOnLoad () {
 		  document.getElementById('main').addEventListener('dragover', handleDragOver, false);
 		}
 	}
-	
-  // add onresize event for resizing the sequence text window and/or
-  // platform.smallMobile viewport
-  // window.onresize = windowResize;
-  // window.matchMedia('(orientation: portrait)').addListener (windowResize);
-  // window.matchMedia('(orientation: landscape)').addListener (windowResize);
       
   // Activate the first figure selection group
   changeFigureGroup();
@@ -5061,9 +4994,6 @@ function doOnLoad () {
 
   if (platform.smallMobile) selectTab('tab-sequenceInfo');
   
-  // add submenu showing/hiding
-  addMenuEventListeners();
-  
   // enable hiding dialogs by tapping outside dialog, but not in
   // scrollbars
   var els = document.getElementsByClassName ('boxbg');
@@ -5103,32 +5033,34 @@ function doOnLoad () {
   // check if we are running from a file (DEPRECATED)
   if (window.location.protocol === 'file:') {
     if (presentFileError) errors.push (userText.runFromFile);
-  } else {
-    // set alert if localStorage is disabled
-    if (!storage) errors.push (userText.noCookies);
   }
+  
   // check if we are running from http i.s.o. https (DEPRECATED sep 2016)
   if ((window.location.protocol === 'http:') &&
     !window.location.hostname.match (/^devel./)) {
     errors.push (userText.runOverHttp);
   }
-  
-  // show alert box for any errors (they are automatically appended)
-  if (errors.length) alertBox ('<p></p>');
+
+	// set alert if localStorage is disabled
+	if (!storage) errors.push (userText.noCookies);
+    
+  // show alert box for any errors
+  if (errors.length) alertBox ('<p>' + errors.join('</p><p>') + '</p>');
+  errors = [];
 
   // Check if an update has just been done
   checkUpdateDone();
 
-  loadComplete = true;
+  // retrieve queue from storage
+  queueFromStorage ();
 
   // check for latest version in a few seconds
   if (!(chromeApp.active || window.location.hostname.match(/^(.+\.)?openaero.net$/))) {
     setTimeout(getLatestVersion, 3000);
   }
-  
-  // retrieve queue from storage
-  queueFromStorage ();
 
+  loadComplete = true;
+  
   // load (mostly) completed, remove loading icon in 1/2 second
   if (!platform.cordova) {
 		setTimeout (function() {loading.style = 'opacity: 0.01;';}, 100);
@@ -5600,6 +5532,8 @@ function addEventListeners () {
 // addMenuEventListeners adds event listeners for showing and hiding 
 // submenus to all menus
 function addMenuEventListeners() {
+	// make sure loading is complete
+	if (!loadComplete) setTimeout (addMenuEventListeners, 100);
   // menu showing and hiding. Add listeners to all <li> menu items
   function addListeners(e) {
     var li = e.getElementsByTagName ('li');
@@ -5624,6 +5558,8 @@ function addMenuEventListeners() {
   
   var menu = document.getElementById ('menu');
   addListeners(menu);
+  
+  if (platform.mobile || platform.smallMobile) mobileInterface();
 }
 
 // checkForApp will check if the OpenAero Chrome app is present
@@ -6802,6 +6738,7 @@ function changePilotCardPercent () {
 
 // selectPwrdGlider is activated when powered or glider is chosen
 function selectPwrdGlider () {
+	rulesWorker.postMessage ({action: 'sportingClass', class: sportingClass.value});
   // update figure chooser
   changeFigureGroup();
   // update figure entryExit values
@@ -6816,26 +6753,40 @@ function selectPwrdGlider () {
   }
   // update rule list
   updateRulesList();
-  changeCombo ('program');
-  // select no figure to force roll option redraw
-  selectFigure (false);
-  // redraw including mini form A
-  draw();
-  // update sequence info
-  changeSequenceInfo();
-  // hide Harmony field for powered
-  var el = document.getElementById ('harmonyField');
-  if (el) {
-    if (sportingClass.value === 'powered') {
-      el.classList.add ('hidden');
-      document.getElementById ('harmony').setAttribute ('disabled', true);
-    } else {
-      el.classList.remove ('hidden');
-      document.getElementById ('harmony').removeAttribute ('disabled');
-    }
-  }
+  changeCombo ('program', function(data){
+		 // select no figure to force roll option redraw
+	  selectFigure (false);
+	  // redraw including mini form A
+	  draw();
+	  // update sequence info
+	  changeSequenceInfo();
+	  // hide Harmony field for powered
+	  var el = document.getElementById ('harmonyField');
+	  if (el) {
+	    if (sportingClass.value === 'powered') {
+	      el.classList.add ('hidden');
+	      document.getElementById ('harmony').setAttribute ('disabled', true);
+	    } else {
+	      el.classList.remove ('hidden');
+	      document.getElementById ('harmony').removeAttribute ('disabled');
+	    }
+	  }
+	});
 }
 
+// setRulesPosHarmony sets positioning and harmony from rule Worker
+function setRulesPosHarmony (positioning, harmony) {
+	var el = document.getElementById('positioning');
+	el.value = positioning;
+  el.setAttribute ('disabled', true);
+  var el = document.getElementById('harmony');
+  el.value = harmony;
+  el.setAttribute ('disabled', true);
+	if (!harmony) {
+		document.getElementById ('harmonyField').classList.add ('hidden');
+	}
+}
+			
 // setYAxisOffset sets the Y axis offset
 function setYAxisOffset (offset) {
   yAxisOffset = offset;
@@ -7326,9 +7277,7 @@ function addRollSelectors (figureId) {
 
 // setUndoRedo will update undo/redo buttons and redo object
 function setUndoRedo (e, clear) {
-  if (clear) {
-    activeSequence[e] = [];
-  }
+  if (clear) activeSequence[e] = [];
   if (activeSequence.undo.length) {
     document.getElementById('undo').firstChild.classList.remove ('disabled');
   } else {
@@ -8065,7 +8014,10 @@ function buildSettingsXML () {
 // when called by other routine. In the latter case it should always be
 // called as changeCombo ('program') to prevent strange effects.
 // When noLogo is true, the logo is not changed
-function changeCombo(id) {
+// If a callback is provided, this will be executed with log and alertMsgs
+// as argument. Also when the rules are not changed, sequence check will
+// be done as other code relies on this
+function changeCombo (id, callback) {
   function disable (e) {
     e.value = '';
     if (e.id === 'program') {
@@ -8123,24 +8075,39 @@ function changeCombo(id) {
   if (category.value == '') {
     disable (program);
   } else enable (program);
-
-  loadRules();
   
-  // Load rules and check against the sequence, return log and display
-  // any alerts
-  if (rulesActiveSave != rulesActive) {
-    var log = checkRules();
+	function completeActions() { // called after rule checking
+	  changeSequenceInfo();
+	  // redraw sequence. May be necessary to update (mini) Form A
+	  checkSequenceChanged(true);
+	  // make sure only available figure groups are shown in chooser
+	  availableFigureGroups();
+	}
+	  
+  // Load rules and check against the sequence. Display any alerts.
+  // Activate callback if required.
+  var
+	  ruleName = getRuleName(),
+	  catName = document.getElementById('category').value.toLowerCase(),
+	  programName = document.getElementById('program').value.toLowerCase();
+
+	// load the rules. Worker will decide if it's possible and necessary
+  rulesWorker.postMessage ({
+		action: 'loadRules',
+		ruleName: ruleName,
+		catName: catName,
+		programName: programName
+	});
+
+	// check the rules and execute function
+	checkRules (function (data) {
+		addAlertsToAlertMsgs (data);
     displayAlerts ();
     markFigures ();
     checkInfo ();
-  } else var log = false;
-
-  changeSequenceInfo();
-  // redraw sequence. May be necessary to update (mini) Form A
-  checkSequenceChanged(true);
-  // make sure only available figure groups are shown in chooser
-  availableFigureGroups();
-  return log;
+    completeActions ();
+    if (callback) callback (data);
+	});
 }
 
 // highlight marks part of a text
@@ -8393,6 +8360,7 @@ function removeLogo() {
 // arrays for fast retrieval
 function parseFiguresFile () {
   var
+	  arestiNrs = {};
 	  groupRegex = new RegExp('^F[0-9]'),
 	  figGroupSelector = document.getElementById('figureGroup'),
 	  figGroupNr = 0,
@@ -8446,11 +8414,12 @@ function parseFiguresFile () {
         // kFactors[1] is for Gliders
         fig[i] = {
           'aresti':arestiK[0],
-          'kpwrd':kFactors[0],
-          'kglider':kFactors[1],
+          'kPwrd':kFactors[0],
+          'kGlider':kFactors[1],
           'group':figGroupNr,
           'pattern':splitLine[0]
         };
+        (arestiToFig[arestiK[0]] || (arestiToFig[arestiK[0]] = [])).push(i);
         // We will extract roll elements for everything but roll figures
         // and (rolling) turns
         if (regexTurn.test(splitLine[0])) {
@@ -8546,100 +8515,14 @@ function parseFiguresFile () {
 						aresti: arestiK[0],
 						kPwrd: parseInt(kFactors[0]),
 	          kGlider: parseInt(kFactors[1])
-					};					
-
-					/** Deprecated use as of 2019 */
-          rollBase[i] = splitLine[0];
-          rollAresti[i] = arestiK[0];
-          rollKPwrd[i] = parseInt(kFactors[0]);
-          rollKGlider[i] = parseInt(kFactors[1]);
-
+					};
+	        (rollArestiToFig[arestiK[0]] || (rollArestiToFig[arestiK[0]] = [])).push(splitLine[0]);
         }
       }
     }
   }
   // select first figure group
   if (figGroupSelector) figGroupSelector.value = 1;
-}
-
-// parseRules walks through the rules file to find out which rules
-// are available
-function parseRules (start) {
-  start = start || 0;
-  
-  var sections = [];
-  var year = rulesYear();
-  for (var i=start; i<rules.length; i++) {
-    // Check for [section]
-    if (rules[i][0].match(/[\[\(]/)) {
-      sections.push (rules[i].toLowerCase().replace (/[\[\(\]\)]/g, ''));
-      var parts = rules[i].match (/^[\[\(]([^ ]+) ([^ ]+) (.+)[\]\)]$/);
-      if (parts && parts.length > 3) {
-        // remove first, global, match. We don't need it
-        parts.shift();
-        // Seems like a valid section name. Set correct rule, cat and seq.
-        var ruleName = parts[0];
-        var rnLower = ruleName.toLowerCase();
-        var seqName = parts[parts.length - 1];
-        parts.splice(parts.length - 1, 1);
-        parts.splice(0, 1);
-        var catName = parts.join(' ');
-        console.log('Parsing ' + rules[i]);
-        // only add square-bracket names to rules
-        if (!seqCheckAvail[rnLower]) {
-          // remove 'glider-' in display name, if present
-          ruleName = ruleName.replace (/^glider-/, '');
-          seqCheckAvail[rnLower] = {
-            'show': false,
-            'name': ruleName,
-            'cats':[]
-          };
-        }
-        if (!seqCheckAvail[rnLower].cats[catName.toLowerCase()]) {
-          seqCheckAvail[rnLower].cats[catName.toLowerCase()] = {
-            'show': false,
-            'name': catName,
-            'seqs':[]
-          };
-        }
-        if (rules[i][0] == '[') {
-          seqCheckAvail[rnLower].cats[catName.toLowerCase()].seqs[seqName.toLowerCase()] = seqName;
-          seqCheckAvail[rnLower].show = true;
-          seqCheckAvail[rnLower].cats[catName.toLowerCase()].show = true;
-        } else {
-          seqCheckAvail[rnLower].cats[catName.toLowerCase()].seqs[seqName.toLowerCase()] = '*' + seqName;
-        }
-        
-        // set correct year
-        year = rulesYear (ruleName);
-      }
-    } else if (rules[i].match (/^(demo|programme)[\s]*=/)) {
-      // add library
-      if (seqName && year) {
-        createProgramme (
-          year,
-          rnLower,
-          ruleName,
-          catName,
-          seqName,
-          rules[i].match(/^(demo|programme)[\s]*=[\s]*(.*)$/)[2]
-        );
-      }
-    }
-  }
-
-  // verify all "more=" statements refer to existing sections
-  for (var i=start; i<rules.length; i++) {
-    if (rules[i][0].match(/[\[\(]/)) var currentSection = rules[i];
-    var match = rules[i].toLowerCase().match (/^more[\s]*=[\s]*(.*)$/);
-    if (match) {
-      if (sections.indexOf (match[1]) === -1) {
-        console.log ('*** Error: section ' + currentSection +
-          ' references non-existing section "' + match[1] + '"');
-      }
-    }
-  }
-  updateRulesList();
 }
 
 // getRuleName will create the correct, active, ruleName
@@ -8651,17 +8534,18 @@ function getRuleName () {
 }
 
 // updateRulesList updates the rules field for power or glider
-function updateRulesList () {
+function updateRulesList (avail) {
   var
-	  regex = /^glider-/,
 	  el = document.getElementById('rulesList'),
 	  fragment = document.createDocumentFragment();
-	  
+	
+	if (avail) seqCheckAvail = avail; // update when avail provided
+	
   // clear list
   while (el.firstChild) el.removeChild(el.firstChild);
   // build list for powered or glider
   for (ruleName in seqCheckAvail) {
-    if ((document.getElementById('class').value === 'glider') === regex.test(ruleName)) {  
+    if ((document.getElementById('class').value === 'glider') === /^glider-/.test(ruleName)) {  
       if (seqCheckAvail[ruleName].show) {
         var listItem = document.createElement('li');
         listItem.innerHTML = seqCheckAvail[ruleName].name;
@@ -8715,552 +8599,84 @@ function updateProgramList () {
     }
   }
   el.appendChild (fragment);
-} 
-
-// rulesYear retrieves the year of the rules provided in ruleName.
-// with no ruleName provided, the year of rulesYY.js is used
-function rulesYear (ruleName) {
-  ruleName = ruleName ? '-' + ruleName : '';
-  var year = '';
-  // find the year of the rules from the file name in index.html
-  var scripts = document.getElementsByTagName('script');
-  var regex = new RegExp ('rules/rules([0-9][0-9]+)' + ruleName + '\\.js$', 'i');
-  for (var i = scripts.length - 1; i >=0; i--) {
-    var match = scripts[i].src.match(regex);
-    if (match) {
-      year = (match[1].length == 2 ? '20' + match[1] : match[1]) + ' ';
-      break;
-    }
-  }
-  return year;
 }
-  
-// loadRules loads the rules for the active sequence and stores it in
-// several arrays for fast retrieval
-function loadRules() {
 
-  var ruleName = getRuleName();
-  var catName = document.getElementById('category').value.toLowerCase();
-  var programName = document.getElementById('program').value.toLowerCase();
-  
-  // check if the rules exist. If not, unload rules and return false
-  if (!(seqCheckAvail[ruleName] &&
-    seqCheckAvail[ruleName].cats[catName] &&
-    seqCheckAvail[ruleName].cats[catName].seqs[programName])) {
-    if (rulesActive) unloadRules();
-    return false;
-  }
+// checkRules calls the checkRules worker with a callbackId
+function checkRules (callback) {
+	var id = uniqueId();
+	workerCallback [id] = callback;
+	
+	multi.useReference = document.getElementById ('multiUseReference').checked;
+	rulesWorker.postMessage ({
+		action: 'checkRules',
+		activeSequenceText: activeSequence.text,
+		figures: simplifyFigures(),
+		figCheckLine: figCheckLine,
+		nonArestiRolls: document.getElementById('nonArestiRolls').checked,
+		multi: multi,
+		callbackId: id
+	});
+}
 
-  var year = rulesYear (ruleName);
+// activateRules is called by loadRules Worker
+function activateRules (data) {
+	additionalFig = data.additionalFig;
+	checkAllowCatId = data.checkAllowCatId;
+	checkCatGroup = data.checkCatGroup;
+	infoCheck = data.infoCheck;
+	rulesActive = data.rulesActive;
+	ruleSuperFamily = data.ruleSuperFamily;
+	
+	document.getElementById ('rulesActive').classList.add ('good');
 
-  // return true if rules were already loaded
-  if (rulesActive === (year + ruleName + ' ' + catName + ' ' + programName)) {
-    return true;
-  }
-
-	// unload previous rules
-	unloadRules();
-
-  document.getElementById ('rulesActive').classList.add ('good');
-
-  // Set parseSection to true to match the global rules
-  var parseSection = true;
-  var ruleSection = ruleName + ' ' + catName + ' ' + programName;
-  ruleSection = ruleSection.toLowerCase();
-  console.log ('Loading rules ' + ruleSection);
-  var section = [];
-  var sectionRegex = /[\[\]\(\)]/g;
-  // First clear or preset the variables
-  checkAllowRegex = [];
-  checkAllowCatId = [];
-  checkCatGroup = [];
-  checkFigGroup = [];
-  checkRule = [];
-  defRules = [];
-  checkConv = [];
-  additionalFig = {'max': 0, 'totalK': 0};
-  infoCheck = [];
-  figureLetters = '';
-  ruleSuperFamily = [];
-  ruleSeqCheck = [];
-  var refSeqEl = document.getElementById ('referenceSequenceString');
-  
-  // restore Reference sequence to previous value
-  refSeqEl.value = savedReference;
-  refSeqEl.removeAttribute ('disabled');
-  document.getElementById ('t_referenceSequenceFixed').classList.add ('noDisplay');
-  
-  // Find the sections
-  for (var i = 0; i < rules.length; i++) {
-    if ((rules[i][0] == '[') || (rules[i][0] == '(')) {
-      var name = rules[i].toLowerCase().replace (sectionRegex, '');
-      if (section[name]) {
-        // log duplicate sections. Use the last one as this will allow
-        // rules import by the user
-        console.log('* Warning: duplicate section "' + name +
-        '" at rulenr ' + i + '. May be because of rule import. ' +
-        'Using last section.');
-      }
-      section[name] = i;
-    }
-  }
-  // Walk through the rules
-
-  // First run, simplify rule lines and define groups and Groups
-  for (var i = 0; i < rules.length; i++) {
-    rules[i] = sanitizeSpaces(rules[i]);
-    // Check for [section] or (section) to match sequence type specific
-    // rules
-    if ((rules[i][0] == '[') || (rules[i][0] == '(')) {
-      parseSection = (i == section[ruleSection]) ? true : false;
-    } else if (parseSection) {
-      // when parseSection = true, continue
-      // First we remove any spaces around '=', this makes parsing easier
-      rules[i] = rules[i].replace(/ *= */g, '=');
-      // We also remove spaces around : or ; except when it is a 'why-' line
-      if (!rules[i].match(/^why-.+/)) {
-        rules[i] = rules[i].replace(/ *: */g, ':');
-        rules[i] = rules[i].replace(/ *; */g, ';');
-      }
-      if (rules[i].match(/^more=/)) {
-        // Apply 'more' rules
-        var name = rules[i].replace('more=', '').toLowerCase();
-        if (section[name]) {
-          i = section[name];
-          ruleSection = false; // don't go over this section again!
-        }
-      } else if (rules[i].match(/^group-/)) {
-        // Apply 'group' rules => single catalog id match
-        var newGroup = rules[i].replace(/^group-/, '').split('=');
-        checkCatGroup[newGroup[0]] = [];
-        checkCatGroup[newGroup[0]].regex = RegExp(newGroup[1] + '[0-9\.]*', '');
-      } else if (rules[i].match(/^Group-/)) {
-        // Apply 'Group' rules => full figure (multiple catalog id) match
-        var newGroup = rules[i].replace(/^Group-/, '').split('=');
-        checkFigGroup[newGroup[0]] = [];
-        // when regex ends with $, assume it's fully formatted.
-        // Otherwise, add catch all
-        if (newGroup[1].slice(-1) === '$') {
-          checkFigGroup[newGroup[0]].regex = RegExp(newGroup[1], 'g');
-        } else {
-          checkFigGroup[newGroup[0]].regex = RegExp(newGroup[1] + '[0-9\. ]*', 'g');
-        }
-      }
-    }
-  }
-  
-  parseSection = true;
-  ruleSection = (ruleName + ' ' + catName + ' ' + programName).toLowerCase();
-
-  // Second run, add all other rules
-  for (var i = 0; i < rules.length; i++) {
-    // Check for [section] or (section) to match sequence type specific rules
-    if ((rules[i][0] == '[') || (rules[i][0] == '(')) {
-      parseSection = (i == section[ruleSection]) ? true : false;
-    } else if (parseSection) {
-      // when parseSection = true, continue
-      if (rules[i].match(/^conv-[^=]+=/)) {
-        // Apply 'conv' rules
-        var convName = rules[i].match(/^conv-([^=]+)/)[1];
-        // log duplicate conversions, use latest
-        if (checkConv[convName]) {
-          console.log('* Error: duplicate conversion "' + convName +
-            '" at rulenr ' + i);
-        }
-        checkConv[convName] = [];
-        var convRules = rules[i].match(/^conv-[^=]+=(.*)$/)[1].split(';');
-        for (var j = 0; j < convRules.length; j++) {
-          var c = convRules[j].split('=');
-          // create regex, make sure it matches to the end
-          checkConv[convName].push ({
-            'regex': new RegExp(c[0] + '.*', 'g'),
-            'replace': c[1]
-          });
-        }
-      } else if (rules[i].match(/^more=/)) {
-        // Apply 'more' rules
-        var name = rules[i].replace('more=', '').toLowerCase();
-        if (section[name]) {
-          i = section[name];
-          ruleSection = false; // don't go over this section again!
-        } else {
-          console.log ('*** Error: rule section "' + name +
-            '" does not exist');
-        }
-      } else if (rules[i].match(/^allow=/)) {
-	      // Apply 'allow' rules
-        var newCatLine = rules[i].replace(/^allow=/, '');
-        var newCat = newCatLine.match(/^[^\s]*/g);
-        var newRules = newCatLine.replace(newCat, '').split(';');
-        for (var j = 0; j<newRules.length; j++) {
-          newRules[j] = newRules[j].replace(/^\s+|\s+$/g, '');
-        }
-        checkAllowRegex.push ({'regex':RegExp(newCat, ''), 'rules':newRules});
-      } else if (rules[i].match(/^allow-defrules=/)) {
-	      // Apply 'allow-defrules' rules
-        var newCatLine = rules[i].replace(/^allow-defrules=/, '');
-        defRules = newCatLine.replace(/[\s]+/g, '').split(';');
-      } else if (rules[i].match(/^[0-9]+\./)) {
-        // Apply figure number rules
-        // The key of checkAllowCatId is equal to the figure number
-        // The value is an array of rules that have to be applied
-        var newCatLine = rules[i];
-        var newCat = newCatLine.match(/^[^\s\(]*/g)[0];
-        // Extract in the array newK the specified K if any
-        var newK = newCatLine.match(/\([0-9,:\s]*\)/);	  
-        if (newK) {
-          newCatLine = newCatLine.replace(newK[0], '');
-		      // change from ':' to ',' is not necessary since rules file
-		      // doesn't mix powered and glider
-          newK = newK[0].replace(/[\(\)\s]*/g,'').split(',');
-        } 
-        // Create an array with rules that have to be applied to the figure
-        var newRules = newCatLine.replace(newCat, '').replace(/[\s]+/g, '').split(';');
-        // When there are no rules we want an empty array, whereas split
-        // provides an array with one empty string
-        if (newRules[0] == '') newRules = [];
-        // Check if the figure string applies to multiple figures, such as 1.1.1.1-4
-        // If so, make a new checkAllowCatId for each figure
-        var multiple = newCat.match(/[0-9]+\-[0-9]+$/);
-        if (multiple) {
-          multiple = multiple[0];
-          for (var j = multiple.split('-')[0]; j < (parseInt(multiple.split('-')[1]) + 1); j++) {
-            checkAllowCatId[newCat.replace(multiple, '') + j] = newRules;
-          if (newK && (newK[j - multiple.split('-')[0]] != '')) {
-            var i_fig = aresti2ind(newCat.replace(multiple, '') + j,0) ;
-            while (i_fig < 0) {
-              rule_K.push({'i_fig':-i_fig,'new_K':newK[j - multiple.split('-')[0]]}) ;
-              i_fig = aresti2ind(newCat,-i_fig) ;
-            } 
-            rule_K.push({'i_fig':i_fig,'new_K':newK[j - multiple.split('-')[0]]}) ;
-            }
-          }
-        } else {
-          checkAllowCatId[newCat] = newRules;
-          if (newK) {
-          var i_fig = aresti2ind(newCat,0) ;
-          while (i_fig < 0) {
-            rule_K.push({'i_fig':-i_fig,'new_K':newK[0]}) ;
-            i_fig = aresti2ind(newCat,-i_fig) ;
-          } 
-            rule_K.push({'i_fig':i_fig,'new_K':newK[0]}) ;			
-          }
-        }
-      } else if (rules[i].match(/[^-]+-min=\d+$/)) {
-      // Apply [group]-min rules
-        var group = rules[i].replace(/-min/, '').split('=');
-        if (checkCatGroup[group[0]]) checkCatGroup[group[0]].min = parseInt(group[1]);
-        if (checkFigGroup[group[0]]) checkFigGroup[group[0]].min = parseInt(group[1]);
-      } else if (rules[i].match(/[^-]+-max=\d+$/)) {
-      // Apply [group]-max rules
-        var group = rules[i].replace(/-max/, '').split('=');
-        if (checkCatGroup[group[0]]) checkCatGroup[group[0]].max = parseInt(group[1]);
-        if (checkFigGroup[group[0]]) checkFigGroup[group[0]].max = parseInt(group[1]);
-      } else if (rules[i].match(/[^-]+-repeat=\d+$/)) {
-      // Apply [group]-repeat rules
-        var group = rules[i].replace(/-repeat/, '').split('=');
-        if (checkCatGroup[group[0]]) checkCatGroup[group[0]].repeat = parseInt(group[1]);
-        if (checkFigGroup[group[0]]) checkFigGroup[group[0]].repeat = parseInt(group[1]);
-      } else if (rules[i].match(/[^-]+-totrepeat=\d+$/)) {
-      // Apply [group]-totrepeat rules
-        var group = rules[i].replace(/-totrepeat/, '').split('=');
-        if (checkCatGroup[group[0]]) checkCatGroup[group[0]].totrepeat = parseInt(group[1]);
-        if (checkFigGroup[group[0]]) checkFigGroup[group[0]].totrepeat = parseInt(group[1]);
-      } else if (rules[i].match(/[^-]+-minperfig=\d+$/)) {
-      // Apply [group]-minperfig rules
-        var group = rules[i].replace(/-minperfig/, '').split('=');
-        if (checkCatGroup[group[0]]) checkCatGroup[group[0]].minperfig = parseInt(group[1]);
-        if (checkFigGroup[group[0]]) checkFigGroup[group[0]].minperfig = parseInt(group[1]);
-      } else if (rules[i].match(/[^-]+-maxperfig=\d+$/)) {
-      // Apply [group]-maxperfig rules
-        var group = rules[i].replace(/-maxperfig/, '').split('=');
-        if (checkCatGroup[group[0]]) checkCatGroup[group[0]].maxperfig = parseInt(group[1]);
-        if (checkFigGroup[group[0]]) checkFigGroup[group[0]].maxperfig = parseInt(group[1]);
-      } else if (rules[i].match(/[^-]+-name=.+$/)) {
-      // Apply [group]-name and seqcheck-name rules
-        var group = rules[i].replace(/-name/, '').split('=');
-        if (checkCatGroup[group[0]]) checkCatGroup[group[0]].name = group[1];
-        if (checkFigGroup[group[0]]) checkFigGroup[group[0]].name = group[1];
-        if (ruleSeqCheck[group[0]]) ruleSeqCheck[group[0]].name = group[1];
-      } else if (rules[i].match(/[^-]+-name_[a-z]{2}=.+$/)) {
-      // Apply [group]-name and seqcheck-name rules
-        var group = rules[i].replace(/-name_[a-z]{2}/, '').split('=');
-        if (checkCatGroup[group[0]]) {
-          checkCatGroup[group[0]][rules[i].match(/name_[a-z]{2}/)[0]] = group[1];
-        }
-        if (checkFigGroup[group[0]]) {
-          checkFigGroup[group[0]][rules[i].match(/name_[a-z]{2}/)[0]] = group[1];
-        }
-        if (ruleSeqCheck[group[0]]) {
-          ruleSeqCheck[group[0]][rules[i].match(/name_[a-z]{2}/)[0]] = group[1];
-        }
-      } else if (rules[i].match(/-[^-]+-rule=.+$/)) {
-        // apply rulebook references
-        var part = rules[i].match (/^([^-]+)-([^-]+)-rule=(.*)$/, '');
-        if (checkCatGroup[part[1]] && checkCatGroup[part[1]][part[2]]) {
-          if (!checkCatGroup[part[1]].rule) checkCatGroup[part[1]].rule = [];
-          checkCatGroup[part[1]].rule[part[2]] = part[3];
-        }
-        if (checkFigGroup[part[1]] && checkFigGroup[part[1]][part[2]]) {
-          if (!checkFigGroup[part[1]].rule) checkFigGroup[part[1]].rule = [];
-          checkFigGroup[part[1]].rule[part[2]] = part[3];
-        }
-      } else if (rules[i].match(/-rule=.+$/)) {
-        var newRuleName = rules[i].match(/^[^-]+/)[0];
-        if (checkRule[newRuleName]) {
-          checkRule[newRuleName].rule = rules[i].replace(/^[^=]+=/, '');
-        } else if (ruleSeqCheck[newRuleName]) {
-          ruleSeqCheck[newRuleName].rule = rules[i].replace(/^[^=]+=/, '');
-        }
-      } else if (rules[i].match(/^rule-[^=]+=.+/)) {
-      // Apply rule-x rules
-        var newRuleName = rules[i].match(/[^=]+/)[0].replace(/^rule-/, '');
-        var checkRuleParts = rules[i].replace('rule-'+newRuleName+'=', '');
-        var colonPos = checkRuleParts.indexOf(':');
-        var check = checkRuleParts.substring(colonPos + 1);
-        if (check.match(/^</)) {
-          checkRule[newRuleName] = {
-            'conv':checkRuleParts.substring(0,colonPos),
-            'less':parseInt(check.match(/^<(.*)/)[1])};
-          //console.log (checkRule[newRuleName].less);
-        } else if (check.match(/^\+</)) {
-          checkRule[newRuleName] = {
-            'conv':checkRuleParts.substring(0,colonPos),
-            'totalLess':parseInt(check.match(/^\+<(.*)/)[1])};
-          //console.log (checkRule[newRuleName].totalLess);
-        } else {
-          checkRule[newRuleName] = {
-            'conv':checkRuleParts.substring(0,colonPos),
-            'regex':RegExp(checkRuleParts.substring(colonPos + 1), 'g')};
-        }
-      } else if (rules[i].match(/^why-[^=]+=.+/)) {
-        // Apply why-x rules
-        var newRuleName = rules[i].match(/[^=]+/)[0].replace(/^why-/, '');
-        if (checkRule[newRuleName]) {
-          checkRule[newRuleName].why = rules[i].replace(/^[^=]+=/, '');
-        }
-      } else if (rules[i].match(/^why_[a-z]{2}-[^=]+=.+/)) {
-        // Apply why_cc-x rules where cc = country code
-        var newRuleName = rules[i].match(/[^=]+/)[0].replace(/^why_[a-z]{2}-/, '');
-        if (checkRule[newRuleName]) {
-          checkRule[newRuleName][rules[i].match(/^why_[a-z]{2}/)[0]] = rules[i].replace(/^[^=]+=/, '');
-        }
-      } else if (rules[i].match(/^floating-point/)) {
-        // Apply floating-point rules
-        checkCatGroup.floatingPoint = rules[i].match(/[0-9]+/)[0];
-      } else if (rules[i].match(regexRulesAdditionals)) {
-        // apply Additionals rules
-        var match = rules[i].match(regexRulesAdditionals);
-        additionalFig.max = parseInt(match[2]);
-        additionalFig.totalK = parseInt(match[3]);
-      } else if (rules[i].match(/^posnl/)) {
-        // load positioning and harmony K
-        // Editing is disabled and harmony hidden when 0
-        var pos = rules[i].match(/[0-9+]+/)[0].split('+');
-        var el = document.getElementById('positioning');
-				el.value = parseInt(pos[0]) || 0;
-        el.setAttribute ('disabled', true);
-        var el = document.getElementById('harmony');
-				el.value = parseInt(pos[1]) || 0;
-        el.setAttribute ('disabled', true);
-        if (el.value == 0) {
-					document.getElementById ('harmonyField').classList.add ('hidden');
-				}
-      } else if (rules[i].match(/^infocheck[ ]*=/)) {
-        // define fields that should be checked for not being empty when
-        // saving or printing a sequence
-        infoCheck = rules[i].replace(/ /g, '').match(/=(.*)/)[1].split(';');
-      } else if (rules[i].match(/^figure-letters[ ]*=/)) {
-        // define Figure Letters
-        figureLetters = rules[i].replace(/ /g, '').match(/=(.*)/)[1];
-      } else if (rules[i].match(/^sf[ ]*=/)) {
-        // define Super Families
-        var val = rules[i].replace(/ /g, '').match(/=(.*)/)[1];
-        if (superFamilies[val.toLowerCase()]) {
-          ruleSuperFamily = superFamilies[val.toLowerCase()];
-        } else {
-          var families = val.split(';');
-          for (var j = 0; j < families.length; j++) {
-            var regex = new RegExp (families[j].split(':')[0]);
-            var fam = families[j].split(':')[1];
-            ruleSuperFamily.push ([regex, fam]);
-          }
-        }
-      } else if (rules[i].match(/^seqcheck-/)) {
-        var newRuleName = rules[i].split('=')[0].replace(/^seqcheck-/, '');
-        var regex = new RegExp (rules[i].split('=')[1]);
-        ruleSeqCheck[newRuleName] = {'regex' : regex};
-      } else if (rules[i].match (/^reference[\s]*=/)) {
-        // load reference sequence
-        refSeqEl.value = rules[i].match (/^reference[\s]*=[\s]*(.*)$/)[1];
-        refSeqEl.setAttribute ('disabled', true);
-        document.getElementById ('t_referenceSequenceFixed').classList.remove ('noDisplay');
-      }
-    }
-  }
-  
-	if (checkAllowRegex) {
-    for (var i = 0 ; i < checkAllowRegex.length ; i++) {
-			for (var j in fig) {
-				if (fig[j].aresti &&
-					checkAllowRegex[i].regex.test(fig[j].aresti) &&
-					!(fig[j].aresti in checkAllowCatId)) {
-						checkAllowCatId[fig[j].aresti] =
-							(checkAllowRegex[i].rules.length == 0) ? [] : checkAllowRegex[i].rules;
-						}
-		  }
-      for (var j in rollAresti) {
-				if (checkAllowRegex[i].regex.test(rollAresti[j]) &&
-					!(rollAresti[j] in checkAllowCatId)) {
-					checkAllowCatId[rollAresti[j]] = [];
-				}
-	    }
-	  }
-	}
-
-  // set rules active
-  rulesActive = year + ruleName + ' ' + catName + ' ' + programName;
-	// adjust K factors if rules require this
-  set_rule_K(); 
-
-  if (figureLetters) {
+	if (data.updatedFig) fig = data.updatedFig;
+	
+  if (data.figureLetters) {
+		figureLetters = data.figureLetters;
     // show reference sequence link
     document.getElementById ('t_referenceSequence').classList.remove ('noDisplay');
   } else {
     // hide link
     document.getElementById ('t_referenceSequence').classList.add ('noDisplay');
   }
-
-  // set CIVA or IAC forms default
-  iacForms = (ruleName === 'iac') ? true : false;
-  if (iacForms) {
+  
+	// set CIVA or IAC forms default
+  if (data.iacForms) {
     document.getElementById('iacForms').setAttribute('checked', 'checked');
   } else {
     document.getElementById('iacForms').removeAttribute('checked');
   }
+  
+	// by default, disable "Print Super Family", but enable change
+	// enable when rules with sf definition active and disable change
+	document.getElementById('printSF').checked = data.ruleSuperFamily.length ? true : false;
+	document.getElementById('printSF').disabled = data.ruleSuperFamily.length ? true : false;
+	
+	rulesKFigures = data.rulesKFigures;
 
   // update reference sequence
-  changeReferenceSequence(true);
-
-	// by default, disable "Print Super Family", but enable change
-	var el = document.getElementById('printSF');
-	el.checked = false;
-	el.disabled = false;
-	// enable when rules with sf definition active and disable change
-	if (rulesActive && ruleSuperFamily.length) {
-		el.checked = true;
-		el.disabled = true;
-	}
-        
-  return true;
+  changeReferenceSequence (true);
 }
 
-// write_log_fig() Writes fig content to console log. This is just for debug.
-function write_log_fig() {
-  newK_string = '' ;
-  var ggg = 0 ;
-  for (var gg in fig) {
-    if ((fig[gg].aresti) && (fig[gg].next)) {
-      newK_string = newK_string + gg + '\t' + fig[gg].aresti + ' ' +
-        fig[gg].base + '     \tpowered(' + fig[gg].kpwrd +
-        ')\tglider(' + fig[gg].kglider + ')\tnext : ' + fig[gg].next +
-        '\n' ; ggg++ ;
-    }
-  }
-  console.log('Fig (' + aresti_K_class + ') , ' + ggg + ' chained lines : \n' + newK_string ) ;
-}
-
-// reset_aresti_K reset back K in fig to aresti K when changed in a rule file
-function reset_aresti_K() {
-  if (Object.keys(aresti_K).length != 0) {
-    for (var key in aresti_K) {
-      fig[aresti_K[key].i_fig][aresti_K_class] = aresti_K[key].saved_K;
-      delete (fig[aresti_K[key].i_fig].arestiK);
-    }
-    aresti_K = [] ;
-  }
-}
-
-// set_rule_K Set K in fig when changed in a rule file and reset it back to aresti K
-// set_rule_K is called each time new rules are loaded (at the end of loadrules)
-// So far only the change of K for powered has been tested, not the change for glider.
-function set_rule_K() {
-  // Next line code is just for debug.
-//  console.log('set_rule_K() rulesActive = ' + rulesActive + ' last_class = ' + aresti_K_class + ' class = ' + document.getElementById('class').value);
-  // First we reset fig with aresti K that have been changed if any
-  reset_aresti_K() ;
-  // Then, if needed, we set fig with the new K from rule and save aresti K in aresti_K
-  if (rule_K.length != 0) {
-    aresti_K_class = (document.getElementById('class').value == 'powered') ? 'kpwrd' : 'kglider' ;
-    var debug = '' ;
-    for (var i in rule_K) {
-//      debug = debug + '\n' + rule_K[i].i_fig + '\tfig : ' + fig[rule_K[i].i_fig].aresti + ' (' + rule_K[i].new_K + ') \tau lieu de ' + fig[rule_K[i].i_fig][aresti_K_class];
-      aresti_K[fig[rule_K[i].i_fig].aresti] = {
-        'i_fig'   : rule_K[i].i_fig,
-        'saved_K' : fig[rule_K[i].i_fig][aresti_K_class]
-      };
-      fig[rule_K[i].i_fig][aresti_K_class] = rule_K[i].new_K;
-      fig[rule_K[i].i_fig].arestiK = fig[rule_K[i].i_fig][aresti_K_class];
-    }
-    console.log('set_rule_K() : ' + rule_K.length + ' K changed for ' + aresti_K_class + ' :' + debug);
-    rule_K = [] ;
-//write_log_fig() ;		// just for debug
-  }
-	// If figure chooser is displayed while cat is changed, the figure
-	// chooser K needs to be updated.
-  if (document.getElementById('figureSelector').classList.contains('active')) changeFigureGroup();
-}
-
-// aresti2ind returns the index of the passed aresti code in the fig array
-// When multiple instances exist in fig, the tag next is added to fig
-// array for chaining all these instances.
-// * fig.next is set to the index of the next instance with the same
-//   aresti value.
-// * fig.next is set to -1 for the last instance or if there is no other
-// instance.
-// The chaining for an aresti code is built once the first time this
-// aresti code is looked for.
-// The return index is set to -index if there is an other instance with 
-// the same aresti code in fig.
-
-// This is used for replacing figure K's for certain Aresti figures from
-// rule files
-function aresti2ind(aresti,start) {
-  if (start == 0) {
-    var previous = 0 ;
-    var ind = false ;
-    for (var i in fig) if (fig[i].aresti == aresti) {
-      if (fig[i].next) {  	// linkage processed. Returns -fig_index if linked and fig_index if otherwise. 
-        ind = (fig[i].next == -1) ? i : -i ; 
-        break ;
-      } else { 		// Built the linkage if any.
-        if (previous != 0) { fig[previous].next = i ; if (!ind) ind = -previous ; }
-        previous = i ;
-      }
-    }
-    if (previous != 0) {
-      fig[previous].next = -1 ;
-      if (!ind) ind = previous ; 
-    }
-  } else {
-    ind = (fig[fig[start].next].next == -1) ? fig[start].next : -fig[start].next ;
-  }
-  return ind ;
-}
- 
-// unloadRules will set rules to inactive and do some checks
-function unloadRules () {
-  console.log('Clearing rules');
+// unloadRules will set rules to inactive and do some checks.
+// It should only be called from the rule Worker
+function unloadRules (updatedFig) {
   
-  reset_aresti_K() ; // reset aresti K if needed
+  if (updatedFig) {
+		rulesKFigures = {};
+		fig = updatedFig;
+		console.log ('Resetting K factors');
+	}
 
 	// by default, disable "Print Super Family", but enable change
 	var el = document.getElementById('printSF');
 	el.checked = false;
 	el.disabled = false;
 
+	figureLetters = '';
   rulesActive = false;
   document.getElementById ('rulesActive').classList.remove ('good');
+  
   // remove disable property of positioning and harmony
   document.getElementById('positioning').removeAttribute ('disabled');
 	document.getElementById('harmony').removeAttribute ('disabled');
@@ -9271,684 +8687,16 @@ function unloadRules () {
   checkSequenceChanged(true);
   // hide reference sequence button
   document.getElementById ('t_referenceSequence').classList.add ('noDisplay');
+  // restore Reference sequence to previous value
+  var refSeqEl = document.getElementById ('referenceSequenceString');
+  refSeqEl.value = savedReference;
+  refSeqEl.removeAttribute ('disabled');
+  document.getElementById ('t_referenceSequenceFixed').classList.add ('noDisplay');
+
   // make sure only available figure groups are shown in chooser
   availableFigureGroups();
   // update figure chooser
   changeFigureGroup ();
-}
-  
-// checkRules will check a complete sequence against the loaded rules
-// and produce alerts where necessary.
-// The Aresti list according description in allowed.js is in the array
-// figCheckLine
-// A log array is returned
-function checkRules () {
-  
-  /* why creates the correct 'why' string. Priority is:
-   1) current language
-   2) no language
-   3) English */
-  function why (rule) {
-    var language = document.getElementById('language').value;
-    if (checkRule[rule]['why_' + language]) {
-      return checkRule[rule]['why_' + language];
-    } else if (checkRule[rule].why) {
-      return checkRule[rule].why;
-    } else if (checkRule[rule].why_en) {
-      return checkRule[rule].why_en;
-    } else return '';
-  }
-  
-  // var t = Date.now(); // used for checking execution time. Typical less than 50ms
-  
-  var
-	  figNr = 0,
-	  figureK = 0,
-	  additionals = 0,
-	  groupMatch = [],
-	  figCount = [],
-	  elemCount = [],
-	  log = [],
-	  logLine = '',
-	  errFigs;
-  
-  log.push ('Testing sequence:' + activeSequence.text);
-  
-  // first we check for rules that are ALWAYS valid, i.e. Aresti
-  // Catalogue rules
-  for (var i = 0; i < figures.length; i++) {
-    var seqNr = figures[i].seqNr;
-    if (seqNr) {
-      // some alerts are disabled when nonArestiRolls is checked
-      if (!document.getElementById('nonArestiRolls').checked) {
-        // check for more than two roll elements on a roll position
-        // Aresti Catalogue Part I - 17
-        if (figCheckLine[seqNr].replace(/[^,; ]/g, '').match(/[,;][,;]/)) {
-          checkAlert (userText.alert.maxTwoRotationElements,
-          false,
-          seqNr,
-          'Aresti Catalogue');
-        }
-        // check for same direction same type unlinked rolls
-        // Aresti Catalogue Part I - 19
-        if (regexUnlinkedRolls.test(figCheckLine[seqNr])) {
-          checkAlert (userText.alert.unlinkedSameNotAllowed,
-          false,
-          seqNr,
-          'Aresti Catalogue');
-        }
-        // check if a spin is preceded by another roll element
-        // Aresti Catalogue 27
-        if (figCheckLine[seqNr].match(/[,;]9\.1[12]\./)) {
-          checkAlert (userText.alert.spinFirst,
-          false,
-          seqNr,
-          'Aresti Catalogue');
-        }
-      }
-      // check if there is a roll on family 1.1.1
-      // Aresti Catalogue 7.2
-      if (figCheckLine[seqNr].match(/^1\.1\.1[^0]+0\.0\.0\.0$/)) {
-        checkAlert (userText.alert.family111RollMissing,
-        false,
-        seqNr,
-        'Aresti Catalogue');
-      }
-    }
-  }
-  
-  // see if there are active rules. If not, return
-  if (rulesActive) {
-    log.push ('Rules: ' + rulesActive);
-  } else {
-    log.push ('Rules: no');
-    return log;
-  }
-  
-  for (var i = 0; i < figures.length; i++) {
-    var aresti = figures[i].aresti;
-    if (aresti) {
-      var k = figures[i].k;
-      var figString = figCheckLine[figures[i].seqNr];
-      figNr++;
-      if (aresti.length > 1) {
-        var checkLine = figString.replace(aresti[0] + ' ', '');
-      } else {
-        var checkLine = '';
-      }
-      var a = '';
-      var checkArray = [];
-      for (var ii = 0; ii < checkLine.length; ii++) {
-        if (checkLine[ii].match(/[ ,;]/)) {
-          checkArray.push(a);
-          checkArray.push(checkLine[ii]);
-          a = '';
-        } else {
-          a += checkLine[ii];
-        }
-      }
-      checkArray.push(a);
-
-      // format thisFig for logging
-      var thisFig = figString.replace(/;/g, ',');
-      for (var j = 0; j < aresti.length; j++) {
-        var regex = new RegExp ('(' + aresti[j].replace(/\./g, '\\.') + ')( |,|$)');
-        thisFig = thisFig.replace(regex, '$1(' + k[j] + ')$2');
-      }
-      log.push ('========= Figure #' + figNr + ': ' + thisFig);
-      // Check if the figure is an additional
-      if (figures[i].additional) {
-        additionals++;
-        log.push ('is additional? True');
-      } else {
-        log.push ('is additional? False');
-        var figK = 0;
-        var groupFigMatch = [];
-        // Walk through the elements of the figure
-        if (figCount[aresti[0]]) {
-          figCount[aresti[0]]++;
-        } else figCount[aresti[0]] = 1;
-        log.push ('Group-combined: Count=' + figNr + ' Fig count=' +
-          figCount[aresti[0]]);
-        elemCount = [];
-        for (var j = 0; j < aresti.length; j++) {
-          log.push ('---- Element: ' + aresti[j]);
-          figK += parseInt(k[j]);
-          figureK += parseInt(k[j]);
-          if (elemCount[aresti[j]]) {
-            elemCount[aresti[j]]++;
-          } else elemCount[aresti[j]] = 1;
-          log.push('Group-k: Count=' + figureK + ' Elem count=' +
-            elemCount[aresti[j]]);
-          // Check all group rules on all elements
-          for (group in checkCatGroup) {
-            if ((group != 'k') && (group != 'floatingPoint')) {
-              var match = aresti[j].match(checkCatGroup[group].regex);
-              if (match) {
-                if (!groupFigMatch[group]) groupFigMatch[group] = [];
-                groupFigMatch[group].push(match[0]);
-                if (!groupMatch[group]) groupMatch[group] = [];
-                groupMatch[group].push({'match':match[0], 'fig':figNr});
-                log.push ('group-' + group +
-                  ': Count=' + groupFigMatch[group].length +
-                  ' Elem count=' + elemCount[aresti[j]]);
-              }
-              // Do checks after the last aresti code of the figure has been processed
-              if (j == (aresti.length - 1)) {
-                if (groupFigMatch[group]) {
-                  log.push ('group-' + checkCatGroup[group].name +
-                    ': Count=' + groupFigMatch[group].length +
-                    ' Elem count=' + elemCount[aresti[j]]);
-                  if (checkCatGroup[group].minperfig &&
-	                  (groupFigMatch[group].length < checkCatGroup[group].minperfig)) {
-										if (('maxperfig' in checkCatGroup[group]) &&
-											(checkCatGroup[group].minperfig === checkCatGroup[group].maxperfig)) {
-											checkAlert(group, 'exactlyperfig');
-										} else checkAlert(group, 'minperfig', figNr);
-                    log.push('Minimum of ' + checkCatGroup[group].minperfig + ' elements of this group not reached');
-                  }
-                  if (checkCatGroup[group].maxperfig && (groupFigMatch[group].length > checkCatGroup[group].maxperfig)) {
-                    checkAlert(group, 'maxperfig', figNr);
-                    log.push('Maximum of ' + checkCatGroup[group].maxperfig + ' elements of this group exceeded');
-                  }
-                }
-              }
-            }
-          }
-          // Check for specific allowed figures if the checkAllowCatId
-          // object is not empty
-          if (Object.keys(checkAllowCatId).length > 0) {
-            //log.push ('Checking for specific allowed figures');
-            if (!(aresti[j] in checkAllowCatId)) {
-              checkAlert (aresti[j], 'notAllowed', figNr);
-              //log.push ('Not allowed:' + aresti[j]);
-            }
-          }
-        }
-        // Run rule checks on specific allowed figures if the
-        // checkAllowCatId object is not empty
-        if (Object.keys(checkAllowCatId).length > 0) {
-          //log.push ('Checking rules on specific allowed figures');
-          var arestiNr = figString.split(' ')[0];
-          //console.log(arestiNr);
-          if ((arestiNr in checkAllowCatId) && (checkAllowCatId[arestiNr][0] !== '')) {
-            //log.push('Allowed base figure:' + arestiNr);
-            // Apply rules to the figure
-            // Run the checks on the rolls
-
-            for (var ii = 0; ii < checkAllowCatId[arestiNr].length; ii++) {
-              // copy checkArray to check
-              var check = checkArray.slice(0);
-              // forElement may be used to add element number to 'why'
-              var forElement = '';
-              var rule = checkAllowCatId[arestiNr][ii];
-              log.push ('-basefig rule: ' + rule);
-              // check if this is a rule of form rule:nr
-              var ruleSplit = rule.split(':');
-              rule = ruleSplit[0];
-              // if it is a rule of form rule:nr, only put this roll
-              // element in check
-              if (ruleSplit[1]) {
-                var rollNr = 1;
-                check = [];
-                for (var m = 0; m < checkArray.length; m++) {
-                  if (rollNr == ruleSplit[1]) {
-                    if (checkArray[m] == ' ') break;
-                    check.push (checkArray[m]);
-                  } else {
-                    if (checkArray[m] == ' ') rollNr++;
-                  }
-                }
-                forElement = userText.forElement + ruleSplit[1];
-              }
-              // Apply conversions to the Aresti number before checking the rule
-              if (checkRule[rule]) { // make sure rule was defined
-	              if (checkRule[rule].conv) {
-	                var conversion = checkRule[rule].conv;
-	                log.push ('Apply: ' + checkRule[rule].conv);
-	                logLine = 'Converted: ' + check.join('') + ' => ';
-	                for (var l = 0; l < checkConv[conversion].length; l++) {
-	                  for (var m = 0; m < check.length; m++) {
-	                    if (!check[m].match(/[ ,;]/)) {
-	                      check[m] = check[m].replace(checkConv[conversion][l].regex,
-	                      checkConv[conversion][l].replace);
-	                    }
-	                  }
-	                }
-	                checkLine = check.join('');
-	
-	                log.push (logLine + checkLine);
-	              }
-	              if (checkRule[rule].regex) {
-	                if (checkLine.match(checkRule[rule].regex)) {
-	                  checkAlert (why(rule) + forElement, 'rule', figNr, checkRule[rule].rule);
-	                  log.push ('*** Error: Fig ' + figNr + ': ' + checkRule[rule].why + forElement);
-	                }
-	              } else if (checkRule[rule].less) {
-	                var sum = 0;
-	                for (var l = check.length - 1; l >= 0; l--) {
-	                  if (check[l].match(/^[0-9]/)) {
-	                    sum += parseInt (check[l]);
-	                  }
-	                  if ((check[l] == ' ') || (l == 0)) {
-	                    if (sum >= parseInt (checkRule[rule].less)) {
-	                      checkAlert (why(rule) + forElement, 'rule', figNr, checkRule[rule].rule);
-	                      log.push ('*** Error: Fig ' + figNr + ': ' + checkRule[rule].why + forElement);
-	                    }
-	                    sum = 0;
-	                  }
-	                }
-	              } else if (checkRule[rule].totalLess) {
-	                var sum = 0;
-	                for (var l = check.length - 1; l >= 0; l--) {
-	                  if (check[l].match(/^[0-9]/)) {
-	                    sum += parseInt (check[l]);
-	                  }
-	                }
-	                if (sum >= parseInt (checkRule[rule].totalLess)) {
-	                  checkAlert (why(rule) + forElement, 'rule', figNr, checkRule[rule].rule);
-	                  log.push ('*** Error: Fig ' + figNr + ': ' + checkRule[rule].why + forElement);
-	                }
-	              }
-							} else console.log ("Referenced rule \"" + rule +
-								"\" does not exist");
-              
-            }
-            // Check default rules when applicable
-            if (defRules != []) {
-              for (k = 0; k < defRules.length; k++) {
-                // copy checkArray to check
-                var check = checkArray.slice(0);
-                
-                var checkLine = figString.replace(arestiNr + ' ', '');
-                rule = defRules[k];
-                // check if this is a rule of form rule:nr
-                var ruleSplit = rule.split(':');
-                if ((ruleSplit[1] === j) || (ruleSplit.length == 1)) {
-                  rule = ruleSplit[0];
-  
-                  log.push ('-basefig rule: ' + rule);
-                  // Apply conversions to the Aresti number before checking the rule
-                  if (checkRule[rule].conv) {
-                    var conversion = checkRule[rule].conv;
-                    log.push ('Apply: ' + checkRule[rule].conv);
-                    logLine = 'Converted: ' + checkLine + ' => ';
-                    for (var l = 0; l < checkConv[conversion].length; l++) {
-                      for (var m = 0; m < check.length; m++) {
-                        if (!check[m].match(/[ ,;]/)) {
-                          check[m] = check[m].replace(checkConv[conversion][l].regex,
-                          checkConv[conversion][l].replace);
-                        }
-                      }
-                    }
-                    checkLine = check.join('');
-                    log.push (logLine + checkLine);
-                  }
-                  if (checkRule[rule].regex) {
-                    if (checkLine.match(checkRule[rule].regex)) {
-                      checkAlert (why(rule), 'rule', figNr, checkRule[rule].rule);
-                      log.push ('*** Error: Fig ' + figNr + ': ' + checkRule[rule].why);
-                    }
-                  } else if (checkRule[rule].less) {
-                    var sum = 0;
-                    for (var l = check.length - 1; l >= 0; l--) {
-                      if (check[l].match(/^[0-9]/)) {
-                        sum += parseInt (check[l]);
-                      }
-                      if ((check[l] == ' ') || (l == 0)) {
-                        if (sum >= parseInt (checkRule[rule].less)) {
-                          checkAlert (why(rule), 'rule', figNr, checkRule[rule].rule);
-                          log.push ('*** Error: Fig ' + figNr + ': ' + checkRule[rule].why);
-                        }
-                        sum = 0;
-                      }
-                    }
-                  } else if (checkRule[rule].totalLess) {
-                    var sum = 0;
-                    for (var l = check.length - 1; l >= 0; l--) {
-                      if (check[l].match(/^[0-9]/)) {
-                        sum += parseInt (check[l]);
-                      }
-                    }
-                    if (sum >= parseInt (checkRule[rule].totalLess)) {
-                      checkAlert (why(rule), 'rule', figNr, checkRule[rule].rule);
-                      log.push ('*** Error: Fig ' + figNr + ': ' + checkRule[rule].why);
-                    }
-
-                  }
-                }
-              }
-            }
-          }
-        }
-        // Check the Group rules for complete figures
-        for (group in checkFigGroup) {
-          var match = figString.match(checkFigGroup[group].regex);
-          if (match) {
-            if (!groupMatch[group]) groupMatch[group] = [];
-            for (j = 0; j < match.length; j++) {
-              groupMatch[group].push({'match':match[j], 'fig':figNr});
-            }
-          }
-        }
-        if ('minperfig' in checkCatGroup.k) {
-          if (figK < checkCatGroup.k.minperfig) {
-						if (('maxperfig' in checkCatGroup.k) &&
-							(checkCatGroup.k.minperfig === checkCatGroup.k.maxperfig)) {
-							checkAlert('k', 'exactlyperfig', figNr);
-						} else checkAlert('k', 'minperfig', figNr);
-          }
-        }
-        if ('maxperfig' in checkCatGroup.k) {
-          if (figK > checkCatGroup.k.maxperfig) {
-            checkAlert('k', 'maxperfig', figNr);
-          }
-        }
-      }
-    }
-  }
-  
-  // add additionals to figureK where applicable
-  if ((additionals > 0) && (additionalFig.max > 0)) {
-    figureK += additionalFig.totalK;
-  }
-  // check for total min/max K
-  if ('min' in checkCatGroup.k) {
-		if (figureK < checkCatGroup.k.min) {
-			if (('max' in checkCatGroup.k) &&
-				(checkCatGroup.k.min === checkCatGroup.k.max)) {
-				checkAlert ('k', 'exactly');
-			} else checkAlert('k', 'min');
-		}
-  }
-  if ('max' in checkCatGroup.k) {
-    if (figureK > checkCatGroup.k.max) checkAlert('k', 'max');
-  }
-
-  // Run checks on maximum and minimum occurrence of a group (catalog ID)
-  // Go through all groups
-  log.push ('====== Testing global repeat/min/max ======');
-  for (group in checkCatGroup) {
-    // Did we have a match on this group?
-    if (groupMatch[group]) {
-      //console.log('* Match');
-      //console.log(checkCatGroup[group]);
-      // Check for max and min occurrences of the group
-      if ('max' in checkCatGroup[group]) {
-        log.push ('testing group ' + group + '-max=' +
-          checkCatGroup[group].max + ' val=' + groupMatch[group].length);
-        if (groupMatch[group].length > checkCatGroup[group].max) {
-          errFigs = figureNumbers (groupMatch[group]);
-          checkAlert(group, 'max', errFigs);
-          log.push ('*** Error: Maximum ' + checkCatGroup[group].max +
-            ' of group ' + group + '(' + errFigs + ')');
-        }
-      }
-      if ('min' in checkCatGroup[group]) {
-        log.push ('testing group ' + group + '-min=' +
-          checkCatGroup[group].min + ' val=' + groupMatch[group].length);
-        if (groupMatch[group].length < checkCatGroup[group].min) {
-					if (('max' in checkCatGroup[group]) &&
-						(checkCatGroup[group].min === checkCatGroup[group].max)) {
-						checkAlert(group, 'exactly');
-					} else checkAlert(group, 'min');
-          log.push ('*** Error: Minimum ' + checkCatGroup[group].min +
-            ' of group ' + group);
-        }
-      }
-      // Check for repeats of the exact same catalog id when necessary
-      if (('repeat' in checkCatGroup[group]) ||
-        ('totrepeat' in checkCatGroup[group])) {
-        //console.log('Check repeat');
-        var matches = [];
-        for (var j = 0; j < groupMatch[group].length; j++) {
-          var thisMatch = groupMatch[group][j];
-          if (matches[thisMatch.match]) {
-            matches[thisMatch.match].push({'match':thisMatch.match, 'fig':thisMatch.fig});
-          } else {
-            matches[thisMatch.match] =
-              [{'match':thisMatch.match, 'fig':thisMatch.fig}];
-          }
-        }
-        if ('repeat' in checkCatGroup[group]) {
-          for (match in matches) {
-            if (matches[match].length > checkCatGroup[group].repeat) {
-              errFigs = figureNumbers (matches[match]);
-              checkAlert(group, 'repeat', errFigs);
-              log.push ('*** Error: Repeat ' + checkCatGroup[group].repeat +
-                ' of group ' + group + '(' + errFigs + ')');
-            }
-          }
-        }
-        if ('totrepeat' in checkCatGroup[group]) {
-          var count = 0;
-          for (match in matches) {
-            if (matches[match].length > 1) {
-              count++;
-            } else delete matches[match];
-          }
-          if (count > checkCatGroup[group].totrepeat) {
-            errFigs = [];
-            for (match in matches) {
-              for (var i = 0; i < matches[match].length; i++) {
-                errFigs.push (matches[match][i]);
-              }
-            }
-            errFigs = figureNumbers (errFigs);
-            checkAlert(group, 'totrepeat', errFigs);
-            log.push ('*** Error: Total Repeat ' + checkCatGroup[group].totrepeat +
-              ' of group ' + group + '(' + errFigs + ')');
-          }
-        }        
-      }
-    } else {
-      // No occurrences of this group, was there a minimum?
-      if ((group != 'k') && (checkCatGroup[group].min)) {
-				if (('max' in checkCatGroup[group]) &&
-					(checkCatGroup[group].min === checkCatGroup[group].max)) {
-					checkAlert(group, 'exactly');
-				} else checkAlert(group, 'min');
-        log.push ('*** Error: Minimum ' + checkCatGroup[group].min +
-          ' of group ' + group);
-      }
-    }
-  }
-  // Run checks on maximum and minimum occurrence of a Group (complete figure)
-  // Go through all groups
-  for (group in checkFigGroup) {
-    // Did we have a match on this group?
-    if (groupMatch[group]) {
-      // Check for min and max occurrences of the group
-      if (('min' in checkFigGroup[group]) &&
-        (groupMatch[group].length < checkFigGroup[group].min)) {
-				if (('max' in checkFigGroup[group]) &&
-					(checkFigGroup[group].min === checkFigGroup[group].max)) {
-					checkAlert(group, 'figexactly');
-				} else checkAlert(group, 'figmin');
-        log.push ('*** Error: Minimum ' + checkFigGroup[group].min +
-          ' of group ' + group);
-      }
-      if (('max' in checkFigGroup[group]) &&
-        (groupMatch[group].length > checkFigGroup[group].max)) {
-        errFigs = figureNumbers (groupMatch[group]);
-        checkAlert(group, 'figmax', errFigs);
-        log.push ('*** Error: Maximum ' + checkFigGroup[group].max +
-          ' of group ' + group + '(' + errFigs + ')');
-      }
-      // Check for repeats of the exact same figure when necessary
-      if ('repeat' in checkFigGroup[group]) {
-        var matches = [];
-        for (var j = 0; j < groupMatch[group].length; j++) {
-          var thisMatch = groupMatch[group][j];
-          if (matches[thisMatch.match]) {
-            matches[thisMatch.match].push({
-              'match':thisMatch.match,
-              'fig':thisMatch.fig
-            });
-          } else {
-            matches[thisMatch.match] =
-              [{'match':thisMatch.match, 'fig':thisMatch.fig}];
-          }
-        }
-        for (match in matches) {
-          if (checkFigGroup[group].repeat &&
-            (matches[match].length > checkFigGroup[group].repeat)) {
-            errFigs = figureNumbers (matches[match]);
-            checkAlert(group, 'figrepeat', errFigs);
-            log.push ('*** Error: Repeat ' + checkFigGroup[group].repeat +
-              ' of group ' + group + '(' + errFigs + ')');
-          }
-        }
-      }
-    } else {
-      // No occurrences of this group, was there a minimum?
-      if ('min' in checkFigGroup[group]) {
-				if (('max' in checkFigGroup[group]) &&
-					(checkFigGroup[group].min === checkFigGroup[group].max)) {
-					checkAlert(group, 'figexactly');
-				} else checkAlert(group, 'figmin');
-        log.push ('*** Error: Minimum ' + checkFigGroup[group].min +
-          ' of group ' + group);
-      }
-    }
-  }
-  
-  // Check complete sequence string on seqcheck directives
-  // When there is NO match for any of the directives, an alert is created
-  
-  if (ruleSeqCheck !== []) {
-    for (var name in ruleSeqCheck) {
-      if (!ruleSeqCheck[name].regex.test(activeSequence.text)) {
-        checkAlert (
-          checkName(ruleSeqCheck[name]),
-          false,
-          false,
-          ruleSeqCheck[name].rule
-        );
-      }
-    }
-  }
-  
-  // check for multiple use of the same free unknown figure, except additionaL
-  // Also check if all figures have been assigned a Free (Un)known letter
-  // or Additional when applicable and if the assigned figure letters
-  // are allowed according the rules
-
-  var remaining = figureLetters ? figureLetters : '';
-
-  var ufl = [];
-  for (var i = 0; i < figures.length; i++) {
-    var l = figures[i].unknownFigureLetter;
-    if (figures[i].aresti) {
-      if (l) {
-        if ((figureLetters + 'L').indexOf (l) === -1) {
-          var msg = sprintf (
-            userText.figureLetterNotAllowed,
-            figures[i].seqNr,
-            l);
-          alertMsgs.push (msg);
-          log.push ('*** Error: ' + msg);
-          //delete figures[i].unknownFigureLetter;
-        } else {
-          if (ufl[l]) {
-            ufl[l].push(figures[i].seqNr);
-          } else {
-            ufl[l] = [figures[i].seqNr];
-          }
-          remaining = remaining.replace(l, '');
-        }
-      }
-    }
-  }
-  
-  for (l in ufl) {
-    if ((ufl[l].length > 1) && (l != 'L')) {
-      var msg = sprintf(userText.FUletterMulti, ufl[l].join(','), l);
-      alertMsgs.push(msg);
-      log.push ('*** Error: ' + msg);
-    }
-  }
-  // see if we have remaining (=unused) letters
-  if (remaining.length) {
-    var figs = [];
-    for (var i = 0; i < figures.length; i++) {
-      if (!figures[i].unknownFigureLetter && figures[i].aresti) {
-        figs.push (figures[i].seqNr);
-      }
-    }
-    // nuisance warning in Designer, so hide there
-    if (figs.length && (activeForm !== 'FU')) {
-      var msg = sprintf(userText.noFigureLetterAssigned, figs.join(','));
-      alertMsgs.push (msg);
-      log.push ('*** Error: ' + msg);
-    }
-
-    var msg = sprintf(userText.unusedFigureLetters, remaining);
-    alertMsgs.push (msg);
-    log.push ('*** Error: ' + msg);
-  }
-  
-  // when additionals are allowed, at least one is required
-  if (additionalFig.max && !additionals) {
-    checkAlert (
-      "At least 1 additional figure required",
-      false,
-      false,
-      (sportingClass.value === 'glider') ?
-        "Sporting Code Section 6 Part II, 3.3.3.8" :
-        "Sporting Code Section 6 Part I, 2.3.1.4&nbsp;c"
-    );
-  }
-
-  // check Reference sequence if provided
-  if (figureLetters && referenceSequence.figures &&
-    (!multi.processing || document.getElementById ('multiUseReference').checked)) {
-    checkReferenceSequence ();
-  }
-  //console.log(Date.now() - t); //log execution time
-
-  return log;
-}
-
-// figureNumbers is called by checkRules. It takes a match array with
-// i items {'match':xxx, 'fig':xxx} and returns the fig numbers as a
-// comma-separated line. Do not add the same number multiple times.
-function figureNumbers (match) {
-  var figs = [];
-  for (var i = 0; i < match.length; i++) {
-    if (figs.indexOf (match[i].fig) === -1) figs.push (match[i].fig);
-  }
-  return figs.join(',');
-}
-
-// checkName creates the correct 'name' string. Priority is:
-// 1) current language
-// 2) no language
-// 3) English
-function checkName (obj) {
-  var language = document.getElementById('language').value;
-  if (obj['name_' + language]) {
-    return obj['name_' + language];
-  } else if (obj.name) {
-    return obj.name;
-  } else if (obj.why_en) {
-    return obj.name_en;
-  } else return '';
-}
-
-// checkRuleText creates the correct 'ruleText' string. Priority is:
-// 1) current language
-// 2) no language
-// 3) English
-function checkRuleText (obj) {
-  var language = document.getElementById('language').value;
-  if (obj['rule_' + language]) {
-    return obj['rule_' + language];
-  } else if (obj.rule) {
-    return obj.rule;
-  } else if (obj.rule_en) {
-    return obj.rule_en;
-  } else return '';
 }
 
 // checkAlert adds an alert resulting from sequence checking
@@ -9957,53 +8705,13 @@ function checkRuleText (obj) {
 // rule  : optional, literal text for the rulebook rule that invoked
 //         this as in xxx-rule
 function checkAlert (value, type, figNr, rule) {
-  var alertRule = false;
-  var alertFig = figNr ? '(' + figNr + ') ' : '';
-  switch (type) {
-    case 'maxperfig':
-    case 'minperfig':
-    case 'exactlyperfig':
-    case 'max':
-    case 'min':
-    case 'exactly':
-    case 'repeat':
-    case 'totrepeat':
-	    // reduce max total K for floating point
-	    if (value === 'k' && checkCatGroup.floatingPoint) {
-				alertMsgs.push(alertFig + sprintf (userText.checkAlert[type],
-        checkCatGroup[value][type.replace (/^exactly/, 'max')] - checkCatGroup.floatingPoint,
-        checkName(checkCatGroup[value])));
-			} else {
-	      alertMsgs.push(alertFig + sprintf (userText.checkAlert[type],
-	        checkCatGroup[value][type.replace (/^exactly/, 'max')],
-	        checkName(checkCatGroup[value])));
-	    }
-      if (checkCatGroup[value].rule) {
-        alertRule = checkCatGroup[value].rule[type.replace (/^exactly/, 'max')];
-      }
-      break;
-    case 'figmax':
-    case 'figmin':
-    case 'figexactly':
-    case 'figrepeat':
-      alertMsgs.push(alertFig + sprintf (userText.checkAlert[type],
-        checkFigGroup[value][type.replace (/^fig/, '').replace (/exactly$/, 'max')],
-        checkName(checkFigGroup[value])));
-      if (checkFigGroup[value].rule) {
-        alertRule = checkFigGroup[value].rule[type.replace (/^fig/, '').replace (/exactly$/, 'max')];
-      }
-      break;
-    case 'notAllowed':
-      alertMsgs.push(alertFig + sprintf (userText.checkAlert.notAllowed,
-        value));
-      break;
-    default:
-      alertMsgs.push(alertFig + value);
-      if (rule) {
-        alertRule = rule;
-      }
-  }
-  if (alertRule) alertMsgRules [alertMsgs[alertMsgs.length - 1]] = alertRule;
+	rulesWorker.postMessage ({
+		action: 'checkAlert',
+		value: value,
+		type: type,
+		figNr: figNr,
+		rule: rule
+	});
 }
 
 // checkSequence will show a window with sequence checking information
@@ -10015,17 +8723,25 @@ function checkSequence(show) {
   var div = document.getElementById('checkSequence');
   if (show) {
     if (show === 'log') {
-      newWindow (function(){
-        // show log page
-        var log = checkRules();
-        var body = document.createElement('body');
-        var pre = document.createElement('pre');
-        for (var i = 0; i < log.length; i++) {
-          pre.appendChild(document.createTextNode(log[i] + '\n'));
-        }
-        body.appendChild(pre);
-        return body;
-      }, userText.sequenceCheckLog);
+			checkRules (function (data) {
+	      alertBox (function(){
+	        // show log page
+	        var div = document.createElement('div');
+	        var pre = document.createElement('pre');
+	        for (var i = 0; i < data.log.length; i++) {
+	          pre.appendChild(document.createTextNode(data.log[i] + '\n'));
+	        }
+	        div.appendChild(pre);
+	        return '<div id="logBox">' + div.innerHTML + '</div>';
+	      }, userText.sequenceCheckLog,
+		      [{'name': 'copyClipboard', 'function': function(){
+		        window.getSelection().selectAllChildren (document.getElementById('logBox'));
+		        document.execCommand ('copy');
+		        alertBox();
+		      }}]
+		    );
+		    window.getSelection().selectAllChildren (document.getElementById('logBox'));
+			});
       div.classList.add ('noDisplay');
     } else {
       div.classList.remove ('noDisplay');
@@ -10096,6 +8812,19 @@ function lockSequence (lock) {
   menuInactiveAll();
 }
 
+// setReferenceSequence is used to change several reference sequence
+// parameters
+function setReferenceSequence (string, fixed) {
+	document.getElementById ('referenceSequenceString').value = string;
+	if (fixed) {
+		document.getElementById ('referenceSequenceString').setAttribute ('disabled', true);
+    document.getElementById ('t_referenceSequenceFixed').classList.remove ('noDisplay');
+	} else {
+		document.getElementById ('referenceSequenceString').removeAttribute ('disabled');
+		document.getElementById ('t_referenceSequenceFixed').classList.add ('noDisplay');
+	}
+}
+
 // changeReferenceSequence is called when the reference sequence is
 // changed
 function changeReferenceSequence (auto) {
@@ -10127,9 +8856,9 @@ function changeReferenceSequence (auto) {
         // only add figures that are not empty
         if (thisFigure.string != '') {
           activeSequence.figures.push ({
-            'string':thisFigure.string,
-            'stringStart':thisFigure.stringStart,
-            'stringEnd':i});
+            'string': thisFigure.string,
+            'stringStart': thisFigure.stringStart,
+            'stringEnd': i});
           thisFigure.string = '';
         }
       }
@@ -10151,7 +8880,7 @@ function changeReferenceSequence (auto) {
   if (string.replace(regexComments, '').match(regexFlipYAxis)) {
     setYAxisOffset (180 - yAxisOffset);
   }
-  
+
   parseSequence ();
 
   activeForm = activeFormSave;
@@ -10198,50 +8927,28 @@ function changeReferenceSequence (auto) {
   div.innerHTML = remaining ?
 	  sprintf (userText.unusedFigureLetters, remaining.split('').join(' ')) : '';
 
+	// send relevant parts of referenceSequence to rulesWorker
+	var refSeqCheck = {figures: {}};
+	for (var key in referenceSequence.figures) {
+		refSeqCheck.figures [key] = {
+			checkLine: referenceSequence.figures[key].checkLine,
+			entryDir: referenceSequence.figures[key].entryDir,
+			entryAtt: referenceSequence.figures[key].entryAtt,
+			exitDir: referenceSequence.figures[key].exitDir,
+			exitAtt: referenceSequence.figures[key].exitAtt
+		}
+	}
+	rulesWorker.postMessage ({action: 'referenceSequence',
+		referenceSequence: refSeqCheck});
+	
   // restore sequence
-  alertMsgs = alertMsgRules = activeSequence.figures = [];
+  alertMsgs = [];
+  alertMsgRules = {};
+  activeSequence.figures = [];
   activeSequence.text = sequenceText.innerText = savedText;
   
   checkSequenceChanged (true);
 
-}
-
-// checkReferenceSequence checks the active sequence against a reference
-// sequence and provides appropriate warnings
-function checkReferenceSequence () {
-  for (var i = 0; i < figures.length; i++) {
-		var f = figures[i];
-    if (f.aresti &&
-      f.unknownFigureLetter &&
-      (f.unknownFigureLetter !== 'L') &&
-      referenceSequence.figures[f.unknownFigureLetter]) {
-      var refFig = referenceSequence.figures[f.unknownFigureLetter];
-      if (refFig.checkLine !== f.checkLine) {
-        checkAlert (sprintf (userText.referenceFigureDifferent,
-          f.unknownFigureLetter), false, f.seqNr);
-      } else if (refFig.entryDir === refFig.exitDir) {
-        if (f.entryDir !== f.exitDir) {
-          if (refFig.entryAtt === refFig.exitAtt) {
-            var text = userText.referenceFigureExitSame;
-          } else {
-            var text = userText.referenceFigureExitOpp;
-          }
-          checkAlert (sprintf (text,
-           f.unknownFigureLetter), false, f.seqNr);
-        }
-      } else if (refFig.entryDir !== refFig.exitDir) {
-        if (f.entryDir === f.exitDir) {
-          if (refFig.entryAtt === refFig.exitAtt) {
-            var text = userText.referenceFigureExitOpp;
-          } else {
-            var text = userText.referenceFigureExitSame;
-          }
-          checkAlert (sprintf (text,
-           f.unknownFigureLetter), false, f.seqNr);
-        }
-      }
-    }
-  }
 }
 
 // checkInfo checks if the required Sequence info is present and
@@ -10481,10 +9188,9 @@ function changeFigureGroup() {
           fig[i].svg = new XMLSerializer().serializeToString(svg);
           svg.setAttribute('id', 'figureChooserSvg');
           // add the roll Aresti nrs to fig if applicable
-          fig[i].rollAresti = [];
-
+          fig[i].rollBase = [];
           for (var j = 1; j < figures[-1].aresti.length; j++) {
-            fig[i].rollAresti[j] = rollAresti.indexOf(figures[-1].aresti[j]);
+            fig[i].rollBase[j] = rollArestiToFig[figures[-1].aresti[j]][0];
           }
         }
         if ((fig[i].aresti.match(newRow) && (fig[i].group != 0)) || (colCount == 0)) {
@@ -10508,38 +9214,43 @@ function changeFigureGroup() {
         inner.innerHTML = fig[i].svg;
         td.addEventListener ('mousedown', function(){selectFigure(this)});
         var rollK = 0;
+        if (!fig[i].rollBase) fig[i].rollBase = [];
         if (sportingClass.value === 'glider') {
-          var k = fig[i].kglider;
-          for (var j = 1; j < fig[i].rollAresti.length; j++) {
+          var k = fig[i].kGlider;
+          for (var j = 1; j < fig[i].rollBase.length; j++) {
             // Set rollK to -1 when this roll has 0K -> illegal
             // Can only happen for queue figures
-            if ((rollKGlider[fig[i].rollAresti[j]] == 0) &&
+            if ((rollFig[fig[i].rollBase[j]].kGlider === 0) &&
 	            (figureGroup == 0)) {
               rollK = -1;
               break;
             }
             // only count half rolls and rolls in queue figures
             if (fig[i].string || (fig[i].rolls[j] == 2)) {
-	            rollK += rollKGlider[fig[i].rollAresti[j]];
+	            rollK += rollFig[fig[i].rollBase[j]].kRules ?
+		            rollFig[fig[i].rollBase[j]].kRules :
+		            rollFig[fig[i].rollBase[j]].kGlider;
 						}
           }
         } else {
-          var k = fig[i].kpwrd;
-          for (var j = 1; j < fig[i].rollAresti.length; j++) {
+          var k = fig[i].kPwrd;
+          for (var j = 1; j < fig[i].rollBase.length; j++) {
             // Set rollK to -1 when this roll has 0K -> illegal
             // Can only happen for queue figures
-            if ((rollKPwrd[fig[i].rollAresti[j]] == 0) &&
+            if ((rollFig[fig[i].rollBase[j]].kPwrd === 0) &&
 	            (figureGroup == 0)) {
               rollK = -1;
               break;
             }
             // only count half rolls and rolls in queue figures
             if (fig[i].string || (fig[i].rolls[j] == 2)) {
-	            rollK += rollKPwrd[fig[i].rollAresti[j]];
+	            rollK += rollFig[fig[i].rollBase[j]].kRules ?
+		            rollFig[fig[i].rollBase[j]].kRules :
+		            rollFig[fig[i].rollBase[j]].kPwrd;
 						}
           }
         }
-
+				if (fig[i].kRules) k = fig[i].kRules;
         if (rollK > 0) {
           k += '(+' + rollK + ')';
         } else if (rollK < 0) {
@@ -10584,7 +9295,7 @@ function changeFigureGroup() {
   if (-1 in figures) {
     // Clear alert messages created by building figures
     alertMsgs = [];
-    alertMsgRules = [];
+    alertMsgRules = {};
     // Delete this figure
     delete figures[-1];
   }
@@ -10605,8 +9316,12 @@ function markFigures () {
 
 // markUsedFigures marks figures that are already in the sequence
 function markUsedFigures () {
-  var table = document.getElementById('figureChooserTable');
-  var tr = table.childNodes;
+  var
+	  table = document.getElementById('figureChooserTable'),
+	  tr = table.childNodes;
+
+  if (!tr.length) return; // don't mark when there are no figures
+
   for (var i = 0; i < tr.length; i++) {
     var td = tr[i].childNodes;
     for (var j = 1; j < td.length; j++) {
@@ -10733,13 +9448,13 @@ function markNotAllowedFigures () {
   
   function legalFigure () {
     td[j].classList.remove ('figureNotAllowed');
-    td[j].firstChild.classList.remove ('hidden');
+    td[j].classList.remove ('hidden');
     anyLegal = true;
   }
   function illegalFigure () {
     if ((document.getElementById('hideIllegal').checked == true) &&
 	    (document.getElementById('figureGroup').value != 0)) {
-      td[j].firstChild.classList.add ('hidden');
+			td[j].classList.add ('hidden');
       td[j].classList.remove ('matchingFigure');
     } else {
       td[j].classList.add ('figureNotAllowed');
@@ -10750,14 +9465,17 @@ function markNotAllowedFigures () {
     var td = tr[i].childNodes;
     var anyLegal = false;
     for (var j = 1; j < td.length; j++) {
-      if ((sportingClass.value === 'powered') && (fig[td[j].id].kpwrd == 0)) {
+      if ((sportingClass.value === 'powered') && (fig[td[j].id].kPwrd == 0)) {
         illegalFigure();
-      } else if ((sportingClass.value === 'glider') && (fig[td[j].id].kglider == 0)) {
+      } else if ((sportingClass.value === 'glider') && (fig[td[j].id].kGlider == 0)) {
         illegalFigure();
       } else if (rulesActive) {
         if (Object.keys(checkAllowCatId).length > 0) {
           var aresti = fig[td[j].id].aresti;
-          var totalK = parseInt((sportingClass.value === 'powered') ? fig[td[j].id].kpwrd : fig[td[j].id].kglider);
+          if (!fig[td[j].id].kRules) {
+	          var totalK = parseInt((sportingClass.value === 'powered') ?
+		          fig[td[j].id].kPwrd : fig[td[j].id].kGlider);
+		      } else var totalK = parseInt(fig[td[j].id].kRules);
           totalK += parseInt (fig[td[j].id].rollK);
 
           if (aresti.match(/^queue-/)) {
@@ -11124,10 +9842,9 @@ function makeMiniFormA (x, y, tiny) {
 	  blockY = y,
 	  figNr = 0,
 	  figureK = 0,
-	  modifiedK = [];
-
-	var widths = tiny ? [28, 0, 0, 35] : [30, 60, 26, 25];
-  var totalWidth = widths.reduce (function(a, b) { return a + b; }, 0);
+	  modifiedK = [],
+	  widths = tiny ? [28, 0, 0, 35] : [30, 60, 26, 25],
+	  totalWidth = widths.reduce (function(a, b) { return a + b; }, 0);
 	
 	if (!tiny) {
 	  // set the header for the correct sporting class
@@ -11150,7 +9867,7 @@ function makeMiniFormA (x, y, tiny) {
 		drawLine (blockX + widths[0] + widths[1], blockY, 0, 24, 'formLine');
 	}
 	blockY += 24;
-  
+
   for (var i = 0; i < figures.length; i++) {
     var aresti = figures[i].aresti;
     var k = figures[i].k;
@@ -11160,7 +9877,7 @@ function makeMiniFormA (x, y, tiny) {
       topBlockY = blockY;
       if (tiny) blockY += 24;
       for (var j = 0; j < aresti.length; j++) {
-        if (aresti[j] in aresti_K) modifiedK.push (figNr);
+        if (aresti[j] in rulesKFigures) modifiedK.push (figNr);
         figK += parseInt(k[j]);
 				if (!tiny) {
 	        drawText (aresti[j], blockX + widths[0] + 4, blockY + 16, 'miniFormA');
@@ -11305,7 +10022,7 @@ function makeTinyFormA (x, y) {
       topBlockY = blockY;
       blockY += 24;
       for (var j = 0; j < aresti.length; j++) {
-        if (aresti[j] in aresti_K) modifiedK.push (figNr);
+        if (aresti[j] in rulesKFigures) modifiedK.push (figNr);
         figK += parseInt(k[j]);
       }
       // Adjust figure K for additionals
@@ -12353,7 +11070,7 @@ function changeQueueColumns () {
 }
 
 // addToQueue adds the selected figure to the figure queue
-function addToQueue () {
+function addToQueue (e) {
   var f = figures[selectedFigure.id];
   var figNr = f.figNr;
   // create aresti string
@@ -12368,7 +11085,7 @@ function addToQueue () {
   while (fig[i]) {
     if (fig[i].group == 0) {
       if (fig[i].aresti == aresti) {
-        alertBox (userText.figureAlreadyInQueue);
+        if (e) alertBox (userText.figureAlreadyInQueue);
         return;
       }
       i--;
@@ -12380,8 +11097,9 @@ function addToQueue () {
                 'rolls':fig[figNr].rolls,
                 'draw':fig[figNr].draw,
                 'pattern':fig[figNr].pattern,
-                'kpwrd':fig[figNr].kpwrd,
-                'kglider':fig[figNr].kglider};
+                'kPwrd':fig[figNr].kPwrd,
+                'kGlider':fig[figNr].kGlider,
+                'kRules':fig[figNr].kRules};
 
   // add properties
   fig[figLen].unknownFigureLetter = f.unknownFigureLetter;
@@ -12424,7 +11142,7 @@ function addAllToQueue () {
   }
   if (noFigures) {
     alertBox (userText.addAllToQueueNoFigures, userText.addAllToQueue);
-    return
+    return;
   }
   
   infoBox (userText.addAllToQueueWait, userText.addAllToQueue);
@@ -12433,17 +11151,17 @@ function addAllToQueue () {
     for (var i = 0; i < figures.length; i++) {
       if (figures[i].aresti) {
         selectFigure(i);
-        addToQueue();
+        addToQueue(false);
       }
     }
     // remove infoBox
-    infoBox ();
+    setTimeout (infoBox, 300);
     // reselect original selected figure
     selectFigure(f);
     // set the figure chooser to the queue group
     document.getElementById ('figureGroup').value = '0';
     changeFigureGroup();
-  }, 100);
+  }, 50);
 }
 
 // removeFromQueue removes a figure from the queue
@@ -12475,6 +11193,7 @@ function clearQueue () {
           i--;
         } else break;
       }
+      changeFigureGroup();
       hideFigureSelector();
       setQueueMenuOptions();
       storeLocal ('queue', []);
@@ -12535,9 +11254,9 @@ function startFuDesigner(dontConfirm) {
     // unlock sequence when locked
     if (document.getElementById ('lock_sequence').value) lockSequence();
     
-    // deactivate any active menus, dialogs etc
-    var active = document.getElementsByClassName ('active');
-    while (active.length > 0) active[0].classList.remove ('active');
+    // deactivate figureSelector and any active menus etc
+    hideFigureSelector();
+    menuInactiveAll();
     
     infoBox (userText.FUstarting, userText.fuDesigner);
 
@@ -12998,8 +11717,9 @@ function buildFuFiguresTab() {
         'rolls':fig[figNr].rolls,
         'draw':fig[figNr].draw,
         'pattern':fig[figNr].pattern,
-        'kpwrd':fig[figNr].kpwrd,
-        'kglider':fig[figNr].kglider,
+        'kPwrd':fig[figNr].kPwrd,
+        'kGlider':fig[figNr].kGlider,
+        'kRules':fig[figNr].kRules,
         'figNr':figNr};
       // remove extensions/shortenings and y axis switch
       var string = f.string;
@@ -13104,12 +11824,11 @@ function buildFuFiguresTab() {
       fuFig[l].svg = new XMLSerializer().serializeToString(svg);
       svg.setAttribute('id', 'figureChooserSvg');
       // add the roll Aresti nrs to fig if applicable
-      fuFig[l].rollAresti = [];
-  
+      fuFig[l].rollBase = [];
       for (var j = 1; j < figures[-1].aresti.length; j++) {
-        fuFig[l].rollAresti[j] = rollAresti.indexOf(figures[-1].aresti[j]);
+        fuFig[l].rollBase[j] = rollArestiToFig[figures[-1].aresti[j]][0];
       }
-      
+
       fu_figures.value += '"@' + l + '" ' + fuFig[l].string + ' ';
     }
     if (colCount == 0) {
@@ -13208,8 +11927,7 @@ function makeFormA() {
     // only draw if there is a (fake) aresti number
     if (aresti) {
       var x = 0;
-      var colCount = iacForms ? 7 : 9;
-      for (var column = 0; column < colCount; column++) {
+      for (var column = 0; column < columnWidths.length; column++) {
         switch (column) {
           case (0):
             drawRectangle (x, y, columnWidths[column], rowHeight, 'formLine');
@@ -13241,7 +11959,7 @@ function makeFormA() {
                 13),
               8);
             for (var j = 0; j < aresti.length; j++) {
-              if (aresti[j] in aresti_K) modifiedK.push (row + 1);
+              if (aresti[j] in rulesKFigures) modifiedK.push (row + 1);
               drawText (aresti[j],
                 x + columnWidths[column] / 2,
                 y + (j + 1) * fontsize,
@@ -13350,7 +12068,7 @@ function makeFormA() {
           default:
             drawRectangle (x, y, columnWidths[column], rowHeight, 'formLine');
         }
-        if (column == (colCount - 1)) {
+        if (column == (columnWidths.length - 1)) {
           drawLine (x + columnWidths[column], y, 0, rowHeight, 'formLineBold');
         }
         if ((row == 0) && (column > 4)) {
@@ -13444,7 +12162,7 @@ function makeFormGrid (cols, width, svg) {
 		for (var j = f.k.length - 1; j>=0; j--) figK += parseInt(f.k[j]);
 		drawText('K: ' + figK,  x + 5, yy, 'formATextBold', 'start', '', svg);
 		for (var j = f.k.length - 1; j>=0; j--) {
-			if (f.aresti[j] in aresti_K) modifiedK.push (f.seqNr);
+			if (f.aresti[j] in rulesKFigures) modifiedK.push (f.seqNr);
 			yy -= 15;
 			drawText(f.aresti[j] + '(' + f.k[j] + ')',
 				x + 5,
@@ -14165,11 +12883,11 @@ function makeFree () {
     if (td) {
       var match = sequenceText.innerText.match(RegExp ('"@' + l[i] + '"', 'g'));
       if (match) {
-        var multi = ((l[i] === 'L') && additionalFig.max) ? additionalFig.max : 1;
+        var multiple = ((l[i] === 'L') && additionalFig.max) ? additionalFig.max : 1;
         if (l[i] === 'L') {
           td.innerHTML = userText.additional + '<br />' + match.length + 'x';
         }
-        if (match.length > multi) {
+        if (match.length > multiple) {
           td.classList.remove ('figUsed');
           td.classList.add ('figUsedMulti');
         } else {
@@ -14250,6 +12968,15 @@ function addFormElements (form) {
   SVGRoot.setAttribute("height", scaleSvg * (h + 5));
 }
 
+// addAlertsToAlertMsgs adds an object provided by checkRules Worker
+// to alertMsgs and alertMsgRules
+function addAlertsToAlertMsgs (data) {
+	for (var i = 0; i < data.alertMsgs.length; i++) {
+		alertMsgs.push (data.alertMsgs[i]);
+		alertMsgRules [data.alertMsgs[i]] = data.alertMsgRules [data.alertMsgs[i]];
+	}
+}
+
 // displayAlerts displays alert messages in the Alerts box
 function displayAlerts () {
   var container = document.getElementById('alerts');
@@ -14260,7 +12987,13 @@ function displayAlerts () {
     }
     // sort messages alphabetically/by number. Specific figure messages
     // will be shown first as '(' comes before all letters
-    alertMsgs.sort();
+    // However, during sorting we change (x) to (0x) to assure figures
+    // below 10 are shown before later figures
+    alertMsgs.sort (function (a, b) {
+			return (
+				a.replace (/^\((\d[\),])/, '(0$1') < b.replace (/^\((\d[\),])/, '(0$1') ? -1 : 1
+			);
+		});
     // Add a message to the top to warn if no rules are loaded
     if (!rulesActive) alertMsgs.unshift (userText.noRules);
     // Display messages
@@ -14274,11 +13007,12 @@ function displayAlerts () {
         span.classList.add ('alertMsgRule');
       }
       container.appendChild (span);
+      // use <br> because sequence check log uses simple formatting
       container.appendChild (document.createElement('br'));
     }
     // Clear all alerts
     alertMsgs = [];
-    alertMsgRules = [];
+    alertMsgRules = {};
   }
 }
 
@@ -14329,35 +13063,7 @@ function draw () {
   
   // check if selectedFigure.id is still valid
   if (!figures[selectedFigure.id]) selectFigure(false);
-  // display all alerts
-  displayAlerts ();
 }
-
-/**
-// windowResize gets called whenever the window is resized or rotated
-function windowResize () {
-
-	if (platform.smallMobile) {
-    // set view to device width
-		var initScale = screen.width / 320;
-
-	  if (platform.ios && platform.cordova) {
-			document.getElementById ('viewport').setAttribute('content',
-		    'user-scalable=no, initial-scale=1, width=device-width, '+
-		    'viewport-fit=cover');
-		  document.body.style = 'transform: scale(' + initScale + '); ' +
-			  '-webkit-transform-origin-x: left; ' +
-			  '-webkit-transform-origin-y: top;';
-		} else {
-		  document.getElementById ('viewport').setAttribute('content',
-		    'user-scalable=no, viewport-fit=cover, width=321' +
-		    (platform.cordova ? ', initial-scale=' + initScale : '')
-		  );
-		}
-
-	}
-}
-*/
 
 // virtualKeyboard shows or hides the virtual keyboard for
 // special keys for touch devices, except on small mobile
@@ -14533,7 +13239,7 @@ function checkSequenceChanged (force) {
     }
 
     // save previous figures for ^ > flip check
-    activeSequence.previousFigures = activeSequence.figures;
+    activeSequence.previousFigures = JSON.parse(JSON.stringify(activeSequence.figures));
 
     // Now assign to activeSequence      
     activeSequence.figures = figure;
@@ -14590,6 +13296,7 @@ function checkSequenceChanged (force) {
 // selectForm selects which Form to show
 function selectForm (form) {
   activeForm = form;
+  rulesWorker.postMessage ({action: 'activeForm', form: form});
   updateDefaultView();
   // always do a full redraw of the form and figure editor as these may
   // change when switching to or from Grid view
@@ -14657,7 +13364,8 @@ function clearSequence () {
 	    document.getElementById ('fu_figures').value = '';
 	    document.getElementById ('pilot_id').value = '';
 	    document.getElementById ('flight_nb').value = '';
-	    unloadRules();
+	    
+      rulesWorker.postMessage ({action: 'unloadRules'});
 	    updateDefaultView();
 		} else {
 			sequenceText.innerText = 'eu';
@@ -14665,6 +13373,7 @@ function clearSequence () {
 			
     checkSequenceChanged();
     displayAlerts();
+
     sequenceSaved = true;
   }
   
@@ -14685,7 +13394,7 @@ function openLogoFile () {
 // programme will load a programme
 function programme () {
   var key = this.id.replace(/^programme-/, '');
-  OLANBumpBugCheck = false;
+  OLAN.bumpBugCheck = false;
   updateSaveFilename();
   if (/^<sequence>/.test(library[key])) {
     activateXMLsequence(library[key]);
@@ -14761,24 +13470,28 @@ function openFile (file, handler, params) {
         reader.onload = loadedLogo;
         break;
       case 'RulesFile':
-        reader.onload = loadedRulesFile;
+        reader.onload = function(e){rulesWorker.postMessage (
+					{action: 'loadedRulesFile', arraybuffer: e.target.result},
+					[e.target.result])};
         break;
     }
     reader.onerror = errorHandler;
-    reader.readAsDataURL(file);
+    if (handler === 'RulesFile') {
+			reader.readAsArrayBuffer (file);
+		} else reader.readAsDataURL(file);
   }
 }
 
 // removeFileListFile removes a file from fileList
-function removeFileListFile(el) {
+function removeFileListFile(el, callback) {
   var id = el.id.replace(/^removeFileListFile/, '');
   var container = el.parentNode.parentNode;
-  console.log ('Removing file:' + fileList[id].name);
+  //console.log ('Removing file:' + fileList[id].name);
   fileList.splice (id, 1);
   // we need to rebuild because splice changes the indexes
   clearFileListContainer (container);
   for (var i = 0; i < fileList.length; i++) {
-    addToFileList (i, container);
+    addToFileList (i, container, callback);
   }
 }
   
@@ -14792,7 +13505,9 @@ function checkMultiDialog(show) {
   if (show) {
     // clear the file list
     fileList = [];
+    multi.processing = false;
     clearFileListContainer (document.getElementById('fileDropFiles'));
+		document.getElementById ('t_checkSequences').classList.add ('disabled');
 
     div.classList.remove ('noDisplay');
     var el = document.getElementById('multiCurrentRules');
@@ -14816,9 +13531,10 @@ function clearFileListContainer (container) {
   
 // updateFileList is called by updateCheckMulti and updatePrintMulti to
 // update the fileList object
-// - evt defines where the files come from
-// - el is the element that holds the file list
-function updateFileList (evt, el) {
+// evt      = where the files come from
+// el       = the element that holds the file list
+// callback = called on changes
+function updateFileList (evt, el, callback) {
   if (evt) {
     if (evt.dataTransfer) {
       noPropagation(evt);
@@ -14845,7 +13561,8 @@ function updateFileList (evt, el) {
         openFile (
           files[i],
           'FileList',
-          { 'container' : el,
+          { 'callback' : callback,
+						'container' : el,
             'file' : files[i]
           }
         );
@@ -14856,12 +13573,13 @@ function updateFileList (evt, el) {
 
 // loadedFileList is called when a file for fileList is loaded
 function loadedFileList (e, params) {
+	console.log(params.file.name);
   loadSequence (e.target.result, function(sequence) {
 	  // only add to fileList when a valid sequence was detected
 	  if (sequence) {
 	    params.file.sequence = sequence;
 	    fileList.push (params.file);
-	    addToFileList (fileList.length - 1, params.container);
+	    addToFileList (fileList.length - 1, params.container, params.callback);
 	  } else {
 	    alertBox (userText.multiNoSequence);
 	  }
@@ -14871,7 +13589,9 @@ function loadedFileList (e, params) {
 // addToFileList is called to add a file to a file list
 // id        = id of fileList element
 // container = where the div will be put
-function addToFileList (id, container) {
+// callback  = function to execute on changes
+function addToFileList (id, container, callback) {
+	if (!callback) callback = function (){};
   // build and add div
   var div = document.createElement ('div');
   var i = document.createElement ('i');
@@ -14880,12 +13600,14 @@ function addToFileList (id, container) {
   i.id = 'removeFileListFile' + id;
   i.innerHTML = 'close';
   i.addEventListener ('mousedown', function(){
-    removeFileListFile(this);
+    removeFileListFile(this, callback);
+    callback ();
     }, false);
   div.appendChild (i);
   var name = document.createTextNode (fileList[id].name);
   div.appendChild (name);
   container.appendChild(div);
+  callback ();
   // adjust image size for saving
   saveImageSizeAdjust();
 }
@@ -14893,7 +13615,11 @@ function addToFileList (id, container) {
 // updateCheckMulti is called after dragging & dropping files to check
 // multi field or adding files with file chooser
 function updateCheckMulti (evt) {  
-  updateFileList (evt, document.getElementById('fileDropFiles'));
+  updateFileList (evt, document.getElementById ('fileDropFiles'), function() {
+	  if (fileList.length) {
+			document.getElementById ('t_checkSequences').classList.remove ('disabled');
+		} else document.getElementById ('t_checkSequences').classList.add ('disabled');
+	});
 }
 
 // updatePrintMulti is called after dragging & dropping files to print
@@ -14904,110 +13630,117 @@ function updatePrintMulti (evt) {
 
 // checkMulti is called to open multiple files for checking.
 function checkMulti () {
-  if (!chromeApp.active) {
-    // open check window. Must do this early to prevent popup blocking
-    newWindow ('', userText.sequenceCheckLog);
-  }  
+	if (this.classList.contains ('disabled')) return;
 
   // save active sequence
   multi.savedSeq = activeSequence.xml;
-  multi.processing = true;
+  multi.processing = 'check';
 
   infoBox (
-    sprintf(userText.checkMultiWait, fileList.length),
+    '<span id="checkMultiCounter"></span>',
     userText.checkMulti);
 
   // hide dialog screen
   checkMultiDialog();
     
-  setTimeout (function() {
-    var body = document.createElement('body');
-    // go through the selected files
-    for (var i = 0; i < fileList.length; i++) {
-      checkSequenceMulti (i, body);
-    }
-  
-    // show the check result window
-    newWindow (body, userText.sequenceCheckLog);
-    // clear "wait" message
-    infoBox ();
-    // restore saved sequence
-    activateXMLsequence (multi.savedSeq);
-    
-    multi.processing = false;
-  }, 1000);
+	var body = document.createElement('body');
+	// go through the selected files
+	checkSequenceMulti (body);
 }
 
 // checkSequenceMulti will be called when a sequence file has been
 // loaded for multiple sequence checking
-function checkSequenceMulti(i, body) {
+function checkSequenceMulti (body) {
 
-  /** fixme: possible code to show counter. Problem: it requires full
-   *  redraw which makes everything very slow and messy and thus is
-   *  counterproductive. Maybe through separate window?
-   */
-  // document.getElementById ('checkMultiCounter').innerHTML = sprintf(
-  //  userText.checkMultiWait, multi.count, multi.total, evt.target.file.name);
+  document.getElementById ('checkMultiCounter').innerHTML = sprintf(
+    userText.checkMultiCounter, fileList[0].name, fileList.length);
   
-  console.log('Checking: ' + fileList[i].name);
+  console.log('Checking: ' + fileList[0].name);
   // create log entry
   var pre = document.createElement('pre');
   body.appendChild (pre);
-  pre.appendChild(document.createTextNode('File: ' + fileList[i].name + '\n'));
+  pre.appendChild(document.createTextNode('File: ' + fileList[0].name + '\n'));
 
-  if (fileList[i].sequence) { 
-    activateXMLsequence (fileList[i].sequence, true);
-  
+  if (fileList[0].sequence) { 
+    activateXMLsequence (fileList[0].sequence, true);
+
+		var callback = function (data) {
+	    // clear any alert boxes. Errors are shown in the log.
+	    alertBox();
+	    // add alerts created by Worker and display them in the alerts area
+	    addAlertsToAlertMsgs (data);
+	    displayAlerts ();
+	  
+	    if (document.getElementById('multiFullLog').checked) {
+	      // full expanded log      
+	      for (var i = 0; i < data.log.length; i++) {
+	        pre.appendChild(document.createTextNode(data.log[i] + '\n'));
+	      }
+	    } else {
+	      // concise log
+	      
+	      // get alerts from alert area
+	      var div = document.createElement('div');
+	      div.innerHTML = document.getElementById('alerts').innerHTML;
+	      // remove label
+	      div.removeChild(div.firstChild);
+	
+	      if (div.innerHTML == '') {
+	        if (rulesActive) {
+	          pre.appendChild(document.createTextNode('Rules: ' + rulesActive + '\n'));
+	          pre.appendChild(document.createTextNode(userText.sequenceCorrect + '\n'));
+	        } else {
+	          pre.appendChild(document.createTextNode(userText.noRules + '\n'));
+	        }
+	      } else {
+	        if (rulesActive) {
+	          pre.appendChild(document.createTextNode('Rules: ' + rulesActive + '\n'));
+	        }
+	        body.appendChild (div);
+	      }
+			}
+      // add delimiter
+			var delimiter = document.createElement('pre');
+			body.appendChild (delimiter);
+		  delimiter.appendChild(document.createTextNode(
+		  '\n--------------------------------------------------------\n'));
+
+			// check next file or finalize
+	    fileList.shift();
+	    if (fileList.length) {
+				checkSequenceMulti (body);
+			} else {
+		    // show the check result window
+        alertBox ('<div id="logBox">' + body.innerHTML + '</div>',
+		      userText.sequenceCheckLog,
+		      [{'name': 'copyClipboard', 'function': function(){
+		        window.getSelection().selectAllChildren (document.getElementById('logBox'));
+		        document.execCommand ('copy');
+		        alertBox();
+		      }}]
+		    );
+		    window.getSelection().selectAllChildren (document.getElementById('logBox'));
+		    // clear "wait" message
+		    infoBox ();
+
+		    // restore saved sequence. First unload rules to make sure
+		    // reference sequence is correctly loaded from rules
+		    rulesWorker.postMessage ({action: 'unloadRules'});
+		    activateXMLsequence (multi.savedSeq);
+				
+		    multi.processing = false;
+			}
+		}
+		  
     // Activate the loading of the checking rules (if any)
     if (document.getElementById('multiOverrideRules').checked) {
       // use rules currently set
-      var log = checkRules();
+			checkRules (callback);
     } else {
       // use rules from file
-      var log = changeCombo('program');
-    }
-  
-    // clear any alert boxes. Errors are shown in the log.
-    alertBox();
-    // clear alert messages
-    alertMsgs = [];
-    alertMsgRules = [];
-  
-    if (document.getElementById('multiFullLog').checked) {
-      // full expanded log      
-      for (var i = 0; i < log.length; i++) {
-        pre.appendChild(document.createTextNode(log[i] + '\n'));
-      }
-    } else {
-      // concise log
-      
-      // get alerts from alert area
-      var div = document.createElement('div');
-      div.innerHTML = document.getElementById('alerts').innerHTML;
-      // remove label
-      div.removeChild(div.firstChild);
-
-      if (div.innerHTML == '') {
-        if (rulesActive) {
-          pre.appendChild(document.createTextNode('Rules: ' + rulesActive + '\n'));
-          pre.appendChild(document.createTextNode(userText.sequenceCorrect + '\n'));
-        } else {
-          pre.appendChild(document.createTextNode(userText.noRules + '\n'));
-        }
-      } else {
-        if (rulesActive) {
-          pre.appendChild(document.createTextNode('Rules: ' + rulesActive + '\n'));
-        }
-        body.appendChild (div);
-
-        var pre = document.createElement('pre');
-
-        body.appendChild (pre);
-      }
+      changeCombo ('program', callback);
     }
   }
-  pre.appendChild(document.createTextNode(
-	  '\n--------------------------------------------------------\n'));
 }
 
 /***********************************************************************
@@ -15030,9 +13763,9 @@ function loadedSequence(evt, name) {
 	
 	  activateXMLsequence (xml, true);
 	
-	  // update the sequence if OLANSequence was true
-	  if (OLANSequence) {
-	    OLANSequence = false;
+	  // update the sequence if OLAN.sequence was true
+	  if (OLAN.sequence) {
+	    OLAN.sequence = false;
 	    updateSequence (-1, '');
 	    activeSequence.text = '';
 	    checkSequenceChanged();
@@ -15041,9 +13774,8 @@ function loadedSequence(evt, name) {
 	  sequenceSaved = true;
 	
 	  // Activate the loading of the checking rules (if any)
-	  changeCombo('program');
-	  
-	  checkFuFiguresFile();
+	  changeCombo ('program', checkFuFiguresFile);
+
 	});
 }
 
@@ -15070,7 +13802,7 @@ function loadedQueue(evt) {
 	  for (var i = 0; i < figures.length; i++) {  
 	    if (figures[i].aresti) {
 	      selectedFigure.id = i;
-	      addToQueue();
+	      addToQueue(false);
 	    }
 	  }
 	
@@ -15081,9 +13813,9 @@ function loadedQueue(evt) {
 	});
 }
 
-// loadSequence loads a sequence file and does some checks. Function f
+// loadSequence loads a sequence file and does some checks. Callback
 // is executed with an XML sequence or false
-function loadSequence (fileString, f) {
+function loadSequence (fileString, callback) {
   // Check if we have an OLAN sequence or an OpenAero XML sequence.
   // If the sequence file starts with '<sequence', assume it's an XML
   // sequence.
@@ -15098,12 +13830,12 @@ function loadSequence (fileString, f) {
 	      var string = steg.decode (image);
 	      if (string.match (/^<sequence/)) {
 	        // this is an OpenAero sequence, no need to do OLAN checks
-	        OLANBumpBugCheck = false;
-	        f (string);
+	        OLAN.bumpBugCheck = false;
+	        callback (string);
 	        return;
 	      } else {
 				  console.log('*** ' + userText.notSequenceFile);
-				  f (false);
+				  callback (false);
 				}
 			}
 			return;
@@ -15111,25 +13843,25 @@ function loadSequence (fileString, f) {
       fileString = atob (fileString.replace (/^data:.*;base64,/, ''));
       if (fileString.match (/^<sequence/)) {
         // this is an OpenAero sequence, no need to do OLAN checks
-        OLANBumpBugCheck = false;
-        f (fileString);
+        OLAN.bumpBugCheck = false;
+        callback (fileString);
         return;
       }
       if (fileString.charAt(0) === '[') {
         // OLAN sequence, transform to XML
-        f (OLANtoXML (fileString));
+        callback (OLANtoXML (fileString));
         return;
       }
     }
   } catch (err) {console.log(err)}
 
   console.log('*** ' + userText.notSequenceFile);
-  f (false);
+  callback (false);
 }
 
 // OLANtoXML transforms an OLAN file to OpenAero XML
 function OLANtoXML (string) {
-  OLANSequence = true;
+  OLAN.sequence = true;
   var activeKey = false;
   var lines = string.split('\n');
   string = '<sequence>';
@@ -15155,7 +13887,7 @@ function OLANtoXML (string) {
   if (activeKey) string += '</' + activeKey + '>';
   // end with current oa_version to prevent some error messages
   string += '<oa_version>' + version + '</oa_version></sequence>';
-  OLANBumpBugCheck = true;
+  OLAN.bumpBugCheck = true;
   return string;
 }
 
@@ -15164,9 +13896,6 @@ function OLANtoXML (string) {
 function activateXMLsequence (xml, noLoadRules) {
   
   var freeUnknownSequence = '';
-  
-  // first rebuild the svg container to free up memory
-  //rebuildSequenceSvg();
   
   // make sure no figure is selected
   if (selectedFigure.id !== null) selectFigure (false);
@@ -15183,8 +13912,7 @@ function activateXMLsequence (xml, noLoadRules) {
 
   // set 'class' to powered by default to provide compatibility with OLAN
   // and older OpenAero versions
-  var el = document.getElementById('class');
-  if (el) el.value = 'powered';
+  document.getElementById('class').value = 'powered';
   
   if (xml) {
     // myElement will hold every entry as a node
@@ -15273,7 +14001,20 @@ function activateXMLsequence (xml, noLoadRules) {
   panelHeader (document.getElementById ('activeContest'), userText.contest);
   
   // Load rules when applicable and update sequence data
-  if (!noLoadRules) loadRules();
+
+  if (!noLoadRules) {
+	  // restore Reference sequence to previous value
+	  var refSeqEl = document.getElementById ('referenceSequenceString');
+	  refSeqEl.value = savedReference;
+	  refSeqEl.removeAttribute ('disabled');
+	  document.getElementById ('t_referenceSequenceFixed').classList.add ('noDisplay');
+	  rulesWorker.postMessage ({
+			action: 'loadRules',
+			ruleName: getRuleName(),
+			catName: document.getElementById('category').value.toLowerCase(),
+			programName: document.getElementById('program').value.toLowerCase()
+		});
+	}
   
   // check if we are switching from a regular sequence to Free (Un)known
   // or vv
@@ -15297,7 +14038,7 @@ function activateXMLsequence (xml, noLoadRules) {
   }
   
   // The sequence is now fully loaded
-  if (!noLoadRules) checkFuFiguresFile();
+  if (!noLoadRules) checkRules (checkFuFiguresFile);
 
   // sequence was just loaded, so also saved
   sequenceSaved = true;
@@ -15311,7 +14052,9 @@ function activateXMLsequence (xml, noLoadRules) {
 // If so, if it may be a Free (Un)known figures file and the user is
 // asked if he wants to open it in the Free (Un)known Designer
 function checkFuFiguresFile() {
+	
 	if (platform.smallMobile) return;
+	
   var l = figureLetters;
   if (
     l &&
@@ -15386,8 +14129,9 @@ function handleDragOver(evt) {
 // checkOpenAeroVersion checks for the version number of the loaded
 // sequence and provides a warning if necessary
 function checkOpenAeroVersion () {
-  var oa_version = document.getElementById('oa_version');
-  var alerts = '';
+  var
+	  oa_version = document.getElementById('oa_version'),
+	  alerts = '';
 
   // before 1.2.3
   if (oa_version.value == '') {
@@ -15413,18 +14157,18 @@ function checkOpenAeroVersion () {
   // first and second line, where the first roll is of uneven quarters
   if (compVersion (oa_version.value, '2016.1') < 0) {
     if (sequenceText.innerText.match (/B/)) {
-      var figures = sanitizeSpaces (sequenceText.innerText).split (' ');
-      for (var i = 0; i < figures.length; i++) {
+      var f = sanitizeSpaces (sequenceText.innerText).split (' ');
+      for (var i = 0; i < f.length; i++) {
         // remove comments
-        figures[i] = figures[i].replace (regexComments, '');
+        f[i] = f[i].replace (regexComments, '');
         // only keep specific characters, and convert ; to ,
-        figures[i] = figures[i].replace (/[^\d,;B\(\)]/g, '').replace (/;/g, ',');
+        f[i] = f[i].replace (/[^\d,;B\(\)]/g, '').replace (/;/g, ',');
         // convert all non-quarter rolls to 'r'
-        figures[i] = figures[i].replace (/(48|88|128|168|24|44|64|84|22|32|42|2|1|9)/g, 'r');
+        f[i] = f[i].replace (/(48|88|128|168|24|44|64|84|22|32|42|2|1|9)/g, 'r');
         // convert remaining rolls to 'q' and remove ,
-        figures[i] = figures[i].replace (/\d+/g, 'q').replace (/,/g, '');
+        f[i] = f[i].replace (/\d+/g, 'q').replace (/,/g, '');
         // check for correct match
-        if (figures[i].match (/^(q|qr|rq)B+\([qr]/)) {
+        if (f[i].match (/^(q|qr|rq)B+\([qr]/)) {
           alerts += userText.warningPre20161;
           break;
         }
@@ -15447,6 +14191,34 @@ function checkOpenAeroVersion () {
       alerts += userText.warningPre201611;
     }
   }
+
+  // before 2019.2:
+  // check for figures 1.2.11.x and 1.2.12.x which were incorrect before 2019.2
+  // fix figures where necessary and present warning
+  if (compVersion (oa_version.value, '2019.2') < 0) {
+		// remove any irrelevant parts, including full rolls, and match
+    if (sequenceText.innerText.replace(/[^\dzt ]|1|22|44|88|9|42|84|168/g, '').match (/\dzt/)) {
+			// basic check passed, now check thoroughly and correct
+			checkSequenceChanged();
+			var s = false;
+			for (var i = 0; i < figures.length; i++) {
+				if (figures[i].aresti && figures[i].aresti[0].match (/1\.2\.1[12]/)) {
+					s = figures[i].string;
+					var m = s.match (/(zt[^-]*)(-+)/);
+					if (m) {
+						s = s.replace (m[0], m[1] + Array (m[2].length).join ('+'));
+					} else {
+						m = s.match (/(zt[^\+]*)(\++)/);
+						if (m) {
+							s = s.replace (m[0], m[1] + Array (m[2].length + 2).join ('-'));
+						} else s += '-';
+					}
+					updateSequence (i, s, true);
+				}
+			} 
+			if (s) alerts += userText.warningPre20192;
+    }
+  }
     
   // add any additional checks here
   // compVersion can be used to check against specific minimum versions
@@ -15458,7 +14230,10 @@ function checkOpenAeroVersion () {
     alerts += userText.warningNewerVersion;
   }
 
-  if (alerts != '') alertBox(alerts + userText.warningPre);
+  if ((alerts != '') && !multi.processing) {
+		// don't show when processing multiple files
+		alertBox(alerts + userText.warningPre);
+	}
   // set version to current version for subsequent saving
   oa_version.value = version;
 }
@@ -15501,34 +14276,6 @@ function loadedLogo (evt) {
     drawActiveLogo();
   } else {
     alertBox (userText.unknownFileType);
-  }
-}
-
-// loadedRulesFile will be called when a rules file has been loaded
-function loadedRulesFile (evt) {
-  // get start index for new rules
-  var start = rules.length;
-  // convert file to array
-  var lines = atob (evt.target.result.replace (/^data:.*;base64,/, '')).split("\n");
-  for (var i = 0; i < lines.length; i++) {
-    // remove any windows linebreaks
-    var line = lines[i].replace('\r', '');
-    // only keep part inside rules.push
-    line = line.replace (/rules\.push[ ]*\("([^"]*).*$/, "$1");
-    // replace all double backslashes by single
-    line = line.replace (/\\\\/g, '\\');
-    // do some basic matching to check for correct rule line
-    if (line.match (/^([0-9\.]{5}|\[[^\]]+\]|\([^\)]+\))/) || line.match (/^[^#\/][a-zA-Z0-9\-_]+=/)) {
-      console.log(line);
-      rules.push (line);
-    }
-  }
-  // when new rules have been added, parse those
-  if (rules.length > start) {
-    parseRules (start);
-    alertBox (userText.rulesImported + (rules.length - start), userText.rulesImportTitle);
-  } else {
-    alertBox (userText.rulesNotImported, userText.rulesImportTitle);
   }
 }
 
@@ -15885,20 +14632,15 @@ function storeLocal(name, value) {
 // getLocal gets a value from localStorage and returns it. If
 // localStorage is not supported it returns false
 // To also support chrome.storage (for apps) it works asynchronous.
-// Function f is the callback to be called when the storage is loaded
-function getLocal(name, f) {
+// Callback will be called when the storage is loaded
+function getLocal(name, callback) {
   if (storage) {
     if (chromeApp.active) {
-      function ff (value) {
-        f (value[name]);
-      }
-      chrome.storage.local.get (name, ff);
+      chrome.storage.local.get (name, function (value) {callback (value[name])});
     } else {
-      f (localStorage.getItem (name));
+      callback (localStorage.getItem (name));
     }
-  } else {
-    return false;
-  }
+  } else return false;
 }
 
 /********************************
@@ -15926,36 +14668,26 @@ function parseAircraft (t) {
 // 2) Check if called from "Save PDF" on Cordova app
 
 function printForms (evt) {
-  // set a short default wait
-  var wait = 50;
-  if (fileList.length > 0) {
-    infoBox (
-      sprintf(userText.printMultiWait, fileList.length),
-      userText.printMulti);
-    // set wait to 1 second when printing multi to build infoBox
-    wait = 1000;
-  }
 
-	// Print the constructed pages. Use setTimeout to prevent blocking.
-	setTimeout (function() {
-		// update the print style with margins
-		var style = document.getElementById ('printStyle');
-		style.innerHTML = '@page {size: auto; margin: ' +
-				document.getElementById ('marginTop').value + 'mm ' +
-				document.getElementById ('marginRight').value + 'mm ' +
-				document.getElementById ('marginBottom').value + 'mm ' +
-				document.getElementById ('marginLeft').value + 'mm}' +
-				'html {height: 100%; overflow: initial;}' +
-				'body {margin: 0; height: 100%; overflow: initial;}' +
-				'.noPrint {display: none;}' +
-				'#noScreen {height: 100%;}' +
-				'.breakAfter {position: relative; display:block; ' +
-				'page-break-inside:avoid; page-break-after:always; ' +
-				'height: 100%;}' +
-				'svg {position: absolute; top: 0; height: 100%;}';
+	// update the print style with margins
+	var style = document.getElementById ('printStyle');
+	style.innerHTML = '@page {size: auto; margin: ' +
+			document.getElementById ('marginTop').value + 'mm ' +
+			document.getElementById ('marginRight').value + 'mm ' +
+			document.getElementById ('marginBottom').value + 'mm ' +
+			document.getElementById ('marginLeft').value + 'mm}' +
+			'html {height: 100%; overflow: initial;}' +
+			'body {margin: 0; height: 100%; overflow: initial;}' +
+			'.noPrint {display: none;}' +
+			'#noScreen {height: 100%;}' +
+			'.breakAfter {position: relative; display:block; ' +
+			'page-break-inside:avoid; page-break-after:always; ' +
+			'height: 100%;}' +
+			'svg {position: absolute; top: 0; height: 100%;}';
 
-		window.document.title = '';	
-		var printBody = buildForms (window);
+	window.document.title = '';
+	// construct and print pages
+	buildForms (window, function (printBody) {
 		// clear noScreen div
 		var div = document.getElementById ('noScreen');
 		while (div.firstChild) div.removeChild (div.firstChild);
@@ -15989,13 +14721,15 @@ function printForms (evt) {
 
 		// restore title
 		changeSequenceInfo();
-	}, wait);
+	});
 }
 
 // buildForms will format selected forms for print or save. When
-// win=true, a body is created in window win and returned (for print).
-// Otherwise an SVG holding the forms is returned.
-function buildForms (win) {
+// win=true, a body is created in window win and callback executed
+// with this body (for print).
+// Otherwise an SVG holding the forms is sent to callback
+function buildForms (win, callback) {
+
   var
 	  pages = ['A', 'B', 'C', 'R', 'L', 'PilotCards', 'Grid'];
 		activeFormSave = activeForm,
@@ -16008,81 +14742,69 @@ function buildForms (win) {
 	  // save the current logo
 	  logoSave = document.getElementById('logo').value, 
 	  fname = activeFileName() || 'sequence';
-  
-  iacForms = document.getElementById('iacForms').checked;
 
-  // make sure no figure is selected
-  selectFigure (false);
-    
-  if (win) var body = win.document.createElement('body');
-  
-  // set multi to true if we have a fileList
-  var multi = (fileList.length > 0);
+	// buildMulti is used when building multiple sequences for print/save
+	function buildMulti () {
+		var file = fileList[0];
+	  document.getElementById ('processingMultiCounter').innerHTML = sprintf(
+	    userText.processingMultiCounter, file.name, fileList.length);
+		console.log('Processing: ' + file.name);
+		// set previous settings for default values
+		loadSettingsStorage ('tempSavedSettings');
+		// load settings from sequence
+		loadSettingsXML (file.sequence);
+			
+		activateXMLsequence (file.sequence, true);
+		
+		// Add sequence file name if checked
+		// Do this by putting it in the Notes area. If the 'Sequence Notes'
+		// box is already ticked, add it before any existing Notes
+		if (document.getElementById('showFileName').checked) {
+			var e = document.getElementById('printNotes');
+			var t = document.getElementById('notes').value;
+			t = ((t != '') && e.checked) ? file.name + ' - ' + t : file.name;
+			document.getElementById('notes').value = t;
+			e.setAttribute('checked', true);
+		}
 
-  if (multi) {
-    // save active sequence and settings
-    var savedSeq = activeSequence.xml;
-    saveSettingsStorage ('tempSavedSettings');
-  }
-  
-  // Do at least once. If the fileList is populated by printMulti,
-  // every sequence in it will be loaded
-  do {
-
-    if (multi) {
-      var file = fileList.shift();
-      // set previous settings for default values
-      loadSettingsStorage ('tempSavedSettings');
-      // load settings from sequence
-      loadSettingsXML (file.sequence);
-        
-      activateXMLsequence (file.sequence, true);
-      
-      // Add sequence file name if checked
-      // Do this by putting it in the Notes area. If the 'Sequence Notes'
-      // box is already ticked, add it before any existing Notes
-      if (document.getElementById('showFileName').checked) {
-        var e = document.getElementById('printNotes');
-        var t = document.getElementById('notes').value;
-        t = ((t != '') && e.checked) ? file.name + ' - ' + t : file.name;
-        document.getElementById('notes').value = t;
-        e.setAttribute('checked', true);
-      }
-
-      // anonymize sequence if checked
-      if (document.getElementById('anonymousSequences').checked) {
-        document.getElementById('pilot').value = '';
-        document.getElementById('team').value = '';
-        document.getElementById('aircraft').value = '';
-      }
-      
-      // select correct logo
-      switch (document.getElementById('multiLogo').value) {
-        case 'remove':
-          removeLogo ();
-          break;
-        case 'active':
-          selectLogo (logoSave);
-      }
-
-      // Activate the loading of the checking rules (if any)
-      if (document.getElementById('printMultiOverrideRules').checked) {
-        // use rules currently set
-        var log = checkRules();
-      } else {
-        // use rules from file
-        var log = changeCombo('program');
-      }
-      
+		// anonymize sequence if checked
+		if (document.getElementById('anonymousSequences').checked) {
+			document.getElementById('pilot').value = '';
+			document.getElementById('team').value = '';
+			document.getElementById('aircraft').value = '';
+		}
+		
+		// select correct logo
+		switch (document.getElementById('multiLogo').value) {
+			case 'remove':
+				removeLogo ();
+				break;
+			case 'active':
+				selectLogo (logoSave);
+		}
+		
+		// Activate the loading of the checking rules (if any) and build
+		// the forms
+    if (document.getElementById('printMultiOverrideRules').checked) {
+      // use rules currently set
+			checkRules (buildSingle);
+    } else {
+      // use rules from file
+      changeCombo ('program', buildSingle);
     }
-    
+	}
+	
+	// buildSingle builds the forms for a single file
+  function buildSingle (data) {
+		if (data) addAlertsToAlertMsgs (data);
+	
     // go through the pages
     for (var i = 0; i < pages.length; i++) {
       if (document.getElementById('printForm' + pages[i]).checked) {
         activeForm = pages[i];
-        
+
         var formSVG = buildForm (win);
-        
+
         if (win) {
           
           var div = win.document.createElement('div');
@@ -16116,47 +14838,76 @@ function buildForms (win) {
         }
       }
     }
-    // continue until fileList is empty
-  } while (fileList.length);
+    if (fileList.length > 1) {
+			fileList.shift();
+			// files remaining in fileList, so buildMulti
+			buildMulti();
+		} else {
+			// no files (remaining) in fileList. Finish up
+			
+		  // hide print dialog, do this after we are done as fileList will
+		  // also be cleared
+		  printDialog();
+		  
+		  infoBox();
+		
+		  if (!win) {
+		    svg += '</svg>';
+		    var height = translateY -
+		      parseInt(document.getElementById ('pageSpacing').value) + 10;
+		    // update first rectangle
+		    svg = svg.replace (/<rect [^>]+>/, '<rect x="-5" y="-20" ' +
+		      'width="810" height="' + (height + 40) + '" ' +
+		      'style="fill: white;"/>');
+		    // Update viewBox
+		    // Add some margin to make sure bold lines etc are correctly shown
+		    svg = svg.replace (/viewBox="[^"]*"/, 'viewBox="-5 -5 810 ' +
+		      height + '"');
+		    // replace first width and height. These should be for complete SVG
+		    svg = svg.replace (/width="[^"]*"/, 'width="' +
+		      document.getElementById ('imageWidth').value + 'px"');
+		    svg = svg.replace (/height="[^"]*"/, 'height="' +
+		      document.getElementById ('imageHeight').value + 'px"');    
+		  }
+		
+		  if (multi.processing) {
+			  multi.processing = false;
+		    // restore previous settings and sequence
+		    loadSettingsStorage ('tempSavedSettings');
+		    activateXMLsequence (savedSeq);
+		    // restore the Sequence Notes check
+		    document.getElementById('printNotes').checked = sequenceNotesSave;
+		  }
+		
+		  // Reset the screen to the normal view
+		  miniFormA = miniFormASave;
+		  selectForm (activeFormSave);
+		  
+		  // execute callback with either body or svg
+		  callback (win ? body : svg);
+		}
+	}
 
-  // hide print dialog, do this after we are done as fileList will
-  // also be cleared
-  printDialog();
-  
-  infoBox();
+  iacForms = document.getElementById('iacForms').checked;
 
-  if (!win) {
-    svg += '</svg>';
-    var height = translateY -
-      parseInt(document.getElementById ('pageSpacing').value) + 10;
-    // update first rectangle
-    svg = svg.replace (/<rect [^>]+>/, '<rect x="-5" y="-20" ' +
-      'width="810" height="' + (height + 40) + '" ' +
-      'style="fill: white;"/>');
-    // Update viewBox
-    // Add some margin to make sure bold lines etc are correctly shown
-    svg = svg.replace (/viewBox="[^"]*"/, 'viewBox="-5 -5 810 ' +
-      height + '"');
-    // replace first width and height. These should be for complete SVG
-    svg = svg.replace (/width="[^"]*"/, 'width="' +
-      document.getElementById ('imageWidth').value + 'px"');
-    svg = svg.replace (/height="[^"]*"/, 'height="' +
-      document.getElementById ('imageHeight').value + 'px"');    
-  }
+  // make sure no figure is selected
+  selectFigure (false);
+    
+  if (win) var body = win.document.createElement('body');
+	
+	// start the process, multi or single
+	if (fileList.length) {
+    // save active sequence and settings
+    var savedSeq = activeSequence.xml;
+    saveSettingsStorage ('tempSavedSettings');
 
-  if (multi) {
-    // restore previous settings and sequence
-    loadSettingsStorage ('tempSavedSettings');
-    activateXMLsequence (savedSeq);
-    // restore the Sequence Notes check
-    document.getElementById('printNotes').checked = sequenceNotesSave;
-  }
+		multi.processing = 'print';
+	  infoBox (
+	    '<span id="processingMultiCounter"></span>',
+	    userText.printMulti);
+	  buildMulti();
+	} else buildSingle ();
 
-  // Reset the screen to the normal view
-  miniFormA = miniFormASave;
-  selectForm (activeFormSave);
-  
-  return (win ? body : svg);
 }
 
 // adjustRollFontSize will adjust the rollFontSize to compensate for
@@ -16637,34 +15388,43 @@ function addSequenceString (svg, textBox, print) {
 
 // addCheckResult will add the check result to a sequence
 function addCheckResult (svg, pos) {
-  checkRules();
-  var d = new Date();
-  var text = userText.sequenceTest +
-    d.getDate() + '-' +
-    parseInt(d.getMonth() + 1) + '-' +
-    d.getFullYear() + ' ' +
-    d.getHours() + ':' +
-    ('0' + d.getMinutes()).slice(-2) + ' ' +
-    'OpenAero ' + version + ' ' +
-    rulesActive + ' ';
-  var g = document.createElementNS (svgNS, 'g');
+  var
+	  d = new Date(),
+	  text = userText.sequenceTest +
+	    d.getDate() + '-' +
+	    parseInt(d.getMonth() + 1) + '-' +
+	    d.getFullYear() + ' ' +
+	    d.getHours() + ':' +
+	    ('0' + d.getMinutes()).slice(-2) + ' ' +
+	    'OpenAero ' + version + ' ' +
+	    (rulesActive ? rulesActive : '') + ' ',
+	  g = document.createElementNS (svgNS, 'g'),
+  	// get alerts from alert area
+	  alertMessages = document.getElementById('alerts').getElementsByTagName('SPAN');
+
   g.id = 'checkResult';
-  if (!alertMsgs.length) {
+
+	if (alertMessages.length < 1) { // no messages
+		// no alerts
+		if (rulesActive) {
     drawText(text + userText.sequenceCorrect, pos.x, pos.y,
       document.getElementById('blackWhite').checked ? 'sequenceStringBW' : 'sequenceString', '', 'start', g);
-  } else {
+		}
+	} else {
+		// alerts present
     var y = pos.y;
-    for (var i = alertMsgs.length - 1; i>=0; i--) {
-      drawText (alertMsgs[i], pos.x, y,
+    for (var i = alertMessages.length - 1; i>=0; i--) {
+      drawText (alertMessages[i].innerText, pos.x, y,
         document.getElementById('blackWhite').checked ? 'sequenceStringBW' : 'sequenceString', '', 'start', g);
       y -= 12;
     }
     drawText (text + userText.sequenceHasErrors, pos.x, y,
       document.getElementById('blackWhite').checked ? 'sequenceStringBW' : 'sequenceString', '', 'start', g);
-  }
+	}
+
   svg.appendChild (g);
   alertMsgs = [];
-  alertMsgRules = [];
+  alertMsgRules = {};
   return g.getBBox();
 }
 
@@ -16746,7 +15506,7 @@ function addFormElementsLR (svg, print) {
       drawText ('K', x + 70, 15, 'miniFormABold', 'end', '', g);
       var y = 27;
       for (var j = 0; j < figures[i].aresti.length; j++) {
-        if (figures[i].aresti[j] in aresti_K) modifiedK.push (figureNr);
+        if (figures[i].aresti[j] in rulesKFigures) modifiedK.push (figureNr);
         drawText (figures[i].aresti[j], x, y, 'miniFormA', 'start', '', g);
         drawText (figures[i].k[j], x + 70, y, 'miniFormA', 'end', '', g);
         figK += parseInt(figures[i].k[j]);
@@ -17353,46 +16113,52 @@ function saveImageSizeAdjust () {
     
 // saveSVG will save an SVG image as selected in print/save dialog
 function saveSVG () {
-  saveFile(
-    buildForms(),
-    activeFileName(),
-    '.svg',
-    {'name':'SVG file', 'filter':'*.svg'},
-    'image/svg+xml;utf8');
-  draw();
+	// save file after checking rules
+	checkRules (function (data) {
+		buildForms (false, function (svg) {
+		  saveFile (
+		    svg,
+		    activeFileName(),
+		    '.svg',
+		    {'name':'SVG file', 'filter':'*.svg'},
+		    'image/svg+xml;utf8'
+		  );
+  	  draw();
+		});
+	});
 }
 
 // savePNG will save a PNG image as selected in print/save dialog
 function savePNG () {
   infoBox (userText.convertingToPng, userText.convertingTitle);
-  // use setTimeout to prevent browser hang-up and warning, and to give
-  // it time to rebuild the sequence first
-  setTimeout(function(){
-    // wrap conversion in try, in case it fails
-    try {
-      svgToPng (buildForms(), function(canvas){
-//        steg.encode (activeSequence.xml, canvas.toDataURL()).toBlob(function(blob){
-        canvas.toBlob(function(blob){
-        
-        saveFile(
-          blob,
-          activeFileName(),
-          '.png',
-          {'name':'PNG file', 'filter':'*.png'},
-          'image/png');
-        infoBox ();
-      });
-    });
-    } catch (err) {
-      console.log(err.stack);
-      infoBox ();
-      alertBox (
-        sprintf(userText.convertingFailed, encodeURI(browserString + '\n' + err.stack)),
-        userText.convertingTitle);
-      return;
-    }
-  }, 500);
-  draw();
+
+	// wrap conversion in try, in case it fails
+	try {
+		buildForms (false, function (svg) {
+			svgToPng (svg, function (canvas) {
+	//        steg.encode (activeSequence.xml, canvas.toDataURL()).toBlob(function(blob){
+				canvas.toBlob (function (blob) {		
+					saveFile (
+						blob,
+						activeFileName(),
+						'.png',
+						{'name':'PNG file', 'filter':'*.png'},
+						'image/png'
+					);
+					infoBox ();
+				  draw();
+				});
+			});
+		});
+	} catch (err) {
+		console.log(err.stack);
+		infoBox ();
+	  draw();
+		alertBox (
+			sprintf(userText.convertingFailed, encodeURI(browserString + '\n' + err.stack)),
+			userText.convertingTitle);
+		return;
+	}
 }
 
 // saveFigs will save all the figures in the sequence separately in a
@@ -17464,11 +16230,11 @@ function saveFigs () {
 
 // svgToPng will convert an svg to a png image
 // The png will be returned as canvas
-// If provided, function f will be executed when the canvas has loaded.
+// If provided, callback will be executed when the canvas has loaded.
 // Otherwise, the function will return with the data.
 // Use the callback (with function f) when the SVG may include external
 // or data: images to make sure these are loaded before toDataURL
-function svgToPng (svg, f) {
+function svgToPng (svg, callback) {
   // remove anything before <svg tag
   svg = svg.replace (/^.*?<svg/, '<svg');
   // convert svg to canvas
@@ -17476,11 +16242,11 @@ function svgToPng (svg, f) {
   canvas.id = 'canvas';
   document.lastChild.appendChild (canvas);
   canvg (canvas, svg);
-  if (f) {
+  if (callback) {
     setTimeout(function(){
       // Wait 500ms for canvas to render, then...
       document.lastChild.removeChild (canvas);
-      f(canvas);
+      callback (canvas);
     }, 500);
   } else {
     // return canvas
@@ -17997,11 +16763,13 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex, figure_chooser) 
   // * fix the figNr in the figures object
   // * remove rolls where only line shortening/lengthening is allowed
   var arestiNrs = new Array(fig[figNr].aresti);
-  if ((sportingClass.value === 'glider') && fig[figNr].kglider) {
-    var kFactors = [parseInt(fig[figNr].kglider)];
-  } else {
-    var kFactors = [parseInt(fig[figNr].kpwrd)];
-  }
+  if (!fig[figNr].kRules) {
+	  if ((sportingClass.value === 'glider') && fig[figNr].kGlider) {
+	    var kFactors = [parseInt(fig[figNr].kGlider)];
+	  } else {
+	    var kFactors = [parseInt(fig[figNr].kPwrd)];
+	  }
+	} else var kFactors = [parseInt(fig[figNr].kRules)];
   figures[figStringIndex].figNr = figNr;
   figCheckLine[seqNr] = fig[figNr].aresti;
   
@@ -18275,13 +17043,15 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex, figure_chooser) 
 	              }
 							}
             }
-            var rollI = rollBase.indexOf(rollAtt + roll[rollnr][j].pattern);
-            if (rollI >= 0) {
-              arestiNrs.push (rollAresti[rollI]);
-              if ((sportingClass.value === 'glider') && (rollKGlider[rollI])) {
-                kFactors.push (rollKGlider[rollI]);
+            var thisRoll = rollFig[rollAtt + roll[rollnr][j].pattern];
+            if (thisRoll) {
+              arestiNrs.push (thisRoll.aresti);
+              if (thisRoll.kRules) {
+								kFactors.push (thisRoll.kRules);
+							} else if ((sportingClass.value === 'glider') && (thisRoll.kGlider)) {
+                kFactors.push (thisRoll.kGlider);
               } else {
-                kFactors.push (rollKPwrd[rollI]);
+                kFactors.push (thisRoll.kPwrd);
               }
               // Check if there was a roll before the current one and
               // - add ; or , as appropriate for checking
@@ -18302,7 +17072,7 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex, figure_chooser) 
                 }
                 k--;
               }
-              figCheckLine[seqNr] += rollAresti[rollI];
+              figCheckLine[seqNr] += thisRoll.aresti;
             } else {
               // disable non-Aresti rolls
               if (!document.getElementById('nonArestiRolls').checked) {
@@ -18556,22 +17326,24 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex, figure_chooser) 
             var rollAtt = rollAttitudes[Attitude];
             switch (Math.abs(autoCorr)) {
               case (90):
-                var rollI = rollBase.indexOf(rollAtt + '4');
+                var addRoll = rollAtt + '4';
                 break;
               case (180):
-                var rollI = rollBase.indexOf(rollAtt + '2');
+                var addRoll = rollAtt + '2';
                 break;
               case (270):
-                var rollI = rollBase.indexOf(rollAtt + '3');
+                var addRoll = rollAtt + '3';
                 break;
               default:
-                var rollI = -1;
+                var addRoll = false;
             }
-            if (rollI >= 0) {
-              arestiNrs.push (rollAresti[rollI]);
-              if ((sportingClass.value === 'glider') && (rollKGlider[rollI])) {
-                kFactors.push (rollKGlider[rollI]);
-              } else kFactors.push (rollKPwrd[rollI]);
+            if (addRoll) {
+              arestiNrs.push (rollFig[addRoll].aresti);
+              if (rollFig[addRoll].kRules) {
+								kFactors.push (rollFig[addRoll].kRules);
+							} else if ((sportingClass.value === 'glider') && (rollFig[addRoll].kGlider)) {
+                kFactors.push (rollFig[addRoll].kGlider);
+              } else kFactors.push (rollFig[addRoll].kPwrd);
             }
             alertMsgs.push ('(' + seqNr + ') ' + userText.autocorrectRoll);
           }
@@ -18671,7 +17443,7 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex, figure_chooser) 
         // when this was an OLAN sequence, check for previous in-figure
         // X axis swap and autocorrect the exit of this figure for the
         // next round
-        if (OLANSequence) OLANXSwitch(figStringIndex);
+        if (OLAN.sequence) OLANXSwitch(figStringIndex);
 
         if (regexChangeDir.test (figString)) {
           figures[figStringIndex].switchX = true;
@@ -18830,10 +17602,10 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex, figure_chooser) 
 	  'glider' : document.getElementById('category').value);
   unknownFigureLetter = false;
       
-  // set inFigureXSwitchFig (used for OLAN sequence autocorrect) to
+  // set OLAN.inFigureXSwitchFig (used for OLAN sequence autocorrect) to
   // Infinity when we exit on X axis
   if ((Direction == 0) || (Direction == 180)) {
-    inFigureXSwitchFig = Infinity;
+    OLAN.inFigureXSwitchFig = Infinity;
   }
 }
 
@@ -18949,11 +17721,11 @@ function checkQRollSwitch (figString, figStringIndex, pattern, seqNr, rollSum, f
       }
       // when this was an OLAN sequence, check for previous in-figure
       // X axis swap and autocorrect this figure for the next round
-      if (OLANSequence) OLANXSwitch(figStringIndex);
+      if (OLAN.sequence) OLANXSwitch(figStringIndex);
       if (regexSwitchDirX.test (figString)) {
         changeDir (180);
         figures[figStringIndex].switchX = true;
-        inFigureXSwitchFig = figStringIndex; // used for OLAN auto correct
+        OLAN.inFigureXSwitchFig = figStringIndex; // used for OLAN auto correct
         // Remove this direction changer from the figure string once
         // applied and no Q roll follows
         if (nextRollExtent == 0) {
@@ -18961,11 +17733,11 @@ function checkQRollSwitch (figString, figStringIndex, pattern, seqNr, rollSum, f
         }
       } else figures[figStringIndex].switchX = false;
       // check for the OLAN Humpty Bump direction bug
-      if (OLANBumpBugCheck) {
+      if (OLAN.bumpBugCheck) {
         if (regexOLANBumpBug.test(pattern)) {
-          OLANBumpBugFigs.push (seqNr);
+          OLAN.bumpBugFigs.push (seqNr);
           // autocorrect loaded OLAN sequence when applicable
-          if (OLANSequence) {
+          if (OLAN.sequence) {
             if (regexSwitchDirX.test (figString)) {
               figures[figStringIndex].string = figures[figStringIndex].string.replace(regexSwitchDirX, '');
             } else {
@@ -18983,7 +17755,7 @@ function checkQRollSwitch (figString, figStringIndex, pattern, seqNr, rollSum, f
       // first go the 'wrong' way before ending the 'right' way
       if (Math.abs(nextAngle) > 180) nextAngle = -nextAngle;
       // autocorrect loaded OLAN sequence when applicable
-      if (OLANSequence && !goFront) {
+      if (OLAN.sequence && !goFront) {
         goFront = true;
         if (regexSwitchDirY.test (figString)) {
           figures[figStringIndex].string = figures[figStringIndex].string.replace(regexSwitchDirY, '');
@@ -19004,9 +17776,9 @@ function checkQRollSwitch (figString, figStringIndex, pattern, seqNr, rollSum, f
         figures[figStringIndex].switchY = false;
       }
       // check for the OLAN N direction bug
-      if (OLANBumpBugCheck && figures[figStringIndex].switchX) {
+      if (OLAN.bumpBugCheck && figures[figStringIndex].switchX) {
         if (regexOLANNBug.test(pattern)) {
-          OLANNBugFigs.push (seqNr);
+          OLAN.nBugFigs.push (seqNr);
         }
       }
     }
@@ -19020,7 +17792,7 @@ function checkQRollSwitch (figString, figStringIndex, pattern, seqNr, rollSum, f
 // X axis swap and autocorrect the exit of this figure for the
 // next round
 function OLANXSwitch (figStringIndex) {
-  if (inFigureXSwitchFig < figStringIndex) {
+  if (OLAN.inFigureXSwitchFig < figStringIndex) {
     if (regexSwitchDirX.test (figures[figStringIndex].string)) {
       figures[figStringIndex].string = figures[figStringIndex].string.replace(regexSwitchDirX, '');
     } else {
@@ -19626,34 +18398,40 @@ function parseSequence () {
   // check for floating point correction
   checkFloatingPoint();
   // Check the sequence against the correct rules
-  checkRules ();
+  checkRules (function (data) {
+		for (var i = 0; i < data.alertMsgs.length; i++) {
+			alertMsgs.push (data.alertMsgs[i]);
+			alertMsgRules[data.alertMsgs[i]] = data.alertMsgRules[data.alertMsgs[i]];
+		}
+		displayAlerts();
+	});
   // check for any OLAN Humpty Bump bug messages
-  if (OLANBumpBugCheck) {
+  if (OLAN.bumpBugCheck) {
     var warning = '';
-    if (OLANBumpBugFigs.length >= 1) {
+    if (OLAN.bumpBugFigs.length >= 1) {
       warning = 'Fig ';
-      for (var i = 0; i < OLANBumpBugFigs.length; i++) {
-        warning += OLANBumpBugFigs[i];
-        if (i < (OLANBumpBugFigs.length -1)) warning += ' and ';
+      for (var i = 0; i < OLAN.bumpBugFigs.length; i++) {
+        warning += OLAN.bumpBugFigs[i];
+        if (i < (OLAN.bumpBugFigs.length -1)) warning += ' and ';
       }
-      if (OLANBumpBugFigs.length < 2) {
+      if (OLAN.bumpBugFigs.length < 2) {
         warning += userText.OLANBumpBugWarning;
       } else warning += userText.OLANBumpBugWarningMulti;
     }
-    if (OLANNBugFigs.length >= 1) {
+    if (OLAN.nBugFigs.length >= 1) {
       warning += 'Fig ';
-      for (var i = 0; i < OLANNBugFigs.length; i++) {
-        warning += OLANNBugFigs[i];
-        if (i < (OLANNBugFigs.length -1)) warning += ' and ';
+      for (var i = 0; i < OLAN.nBugFigs.length; i++) {
+        warning += OLAN.nBugFigs[i];
+        if (i < (OLAN.nBugFigs.length -1)) warning += ' and ';
       }
-      if (OLANNBugFigs.length < 2) {
+      if (OLAN.nBugFigs.length < 2) {
         warning += userText.OLANNBugWarning;
       } else warning += userText.OLANNBugWarningMulti;
     }
     if (warning != '') {
       alertBox(warning + userText.OLANBugWarningFooter);
-      OLANBumpBugFigs = OLANNBugFigs = [];
-      OLANBumpBugCheck = false;
+      OLAN.bumpBugFigs = OLAN.nBugFigs = [];
+      OLAN.bumpBugCheck = false;
     }
   }
   // Build the last figure stop shape at the last real figure after

@@ -151,22 +151,21 @@ lang.fr = {
 'checkingRules' : 'Règles de vérification',
 'checkMulti' : 'Vérification de plusieurs programmes',
 'checkMultiClose' : 'Fermer',
-'checkMultiCounter' : 'Vérification du programme %s of %s<br>%s<br>Ceci peut ' +
-  'prendre du temps. Patientez, svp...',
+// changed 2019.2
+'checkMultiCounter' : 'Vérification du programme %s<br><br><strong> ' +
+	'%s restants</strong>',
 'checkMultipleSeq' : 'Vérification d\'un groupe de programmes',
 'checkMultiUseReference' : 'Utilisez le programme de référence pour ' +
   '(In)Connu-Libre',
-'checkMultiWait' : 'Vérification des programmes %s .<br>Ceci peut ' +
-  'prendre du temps. Patientez, svp...',
 'checkSequence' : 'Vérifier le programme',
 'checkSequenceLog' : 'Voir le détail',
 'checkSequenceOK' : 'OK',
 'checkSequenceResult' : 'Résultat de vérification',
 'checkSequences' : 'Vérification des programmes',
 'chooseFiles' : '<strong>Choisir</strong> vos fichiers ici',
-'chooseFilesOrDrop' : '<strong>Choisir</strong> ou glisser/déplacer vos fichiers ici',
+'chooseFilesOrDrop' : 'Choisir ou glisser/déplacer vos fichiers ici',
 'chooseFilesPrint' : '<strong>Choisir<strong> vos fichiers ici',
-'chooseFilesOrDropPrint' : '<strong>Choisir</strong> ou glisser/déplacer vos fichiers ici',
+'chooseFilesOrDropPrint' : 'Choisir ou glisser/déplacer vos fichiers ici',
 'chooseLogo' : 'Choisir un logo',
 'class' : 'Type',
 'clearPositioning' : 'Effacer le positionnement',
@@ -192,7 +191,6 @@ lang.fr = {
 'convertingToPng' : 'Conversion en image PNG.<br>Ceci peut prendre' +
   'du temps. Patientez, svp...',
 'convertingTitle' : 'Conversion en cours...',
-// new 2017.2.4
 'copyClipboard' : 'Copier',
 'date' : 'Date',
 'demo' : 'Exemples',
@@ -415,7 +413,7 @@ lang.fr = {
   'Certaines fonctions d\'OpenAero ne marcheront pas.<br>' +
   'Pour autoriser les cookies dans Chrome, copier l\'url ' +
   'suivante dans la barre d\'adresse :<br />' +
-  '<strong>chrome://chrome/settings/content</strong><br />' +
+  '<strong>chrome://settings/content/cookies</strong><br />' +
   'et choisissez <i>Autoriser l\'enregistrement de données locales</i>',
 'noFigureLetterAssigned' : '(%s) Pas de lettre affectée',
 'noFreeUnknownFig' : 'Pas de lettre',
@@ -510,6 +508,9 @@ lang.fr = {
 'printSavePdf' : 'Imprimer / Enregistrer PDF',
 'printSF' : 'Numéro de Super Famille',
 'printString' : 'Texte du programme',
+// new 2019.2
+'processingMultiCounter' : 'Traitement du programme %s<br><br><strong> ' +
+	'%s restants</strong>',
 'program' : 'Programme',
 'programme' : 'Programme',
 'proposalsCreate' : 'Nouvelles propositions',

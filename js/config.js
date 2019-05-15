@@ -33,10 +33,10 @@
 // **************
 // Define active version number of OpenAero
 // It is of format yyyy.x.z
-// Where a new x should be used for versions that create sequences not
+// A new x should be used for versions that create sequences not
 // fully backward compatible with the previous version
 
-var version = '2019.1.7';
+var version = '2019.2';
 /* versionNew is an object that contains version update information
    The structure is {vvv : [[ttt, n], ...], ...} , where
    vvv = version number
@@ -44,6 +44,12 @@ var version = '2019.1.7';
    n   = importance (higher = more important)
 */
 var versionNew = {
+	'2019.2' : [
+		['Corrected notation of figures 1.2.11.x and 1.2.12.x as their ' +
+		'exit attitude notation was swapped. Sequences made with older ' +
+		'OpenAero versions will be automatically corrected when loaded ' +
+		'from file or sequence link.', 3]
+	],
 	'2019.1.7' : [
 		['Added AAC Power Known sequences, rules and logo for 2019', 2]
 	],

@@ -1005,6 +1005,9 @@ html.framed ol {
   background: #fff;
   clear: both;
 }
+#t_alerts {
+	margin-bottom: 4px;
+}
 #alerts span {
   display: inline-block;
   padding: 2px 0.5em 2px 2em;
@@ -1288,6 +1291,10 @@ option.used {
   -webkit-transform: translateY(-1px);
   transform: translateY(-1px);
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.5);
+}
+.textButton.disabled {
+  color: rgba(0, 0, 0, 0.27) !important;
+  background-color: transparent !important;
 }
 .boxbg .textButton:active {
   background-color: #35e;
@@ -1632,7 +1639,7 @@ option.used {
   word-wrap: break-word;
   height: 12em;
 }
-#newWindow {
+#logBox {
   position: relative;
   background-color: white;
   -webkit-touch-callout: text;
