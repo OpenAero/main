@@ -1596,19 +1596,19 @@ function cordovaHandleOpenURL (url) {
 		url, 
 		function (fileEntry) {
 			fileEntry.file (
-					function (file) {
-						openFile (file, 'Sequence');
-					},
-					function (error) {
-						console.log (error);
-					}
-				)
-			}, 
-			function (error) {
-				console.log(error);
+				function (file) {
+					openFile (file, 'Sequence');
+				},
+				function (error) {
+					console.log (error);
+				}
+			)
+		}, 
+		function (error) {
+			console.log(error);
 		}
 	)
-};
+}
 
 // cordovaHandleIntent handles opening a sequence file as received from
 // Intent (Android)
@@ -4816,7 +4816,7 @@ function doOnLoad () {
   if (!chromeApp.active) {
 		try {
 	    storage = (typeof localStorage != 'undefined') ? true : false;
-		} catch {storage = false};
+		} catch (err) {storage = false};
   }
 
   getLocal ('fileName', function(value) {fileName.innerText = value});
@@ -5137,6 +5137,7 @@ function launchURL (launchData) {
         string = '<sequence>' + parts.join ('<') + '</sequence>';
       }
     }
+    updateSaveFilename(); // clear filename
 		return activateXMLsequence (string);
   }
   return false;
@@ -11240,11 +11241,11 @@ function queueFromStorage () {
 function startFuDesigner(dontConfirm) {
   if (!figureLetters) {
     alertBox (userText.FUDesignNotFreeUnknown, userText.fuDesigner);
-    return;
+    return false;
   }
   if (!buildFuFiguresTab()) {
     console.log('Unable to start Free (Un)known Designer');
-    return;
+    return false;
   }
   
   function f () {
@@ -14017,25 +14018,30 @@ function activateXMLsequence (xml, noLoadRules) {
 	}
   
   // check if we are switching from a regular sequence to Free (Un)known
-  // or vv
-  if ((activeForm === 'FU') && (prevForm !== 'FU')) {
-    startFuDesigner(true);
-  } else if ((activeForm !== 'FU') && (prevForm === 'FU')) {
-    exitFuDesigner(true);
-  } else { 
-    // update sequence
-    checkSequenceChanged();
-  }
-  
-  // if the loaded sequence was a (partial) Free (Un)known composed
-  // sequence, load that now that the figures tab has been loaded
-  if (freeUnknownSequence) {
-    sequenceText.innerText = freeUnknownSequence;
-    checkSequenceChanged ();
-  } else {
-    // lock sequence when applicable
-    if (document.getElementById ('lock_sequence').value) lockSequence(true);
-  }
+  // or vv. Make sure we do this after rules are loaded by passing
+  // through rulesWorker
+	var id = uniqueId();
+	workerCallback [id] = function() {  
+	  if ((activeForm === 'FU') && (prevForm !== 'FU')) {
+	    if (!startFuDesigner(true)) activeForm = prevForm;
+	  } else if ((activeForm !== 'FU') && (prevForm === 'FU')) {
+	    exitFuDesigner(true);
+	  } else { 
+	    // update sequence
+	    checkSequenceChanged();
+	  }
+	  
+	  // if the loaded sequence was a (partial) Free (Un)known composed
+	  // sequence, load that now that the figures tab has been loaded
+	  if (freeUnknownSequence) {
+	    sequenceText.innerText = freeUnknownSequence;
+	    checkSequenceChanged ();
+	  } else {
+	    // lock sequence when applicable
+	    if (document.getElementById ('lock_sequence').value) lockSequence(true);
+	  }
+	}
+	rulesWorker.postMessage ({action: false, callbackId: id});
   
   // The sequence is now fully loaded
   if (!noLoadRules) checkRules (checkFuFiguresFile);

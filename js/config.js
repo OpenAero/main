@@ -36,7 +36,7 @@
 // A new x should be used for versions that create sequences not
 // fully backward compatible with the previous version
 
-var version = '2019.2';
+var version = '2019.2.2';
 /* versionNew is an object that contains version update information
    The structure is {vvv : [[ttt, n], ...], ...} , where
    vvv = version number
@@ -44,6 +44,9 @@ var version = '2019.2';
    n   = importance (higher = more important)
 */
 var versionNew = {
+	'2019.2.1' : [
+		['Updated NZAC Power rules and sequences for 2019/2020', 3]
+	],
 	'2019.2' : [
 		['Corrected notation of figures 1.2.11.x and 1.2.12.x as their ' +
 		'exit attitude notation was swapped. Sequences made with older ' +

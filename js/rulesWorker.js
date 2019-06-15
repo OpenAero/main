@@ -108,6 +108,9 @@ self.onmessage = function (e) {
 				e.data.nonArestiRolls,
 				e.data.multi);
 			break;
+		case false:
+			postMessage ({callbackId: e.data.callbackId});
+			break;
 	}
 }
 

@@ -1,3 +1,11 @@
+2019.2.2
+* added camera plugin and usage explanations for Cordova iOS
+
+2019.2.1
+* clear filename when loading sequence from url
+* updated 2020 NZAC sequences and rules
+* fixed issue that caused failed restart when in the process of using Designer
+
 2019.2
 * corrected notation of figures 1.2.11.x and 1.2.12.x as their exit attitude notation was swapped
 * moved rule loading and checking to separate Worker for improved performance and extendability
