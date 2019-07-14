@@ -36,83 +36,85 @@
 * - updated VINK rules for Club and Sports
 */
 
-
+rules.push (
 
 //###############################################################################
 //##### VINK CLUB KNOWN ####################################################
 //###############################################################################
 
-rules.push("[VINK Club Known]");
-rules.push("posnl=10");
-//rules.push("demo=d iv``s.' c.'',2 o 2j 1");
+"[VINK Club Known]",
+"posnl=10",
+//"demo=d iv``s.' c.'',2 o 2j 1",
 
 //###############################################################################
 //##### VINK STANDARD KNOWN #####################################################
 //###############################################################################
 
-rules.push("[VINK Sports Known]");
-rules.push("posnl=15");
-//rules.push("demo=m,2+ +2j (0,12) d iv```6s...''++ ',2rc ~~44~~ 2> `+h,4''+ 3> oj c.'2 1");
+"[VINK Sports Known]",
+"posnl=15",
+//"demo=m,2+ +2j (0,12) d iv```6s...''++ ',2rc ~~44~~ 2> `+h,4''+ 3> oj c.'2 1",
 
 //###############################################################################
 //##### VINK STANDARD UNKNOWN ###################################################
 //###############################################################################
 
-rules.push("[VINK Sports Unknown]");
-rules.push("posnl=15");
+"[VINK Sports Unknown]",
+"posnl=15",
 
 // convert 9.11.1.4 and .6 to s, 9.11.1.5 to q and no roll to z
-rules.push("conv-standardSpin=^9\\.11\\.1\\.[46]=s ; ^9\\.11\\.1\\.5=q ; ^0\\.=z");
+"conv-standardSpin=^9\\.11\\.1\\.[46]=s ; ^9\\.11\\.1\\.5=q ; ^0\\.=z",
 
-rules.push("rule-no5Qspin=standardSpin:q");
-rules.push("why-no5Qspin=no 1 1/4 spin allowed");
+"rule-no5Qspin=standardSpin:q",
+"why-no5Qspin=no 1 1/4 spin allowed",
 
-rules.push("rule-spinRequired=standardSpin:z");
-rules.push("why-spinRequired=spin required on vertical");
+"rule-spinRequired=standardSpin:z",
+"why-spinRequired=spin required on vertical",
 
-rules.push("rule-NH=roll:2");
-rules.push("why-NH=no 2-point rolls allowed");
+"rule-NH=roll:2",
+"why-NH=no 2-point rolls allowed",
 
-rules.push("rule-NQ=roll:4");
-rules.push("why-NQ=no 4-point rolls allowed");
+"rule-NQ=roll:4",
+"why-NQ=no 4-point rolls allowed",
 
-rules.push("emptyline-max=0");
-rules.push("opposite-max=0");
+"emptyline-max=0",
+"opposite-max=0",
 
-rules.push("1.1.1.1");
-rules.push("1.1.2.1");
-rules.push("1.1.2.3");
-rules.push("1.1.6.3 spinRequired");
-rules.push("1.2.3.1");
-rules.push("1.2.6.3 spinRequired:1 ; no5Qspin");
-rules.push("2.1.1.1");
-rules.push("2.2.1.1");
-rules.push("2.3.1.1");
-rules.push("5.2.1.1");
-rules.push("7.2.2.1 NR:1");
-rules.push("7.2.3.3 NR:2");
-rules.push("7.3.2.1");
-rules.push("7.3.3.3");
-rules.push("7.4.1.1 NR");
-rules.push("7.5.5.3");
-rules.push("7.5.7.1");
-rules.push("8.4.1.1 NR");
-rules.push("8.5.2.1 NQ");
-rules.push("8.5.3.3");
-rules.push("8.5.6.1 NR:1");
-rules.push("8.5.7.3");
-rules.push("8.6.4.3 spinRequired:1 ; no5Qspin");
-rules.push("8.6.5.1 NH ; NQ ; NR:2 ; NR:3");
-rules.push("8.7.5.1 NH ; NQ ; NR:2 ; NR:3");
+"1.1.1.1",
+"1.1.2.1",
+"1.1.2.3",
+"1.1.6.3 spinRequired",
+"1.2.3.1",
+"1.2.6.3 spinRequired:1 ; no5Qspin",
+"2.1.1.1",
+"2.2.1.1",
+"2.3.1.1",
+"5.2.1.1",
+"7.2.2.1 NR:1",
+"7.2.3.3 NR:2",
+"7.3.2.1",
+"7.3.3.3",
+"7.4.1.1 NR",
+"7.5.5.3",
+"7.5.7.1",
+"8.4.1.1 NR",
+"8.5.2.1 NQ",
+"8.5.3.3",
+"8.5.6.1 NR:1",
+"8.5.7.3",
+"8.6.4.3 spinRequired:1 ; no5Qspin",
+"8.6.5.1 NH ; NQ ; NR:2 ; NR:3",
+"8.7.5.1 NH ; NQ ; NR:2 ; NR:3",
 
-rules.push("9.1.2.2");
-rules.push("9.1.3.2");
-rules.push("9.1.3.4");
-rules.push("9.1.4.2");
-rules.push("9.1.5.1");
-rules.push("9.2.3.4");
-rules.push("9.4.3.4");
+"9.1.2.2",
+"9.1.3.2",
+"9.1.3.4",
+"9.1.4.2",
+"9.1.5.1",
+"9.2.3.4",
+"9.4.3.4",
 
-rules.push("9.11.1.4");
-rules.push("9.11.1.5");
-rules.push("9.11.1.6");
+"9.11.1.4",
+"9.11.1.5",
+"9.11.1.6"
+
+);

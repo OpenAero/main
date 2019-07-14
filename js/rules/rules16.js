@@ -211,106 +211,106 @@
  *************************************************************************/
 
 // define rules global
-var rules = [];
+var rules = [
 
-rules.push("group-k=^");// group k is special, total the K-factor per fig/seq
-rules.push("group-basefig=^[1-8]");
-rules.push("group-basefigex11=^(1\\.1\\.[2-9]|1\\.1\\.1\\d|[2-8])");
-rules.push("group-roll=^9\\.[1248]\\.");
-rules.push("group-snap=^9\\.(9|10)");
-rules.push("group-isnap=^9\\.9");
-rules.push("group-osnap=^9\\.10");
-rules.push("group-spin=^9\\.1[12]");
-rules.push("group-uspin=^9\\.11");
+"group-k=^",// group k is special, total the K-factor per fig/seq
+"group-basefig=^[1-8]",
+"group-basefigex11=^(1\\.1\\.[2-9]|1\\.1\\.1\\d|[2-8])",
+"group-roll=^9\\.[1248]\\.",
+"group-snap=^9\\.(9|10)",
+"group-isnap=^9\\.9",
+"group-osnap=^9\\.10",
+"group-spin=^9\\.1[12]",
+"group-uspin=^9\\.11",
 
-rules.push("k-name=K factor");//special, counts actual K instead of figures count
-rules.push("basefig-name=base figures");
-rules.push("basefigex11-name=base figures except 1.1.1.x");
-rules.push("roll-name=roll family");
-rules.push("snap-name=flick roll");
-rules.push("isnap-name=inside (positive) flick roll");
-rules.push("osnap-name=outside (negative) flick roll");
-rules.push("spin-name=spin family");
-rules.push("uspin-name=upright spin family");
+"k-name=K factor",//special, counts actual K instead of figures count
+"basefig-name=base figures",
+"basefigex11-name=base figures except 1.1.1.x",
+"roll-name=roll family",
+"snap-name=flick roll",
+"isnap-name=inside (positive) flick roll",
+"osnap-name=outside (negative) flick roll",
+"spin-name=spin family",
+"uspin-name=upright spin family",
 
-rules.push("k-name_fr=Coef K");//special, counts actual K instead of figures count
-rules.push("basefig-name_fr=figures de base");
-rules.push("basefigex11-name_fr=figures de base sauf 1.1.1.x");
-rules.push("roll-name_fr=tonneau(x)");
-rules.push("snap-name_fr=déclenché(s)");
-rules.push("isnap-name_fr=déclenché(s) positif(s)");
-rules.push("osnap-name_fr=déclenché(s) negatif(s)");
-rules.push("spin-name_fr=vrille(s)");
-rules.push("uspin-name_fr=vrille(s) positive(s)");
+"k-name_fr=Coef K",//special, counts actual K instead of figures count
+"basefig-name_fr=figures de base",
+"basefigex11-name_fr=figures de base sauf 1.1.1.x",
+"roll-name_fr=tonneau(x)",
+"snap-name_fr=déclenché(s)",
+"isnap-name_fr=déclenché(s) positif(s)",
+"osnap-name_fr=déclenché(s) negatif(s)",
+"spin-name_fr=vrille(s)",
+"uspin-name_fr=vrille(s) positive(s)",
 
-rules.push("group-fam1=^1\\..*");
-rules.push("group-fam2=^2\\..*");
-rules.push("group-fam3=^3\\..*");
-rules.push("group-fam4=^4\\..*");
-rules.push("group-fam5=^5\\..*");
-rules.push("group-fam6=^6\\..*");
-rules.push("group-fam7=^7\\..*");
-rules.push("group-fam8=^8\\..*");
-rules.push("group-fam9=^9\\..*");
+"group-fam1=^1\\..*",
+"group-fam2=^2\\..*",
+"group-fam3=^3\\..*",
+"group-fam4=^4\\..*",
+"group-fam5=^5\\..*",
+"group-fam6=^6\\..*",
+"group-fam7=^7\\..*",
+"group-fam8=^8\\..*",
+"group-fam9=^9\\..*",
 
-rules.push("fam1-name=Family 1");
-rules.push("fam2-name=Family 2");
-rules.push("fam3-name=Family 3");
-rules.push("fam4-name=Family 4");
-rules.push("fam5-name=Family 5");
-rules.push("fam6-name=Family 6");
-rules.push("fam7-name=Family 7");
-rules.push("fam8-name=Family 8");
-rules.push("fam9-name=Family 9");
+"fam1-name=Family 1",
+"fam2-name=Family 2",
+"fam3-name=Family 3",
+"fam4-name=Family 4",
+"fam5-name=Family 5",
+"fam6-name=Family 6",
+"fam7-name=Family 7",
+"fam8-name=Family 8",
+"fam9-name=Family 9",
 
-rules.push("fam1-name_fr=Famille 1");
-rules.push("fam2-name_fr=Famille 2");
-rules.push("fam3-name_fr=Famille 3");
-rules.push("fam4-name_fr=Famille 4");
-rules.push("fam5-name_fr=Famille 5");
-rules.push("fam6-name_fr=Famille 6");
-rules.push("fam7-name_fr=Famille 7");
-rules.push("fam8-name_fr=Famille 8");
-rules.push("fam9-name_fr=Famille 9");
+"fam1-name_fr=Famille 1",
+"fam2-name_fr=Famille 2",
+"fam3-name_fr=Famille 3",
+"fam4-name_fr=Famille 4",
+"fam5-name_fr=Famille 5",
+"fam6-name_fr=Famille 6",
+"fam7-name_fr=Famille 7",
+"fam8-name_fr=Famille 8",
+"fam9-name_fr=Famille 9",
 
-rules.push("group-froll=^9\\.1\\.");
-rules.push("group-hroll=^9\\.2");
-rules.push("group-troll=^9\\.3");
-rules.push("group-qroll=^9\\.4");
-rules.push("group-eroll=^9\\.8");
-rules.push("group-sroll=^9\\.13");
-rules.push("group-hesroll=^9\\.[2-8]");
+"group-froll=^9\\.1\\.",
+"group-hroll=^9\\.2",
+"group-troll=^9\\.3",
+"group-qroll=^9\\.4",
+"group-eroll=^9\\.8",
+"group-sroll=^9\\.13",
+"group-hesroll=^9\\.[2-8]",
 
-rules.push("froll-name=Family 9.1 (no-hesitation roll)");
-rules.push("hroll-name=Family 9.2 (half roll hesitations)");
-rules.push("troll-name=1/3 roll");
-rules.push("qroll-name=family 9.4 (quarter roll hesitations)");
-rules.push("eroll-name=1/8's roll");
-rules.push("sroll-name=super slow roll");
-rules.push("hesroll-name=hesitation roll");
+"froll-name=Family 9.1 (no-hesitation roll)",
+"hroll-name=Family 9.2 (half roll hesitations)",
+"troll-name=1/3 roll",
+"qroll-name=family 9.4 (quarter roll hesitations)",
+"eroll-name=1/8's roll",
+"sroll-name=super slow roll",
+"hesroll-name=hesitation roll",
 
-rules.push("froll-name_fr=Famille 9.1 (tonneaux sans facette)");
-rules.push("hroll-name_fr=Famille 9.2 (tonneaux à 2 facettes)");
-rules.push("troll-name_fr=Famille 9.3 (tonneaux à 3 facettes)");
-rules.push("qroll-name_fr=Famille 9.4 (tonneaux à 4 facettes)");
-rules.push("eroll-name_fr=Famille 9.8 (tonneaux à 8 facettes)");
-rules.push("sroll-name_fr=tonneaux super lents");
-rules.push("hesroll-name_fr=tonneaux à facettes");
+"froll-name_fr=Famille 9.1 (tonneaux sans facette)",
+"hroll-name_fr=Famille 9.2 (tonneaux à 2 facettes)",
+"troll-name_fr=Famille 9.3 (tonneaux à 3 facettes)",
+"qroll-name_fr=Famille 9.4 (tonneaux à 4 facettes)",
+"eroll-name_fr=Famille 9.8 (tonneaux à 8 facettes)",
+"sroll-name_fr=tonneaux super lents",
+"hesroll-name_fr=tonneaux à facettes",
 
 // super groups ("G") are matched the full catalog info. this one
 // indicates real opposite rolls (spin-roll is not!)
 // note that Group-opposite counts opposites on base figures, NOT actual
 // opposites (1,1c1,2 will be counted ONCE).
 
-rules.push("Group-opposite=(^| )9\\.([1-9]|10)\\.[\\d()\\.]+,");
-rules.push("opposite-name=opposite rolls");
-rules.push("opposite-name_fr=rotation(s) alternée(s)");
+"Group-opposite=(^| )9\\.([1-9]|10)\\.[\\d()\\.]+,",
+"opposite-name=opposite rolls",
+"opposite-name_fr=rotation(s) alternée(s)",
 
 // used to allow k2 and k24 but not k2 twice, etc for glider int.
 // indicate repetitions of complete figures
-rules.push("Group-combined=^");
-rules.push("combined-name=combination figures (base and rolls)");
-rules.push("combined-name_fr=figures complétes (base et rotations)");
+"Group-combined=^",
+"combined-name=combination figures (base and rolls)",
+"combined-name_fr=figures complétes (base et rotations)",
 
 //#####################################################################
 //##### UNKNOWNS ALLOWED FIGURES RULES ################################
@@ -328,35 +328,38 @@ rules.push("combined-name_fr=figures complétes (base et rotations)");
 // F flick "hard way" flick
 // z no roll(zero)
 
-rules.push("conv-roll=^9\\.([1248])\\.=$1; ^9\\.(9|10)\\.([6-9]|10)=F; ^9\\.(9|10)=f; ^9\\.1[12]=s ; ^9\\.13=t ; ^0\\.=z");
+"conv-roll=^9\\.([1248])\\.=$1; ^9\\.(9|10)\\.([6-9]|10)=F; ^9\\.(9|10)=f; ^9\\.1[12]=s ; ^9\\.13=t ; ^0\\.=z",
 
 //replace rolls added to figure with single digit 1-8 for # of qtrs
-rules.push("conv-qtrs=^9\\.\\d+\\.\\d.([1-8])=$1; ^0\\.=0");
+"conv-qtrs=^9\\.\\d+\\.\\d.([1-8])=$1; ^0\\.=0",
 
 // NF:1 - no flick on roll#1
 // NF:2 - no flick on roll#2
 // NOU:1 - no opposite or unlinked rolls on roll#1
 
-rules.push("rule-NF=roll:[fF]");
-rules.push("why-NF=no flick allowed");
-rules.push("why_fr-NF=déclenché interdit");
+"rule-NF=roll:[fF]",
+"why-NF=no flick allowed",
+"why_fr-NF=déclenché interdit",
 
-rules.push("rule-NOU=roll:[,;]");
-rules.push("why-NOU=no opposite or unlinked rolls allowed");
-rules.push("why_fr-NOU=rotations combinées interdites");
+"rule-NOU=roll:[,;]",
+"why-NOU=no opposite or unlinked rolls allowed",
+"why_fr-NOU=rotations combinées interdites",
 
-rules.push("rule-NR=roll:[^z]");
-rules.push("why-NR=no roll allowed");
-rules.push("why_fr-NR=rotation interdite");
+"rule-NR=roll:[^z]",
+"why-NR=no roll allowed",
+"why_fr-NR=rotation interdite",
 
-rules.push("rule-OS=roll:[1248fF]");
-rules.push("why-OS=only spin allowed");
-rules.push("why_fr-OS=seule vrille autorisée");
+"rule-OS=roll:[1248fF]",
+"why-OS=only spin allowed",
+"why_fr-OS=seule vrille autorisée",
 
-rules.push("rule-MAX360=qtrs:<5");
-rules.push("why-MAX360=maximum of 360 degrees rotation allowed");
-rules.push("why_fr-MAX360=maximum de 360° de rotation permis");
+"rule-MAX360=qtrs:<5",
+"why-MAX360=maximum of 360 degrees rotation allowed",
+"why_fr-MAX360=maximum de 360° de rotation permis",
 
-rules.push("rule-FAM91=roll:[^1z]");
-rules.push("why-FAM91=only family 1 roll allowed");
-rules.push("why_fr-FAM91=uniquement tonneau sans facette permis");
+"rule-FAM91=roll:[^1z]",
+"why-FAM91=only family 1 roll allowed",
+"why_fr-FAM91=uniquement tonneau sans facette permis"
+
+// close the initial rules array definition
+];

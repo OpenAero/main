@@ -6101,7 +6101,7 @@ function buildPlusMinElement (id, value, el) {
 function addRollSelectElement (figNr, rollEl, elNr, parent) {
   var
 	  thisRoll = figures[figNr].rollInfo[rollEl],
-	  thisAttitude = rollAttitudes[thisRoll.attitude]
+	  thisAttitude = rollAttitudes[thisRoll.attitude],
 	  ruleCheckRolls = rulesActive && 
 		  (Object.keys(checkAllowCatId).length > 0),
 	  pattern = '',
@@ -6130,30 +6130,40 @@ function addRollSelectElement (figNr, rollEl, elNr, parent) {
 	    html += '>'+roll[1]+'</option>';
 		}
   }
-  // build the positive flick options
+
+  // build the positive flick options, also allow opposite attitude as
+  // flick may have been proceeded by half roll
   thisAttitude = (thisRoll.negLoad ? '-' : '+') +
 	  rollAttitudes[thisRoll.attitude];
+	var oppAttitude = (thisRoll.negLoad ? '+' : '-') +
+	  rollAttitudes[(thisRoll.attitude + 180) % 360];
+
   for (var i = 0; i < posFlickTypes.length; i++) {
     var
 	    roll = posFlickTypes[i].split(':'),
 	    rollPattern = roll[0].replace (/^1/, '');
+	    
     if (rollPattern == pattern || !ruleCheckRolls ||
 	    document.getElementById('nonArestiRolls').checked ||
-	    (rollFig[thisAttitude + roll[0]].aresti) in checkAllowCatId) {
+	    (rollFig[thisAttitude + roll[0]].aresti) in checkAllowCatId ||
+	    (rollFig[oppAttitude + roll[0]].aresti) in checkAllowCatId) {
 	    html += '<option value="' + rollPattern +
 		    '" class="posFlickSelectOption"';
 	    if (rollPattern == pattern) html += ' selected="selected"';
 	    html += '>'+roll[1]+'</option>';
 		}
   }
-  // build the negative flick options
+
+  // build the negative flick options, also allow opposite attitude as
+  // flick may have been proceeded by half roll
   for (var i = 0; i < negFlickTypes.length; i++) {
     var
 	    roll = negFlickTypes[i].split(':'),
 	    rollPattern = roll[0].replace (/^1/, '');
     if (rollPattern == pattern || !ruleCheckRolls ||
 	    document.getElementById('nonArestiRolls').checked ||
-	    (rollFig[thisAttitude + roll[0]].aresti) in checkAllowCatId) {
+	    (rollFig[thisAttitude + roll[0]].aresti) in checkAllowCatId ||
+	    (rollFig[oppAttitude + roll[0]].aresti) in checkAllowCatId) {
 	    html += '<option value="' + rollPattern +
 		    '" class="negFlickSelectOption"';
 	    if (rollPattern == pattern) html += ' selected="selected"';
@@ -9191,7 +9201,7 @@ function changeFigureGroup() {
           // add the roll Aresti nrs to fig if applicable
           fig[i].rollBase = [];
           for (var j = 1; j < figures[-1].aresti.length; j++) {
-            fig[i].rollBase[j] = rollArestiToFig[figures[-1].aresti[j]][0];
+            fig[i].rollBase[j-1] = rollArestiToFig[figures[-1].aresti[j]][0];
           }
         }
         if ((fig[i].aresti.match(newRow) && (fig[i].group != 0)) || (colCount == 0)) {
@@ -9218,7 +9228,7 @@ function changeFigureGroup() {
         if (!fig[i].rollBase) fig[i].rollBase = [];
         if (sportingClass.value === 'glider') {
           var k = fig[i].kGlider;
-          for (var j = 1; j < fig[i].rollBase.length; j++) {
+          for (var j = 0; j < fig[i].rollBase.length; j++) {
             // Set rollK to -1 when this roll has 0K -> illegal
             // Can only happen for queue figures
             if ((rollFig[fig[i].rollBase[j]].kGlider === 0) &&
@@ -9227,7 +9237,7 @@ function changeFigureGroup() {
               break;
             }
             // only count half rolls and rolls in queue figures
-            if (fig[i].string || (fig[i].rolls[j] == 2)) {
+            if (fig[i].string || (/2$/.test(fig[i].rollBase[j]))) {
 	            rollK += rollFig[fig[i].rollBase[j]].kRules ?
 		            rollFig[fig[i].rollBase[j]].kRules :
 		            rollFig[fig[i].rollBase[j]].kGlider;
@@ -9235,7 +9245,7 @@ function changeFigureGroup() {
           }
         } else {
           var k = fig[i].kPwrd;
-          for (var j = 1; j < fig[i].rollBase.length; j++) {
+          for (var j = 0; j < fig[i].rollBase.length; j++) {
             // Set rollK to -1 when this roll has 0K -> illegal
             // Can only happen for queue figures
             if ((rollFig[fig[i].rollBase[j]].kPwrd === 0) &&
@@ -9244,7 +9254,7 @@ function changeFigureGroup() {
               break;
             }
             // only count half rolls and rolls in queue figures
-            if (fig[i].string || (fig[i].rolls[j] == 2)) {
+            if (fig[i].string || (/2$/.test(fig[i].rollBase[j]))) {
 	            rollK += rollFig[fig[i].rollBase[j]].kRules ?
 		            rollFig[fig[i].rollBase[j]].kRules :
 		            rollFig[fig[i].rollBase[j]].kPwrd;
@@ -11827,7 +11837,7 @@ function buildFuFiguresTab() {
       // add the roll Aresti nrs to fig if applicable
       fuFig[l].rollBase = [];
       for (var j = 1; j < figures[-1].aresti.length; j++) {
-        fuFig[l].rollBase[j] = rollArestiToFig[figures[-1].aresti[j]][0];
+        fuFig[l].rollBase[j-1] = rollArestiToFig[figures[-1].aresti[j]][0];
       }
 
       fu_figures.value += '"@' + l + '" ' + fuFig[l].string + ' ';
@@ -14026,7 +14036,7 @@ function activateXMLsequence (xml, noLoadRules) {
 	    if (!startFuDesigner(true)) activeForm = prevForm;
 	  } else if ((activeForm !== 'FU') && (prevForm === 'FU')) {
 	    exitFuDesigner(true);
-	  } else { 
+	  } else {
 	    // update sequence
 	    checkSequenceChanged();
 	  }

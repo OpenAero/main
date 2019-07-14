@@ -1,5 +1,12 @@
+2019.2.3
+* fixed issue where some figures would be shown with wrong half roll K in the chooser (sometimes marking them as illegal due rules)
+* added ACRO Brasil logo
+* improved readibility and file size of rules files by using a single rules.push for all rules
+* loosened criteria for showing snap rolls in Figure Editor roll selection as previous roll can change attitude
+
 2019.2.2
 * added camera plugin and usage explanations for Cordova iOS
+* added meta description to improve search engine results
 
 2019.2.1
 * clear filename when loading sequence from url

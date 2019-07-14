@@ -20,30 +20,33 @@
  
 // This file defines German-Aerobatics (GA) rules for 2015
 
+rules.push (
  
 /***********************************************************************
  * SAC SPORTSMAN DEFAULT-FREE
  **********************************************************************/
  
-rules.push("[SAC Sportsman Free]");
+"[SAC Sportsman Free]",
  
-rules.push("posnl=15");
-rules.push("basefig-max=12");
-rules.push("k-max=120");
+"posnl=15",
+"basefig-max=12",
+"k-max=120",
  
-rules.push("fam1-min=1");
-rules.push("fam5-min=1");
-rules.push("fam7-min=1");
-rules.push("fam8-min=1");
-rules.push("froll-min=1");
-rules.push("hroll-min=1");
-rules.push("qroll-min=1");
-rules.push("spin-max=1");
-rules.push("spin-min=1");
+"fam1-min=1",
+"fam5-min=1",
+"fam7-min=1",
+"fam8-min=1",
+"froll-min=1",
+"hroll-min=1",
+"qroll-min=1",
+"spin-max=1",
+"spin-min=1",
  
-rules.push("emptyline-max=0");
+"emptyline-max=0",
  
-rules.push("basefig-repeat=1");
-rules.push("fam9-repeat=1");
+"basefig-repeat=1",
+"fam9-repeat=1",
  
-rules.push("allow=^[1-9]"); //all figures are allowed for the Free program
+"allow=^[1-9]" //all figures are allowed for the Free program
+
+);
