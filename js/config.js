@@ -36,7 +36,7 @@
 // A new x should be used for versions that create sequences not
 // fully backward compatible with the previous version
 
-var version = '2019.2.3';
+var version = '2019.2.4';
 /* versionNew is an object that contains version update information
    The structure is {vvv : [[ttt, n], ...], ...} , where
    vvv = version number
@@ -44,6 +44,9 @@ var version = '2019.2.3';
    n   = importance (higher = more important)
 */
 var versionNew = {
+	'2019.2.4' : [
+		['Added rules for IAC Glider sequences', 2]
+	],
 	'2019.2.3' : [
 		['Fixed issue where some figures would be shown with wrong half roll K in the chooser (sometimes marking them as illegal due rules)', 3]
 	],
