@@ -77,18 +77,15 @@ rules.push (
 
 "[glider-IAC Sportsman Free]",
 
-"group-fam91=^9\\.1\\.",
-"fam91-name=Family 9.1",
-
 "posnl=15",
 "k-max=124",
 "floating-point=3",
 
-"basefigex11-repeat=1",
-
 "fam2-min=1",
 "fam7-min=1",
-"fam91-min=1",
+"froll-min=1",
+
+"roll-repeat=1",
 
 "emptyline-max=0",
 
@@ -109,7 +106,6 @@ rules.push (
 "k-max=143",
 "floating-point=3",
 
-"basefigex11-repeat=1",
 "roll-repeat=1",
 
 "fam2-min=1",
@@ -138,25 +134,30 @@ rules.push (
 "k-max=178",
 "floating-point=3",
 
-"basefig-repeat=1",
-"roll-repeat=1",
+// Rule 6.8(3) allows unlimited repetition of 1.1.1.x and 9.1.x.x.
+// The items below prohibit repetition of all other figures.
+"basefigex11-repeat=1",
+"hroll-repeat=1",
+"troll-repeat=1",
+"qroll-repeat=1",
+"eroll-repeat=1",
 "snap-repeat=1",
 "spin-repeat=1",
 
 // #### See IAC Rule Book Section 6.3.1
 "group-fam2advf=^2\\.[1234]\\.1\\.|^2\\.1\\.3\\.",
 "fam2advf-name=Family 2.1.1, 2.2.1, 2.3.1, 2.4.1, or 2.1.3",
-"group-fam9half=^9\\.1\\.[12345]\\.2$",
-"fam9half-name=Family 9.1.x.2",
+"group-halfroll=^9\\.1\\.[1-5]\\.2\\.",
+"halfroll-name=Family 9.1 half-roll",
 "group-fam9hesitation=^9\\.[248]\\.",
 "fam9hesitation-name=Family 9.2, 9.4, or 9.8",
 
-"fam2adv-min=1",
+"fam2advf-min=1",
 "fam5-min=1",
 "fam6-min=1",
 "fam7-min=1",
 "fam8-min=1",
-"fam9half-min=1",
+"halfroll-min=1",
 "fam9hesitation-min=1",
 
 "emptyline-max=0",
@@ -181,17 +182,8 @@ rules.push (
 "group-fam2fullroll=^2\\.1\\.3\\.|^2\\.2\\.[3-7]\\.|^2\\.3\\.[2-5]\\.|^2\\.4\\.[3-8]\\.",
 "fam2fullroll-name=Family 2 with at least one full roll",
 
-"group-fam91=^9\\.1\\.",
-"fam91-name=Family 9.1",
-
-"group-fam92=^9\\.2\\.",
-"fam92-name=Family 9.2",
-
-"group-fam94=^9\\.4\\.",
-"fam94-name=Family 9.4",
-
-"group-fam98=^9\\.8\\.",
-"fam98-name=Family 9.8",
+"group-halfroll=^9\\.1\\.[1-5]\\.2\\.",
+"halfroll-name=Family 9.1 half-roll",
 
 "group-fam99=^9\\.9\\.",
 "fam99-name=Family 9.9",
@@ -204,12 +196,18 @@ rules.push (
 "fam6-min=1",
 "fam7-min=1",
 "fam8-min=1",
-"fam91-min=1",
-"fam92-min=1",
-"fam94-min=1",
-"fam98-min=1",
+"halfroll-min=1",
+"hesroll-min=1",
 "fam99-min=1",
 "fam910-min=1",
+
+// Rule 6.8(3) allows unlimited repetition of 1.1.1.x and 9.1.x.x.
+// The items below prohibit repetition of all other figures.
+"basefigex11-repeat=1",
+"hroll-repeat=1",
+"troll-repeat=1",
+"qroll-repeat=1",
+"eroll-repeat=1",
 
 "emptyline-max=0",
 
