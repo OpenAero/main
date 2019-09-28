@@ -37,10 +37,8 @@ lang.fr = {
   'Si c\'est le cas, vous aiderez à l\'amélioration d\' OpenAero en les ajoutant à ' +
   '<a href="https://github.com/OpenAero/main/issues" target="_blank">la ' +
   'liste des améliorations</a>.',
-// changed 2018.3.4
 'aboutOlder' : '<font color="red">Vous travaillez avec une ancienne version. ' +
   '</font>><br />',
-// new 2018.3.4
 'aboutOlderAndroid' : '<a href="https://play.google.com' +
   '/store/apps/details?id=net.openaero" target="_blank">' +
   '<img src="img/google-play-badge.png" width="200"></a>',
@@ -96,7 +94,6 @@ lang.fr = {
 'addFigureText' : 'Ajouter figure',
 'addingFigure' : 'Ajouter une nouvelle figure',
 'additional' : 'Liaison(s)',
-// new 2018.1.9
 'addSequenceLink' : 'Ajouter un lien de programme',
 'addToQueue' : 'Ajouter à la file',
 'acreg': 'Immat d\'Avion',
@@ -130,7 +127,6 @@ lang.fr = {
 'changedFigureKMulti' : 'Les K Aresti normaux des figures %s ont été ' +
   'changés selon le réglement %s',
 'changeStyle' : 'Changer',
-// changed 2018.2
 // checkAlert forms a sub-array
 'checkAlert' : {
   'exactlyperfig' : 'Exactement %s %s par figure',
@@ -302,17 +298,14 @@ lang.fr = {
   'Google Chrome</a>.',
 'getTheApp' : 'OpenAero est disponible en tant qu\'application',
 'glider' : 'Planeur',
-// new 2017.1
 'gridAdditionals' : 'Informations requises',
 'gridInfo' : 'Infos de la vue en tableau',
 'gridNegEntry' : 'Entrée dos',
 'gridNegExit' : 'Sortie dos',
-// new 2018.3.3
 'gridOrderBy' : 'Trié par',
 'gridPosEntry' : 'Entrée ventre',
 'gridPosExit' : 'Sortie ventre',
 'gridSpeed' : 'Vitesse',
-// changed 2017.1
 'gridView' : 'Le choix du nombre de colonnes de la vue "Tableau des figures" est accessible par ' +
   'le menu Affichage/Tableau des figures puis "infos de la vue en tableau"',
 'harmony' : 'Harmonie',
@@ -351,7 +344,6 @@ lang.fr = {
   'bureau pour un accès direct.</p>' +
   '<p>Un Mode d\'emploi complet est disponible a <i>Aide -> Manuel ' +
   'OpenAero</i>. S\'il vous plait, prenez le temps de le lire !</p>',
-// new 2018.1.10
 'installedFile' : '<p>OpenAero est maintenant installé avec ce ' +
   'navigateur. Il est disponible ' +
   'en ligne,mais aussi hors connexion à <a href="http://%1\$s" target="_blank">' +
@@ -376,26 +368,25 @@ lang.fr = {
 'iOSsaveFileTitle' : 'Enregistrer le fichier',
 'judgesName' : 'Nom des Juges',
 'language' : 'Langue',
-// new 2017.1
 'library' : 'Bibliothèque',
 'loadNewVersion' : 'Une nouvelle version d\'OpenAero est disponible. La charger ?',
 'loadNewVersionNoCookies' : 'Une nouvelle version d\'OpenAero est disponible. La charger ?' +
   'Si un programme est ouvert, il sera effacé.',
 'loadNewVersionTitle' : 'Nouvelle version',
-'location' : 'Lieu',
+'location' : 'Compétition / lieu',
 'locked' : 'Ce programme est verrouillé. Pour le déverrouiller, cliquez sur <i>Déverrouiller</i> ' +
   'dans le menu Programme',
 'lockSequence' : 'Verrouiller',
 'logo' : 'Logo',
 'logoChooserCancel' : 'Annuler',
 'logoChooserTitle' : 'Choisir un logo',
-'logoExplain' : 'Chargez votre logo en cliquant sur parcourir..., ' +
-  'ou sélectionnez un des logos déjà affiches.',
+// removed 2019.2.4
+//'logoExplain' : 'Chargez votre logo en cliquant sur parcourir..., ' +
+//  'ou sélectionnez un des logos déjà affiches.',
 'manual' : 'Manuel OpenAero',
 'maxAdditionals' : 'Maximum de figures supplémentaires permis : %s',
 'maxScaling' : 'Agrandissement Max des petits programmes',
 'missedSlot' : 'Hors créneau',
-// changed 2017.1
 'missingInfo' : 'Des informations essentielles du programme manquent.</br>' +
   'Etes-vous sur de vouloir enregistrer ou imprimer le fichier sans celles-ci :',
 'missingInfoTitle' : 'Informations du programme manquantes',
@@ -421,7 +412,6 @@ lang.fr = {
   'non-Aresti (essayer <i>41h4,f,4 66</i>)',
 'none' : 'Aucune',
 'noRollAllowed' : 'Rotation interdite par l\'Aresti',
-// changed 2018.2.1
 'noRules' : 'Pas de règle de vérification disponible.',
 'notes' : 'Annotations (haut de page)',
 'notOnFormBC' : 'Cette fonction est seulement disponible lorsque ' +
@@ -457,12 +447,10 @@ lang.fr = {
   'placez le dans l\'emplacement ci-dessous :',
 'openSequenceLinkOpen' : 'Ouvrir',
 'openSequenceLinkTitle' : 'Ouvrir le programme à partir du lien',
-// new 2018.3.3
 'orderCountry' : 'Pays',
 'orderFigureNr' : 'Numéro',
 'orderK' : 'Coef K',
 'orderLetter' : 'Lettre',
-// end new
 'otherNote' : 'Autre(noter...)',
 'pageSpacing' : 'Espacement entre pages',
 'pilot' : 'Pilote',
@@ -501,14 +489,12 @@ lang.fr = {
 'printMultipleSeq' : 'Impression de plusieurs programmes',
 'printMultiWait' : 'Impression de %s programmes.<br>Ceci peut ' +
   'prendre du temps. Patienter, svp...',
-// changed 2018.2.1
 'printNotes' : 'Annotations (haut de page)',
 'printPilotCards' : 'Fiche pilote',
 'printSaveForms' : 'Imprimer / Enregistrer image',
 'printSavePdf' : 'Imprimer / Enregistrer PDF',
 'printSF' : 'Numéro de Super Famille',
 'printString' : 'Texte du programme',
-// new 2019.2
 'processingMultiCounter' : 'Traitement du programme %s<br><br><strong> ' +
 	'%s restants</strong>',
 'program' : 'Programme',
@@ -526,7 +512,6 @@ lang.fr = {
   'assez de figures dans le programme en cours',
 'proposalsTitle' : 'Génération de propositions d\'enchainements de figures',
 'proposalsToGrid' : 'Transfert dans la vue en tableau',
-// new 2018.3.5
 'proposalsTotalK' : 'K total de chaque proposition: ',
 'queue' : 'File/Tampon',
 'queueColumns' : 'Colonnes',
@@ -568,10 +553,12 @@ lang.fr = {
 	'Troisième série de rotations',
 	'Quatrième série de rotations'],
 'rollSmall' : 'Petit',
-// new 2019.1
 'rollsSpinsExplain' : 'Pour ajouter des rotations ou des vrilles, ' +
 	'sélectionnez un chiffre de base (par exemple, de la famille 1) et ' +
 	'ajoutez la rotation ou la vrille à celui-ci',
+'rollSymbolLarge' : 'Grand',
+'rollSymbolMedium' : 'Moyen',
+'rollSymbolSize' : 'Taille du symbole des rotations',
 'rollTextSize' : 'Taille du texte des rotations',
 'rules' : 'Règles',
 'rulesImported' : 'Règles importées du fichier avec succès. Nombre de lignes (hors commentaires) :',

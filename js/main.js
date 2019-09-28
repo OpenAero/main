@@ -3562,11 +3562,12 @@ function makeRollText (extent, stops, sign, comment, radSin, radCos) {
 // [6] is optional generic roll symbol	1 = roll, 2 = half roll, 3 = any roll, 4 = any roll or spin
 // Example: (270,4) would be a 3x4 roll
 function makeRoll (params) {
-  var pathsArray = [];
-  var stops = params[1];
-  var extent = Math.abs(params[0]);
-  var sign = params[0] > 0 ? 1 : -1;
-  var sweepFlag = params[0] > 0 ? 1 : 0;
+  var
+	  pathsArray = [],
+	  stops = params[1],
+	  extent = Math.abs(params[0]),
+	  sign = params[0] > 0 ? 1 : -1,
+	  sweepFlag = params[0] > 0 ? 1 : 0;
   if (params.length > 2) var rollTop = params[2];
   var rad = dirAttToAngle (Direction, Attitude);
   if (((Attitude == 45) || (Attitude == 315)) || ((Attitude == 225) || (Attitude == 135))) {
@@ -3707,11 +3708,12 @@ function makeRoll (params) {
 // [3] is optional comment
 // Examples: (270,0) is a 3/4 pos snap. (180,1) is a 1/2 neg snap
 function makeSnap (params) {
-  var pathsArray = [];
-  var stops = params[1];
-  var extent = Math.abs(params[0]);
-  var sign = params[0] > 0 ? 1 : -1;
-  var rad = dirAttToAngle (Direction, Attitude);
+  var
+	  pathsArray = [],
+	  stops = params[1],
+	  extent = Math.abs(params[0]),
+	  sign = params[0] > 0 ? 1 : -1,
+	  rad = dirAttToAngle (Direction, Attitude);
   if (((Attitude == 45) || (Attitude == 315)) || ((Attitude == 225) || (Attitude == 135))) {
     rad = True_Drawing_Angle;
   }
@@ -3765,8 +3767,8 @@ function makeSnap (params) {
         0,
         sign,
         params[3],
-        radSin,
-        radCos
+        radSin * snapElementText,
+        radCos * snapElementText
       );
       if (rollText) pathsArray.push (rollText);
     }
@@ -3781,9 +3783,9 @@ function makeSnap (params) {
       // Make the line between the two rolls
       // Only move the pointer for rolls in the top
       if (rollTop) {
-        pathsArray = buildShape ('Move', [1.5/scale], pathsArray);
+        pathsArray = buildShape ('Move', [snapElement017/scale], pathsArray);
       } else {
-        pathsArray = buildShape ('Line', [1.5/scale], pathsArray);
+        pathsArray = buildShape ('Line', [snapElement017/scale], pathsArray);
       }
       NegLoad = saveLoad;
       // Get the relative movement by the line and use this to build the
@@ -3797,6 +3799,7 @@ function makeSnap (params) {
       pathsArray.push ({'path':path, 'style':'pos'});
     }
   }
+  
   return pathsArray;
 }
 
@@ -3860,7 +3863,14 @@ function makeSpin (params) {
     // roll point and arc.
     // This is only necessary for spins that are not multiples of 180
     if (extent == Math.abs(params[0])) {
-      var rollText = makeRollText (extent, 0, sign, params[3], radSin, radCos);
+      var rollText = makeRollText (
+	      extent,
+	      0,
+	      sign,
+	      params[3],
+	      radSin * spinElementText,
+	      radCos * spinElementText
+	    );
       if (rollText) pathsArray.push (rollText);
     }
     // Completed the first (full) spin. Continue for more than 360
@@ -4836,6 +4846,21 @@ function doOnLoad () {
   loadSettingsStorage();
   loadPrintDialogStorage();
 
+  // load private logos
+	getLocal ('logoImages', function (privateLogoImages) {
+		privateLogoImages = JSON.parse (privateLogoImages);
+		for (var key in privateLogoImages) {
+	    logoImages[key] = privateLogoImages [key];
+		}
+	});
+	// check for existence of logoSelectionCount
+	getLocal ('logoSelectionCount', function (count) {
+		if (!count) {
+			// by default, set CIVA logo to 3 selections so it starts in front
+			storeLocal ('logoSelectionCount', JSON.stringify ({CIVA: 3}));
+		}
+	});
+
 	// when smallMobile is checked (loaded from settings), or when screen
 	// width is small and no setting is found, switch to smallMobile.
 	// Use window.screen.width to get CSS pixels
@@ -4924,6 +4949,10 @@ function doOnLoad () {
 	  dropZone.addEventListener('drop', updatePrintMulti, false);
 	  document.getElementById ('t_chooseFilesPrint').innerHTML = userText.chooseFilesOrDropPrint;
 	  document.getElementById ('t_chooseFilesPrint').id = 't_chooseFilesOrDropPrint';
+	  // Setup the drag n drop listeners for logo uploading
+	  var dropZone = document.getElementById('fileDropLogo');
+	  dropZone.addEventListener('dragover', handleDragOver, false);
+	  dropZone.addEventListener('drop', openLogoFile, false);
 	  // Setup the drag n drop listener for file opening
 	  if (!platform.mobile) {
 		  document.getElementById('topBlock').addEventListener('dragover', handleDragOver, false);
@@ -5053,7 +5082,7 @@ function doOnLoad () {
 
   // retrieve queue from storage
   queueFromStorage ();
-
+	
   // check for latest version in a few seconds
   if (!(chromeApp.active || window.location.hostname.match(/^(.+\.)?openaero.net$/))) {
     setTimeout(getLatestVersion, 3000);
@@ -5344,6 +5373,9 @@ function addEventListeners () {
   document.getElementById('t_referenceSequence').addEventListener('mousedown', referenceSequenceDialog);
   document.getElementById('harmony').addEventListener('change', changeSequenceInfo, false);
   
+  document.getElementById('copyContest').addEventListener('mousedown', copyContest, false);
+  document.getElementById('pasteContest').addEventListener('mousedown', pasteContest, false);
+  document.getElementById('lockContest').addEventListener('mousedown', lockContest, false);
   document.getElementById('location').addEventListener('change', changeSequenceInfo, false);
   document.getElementById('date').addEventListener('change', changeSequenceInfo, false);
   document.getElementById('t_chooseLogo').addEventListener('mousedown', logoChooser, false);
@@ -5352,7 +5384,7 @@ function addEventListeners () {
   document.getElementById('t_logoChooserCancel').addEventListener('mousedown', hideLogoChooser, false);
   document.getElementById('logoFile').addEventListener('change', openLogoFile, false);
 
-  document.getElementById('notes').addEventListener('change', changeSequenceInfo, false);
+  document.getElementById('notes').addEventListener('input', changeSequenceInfo, false);
   document.getElementById('notes').addEventListener('keydown', function(e){
     if (e.keyCode == 9) {
       document.getElementById('pilot').focus();
@@ -5398,6 +5430,11 @@ function addEventListeners () {
   document.getElementById('figureGroup').addEventListener('change', changeFigureGroup, false);
 //  document.getElementById('t_switchQueue').addEventListener('mousedown', function(){switchQueue(this)});
 
+	// logo chooser
+  document.getElementById('manual_html_contest_information').addEventListener('mousedown', function(){
+    helpWindow('doc/manual.html#contest_information', 'Grid system');
+  }, false);
+  
   // close alert box
   document.getElementById('t_closeAlert').addEventListener('click', function(){alertBox()}, false);
   
@@ -5443,6 +5480,7 @@ function addEventListeners () {
 
   document.getElementById('numberInCircle').addEventListener('change', updateNumberInCircle, false);
   document.getElementById('rollFontSize').addEventListener('change', updateRollFontSize, false);
+  document.getElementById('rollSymbolSize').addEventListener('change', updateRollSymbolSize, false);
 
   document.getElementById('nonArestiRolls').addEventListener('change', updateNonArestiRolls, false);
   document.getElementById('styles').addEventListener('change', getStyle, false);
@@ -6507,6 +6545,7 @@ function loadSettingsStorage (location) {
       updateUserTexts();
       numberInCircle = document.getElementById('numberInCircle').checked ? true : false;
       changeRollFontSize (document.getElementById('rollFontSize').value);
+      setRollSymbolSizes (document.getElementById('rollSymbolSize').value);
     }
   }
   
@@ -6696,6 +6735,14 @@ function updateNumberInCircle() {
 function updateRollFontSize() {
   saveSettingsStorage();
   changeRollFontSize(this.value);
+  draw();
+}
+
+// updateRollFontSize is called when "roll font size" is changed in
+// settings
+function updateRollSymbolSize() {
+  saveSettingsStorage();
+  setRollSymbolSizes(this.value);
   draw();
 }
 
@@ -7926,6 +7973,10 @@ function changeSequenceInfo () {
       storeLocal ('sequence', activeSequence.xml);
     }
     checkInfo();
+    // update 'Notes' field height
+    var el = document.getElementById ('notes');
+    el.style.height = "";
+	  el.style.height = el.scrollHeight + "px";
   }
 }
 
@@ -8201,6 +8252,61 @@ function restoreSelection (containerEl, savedSel) {
 	sel.addRange(range);
 }
 
+// copyContest will copy the contest info to localStorage
+function copyContest (e) {
+	noPropagation (e);
+	storeLocal ('contestInfo', JSON.stringify ({
+		location: document.getElementById ('location').value,
+		date: document.getElementById ('date').value,
+		logo: document.getElementById ('logo').value,
+		notes: document.getElementById ('notes').value
+	}));
+}
+
+// pasteContest retrieves contest info from localStorage and puts it in
+// Contest Info fields
+function pasteContest (e) {
+	noPropagation (e);
+	if (document.getElementById ('lockContest').classList.contains ('locked')) return;
+	getLocal ('contestInfo', function (string) {
+    if (string) {
+      var info = JSON.parse(string);
+      document.getElementById ('location').value = info.location;
+      document.getElementById ('date').value = info.date;
+      if (info.logo) selectLogo(info.logo); else removeLogo ();
+      document.getElementById ('notes').value = info.notes;
+      changeSequenceInfo ();
+    }
+  });
+}
+
+// lockContest locks and unlocks the contest info when called. Locking
+// prevents the contest info from being changed by anything
+function lockContest (e) {
+	noPropagation (e);
+	if (document.getElementById ('lockContest').classList.contains ('locked')) {
+		// unlock
+		document.getElementById ('lockContest').classList.remove ('locked');
+		document.getElementById ('pasteContest').classList.remove ('disabled');
+		document.getElementById ('removeLogo').classList.remove ('disabled');
+		document.getElementById ('t_chooseLogo').classList.remove ('disabled');
+		document.getElementById ('location').disabled = false;
+		document.getElementById ('date').disabled = false;
+		document.getElementById ('printNotes').disabled = false;
+		document.getElementById ('notes').disabled = false;
+	} else {
+		// lock
+		document.getElementById ('lockContest').classList.add ('locked');
+		document.getElementById ('pasteContest').classList.add ('disabled');
+		document.getElementById ('removeLogo').classList.add ('disabled');
+		document.getElementById ('t_chooseLogo').classList.add ('disabled');
+		document.getElementById ('location').disabled = true;
+		document.getElementById ('date').disabled = true;
+		document.getElementById ('printNotes').disabled = true;
+		document.getElementById ('notes').disabled = true;
+	}
+}
+
 // buildLogoSvg will create a logo svg from a provided image string,
 // width and height
 function buildLogoSvg(logoImage, x, y, width, height, blackWhite) {
@@ -8262,9 +8368,10 @@ function buildLogoSvg(logoImage, x, y, width, height, blackWhite) {
 // logoChooser will display the available logos
 // and allow for selection of a logo
 function logoChooser() {
+	if (document.getElementById ('lockContest').classList.contains ('locked')) return;
 	// define logo thumbnail width and height
-  var width = platform.smallMobile ? 66 : 80;
-  var height = platform.smallMobile ? 66 : 80;
+  var width = 80;
+  var height = 80;
   // show the logo chooser container
   var container = document.getElementById('logoChooserContainer');
   container.classList.remove ('noDisplay');
@@ -8274,23 +8381,82 @@ function logoChooser() {
   // Show all the logo images
   container = document.getElementById('chooseLogo');
   // Clean up the container
-  while (container.childNodes.length) {
+  var fileDropLogo = document.getElementById('fileDropLogo');
+  fileDropLogo.style.width = (width - 40) + 'px';
+  fileDropLogo.style.height = (height - 40) + 'px';
+  while (container.lastChild !== fileDropLogo) {
     container.removeChild(container.lastChild);
   }
-  for (var logoName in logoImages) {
-    var div = document.createElement('div');
-    container.appendChild(div);
-    div.setAttribute("alt", logoName);
-    div.addEventListener ('click', selectLogo, false);
-    div.appendChild(buildLogoSvg(logoImages[logoName], 0, 0, width, height));
-  }
+  // add logoImages
+  getLocal ('logoSelectionCount', function (count) {
+		// find out which are used most, put them right after private logos
+		count = JSON.parse (count);
+		var keys = Object.keys (count);
+		for (var i = 0; i < keys.length; i++) {
+			// remove private logos. They are added to the beginning later
+			if (/^[0-9]+$/.test (keys[i])) {
+				keys.splice (i, 1);
+				i--;
+			} else keys[i] = count[keys[i]] + '|' + keys[i];
+		}
+		keys.sort (function (a, b) {return parseInt(b)-parseInt(a)});
+		for (var i = 0; i < keys.length; i++) keys[i] = keys[i].split('|')[1];
+		var privateLogos = 0;
+		for (var logoName in logoImages) {
+			if (/^[0-9]+$/.test (logoName)) {
+				// add private logos to the beginning
+				keys.unshift (logoName);
+				privateLogos++;
+			} else if (!keys.includes (logoName)) {
+				// add remaining logos to the end
+				keys.push (logoName);
+			}
+		}
+		if (privateLogos > 2) { // max 3 private logos
+			fileDropLogo.classList.add ('noDisplay');
+		} else fileDropLogo.classList.remove ('noDisplay');
+		// build the logos in correct order
+	  for (var i = 0; i < keys.length; i++) {
+			logoName = keys[i];
+	    var div = document.createElement('div');
+	    container.appendChild(div);
+	    div.setAttribute("alt", logoName);
+	    div.addEventListener ('mousedown', selectLogo, false);
+	    div.appendChild(buildLogoSvg(logoImages[logoName], 0, 0, width, height));
+	    if (/^[0-9]+$/.test (logoName)) {
+				// add a 'delete' button
+				var button = document.createElement('div');
+				button.classList.add ('deleteLogoButton');
+				button.id = 'deleteLogo-' + logoName;
+				button.innerHTML = '<i class="material-icons">close</i>';
+				// make sure we remove on touch devices by using touchstart
+				// which fires before mousedown
+				if (platform.touch) {
+					button.addEventListener ('touchstart', deleteLogo);
+				}
+				button.addEventListener ('mousedown', deleteLogo);
+				div.appendChild(button);
+			}
+	  }
+	});
 }
 
 // selectLogo is called when a logo is clicked in the logoChooser and
-// will select the correct logo for use
+// will select the correct logo for use. Can also be called from
+// code in which case a logo name should be supplied.
 function selectLogo(logo) {
-  // get name from alt attribute when called from eventListener
-  if (this.getAttribute) logo = this.getAttribute('alt');
+  // called from eventListener
+  if (this.getAttribute) {
+		// get name from alt attribute
+		logo = this.getAttribute('alt');
+		// increment selection counter
+		getLocal ('logoSelectionCount', function (totals) {
+			totals = JSON.parse (totals);
+			if (logo in totals) totals[logo]++; else totals[logo] = 1;
+			storeLocal ('logoSelectionCount', JSON.stringify (totals));
+		});
+	}
+	
   // check if there already was a logo to replace
   var replace = logoImg ? true : false;
   logoImg = logoImages[logo];
@@ -8321,12 +8487,6 @@ function selectLogo(logo) {
   changeSequenceInfo();
 }
 
-// uploadLogo is used to upload a logo
-function uploadLogo (file) {
-  logoImages.mylogo = file;
-  selectLogo ('mylogo');
-}
-
 // drawActiveLogo makes a small thumbnail of the active logo in the
 // Sequence info and adds 'remove logo' link
 // Start by checking for logoImage element. It may not be present when
@@ -8352,6 +8512,7 @@ function drawActiveLogo() {
 
 // removeLogo makes it possible to remove the previously chosen logo
 function removeLogo() {
+	if (document.getElementById ('lockContest').classList.contains ('locked')) return;
   logoImg = false;
   // Remove 'remove logo' link and logo image
   document.getElementById('removeLogo').classList.add ('noDisplay');
@@ -8365,6 +8526,21 @@ function removeLogo() {
     }, 300);
   document.getElementById('logo').value = '';
   changeSequenceInfo();
+}
+
+// deleteLogo deletes the private logo from the chooser and localStorage
+function deleteLogo (evt) {
+	noPropagation (evt);
+	var logoName = this.id.replace (/^deleteLogo-/, '');
+	this.parentNode.parentNode.removeChild (this.parentNode);
+	document.getElementById('fileDropLogo').classList.remove ('noDisplay');
+	delete logoImages [logoName];
+	privateLogoImages = {};
+	// update images in localStorage
+	for (var key in logoImages) {
+		if (/^[0-9]+$/.test (key)) privateLogoImages [key] = logoImages [key];
+	}
+	storeLocal ('logoImages', JSON.stringify (privateLogoImages));
 }
   
 // parseFiguresFile parses the figures file and stores it in several
@@ -10210,13 +10386,15 @@ function grabFigure(evt) {
     // svg may be rescaled on smallMobile browser
     var scale = platform.smallMobile ? svg.getAttribute('width')/viewBox[2] : 1;
     var margin = 5 * scale;
-    GrabPoint.x = TrueCoords.x;
-    GrabPoint.y = TrueCoords.y;
-    var x = TrueCoords.x;
-    var y = TrueCoords.y;
+		var zoom = parseInt(document.getElementById('zoom').textContent.match(/\d+/)[0]) / 100;
+    GrabPoint.x = TrueCoords.x / zoom;
+    GrabPoint.y = TrueCoords.y / zoom;
+    var x = TrueCoords.x / zoom;
+    var y = TrueCoords.y / zoom;
 
     var closest = false;
     var minDistSq = Infinity;
+    
     for (var i = figures.length - 1; i >= 0; i--) {
      if (figures[i].draggable) {
        if (svg.getElementById('figure' + i)) {
@@ -13397,9 +13575,18 @@ function clearSequence () {
 }
 
 // openLogoFile will load a logo from a file
-function openLogoFile () {
+function openLogoFile (evt) {
   hideLogoChooser();
-  openFile(document.getElementById('logoFile').files[0], 'Logo');
+	if (evt.dataTransfer) {
+		// file dropped
+		noPropagation(evt);
+		openFile (evt.dataTransfer.files[0], 'Logo');
+	} else {  
+		// get files from file input
+		openFile (this.files[0], 'Logo');
+		// clear for next
+		this.parentNode.reset();    
+	}
 }
 
 // programme will load a programme
@@ -13851,7 +14038,8 @@ function loadSequence (fileString, callback) {
 			}
 			return;
 	  } else {
-      fileString = atob (fileString.replace (/^data:.*;base64,/, ''));
+      fileString = decodeURIComponent (escape (atob (
+	      fileString.replace (/^data:.*;base64,/, ''))));
       if (fileString.match (/^<sequence/)) {
         // this is an OpenAero sequence, no need to do OLAN checks
         OLAN.bumpBugCheck = false;
@@ -13916,11 +14104,17 @@ function activateXMLsequence (xml, noLoadRules) {
 
   // clear previous values
   for (var i = 0; i < sequenceXMLlabels.length; i++) {
-    var el = document.getElementById(sequenceXMLlabels[i]);
-    if ('value' in el) el.value = ''; else if (el.innerText) el.innerText = '';
+		if (document.getElementById ('lockContest').classList.contains ('locked') &&
+			['location', 'date', 'logo', 'notes'].includes (sequenceXMLlabels[i])) {
+			// do nothing for contest elements when contest is locked
+		} else {
+	    var el = document.getElementById(sequenceXMLlabels[i]);
+	    if ('value' in el) el.value = ''; else if (el.innerText) el.innerText = '';
+		}
   }
-  logoImg = false;
-
+	if (!document.getElementById ('lockContest').classList.contains ('locked')) {
+	  logoImg = false;
+	}
   // set 'class' to powered by default to provide compatibility with OLAN
   // and older OpenAero versions
   document.getElementById('class').value = 'powered';
@@ -13942,16 +14136,23 @@ function activateXMLsequence (xml, noLoadRules) {
     // Put every element in the correct field
     for (var ele in nodes) {
       if(nodes[ele].innerHTML) {
-        // translate escape characters by browser through myTextArea
-        myTextArea.innerHTML = nodes[ele].innerHTML;
-        // e will be the field, only put a value when it exists
-        var e = document.getElementById(nodes[ele].nodeName.toLowerCase());
-        if (e) {
-					if ('value' in e) {
-						e.value = myTextArea.value;
-					} else if ('innerText' in e) e.innerText = myTextArea.value;
+				if (document.getElementById ('lockContest').classList.contains ('locked') &&
+					['location', 'date', 'logo', 'notes'].includes (nodes[ele].nodeName.toLowerCase())) {
+					// do nothing for contest elements when contest is locked
+				} else {
+	        // translate escape characters by browser through myTextArea
+	        myTextArea.innerHTML = nodes[ele].innerHTML;
+	        // e will be the field, only put a value when it exists
+	        var e = document.getElementById(nodes[ele].nodeName.toLowerCase());
+	        if (e) {
+						if ('value' in e) {
+							e.value = myTextArea.value;
+						} else if ('innerText' in e) e.innerText = myTextArea.value;
+					}
+	        if (nodes[ele].nodeName.toLowerCase() === 'actype') {
+						oldSequence = false;
+					}
 				}
-        if (nodes[ele].nodeName.toLowerCase() === 'actype') oldSequence = false;
       }
     }
 
@@ -14287,9 +14488,19 @@ function compVersion (v1, v2, parts) {
 function loadedLogo (evt) {
   var fileData = evt.target.result;
   if (evt.type) {
-    logoImg = fileData;
-    draw();
-    drawActiveLogo();
+		getLocal ('logoImages', function (privateLogoImages) {
+			privateLogoImages = JSON.parse (privateLogoImages) || {};
+			for (var key in privateLogoImages) {
+				if (privateLogoImages[key] === fileData) {
+					selectLogo (key);
+					return;
+				}
+			}
+			var t = (new Date()).getTime();
+			privateLogoImages [t] = logoImages [t] = fileData;
+			storeLocal ('logoImages', JSON.stringify (privateLogoImages));
+			selectLogo (t);
+		});
   } else {
     alertBox (userText.unknownFileType);
   }

@@ -165,6 +165,10 @@ select {
   height: 48px;
 }
 
+#fileDropLogo {
+	margin: 16px 16px 0 0;
+}
+
 #alerts {
 	/* width: 312px; */
 	width: 99%;

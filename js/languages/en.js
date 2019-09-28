@@ -372,20 +372,20 @@ lang.en = {
 'loadNewVersionNoCookies' : 'A new version of OpenAero is available. ' +
 	'Load it? If you have a sequence open now it will be cleared.',
 'loadNewVersionTitle' : 'New version',
-'location' : 'Location',
+'location' : 'Contest / location',
 'locked' : 'This sequence is locked. To unlock, choose <i>Unlock</i> ' +
   'from the Sequence menu',
 'lockSequence' : 'Lock',
 'logo' : 'Logo',
 'logoChooserCancel' : 'Cancel',
 'logoChooserTitle' : 'Choose logo',
-'logoExplain' : 'Upload your own logo by clicking on the file ' +
-  'chooser below, or select one of the displayed logos.',
+// removed in 2019.2.4
+//'logoExplain' : 'Upload your own logo by clicking on the file ' +
+//  'chooser below, or select one of the displayed logos.',
 'manual' : 'Manual',
 'maxAdditionals' : 'Maximum additional figures allowed: %s',
 'maxScaling' : 'Max small seq. scaling %',
 'missedSlot' : 'Missed Slot',
-// changed 2017.1
 'missingInfo' : 'There seems to be essential Sequence Info missing.</br>' +
   'Are you sure you want to save or print the file without:',
 'missingInfoTitle' : 'Sequence info missing',
@@ -561,6 +561,9 @@ lang.en = {
 // new 2019.1
 'rollsSpinsExplain' : 'To add rolls or spins, select a base figure ' +
 	'(e.g. from family 1) and add the roll or spin onto it',
+'rollSymbolLarge' : 'Large',
+'rollSymbolMedium' : 'Medium',
+'rollSymbolSize' : 'Roll symbol size',
 'rollTextSize' : 'Roll text size',
 'rules' : 'Rules',
 'rulesImported' : 'Succesfully imported rules from file. Total lines (excluding comments) : ',

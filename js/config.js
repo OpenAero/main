@@ -36,7 +36,7 @@
 // A new x should be used for versions that create sequences not
 // fully backward compatible with the previous version
 
-var version = '2019.2.3';
+var version = '2019.2.4';
 /* versionNew is an object that contains version update information
    The structure is {vvv : [[ttt, n], ...], ...} , where
    vvv = version number
@@ -44,8 +44,14 @@ var version = '2019.2.3';
    n   = importance (higher = more important)
 */
 var versionNew = {
+	'2019.2.4' : [
+		['Added rules for IAC Glider sequences, corrected some IAC Power rules', 3],
+		['Added automatic local saving of private logos', 2],
+		['Updated Privacy policy (look under Help / About)', 2]
+	],
 	'2019.2.3' : [
-		['Fixed issue where some figures would be shown with wrong half roll K in the chooser (sometimes marking them as illegal due rules)', 3]
+		['Fixed issue where some figures would be shown with wrong half ' +
+		'roll K in the chooser (sometimes marking them as illegal due rules)', 3]
 	],
 	'2019.2.1' : [
 		['Updated NZAC Power rules and sequences for 2019/2020', 3]
@@ -288,34 +294,42 @@ var sequenceXMLlabels = [
  * 
  **********************************************************************/
 
-// basic curve size
-var curveRadius = 40;
-// roll curve size
-var rollcurveRadius = 20;
 // basic line element size
 var lineElement = 10;
-// basic Snap element size
-var snapElement = 8;
-// basic Spin element size
-var spinElement = 8;
-// derived line element sizes, prevents many calculations during runtime
-var lineElement075 = lineElement * 0.75;
-var lineElement12 = lineElement * 1.2;
-var lineElement2 = lineElement * 2;
-var lineElement24 = lineElement * 2.4;
-var lineElement3 = lineElement * 3;
-// derived snap element sizes, prevents many calculations during runtime
-var snapElement075 = snapElement * 0.75;
-var snapElement12 = snapElement * 1.2;
-var snapElement15 = snapElement * 1.5;
-var snapElement2 = snapElement * 2;
-var snapElement24 = snapElement * 2.4;
-var snapElement3 = snapElement * 3;
-// derived spin element sizes, prevents many calculations during runtime
-var spinElement12 = spinElement * 1.2;
-var spinElement2 = spinElement * 2;
-var spinElement24 = spinElement * 2.4;
-var spinElement3 = spinElement * 3;
+// basic curve size
+var curveRadius = 40;
+var rollSymbolSizes = {'medium': 8, 'large': 12};
+function setRollSymbolSizes (sizeDescription) {
+	var rollSymbolSize = rollSymbolSizes[sizeDescription];
+	// roll curve size
+	window.rollcurveRadius = rollSymbolSize * 2.5;
+	// basic Snap element size
+	window.snapElement = rollSymbolSize;
+	// basic Spin element size
+	window.spinElement = rollSymbolSize;
+	// derived line element sizes, prevents many calculations during runtime
+	window.lineElement075 = lineElement * 0.75;
+	window.lineElement12 = lineElement * 1.2;
+	window.lineElement2 = lineElement * 2;
+	window.lineElement24 = lineElement * 2.4;
+	window.lineElement3 = lineElement * 3;
+	// derived snap element sizes, prevents many calculations during runtime
+	window.snapElement017 = snapElement * 0.17;
+	window.snapElement075 = snapElement * 0.75;
+	window.snapElement12 = snapElement * 1.2;
+	window.snapElement15 = snapElement * 1.5;
+	window.snapElement2 = snapElement * 2;
+	window.snapElement24 = snapElement * 2.4;
+	window.snapElement3 = snapElement * 3;
+	window.snapElementText = 0.5 + snapElement / 16;
+	// derived spin element sizes, prevents many calculations during runtime
+	window.spinElement12 = spinElement * 1.2;
+	window.spinElement2 = spinElement * 2;
+	window.spinElement24 = spinElement * 2.4;
+	window.spinElement3 = spinElement * 3;
+	window.spinElementText = 0.5 + spinElement / 16;
+}
+setRollSymbolSizes('medium');
 // define golden ratio
 Math.GR = 1.618;
 // define A4 page ratio
@@ -376,6 +390,7 @@ var saveSettings = [
   'showHandles',
   'smallMobile',
   'rollFontSize',
+  'rollSymbolSize',
   'nonArestiRolls'];
 // define which settings will be loaded from sequence
 var loadSettings = [

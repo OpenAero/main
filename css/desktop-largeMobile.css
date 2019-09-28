@@ -172,6 +172,10 @@
 	width: 268px;
 }
 
+#fileDropLogo {
+	margin: 8px 16px 0 0;
+}
+
 /* virtual keyboard */
 #virtualKeyboard {
   top: 4px;

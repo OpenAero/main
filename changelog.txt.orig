@@ -1,14 +1,5 @@
 2019.2.4
 * fixed issue with selecting figures when zoom != 100
-* added IAC Glider rules
-* added Setting to change roll symbol sizes
-* corrected IAC Advanced Free: min-snap=2 and added opposite-min=1
-* added automatic adjustment of Sequence Notes height
-* added copying, pasting and locking of Contest info
-* fixed bug in opening of sequences with special characters (e.g. ö)
-* added automatic local saving of private logos
-* changed Location to Contest/location
-* added information to the Privacy Policy about use of cookies
 
 2019.2.3
 * fixed issue where some figures would be shown with wrong half roll K in the chooser (sometimes marking them as illegal due rules)

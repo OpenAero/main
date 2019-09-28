@@ -1080,7 +1080,7 @@ option.used {
 }
 .expanded #activeLogo {
 	transform: scale(1);
-	top: 72px;
+	top: 100px;
 }
 #activeLogo i {
 	display: none;
@@ -1120,6 +1120,20 @@ option.used {
 }
 #sequenceInfo .flatTextButton {
 	font-size: 14px;
+}
+#sequenceInfo .button {
+	width: auto;
+	height: auto;
+	border: none;
+	border-radius: 8px;
+	background: transparent;
+}
+#sequenceInfo .button:hover:not(.disabled) {
+  background-color: #cdf;
+  transition: all 0.1s ease-in-out;
+}
+#sequenceInfo .button:active:not(.disabled) {
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 0 0 16px rgba(89, 189, 255, 0.6);
 }
 #sequenceInfo div.form-group:only-of-type {
 	width: 100% !important;
@@ -1178,8 +1192,20 @@ option.used {
 	float: left;
 	margin: 0 16px 0 0;
 }
+#copyContest, #pasteContest, #lockContest {
+	float: left;
+	margin: 0 4px 8px 0;
+	opacity: 0;
+	transition: opacity 0.5s;
+}
 .expanded #contestLabel {
 	display: initial;
+}
+.expanded #copyContest, .expanded #pasteContest, .expanded #lockContest {
+	opacity: 1;
+}
+#lockContest.locked {
+	color: red;
 }
 #activeContest, #activeRules {
 	position: absolute;
@@ -1188,6 +1214,8 @@ option.used {
 }
 #chooseLogo div {
   display: inline-block;
+  position: relative;
+  vertical-align: top;
   transition: all 0.3s ease-in-out;
 }
 #chooseLogo svg {
@@ -1292,7 +1320,7 @@ option.used {
   transform: translateY(-1px);
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.5);
 }
-.textButton.disabled {
+.textButton.disabled, .flatTextButton.disabled {
   color: rgba(0, 0, 0, 0.27) !important;
   background-color: transparent !important;
 }
@@ -1507,10 +1535,19 @@ option.used {
   padding: 16px;
   -webkit-overflow-scrolling: touch;
 }
+#fileDropLogo {
+	padding: 16px !important;;
+	color: #2979ff;
+	font-size: 64px;
+  line-height: 0.6;
+  overflow: hidden !important;
+}
+#logoFileForm{
+}
 #printMultiFileForm {
 	margin-top: 8px;
 }
-#printMultiFiles, #checkMultiFiles {
+#printMultiFiles, #checkMultiFiles, #logoFile {
   display: none;
 }
 #fileDropFiles, #fileDropPrintFiles {
@@ -2200,7 +2237,7 @@ table#figureChooserTable div {
 .familyB {
   background: #fff9f0;
 }
-.removeFigureButton {
+.removeFigureButton, .deleteLogoButton {
   position: absolute !important;
   right: 0px;
   top: 0px;
@@ -2212,10 +2249,10 @@ table#figureChooserTable div {
 	text-shadow: -1px -1px rgba(255,255,255,0.5), -1px 1px rgba(255,255,255,0.5), 1px -1px rgba(255,255,255,0.5), 1px 1px rgba(255,255,255,0.5);
   z-index: 9;
 }
-.removeFigureButton i {
+.removeFigureButton i, .deleteLogoButton i {
   color: red;
 }
-.removeFigureButton:hover {
+.removeFigureButton:hover, .deleteLogoButton:hover {
   transform: scale(1.33);
 }
 .UFKInFigure {

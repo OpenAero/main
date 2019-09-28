@@ -21,6 +21,10 @@
 
 /* This file defines all the css styles for the mobile device version */
 
+#sequenceInfo .button:hover {
+	background: transparent !important;
+}
+
 body.menuOpen {
   overflow-y: hidden;
 }

@@ -39,6 +39,9 @@
 * - updated Sportsman K for 2018
 * 2019.1.4
 * - updated all posnl (Presentation) K factors
+* 2019.2.4
+* - corrected min-snap in Advanced Free to 2
+* - added opposite-min=1 in Advanced Free
 */
 
 rules.push (
@@ -179,8 +182,9 @@ rules.push (
 "hroll-min=1",
 "qroll-min=1",
 "eroll-min=1",
-"snap-min=1",
+"snap-min=2",
 "spin-min=1",
+"opposite-min=1",
 
 "emptyline-max=0",
 
