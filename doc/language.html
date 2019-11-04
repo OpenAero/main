@@ -46,16 +46,16 @@ This is a complete reference to the figure codes used by OpenAero to create sequ
 Every sequence in OpenAero is written as one single line of characters. Complete figures are separated by a space. There are also some drawing instructions that are separated from the figures by a space.
 </p>
 <p>
-The OpenAero laguage uses numbers to indicate rolling elements. These are prefixed or postfixed to "base figures" such as a P-loop, a diagonal line, or a half cuban. Most base figures use a single letter to indicate the figure, as specified below, e.g., "<b>c</b>" is a half cuban. Note that you can not write just "c" in the software because it has no rolling element and no inverted entry or exit. Hence it is illegal. Valid figures are either "c-" (inverted exit) "-c" (a push from inverted half cuban) or "c2" which is the typcial half roll down the 45 line half cuban.
+The OpenAero language uses numbers to indicate rolling elements. These are prefixed or postfixed to "base figures" such as a P-loop, a diagonal line, or a half cuban. Most base figures use a single letter to indicate the figure, as specified below, e.g., "<b>c</b>" is a half cuban. Note that you can not write just "c" in the software because it has no rolling element and no inverted entry or exit. Hence it is illegal. Valid figures are either "c-" (inverted exit) "-c" (a push from inverted half cuban) or "c2" which is the typical half roll down the 45 line half cuban.
 </p>
 <p>
 For some base figures, a "reverse figure" is also flown, and is indicated by the letter "r". So, for example, a "rc" is a reverse half-cuban. Once again note that "rc" is illegal and the usual "reverse half cuban" is written as "2rc". Unlike "c2" where the half roll is postfixed, in the reverse half cuban the half roll is prefixed because it comes before the looping portion. Of course, a "rc2" is a valid figure indicating a push reverse half cuban with a half roll to normal flight at the end of the looping portion. Other common figures with an "r" variant are the P-loop, Q-loop and Keyhole (Y loop). In all of these cases the "reverse" figure is the one flown with the vertical line first. Some "reverse" elements are confusing or common enough to have their own letter: "k" (a shark tooth with vertical up first) is really the reverse figure of "t" (a shark Tooth with the 45 degrees up line first.
 </p>
 <p>
-Practically all figures have an "inverted" variant, with the exception of a hammerhead. For example, a "ic" is an inverted half cuban, where the looping portion is down(below) the initial flying level. Similarly, there are "ib" (inverted humpty bump), "irp" inverted reverse P looop (vertical down line followed by a loop up to the horizon) and "io", the inverted loop going down from the start line. Do not confuse inverted figures and inverted flying. So, "-o-" is a negative entry and negative exit loop, which can only be drawn and flown as a push (negative) loop. In comparison, "-io-" is a negative entry and negative exit inverted loop, the loop itself being flown "down" from the start, in a positive-G looping all around until the inverted exit at the top. Some "inverted" elements are so common that they have their own letter: split-s, technically a "reverse half loop up" is designated "a" and not "im" which would be very confusing. Also note that "ita", an inverted tail slide is a special case.
+Practically all figures have an "inverted" variant, with the exception of a hammerhead. For example, a "ic" is an inverted half cuban, where the looping portion is down(below) the initial flying level. Similarly, there are "ib" (inverted humpty bump), "irp" inverted reverse P loop (vertical down line followed by a loop up to the horizon) and "io", the inverted loop going down from the start line. Do not confuse inverted figures and inverted flying. So, "-o-" is a negative entry and negative exit loop, which can only be drawn and flown as a push (negative) loop. In comparison, "-io-" is a negative entry and negative exit inverted loop, the loop itself being flown "down" from the start, in a positive-G looping all around until the inverted exit at the top. Some "inverted" elements are so common that they have their own letter: split-s, technically a "reverse half loop up" is designated "a" and not "im" which would be very confusing. Also note that "ita", an inverted tail slide is a special case.
 </p>
 <p>
-A few other prefix letters are used to indicate or differentiate figures, such as "pb" for a push humpty bump, a "zt" for z "Z style 45 line shark tooth" where the intial pull to the 45 line is a 135 degrees pull, and "db" for "diagonal bump". 
+A few other prefix letters are used to indicate or differentiate figures, such as "pb" for a push humpty bump, a "zt" for z "Z style 45 line shark tooth" where the initial pull to the 45 line is a 135 degrees pull, and "db" for "diagonal bump".
 </p>
 <p>
 The basic figures contain only a single rolling element, which is postfixed. For example, "<b>d1</b>" is a diagonal up line with a half roll.
@@ -68,7 +68,7 @@ With some highly-complex figures such as "N figure" the middle rolling element i
 within a single digit. Note that since the OpenAero software "knows" the flying direction, you specify a vertical roll going up and a horizontal roll in the exact same fashion: "<b>1</b>".
 </p>
 <p>
-There are even figures with four possible rolls, such as a hammerhead with a diagonal exit and entry. In these figures the middle rolls are also specified in parentheses, where empty parantheses may be necessary to specify the correct rolls, e.g. "<b>1dhd(2)(1)1</b>" or "<b>dhd(2)()</b>". 
+There are even figures with four possible rolls, such as a hammerhead with a diagonal exit and entry. In these figures the middle rolls are also specified in parentheses, where empty parenthesis may be necessary to specify the correct rolls, e.g. "<b>1dhd(2)(1)1</b>" or "<b>dhd(2)()</b>".
 </p>
 
 	<p><br><b>Single-Element Lines:</b>
@@ -111,7 +111,7 @@ The qo, dq and qq have an inverted variety as well
 <br>
 <br><b>g</b> Goldfish: 45 line up, then loop down, then another 45 line up.
 <br>
-<br><b>p</b> P-loop: loop with vertcal down exit line
+<br><b>p</b> P-loop: loop with vertical down exit line
 <br><b>rp</b> Reverse P loop: vertical up and loop to the horizontal line
 <br>
 <br><b>q</b> Q-loop: loop with diagonal down exit line
@@ -154,16 +154,16 @@ The C, G, P, Q & Y loops all have an "inverted" version
 
 
 <p><br><b>Complex 3-Rolling elements figures:</b>
-<br><b><sp>n</b> N figure, pull to the diagoanl
+<br><b>n</b> N figure, pull to the diagonal
 <br><b>pn</b> push-N figure, push to the diagonal
 <br><b>in</b> inverted N figure, starts vertical down
 <br><b>ipn</b> inverted push-N figure
 <br>
-<br><b><sp>w</b> Bow (tie or X) 
-<br><b><sp>iw</b> Inverted Bow (tie or X) 
+<br><b>w</b> Bow (tie or X)
+<br><b>iw</b> Inverted Bow (tie or X)
 <br>
-<br><b><sp>gg</b> double goldfish (super-8)
-<br><b><sp>igg</b> inverted double goldfish (diagonals down)
+<br><b>gg</b> double goldfish (super-8)
+<br><b>igg</b> inverted double goldfish (diagonals down)
 <br>
 <p><br><b>Oddball figures</b>
 <br><b>f</b> flick roll on a horizontal line (see <a href="#rolls">rolls</a>)
@@ -173,14 +173,14 @@ The C, G, P, Q & Y loops all have an "inverted" version
 <br><b>oo</b> double loops 8-shape
 <br><b>ooo</b> loops over loop central-entry 8-shape
 <br>
-<br><b><sp>zb</b> Z-style entry diagonal humpty bump
-<br><b><sp>rzb</b> reverse Z-style entry diagonal humpty bump
-<br><b><sp>bz</b> diagonal humpty bump with z-style exit
-<br><b><sp>rbz</b> reverse diagonal humpty bump with z-style exit
+<br><b>zb</b> Z-style entry diagonal humpty bump
+<br><b>rzb</b> reverse Z-style entry diagonal humpty bump
+<br><b>bz</b> diagonal humpty bump with z-style exit
+<br><b>rbz</b> reverse diagonal humpty bump with z-style exit
 <br>
 <br>
-<br><b><sp>zy</b> Z-style entry keyhole (Y) loop
-<br><b><sp>rzy</b> reverse Z-style exit keyhole (Y) loop
+<br><b>zy</b> Z-style entry keyhole (Y) loop
+<br><b>rzy</b> reverse Z-style exit keyhole (Y) loop
 </p>
 
 <p>
@@ -215,7 +215,7 @@ The C, G, P, Q & Y loops all have an "inverted" version
 <a name="rolls"></a>
 <H2>OpenAero Roll elements reference guide</H2>
 <p>
-The OpenAero laguage uses numbers to indicate rolling elements. Most of the common elements are contained within a single digit. Note that since the OpenAero software "knows" the flying direction, you specify a vertical roll going up and a horizontal roll in the exact same fashion: "<b>1</b>". 
+The OpenAero language uses numbers to indicate rolling elements. Most of the common elements are contained within a single digit. Note that since the OpenAero software "knows" the flying direction, you specify a vertical roll going up and a horizontal roll in the exact same fashion: "<b>1</b>".
 <br>
 <b>No-Hesitation Rolls follow:</b>
 <br>
@@ -266,10 +266,10 @@ For rolls on a single horizontal line, there is no "base figure" being specified
 <br>
 <p>
 <b></b> &nbsp;<p>
-        <b>Qaurter-Roll hesitations</b> use the following numbers:
+        <b>Quarter-Roll hesitations</b> use the following numbers:
 <br>
 <br>
-<b><sp>4</b> quarter roll (no hesitation)
+<b>4</b> quarter roll (no hesitation)
 <br>
 <b>24</b> two quarter rolls (one middle hesitation, total one roll)
 <br>
@@ -277,6 +277,7 @@ For rolls on a single horizontal line, there is no "base figure" being specified
 <br>
 <b>44</b> 4 point roll (full roll, 3 middle hesitations, or 4 quarters)
 <br>
+<b>54</b> 5 quarter rolls
 <b>54</b> 5 quarter rolls
 <br>
 <b>64</b> 6 quarter rolls
@@ -289,7 +290,7 @@ You may also use "74" and "84" to indicate 1 3/4 roll and two full rolls in quar
 <b></b> &nbsp;<p>
         <b>Eight-Point Hesitation Rolls</b> use these numbers for the common cases:
 <br>
-<b><sp></b> 
+<b></b>
     </p>
     <p>
         <b>8</b> 2/8 (a quarter roll with one hesitation)
@@ -306,10 +307,10 @@ You may also use "74" and "84" to indicate 1 3/4 roll and two full rolls in quar
         <strong>Multiple elements on the same line </strong>
     </p>
     <p>
-        Use "," (comma) to seperate opposite elements on the same line, e.g. "c1,2" is a
+        Use "," (comma) to separate opposite elements on the same line, e.g. "c1,2" is a
         half cuban with a full roll, opposite half roll on the 45 down line.</p>
     <p>
-        Use ";" (semicolon) to seperate same-direction elements on the same line, e.g "1;2ft"
+        Use ";" (semicolon) to separate same-direction elements on the same line, e.g "1;2ft"
         is a reverse shark took with a full roll followed by a half snap in the same direction
         on the up 45 line.</p>
     <p>
@@ -359,7 +360,8 @@ You may also use "74" and "84" to indicate 1 3/4 roll and two full rolls in quar
       <td><b>(x,y)</b></td><td>Just as previous, but with a curved line</td>
     </tr>
     <tr>
-      <td><b>></b></td><td>Has two different functions:    </tr>
+      <td><b>></b></td><td>Has two different functions:
+    </tr>
     <tr>
       <td></td><td>When placed after a figure: Switch upwind/downwind exit
       direction in figures with 1/4, 3/4 etc roll up or down or (rolling) turns</td>
