@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# OpenAero version 2019.2.4
+# OpenAero version 2020.1
 appcache.manifest
 changelog.txt
 cordova.js
@@ -11,8 +11,8 @@ css/MaterialIcons-Regular.woff
 css/mobile.css
 css/smallMobile.css
 doc/arestisystem.html
-doc/CIVA-Free-Known-Programme-Guidance-Glider-Aircraft-2019-v1.pdf
-doc/CIVA-Free-Known-Programme-Guidance-Power-Aircraft-2019-v1.pdf
+doc/CIVA-Free-Known-Programme-Guidance-Glider-Aircraft-2020-v1.pdf
+doc/CIVA-Free-Known-Programme-Guidance-Power-Aircraft-2020-v1.pdf
 doc/gpl_files/combo.css
 doc/gpl_files/gplv3-127x51.png
 doc/gpl_files/layout.css
@@ -73,14 +73,16 @@ js/rules/rules18-france.js
 js/rules/rules19-aac.js
 js/rules/rules19-iac.js
 js/rules/rules19-glider-iac.js
-js/rules/rules19-civa.js
-js/rules/rules19-glider-civa.js
+js/rules/rules20-civa.js
+js/rules/rules20-glider-civa.js
 js/rules/rules20-nzac.js
 js/rules/rules19-vink.js
 js/rulesWorker.js
 js/vkbeautify.js
 js/window.js
 manifest.json
+manifest.webmanifest
+pwabuilder-sw.js
 window.html
 NETWORK: 
 #http://jsconsole.com/remote.js

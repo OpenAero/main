@@ -151,14 +151,15 @@ var dragTarget = null;
 // confirmFunction is used as a function reference of confirm dialog
 var confirmFunction;
 
-// set platform OS for Android and iOS
+// set platform OS for Android, iOS and Windows
 platform.android = /Android/i.test(navigator.userAgent);
 platform.ios = /i(Pad|Phone|Pod)/i.test(navigator.userAgent);
+platform.windows = window.Windows;
 
 // platform.mobile is true when running on a mobile device (e.g. tablet)
-/** SET TO TRUE FOR TESTING MOBILE */
+/** SET TO true FOR TESTING MOBILE */
 platform.mobile = ((typeof window.orientation !== 'undefined') ||
-	(navigator.userAgent.indexOf('IEMobile') !== -1) || false);
+	(navigator.userAgent.indexOf('IEMobile') !== -1) || false); // here
 
 // platform.touch is true on touch enabled devices
 platform.touch = (('ontouchstart' in window)
@@ -1673,6 +1674,35 @@ function cordovaPdf (uri, title) {
 	  });
 	});
 }
+
+/**************************************************************
+ * 
+ * Windows functions
+ * 
+ *************************************************************/
+
+// open .seq file from Windows PWA
+var exports = {};
+Object.defineProperty(exports, "__esModule", { value: true });
+var Activation = /** @class */ (function () {
+    function Activation() {
+    }
+    Activation.register = function () {
+        if (window.Windows) {
+            Windows.UI.WebUI.WebUIApplication.addEventListener('activated', function (activatedEventArgs) {
+                if (activatedEventArgs.kind === Windows.ApplicationModel.Activation.ActivationKind.file) {
+                    Windows.Storage.FileIO.readTextAsync(activatedEventArgs.files[0])
+                        .done(function (text) {
+                            loadedSequenceWindows (text, Windows.Storage.StorageFile.Name);
+                    });
+                }
+            });
+        }
+    };
+    return Activation;
+}());
+exports.default = Activation;
+Activation.register();
 
 /************************************************
  * User interface functions
@@ -5313,11 +5343,11 @@ function addEventListeners () {
     }, false);
 	
   document.getElementById('t_freeKnownGuidancePower').parentNode.addEventListener('mousedown', function(){
-      helpWindow('doc/CIVA-Free-Known-Programme-Guidance-Power-Aircraft-2019-v1.pdf', 'CIVA Free Known Guidance Power');
+      helpWindow('doc/CIVA-Free-Known-Programme-Guidance-Power-Aircraft-2020-v1.pdf', 'CIVA Free Known Guidance Power');
     }, false);
 
   document.getElementById('t_freeKnownGuidanceGlider').parentNode.addEventListener('mousedown', function(){
-      helpWindow('doc/CIVA-Free-Known-Programme-Guidance-Glider-Aircraft-2019-v1.pdf', 'CIVA Free Known Guidance Glider');
+      helpWindow('doc/CIVA-Free-Known-Programme-Guidance-Glider-Aircraft-2020-v1.pdf', 'CIVA Free Known Guidance Glider');
     }, false);
     
   document.getElementById('t_about').parentNode.addEventListener('mousedown',
@@ -14011,6 +14041,36 @@ function loadedQueue(evt) {
 	});
 }
 
+// loadedSequence will be called when a sequence file has been loaded
+function loadedSequenceWindows (text, name) {
+
+  // Obtain the read file data  
+  loadSequence (text, function(xml) {
+	  if (xml === false) {
+	    alertBox(userText.notSequenceFile);
+	    return;
+	  }
+	
+	  updateSaveFilename (name.replace(/.*\\/, '').replace(/\.[^.]*$/, ''));
+	
+	  activateXMLsequence (xml, true);
+	
+	  // update the sequence if OLAN.sequence was true
+	  if (OLAN.sequence) {
+	    OLAN.sequence = false;
+	    updateSequence (-1, '');
+	    activeSequence.text = '';
+	    checkSequenceChanged();
+	  }
+	
+	  sequenceSaved = true;
+	
+	  // Activate the loading of the checking rules (if any)
+	  changeCombo ('program', checkFuFiguresFile);
+
+	});
+}
+
 // loadSequence loads a sequence file and does some checks. Callback
 // is executed with an XML sequence or false
 function loadSequence (fileString, callback) {
@@ -14487,15 +14547,23 @@ function compVersion (v1, v2, parts) {
 // loadedLogo will be called when a logo image has been loaded
 function loadedLogo (evt) {
   var fileData = evt.target.result;
+  console.log (evt);
   if (evt.type) {
+		// check file for maximum size due local storage on mobile
+		if (platform.mobile && (evt.loaded > 1048576)) {
+			alertBox (userText.logoFileTooLarge);
+			return;
+		}
 		getLocal ('logoImages', function (privateLogoImages) {
 			privateLogoImages = JSON.parse (privateLogoImages) || {};
+			// check if this logo already existed
 			for (var key in privateLogoImages) {
 				if (privateLogoImages[key] === fileData) {
 					selectLogo (key);
 					return;
 				}
 			}
+			// logo dit not exist yet, create new
 			var t = (new Date()).getTime();
 			privateLogoImages [t] = logoImages [t] = fileData;
 			storeLocal ('logoImages', JSON.stringify (privateLogoImages));

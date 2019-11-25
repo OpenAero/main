@@ -36,7 +36,7 @@
 // A new x should be used for versions that create sequences not
 // fully backward compatible with the previous version
 
-var version = '2019.2.4';
+var version = '2020.1';
 /* versionNew is an object that contains version update information
    The structure is {vvv : [[ttt, n], ...], ...} , where
    vvv = version number
@@ -44,6 +44,10 @@ var version = '2019.2.4';
    n   = importance (higher = more important)
 */
 var versionNew = {
+	'2020.1' : [
+		['CIVA rules and sequences for 2020. Flick rolls on vertical up of ' +
+		'tailslides are now allowed for Power Unlimited Unknowns', 4]
+	],
 	'2019.2.4' : [
 		['Added rules for IAC Glider sequences, corrected some IAC Power rules', 3],
 		['Added automatic local saving of private logos', 2],

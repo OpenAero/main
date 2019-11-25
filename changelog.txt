@@ -1,3 +1,12 @@
+2020.1
+* updated CIVA rules for 2020, including flick rolls on vertical up in tailslides for Power Unlimited
+* added 2020 CIVA sequences
+* limited logo file size on mobile to 1 MB to prevent local storage limit issues
+
+2019.2.5
+* changed "X-box entry" to "Cross-box entry" to prevent confusion
+* added code to enable running as PWA on Windows and macOS (not functional yet)
+ 
 2019.2.4
 * fixed issue with selecting figures when zoom != 100
 * added IAC Glider rules

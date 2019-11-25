@@ -1,0 +1,24 @@
+{
+	"dir" : "ltr",
+	"lang" : "en",
+	"name" : "OpenAero",
+	"scope" : "/",
+	"display" : "standalone",
+	"start_url" : "https://devel.openaero.net/",
+	"short_name" : "OpenAero",
+	"theme_color" : "#7e57c2",
+	"description" : "OpenAero helps you design aerobatic sequences. It has many features for all levels of aerobatic pilots and contest organisers.",
+	"orientation" : "any",
+	"background_color" : "transparent",
+	"related_applications" : [],
+	"prefer_related_applications" : false,
+	"icons" : [
+		{
+			"src": "https://openaero.net/img/favicons/favicon16.png",
+			"sizes": "16x16"
+		},
+		{
+			"src": "https://openaero.net/img/favicons/favicon195.png",
+			"sizes": "195x195"
+		}]
+}

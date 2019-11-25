@@ -127,7 +127,6 @@ lang.en = {
 'changedFigureKMulti' : 'Standard Aresti K of figures %s changed ' +
   'according rules %s',
 'changeStyle' : 'Change',
-// changed 2018.2
 // checkAlert forms a sub-array
 'checkAlert' : {
 	'exactlyperfig' : 'Exactly %s of %s per figure',
@@ -148,7 +147,6 @@ lang.en = {
 'checkingRules' : 'Sequence checking rules',
 'checkMulti' : 'Check multiple sequences',
 'checkMultiClose' : 'Close',
-// new 2019.2
 'checkMultiCounter' : 'Checking sequence %s<br><br><strong>%s ' +
 	'remaining</strong>',
 'checkMultipleSeq' : 'Check multiple seq',
@@ -218,7 +216,6 @@ lang.en = {
   'font (e.g. 2x8).</p>',
 'dropFigureHere' : 'Drop Figure here',
 'editingFigure' : 'Edit figure ',
-// updated 2018.1.9
 'emailHeader' : 'Click the link below to open the sequence in OpenAero. ' +
   'Or you can copy the link and use "File -> Open sequence link" ' +
   'in your OpenAero app.', 
@@ -299,7 +296,6 @@ lang.en = {
 'gridInfo' : 'Grid info',
 'gridNegEntry' : 'Negative entry',
 'gridNegExit' : 'Negative exit',
-// new 2018.3.3
 'gridOrderBy' : 'Order by',
 'gridPosEntry' : 'Positive entry',
 'gridPosExit' : 'Positive exit',
@@ -379,9 +375,9 @@ lang.en = {
 'logo' : 'Logo',
 'logoChooserCancel' : 'Cancel',
 'logoChooserTitle' : 'Choose logo',
-// removed in 2019.2.4
-//'logoExplain' : 'Upload your own logo by clicking on the file ' +
-//  'chooser below, or select one of the displayed logos.',
+// new 2020.1
+'logoFileTooLarge' : 'Logo file is too large. Please limit file size ' +
+	'to 1 MB.',
 'manual' : 'Manual',
 'maxAdditionals' : 'Maximum additional figures allowed: %s',
 'maxScaling' : 'Max small seq. scaling %',
@@ -413,7 +409,6 @@ lang.en = {
 'none' : 'None',
 'noRollAllowed' : 'No roll allowed according Aresti Catalog',
 'noRules' : 'No sequence validity checking rules active.',
-// changed 2018.2.1
 'notes' : 'Notes (top of pages)',
 'notOnFormBC' : 'This function is only available when Form ' +
   'B or C  is being viewed.',
@@ -448,12 +443,10 @@ lang.en = {
   'paste it in the box below',
 'openSequenceLinkOpen' : 'Open',
 'openSequenceLinkTitle' : 'Open sequence from link',
-// new 2018.3.3
 'orderCountry' : 'Country',
 'orderFigureNr' : 'Figure Nr',
 'orderK' : 'K factor',
 'orderLetter' : 'Figure letter',
-// end new
 'otherNote' : 'Other(note...)',
 'pageSpacing' : 'Page spacing',
 'pilot' : 'Pilot',
@@ -498,7 +491,6 @@ lang.en = {
 'printSavePdf' : 'Print / Save PDF',
 'printSF' : 'Super Family numbers',
 'printString' : 'Sequence string',
-// new 2019.2
 'processingMultiCounter' : 'Processing sequence %s<br><br><strong>%s ' +
 	'remaining</strong>',
 'program' : 'Program',
@@ -517,7 +509,6 @@ lang.en = {
   'are insufficient figures in the active sequence',
 'proposalsTitle' : 'Create figure group proposals',
 'proposalsToGrid' : 'Load to Grid',
-// new 2018.3.5
 'proposalsTotalK' : 'Total K for each proposal: ',
 'queue' : 'Queue',
 'queueColumns' : 'Columns',
@@ -551,14 +542,12 @@ lang.en = {
   'restored to their default settings. Do you want to continue?',
 'rollLarge' : 'Large',
 'rollMedium' : 'Medium',
-// changed 2018.3.5
 'rollPos' : [
 	'First roll/spin position',
 	'Second roll position',
 	'Third roll position',
 	'Fourth roll position'],
 'rollSmall' : 'Small',
-// new 2019.1
 'rollsSpinsExplain' : 'To add rolls or spins, select a base figure ' +
 	'(e.g. from family 1) and add the roll or spin onto it',
 'rollSymbolLarge' : 'Large',
@@ -711,7 +700,6 @@ lang.en = {
   'This is handled differently by older versions of OpenAero. Please ' +
   'check the figures to make sure their exit directions are correct ' +
   'relative to their start (same or opposite).</p>',
-// new 2019.2
 'warningPre20192' : '<p>The file you just opened was created with an ' +
   'OpenAero version older than 2019.2. Also, it contains one or ' +
   'more figures of family 1.2.11 or 1.2.12 (triangle figures with ' +
@@ -723,10 +711,10 @@ lang.en = {
 'wind' : 'wind/vent',
 'windIAC' : 'wind direction',
 'wingRocks' : 'Wing Rocks',
-'xBox' : 'X-Box',
-'xBoxAway' : 'X-Box away',
-'xBoxEntry' : 'X-box entry',
-'xBoxEntryAway' : 'X-box entry away',
+'xBox' : 'Cross-Box',
+'xBoxAway' : 'Cross-Box away',
+'xBoxEntry' : 'Cross-box entry',
+'xBoxEntryAway' : 'Cross-box entry away',
 'zipImageFilenamePattern' : 'Separate fig images filename pattern',
 'zoom' : 'Zoom'
 // end of key-value pairs. No comma after last

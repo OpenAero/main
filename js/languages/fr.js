@@ -380,6 +380,9 @@ lang.fr = {
 'logo' : 'Logo',
 'logoChooserCancel' : 'Annuler',
 'logoChooserTitle' : 'Choisir un logo',
+// new 2020.1 by Massa
+'logoFileTooLarge' : 'Le fichier de logo est trop volumineux. Veuillez ' +
+	'limiter la taille du fichier à 1 MB',
 // removed 2019.2.4
 //'logoExplain' : 'Chargez votre logo en cliquant sur parcourir..., ' +
 //  'ou sélectionnez un des logos déjà affiches.',
