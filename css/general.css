@@ -43,6 +43,7 @@ html, body {
   -moz-user-select: none;
   -ms-user-select: none;
   -o-user-select: none;
+  -ms-overflow-style: scrollbar;
   user-select: none;
   background-color: #fff;
 }
@@ -850,7 +851,7 @@ html.framed .docs table {
 html.framed ol {
 	padding: 24px;
 }
-.box div.section, .section, .docs table tr {
+.box div.section, .section {
   position: relative;
   float: left;
   box-sizing: border-box;
@@ -911,7 +912,7 @@ html.framed ol {
   position: relative;
   float: right;
 }
-.docs table.regularTable tr {
+.docs table tr {
 	border: 0;
   margin: 2px;
   background: transparent;
@@ -919,7 +920,8 @@ html.framed ol {
   box-sizing: content-box;
   -moz-box-sizing: content-box;
 }
-.docs table.regularTable td {
+.docs table td {
+	vertical-align: top;
   padding: 0;
   padding-right: 1em;
 }
@@ -2466,15 +2468,16 @@ table#figureChooserTable div {
 	right: 8px;
 	height: 48px;
 }
-#playStore {
+#playStore, #appStore, #mobileInstallPWA {
 	display: none;
 }
 #installApp.android #playStore {
 	display: inline-block;
 }
-#appStore {
-	display: none;
-}
 #installApp.ios #appStore {
 	display: inline-block;
-}	 
+}
+#installApp.pwa #mobileInstallPWA {
+	display: inline-block;
+}
+

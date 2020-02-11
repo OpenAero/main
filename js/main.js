@@ -151,11 +151,6 @@ var dragTarget = null;
 // confirmFunction is used as a function reference of confirm dialog
 var confirmFunction;
 
-// set platform OS for Android, iOS and Windows
-platform.android = /Android/i.test(navigator.userAgent);
-platform.ios = /i(Pad|Phone|Pod)/i.test(navigator.userAgent);
-platform.windows = window.Windows;
-
 // platform.mobile is true when running on a mobile device (e.g. tablet)
 /** SET TO true FOR TESTING MOBILE */
 platform.mobile = ((typeof window.orientation !== 'undefined') ||
@@ -165,9 +160,6 @@ platform.mobile = ((typeof window.orientation !== 'undefined') ||
 platform.touch = (('ontouchstart' in window)
   || (navigator.maxTouchPoints > 0)
   || (navigator.msMaxTouchPoints > 0));
-
-// browserString identifies the browser
-var browserString = '';
 
 // storage is true when localStorage is enabled (checked by doOnLoad)
 // start with true to activate the check
@@ -259,283 +251,6 @@ var alertMsgs = [];
 var alertMsgRules = {};
 // errors is used for tracking startup errors
 var errors = [];
-
-/************************************************
- * 
- * HTML5 DOM shims
- * 
- ************************************************/
- 
-/*
- * classList.js: Cross-browser full element.classList implementation.
- * 1.2.20171210
- *
- * By Eli Grey, http://eligrey.com
- * License: Dedicated to the public domain.
- *   See https://github.com/eligrey/classList.js/blob/master/LICENSE.md
- */
-
-/*global self, document, DOMException */
-
-/*! @source http://purl.eligrey.com/github/classList.js/blob/master/classList.js */
-
-if ("document" in self) {
-	
-	// Full polyfill for browsers with no classList support
-	// Including IE < Edge missing SVGElement.classList
-	if (
-		   !("classList" in document.createElement("_")) 
-		|| document.createElementNS
-		&& !("classList" in document.createElementNS("http://www.w3.org/2000/svg","g"))
-	) {
-	
-	(function (view) {
-	
-	"use strict";
-	
-	if (!('Element' in view)) return;
-	
-	var
-		  classListProp = "classList"
-		, protoProp = "prototype"
-		, elemCtrProto = view.Element[protoProp]
-		, objCtr = Object
-		, strTrim = String[protoProp].trim || function () {
-			return this.replace(/^\s+|\s+$/g, "");
-		}
-		, arrIndexOf = Array[protoProp].indexOf || function (item) {
-			var
-				  i = 0
-				, len = this.length
-			;
-			for (; i < len; i++) {
-				if (i in this && this[i] === item) {
-					return i;
-				}
-			}
-			return -1;
-		}
-		// Vendors: please allow content code to instantiate DOMExceptions
-		, DOMEx = function (type, message) {
-			this.name = type;
-			this.code = DOMException[type];
-			this.message = message;
-		}
-		, checkTokenAndGetIndex = function (classList, token) {
-			if (token === "") {
-				throw new DOMEx(
-					  "SYNTAX_ERR"
-					, "The token must not be empty."
-				);
-			}
-			if (/\s/.test(token)) {
-				throw new DOMEx(
-					  "INVALID_CHARACTER_ERR"
-					, "The token must not contain space characters."
-				);
-			}
-			return arrIndexOf.call(classList, token);
-		}
-		, ClassList = function (elem) {
-			var
-				  trimmedClasses = strTrim.call(elem.getAttribute("class") || "")
-				, classes = trimmedClasses ? trimmedClasses.split(/\s+/) : []
-				, i = 0
-				, len = classes.length
-			;
-			for (; i < len; i++) {
-				this.push(classes[i]);
-			}
-			this._updateClassName = function () {
-				elem.setAttribute("class", this.toString());
-			};
-		}
-		, classListProto = ClassList[protoProp] = []
-		, classListGetter = function () {
-			return new ClassList(this);
-		}
-	;
-	// Most DOMException implementations don't allow calling DOMException's toString()
-	// on non-DOMExceptions. Error's toString() is sufficient here.
-	DOMEx[protoProp] = Error[protoProp];
-	classListProto.item = function (i) {
-		return this[i] || null;
-	};
-	classListProto.contains = function (token) {
-		return ~checkTokenAndGetIndex(this, token + "");
-	};
-	classListProto.add = function () {
-		var
-			  tokens = arguments
-			, i = 0
-			, l = tokens.length
-			, token
-			, updated = false
-		;
-		do {
-			token = tokens[i] + "";
-			if (!~checkTokenAndGetIndex(this, token)) {
-				this.push(token);
-				updated = true;
-			}
-		}
-		while (++i < l);
-	
-		if (updated) {
-			this._updateClassName();
-		}
-	};
-	classListProto.remove = function () {
-		var
-			  tokens = arguments
-			, i = 0
-			, l = tokens.length
-			, token
-			, updated = false
-			, index
-		;
-		do {
-			token = tokens[i] + "";
-			index = checkTokenAndGetIndex(this, token);
-			while (~index) {
-				this.splice(index, 1);
-				updated = true;
-				index = checkTokenAndGetIndex(this, token);
-			}
-		}
-		while (++i < l);
-	
-		if (updated) {
-			this._updateClassName();
-		}
-	};
-	classListProto.toggle = function (token, force) {
-		var
-			  result = this.contains(token)
-			, method = result ?
-				force !== true && "remove"
-			:
-				force !== false && "add"
-		;
-	
-		if (method) {
-			this[method](token);
-		}
-	
-		if (force === true || force === false) {
-			return force;
-		} else {
-			return !result;
-		}
-	};
-	classListProto.replace = function (token, replacement_token) {
-		var index = checkTokenAndGetIndex(token + "");
-		if (~index) {
-			this.splice(index, 1, replacement_token);
-			this._updateClassName();
-		}
-	}
-	classListProto.toString = function () {
-		return this.join(" ");
-	};
-	
-	if (objCtr.defineProperty) {
-		var classListPropDesc = {
-			  get: classListGetter
-			, enumerable: true
-			, configurable: true
-		};
-		try {
-			objCtr.defineProperty(elemCtrProto, classListProp, classListPropDesc);
-		} catch (ex) { // IE 8 doesn't support enumerable:true
-			// adding undefined to fight this issue https://github.com/eligrey/classList.js/issues/36
-			// modernie IE8-MSW7 machine has IE8 8.0.6001.18702 and is affected
-			if (ex.number === undefined || ex.number === -0x7FF5EC54) {
-				classListPropDesc.enumerable = false;
-				objCtr.defineProperty(elemCtrProto, classListProp, classListPropDesc);
-			}
-		}
-	} else if (objCtr[protoProp].__defineGetter__) {
-		elemCtrProto.__defineGetter__(classListProp, classListGetter);
-	}
-	
-	}(self));
-	
-	}
-	
-	// There is full or partial native classList support, so just check if we need
-	// to normalize the add/remove and toggle APIs.
-	
-	(function () {
-		"use strict";
-	
-		var testElement = document.createElement("_");
-	
-		testElement.classList.add("c1", "c2");
-	
-		// Polyfill for IE 10/11 and Firefox <26, where classList.add and
-		// classList.remove exist but support only one argument at a time.
-		if (!testElement.classList.contains("c2")) {
-			var createMethod = function(method) {
-				var original = DOMTokenList.prototype[method];
-	
-				DOMTokenList.prototype[method] = function(token) {
-					var i, len = arguments.length;
-	
-					for (i = 0; i < len; i++) {
-						token = arguments[i];
-						original.call(this, token);
-					}
-				};
-			};
-			createMethod('add');
-			createMethod('remove');
-		}
-	
-		testElement.classList.toggle("c3", false);
-	
-		// Polyfill for IE 10 and Firefox <24, where classList.toggle does not
-		// support the second argument.
-		if (testElement.classList.contains("c3")) {
-			var _toggle = DOMTokenList.prototype.toggle;
-	
-			DOMTokenList.prototype.toggle = function(token, force) {
-				if (1 in arguments && !this.contains(token) === !force) {
-					return force;
-				} else {
-					return _toggle.call(this, token);
-				}
-			};
-	
-		}
-	
-		// replace() polyfill
-		if (!("replace" in document.createElement("_").classList)) {
-			DOMTokenList.prototype.replace = function (token, replacement_token) {
-				var
-					  tokens = this.toString().split(" ")
-					, index = tokens.indexOf(token + "")
-				;
-				if (~index) {
-					tokens = tokens.slice(index);
-					this.remove.apply(this, tokens);
-					this.add(replacement_token);
-					this.add.apply(this, tokens.slice(1));
-				}
-			}
-		}
-	
-		testElement = null;
-	}());
-
-}// * End classlist.js
-
-// add getElementsByClassName for older browsers
-if(!document.getElementsByClassName) {
-  document.getElementsByClassName = function(className) {
-    return this.querySelectorAll("." + className);
-  };
-}
 
 /*
  * steganography.js v1.0.3 2017-09-22
@@ -1560,7 +1275,8 @@ if (typeof module !== "undefined" && module.exports) {
   });
 }
 
-/* HTMLCanvasElement.toBlob() polyfill */
+/* HTMLCanvasElement.toBlob() polyfill
+ * Needed for Microsoft Edge 2020 */
 if (!HTMLCanvasElement.prototype.toBlob) {
  Object.defineProperty(HTMLCanvasElement.prototype, 'toBlob', {
   value: function (callback, type, quality) {
@@ -1681,28 +1397,18 @@ function cordovaPdf (uri, title) {
  * 
  *************************************************************/
 
-// open .seq file from Windows PWA
-var exports = {};
-Object.defineProperty(exports, "__esModule", { value: true });
-var Activation = /** @class */ (function () {
-    function Activation() {
-    }
-    Activation.register = function () {
-        if (window.Windows) {
-            Windows.UI.WebUI.WebUIApplication.addEventListener('activated', function (activatedEventArgs) {
-                if (activatedEventArgs.kind === Windows.ApplicationModel.Activation.ActivationKind.file) {
-                    Windows.Storage.FileIO.readTextAsync(activatedEventArgs.files[0])
-                        .done(function (text) {
-                            loadedSequenceWindows (text, Windows.Storage.StorageFile.Name);
-                    });
-                }
-            });
-        }
-    };
-    return Activation;
-}());
-exports.default = Activation;
-Activation.register();
+// open associated .seq file in Windows UWP
+if (platform.uwp) {
+	Windows.UI.WebUI.WebUIApplication.addEventListener (
+		'activated', function (activatedEventArgs) {
+			if (activatedEventArgs.kind === Windows.ApplicationModel.Activation.ActivationKind.file) {
+				Windows.Storage.FileIO.readTextAsync(activatedEventArgs.files[0])
+				.done(function (text) {
+					loadedSequenceWindows (text, activatedEventArgs.files[0].name);
+				});
+			}
+	});
+}
 
 /************************************************
  * User interface functions
@@ -1909,9 +1615,13 @@ function panelHeader (el, empty) {
 	if (grandPa.classList.contains ('expanded')) {
 		el.innerText = '';
 	} else {
-		var inputs = grandPa.getElementsByClassName('panelHeader');
-		var values = [];
+		var
+			inputs = grandPa.getElementsByClassName('panelHeader'),
+			values = [];
 		for (var i = 0; i < inputs.length; i++) {
+			// put the last value (of two or more values) on a new line
+			if (inputs.length > 1 && i == (inputs.length - 1)) values.push ('\n');
+			// add input values
 			if ((inputs[i].tagName === 'SELECT') && userText[inputs[i].value]) {
 				values.push (userText[inputs[i].value]);
 			} else values.push(inputs[i].value);
@@ -2027,15 +1737,26 @@ function prepareSvg (svg) {
 
 // infoBox creates a styled box without any options.
 // message contains the HTML text. When false, the box is closed
-function infoBox(message, title) {
+function infoBox (message, title) {
   // hide all menus
   menuInactiveAll();
-  
+
   var div = document.getElementById('infoBox');
   if (message) {
     // show box
-    div.classList.remove ('noDisplay');
+		div.classList.remove ('noDisplay');
     dialogBuildContents ('info', message, title);
+    /** Code to be used later for building UWP native dialogs. Most of
+     * the infoboxes should be progress boxes. See
+     * https://docs.microsoft.com/en-us/uwp/api/windows.ui.popups.messagedialog
+     * https://docs.microsoft.com/en-gb/windows/uwp/design/controls-and-patterns/progress-controls
+		if (platform.uwp) {
+			var dialog = new Windows.UI.Popups.MessageDialog (
+				document.getElementById ('infoMessage').innerHTML,
+				document.getElementById ('infoTitle').innerHTML);
+			dialog.showAsync ();
+		}
+		*/
   } else {
     div.classList.add ('noDisplay');
   }
@@ -2296,7 +2017,7 @@ function helpWindow (url, title) {
 		document.getElementById ('helpBox').classList.remove ('noDisplay');
 		document.getElementById ('helpTitle').innerText = title;
 		document.getElementById ('helpContent').firstChild.src = url;
-	} else if (chromeApp.active) {
+	} else if (platform.chrome) {
     // use chrome.app.window.create for desktop Chrome app
     chrome.app.window.create (url, {
       bounds: {
@@ -2309,15 +2030,25 @@ function helpWindow (url, title) {
         win.document.title = title;
       };
     });
-  } else if (window.navigator.standalone) {
+  } else if (platform.uwp) {
+    var w = window.open (
+	    url,
+	    title,
+	    'menubar=no, scrollbars=yes, status=no, toolbar=no, top=30, width=800'
+    );
+	} else if (window.navigator.standalone) {
     // create and click <a> for standalone
     var a = document.createElement('a');
     a.href = url;
     a.target = '_blank';
     a.click();
-  } else {
+	} else {
     // open new window for all others
-    var w = window.open(url, title, 'menubar=no, scrollbars=yes, status=no, toolbar=no, top=30, width=800');
+    var w = window.open (
+	    url,
+	    title,
+	    'menubar=no, scrollbars=yes, status=no, toolbar=no, top=30, width=800'
+	  );
   }
 }
 
@@ -2369,98 +2100,112 @@ function aboutDialog () {
 
 /** End dialogs and windows */
 
-// Combo box
+// Datalist with combo box polyfill
 // The correct values are put in the select list when the box is
 // activated by user
-function combo(id,h,l) {
-  var self = this; 
-  self.h = h; 
-  self.l = l; 
-  self.inp = document.getElementById(id); 
-  self.hasfocus = false; 
-  self.sel = -1; 
-  self.ul = self.inp.nextSibling;
-  while (self.ul.tagName !== 'UL') self.ul = self.ul.nextSibling; 
-  self.ul.onmouseover = function() {
-    self.ul.classList.remove ('focused');
-  }; 
-  self.ul.onmouseout = function() {
-    self.ul.classList.add ('focused');
-    if (!self.hasfocus) self.ul.style.display = 'none';
-  };
-  
-  self.inp.onfocus = function() {
-    var ul = self.ul;
-    ul.style.display = 'block';
-    ul.classList.add ('focused');
-    self.hasfocus = true;
-    self.sel = -1;
-    // rebuild the list
-    switch (ul.id) {
-      case 'rulesList':
-        updateRulesList ();
-        break;
-      case 'categoryList':
-        updateCategoryList ();
-        break;
-      case 'programList':
-        updateProgramList ();
-    }
-    self.addMouseDown();
-  }; 
-  self.inp.onblur = function() {
-    if(self.ul.classList.contains ('focused')) {
-      self.rset(self);
-    }
-    self.ul.classList.remove ('focused');
-    self.hasfocus = false;
-    changeCombo(self.inp.id);
-  }; 
-  self.inp.onkeyup = function(e) {
-    var k = e ? e.keyCode : event.keyCode;
-    if (k == 40 || k == 13) {
-      if (self.sel == self.list.length-1) {
-        self.list[self.sel].style.backgroundColor = self.l;
-        self.sel = -1;
-      }
-      if (self.sel > -1) {
-        self.list[self.sel].style.backgroundColor = self.l;
-      }
-      self.inp.value = self.list[++self.sel].firstChild.data;
-      self.list[self.sel].style.backgroundColor = self.h;
-      changeCombo (self.inp.id);
-    } else if (k == 38 && self.sel > 0) {
-      self.list[self.sel].style.backgroundColor = self.l;
-      self.inp.value = self.list[--self.sel].firstChild.data;
-      self.list[self.sel].style.backgroundColor = self.h;
-      changeCombo (self.inp.id);
-    }
-    return false;
-  };
-}
-combo.prototype.rset = function(self) {
-  self.ul.style.display = 'none';
-  self.sel = -1;
-  for (var i=self.list.length - 1; i >= 0; i--) {
-    self.list[i].style.backgroundColor = self.l;
-  }
-  return false;
-}
-combo.prototype.addMouseDown = function () {
+function combo(id) {
   var self = this;
-  self.list = self.ul.getElementsByTagName('li'); 
-  for (var i = self.list.length - 1; i >= 0; i--) {
-    self.list[i].addEventListener (
-      'mousedown',
-      function() {
-        self.inp.value = this.firstChild.data;
-        self.rset(self);
-      },
-      false
-    );
-  }
-  changeCombo (self.ul.id);
-}  
+  self.inp = document.getElementById(id);
+  /** DISABLED datalist. Not sure if I want to use this */
+	if (false && 'options' in document.createElement ('datalist')) {
+		var datalistId = 'datalist-' + id;
+		self.inp.setAttribute ('list', datalistId);
+		var datalist = document.createElement ('datalist');
+		datalist.id = datalistId;
+		self.inp.parentNode.appendChild (datalist);
+		self.inp.onfocus = function () {
+			// rebuild the list
+	    switch (self.inp.id) {
+	      case 'rules':
+	        updateRulesList ();
+	        break;
+	      case 'category':
+	        updateCategoryList ();
+	        break;
+	      case 'program':
+	        updateProgramList ();
+	    }
+		}
+		self.inp.onchange = function () {changeCombo (self.inp.id);};
+	} else {
+	  self.hasfocus = false; 
+	  self.sel = -1; 
+	  self.ul = self.inp.nextSibling;
+	  while (self.ul.tagName !== 'UL') self.ul = self.ul.nextSibling; 
+	  self.ul.onmouseover = function() {
+	    self.ul.classList.remove ('focused');
+	  }; 
+	  self.ul.onmouseout = function() {
+	    self.ul.classList.add ('focused');
+	    if (!self.hasfocus) self.ul.style.display = 'none';
+	  };
+	  
+	  self.inp.onfocus = function() {
+	    var ul = self.ul;
+	    ul.style.display = 'block';
+	    ul.classList.add ('focused');
+	    self.hasfocus = true;
+	    self.sel = -1;
+	    // rebuild the list
+	    switch (ul.id) {
+	      case 'rulesList':
+	        updateRulesList ();
+	        break;
+	      case 'categoryList':
+	        updateCategoryList ();
+	        break;
+	      case 'programList':
+	        updateProgramList ();
+	    }
+	    self.addMouseDown();
+	  }; 
+	  self.inp.onblur = function() {
+	    if(self.ul.classList.contains ('focused')) {
+	      self.rset(self);
+	    }
+	    self.ul.classList.remove ('focused');
+	    self.hasfocus = false;
+	    changeCombo(self.inp.id);
+	  }; 
+	  self.inp.onkeyup = function(e) {
+	    var k = e ? e.keyCode : event.keyCode;
+	    if (k == 40 || k == 13) {
+	      if (self.sel == self.list.length-1) {
+	        self.sel = -1;
+	      }
+	      self.inp.value = self.list[++self.sel].firstChild.data;
+	      changeCombo (self.inp.id);
+	    } else if (k == 38 && self.sel > 0) {
+	      self.inp.value = self.list[--self.sel].firstChild.data;
+	      changeCombo (self.inp.id);
+	    }
+	    return false;
+	  };
+	}
+}
+// only apply these for polyfill
+if (!(false && 'options' in document.createElement ('datalist'))) {
+	combo.prototype.rset = function(self) {
+	  self.ul.style.display = 'none';
+	  self.sel = -1;
+	  return false;
+	}
+	combo.prototype.addMouseDown = function () {
+	  var self = this;
+	  self.list = self.ul.getElementsByTagName('li'); 
+	  for (var i = self.list.length - 1; i >= 0; i--) {
+	    self.list[i].addEventListener (
+	      'mousedown',
+	      function() {
+	        self.inp.value = this.firstChild.data;
+	        self.rset(self);
+	      },
+	      false
+	    );
+	  }
+	  changeCombo (self.ul.id);
+	}
+}
 
 // selectTab allows us to select different tabbed pages
 // 'e' is either the tab object or a tab id
@@ -2581,6 +2326,21 @@ function sanitizeSpaces (line, noLT) {
   line = line.replace(/[\t]/g, ' ').replace(/\s\s+/g, ' ');
   if (!noLT) line = line.trim();
   return line;
+}
+
+// setSequenceSaved sets the sequenceSaved variable to true or false by
+// passing through the rules worker to assure any actions there are
+// executed first. When setting to true, always wait a while to assure
+// any false settings are executed first
+function setSequenceSaved (value) {
+
+	var id = uniqueId();
+	workerCallback [id] = function() {
+		if (value) {
+			setTimeout (function () {sequenceSaved = true;}, 200);
+		} else sequenceSaved = false;
+	}
+	rulesWorker.postMessage ({action: false, callbackId: id});
 }
 
 // simplifyFigures takes the figures global and returns a leaner version
@@ -4765,10 +4525,12 @@ function drawArestiText(figNr, aresti) {
 function doOnLoad () {
 
 	var loading = document.getElementById ('loading');
+	// immediately remove loading on Windows app as this is handled by the
+	// app itself
+  if (platform.uwp) loading.parentNode.removeChild (loading);
   
   // define DOM variables
 	if ((typeof chrome !== 'undefined') && chrome.fileSystem) {
-		chromeApp.active = true;
 		platform.chrome = true;
 		console.log('Running as Chrome app');
 	}
@@ -4848,12 +4610,9 @@ function doOnLoad () {
 		}
 	});
 
-  // check if Chrome App is installed
-  checkForApp();
-
   // Check if localStorage is supported. When running as Chrome app, we
   // assume the local storage support is present
-  if (!chromeApp.active) {
+  if (!platform.chrome) {
 		try {
 	    storage = (typeof localStorage != 'undefined') ? true : false;
 		} catch (err) {storage = false};
@@ -4932,29 +4691,29 @@ function doOnLoad () {
   // add all listeners for clicks, keyup etc
   addEventListeners();
 
-  // Add a listener for HTML5 app cache updates
-  if (!chromeApp.active) {
-    addUpdateListener();
-    // Give Cordova five seconds to start, then...
-    setTimeout(function() {
-			if (!platform.cordova) {
-		    if (platform.android || platform.ios) {
-					// getTheApp popup for Android and iOS devices
-					getTheApp ();
-				} else {
-				  // activate addtohomescreen for other mobile devices
-				  addToHomescreen();
-				}
-			}
-		}, 5000);
-  }
+	if (!(platform.android || platform.ios || platform.uwp || platform.windows10)) {
+		// setup PWA handler. Must be done early to ensure triggering of
+		// beforeinstallprompt
+		var installPWA = document.getElementById (platform.mobile ?
+			'mobileInstallPWA' : 't_installApp');
+		window.addEventListener('beforeinstallprompt', (e) => {
+			platform.supportsPWA = true;
+		  installPWA.addEventListener ('mousedown', function(){
+				installPWA.parentNode.classList.add ('noDisplay');
+				e.prompt();
+			});
+		});
+	}
+	// Give Cordova or PWA five seconds to start, then...
+	setTimeout(function() {
+		if (!platform.cordova) checkForApp ();
+	}, 5000);
 
   // build sequence svg
   rebuildSequenceSvg();
 
   // check browser and capabilities
-  var err = checkBrowser();
-  if (err) errors.push (err);
+  checkBrowser();
 
 	// remove zoomMenu when zoom is not supported
 	if (!('zoom' in document.body.style) && !platform.mobile) {
@@ -5039,9 +4798,9 @@ function doOnLoad () {
     
   // Add combo box functions for rules/category/program input fields
   // but make sure we don't change the logo (true)
-  new combo('rules','#ddf','transparent');
-  new combo('category','#ddf','transparent');
-  new combo('program','#ddf','transparent');
+  new combo('rules');
+  new combo('category');
+  new combo('program');
   changeCombo('program');
   
   // check if the sequence displayed is the one in the input field
@@ -5090,14 +4849,8 @@ function doOnLoad () {
   }
     
   // check if we are running from a file (DEPRECATED)
-  if (window.location.protocol === 'file:') {
+  if (!platform.cordova && window.location.protocol === 'file:') {
     if (presentFileError) errors.push (userText.runFromFile);
-  }
-  
-  // check if we are running from http i.s.o. https (DEPRECATED sep 2016)
-  if ((window.location.protocol === 'http:') &&
-    !window.location.hostname.match (/^devel./)) {
-    errors.push (userText.runOverHttp);
   }
 
 	// set alert if localStorage is disabled
@@ -5114,14 +4867,12 @@ function doOnLoad () {
   queueFromStorage ();
 	
   // check for latest version in a few seconds
-  if (!(chromeApp.active || window.location.hostname.match(/^(.+\.)?openaero.net$/))) {
-    setTimeout(getLatestVersion, 3000);
-  }
+	setTimeout (getLatestVersion, 3000);
 
   loadComplete = true;
   
   // load (mostly) completed, remove loading icon in 1/2 second
-  if (!platform.cordova) {
+  if (!(platform.cordova || platform.uwp)) {
 		setTimeout (function() {loading.style = 'opacity: 0.01;';}, 100);
 		setTimeout (function() {loading.parentNode.removeChild (loading);}, 500);
 	}
@@ -5129,7 +4880,7 @@ function doOnLoad () {
   // load Google Analytics, but not on Cordova
   /** DISABLED, not used at the moment and it complicates privacy policy
   try {
-    if (chromeApp.active) {
+    if (platform.chrome) {
       var xhr = new XMLHttpRequest();
       xhr.responseType = 'blob';
       xhr.onload = function(e) {
@@ -5251,7 +5002,7 @@ function appZoom (e) {
 // specified as event listeners for Chrome Apps.
 function addEventListeners () {
   // zoom for Chrome app and touch devices
-  if (chromeApp.active || platform.touch) {
+  if (platform.chrome || platform.touch) {
     document.addEventListener ('keydown', appZoom, false);
   }
   document.addEventListener ('keydown', keyListener, false);
@@ -5328,7 +5079,6 @@ function addEventListeners () {
   document.getElementById('t_printMultipleSeq').parentNode.addEventListener('mousedown', printMultiDialog, false);
   document.getElementById('rulesFile').addEventListener('change', openRulesFile, false);
   document.getElementById('t_settings').parentNode.addEventListener('mousedown', settingsDialog, false);
-  document.getElementById('t_installChromeAppTitle').parentNode.addEventListener ('mousedown', installChromeApp, false);
   
   document.getElementById('t_finalizeSequence').addEventListener ('mousedown', function(){exitFuDesigner(false)});
   
@@ -5343,11 +5093,11 @@ function addEventListeners () {
     }, false);
 	
   document.getElementById('t_freeKnownGuidancePower').parentNode.addEventListener('mousedown', function(){
-      helpWindow('doc/CIVA-Free-Known-Programme-Guidance-Power-Aircraft-2020-v1.pdf', 'CIVA Free Known Guidance Power');
+      helpWindow('doc/CIVA-Free-Known-Programme-Guidance-Power-Aircraft-2020-v1.html', 'CIVA Free Known Guidance Power');
     }, false);
 
   document.getElementById('t_freeKnownGuidanceGlider').parentNode.addEventListener('mousedown', function(){
-      helpWindow('doc/CIVA-Free-Known-Programme-Guidance-Glider-Aircraft-2020-v1.pdf', 'CIVA Free Known Guidance Glider');
+      helpWindow('doc/CIVA-Free-Known-Programme-Guidance-Glider-Aircraft-2020-v1.html', 'CIVA Free Known Guidance Glider');
     }, false);
     
   document.getElementById('t_about').parentNode.addEventListener('mousedown',
@@ -5631,63 +5381,56 @@ function addMenuEventListeners() {
   if (platform.mobile || platform.smallMobile) mobileInterface();
 }
 
-// checkForApp will check if the OpenAero Chrome app is present
+// checkForApp will check the platform and present appropriate
+// information for getting an app
 function checkForApp () {
-  // only do something when not running as Chrome app
-  // and
-  // in Chrome browser with extension support on Chrome OS
-  if (!((navigator.userAgent.toLowerCase().indexOf('chrome') > -1) &&
-    (navigator.vendor.toLowerCase().indexOf("google") > -1) &&
-    (/\bCrOS/.test(navigator.userAgent)) &&
-    chrome)) return;
-  if (!chromeApp.active) {
-    function f (c) {
-      
-      if (typeof chrome.app == "undefined") return;
-      if (!chromeApp.active) {
-        // App not active. This also means we are not in OpenAero Stable
-        // (openaero.net or www.openaero.net) with the App installed.
-        // Stable is automatically redirected to the App through the
-        // url_handlers directive in manifest.json
-        
-        // Show link in tools menu
-        document.getElementById('installChromeApp').classList.remove ('noDisplay');
-          
-        // Create a box presenting the user with information on OpenAero
-        // and asking if they want to install the
-        // App, unless installChromeAppAsked is present. Also wait until
-        // loadComplete
-        if (!c) {
-          var id = window.setInterval (function(){
-            if (loadComplete) {
-              window.clearInterval (intervalID.installChromeApp);
-              delete intervalID.installChromeApp;
-              confirmBox (
-                { userText: 'installChromeApp',
-                  params: [window.location.host]},
-                { userText: 'installChromeAppTitle' },
-                installChromeApp
-              );
-            }
-          }, 1000);
-          intervalID.installChromeApp = id;
-          // don't ask again, independent of install result
-          storeLocal ('installChromeAppAsked', 'true');
-        };
-      }
-      
-    }
-    
-    getLocal ('installChromeAppAsked', f);
-    
-  }
 
-}
-
-// installChromeApp will open Chrome App installation page after called
-function installChromeApp() {
-  helpWindow ('https://chrome.google.com/webstore/detail/openaero/' +
-	  chromeApp.id);
+	if (platform.chrome) {
+		// chrome app is deprecated from june 2020 onwards
+		alertBox (userText.warningChrome);
+		setTimeout (
+			function() {chrome.management.uninstallSelf (true)}, 10000);
+	} else if (platform.android || platform.ios ||
+		(platform.mobile && !(platform.cordova || platform.uwp))) {
+		// Show the banner for getting the Android, iOS or PWA app under
+		// certain conditions
+		getLocal ('installAppAsked', function(timestamp) {
+	
+			var
+				banner = document.getElementById ('installApp'),
+				t = parseInt ((new Date()).getTime());
+	
+			if (timestamp) { // do not ask the first time
+				if (timestamp < (t - 86400 * 7)) { // ask once a week
+					storeLocal ('installAppAsked', t);
+					banner.classList.remove ('noDisplay');
+					if (platform.android) {
+						banner.classList.add ('android');
+					} else if (platform.ios) {
+						banner.classList.add ('ios');
+					} else banner.classList.add ('pwa');
+					// use setTimeout before showing to allow subtle entry
+					setTimeout (function(){banner.classList.add ('show')},500);
+					setTimeout (function(){removeBanner (banner)}, 15000);
+				}
+			} else storeLocal ('installAppAsked', 1);
+		});
+	} else if (platform.uwp) {
+		// inside UWP app, do nothing
+	} else if (platform.windows10) {
+		// add the link to Windows 10 installation to Tools
+		document.getElementById ('installDesktopApp').classList.remove ('noDisplay');
+		document.getElementById ('t_installApp').addEventListener (
+			'mousedown', function () {
+				window.location = platform.windowsStore;
+			}
+		);
+	} else {
+		// add the install link to Tools on PWA enabled browsers
+		if (platform.supportsPWA){
+			document.getElementById ('installDesktopApp').classList.remove ('noDisplay');
+		}
+	}
 }
 
 // Functions for interpreting user input and variables
@@ -5701,198 +5444,21 @@ function confirmYes () {
   confirmFunction = null;
 }
 
-// checkBrowser checks on which browser we're running and creates
-// alerts where applicable
+// checkBrowser checks browser requirements
 function checkBrowser () {
-  /* The objects in dataBrowser are used in the order they appear;
-   * that's why dataBrowser is an array. As soon as a positive
-   * identification is made the script ends, and it doesn't check the
-   * remaining objects.
-   * Detection order is very important. The general rule is that you
-   * check for the minor browsers first. The reason is that many minor
-   * browsers give their users the opportunity to change identity in
-   * order to work around browser detects.
-   * For instance, the Opera navigator.userAgent may contain "MSIE". If
-   * we'd check for Explorer first, we'd find the "MSIE" and incorrectly
-   * conclude that the browser is Explorer. In order to avoid this false
-   * detection, we should check for Opera first. If the browser is in
-   * fact Opera, the script never proceeds to the "MSIE" check. */
-  var BrowserDetect = {
-    init: function () {
-      this.browser = this.searchString(this.dataBrowser) || "unknown";
-      this.version = this.searchVersion(navigator.userAgent)
-        || this.searchVersion(navigator.appVersion)
-        || "unknown";
-      this.OS = this.searchString(this.dataOS) || "an unknown OS";
-    },
-    searchString: function (data) {
-      for (var i=0;i<data.length;i++)	{
-        var dataString = data[i].string;
-        var dataProp = data[i].prop;
-        this.versionSearchString = data[i].versionSearch || data[i].identity;
-        if (dataString) {
-          if (dataString.indexOf(data[i].subString) != -1)
-            return data[i].identity;
-        }
-        else if (dataProp)
-          return data[i].identity;
-      }
-    },
-    searchVersion: function (dataString) {
-      var index = dataString.indexOf(this.versionSearchString);
-      if (index == -1) return;
-      return parseFloat(dataString.substring(index+this.versionSearchString.length+1));
-    },
-    dataBrowser: [
-      {
-        string: navigator.userAgent,
-        subString: "Chrome",
-        identity: "Chrome"
-      },
-      { 	string: navigator.userAgent,
-        subString: "OmniWeb",
-        versionSearch: "OmniWeb/",
-        identity: "OmniWeb"
-      },
-      {
-        string: navigator.vendor,
-        subString: "Apple",
-        identity: "Safari",
-        versionSearch: "Version"
-      },
-      {
-        prop: window.opera,
-        identity: "Opera",
-        versionSearch: "Version"
-      },
-      {
-        string: navigator.vendor,
-        subString: "iCab",
-        identity: "iCab"
-      },
-      {
-        string: navigator.vendor,
-        subString: "KDE",
-        identity: "Konqueror"
-      },
-      {
-        string: navigator.userAgent,
-        subString: "Firefox",
-        identity: "Firefox"
-      },
-      {
-        string: navigator.vendor,
-        subString: "Camino",
-        identity: "Camino"
-      },
-      {		// for newer Netscapes (6+)
-        string: navigator.userAgent,
-        subString: "Netscape",
-        identity: "Netscape"
-      },
-      {
-        string: navigator.userAgent,
-        subString: "MSIE",
-        identity: "Explorer",
-        versionSearch: "MSIE"
-      },
-      {
-        string: navigator.userAgent,
-        subString: "Gecko",
-        identity: "Mozilla",
-        versionSearch: "rv"
-      },
-      { 		// for older Netscapes (4-)
-        string: navigator.userAgent,
-        subString: "Mozilla",
-        identity: "Netscape",
-        versionSearch: "Mozilla"
-      }
-    ],
-    dataOS : [
-      {
-        string: navigator.platform,
-        subString: "Win",
-        identity: "Windows"
-      },
-      {
-        string: navigator.platform,
-        subString: "Mac",
-        identity: "Mac"
-      },
-      {
-           string: navigator.userAgent,
-           subString: "iPhone",
-           identity: "iPhone/iPod"
-      },
-      {
-        string: navigator.platform,
-        subString: 'iPad',
-        identity:  'iPad'
-      },
-      {
-        string: navigator.platform,
-        subString: "Linux",
-        identity: "Linux"
-      }
-    ]
-  
-  };
-  BrowserDetect.init();
-  var fatalError = false;
-  browserString = BrowserDetect.browser + ' Version ' +
-    BrowserDetect.version + ', running on ' + BrowserDetect.OS;
-  // following line can be used for finding browser keys
-  // for (key in navigator) console.log (key + ' : ' + navigator[key]);
-  console.log ('Browser: ' + browserString);
-  // Check for essential methods, OpenAero will not function without these!
-  // use the selectedFigureSvg to check for SVG and getBBox support
-  if (!document.getElementById('selectedFigureSvg').getBBox()) fatalError = true;
-  if (fatalError) {
+
+  // Check for Promise support, OpenAero will not function without it!
+  // Support has existed in all major browsers since 2016. Other
+  // technologies used in OpenAero are older so this should be the most
+  // limiting.
+  if (!('Promise' in window)) {
     document.getElementsByTagName('body')[0].innerHTML = '<h2><center>' +
-      sprintf (userText.oldBrowser, browserString) +
+      userText.oldBrowser +
       userText.getChrome +
       '</center></h2>';
     throw new Error('Browser not capable of running OpenAero');
   }
-  // Check for recommended methods
-  // check for file support
-  if (!fileSupport()) {
-    return userText.fileOpeningNotSupported + '<br>' + userText.getChrome;
-  }
-  // Present a warning if the browser is not
-  // Chrome, Firefox, Safari or Edge
-  // and the warning was not displayed for one week. Use store value
-  // for setting the expiry time
-  if (!BrowserDetect.browser.match(/Chrome|Firefox|Safari|Edge/)) {
-    function f(c) {
-      var d = new Date();
-      var t = parseInt(d.getTime());
-      if (c && (c < t)) c = false;
-      if (!c) {
-        storeLocal ('noChromeWarned', t + 604800000);
-        errors.push (sprintf (userText.browserDetect, browserString) +
-          userText.getChrome);
-      }
-    }
-    getLocal ('noChromeWarned', f);
-  }
-}
 
-// checkFileSupport checks for file reading support
-// if not available, some functions are disabled and a warning is returned
-function fileSupport () {
-  if (window.File && window.FileReader && window.FileList && window.Blob) {
-    //console.log('File reading support confirmed');
-    return true;
-  } else {
-    // disable file reading functions
-    var els = document.getElementsByClassName('fileOpening');
-    for (var i = els.length - 1; i >= 0; i--) {
-      els[i].parentNode.removeChild(els[i]);
-    }
-    return false;
-  }
 }
 
 // clickButton is called when clicking certain buttons
@@ -7771,10 +7337,7 @@ function updateFigureComments () {
 // getLatestVersion makes sure the latest version is installed
 function getLatestVersion() {
   
-  if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
-    // Check for appcache when using http
-    if (window.applicationCache) window.applicationCache.update();
-  } else {
+  if (!/^http/.test (window.location.protocol)) {
 		getStableVersion (function(latestVersion) {
 			if (compVersion (version, latestVersion) == -1) {
 				var banner = document.getElementById('installApp');
@@ -7827,27 +7390,6 @@ function preventUnload (e) {
   return userText.confirmLeave;
 }
 
-// addUpdateListener adds an event listener that checks if a new app
-// cache update is available
-function addUpdateListener () {
-  if (window.applicationCache) {
-    window.applicationCache.addEventListener('updateready', function(e) {
-      if (window.applicationCache.status == window.applicationCache.UPDATEREADY) {
-        // Browser downloaded a new app cache.
-        // Swap it in and reload the page to get the new hotness.
-        window.applicationCache.swapCache();
-        // only reload after confirmation
-        var t = storage ? userText.loadNewVersion : userText.loadNewVersionNoCookies;
-        confirmBox (t, userText.loadNewVersionTitle, function(){
-          sequenceSaved = true;
-          // reload the page, sequence will be provided by localStorage
-          window.location.reload(true);
-        });
-      }
-    }, false);
-  }
-}
-
 // checkUpdateDone checks if an update was just done. If so, it presents
 // a dialog to the user
 function checkUpdateDone() {
@@ -7868,24 +7410,25 @@ function checkUpdateDone() {
 	        changeLanguage ();
 	      }
 		  }
-      // Only show the installed box if not on Chrome. If on Chrome, it
-      // will be shown by checkForApp
+
       // Wait a few seconds to give platform.cordova to be set if applicable
-      if ((typeof chrome !== 'undefined') && chrome.fileSystem) chromeApp.active = true;
-      if (!chromeApp.active) setTimeout(function(){
-				if (!platform.cordova) {
-					if (window.location.host) {
-						alertBox (
-			        {userText: 'installed', params: [window.location.host]},
-			        {userText: 'installation'}
-			      );
-					} else {
-						alertBox (
-			        {userText: 'installedFile', params: [location.pathname]},
-			        {userText: 'installation'}
-			      );
-					}
-				} 
+      setTimeout(function(){
+				if (platform.cordova || platform.uwp) {
+					alertBox (
+		        {userText: 'installedApp'},
+		        {userText: 'installation'}
+		      );
+				} else if (platform.windows10) {
+					alertBox (
+		        {userText: 'installedWindows10', params: [window.location.host]},
+		        {userText: 'installation'}
+		      );
+				} else if (window.location.host) {
+					alertBox (
+		        {userText: 'installed', params: [window.location.host]},
+		        {userText: 'installation'}
+		      );
+				}
 			}, 3000);
       storeLocal ('version', version);
     } else if (oldVersion !== version) {
@@ -7916,31 +7459,6 @@ function checkUpdateDone() {
   
   // this only works when storage is enabled
   if (storage) getLocal ('version', f);
-}
-
-// getTheApp shows the banner for getting the app under certain conditions
-// Currently only for Android and iOS
-function getTheApp () {
-	if (!(platform.android || platform.ios)) return;
-	
-	getLocal ('installAppAsked', function(timestamp) {
-
-		var
-			banner = document.getElementById ('installApp'),
-			t = parseInt ((new Date()).getTime());
-
-		if (timestamp) { // do not ask the first time
-			if (timestamp < (t - 86400 * 7)) { // ask once a week
-				storeLocal ('installAppAsked', t);
-				banner.classList.remove ('noDisplay');
-				if (platform.android) banner.classList.add ('android');
-				if (platform.ios) banner.classList.add ('ios');
-				// use setTimeout before showing to allow subtle entry
-				setTimeout (function(){banner.classList.add ('show')},500);
-				setTimeout (function(){removeBanner (banner)}, 15000);
-			}
-		} else storeLocal ('installAppAsked', 1);
-	});
 }
 
 // removeBanner hides and then removes banner
@@ -8753,7 +8271,9 @@ function getRuleName () {
 // updateRulesList updates the rules field for power or glider
 function updateRulesList (avail) {
   var
-	  el = document.getElementById('rulesList'),
+	  el = document.getElementById ('rules').list ?
+		  document.getElementById('datalist-rules') :
+		  document.getElementById('rulesList'),
 	  fragment = document.createDocumentFragment();
 	
 	if (avail) seqCheckAvail = avail; // update when avail provided
@@ -8764,8 +8284,13 @@ function updateRulesList (avail) {
   for (ruleName in seqCheckAvail) {
     if ((document.getElementById('class').value === 'glider') === /^glider-/.test(ruleName)) {  
       if (seqCheckAvail[ruleName].show) {
-        var listItem = document.createElement('li');
-        listItem.innerHTML = seqCheckAvail[ruleName].name;
+				if (document.getElementById ('rules').list) {
+					var listItem = document.createElement ('option');
+					listItem.value = seqCheckAvail[ruleName].name;
+				} else {
+	        var listItem = document.createElement ('li');
+	        listItem.innerHTML = seqCheckAvail[ruleName].name;
+				}
         fragment.appendChild(listItem);
       }
     }
@@ -8777,7 +8302,9 @@ function updateRulesList (avail) {
 function updateCategoryList () {
   var
 	  ruleName = getRuleName(),
-	  el = document.getElementById('categoryList'),
+	  el = document.getElementById ('category').list ?
+		  document.getElementById('datalist-category') :
+		  document.getElementById('categoryList'),
 	  fragment = document.createDocumentFragment();
 	  
   while (el.firstChild) el.removeChild(el.firstChild);
@@ -8785,7 +8312,8 @@ function updateCategoryList () {
   if (seqCheckAvail[ruleName]) {
     for (n in seqCheckAvail[ruleName].cats) {
       if (seqCheckAvail[ruleName].cats[n].show) {
-        var listItem = document.createElement('li');
+        var listItem = document.createElement (
+	        document.getElementById ('category').list ? 'option' : 'li');
         var name = seqCheckAvail[ruleName].cats[n].name;
         listItem.appendChild (document.createTextNode (name));
         fragment.appendChild(listItem);
@@ -8800,7 +8328,9 @@ function updateProgramList () {
   var
 	  ruleName = getRuleName(),
 	  categoryName = document.getElementById('category').value.toLowerCase(),
-	  el = document.getElementById('programList'),
+	  el = document.getElementById ('program').list ?
+		  document.getElementById('datalist-program') :
+		  document.getElementById('programList'),
 	  fragment = document.createDocumentFragment();
 	  
   while (el.firstChild) el.removeChild(el.firstChild);
@@ -8808,7 +8338,8 @@ function updateProgramList () {
   if (seqCheckAvail[ruleName] && seqCheckAvail[ruleName].cats[categoryName]) {
     for (n in seqCheckAvail[ruleName].cats[categoryName].seqs) {
       if (seqCheckAvail[ruleName].cats[categoryName].seqs[n][0] != '*') {
-        var listItem = document.createElement('li');
+        var listItem = document.createElement (
+	        document.getElementById ('program').list ? 'option' : 'li');
         var name = seqCheckAvail[ruleName].cats[categoryName].seqs[n];
         listItem.appendChild (document.createTextNode (name));
         fragment.appendChild(listItem);
@@ -8844,7 +8375,10 @@ function activateRules (data) {
 	rulesActive = data.rulesActive;
 	ruleSuperFamily = data.ruleSuperFamily;
 	
+	// set the rulesActive marker and fold rules section
 	document.getElementById ('rulesActive').classList.add ('good');
+	document.getElementById('rulesLabel').parentNode.classList.remove ('expanded');
+	panelHeader (document.getElementById ('activeRules'));
 
 	if (data.updatedFig) fig = data.updatedFig;
 	
@@ -10347,18 +9881,19 @@ function grabFigure(evt) {
    
   dragTarget = null;
   // find out which element we moused down on
-  
+
   // first see if we grabbed a figure handle
   if (evt.target.id.match (/-handle$/)) {
     dragTarget = evt.target;
+
     dragTarget.targetLine = svg.getElementById (
       dragTarget.id.replace (/-handle$/, ''));
-    
+
     // get dx and dy for this line
-    var match = dragTarget.targetLine.getAttribute ('d').match (/l ([0-9\-\.]+),([0-9\-\.]+)/);
+    var match = dragTarget.targetLine.getAttribute ('d').match (/l ([0-9\-\.]+)[, ]([0-9\-\.]+)/);
     dragTarget.linedx = parseFloat(match[1]);
     dragTarget.linedy = parseFloat(match[2]);
-    
+
     if (dragTarget.id.match (/entry-handle$/)) {
       // get entry gap element
       dragTarget.gap = document.getElementById ('entryExt-value');
@@ -10451,7 +9986,7 @@ function grabFigure(evt) {
   
   if (dragTarget) {
     evt.preventDefault(); // prevent default drag & drop
-    
+
     // save current scrollTop, to be restored after Drop
     dragTarget.scrollTopSave = document.getElementById('svgContainer').scrollTop;
     dragTarget.scrollLeftSave = document.getElementById('svgContainer').scrollLeft;
@@ -10560,9 +10095,9 @@ function setFigureSelected (figNr) {
 			for (var i = nodes.length - 1; i >= 0; i--) {
 				var s = nodes[i].getAttribute('style');
 				if (s) {
-					s = s.replace (/#ff00a0/g, 'black');
-					s = s.replace (/#ff1090/g, 'red');
-					nodes[i].setAttribute ('style', s);
+					nodes[i].setAttribute ('style',
+						s.replace (/#ff00a0/g, 'black').replace (/#ff1090/g, 'red')
+					);
 				}
 				if (nodes[i].id &&
 					nodes[i].id.match (/^(.*-handle|magnifier|selectedFigureBox)$/)) {
@@ -10582,7 +10117,7 @@ function setFigureSelected (figNr) {
       if (el) {
 	      var
 		      svgScale = roundTwo (SVGRoot.viewBox.baseVal.width /
-			      SVGRoot.width.baseVal.value) || 1,
+			      (SVGRoot.width.baseVal.value || 1)) || 1,
 		      showHandles = document.getElementById ('showHandles').checked &&
 		        !(activeForm === 'Grid'),
 	        nodes = el.childNodes,
@@ -10592,9 +10127,9 @@ function setFigureSelected (figNr) {
         for (var i = 0 ; i < length; i++) {
           var s = nodes[i].getAttribute('style');
           if (s) {
-            s = s.replace (/black/g, '#ff00a0');
-            s = s.replace (/red/g, '#ff1090');
-            nodes[i].setAttribute ('style', s);
+            nodes[i].setAttribute ('style',
+	            s.replace (/black/g, '#ff00a0').replace (/red/g, '#ff1090')
+	          );
           }
           // add editing handles where applicable. They are centered on
           // the element. Somewhat larger circles for touch devices to
@@ -10686,7 +10221,7 @@ function Drag (evt) {
         newX *= 2;
         newY *= 2;
         var d = dragTarget.targetLine.getAttribute ('d');
-        d = d.replace (/l ([0-9\-\.]+),([0-9\-\.]+)/, 'l ' +
+        d = d.replace (/l ([0-9\-\.]+)[, ]([0-9\-\.]+)/, 'l ' +
           (dragTarget.linedx + newX) + ',' +
           (dragTarget.linedy + newY));
         dragTarget.targetLine.setAttribute ('d', d);
@@ -11632,23 +11167,6 @@ function exitFuDesigner (newSequence) {
   
         checkSequenceChanged ();
         
-        /** breaks reference sequence. Why did I change this? Unsure,
-         *  removing for now (2018-1-22)
-        // put figures with letters in reference sequence field
-        var div = document.getElementById('referenceSequenceDialog');
-        div.classList.remove ('noDisplay');
-        var ref = document.getElementById ('referenceSequenceString');
-        ref.value = '';
-        for (var i = 0; i < figures.length; i++) {
-          if (figures[i].aresti && figures[i].unknownFigureLetter &&
-            (figures[i].unknownFigureLetter !== 'L')) {
-            ref.value += '"@' + figures[i].unknownFigureLetter + '" ' +
-              figures[i].string + ' ';
-          }
-        }
-        changeReferenceSequence();
-        div.classList.add ('noDisplay');
-        */
       }
     
       // restore the tabs
@@ -11811,11 +11329,6 @@ function handleFreeDrop (e) {
 
     // if unknownFigureLetter is set, drop one figure earlier
     var previous = figures[figNr].unknownFigureLetter ? 1 : 0;
-    /** next part was added in 2018.1.2. Why? Does not seem to work.
-     *  fixed in 2018.3.5
-    // if aresti is set, drop one figure earlier
-    //var previous = figures[figNr].aresti ? 1 : 0;
-		*/
 		
     // a subsequence is marked by "n" at the start, where
     // n = subsequence number
@@ -13389,7 +12902,7 @@ function checkSequenceChanged (force) {
   
   // Prevent OpenAero from being left unintentionally
   if (activeSequence.text != sequenceText.innerText) {
-    sequenceSaved = false;
+    setSequenceSaved (false);
   }
 
   if ((activeSequence.text != sequenceText.innerText.replace(/\u00a0/g, ' ')) || (force === true)) {
@@ -13398,7 +12911,7 @@ function checkSequenceChanged (force) {
     activeSequence.text = sequenceText.innerText.replace(/\u00a0/g, ' ');
     var string = activeSequence.text;
     // whenever the string is empty, consider it 'saved'
-    if (string === '') sequenceSaved = true;
+    if (string === '') setSequenceSaved (true);
 
     var
 	    figure = [],
@@ -13593,7 +13106,7 @@ function clearSequence () {
     checkSequenceChanged();
     displayAlerts();
 
-    sequenceSaved = true;
+    setSequenceSaved (true);
   }
   
   if (!sequenceSaved) {
@@ -13639,23 +13152,25 @@ function dropSequence (evt) {
   if (evt && evt.dataTransfer && evt.dataTransfer.files &&
     evt.dataTransfer.files[0]) {
     noPropagation(evt);
-    openSequence();
+    openSequence(evt);
   }
 }
 
 // openSequence will load a sequence from a .seq file
-function openSequence () {
-  function open () {
-    openFile (document.getElementById('file').files[0], 'Sequence');
+function openSequence (evt) {
+  function open (e) {
+		openFile (e, 'Sequence');
   }
 
+	var e = evt && evt.dataTransfer && evt.dataTransfer.files &&
+	  evt.dataTransfer.files[0] ?
+	  evt.dataTransfer.files[0] :
+	  document.getElementById('file').files[0];
   // Check if the current sequence was saved. If not, present a dialog
   if (!sequenceSaved) {
     confirmBox (userText.sequenceNotSavedWarning,
-      userText.openSequence, open);
-  } else {
-    open();
-  }
+      userText.openSequence, function () {open (e)});
+  } else open (e);
 
 }
 
@@ -13714,7 +13229,6 @@ function openFile (file, handler, params) {
 function removeFileListFile(el, callback) {
   var id = el.id.replace(/^removeFileListFile/, '');
   var container = el.parentNode.parentNode;
-  //console.log ('Removing file:' + fileList[id].name);
   fileList.splice (id, 1);
   // we need to rebuild because splice changes the indexes
   clearFileListContainer (container);
@@ -13801,7 +13315,7 @@ function updateFileList (evt, el, callback) {
 
 // loadedFileList is called when a file for fileList is loaded
 function loadedFileList (e, params) {
-	console.log(params.file.name);
+
   loadSequence (e.target.result, function(sequence) {
 	  // only add to fileList when a valid sequence was detected
 	  if (sequence) {
@@ -13959,15 +13473,18 @@ function checkSequenceMulti (body) {
 		    multi.processing = false;
 			}
 		}
-		  
-    // Activate the loading of the checking rules (if any)
-    if (document.getElementById('multiOverrideRules').checked) {
-      // use rules currently set
-			checkRules (callback);
-    } else {
-      // use rules from file
-      changeCombo ('program', callback);
-    }
+
+		// Give sequence half a second to load, then...
+		setTimeout (function () {
+	    // Activate the loading of the checking rules (if any)
+	    if (document.getElementById('multiOverrideRules').checked) {
+	      // use rules currently set
+				checkRules (callback);
+	    } else {
+	      // use rules from file
+	      changeCombo ('program', callback);
+	    }
+		}, 500);
   }
 }
 
@@ -13999,11 +13516,10 @@ function loadedSequence(evt, name) {
 	    checkSequenceChanged();
 	  }
 	
-	  sequenceSaved = true;
-	
 	  // Activate the loading of the checking rules (if any)
 	  changeCombo ('program', checkFuFiguresFile);
 
+	  setSequenceSaved (true);
 	});
 }
 
@@ -14051,8 +13567,10 @@ function loadedSequenceWindows (text, name) {
 	    return;
 	  }
 	
-	  updateSaveFilename (name.replace(/.*\\/, '').replace(/\.[^.]*$/, ''));
-	
+	  if (name) {
+			updateSaveFilename (name.replace(/.*\\/, '').replace(/\.[^.]*$/, ''));
+		}
+
 	  activateXMLsequence (xml, true);
 	
 	  // update the sequence if OLAN.sequence was true
@@ -14063,7 +13581,7 @@ function loadedSequenceWindows (text, name) {
 	    checkSequenceChanged();
 	  }
 	
-	  sequenceSaved = true;
+	  setSequenceSaved (true);
 	
 	  // Activate the loading of the checking rules (if any)
 	  changeCombo ('program', checkFuFiguresFile);
@@ -14098,9 +13616,13 @@ function loadSequence (fileString, callback) {
 			}
 			return;
 	  } else {
-      fileString = decodeURIComponent (escape (atob (
-	      fileString.replace (/^data:.*;base64,/, ''))));
-      if (fileString.match (/^<sequence/)) {
+			// if needed, decode from base64
+      if (/^data:/.test (fileString)) {
+				fileString = decodeURIComponent (escape (atob (
+		      fileString.replace (/^data:.*;base64,/, ''))));
+		  }
+
+      if (/^<sequence/.test (fileString)) {
         // this is an OpenAero sequence, no need to do OLAN checks
         OLAN.bumpBugCheck = false;
         callback (fileString);
@@ -14318,7 +13840,7 @@ function activateXMLsequence (xml, noLoadRules) {
   if (!noLoadRules) checkRules (checkFuFiguresFile);
 
   // sequence was just loaded, so also saved
-  sequenceSaved = true;
+  setSequenceSaved (true);
   
   return true;
 }
@@ -14499,7 +14021,7 @@ function checkOpenAeroVersion () {
     
   // add any additional checks here
   // compVersion can be used to check against specific minimum versions
-
+	
   // check if running OpenAero version is older than that of the
   // sequence, but only check the first two version parts. So checking
   // version 2016.2.1 against 2016.2.2 would not trigger the warning
@@ -14509,7 +14031,7 @@ function checkOpenAeroVersion () {
 
   if ((alerts != '') && !multi.processing) {
 		// don't show when processing multiple files
-		alertBox(alerts + userText.warningPre);
+		alertBox (alerts + userText.warningPre);
 	}
   // set version to current version for subsequent saving
   oa_version.value = version;
@@ -14546,32 +14068,27 @@ function compVersion (v1, v2, parts) {
    
 // loadedLogo will be called when a logo image has been loaded
 function loadedLogo (evt) {
-  var fileData = evt.target.result;
-  console.log (evt);
-  if (evt.type) {
-		// check file for maximum size due local storage on mobile
-		if (platform.mobile && (evt.loaded > 1048576)) {
-			alertBox (userText.logoFileTooLarge);
-			return;
-		}
-		getLocal ('logoImages', function (privateLogoImages) {
-			privateLogoImages = JSON.parse (privateLogoImages) || {};
-			// check if this logo already existed
-			for (var key in privateLogoImages) {
-				if (privateLogoImages[key] === fileData) {
-					selectLogo (key);
-					return;
-				}
+
+	// check file for maximum size due local storage on mobile
+	if (platform.mobile && (evt.loaded > 1048576)) {
+		alertBox (userText.logoFileTooLarge);
+		return;
+	}
+	getLocal ('logoImages', function (privateLogoImages) {
+		privateLogoImages = JSON.parse (privateLogoImages) || {};
+		// check if this logo already existed
+		for (var key in privateLogoImages) {
+			if (privateLogoImages[key] === evt.target.result) {
+				selectLogo (key);
+				return;
 			}
-			// logo dit not exist yet, create new
-			var t = (new Date()).getTime();
-			privateLogoImages [t] = logoImages [t] = fileData;
-			storeLocal ('logoImages', JSON.stringify (privateLogoImages));
-			selectLogo (t);
-		});
-  } else {
-    alertBox (userText.unknownFileType);
-  }
+		}
+		// logo did not exist yet, create new
+		var t = (new Date()).getTime();
+		privateLogoImages [t] = logoImages [t] = evt.target.result;
+		storeLocal ('logoImages', JSON.stringify (privateLogoImages));
+		selectLogo (t);
+	});
 }
 
 // sanitizeFileName assures fileName does not contain illegal
@@ -14655,16 +14172,10 @@ function waitForIO(writer, callback) {
 
 // saveFile saves a file
 // The function returns true if the file was saved
-function saveFile(data, name, ext, filter, format) {
+function saveFile (data, name, ext, filter, format) {
   // Set saving result to true always as we currently have no method of
   // knowing whether the file was saved or not
   var result = true;
-
-  // depending on browser we choose a method for
-  // saving the file with the following preference:
-  // 1) Use chrome.fileSystem, only available when running as Chrome App
-  // 2) Use "download" attribute
-  // 3) Ask user to right-click and "Save as"
 
   // convert base64 to binary
   if (format.match (/;base64$/)) {
@@ -14676,33 +14187,71 @@ function saveFile(data, name, ext, filter, format) {
     data = new Uint8Array(byteN);
   }
 
-  // 1) Chrome app saving
-  if (chromeApp.active) {
+  saveData.blob = new Blob ([data], {type: format.replace(/;.+$/, '')});
+  saveData.ext = ext;
     
+  // depending on pklatform we choose a method for
+  // saving the file with the following preference:
+  // 1) Use chrome.fileSystem for Chrome App
+  // 2) Use Windows.Storage for Windows UWP
+  // 3) Use "download" attribute
+  // 4) Ask user to right-click and "Save as"
+
+  if (platform.chrome) {
+	  // 1) Chrome app saving    
     chrome.fileSystem.chooseEntry ({
-      'type':'saveFile',
-      'suggestedName':name+ext
+      'type' : 'saveFile',
+      'suggestedName' : name + ext
     }, function(w) {
-      var blob = new Blob([data], {type: format.replace(/;.+$/, '')});
-      writeFileEntry (w, blob, function(){
+      writeFileEntry (w, saveData.blob, function(){
         // this callback is called after succesful write
         updateSaveFilename (w.name.replace(/\.[^.]*$/, ''));
-        if (ext === '.seq') sequenceSaved = true;
+        if (ext === '.seq') setSequenceSaved (true);
       });
     });
     return result;
-  }
-  
-  saveData.blob = new Blob ([data], {type: format.replace(/;.+$/, '')});
-  saveData.ext = ext;
-  
-  var a = document.createElement('a');
-  
-  if (platform.cordova) {
+  } else if (platform.uwp) {
+		// 2) Windows UWP saving
+		var savePicker = new Windows.Storage.Pickers.FileSavePicker();
+		savePicker.suggestedStartLocation =
+	    Windows.Storage.Pickers.PickerLocationId.documentsLibrary;
+		// Dropdown of file types the user can save the file as
+		savePicker.fileTypeChoices.insert (filter.name, [filter.filter]);
+		savePicker.suggestedFileName = name + ext;
+
+    savePicker.pickSaveFileAsync().done (function (file) {
+			if (file) {
+				// Open the returned file in order to copy the data 
+				file.openAsync(Windows.Storage.FileAccessMode.readWrite).then(function (output) { 
+	 
+					// Get the IInputStream stream from the blob object 
+					var input = saveData.blob.msDetachStream(); 
+	 
+					// Copy the stream from the blob to the File stream 
+					Windows.Storage.Streams.RandomAccessStream.copyAsync(input, output).then(function () { 
+						output.flushAsync().done(function (updateStatus) {
+							//if (updateStatus === Windows.Storage.Provider.FileUpdateStatus.complete) {
+								updateSaveFilename (file.name.replace (/\.[^.]*$/, ''));
+				        if (ext === '.seq') setSequenceSaved (true);
+							//} else {
+							//	result = false;
+							//}
+							input.close(); 
+							output.close(); 
+						}); 
+					});
+				});
+			} else {
+				// saving was cancelled
+				result = false;
+			}
+		});
+		return result;
+	} else if (platform.cordova) {
 		saveDialog (' ', name, ext);
 	} else if (platform.ios) {
     saveDialog (userText.iOSsaveFileMessage, name, ext);
-  } else if (typeof a.download !== "undefined") {
+  } else if (typeof document.createElement('a').download !== "undefined") {
     saveDialog (userText.downloadHTML5, name, ext);
   } else {
     saveDialog (userText.downloadLegacy, name, ext);
@@ -14736,7 +14285,7 @@ function saveSequence () {
       xml,
       fname,
       '.seq',
-      {'name':'OpenAero Sequence', 'filter':'*.seq'},
+      {'name':'OpenAero Sequence', 'filter':'.seq'},
       'text/xhtml+xml;utf8'
     );
   }
@@ -14771,7 +14320,7 @@ function saveQueue () {
     xml,
     fname,
     '.seq',
-    {'name':'OpenAero Queue', 'filter':'*.seq'},
+    {'name':'OpenAero Queue', 'filter':'.seq'},
     'text/xhtml+xml;utf8'
   );
 
@@ -14911,7 +14460,7 @@ function openSequenceLink (e) {
 // it returns false
 function storeLocal(name, value) {
   if (storage) {
-    if (chromeApp.active) {
+    if (platform.chrome) {
       var c = {};
       c[name] = value;
       chrome.storage.local.set (c);
@@ -14930,7 +14479,7 @@ function storeLocal(name, value) {
 // Callback will be called when the storage is loaded
 function getLocal(name, callback) {
   if (storage) {
-    if (chromeApp.active) {
+    if (platform.chrome) {
       chrome.storage.local.get (name, function (value) {callback (value[name])});
     } else {
       callback (localStorage.getItem (name));
@@ -15077,16 +14626,19 @@ function buildForms (win, callback) {
 			case 'active':
 				selectLogo (logoSave);
 		}
-		
-		// Activate the loading of the checking rules (if any) and build
-		// the forms
-    if (document.getElementById('printMultiOverrideRules').checked) {
-      // use rules currently set
-			checkRules (buildSingle);
-    } else {
-      // use rules from file
-      changeCombo ('program', buildSingle);
-    }
+
+		// Give sequence half a second to load, then...
+		setTimeout (function () {
+			// Activate the loading of the checking rules (if any) and build
+			// the forms
+	    if (document.getElementById('printMultiOverrideRules').checked) {
+	      // use rules currently set
+				checkRules (buildSingle);
+	    } else {
+	      // use rules from file
+	      changeCombo ('program', buildSingle);
+	    }
+		}, 500);
 	}
 	
 	// buildSingle builds the forms for a single file
@@ -16415,7 +15967,7 @@ function saveSVG () {
 		    svg,
 		    activeFileName(),
 		    '.svg',
-		    {'name':'SVG file', 'filter':'*.svg'},
+		    {'name':'SVG file', 'filter':'.svg'},
 		    'image/svg+xml;utf8'
 		  );
   	  draw();
@@ -16437,7 +15989,7 @@ function savePNG () {
 						blob,
 						activeFileName(),
 						'.png',
-						{'name':'PNG file', 'filter':'*.png'},
+						{'name':'PNG file', 'filter':'.png'},
 						'image/png'
 					);
 					infoBox ();
@@ -16446,11 +15998,11 @@ function savePNG () {
 			});
 		});
 	} catch (err) {
-		console.log(err.stack);
+		console.log (err.stack);
 		infoBox ();
 	  draw();
 		alertBox (
-			sprintf(userText.convertingFailed, encodeURI(browserString + '\n' + err.stack)),
+			sprintf (userText.convertingFailed, encodeURI( err.stack)),
 			userText.convertingTitle);
 		return;
 	}
@@ -16511,14 +16063,17 @@ function saveFigs () {
       }
     }
   }
+	zip.generateAsync ({type:"blob"})
+	.then(function (content) {
+	  saveFile (
+	    content,
+	    fname,
+	    '.zip',
+	    {'name':'ZIP file', 'filter':'.zip'},
+	    'application/zip'
+	  );
+	});
 
-  saveFile(
-    zip.generate({type: 'blob'}),
-    fname,
-    '.zip',
-    {'name':'ZIP file', 'filter':'*.zip'},
-    'application/zip'
-  );
   selectedFigure.id = id;
   displaySelectedFigure();
 }  
@@ -18745,6 +18300,5 @@ function parseSequence () {
   }
 }
 
-// do initialization when all DOM content has been loaded. Wrap this in
-// a setTimeout to assure splash screen shows immediately
-document.addEventListener("DOMContentLoaded", function(){setTimeout(doOnLoad, 100)}, false);
+// do initialization when all DOM content has been loaded
+document.addEventListener("DOMContentLoaded", doOnLoad, false);

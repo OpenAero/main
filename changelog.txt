@@ -1,3 +1,23 @@
+2020.1.2
+* updated jszip to 3.2.2 and canvg to 2.0.0
+* changed CIVA Free Known guidance to png files for PWA UWP support
+* added code for Windows UWP file saving and file association
+* by default fold the Rules section in Sequence info when rules are active
+* fixed Microsoft Edge scrollbar hiding issue
+* disabled the use of appcache as this is now deprecated in favour of PWA
+* removed addToHomeScreen as this functionality is now provided inline
+* removed prompting to install Chrome app, no longer supported as of june 2021 (https://blog.chromium.org/2020/01/moving-forward-from-chrome-apps.html)
+* added prompting to remove Chrome app
+* replaced chromeApp variable by platform.chrome
+* integrated flags.js into config.js
+* removed support for pre-2016 browsers including Internet Explorer
+* removed support for usage from file
+* removed window.html and window.js, no longer used
+* updated manual for removal of Chrome app and addition of UWP app
+* fixed issue with checking and printing of multiple sequences by allowing 500 ms to load sequence
+* fixed blue handle grabbing issue in Edge
+* fixed issue with dropping of files on OpenAero to open them
+
 2020.1
 * updated CIVA rules for 2020, including flick rolls on vertical up in tailslides for Power Unlimited
 * added 2020 CIVA sequences

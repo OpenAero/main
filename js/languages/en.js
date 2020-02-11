@@ -57,13 +57,15 @@ lang.en = {
 	'<img src="img/ios-appstore-badge.svg" width="200"></a>',
 'aboutUnknown' : 'Unable to determine Stable version. You are ' +
   'probably offline.',
+// changed 2020.1.1
 'aboutText' : '<div class="divider">' +
   '<p>This&nbsp;version:<strong>%s</strong> &nbsp; ' +
   'Stable&nbsp;version:<strong>%s</strong></p><p>%s</p>' +
   '<a id="viewChangelog">View changelog.txt</a></div>' +
   '<div class="divider">' +
   '<p>OpenAero is aerobatic sequence design software that ' +
-  'runs inside your web browser.</p><p>OpenAero is free software: you ' +
+  'runs inside your web browser or as an app.</p>' +
+  '<p>OpenAero is free software: you ' +
   'can redistribute it and/or modify it under the terms of the ' +
   '<a href="doc/gpl.htm">GNU General Public License</a> as published by ' +
   'the Free Software Foundation, either version 3 of the License, or ' +
@@ -117,7 +119,6 @@ lang.en = {
 'autocorrectRoll' : 'Added autocorrect roll',
 'blackWhite' : 'Black & white',
 'boxOuts' : 'Box Outs',
-'browserDetect' : 'Your browser has been detected as: %s.<br>',
 'cancel' : 'Cancel',
 'cancelPrint' : 'Cancel',
 'cancelSave' : 'Cancel',
@@ -225,8 +226,6 @@ lang.en = {
 'exitDesigner' : 'Exit Designer',
 'expert' : 'Expert',
 'feedback' : 'Feedback',
-'fileOpeningNotSupported' : 'File opening is not supported in ' +
-  'this browser. Some functions have been disabled.',
 'figSelectorAddAfter' : 'Add new figure after active',
 'figSelectorAddBefore' : 'Add new figure before active',
 'figSelectorAddEnd' : 'Add new figure at end',
@@ -314,23 +313,9 @@ lang.en = {
 'imageWidth' : 'Width',
 'importRulesFile' : 'Import rules file',
 'insertions' : 'Insertions',
+// new 2020.1.1
+'installApp' : 'Install app',
 'installation' : 'Installation',
-'installChromeApp' : '<p>OpenAero has now been installed ' +
-  'in this browser and will automatically receive updates. It is ' +
-  'available online and offline at <a href="http://%1\$s" target="_blank">' +
-  '%1\$s</a>.</p>' +
-  '<p>An extensive manual is available under <i>Help -> Manual</i>. ' +
-  'Please take some time to read it!</p>' +
-  '<p>You can install OpenAero as a Chrome App. This ' +
-  'provides:<ul><li>Improved file saving</li><li>Adding OpenAero to ' +
-  'your desktop to start without opening Chrome browser</li></ul>' +
-  'Do you wish to install the App? If you select <i>No</i> you will ' +
-  'not be asked again but can install it through the <i>Tools</i> ' +
-  'menu at any time.</p>',
-'installChromeAppComplete' : 'Chrome App has been installed. You can ' +
-  'access it by opening a new tab in Chrome. By right-clicking you ' +
-  'add the App to your desktop.',
-'installChromeAppTitle' : 'Install Chrome App',
 'installed' : '<p>OpenAero has now been installed ' +
   'in this browser and will automatically receive updates. It is ' +
   'available online and offline at <a href="http://%1\$s" target="_blank">' +
@@ -338,13 +323,19 @@ lang.en = {
   'easy access.</p>' +
   '<p>An extensive manual is available under <i>Help -> Manual</i>. ' +
   'Please take some time to read it!</p>',
-'installedFile' : '<p>OpenAero has now been installed ' +
-  'in this browser. It is ' +
-  'available online and offline at <a href="http://%1\$s" target="_blank">' +
-  '%1\$s</a>. You can add a link to this address to your desktop for ' +
-  'easy access.</p>' +
+'installedApp' : '<p>Welcome to your OpenAero app.</p>' +
   '<p>An extensive manual is available under <i>Help -> Manual</i>. ' +
   'Please take some time to read it!</p>',
+'installedWindows10' : '<p>OpenAero has now been installed ' +
+  'in this browser and will automatically receive updates. It is ' +
+  'available online and offline at <a href="http://%1\$s" target="_blank">' +
+  '%1\$s</a>.</p>' +
+  '<p>An extensive manual is available under <i>Help -> Manual</i>. ' +
+  'Please take some time to read it!</p>' +
+  '<p>You can install OpenAero as a Windows App. This ' +
+  'provides<ul><li>Improved file saving</li><li>Adding OpenAero to ' +
+  'your desktop to start without opening your browser</li></ul>' +
+  'You can install the app from the <i>Tools</i> menu.</p>',
 'interruptions' : 'Interruptions',
 'inverseForms' : 'Inverse color (white on black)',
 'iOScancelSave' : 'Cancel',
@@ -429,7 +420,8 @@ lang.en = {
   'ones following may be drawn differently in OLAN and OpenAero!</font> ' +
   'Please check correct direction.<br>' +
   'This message will not be shown for this sequence again.',
-'oldBrowser' : 'Your browser (%s) is not capable of running OpenAero.<br>',
+// changed 2020.1
+'oldBrowser' : 'Your browser is not capable of running OpenAero.<br>',
 'openaeroLanguage' : 'OpenAero language',
 'openQueueFile' : 'Open queue file',
 'openSequence' : 'Open sequence',
@@ -464,10 +456,11 @@ lang.en = {
 'print' : 'Print',
 'printCheck' : 'Sequence check result',
 'printDialog' : 'Print options',
+// changed 2020.1.1
 'printExplain' : 'You can set the options for printing below.<br>' +
   'To <i>save</i> your forms as PDF, click <strong>Print</strong> and ' +
   'then choose <i>destination</i> <strong>Save as PDF</strong> in the ' +
-  'browser\'s print menu.',
+  'print menu.',
 'printForms' : 'OpenAero printing forms...',
 'printFormA' : 'Form A',
 'printFormB' : 'Form B',
@@ -561,17 +554,17 @@ lang.en = {
   'is not a valid rules file? Please refer to ' +
   '<a href="http://code.google.com/p/open-aero/wiki/Developers#Creating_rule_checking_files" '+
   'target="_blank">Creating rule checking files</a> for more information.',
+// changed 2020.1.1
 'runFromFile' : 'It seems you are running OpenAero directly from ' +
   'a file. As of version 1.2.3 (february 2013) this is no longer ' +
   'recommended as some functions will be unavailable.<br />' +
   'Please go to <a href="http://openaero.net">openaero.net</a>. ' +
   'OpenAero will automatically install in your browser and will also ' +
-  'be available offline.',
-'runOverHttp' : 'Your link to OpenAero seems to be outdated. Please ' +
-  'make sure you use ' +
-  '<a href="https://openaero.net">https://openaero.net</a>.<br>' +
-  'When using as a mobile homescreen app, please remove the app and ' +
-  'then add it to your homescreen again.',
+  'be available offline.<br />' +
+  'If you are a developer and would like to run a local copy of ' +
+  'OpenAero, please use the ' +
+  '<a href="https://chrome.google.com/webstore/detail/web-server-for-chrome/ofhbbkphhbklhfoeikjpcbhemlocgigb">' +
+  'Web Server for Chrome</a>.',
 'sameAsBefore' : 'Same as before',
 'saveAsLink' : 'Save as link',
 'saveAsPNG' : 'Save PNG image',
@@ -658,7 +651,6 @@ lang.en = {
 }, // end tooltip sub-array
 'totalK' : 'Total K',
 'trgViolation' : 'Trg Violation',
-'unknownFileType' : 'File opening is not supported in this browser.',
 'unlockSequence' : 'Unlock',
 'unusedFigureLetters' : 'Unused figure letter(s): %s',
 'update' : 'Update',
@@ -672,6 +664,14 @@ lang.en = {
   'changelog.txt</a> if interested)</li>' +
   '</ul>',
 'view' : 'View',
+// new 2020.1.1
+'warningChrome' : '<p>You are using the Chrome app. This will no longer ' +
+	'be supported by Google (' +
+	'<a href="https://blog.chromium.org/2020/01/moving-forward-from-chrome-apps.html">blog post</a>' +
+	'). If you want to continue using the advantages of an app, ' +
+	'including offline sequence building, please install the new app ' +
+	'from the <b>Tools menu</b> at ' +
+	'<a href="https://openaero.net">https://openaero.net</a>.</p>',
 'warningNewerVersion' : '<p>This sequence was created with a newer ' +
   'version of OpenAero than you are running. It may contain new ' +
   'features. Please double check the sequence is correct.</p>',

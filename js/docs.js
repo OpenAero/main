@@ -21,9 +21,30 @@ along with OpenAero.  If not, see <http://www.gnu.org/licenses/>.
 
 document.addEventListener("DOMContentLoaded", load, false);
 
-function load() {
+function load () {
 	// append class to HTML element when in a frame
 	document.documentElement.classList.add (window.self == window.top ? "top" : "framed");
+	// do not display nodes with class noUWP on UWP
+	if (window.Windows) {
+		var els = document.getElementsByClassName ('noUWP');
+		for (var i = 0; i < els.length; i++) els[i].classList.add ('noDisplay');
+	}
+}
+
+// This is the service worker with the Cache-first network
+
+// Check compatibility for the browser we're running this in
+if ("serviceWorker" in navigator) {
+	// Register the service worker, unless running from local file
+	if (window.location.protocol !== 'file:') {
+    navigator.serviceWorker
+      .register("pwabuilder-sw.js", {
+        scope: "./"
+      })
+      .then(function (reg) {
+        console.log("[PWA Builder] Service worker has been registered for scope: " + reg.scope);
+      });
+	}
 }
 
 /*

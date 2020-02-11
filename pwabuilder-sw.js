@@ -2,10 +2,8 @@
 
 const CACHE = "pwabuilder-precache";
 const precacheFiles = [
-'appcache.manifest',
 'changelog.txt',
 'cordova.js',
-'css/addtohomescreen.css',
 'css/desktop.css',
 'css/desktop-largeMobile.css',
 'css/general.css',
@@ -13,8 +11,10 @@ const precacheFiles = [
 'css/mobile.css',
 'css/smallMobile.css',
 'doc/arestisystem.html',
-'doc/CIVA-Free-Known-Programme-Guidance-Glider-Aircraft-2020-v1.pdf',
-'doc/CIVA-Free-Known-Programme-Guidance-Power-Aircraft-2020-v1.pdf',
+'doc/CIVA-Free-Known-Programme-Guidance-Glider-Aircraft-2020-v1.html',
+'doc/CIVA-Free-Known-Programme-Guidance-Glider-Aircraft-2020-v1.png',
+'doc/CIVA-Free-Known-Programme-Guidance-Power-Aircraft-2020-v1.html',
+'doc/CIVA-Free-Known-Programme-Guidance-Power-Aircraft-2020-v1.png',
 'doc/gpl_files/combo.css',
 'doc/gpl_files/gplv3-127x51.png',
 'doc/gpl_files/layout.css',
@@ -25,7 +25,6 @@ const precacheFiles = [
 'doc/manual.html',
 'doc/privacy.html',
 'img/blue_handles.png',
-'img/chrome-webstore-badge.png',
 'img/ee_ext-figure.png',
 'img/favicons/favicon114.png',
 'img/favicons/favicon128.png',
@@ -42,6 +41,7 @@ const precacheFiles = [
 'img/hesrolls.png',
 'img/ios-appstore-badge.svg',
 'img/magnifier.svg',
+'img/microsoft-badge.svg',
 'img/multirolls.png',
 'img/OA_FigureAddPanel.png',
 'img/OA_FigureGrid.gif',
@@ -50,17 +50,16 @@ const precacheFiles = [
 'img/OA_FreeUnknownDesignerMain.png',
 'img/OA_GridInfo.png',
 'img/PilotCard.svg',
+'img/pwa-badge.png',
 'img/sequence_info.png',
 'img/snaprolls.png',
 'img/spinrolls.png',
 'index.html',
-'js/addtohomescreen.min.js',
 'js/background.js',
-'js/canvg.min.js',
+'js/canvg.js',
 'js/config.js',
 'js/docs.js',
 'js/figures19.js',
-'js/flags.js',
 'js/jszip.min.js',
 'js/languages/en.js',
 'js/languages/fr.js',
@@ -81,11 +80,9 @@ const precacheFiles = [
 'js/rules/rules19-vink.js',
 'js/rulesWorker.js',
 'js/vkbeautify.js',
-'js/window.js',
 'manifest.json',
 'manifest.webmanifest',
-'pwabuilder-sw.js',
-'window.html'
+'pwabuilder-sw.js'
 ];
 
 self.addEventListener("install", function (event) {

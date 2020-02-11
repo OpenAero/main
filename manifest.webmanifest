@@ -4,7 +4,7 @@
 	"name" : "OpenAero",
 	"scope" : "/",
 	"display" : "standalone",
-	"start_url" : "https://devel.openaero.net/",
+	"start_url" : "https://openaero.net/",
 	"short_name" : "OpenAero",
 	"theme_color" : "#7e57c2",
 	"description" : "OpenAero helps you design aerobatic sequences. It has many features for all levels of aerobatic pilots and contest organisers.",

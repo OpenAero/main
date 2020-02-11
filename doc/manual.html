@@ -19,11 +19,6 @@
   You should have received a copy of the GNU General Public License
   along with OpenAero.  If not, see <http://www.gnu.org/licenses/>.
   
-  ----------------------------------------------------------------------  
-  Updates
-  ----------------------------------------------------------------------
-  * 2016.4
-  grid_system
 -->
 
 <html>
@@ -31,7 +26,9 @@
 	<meta name="viewport" content="width=device-width">
 	<script src="../js/docs.js" type="text/javascript"></script>
 	<link rel="stylesheet" href="../css/general.css">
-	<TITLE>OpenAero Manual</TITLE>
+	<!-- web manifest for progressive web apps -->
+	<link rel="manifest" href="/manifest.webmanifest">
+ 	<TITLE>OpenAero Manual</TITLE>
 	<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8" />
 </HEAD>
 
@@ -54,16 +51,14 @@
 	</div>
 	<div class="documentation">
 		<span id="general"><h3>General</h3>
-		<span class="noCordova">
+		<span class="noCordova noUWP">
 			<p>OpenAero is aerobatic sequence design software available from
 			<a href="https://openaero.net/" target="_blank">OpenAero.net</a> that
 	    runs inside your web browser. This makes it available on practically
 	    any computer, tablet and even smartphone. For the best experience the
 			<a href="http://www.google.com/intl/en_uk/chrome/browser/" target="_blank">Google Chrome</a> 
-			web browser is recommended, and currently
-			<a href="http://www.ez-download.com/mozilla-firefox" target="_blank">Mozilla Firefox</a> 
-			also works well. Other web browsers may offer sufficient standards 
-			compatibility to function correctly, but not all. It is useful to set 
+			web browser is recommended, but most browsers published from 2016
+			onward should function correctly. It is useful to set 
 			the full-screen browser mode (usually by pressing F11 on your keyboard) 
 			to have the maximum screen space available when using OpenAero.</p>
 			<p>The latest version of the software is always presented when you are 
@@ -81,11 +76,11 @@
 	    (but not as an app) it may help to clear the appCache. Enter
 	    <strong>chrome://appcache-internals</strong> in your address bar
 	    and <strong>Remove</strong> all entries that contain OpenAero.</p>
-	    <h3>iOS, Android and Chrome app</h3>
+	    <h3>iOS, Android and Windows 10 app</h3>
 	    <p>An app is available for most common platforms. Beside normal
 	    OpenAero functionality this offers:
 	    <ul>
-				<li>improved handling of .seq sequence files on mobile devices</li>
+				<li>improved handling of .seq sequence files</li>
 				<li>guaranteed offline performance</li>
 				<li>supporting OpenAero development with your financial contribution</li>
 	    </ul>
@@ -97,8 +92,8 @@
 				<a href="https://play.google.com/store/apps/details?id=net.openaero" target="_blank">
 					<img src="../img/google-play-badge.png">
 				</a>
-				<a href="https://chrome.google.com/webstore/detail/openaero/gadjhgnenmdfihhmnhgpcijlafpahfbi" target="_blank">
-					<img src="../img/chrome-webstore-badge.png">
+				<a href="https://www.microsoft.com/store/apps/58124MassAppz.OpenAero" target="_blank">
+					<img src="../img/microsoft-badge.svg">
 				</a>
 	    </p>
     </span>
@@ -108,7 +103,7 @@
 		<a href="http://www.arestisystem.com/" target="_blank">Aresti catalog</a>
     is recommended for checking.</p>
     <p>This manual is intended for users of OpenAero. If you are interested in 
-    development of additions to OpenAero, including (National) rules, please 
+    development of additions to OpenAero, including (national) rules, please 
     refer to the <a href="https://github.com/OpenAero/main/wiki/Developers" target="_blank">
     developers wiki page</a>.</p>
     </span>
@@ -239,7 +234,7 @@
     change the length of all lines. In the top-right of the figure a
     magnifier shows which can be used to scale the entire figure.<br />
     It is possible to disable this way of figure editing through
-    <i>Options</i> in the <i>Tools</i> menu.</p>
+    <i>Settings</i>.</p>
 		<p>When you have finished editing the figure click in an adjacent space 
 		to deactivate it, then you can add a new figure at the end of the 
 		sequence or optionally at the beginning. If a figure is highlighted when 
@@ -366,7 +361,7 @@
 		Note that any construction errors are shown in the <i>Alerts</i> box below the 
 		figure editor. If you print the sequence you can opt to add the <i>Sequence 
 		Check Result</i> to the bottom of your Form B, C, R or L.</p>
-		<p>Several sequences can be checked simultaneously by choosing and/or dragging 
+		<p class="noCordova">Several sequences can be checked simultaneously by choosing and/or dragging 
 		their files to the box shown when you click menu item <i>Tools ... Check 
 		multiple seq</i>.</p>
     <p>When creating a Free Unknown sequence, it is possible to use the
@@ -403,7 +398,7 @@
       Otherwise, you can start it from the menu.<br />
       If OpenAero detects it is just a figures file you will start with
       an empty sequence. Otherwise, the current sequence will be shown.
-      <p><image src="../img/OA_FreeUnknownDesignerMain.png" style="max-width: 95%"></image></p>
+      <p><img src="../img/OA_FreeUnknownDesignerMain.png" style="max-width: 95%"></img></p>
       <h3>Sequence layout</h3>
       <p>The purpose of the designer is to quickly create a sequence. For
       this reason, layout is schematic and fully automated. There are no
@@ -483,15 +478,18 @@
       <h4>Saving sequences</h4>
       <p class="noCordova">To save the current sequence as a
       <i>&quot;filename.seq&quot;</i>
-      file, choose <i>Save sequence</i> in the <i>File menu</i>. Depending
+      file, choose <i>Save sequence</i> in the <i>File menu</i>.
+      <span class="noUWP">
+		  Depending
       on how you have set your browser, your computer will ask 
       for a file name to save the sequence; in Chrome be sure to use the
       '≡' Customize and control button in the header area, then click
       the Settings item so that you can tick "Ask where to save each
       file before downloading" on the Advanced Settings page. Always be
-      sure to give the sequence a file name ending in <i>&quot;.seq&quot; 
-      - </i>these files can subsequently be opened only by OpenAero.</p>
-      <p>The OpenAero app for mobile has a variety of options for saving
+      sure to give the sequence a file name ending in <i>&quot;.seq&quot;.</i>
+      </span>
+      </p>
+      <p class="noUWP">The OpenAero app for mobile has a variety of options for saving
       and sharing your sequence under <i>File ... Save/share sequence</i>
       </p>
       <p>To create a link that holds your complete sequence, choose <i>Save as 
@@ -499,8 +497,8 @@
       <h4 id="save_print">Saving or Printing sequence forms</h4>
       <p>To save or print some or all of the sequence forms, choose
       <i>Print/save forms</i> in the <i>File menu</i>, and select the
-      appropriate options. <span class="noCordova">To save the forms as
-      a PDF file in Windows you will need some software that does this for you, such as
+      appropriate options. <span class="noCordova noUWP">To save the forms as
+      a PDF file in Windows you may need some software that does this for you, such as
       <a href="http://sourceforge.net/projects/pdfcreator" target="_blank">PDFcreator</a> or 
       <a href="http://www.exp-systems.com/pdfredirect/downloads.htm" target="_blank">PDF reDirect v2</a>. 
       In a Mac OSX or Linux machine you can simply choose to &#39;print to PDF&#39;.</span></p>
@@ -520,15 +518,17 @@
           for further advice.
         </li>
       </ul>
-      <p>iPad/iPhone: Only <strong>Save PNG image</strong> is available.
-      <span class="noCordova">In Safari, you can then tap the
-      <span class="iOSsaveIcon"></span>
-      button to save or print the image.</span></p>
-      <h4>Printing multiple sequences</h4>
+      <p class="noUWP">
+				iPad/iPhone: Only <strong>Save PNG image</strong> is available.
+	      <span class="noCordova">In Safari, you can then tap the
+	      <span class="iOSsaveIcon"></span>
+	      button to save or print the image.</span>
+      </p>
+      <h4 class="noCordova">Printing multiple sequences</h4>
       Multiple sequences can be printed without opening each sequence
       separately. This option can be found in the <i>Tools</i> menu.<br />
       This is especially usefull for contest organisers.
-      <h4>Saving a sequence's figures as separate	images</h4>
+      <h4>Saving a sequence's figures as separate images</h4>
       <p>To save the current sequence figures as separate images, choose
       <i>Save figs separate</i> in the <i>File</i> menu. You will then get
       the option to save a ZIP file that 
@@ -537,8 +537,7 @@
       svg) and the image size.<br />
       The images are oriented according the sequence flow and the form 
       currently being viewed (B or C).</p>
-      <p>The image naming pattern can be set in <i>Settings</i> in the
-      <i>Tools</i> menu.</p>
+      <p>The image naming pattern can be set in <i>Settings</i>.</p>
 		</span>
 	</div>
 	<div class="documentation">
@@ -564,7 +563,7 @@
         required (accessible through Settings on small mobile layout).<br />
         The box provides information on the amount of
         positive and negative figure entries and exits, as well as the
-        associated Low, Neutral or High speed.</br>
+        associated Low, Neutral or High speed.<br />
         Below this is an indication of the needed number of Additionals
         to create a full sequence. This is estimated by matching the
         figures based on attitude and speed

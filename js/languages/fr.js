@@ -57,13 +57,15 @@ lang.fr = {
 	'<img src="img/ios-appstore-badge.svg" width="200"></a>',
 'aboutUnknown' : 'Impossible de déterminer la derniere version. ' +
   'Vous travaillez probablement hors connexion.',
+// changed 2020.1.1
 'aboutText' : '<div class="divider">' +
   '<p>Cette&nbsp;version:<strong>%s</strong> &nbsp; ' +
   'Version&nbsp;courante:<strong>%s</strong></p><p>%s</p>' +
   '<a id="viewChangelog">Lisez changelog.txt</a> (en Anglais)</div>' +
   '<div class="divider">' +
   '<p>OpenAero est un logiciel de conception de programmes de voltige ' +
-  'qui s\'exécute dans votre navigateur web.</p><p>OpenAero est un logiciel gratuit: vous ' +
+  'qui s\'exécute dans votre navigateur web ou comme une application.</p>' +
+  '<p>OpenAero est un logiciel gratuit: vous ' +
   'pouvez le redistribuer et/ou le modifier selon les termes de la ' +
   '<a href="doc/gpl.htm">GNU General Public License</a> comme publiée par ' +
   'la \'Free Software Foundation\', soit dans la version 3 de la Licence, soit ' +
@@ -229,8 +231,6 @@ lang.fr = {
 'exitDesigner' : 'Quitter l\'assembleur',
 'expert' : 'Expert',
 'feedback' : 'Retour',
-'fileOpeningNotSupported' : 'L\'ouverture de fichier n\'est pas supportée dans ' +
-  'ce navigateur. Certaines fonctions ont été invalidées.',
 'figSelectorAddAfter' : 'Ajout de figure après',
 'figSelectorAddBefore' : 'Ajout de figure avant',
 'figSelectorAddEnd' : 'Ajout de figure à la fin',
@@ -321,22 +321,8 @@ lang.fr = {
 'imageWidth' : 'Largeur',
 'importRulesFile' : 'Importer un fichier de règles',
 'insertions' : 'Insertions',
+'installApp' : 'Installer l\'application',
 'installation' : 'Installation',
-'installChromeApp' : '<p>OpenAero est maintenant installé avec ce ' +
-  'navigateur et les mises à jour seront automatiques. Il est disponible ' +
-  'en ligne,mais aussi hors connexion à <a href="http://%1\$s" target="_blank">' +
-  '%1\$s</a>.</p>' +
-  '<p>Un Mode d\'emploi complet est disponible a <i>Aide -> Manuel ' +
-  'OpenAero</i>. S\'il vous plait, prenez le temps de le lire !</p>' +
-  '<p>Vous pouvez installer OpenAero en tant qu\'Application Chrome. Ceci ' +
-  'vous procure:<ul><li>Un enregistrement des fichiers amélioré</li><li>Le lancement ' +
-  'd\'OpenAero à partir du bureau sans ouvrir votre navigateur Chrome </li></ul>' +
-  'Voulez vous installer cette application ? si vous choisissez <i>Non</i>, cette question ' +
-  'ne vous sera plus posée, mais vous pourrez l\'installer par le menu <i>Outils</i> ' +
-  'à tout moment.</p>','installChromeAppComplete' : 'L\'application Chrome a été installée. Vous pouvez y ' +
-  'accéder en ouvrant une nouvelle rubrique dans Chrome. Par un clic droit ' +
-  'vous pouvez ajouter l\'application sur votre bureau.',
-'installChromeAppTitle' : 'Installer l\'application Chrome',
 'installed' : '<p>OpenAero est maintenant installé avec ce ' +
   'navigateur et les mises à jour seront automatiques. Il est disponible ' +
   'en ligne,mais aussi hors connexion à <a href="http://%1\$s" target="_blank">' +
@@ -344,13 +330,19 @@ lang.fr = {
   'bureau pour un accès direct.</p>' +
   '<p>Un Mode d\'emploi complet est disponible a <i>Aide -> Manuel ' +
   'OpenAero</i>. S\'il vous plait, prenez le temps de le lire !</p>',
-'installedFile' : '<p>OpenAero est maintenant installé avec ce ' +
-  'navigateur. Il est disponible ' +
-  'en ligne,mais aussi hors connexion à <a href="http://%1\$s" target="_blank">' +
-  '%1\$s</a>. Vous pouvez ajouter un raccourci vers cette adresse sur votre ' +
-  'bureau pour un accès direct.</p>' +
+'installedApp' : '<p>Bienvenue dans votre application openaero.</p>' +
   '<p>Un Mode d\'emploi complet est disponible a <i>Aide -> Manuel ' +
   'OpenAero</i>. S\'il vous plait, prenez le temps de le lire !</p>',
+'installedWindows10' : '<p>OpenAero est maintenant installé avec ce ' +
+  'navigateur et les mises à jour seront automatiques. Il est disponible ' +
+  'en ligne,mais aussi hors connexion à <a href="http://%1\$s" target="_blank">' +
+  '%1\$s</a>.</p>' +
+  '<p>Un Mode d\'emploi complet est disponible a <i>Aide -> Manuel ' +
+  'OpenAero</i>. S\'il vous plait, prenez le temps de le lire !</p>' +
+  '<p>Vous pouvez installer OpenAero en tant qu\'Application Windows. Ceci ' +
+  'vous procure<ul><li>Un enregistrement des fichiers amélioré</li><li>Le lancement ' +
+  'd\'OpenAero à partir du bureau sans ouvrir votre navigateur</li></ul>' +
+  'Vous pourrez l\'installer par le menu <i>Outils</i>.</p>',
 'interruptions' : 'Interruptions',
 'inverseForms' : 'Inverse vidéo (blanc sur noir)',
 'iOScancelSave' : 'Annuler',
@@ -436,7 +428,8 @@ lang.fr = {
   'suivantes peuvent être dessinées différemment dans Olan et OpenAero !</font>' +
   'Vérifiez que la direction de sortie est correcte.<br>' +
   'Ce message ne sera plus affiche pour ce programme.',
-'oldBrowser' : 'Votre navigateur (%s) ne peut pas faire tourner OpenAero.<br>',
+// changed 2020.1
+'oldBrowser' : 'Votre navigateur ne peut pas faire tourner OpenAero.<br>',
 'openaeroLanguage' : 'Syntaxe OpenAero',
 'openQueueFile' : 'Ouvrir un fichier file',
 'openSequence' : 'Ouvrir un programme',
@@ -471,10 +464,11 @@ lang.fr = {
 'print' : 'Imprimer',
 'printCheck' : 'Résultat de la vérification',
 'printDialog' : 'Options d\'impression',
+// changed 2020.1
 'printExplain' : 'Vous pouvez positionner les options d\'impression ci-dessous.<br>' +
   'Pour <i>enregistrer</i> PDF, cliquer <strong>Imprimer</strong> puis choisir ' +
   'comme <i>destination</i> <strong>Enregistrer en PDF</strong> dans le ' +
-  'Menu de votre navigateur.',
+  'Menu de impression.',
 'printForms' : 'Impression des Formes...',
 'printFormA' : 'Forme A',
 'printFormB' : 'Forme B',
@@ -575,12 +569,11 @@ lang.fr = {
   'car certains fonctions ne sont pas disponibles.<br />' +
   'Allez à <a href="http://openaero.net">openaero.net</a>. ' +
   'OpenAero sera automatiquement installé dans votre navigateur et sera également ' +
-  'disponible hors connexion.',
-'runOverHttp' : 'Votre lien vers OpenAero ne semble pas à jour. Vérifiez ' +
-  'que vous utilisez bien ' +
-  '<a href="https://openaero.net">https://openaero.net</a>.<br>' +
-  'Si vous utilisez une application pour smartphone, supprimez la puis ' +
-  'ré-installez la sur votre page d\'accueil.',
+  'disponible hors connexion.<br />' +
+  'Si vous êtes un développeur et que vous souhaitez exécuter une ' +
+  'copie locale d\'OpenAero, veuillez utiliser le ' +
+  '<a href="https://chrome.google.com/webstore/detail/web-server-for-chrome/ofhbbkphhbklhfoeikjpcbhemlocgigb">' +
+  'Web Server for Chrome</a>.',
 'sameAsBefore' : 'Comme avant',
 'saveAsLink' : 'Enregistrer en tant que lien',
 'saveAsPNG' : 'Enregistrer une image PNG',
@@ -670,7 +663,6 @@ lang.fr = {
 }, // end tooltip sub-array
 'totalK' : 'K total',
 'trgViolation' : 'Echauf. non OK',
-'unknownFileType' : 'L\'ouverture de ce fichier n\'est pas supportée dans ce navigateur.',
 'unlockSequence' : 'Déverrouiller',
 'unusedFigureLetters' : 'Lettre(s) inutilisée(s) : %s',
 'update' : 'Mise à jour',

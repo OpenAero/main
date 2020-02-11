@@ -23,12 +23,6 @@
  * They will override any equivalent css styles in general.css and
  * mobile.css */
 
-/*html, body {
-	width: 320px;
-}*/
-/*body * {
-	-webkit-overflow-scrolling: touch;
-}*/
 select {
   background-color: #fff;
 }
