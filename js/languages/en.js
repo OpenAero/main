@@ -665,13 +665,12 @@ lang.en = {
   '</ul>',
 'view' : 'View',
 // new 2020.1.1
-'warningChrome' : '<p>You are using the Chrome app. This will no longer ' +
-	'be supported by Google (' +
-	'<a href="https://blog.chromium.org/2020/01/moving-forward-from-chrome-apps.html">blog post</a>' +
-	'). If you want to continue using the advantages of an app, ' +
-	'including offline sequence building, please install the new app ' +
-	'from the <b>Tools menu</b> at ' +
-	'<a href="https://openaero.net">https://openaero.net</a>.</p>',
+'warningChrome' : '<p><i class="material-icons" style="color:red">warning</i> ' +
+	'You are using the Chrome app. This will no longer ' +
+	'be supported by Google in the near future.</p>' +
+	'<p>A new app is available that includes offline sequence building.</p>' +
+	'<p>Would you like to uninstall this app now and install the new app ' +
+	'from the <b>Tools menu</b> at https://openaero.net?</p>',
 'warningNewerVersion' : '<p>This sequence was created with a newer ' +
   'version of OpenAero than you are running. It may contain new ' +
   'features. Please double check the sequence is correct.</p>',

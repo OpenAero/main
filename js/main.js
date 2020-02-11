@@ -1797,7 +1797,7 @@ function alertBox (message, title, buttons) {
 // confirmBox creates a styled confirm box with 'yes' and 'no' options
 // message contains the HTML text. When false, the box is closed
 // the callback will be executed after confirm
-function confirmBox(message, title, callback) {
+function confirmBox (message, title, callback) {
   // hide all menus
   menuInactiveAll();
   
@@ -4528,6 +4528,9 @@ function doOnLoad () {
 	// immediately remove loading on Windows app as this is handled by the
 	// app itself
   if (platform.uwp) loading.parentNode.removeChild (loading);
+
+  // check browser and capabilities
+  checkBrowser();
   
   // define DOM variables
 	if ((typeof chrome !== 'undefined') && chrome.fileSystem) {
@@ -4704,16 +4707,13 @@ function doOnLoad () {
 			});
 		});
 	}
-	// Give Cordova or PWA five seconds to start, then...
+	// Give Cordova or PWA three seconds to start, then...
 	setTimeout(function() {
 		if (!platform.cordova) checkForApp ();
-	}, 5000);
+	}, 3000);
 
   // build sequence svg
   rebuildSequenceSvg();
-
-  // check browser and capabilities
-  checkBrowser();
 
 	// remove zoomMenu when zoom is not supported
 	if (!('zoom' in document.body.style) && !platform.mobile) {
@@ -5387,9 +5387,10 @@ function checkForApp () {
 
 	if (platform.chrome) {
 		// chrome app is deprecated from june 2020 onwards
-		alertBox (userText.warningChrome);
-		setTimeout (
-			function() {chrome.management.uninstallSelf (true)}, 10000);
+		confirmBox (userText.warningChrome, '', function () {
+			window.open ('https://openaero.net');
+			chrome.management.uninstallSelf();
+		});
 	} else if (platform.android || platform.ios ||
 		(platform.mobile && !(platform.cordova || platform.uwp))) {
 		// Show the banner for getting the Android, iOS or PWA app under
