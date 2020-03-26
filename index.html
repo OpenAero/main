@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <!--
   index.html
   This file is part of OpenAero.
@@ -103,11 +103,11 @@
     <script src="js/rules/rules20-glider-civa.js" type="text/javascript"></script>
     <script src="js/rules/rules19-aac.js" type="text/javascript"></script>
     <script src="js/rules/rules17-baea.js" type="text/javascript"></script>
-    <script src="js/rules/rules18-france.js" type="text/javascript"></script>
+    <script src="js/rules/rules20-france.js" type="text/javascript"></script>
     <script src="js/rules/rules15-ga.js" type="text/javascript"></script>
-    <script src="js/rules/rules19-iac.js" type="text/javascript"></script>
-    <script src="js/rules/rules19-glider-iac.js" type="text/javascript"></script>
-    <script src="js/rules/rules20-nzac.js" type="text/javascript"></script>
+    <script src="js/rules/rules20-iac.js" type="text/javascript"></script>
+    <script src="js/rules/rules20-glider-iac.js" type="text/javascript"></script>
+    <script src="js/rules/rules21-nzac.js" type="text/javascript"></script>
     <script src="js/rules/rules16-sac.js" type="text/javascript"></script>
     <script src="js/rules/rules19-vink.js" type="text/javascript"></script>
     <!-- library -->
@@ -125,7 +125,7 @@
     <script src="js/canvg/rgbcolor.js" type="text/javascript"></script>
     <script src="js/canvg/stackblur.js" type="text/javascript"></script>
     -->
-    <script src="js/canvg.js" type="text/javascript"></script>
+    <!-- <script src="js/canvg.js" type="text/javascript"></script> -->
     
     <!-- jsconsole script for debugging only !!! -->
     <!-- <script src="js/http://jsconsole.com/remote.js?8C1754EF-DB29-4859-B5CC-87978E718150"></script> -->
@@ -911,105 +911,118 @@
 					<span class="userText" id="t_printExplain"></span>
 				</div>
 				<!-- print forms -->
-				<div class="content3cols content" id="printForms">
-				<!--
-				<div class="content3cols content form-group" id="printForms">
-					<div class="checkbox">
-						<label>
-						<input type="checkbox" id="printFormA" checked="true"><i class="helper"></i>
-						<span class="userText" id="t_printFormA"></span>
-						</label>
-					</div>
-					-->
-					<div>
-						<input type="checkbox" id="printFormA" checked="true">
-						<span class="userText" id="t_printFormA"></span>
-					</div>
-					<div>
-						<span>
-							<input type="checkbox" id="printFormB" checked="true">
-							<span class="userText" id="t_printFormB"></span>
-						</span>
-						<span>
-							<input type="checkbox" id="printMiniFormAonB" checked="true">
-							<span class="userText" id="t_printMiniFormAonB"></span>
-						</span>
-					</div>
-					<div>
-						<span>
-							<input type="checkbox" id="printFormC" checked="true">
-							<span class="userText" id="t_printFormC"></span>
-						</span>
-						<span>
-							<input type="checkbox" id="printMiniFormAonC">
-							<span class="userText" id="t_printMiniFormAonC"></span>
-						</span>            
-					</div>
-					<span id="formRL">
-						<div>
-							<input type="checkbox" id="printFormR">
-							<span class="userText" id="t_printFormR"></span>
-						</div>
-						<div>
-							<input type="checkbox" id="printFormL">
-							<span class="userText" id="t_printFormL"></span>
-						</div>
-					</span>
-					<div class="clearBoth">
-						<span>
-							<input type="checkbox" id="printFormGrid">
-							<span class="userText" id="t_printFormGrid"></span>
-						</span>
-						<span>
-							<input type="checkbox" id="formGridHeader" checked>
-							<span class="userText" id="t_formGridSequenceInfo"></span>
-						</span>
-					</div>
-					<div class="clearBoth">
-						<span>
-							<input type="checkbox" id="printFormPilotCards">
-							<span class="userText" id="t_printPilotCards"></span>
-						</span>
-					</div>
-					<div id="pilotCardLayout" class="folded">
-						<div id="pilotCardPercent" class="pilotCardLayout active">
-							<div class="pilotCard">
-								<img id="pilotCardPercentImage" src="img/PilotCard.svg">
-								<div class="pilotCardLetter"></div>
-							</div>
-							<span><input type="number" step="1" value="60" max="100" id="pilotCardPercentValue">%</span>
-						</div>
-						<div id="pilotCard2" class="pilotCardLayout">
-							<div class="pilotCard">
-								<img src="img/PilotCard.svg">
-								<div class="pilotCardLetter"></div>
-							</div>
-							<div class="pilotCard">
-								<img src="img/PilotCard.svg">
-								<div class="pilotCardLetter"></div>
-							</div>
-						</div>
-						<div id="pilotCard4" class="pilotCardLayout">
-							<div class="pilotCard">
-								<img src="img/PilotCard.svg">
-								<div class="pilotCardLetter"></div>
-							</div>
-							<div class="pilotCard">
-								<img src="img/PilotCard.svg">
-								<div class="pilotCardLetter"></div>
-							</div>
-							<div class="pilotCard">
-								<img src="img/PilotCard.svg">
-								<div class="pilotCardLetter"></div>
-							</div>
-							<div class="pilotCard">
-								<img src="img/PilotCard.svg">
-								<div class="pilotCardLetter"></div>
-							</div>
-						</div>
-						<div id="t_pilotCardExplain" class="userText"></div>
-					</div>
-				</div>
+                <div class="content3cols content" id="printForms">
+                    <div id="sectionPrintPageSet" class="clearBoth">
+                        <label>
+                            <input type="checkbox" id="printPageSet" class="material-switch-input">
+                            <span class="material-switch left"></span>
+                            <span class="userText" id="t_printPageSet"></span>
+                        </label>
+                        <span class="form-group">
+                            <input id="printPageSetString" type="text" spellcheck="false" autocapitalize="characters" disabled /><i class="bar"></i>
+                        </span>
+                        <div id="printPageSetLayout" class="noDisplay"></div>
+                        <span class="userText noDisplay" id="t_printPageSetHidesFormSelectors"></span>
+                    </div>
+                    <label>
+                        <input type="checkbox" id="printFormA" checked="true" class="material-switch-input">
+                        <span class="material-switch left"></span>
+                        <span class="userText" id="t_printFormA"></span>
+                    </label>
+                    <div>
+                        <label class="clearNone">
+                            <input type="checkbox" id="printFormB" checked="true" class="material-switch-input">
+                            <span class="material-switch left"></span>
+                            <span class="userText" id="t_printFormB"></span>
+                        </label>
+                        <label class="clearNone">
+                            <input type="checkbox" id="printMiniFormAonB" checked="true" class="material-switch-input">
+                            <span class="material-switch left"></span>
+                            <span class="userText" id="t_printMiniFormAonB"></span>
+                        </label>
+                    </div>
+                    <div>
+                        <label class="clearNone">
+                            <input type="checkbox" id="printFormC" checked="true" class="material-switch-input">
+                            <span class="material-switch left"></span>
+                            <span class="userText" id="t_printFormC"></span>
+                        </label>
+                        <label class="clearNone">
+                            <input type="checkbox" id="printMiniFormAonC" class="material-switch-input">
+                            <span class="material-switch left"></span>
+                            <span class="userText" id="t_printMiniFormAonC"></span>
+                        </label>
+                    </div>
+                    <span id="formRL">
+                        <label>
+                            <input type="checkbox" id="printFormR" class="material-switch-input">
+                            <span class="material-switch left"></span>
+                            <span class="userText" id="t_printFormR"></span>
+                        </label>
+                        <label>
+                            <input type="checkbox" id="printFormL" class="material-switch-input">
+                            <span class="material-switch left"></span>
+                            <span class="userText" id="t_printFormL"></span>
+                        </label>
+                    </span>
+                    <div class="clearBoth">
+                        <label class="clearNone">
+                            <input type="checkbox" id="printFormGrid" class="material-switch-input">
+                            <span class="material-switch left"></span>
+                            <span class="userText" id="t_printFormGrid"></span>
+                        </label>
+                        <label class="clearNone">
+                            <input type="checkbox" id="formGridHeader" class="material-switch-input" checked>
+                            <span class="material-switch left"></span>
+                            <span class="userText" id="t_formGridSequenceInfo"></span>
+                        </label>
+                    </div>
+                    <div class="clearBoth">
+                        <label>
+                            <input type="checkbox" id="printFormPilotCards" class="material-switch-input">
+                            <span class="material-switch left"></span>
+                            <span class="userText" id="t_printPilotCards"></span>
+                        </label>
+                    </div>
+                    <div id="pilotCardLayout" class="folded">
+                        <div id="pilotCardPercent" class="pilotCardLayout active">
+                            <div class="pilotCard">
+                                <img id="pilotCardPercentImage" src="img/PilotCard.svg">
+                                <div class="pilotCardLetter"></div>
+                            </div>
+                            <span><input type="number" step="10" value="60" max="100" id="pilotCardPercentValue">%</span>
+                        </div>
+                        <div id="pilotCard2" class="pilotCardLayout">
+                            <div class="pilotCard">
+                                <img src="img/PilotCard.svg">
+                                <div class="pilotCardLetter"></div>
+                            </div>
+                            <div class="pilotCard">
+                                <img src="img/PilotCard.svg">
+                                <div class="pilotCardLetter"></div>
+                            </div>
+                        </div>
+                        <div id="pilotCard4" class="pilotCardLayout">
+                            <div class="pilotCard">
+                                <img src="img/PilotCard.svg">
+                                <div class="pilotCardLetter"></div>
+                            </div>
+                            <div class="pilotCard">
+                                <img src="img/PilotCard.svg">
+                                <div class="pilotCardLetter"></div>
+                            </div>
+                            <div class="pilotCard">
+                                <img src="img/PilotCard.svg">
+                                <div class="pilotCardLetter"></div>
+                            </div>
+                            <div class="pilotCard">
+                                <img src="img/PilotCard.svg">
+                                <div class="pilotCardLetter"></div>
+                            </div>
+                        </div>
+                        <div id="t_pilotCardExplain" class="userText"></div>
+                    </div>
+                </div>
 				<!-- end print forms -->
 				<!-- print options -->
 				<div class="content3cols content" id="printOptions">

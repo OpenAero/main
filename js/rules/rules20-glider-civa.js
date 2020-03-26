@@ -1,4 +1,4 @@
-// OpenAero rules20-glider-civa.js file
+ï»¿// OpenAero rules20-glider-civa.js file
 
 // This file is part of OpenAero.
 
@@ -658,7 +658,7 @@ rules.push (
 // Two Lines
 //----------
 // no vertical roll in fig. of column 4, or column 2 of 1.2.5-8 ### acc. to Ch. A.4.1.1
-// no hesitation rolls on 45°lines of lines 1.2.5-8
+// no hesitation rolls on 45Â°lines of lines 1.2.5-8
 "1.2.1.1  NOAH ; NR:1",
 "1.2.1.2  NOAH  ; NR:1 ; nopushout",
 "1.2.2.1  NOAH ; NR:1 ; nopushout",
@@ -1108,7 +1108,7 @@ rules.push (
 //#####################
 // Allowed Figures for KNOWN and FREE acc. to Ch. 2.2.1.6 and 2.2.1.7 # "acc. to the Aresti-System, Glider Version"
 //=========================================================================================================
-//no full negative loops, no high speed negative part loops of more than 45°
+//no full negative loops, no high speed negative part loops of more than 45Â°
 "1.1.1.1-4",
 "1.1.2.1-4",
 "1.1.3.1-4",
@@ -1453,7 +1453,7 @@ rules.push (
 // Two Lines
 //----------
 // no vertical roll in fig. of column 4, or column 2 of 1.2.5-8 ### acc. to Ch. A.4.1.1
-// no hesitation rolls on 45°lines of lines 1.2.5-8  ### acc. to Ch. 9.1.1.4
+// no hesitation rolls on 45Â°lines of lines 1.2.5-8  ### acc. to Ch. 9.1.1.4
 "1.2.1.1  NOAH ; NR:1",
 "1.2.2.2  NOAH ; NR:1",
 "1.2.3.1  NOAH",

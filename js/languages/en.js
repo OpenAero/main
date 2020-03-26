@@ -1,4 +1,4 @@
-// en.js
+﻿// en.js
 // This file is part of OpenAero.
 
 //  OpenAero was originally designed by Ringo Massa and built upon ideas
@@ -477,8 +477,12 @@ lang.en = {
   'rules from Sequence info: ',
 'printMultipleSeq' : 'Print multiple seq',
 'printMultiWait' : 'Printing %s sequences.<br>This may ' +
-  'take some time. Please wait...',
-'printNotes' : 'Notes (top of pages)',
+    'take some time. Please wait...',
+'printNotes': 'Notes (top of pages)',
+// new 2020.1.5
+    'printPageSet': 'Page set',
+    'printPageSetHidesFormSelectors': 'When "Page set" is ' +
+    'active, other form selectors are hidden.',
 'printPilotCards' : 'Pilot cards',
 'printSaveForms' : 'Print/save forms',
 'printSavePdf' : 'Print / Save PDF',
@@ -702,7 +706,7 @@ lang.en = {
 'warningPre20192' : '<p>The file you just opened was created with an ' +
   'OpenAero version older than 2019.2. Also, it contains one or ' +
   'more figures of family 1.2.11 or 1.2.12 (triangle figures with ' +
-  'half roll on 45 line).' +
+  'a half roll on a 45 degree line).' +
   'These were incorrectly coded in older versions of OpenAero. They ' +
   'have now been automatically corrected. Nevertheless, please ' +
   'check the sequence to make sure their exit directions and ' +

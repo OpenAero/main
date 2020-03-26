@@ -1,4 +1,4 @@
-// This is the service worker with the Cache-first network
+﻿// This is the service worker with the Cache-first network
 
 const CACHE = "pwabuilder-precache";
 const precacheFiles = [
@@ -56,7 +56,6 @@ const precacheFiles = [
 'img/spinrolls.png',
 'index.html',
 'js/background.js',
-'js/canvg.js',
 'js/config.js',
 'js/docs.js',
 'js/figures19.js',
@@ -70,13 +69,13 @@ const precacheFiles = [
 'js/rules/rules16-sac.js',
 'js/rules/rules16.js',
 'js/rules/rules17-baea.js',
-'js/rules/rules18-france.js',
+'js/rules/rules20-france.js',
 'js/rules/rules19-aac.js',
-'js/rules/rules19-iac.js',
-'js/rules/rules19-glider-iac.js',
+'js/rules/rules20-iac.js',
+'js/rules/rules20-glider-iac.js',
 'js/rules/rules20-civa.js',
 'js/rules/rules20-glider-civa.js',
-'js/rules/rules20-nzac.js',
+'js/rules/rules21-nzac.js',
 'js/rules/rules19-vink.js',
 'js/rulesWorker.js',
 'js/vkbeautify.js',

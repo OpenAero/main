@@ -1,4 +1,4 @@
-/* Set up the rulesWorker. This is not done through a separate Worker
+﻿/* Set up the rulesWorker. This is not done through a separate Worker
  * script as this will not work when using OpenAero from a local file.
  * 
  * The rulesWorker handles all rule loading and checking in a separate

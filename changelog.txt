@@ -1,3 +1,20 @@
+﻿2020.1.6
+* updated France rules and sequences for 2020
+* added quarter clovers to the allowed figures for IAC Intermediate Free
+* fixed UWP horizontal drag & drop of figures
+* fixed deselection of dragged figure which was previously repositioned (Issue #231)
+
+2020.1.5
+* added option for printing complex sets of pages (Issue #216)
+* updated NZAC rules and sequences for 2021
+* improved code and compatibility for png generation
+* removed canvg.js because of new png generation strategy
+
+2020.1.3
+* added 2020 IAC sequences and updated IAC Sportsman Free maximum K
+* added IAC Glider Advanced Known floating point correction
+* changed "Done" button colour in inAppBrowser for Help documents to orange
+
 2020.1.2
 * updated jszip to 3.2.2 and canvg to 2.0.0
 * changed CIVA Free Known guidance to png files for PWA UWP support
@@ -24,7 +41,7 @@
 * limited logo file size on mobile to 1 MB to prevent local storage limit issues
 
 2019.2.5
-* changed "X-box entry" to "Cross-box entry" to prevent confusion
+* changed "X-box entry" to "Cross-box entry" to prevent confusion (Issue #240)
 * added code to enable running as PWA on Windows and macOS (not functional yet)
  
 2019.2.4
@@ -104,7 +121,7 @@
 * updated file selection dialogs
 * fixed issue with Sequence Notes on Form L&R of large sequences
 * improved Mini Form A layout
-* added changelog.txt link to About dialog
+* added changelog.txt link to About dialog (Issue #235)
 * added privacy policy link to About dialog and removed Google analytics reference
 * updated CIVA form layouts
 

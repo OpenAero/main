@@ -1,4 +1,4 @@
-// OpenAero rulesYY-France file
+﻿// OpenAero rulesYY-France file
 
 // This file is part of OpenAero.
 

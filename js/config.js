@@ -1,4 +1,4 @@
-// config.js
+﻿// config.js
 
 // This file is part of OpenAero.
 
@@ -36,7 +36,7 @@
 // A new x should be used for versions that create sequences not
 // fully backward compatible with the previous version
 
-var version = '2020.1.2';
+var version = '2020.1.6';
 /* versionNew is an object that contains version update information
    The structure is {vvv : [[ttt, n], ...], ...} , where
    vvv = version number
@@ -44,8 +44,20 @@ var version = '2020.1.2';
    n   = importance (higher = more important)
 */
 var versionNew = {
+    '2020.1.6': [
+        ['Updated France rules and sequences for 2020', 3],
+        ['Added quarter clovers to the allowed figures for IAC Intermediate Free', 2]
+    ],
+    '2020.1.5': [
+        ['Added option for printing complex sets of pages. This is especially useful for ' +
+            'contest organisers', 3],
+        ['Updated NZAC Power rules and sequences for 2020/2021', 3]
+    ],
+    '2020.1.3': [
+        ['Added IAC Power and Glider Known sequences for 2020', 3]
+    ],
 	'2020.1.2' : [
-		['Added a Windows 10 app to the Windows store', 4]
+        ['Added a Windows 10 app to the Windows store', 4]
 	],
 	'2020.1' : [
 		['CIVA rules and sequences for 2020. Flick rolls on vertical up of ' +
@@ -462,45 +474,45 @@ var style = {
   // Autocorrect filled path style
   'corrfill' : 'stroke: red; stroke-width: 2px; fill: red;',
   // Roll text style
-  'rollText' : 'font-family: arial, sans; font-size: ' + rollFontSize +
+  'rollText' : 'font-family: Arial, Sans; font-size: ' + rollFontSize +
     'px; font-weight: bold; fill: red;',
   // Figure Number
-  'figNbr_09' : 'font-family: verdana, helvetica, sans; font-size: 14px; font-weight: bold; fill: black;',
-  'figNbr_10' : 'font-family: verdana, helvetica, sans; font-size: 12px; font-weight: bold; fill: black;',
+  'figNbr_09' : 'font-family: Verdana, Helvetica, Sans; font-size: 14px; font-weight: bold; fill: black;',
+  'figNbr_10' : 'font-family: Verdana, Helvetica, Sans; font-size: 12px; font-weight: bold; fill: black;',
   // Text block style
-  'textBlock' : 'font-family: verdana, helvetica, sans; font-size: 20px; fill: black;',
+  'textBlock' : 'font-family: verdana, Helvetica, Sans; font-size: 20px; fill: black;',
   'textBlockBorder' : 'stroke: black; stroke-width: 1px; fill: none;',
   'textBlockBorderBold' : 'stroke: black; stroke-width: 2px; fill: none;',
   'textBlockBorderBoldRed' : 'stroke: red; stroke-width: 2px; fill: none;',
   // Mini Form A styles
-  'miniFormA' : 'font-family: verdana, helvetica, sans; font-size: 10px; fill: black;',
-  'miniFormABold' : 'font-family: verdana, helvetica, sans; font-size: 10px; font-weight: bold; fill: black;',
-  'miniFormAMax' : 'font-family: verdana, helvetica, sans; font-size: 14px; fill: black;',
-  'miniFormAModifiedK' : 'font-family: verdana, helvetica, sans; font-size: 10px; color: red; fill: red;',
-  'miniFormASmall' : 'font-family: verdana, helvetica, sans; font-size: 8px; fill: black;',
-  'miniFormATotal' : 'font-family: verdana, helvetica, sans; font-size: 16px; font-weight: bold; fill: black;',
+  'miniFormA' : 'font-family: verdana, Helvetica, Sans; font-size: 10px; fill: black;',
+  'miniFormABold' : 'font-family: verdana, Helvetica, Sans; font-size: 10px; font-weight: bold; fill: black;',
+  'miniFormAMax' : 'font-family: verdana, Helvetica, Sans; font-size: 14px; fill: black;',
+  'miniFormAModifiedK' : 'font-family: verdana, Helvetica, Sans; font-size: 10px; color: red; fill: red;',
+  'miniFormASmall' : 'font-family: verdana, Helvetica, Sans; font-size: 8px; fill: black;',
+  'miniFormATotal' : 'font-family: verdana, Helvetica, Sans; font-size: 16px; font-weight: bold; fill: black;',
   // Form A styles
-  'formATextTiny' : 'font-family: verdana, helvetica, sans; font-size: 8px; fill: black;',
-  'formATextSmall' : 'font-family: verdana, helvetica, sans; font-size: 10px; fill: black;',
-  'formAText' : 'font-family: verdana, helvetica, sans; font-size: 12px; fill: black;',
-  'formATextBold' : 'font-family: verdana, helvetica, sans; font-size: 12px; font-weight: bold; fill: black;',
-  'formATextBold8px' : 'font-family: verdana, helvetica, sans; font-size: 8px; font-weight: bold; fill: black;',
-  'formATextBold9px' : 'font-family: verdana, helvetica, sans; font-size: 9px; font-weight: bold; fill: black;',
-  'formATextBold10px' : 'font-family: verdana, helvetica, sans; font-size: 10px; font-weight: bold; fill: black;',
-  'formATextBold11px' : 'font-family: verdana, helvetica, sans; font-size: 11px; font-weight: bold; fill: black;',
-  'formATextBold12px' : 'font-family: verdana, helvetica, sans; font-size: 12px; font-weight: bold; fill: black;',
-  'formATextBold13px' : 'font-family: verdana, helvetica, sans; font-size: 13px; font-weight: bold; fill: black;',
-  'formATextMedium' : 'font-family: verdana, helvetica, sans; font-size: 15px; fill: black;',
-  'formATextLarge' : 'font-family: verdana, helvetica, sans; font-size: 18px; fill: black;',
-  'formATextXL' : 'font-family: verdana, helvetica, sans; font-size: 21px; fill: black;',
-  'formATextHuge' : 'font-family: verdana, helvetica, sans; font-size: 40px; fill: black;',	// Ajout Modif GG 2017
-  'formATextBoldHuge' : 'font-family: verdana, helvetica, sans; font-size: 40px; font-weight: bold; fill: black;',
+  'formATextTiny' : 'font-family: verdana, Helvetica, Sans; font-size: 8px; fill: black;',
+  'formATextSmall' : 'font-family: verdana, Helvetica, Sans; font-size: 10px; fill: black;',
+  'formAText' : 'font-family: verdana, Helvetica, Sans; font-size: 12px; fill: black;',
+  'formATextBold' : 'font-family: verdana, Helvetica, Sans; font-size: 12px; font-weight: bold; fill: black;',
+  'formATextBold8px' : 'font-family: verdana, Helvetica, Sans; font-size: 8px; font-weight: bold; fill: black;',
+  'formATextBold9px' : 'font-family: verdana, Helvetica, Sans; font-size: 9px; font-weight: bold; fill: black;',
+  'formATextBold10px' : 'font-family: verdana, Helvetica, Sans; font-size: 10px; font-weight: bold; fill: black;',
+  'formATextBold11px' : 'font-family: verdana, Helvetica, Sans; font-size: 11px; font-weight: bold; fill: black;',
+  'formATextBold12px' : 'font-family: verdana, Helvetica, Sans; font-size: 12px; font-weight: bold; fill: black;',
+  'formATextBold13px' : 'font-family: verdana, Helvetica, Sans; font-size: 13px; font-weight: bold; fill: black;',
+  'formATextMedium' : 'font-family: verdana, Helvetica, Sans; font-size: 15px; fill: black;',
+  'formATextLarge' : 'font-family: verdana, Helvetica, Sans; font-size: 18px; fill: black;',
+  'formATextXL' : 'font-family: verdana, Helvetica, Sans; font-size: 21px; fill: black;',
+  'formATextHuge' : 'font-family: verdana, Helvetica, Sans; font-size: 40px; fill: black;',	// Ajout Modif GG 2017
+  'formATextBoldHuge' : 'font-family: verdana, Helvetica, Sans; font-size: 40px; font-weight: bold; fill: black;',
   'formLine' : 'stroke: black; stroke-width: 1px; fill: none;',
   'formLineBold' : 'stroke: black; stroke-width: 4px; fill: none;',
   // Print styles
   'formBackground' : 'fill: white;',
   'modifiedK' : 'font-family: monospace; font-size: 8px; color: red; fill: red;',
-  'printNotes' : 'font-family: verdana, helvetica, sans; font-size: 24px; fill: black;',
+  'printNotes' : 'font-family: verdana, Helvetica, Sans; font-size: 24px; fill: black;',
   'sequenceString' : 'font-family: monospace; font-size: 8px; color: blue; fill: blue; word-wrap: break-word;',
   'sequenceStringBW' : 'font-family: monospace; font-size: 8px; color: grey; fill: grey; word-wrap: break-word;',
   'windArrow' : 'stroke: black; stroke-width: 1.5px; fill: white;',

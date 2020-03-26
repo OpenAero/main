@@ -1,4 +1,4 @@
-// OpenAero rules19-aac.js file
+﻿// OpenAero rules19-aac.js file
 
 // This file is part of OpenAero.
 

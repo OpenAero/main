@@ -1,4 +1,4 @@
-// OpenAero rules19-glider-iac.js file
+﻿// OpenAero rules19-glider-iac.js file
 
 // This file is part of OpenAero.
 

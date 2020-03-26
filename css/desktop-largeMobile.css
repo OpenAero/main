@@ -1,4 +1,4 @@
-/*
+﻿/*
  desktop-tablet.css
  This file is part of OpenAero.
 
@@ -560,6 +560,7 @@ table#figureChooserColumns {
   position: relative;
   float: left;
   margin: 3px;
+  border-spacing: 4px;
   border: 1px solid blue;
   border-radius: 10px;
 }
@@ -571,7 +572,6 @@ table#figureChooserColumns {
   width: 120px;
   height: 100px;
   border-radius: 10px;
-  margin: 1px;
   text-align: center;
   font-size: 1.5em;
   font-weight: bold;
@@ -616,7 +616,7 @@ table#figureChooserColumns {
   position: absolute;
 }
 #fuSequence .prevRight::before {
-  right: -18px;
+  right: -20px;
   top: 41px;
   font-family: 'Material Icons';
   font-size: 36px;
@@ -625,8 +625,8 @@ table#figureChooserColumns {
 	content: 'arrow_back';
 }
 #fuSequence .prevRightTop::before {
-  right: -18px;
-  top: -18px;
+  right: -20px;
+  top: -20px;
   font-family: 'Material Icons';
   font-size: 36px;
   direction: ltr;
@@ -636,7 +636,7 @@ table#figureChooserColumns {
 }
 #fuSequence .prevTop::before {
   right: 51px;
-  top: -18px;
+  top: -20px;
   font-family: 'Material Icons';
   font-size: 36px;
   direction: ltr;
@@ -644,8 +644,8 @@ table#figureChooserColumns {
 	content: 'arrow_downward';
 }
 #fuSequence .prevLeftTop::before {
-  left: -18px;
-  top: -18px;
+  left: -20px;
+  top: -20px;
   font-family: 'Material Icons';
   font-size: 36px;
   direction: ltr;
@@ -654,7 +654,7 @@ table#figureChooserColumns {
   transform: rotate(-45deg);
 }
 #fuSequence .prevLeft::before {
-  left: -18px;
+  left: -20px;
   top: 41px;
   font-family: 'Material Icons';
   font-size: 36px;

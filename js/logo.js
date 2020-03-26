@@ -1,4 +1,4 @@
-// logo.js
+﻿// logo.js
 
 // This file is part of OpenAero.
 

@@ -1,4 +1,4 @@
-/*
+﻿/*
  general.css
  This file is part of OpenAero.
 
@@ -678,7 +678,8 @@ textarea {
   clear: left;
 }
 .clearNone {
-  clear: none;
+  clear: none !important;
+  width: auto !important;
 }
 .noDisplay {
   display: none !important;
@@ -867,10 +868,11 @@ html.framed ol {
   margin: 0;
 }
 .content.content2cols, .content.content3cols {
-  float: left;
-  box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  clear: none;
+    float: left;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    clear: none;
+    overflow: visible;
 }
 .divider {
   border-bottom: 1px solid rgba(0,0,0,0.2);
@@ -950,7 +952,7 @@ html.framed ol {
   width: 97%;
 }
 .docs table tr td {
-  padding: 1em;
+  padding: 0.2em;
 }
 .docs table table tr {
   border: 0;
@@ -1358,10 +1360,6 @@ option.used {
 }
 
 /* print dialog */
-#formRL {
-  float: left;
-  white-space: nowrap;
-}
 .twoLine {
   float: right;
   transform : scale(1.5,3) translate(0,3px);
@@ -1386,9 +1384,27 @@ option.used {
   -o-transition: height 0.2s, opacity 0.2s;
   transition: height 0.2s, opacity 0.2s;
 }
+.pageSet {
+    display: inline-block;
+    box-shadow: 1px 1px 4px rgba(0,0,0,0.4);
+    padding: 0;
+    margin: 4px !important;
+}
+.singlePage {
+    display: inline-block;
+    margin: 4px !important;
+    width: 20px;
+    height: 32px;
+    padding: 4px;
+    color: orange;
+    background-color: white;
+    font-size: 16px;
+    font-weight: bold;
+}
 #printFormGrid {
   z-index: 100;
 }
+
 #pilotCardLayout.folded {
   margin: 4px;
   opacity: 0;
@@ -2386,6 +2402,10 @@ table#figureChooserTable div {
   position: relative;
   display: inline-block;
   top: 3px;
+}
+
+.material-switch.left {
+    float: none;
 }
 
 /* switch background */

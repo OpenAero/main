@@ -1,4 +1,4 @@
-/* docs.js
+﻿/* docs.js
 
 This file is part of OpenAero.
 
@@ -28,7 +28,12 @@ function load () {
 	if (window.Windows) {
 		var els = document.getElementsByClassName ('noUWP');
 		for (var i = 0; i < els.length; i++) els[i].classList.add ('noDisplay');
-	}
+    }
+    // do not display nodes with class noIOS on IOS
+    if (/i(Pad|Phone|Pod)/i.test(navigator.userAgent)) {
+        var els = document.getElementsByClassName('noIOS');
+        for (var i = 0; i < els.length; i++) els[i].classList.add('noDisplay');
+    }
 }
 
 // This is the service worker with the Cache-first network

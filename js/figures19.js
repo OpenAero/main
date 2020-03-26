@@ -1,4 +1,4 @@
-// figures19.js
+﻿// figures19.js
 
 // This file is part of OpenAero.
 

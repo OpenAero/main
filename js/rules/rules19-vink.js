@@ -1,4 +1,4 @@
-// OpenAero rules19-vink.js file
+﻿// OpenAero rules19-vink.js file
 
 // This file is part of OpenAero.
 

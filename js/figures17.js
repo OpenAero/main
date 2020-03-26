@@ -1,4 +1,4 @@
-// figures17.js
+﻿// figures17.js
 
 // This file is part of OpenAero.
 

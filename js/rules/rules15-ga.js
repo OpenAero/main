@@ -1,4 +1,4 @@
-// OpenAero rules15-ga.js file
+﻿// OpenAero rules15-ga.js file
  
 // This file is part of OpenAero.
  

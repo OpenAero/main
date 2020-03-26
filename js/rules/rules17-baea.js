@@ -1,4 +1,4 @@
-// OpenAero rules17-baea.js file
+﻿// OpenAero rules17-baea.js file
 
 // This file is part of OpenAero.
 

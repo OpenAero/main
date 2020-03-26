@@ -1,4 +1,4 @@
-// OpenAero rules20-nzac.js file
+﻿// OpenAero rules20-nzac.js file
 
 // This file is part of OpenAero.
 

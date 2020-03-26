@@ -1,4 +1,4 @@
-// OpenAero rules16-sac.js file
+﻿// OpenAero rules16-sac.js file
  
 // This file is part of OpenAero.
  

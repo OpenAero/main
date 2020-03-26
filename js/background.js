@@ -1,5 +1,5 @@
-chrome.app.runtime.onLaunched.addListener(function(launchData) {
-  
+﻿chrome.app.runtime.onLaunched.addListener(function(launchData) {
+ 
   function onWindowCreated(win) {
     appWin = win;
     // add listener for bound changes

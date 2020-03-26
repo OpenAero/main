@@ -1,4 +1,4 @@
-/* 
+﻿/* 
  * steganography.js v1.0.1
  * 
  * Copyright (C) 2012, Peter Eigenschink (http://www.peter-eigenschink.at/)

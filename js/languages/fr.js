@@ -487,7 +487,11 @@ lang.fr = {
 'printMultiWait' : 'Impression de %s programmes.<br>Ceci peut ' +
   'prendre du temps. Patienter, svp...',
 'printNotes' : 'Annotations (haut de page)',
-'printPilotCards' : 'Fiche pilote',
+    // new 2020.1.5
+    'printPageSet': 'Ensemble de pages',
+    'printPageSetHidesFormSelectors': 'Lorsque "Ensemble de pages" est actif, ' +
+        'les autres sélecteurs de formulaire sont masqués.',
+    'printPilotCards': 'Fiche pilote',
 'printSaveForms' : 'Imprimer / Enregistrer image',
 'printSavePdf' : 'Imprimer / Enregistrer PDF',
 'printSF' : 'Numéro de Super Famille',
@@ -675,7 +679,13 @@ lang.fr = {
   '<li>Autres corrections et améliorations (lisez <a id="changelog">' +
   'changelog.txt</a> si intéressé)</li>' +
   '</ul>',
-'view' : 'Affichage',
+    'view': 'Affichage',
+    'warningChrome': '<p><i class="material-icons" style="color:red">warning</i> ' +
+        'Vous utilisez l\'application Chrome. Cela ne sera plus pris en charge par ' +
+        'Google dans un proche avenir.Une nouvelle application est disponible qui ' +
+        'comprend la création de séquences hors ligne.Souhaitez - vous désinstaller ' +
+        'cette application maintenant et installer la nouvelle application à partir ' +
+        'du <b>menu Outils</b> sur https://openaero.net?</p>',
 'warningNewerVersion' : '<p>Ce programme a été créé avec une version ' +
   'd\'OpenAero plus récente que celle que vous utilisez actuellement. ' +
   'Il utilise peut être de nouvelles fonctions. Vérifiez ' +
@@ -703,7 +713,15 @@ lang.fr = {
   '"Tableau des figures" et contient une ou plusieurs figures avec des ' +
   'changements d\'axes (symboles ^ ou >). Ces figures étaient dessinées ' +
   'différement par les anciennes versions d\'OpenAero. Vérifiez bien que les ' +
-  'sens relatifs d\'entrée/sortie sont corrects (même sens ou sens opposé).',
+        'sens relatifs d\'entrée/sortie sont corrects (même sens ou sens opposé).',
+    'warningPre20192': '<p>Le fichier que vous venez d\'ouvrir a été créé avec une ' +
+        'version d\'OpenAero antérieure à 2019.2. En outre, il contient une ou ' +
+        'plusieurs figures de la famille 1.2.11 ou 1.2.12 (figures triangulaires ' +
+        'avec un demi-rouleau sur une ligne de 45 degrés).Celles-ci étaient ' +
+        'incorrectement codées dans les anciennes versions d\'OpenAero.Ils ont ' +
+        'maintenant été corrigés automatiquement.Néanmoins, veuillez vérifier la ' +
+        'séquence pour vous assurer que leurs directions et attitudes de sortie ' +
+        'sont correctes.</p>',
 'wind' : 'V E N T  ',
 'windIAC' : 'sens du vent',
 'wingRocks' : 'Battem. d\'Ailes',
