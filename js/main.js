@@ -4588,7 +4588,7 @@ function doOnLoad() {
                     // add status bar inside webview
                     var bar = document.getElementById('cordovaStatusBar');
                     bar.classList.remove('noDisplay');
-                    bar.nextElementSibling.style.top = '20px';
+                    bar.nextElementSibling.style.top = '32px';
 
                     break;
                 case 'android':
@@ -12712,6 +12712,22 @@ function makeFormPilotCard() {
     }
 }
 
+// makeFormDescription creates a form that contains the figures
+// in describing text form. Can be used by a caller
+function makeFormDescription(svg) {
+    var text = '';
+    for (var i = 0; i < figures.length; i++) {
+        if (figures[i].aresti) {
+            text += '<p><strong>Figure ' + figures[i].seqNr + '</strong><br />';
+            for (var j = 0; j < figures[i].description.length; j++) {
+                text += (j + 1) + '. ' + figures[i].description[j] + '<br />';
+            }
+            text += '</p>';
+        }
+    }
+    console.log(text);
+    drawTextArea(text, 0, 0, 800, 1130, 'formAText', 'textBox', svg);
+}
 // addFormElements adds wind & mini form A and adjusts size
 function addFormElements(form) {
     // Find out how big the SVG has become and adjust margins
@@ -12839,6 +12855,8 @@ function draw() {
             break;
         case 'FU':
             makeFree();
+            break;
+        case 'D':
             break;
         default:
             makeFormGrid(document.getElementById('gridColumns').value,
@@ -14693,7 +14711,7 @@ function buildForms(win, callback) {
         // go through the pages by parsing printPageSetString
         var string = document.getElementById('printPageSetString').value.toUpperCase();
         for (var i = 0; i < string.length; i++) {
-            if (/[ABCRLG_ ]/.test(string[i]) ||
+            if (/[ABCRLGD_ ]/.test(string[i]) ||
                 (/[0-9][><]|[TF][><=]/.test(string.substring(i, i + 2)))) {
                 if (/[BCG]\+|[0-9][><]|[TF][><=]/.test(string.substring(i, i + 2))) {
                     activeForm = string.substring(i, i + 2);
@@ -14947,7 +14965,9 @@ function buildForm(print) {
         case 'R':
             addFormElementsLR(mySVG, print);
             break;
-
+        case 'D':
+            makeFormDescription(mySVG);
+            break;
         default:
             // Find the size and adjust scaling if necessary, upscaling to a
             // maximum factor of 2.
@@ -16310,7 +16330,8 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figure_chooser) {
         // entryAxis identifies the axis on which the figure starts
         entryAxis = ((Direction == 0) || (Direction == 180)) ? 'X' : 'Y',
         entryAtt = Attitude,
-        entryDir = Direction;
+        entryDir = Direction,
+        description = [];
 
     // goFront is set to true for every new figure that starts to front
     if (((Direction == 90) && (Attitude == 0)) || ((Direction == 270) && (Attitude == 180))) {
@@ -17419,6 +17440,9 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figure_chooser) {
             default:
                 if (figureDraw.charAt(i) in drawAngles) {
                     var angle = parseInt(drawAngles[figureDraw.charAt(i)]);
+                    // add text to description
+                    description.push(sprintf(
+                        angle > 0 ? userText.pullLoop : userText.pushLoop, Math.abs(angle)));
                     // Draw sharp angles for corners less than 180 unless
                     // specifically told to make a curve by '=' symbol
                     if ((Math.abs(angle) < 180) && (figureDraw.charAt(i + 1) != '=')) {
@@ -17537,6 +17561,7 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figure_chooser) {
 
     // The figure is complete. Create the final figure object for later
     // processing such as drawing Forms and point & click figure editing
+    figures[figStringIndex].description = description;
     figures[figStringIndex].paths = paths;
     figures[figStringIndex].aresti = arestiNrs;
     figures[figStringIndex].k = kFactors;

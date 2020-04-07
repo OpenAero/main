@@ -23,13 +23,7 @@
    mobile versions */
 
 /* General styling */
-/*
-html {
-	position: fixed;
-}
-body {
-	position: absolute;
-}*/
+
 html, body {
 	height: 100%;
 	width: 100%;

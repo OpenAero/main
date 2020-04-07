@@ -3,6 +3,7 @@
 * added quarter clovers to the allowed figures for IAC Intermediate Free
 * fixed UWP horizontal drag & drop of figures
 * fixed deselection of dragged figure which was previously repositioned (Issue #231)
+* fixed notch protruding into sequence string on newer iPhones
 
 2020.1.5
 * added option for printing complex sets of pages (Issue #216)

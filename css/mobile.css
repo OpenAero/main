@@ -29,12 +29,12 @@ body.menuOpen {
   overflow-y: hidden;
 }
 #cordovaStatusBar {
-	position: absolute;
-	top: 0;
-	right: 0;
-	left: 0;
-	height: 20px;
-	background-color: #ede7f6;
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: 32px;
+    background-color: #ede7f6;
 }
 #topBlock {
 	height: 56px;
