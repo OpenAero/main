@@ -12718,11 +12718,11 @@ function makeFormDescription(svg) {
     var text = '<div style="width: 800px;height: 990px;column-count: 3;">';
     for (var i = 0; i < figures.length; i++) {
         if (figures[i].aresti) {
-            text += '<p style="break-inside: avoid;"><strong>Figure ' + figures[i].seqNr + '</strong><br />';
+            text += '<div style="break-inside: avoid;"><strong>Figure ' + figures[i].seqNr + '</strong><ol>';
             for (var j = 0; j < figures[i].description.length; j++) {
-                text += (j + 1) + '. ' + figures[i].description[j] + '<br />';
+                text += '<li>' + figures[i].description[j] + '</li>';
             }
-            text += '</p>';
+            text += '</ol></div>';
         }
     }
     text += '</div>';
