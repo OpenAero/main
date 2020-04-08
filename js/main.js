@@ -12715,18 +12715,19 @@ function makeFormPilotCard() {
 // makeFormDescription creates a form that contains the figures
 // in describing text form. Can be used by a caller
 function makeFormDescription(svg) {
-    var text = '';
+    var text = '<div style="width: 800px;height: 990px;column-count: 3;">';
     for (var i = 0; i < figures.length; i++) {
         if (figures[i].aresti) {
-            text += '<p><strong>Figure ' + figures[i].seqNr + '</strong><br />';
+            text += '<p style="break-inside: avoid;"><strong>Figure ' + figures[i].seqNr + '</strong><br />';
             for (var j = 0; j < figures[i].description.length; j++) {
                 text += (j + 1) + '. ' + figures[i].description[j] + '<br />';
             }
             text += '</p>';
         }
     }
-    console.log(text);
-    drawTextArea(text, 0, 0, 800, 1130, 'formAText', 'textBox', svg);
+    text += '</div>';
+    drawTextArea(text, 0, 0, 800, 990, 'formATextLarge', 'textBox', svg);
+    addFormElementsGrid(svg);
 }
 // addFormElements adds wind & mini form A and adjusts size
 function addFormElements(form) {
@@ -15710,7 +15711,7 @@ function addFormElementsGrid(svg) {
     svg.setAttribute("height", '100%');
     svg.setAttribute("viewBox", '0 0 800 1130');
 
-    if (/^G\+/.test(activeForm)) {
+    if (/^G\+|D/.test(activeForm)) {
         var children = svg.childNodes;
         for (var i = 0; i < children.length; i++) {
             children[i].setAttribute('transform',
