@@ -204,7 +204,7 @@ var seqCheckAvail = {};
 var checkAllowCatId = [];  // Catalogue Numbers for allowed figures
 var checkCatGroup = [];
 var figCheckLine = [];
-var rulesActive = false;   // Are rules active?
+var activeRules = false;   // Are rules active? If so, is object {description: ,logo:}
 var infoCheck = [];        // Seq info fields to be filled out when saving or printing
 var figureLetters = '';    // Letters that can be assigned to individual figures
 var additionalFig = { 'max': 0, 'totalK': 0 };    // Additional figures, max and K
@@ -1416,11 +1416,6 @@ function switchSmallMobile() {
     var svg = document.getElementById('svgContainer');
     var showHandles = document.getElementById('showHandles');
     if (platform.smallMobile) {
-        if (platform.cordova && screen.orientation) {
-            screen.orientation.lock('portrait');
-        }
-        // set viewport
-        // windowResize();
         // hide Free (Un)known designer menu item
         document.getElementById('t_fuDesigner').parentNode.classList.add('noDisplay');
         // set smallMobile css
@@ -1440,6 +1435,10 @@ function switchSmallMobile() {
             document.getElementById('main'));
         // show tiny form A
         miniFormA = 'tiny';
+        // lock orientation in portrait on Cordova
+        if (platform.cordova && screen.orientation) {
+            screen.orientation.lock('portrait');
+        }
     } else {
         if (platform.cordova && screen.orientation) {
             screen.orientation.unlock();
@@ -1927,7 +1926,7 @@ function printMultiDialog() {
     clearFileListContainer(document.getElementById('fileDropPrintFiles'));
 
     var el = document.getElementById('printMultiCurrentRules');
-    el.innerHTML = rulesActive ? rulesActive.replace(/ /g, '&nbsp;') : userText.none;
+    el.innerHTML = activeRules ? activeRules.description.replace(/ /g, '&nbsp;') : userText.none;
 
     setPrintPageSet();
     document.getElementById('printDialog').classList.remove('noDisplay');
@@ -2366,7 +2365,7 @@ function getSuperFamily(aresti, category) {
     category = category.toLowerCase();
     superFamily = superFamilies[category] || superFamilies.advanced;
     // set Super Family from rules
-    if (rulesActive && ruleSuperFamily.length) {
+    if (activeRules && ruleSuperFamily.length) {
         superFamily = ruleSuperFamily;
     }
 
@@ -5060,7 +5059,7 @@ function addEventListeners() {
     document.getElementById('t_formA').parentNode.addEventListener('mousedown', function () { selectForm('A') }, false);
     document.getElementById('t_formB').parentNode.addEventListener('mousedown', function () { selectForm('B') }, false);
     document.getElementById('t_formC').parentNode.addEventListener('mousedown', function () { selectForm('C') }, false);
-    document.getElementById('t_figsInGrid').parentNode.addEventListener('mousedown', function () { selectForm('Grid') }, false);
+    document.getElementById('t_figsInGrid').parentNode.addEventListener('mousedown', function () { selectForm('G') }, false);
     document.getElementById('zoomMin').addEventListener('mousedown', function () { appZoom(-1) }, false);
     document.getElementById('zoomPlus').addEventListener('mousedown', function () { appZoom(1) }, false);
 
@@ -5129,7 +5128,7 @@ function addEventListeners() {
     document.getElementById('gridInfo').addEventListener('mousemove', Drag);
 
     document.getElementById('gridColumns').addEventListener('change', updateGridColumns);
-    document.getElementById('gridOrderBy').addEventListener('change', function () { selectForm('Grid'); });
+    document.getElementById('gridOrderBy').addEventListener('change', function () { selectForm('G'); });
     document.getElementById('manual_html_grid_system').addEventListener('mousedown', function () {
         helpWindow('doc/manual.html#grid_system', 'Grid system');
     }, false);
@@ -5745,7 +5744,7 @@ function addRollSelectElement(figNr, rollEl, elNr, parent) {
     var
         thisRoll = figures[figNr].rollInfo[rollEl],
         thisAttitude = rollAttitudes[thisRoll.attitude],
-        ruleCheckRolls = rulesActive &&
+        ruleCheckRolls = activeRules &&
             (Object.keys(checkAllowCatId).length > 0),
         pattern = '',
         span = document.createElement('span'),
@@ -5937,7 +5936,9 @@ function createProgramme(year, rnLower, rules, cat, seq, string) {
         '<category>' + cat + '</category>' +
         '<program>' + seq + '</program>' +
         '<sequence_text>' + string + '</sequence_text>';
-    if (rulesLogo[rules.toLowerCase()]) {
+    if (activeRules && activeRules.logo) {
+        sequence += '<logo>' + activeRules.logo + '</logo>';
+    } else if (rulesLogo[rules.toLowerCase()]) {
         sequence += '<logo>' + rulesLogo[rules.toLowerCase()] + '</logo>';
     }
     sequence += '<oa_version>' + version + '</oa_version></sequence>';
@@ -6340,7 +6341,7 @@ function updateRollSymbolSize() {
 // updateGridColumns is called when "Grid columns" is changed in settings
 function updateGridColumns() {
     saveSettingsStorage();
-    selectForm('Grid');
+    selectForm('G');
 }
 
 // setPilotCardForm will show or hide pilot card options
@@ -7440,7 +7441,7 @@ function getLatestVersion() {
 function getStableVersion(f) {
     var xhr = new XMLHttpRequest();
     xhr.timeout = 5000;
-
+    
     if (platform.cordova && platform.ios) {
         // only check when online as this might crash when offline on iOS 12
         xhr.onload = function () {
@@ -7456,7 +7457,7 @@ function getStableVersion(f) {
     } else {
         xhr.onload = function () { f(xhr.response) };
     }
-
+    
     xhr.onerror = xhr.ontimeout = function () { f(false) };
     xhr.open('GET', 'https://openaero.net/openaero.php?v', true);
     xhr.send();
@@ -7626,7 +7627,7 @@ function buildFigureXML() {
                 // if rules are loaded, check if letter is allowed accordingly
                 if ((figureLetters.indexOf(figures[i].unknownFigureLetter) > -1) ||
                     (additionalFig.max && (figures[i].unknownFigureLetter === 'L')) ||
-                    !rulesActive) {
+                    !activeRules) {
                     var letter = f.appendChild(document.createElement('letter'));
                     letter.appendChild(document.createTextNode(figures[i].unknownFigureLetter));
                 }
@@ -7722,7 +7723,7 @@ function changeCombo(id, callback) {
         e.nextElementSibling.innerHTML = userText[e.id];
     }
 
-    var rulesActiveSave = rulesActive,
+    var activeRulesSave = activeRules ? JSON.parse(JSON.stringify(activeRules)) : false,
         rules = document.getElementById('rules'),
         ruleName = getRuleName(),
         category = document.getElementById('category'),
@@ -7731,7 +7732,7 @@ function changeCombo(id, callback) {
         programName = program.value.toLowerCase();
 
     if (id === 'rules') {
-        // set logo
+        // set default logo for rules
         if (rulesLogo[ruleName]) selectLogo(rulesLogo[ruleName]);
 
         // set CIVA or IAC forms default
@@ -8447,13 +8448,16 @@ function activateRules(data) {
     checkAllowCatId = data.checkAllowCatId;
     checkCatGroup = data.checkCatGroup;
     infoCheck = data.infoCheck;
-    rulesActive = data.rulesActive;
+    activeRules = data.activeRules;
     ruleSuperFamily = data.ruleSuperFamily;
 
-    // set the rulesActive marker and fold rules section
+    // set the activeRules marker and fold rules section
     document.getElementById('rulesActive').classList.add('good');
     document.getElementById('rulesLabel').parentNode.classList.remove('expanded');
     panelHeader(document.getElementById('activeRules'));
+
+    // set a rule based logo if applicable
+    if (activeRules.logo) selectLogo(activeRules.logo);
 
     if (data.updatedFig) fig = data.updatedFig;
 
@@ -8499,7 +8503,7 @@ function unloadRules(updatedFig) {
     el.disabled = false;
 
     figureLetters = '';
-    rulesActive = false;
+    activeRules = false;
     document.getElementById('rulesActive').classList.remove('good');
 
     // remove disable property of positioning and harmony
@@ -8571,9 +8575,9 @@ function checkSequence(show) {
             div.classList.add('noDisplay');
         } else {
             div.classList.remove('noDisplay');
-            if (rulesActive) {
+            if (activeRules) {
                 var content = '<div class="divider">' + userText.checkingRules +
-                    ' : ' + rulesActive + '</div>';
+                    ' : ' + activeRules.description + '</div>';
             } else {
                 var content = '';
             }
@@ -8584,7 +8588,7 @@ function checkSequence(show) {
             contentDiv.removeChild(contentDiv.firstChild);
             if (contentDiv.innerHTML == '') {
                 // no alerts
-                if (rulesActive) {
+                if (activeRules) {
                     contentDiv.innerHTML = content + userText.sequenceCorrect;
                 } else {
                     contentDiv.innerHTML = content;
@@ -8788,7 +8792,7 @@ function checkInfo() {
         el[i].classList.remove('checkInfo');
     }
     // when no rules are active, revert to default: pilot, actype, acreg
-    if (!rulesActive) infoCheck = ['pilot', 'actype', 'acreg'];
+    if (!activeRules) infoCheck = ['pilot', 'actype', 'acreg'];
     // add red borders to missing info
     for (var i = 0; i < infoCheck.length; i++) {
         el = document.getElementById(infoCheck[i]);
@@ -8903,7 +8907,7 @@ function availableFigureGroups() {
         }
     }
     if ((Object.keys(checkAllowCatId).length > 0) &&
-        rulesActive &&
+        activeRules &&
         (document.getElementById('hideIllegal').checked == true) &&
         (activeForm !== 'FU')) {
         // now show all options that are applicable
@@ -9295,7 +9299,7 @@ function markNotAllowedFigures() {
                 illegalFigure();
             } else if ((sportingClass.value === 'glider') && (fig[td[j].id].kGlider == 0)) {
                 illegalFigure();
-            } else if (rulesActive) {
+            } else if (activeRules) {
                 if (Object.keys(checkAllowCatId).length > 0) {
                     var aresti = fig[td[j].id].aresti;
                     if (!fig[td[j].id].kRules) {
@@ -9773,7 +9777,7 @@ function makeMiniFormA(x, y, tiny) {
         drawText('Total K', blockX + 32, blockY + 17, 'formATextMedium', 'middle');
         drawText(figureK, blockX + 32, blockY + 38, 'formATextXL', 'middle');
         // add maximum K (corrected for Floating Point) where applicable
-        if (rulesActive && checkCatGroup.k && checkCatGroup.k.max) {
+        if (activeRules && checkCatGroup.k && checkCatGroup.k.max) {
             var max = checkCatGroup.k.max;
             if (checkCatGroup.floatingPoint) max -= checkCatGroup.floatingPoint;
             drawText('Max K', blockX + totalWidth / 2, blockY + 54,
@@ -9789,7 +9793,7 @@ function makeMiniFormA(x, y, tiny) {
     } else {
         drawText('Total K = ' + figureK, blockX + 4, blockY + 17, 'miniFormATotal');
         // add maximum K (corrected for Floating Point) where applicable
-        if (rulesActive && checkCatGroup.k && checkCatGroup.k.max) {
+        if (activeRules && checkCatGroup.k && checkCatGroup.k.max) {
             var max = checkCatGroup.k.max;
             if (checkCatGroup.floatingPoint) max -= checkCatGroup.floatingPoint;
             drawText('(max K = ' + max + ')',
@@ -9805,7 +9809,7 @@ function makeMiniFormA(x, y, tiny) {
     // add text when K has been modified by rules
     if (modifiedK.length) {
         var text = drawTextArea(
-            changedFigureKText(modifiedK, rulesActive),
+            changedFigureKText(modifiedK, activeRules.description),
             blockX + 4,
             blockY + 4,
             totalWidth - 8,
@@ -9896,7 +9900,7 @@ function makeTinyFormA(x, y) {
     drawText('Total K', blockX + 32, blockY + 17, 'formATextMedium', 'middle');
     drawText(figureK, blockX + 32, blockY + 36, 'formATextLarge', 'middle');
     // add maximum K (corrected for Floating Point) where applicable
-    if (rulesActive && checkCatGroup.k && checkCatGroup.k.max) {
+    if (activeRules && checkCatGroup.k && checkCatGroup.k.max) {
         var max = checkCatGroup.k.max;
         if (checkCatGroup.floatingPoint) max -= checkCatGroup.floatingPoint;
         drawText('Max K', blockX + 32, blockY + 54, 'formATextMedium', 'middle');
@@ -9911,7 +9915,7 @@ function makeTinyFormA(x, y) {
     // add text when K has been modified by rules
     if (modifiedK.length) {
         var text = drawTextArea(
-            changedFigureKText(modifiedK, rulesActive),
+            changedFigureKText(modifiedK, activeRules.description),
             blockX + 4,
             blockY + 4,
             56,
@@ -11650,8 +11654,8 @@ function buildFuFiguresTab() {
 // changedFigureKText creates a well-formatted string
 function changedFigureKText(figs) {
     if (figs && figs.length > 1) {
-        return sprintf(userText.changedFigureKMulti, figs.join(','), rulesActive);
-    } else return sprintf(userText.changedFigureK, figs[0], rulesActive);
+        return sprintf(userText.changedFigureKMulti, figs.join(','), activeRules.description);
+    } else return sprintf(userText.changedFigureK, figs[0], activeRules.description);
 }
 
 // makeFormA creates Form A from the figures object
@@ -11867,7 +11871,7 @@ function makeFormA() {
         }
     }
     if (modifiedK.length) {
-        drawText(changedFigureKText(modifiedK, rulesActive),
+        drawText(changedFigureKText(modifiedK, activeRules.description),
             0, y + 12, 'miniFormAModifiedK', 'start', '', svgElement);
         SVGRoot.setAttribute("viewBox", '0 0 800 1020');
     } else SVGRoot.setAttribute("viewBox", '0 0 800 1000');
@@ -12063,7 +12067,7 @@ function makeFormGrid(cols, width, svg) {
     // update viewbox and svg height
     var height = y + ch + 2;
     if (modifiedK.length) {
-        drawText(changedFigureKText(modifiedK, rulesActive),
+        drawText(changedFigureKText(modifiedK, activeRules.description),
             0, -4, 'miniFormAModifiedK', 'start', '', svgElement);
         height += 12;
         svg.setAttribute("viewBox", '-1 -13 ' + (width + 2) + ' ' + height);
@@ -12484,7 +12488,7 @@ function makeFree() {
             var div = document.createElement('div');
             div.classList.add('UFKInFigure');
             div.innerHTML = 'Total K: ' + totalK;
-            if (rulesActive && checkCatGroup.k && checkCatGroup.k.max) {
+            if (activeRules && checkCatGroup.k && checkCatGroup.k.max) {
                 div.innerHTML += '<br />Max K: ' + checkCatGroup.k.max;
             }
             td.appendChild(div);
@@ -12681,7 +12685,7 @@ function makeFree() {
                 // set Free figure defaults. Should be overridden by rules
                 var freeFigMin = 5;
                 var freeFigMax = 5;
-                if (rulesActive && checkCatGroup && checkCatGroup.basefig) {
+                if (activeRules && checkCatGroup && checkCatGroup.basefig) {
                     freeFigMin = checkCatGroup.basefig.min - (figureLetters.length);
                     freeFigMax = checkCatGroup.basefig.max - (figureLetters.length);
                 }
@@ -12795,7 +12799,7 @@ function displayAlerts() {
             );
         });
         // Add a message to the top to warn if no rules are loaded
-        if (!rulesActive) alertMsgs.unshift(userText.noRules);
+        if (!activeRules) alertMsgs.unshift(userText.noRules);
         // Display messages
         for (var i = 0; i < alertMsgs.length; i++) {
             var span = document.createElement('span');
@@ -13147,38 +13151,21 @@ function updateDefaultView(queue) {
 // sequenceText in Free (Un)Known designer
 function clearSequence() {
     function clear() {
+
         if (activeForm !== 'FU') {
-            // clear all input fields
-            var fields = document.getElementsByTagName('input');
-            var length = fields.length;
-            while (length--) {
-                if (fields[length].type === 'text') fields[length].value = '';
-            }
-
-            var div = document.getElementById('referenceSequenceDialog');
-            div.classList.remove('noDisplay');
-            var fields = document.getElementsByTagName('textarea');
-            var length = fields.length;
-            while (length--) fields[length].value = '';
-            div.classList.add('noDisplay');
-            changeReferenceSequence();
-
-            sequenceText.innerText = '';
-
-            document.getElementById('fu_figures').value = '';
-            document.getElementById('pilot_id').value = '';
-            document.getElementById('flight_nb').value = '';
-
-            rulesWorker.postMessage({ action: 'unloadRules' });
+            // activate empty sequence
+            activateXMLsequence();
+            // set OpenAero version for saving
+            document.getElementById('oa_version').value = version;
             updateDefaultView();
         } else {
             sequenceText.innerText = 'eu';
+            checkSequenceChanged();
+            displayAlerts();
+
+            setSequenceSaved(true);
         }
 
-        checkSequenceChanged();
-        displayAlerts();
-
-        setSequenceSaved(true);
     }
 
     if (!sequenceSaved) {
@@ -13286,14 +13273,13 @@ function openFile(file, handler, params) {
             case 'RulesFile':
                 reader.onload = function (e) {
                     rulesWorker.postMessage(
-                        { action: 'loadedRulesFile', arraybuffer: e.target.result },
-                        [e.target.result])
+                        { action: 'loadedRulesFile', lines: e.target.result })
                 };
                 break;
         }
         reader.onerror = errorHandler;
         if (handler === 'RulesFile') {
-            reader.readAsArrayBuffer(file);
+            reader.readAsText(file);
         } else reader.readAsDataURL(file);
     }
 }
@@ -13326,7 +13312,7 @@ function checkMultiDialog(show) {
 
         div.classList.remove('noDisplay');
         var el = document.getElementById('multiCurrentRules');
-        el.innerHTML = rulesActive ? rulesActive.replace(/ /g, '&nbsp;') : userText.none;
+        el.innerHTML = activeRules ? activeRules.description.replace(/ /g, '&nbsp;') : userText.none;
     } else {
         div.classList.add('noDisplay');
     }
@@ -13500,15 +13486,15 @@ function checkSequenceMulti(body) {
                 div.removeChild(div.firstChild);
 
                 if (div.innerHTML == '') {
-                    if (rulesActive) {
-                        pre.appendChild(document.createTextNode('Rules: ' + rulesActive + '\n'));
+                    if (activeRules) {
+                        pre.appendChild(document.createTextNode('Rules: ' + activeRules.description + '\n'));
                         pre.appendChild(document.createTextNode(userText.sequenceCorrect + '\n'));
                     } else {
                         pre.appendChild(document.createTextNode(userText.noRules + '\n'));
                     }
                 } else {
-                    if (rulesActive) {
-                        pre.appendChild(document.createTextNode('Rules: ' + rulesActive + '\n'));
+                    if (activeRules) {
+                        pre.appendChild(document.createTextNode('Rules: ' + activeRules.description + '\n'));
                     }
                     body.appendChild(div);
                 }
@@ -14339,9 +14325,9 @@ function saveSequence() {
         var xml = activeSequence.xml.replace('</sequence>', '');
         // check if the alerts box contains no alerts. If so, add verified
         // tag
-        if (rulesActive &&
+        if (activeRules &&
             (document.getElementById('alerts').childElementCount < 2)) {
-            xml += '<verified>' + rulesActive + '</verified>';
+            xml += '<verified>' + activeRules.description + '</verified>';
         }
         xml += buildFigureXML();
         xml += buildSettingsXML();
@@ -15310,7 +15296,7 @@ function addCheckResult(svg, pos) {
             d.getHours() + ':' +
             ('0' + d.getMinutes()).slice(-2) + ' ' +
             'OpenAero ' + version + ' ' +
-            (rulesActive ? rulesActive : '') + ' ',
+            (activeRules ? activeRules.description : '') + ' ',
         g = document.createElementNS(svgNS, 'g'),
         // get alerts from alert area
         alertMessages = document.getElementById('alerts').getElementsByTagName('SPAN');
@@ -15319,7 +15305,7 @@ function addCheckResult(svg, pos) {
 
     if (alertMessages.length < 1) { // no messages
         // no alerts
-        if (rulesActive) {
+        if (activeRules) {
             drawText(text + userText.sequenceCorrect, pos.x, pos.y,
                 document.getElementById('blackWhite').checked ? 'sequenceStringBW' : 'sequenceString', '', 'start', g);
         }
@@ -15490,7 +15476,7 @@ function addFormElementsLR(svg, print) {
 
     // add warning for modified K when applicable
     if (modifiedK.length) {
-        drawText(changedFigureKText(modifiedK, rulesActive),
+        drawText(changedFigureKText(modifiedK, activeRules.description),
             10, seqBottom - 8, 'modifiedK', 'start', '', svg);
         seqBottom -= 10;
     }
@@ -16190,26 +16176,6 @@ function svgToPng(svg, callback) {
     // convert svg to canvas
     img.src = url;
 
-    /** OLD CODE. Replaced in 2020.1.5 by code above. Keep for
-     *  a while in case fallback is needed
-     *
-
-  var canvas = document.createElement('canvas');
-  canvas.id = 'canvas';
-  document.lastChild.appendChild (canvas);
-  canvg (canvas, svg);
-
-  if (callback) {
-    setTimeout(function(){
-      // Wait 500ms for canvas to render, then...
-      document.lastChild.removeChild (canvas);
-      callback (canvas);
-    }, 500);
-  } else {
-    // return canvas
-    document.lastChild.removeChild (canvas);
-    return canvas;
-  }*/
 }
 
 // savePDF will save any combination of pages as a single PDF
@@ -18006,7 +17972,7 @@ function parseSequence() {
         // always start figure LTR for Figures in grid view. But this means
         // we have to correct direction switchers if the figure would start
         // on Y axis on Form B
-        if (activeForm === 'G') {
+        if (/^G/.test(activeForm)) {
             formBDirection += Direction;
             if (formBDirection >= 360) formBDirection -= 360;
             if ((formBDirection === 90) || (formBDirection === 270)) {

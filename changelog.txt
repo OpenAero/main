@@ -1,4 +1,17 @@
-﻿2020.1.6
+﻿2020.1.10
+* added 2020 AAC sequences and Sportsman Free rule update
+* added directive to rule files to add a specific logo to specific rules (logo=xxx)
+* updates rules16.js to rules20.js with additional descriptions
+
+2020.1.9
+* fixed issue of "old version warning" introduced by clearSequence fix
+
+2020.1.8
+* fixed broken loadedRulesFile to use a restricted eval
+* added SAA rules for 2020
+* fixed clearSequence to update folded panels
+
+2020.1.6
 * updated France rules and sequences for 2020
 * added quarter clovers to the allowed figures for IAC Intermediate Free
 * fixed UWP horizontal drag & drop of figures

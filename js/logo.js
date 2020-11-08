@@ -30,16 +30,17 @@
 
 // rulesLogo maps a set of sequence rules (in lowercase) to a logo for automatic selection
 var rulesLogo = {
-	'civa':'CIVA',
-  'glider-civa':'CIVA',
-  'vink':'VINK',
-  'baea':'BAeA',
-  'france':'FFAvoltige',
-  'german-aerobatics':'GermanAerobatics',
-  'iac':'IAC',
-  'nzac':'NZAC',
-  'aac':'AAC',
-  'sac':'SAC'
+    'civa': 'CIVA',
+    'glider-civa': 'CIVA',
+    'vink': 'VINK',
+    'baea': 'BAeA',
+    'france': 'FFAvoltige',
+    'german-aerobatics': 'GermanAerobatics',
+    'iac': 'IAC',
+    'nzac': 'NZAC',
+    'aac': 'AAC',
+    'sac': 'SAC',
+    'saa': 'SAA'
 };
 var logoImages = {
 // CIVA logo

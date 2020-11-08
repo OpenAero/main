@@ -1,6 +1,6 @@
 ﻿// This is the service worker with the Cache-first network
 
-const CACHE = "pwabuilder-precache";
+const CACHE = "pwabuilder-precache-OpenAero";
 const precacheFiles = [
 'changelog.txt',
 'cordova.js',
@@ -67,10 +67,10 @@ const precacheFiles = [
 'js/main.js',
 'js/rules/rules15-ga.js',
 'js/rules/rules16-sac.js',
-'js/rules/rules16.js',
+'js/rules/rules20.js',
 'js/rules/rules17-baea.js',
 'js/rules/rules20-france.js',
-'js/rules/rules19-aac.js',
+'js/rules/rules20-aac.js',
 'js/rules/rules20-iac.js',
 'js/rules/rules20-glider-iac.js',
 'js/rules/rules20-civa.js',

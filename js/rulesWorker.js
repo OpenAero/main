@@ -3,7 +3,7 @@
  * 
  * The rulesWorker handles all rule loading and checking in a separate
  * thread. Within the rulesWorker only one thread will run at a time,
- * so no concurrent operations within the Worker.
+ * so there are no concurrent operations within the Worker.
  */
 
 var blobURL = URL.createObjectURL (new Blob (['(',
@@ -23,7 +23,7 @@ var
 	referenceSequence = {},
 	rollFig,
 	rules,
-	rulesActive = false,
+	activeRules = false,
 	rulesKFigures = {},
 	regexRulesAdditionals = /^(connectors|additionals)=([0-9]+)\/([0-9]+)/,
 	regexUnlinkedRolls = /[,; ](9\.[1-8]\.[0-9.]*;9\.[1-8]\.)|(9\.(9|10)\.[0-9.]*;9\.(9|10))|(9\.1[12]\.[0-9.]*;9\.1[12])/,
@@ -42,7 +42,7 @@ var checkCatGroup = [];
 var checkFigGroup = [];
 var checkRule = [];
 var defRules = [];
-var rulesActive = false;   // Are rules active?
+var activeRules = false;   // Are rules active?  If so, is object {description: xxx, logo: xxx}
 var figureLetters = '';    // Letters that can be assigned to individual figures
 var additionalFig = {'max': 0, 'totalK': 0};    // Additional figures, max and K
 var ruleSuperFamily = [];  // Array of rules for determining figure SF
@@ -94,7 +94,7 @@ self.onmessage = function (e) {
 			loadRules (e.data.ruleName, e.data.catName, e.data.programName);
 			break;
 		case 'loadedRulesFile':
-			loadedRulesFile (e.data.arraybuffer);
+			loadedRulesFile (e.data.lines);
 			break;
 		case 'unloadRules':
 			unloadRules();
@@ -145,29 +145,19 @@ function rulesYear (ruleName) {
 }
 
 // loadedRulesFile will be called when a rules file has been loaded
-function loadedRulesFile (arraybuffer) {
-	// convert file to array
-	var
-		lines = (String.fromCharCode.apply(
-			null, new Int8Array(arraybuffer))).split("\n"),
-		start = rules.length;
+function loadedRulesFile (lines) {
+	var start = rules.length;
 
-  // convert file to array
-  //var lines = atob (evt.target.result.replace (/^data:.*;base64,/, '')).split("\n");
-  for (var i = 0; i < lines.length; i++) {
-    // remove any windows linebreaks
-    var line = lines[i].replace('\r', '');
-    // only keep part inside rules.push
-    line = line.replace (/rules\.push[ ]*\("([^"]*).*$/, "$1");
-    // replace all double backslashes by single
-    line = line.replace (/\\\\/g, '\\');
-    // do some basic matching to check for correct rule line
-    if (line.match (/^([0-9\.]{5}|\[[^\]]+\]|\([^\)]+\))/) ||
-	    line.match (/^[^#\/][a-zA-Z0-9\-_]+=/)) {
-      console.log(line);
-      rules.push (line);
+    // use function to interpret rule file but make sure to limit scope
+    function addRules() {
+        "use strict";
+        return (
+            new Function(
+                '"use strict"; var rules=[];' + lines + '; return rules;')()
+        )
     }
-  }
+
+    rules.push(...addRules());
   // when new rules have been added, parse those
   if (rules.length > start) parseRules (start);
 	postMessage ({runFunction: 'alertBox',
@@ -188,7 +178,7 @@ function parseRules (start) {
   var sections = [];
   var year = rulesYear();
   
-  for (var i=start; i<rules.length; i++) {
+  for (var i = start; i < rules.length; i++) {
     // Check for [section]
     if (rules[i][0].match(/[\[\(]/)) {
       sections.push (rules[i].toLowerCase().replace (/[\[\(\]\)]/g, ''));
@@ -271,21 +261,24 @@ function loadRules (ruleName, catName, programName) {
   if (!(seqCheckAvail[ruleName] &&
     seqCheckAvail[ruleName].cats[catName] &&
     seqCheckAvail[ruleName].cats[catName].seqs[programName])) {
-    if (rulesActive) unloadRules();
+    if (activeRules) unloadRules();
     return false;
   }
 
   var
-	  updatedFig = false;
+	  updatedFig = false,
 	  year = rulesYear (ruleName);
 
   // return true if rules were already loaded
-  if (rulesActive === (year + ruleName + ' ' + catName + ' ' + programName)) {
+  if (activeRules && activeRules.description === (year + ruleName + ' ' + catName + ' ' + programName)) {
     return true;
   }
 
 	// unload previous rules
 	unloadRules();
+
+    // set rules active
+    activeRules = { 'description': year + ruleName + ' ' + catName + ' ' + programName };
 
   // Set parseSection to true to match the global rules
   var parseSection = true;
@@ -294,7 +287,7 @@ function loadRules (ruleName, catName, programName) {
   console.log ('Loading rules ' + ruleSection);
   var section = [];
   var sectionRegex = /[\[\]\(\)]/g;
-	var infoCheck = []; // Seq info fields to be filled out when saving or printing
+    var infoCheck = []; // Seq info fields to be filled out when saving or printing
   // First clear or preset the variables
   checkAllowRegex = [];
   checkAllowCatId = [];
@@ -377,244 +370,250 @@ function loadRules (ruleName, catName, programName) {
       parseSection = (i == section[ruleSection]) ? true : false;
     } else if (parseSection) {
       // when parseSection = true, continue
-      if (rules[i].match(/^conv-[^=]+=/)) {
-        // Apply 'conv' rules
-        var convName = rules[i].match(/^conv-([^=]+)/)[1];
-        // log duplicate conversions, use latest
-        if (checkConv[convName]) {
-          console.log('* Error: duplicate conversion "' + convName +
-            '" at rulenr ' + i);
-        }
-        checkConv[convName] = [];
-        var convRules = rules[i].match(/^conv-[^=]+=(.*)$/)[1].split(';');
-        for (var j = 0; j < convRules.length; j++) {
-          var c = convRules[j].split('=');
-          // create regex, make sure it matches to the end
-          checkConv[convName].push ({
-            'regex': new RegExp(c[0] + '.*', 'g'),
-            'replace': c[1]
-          });
-        }
-      } else if (rules[i].match(/^more=/)) {
-        // Apply 'more' rules
-        var name = rules[i].replace('more=', '').toLowerCase();
-        if (section[name]) {
-          i = section[name];
-          ruleSection = false; // don't go over this section again!
-        } else {
-          console.log ('*** Error: rule section "' + name +
-            '" does not exist');
-        }
-      } else if (rules[i].match(/^allow=/)) {
-	      // Apply 'allow' rules
-        var newCatLine = rules[i].replace(/^allow=/, '');
-        var newCat = newCatLine.match(/^[^\s]*/g);
-        var newRules = newCatLine.replace(newCat, '').split(';');
-        for (var j = 0; j<newRules.length; j++) {
-          newRules[j] = newRules[j].replace(/^\s+|\s+$/g, '');
-        }
-        checkAllowRegex.push ({'regex':RegExp(newCat, ''), 'rules':newRules});
-      } else if (rules[i].match(/^allow-defrules=/)) {
-	      // Apply 'allow-defrules' rules
-        var newCatLine = rules[i].replace(/^allow-defrules=/, '');
-        defRules = newCatLine.replace(/[\s]+/g, '').split(';');
-      } else if (rules[i].match(/^[0-9]+\./)) {
-        // Apply figure number rules
-        // The key of checkAllowCatId is equal to the figure number
-        // The value is an array of rules that have to be applied
-        var newCatLine = rules[i];
-        var newCat = newCatLine.match(/^[^\s\(]*/g)[0];
-        // Extract in the array newK the specified K if any
-        var newK = newCatLine.match(/\([0-9,:\s]*\)/);	  
-        if (newK) {
-          newCatLine = newCatLine.replace(newK[0], '');
-		      // change from ':' to ',' is not necessary since rules file
-		      // doesn't mix powered and glider
-          newK = newK[0].replace(/[\(\)\s]*/g,'').split(',');
-        } 
-        // Create an array with rules that have to be applied to the figure
-        var newRules = newCatLine.replace(newCat, '').replace(/[\s]+/g, '').split(';');
-        // When there are no rules we want an empty array, whereas split
-        // provides an array with one empty string
-        if (newRules[0] == '') newRules = [];
-        // Check if the figure string applies to multiple figures, such as 1.1.1.1-4
-        // If so, make a new checkAllowCatId for each figure
-        var multiple = newCat.match(/[0-9]+\-[0-9]+$/);
-        if (multiple) {
-          multiple = multiple[0];
-          for (var j = multiple.split('-')[0]; j < (parseInt(multiple.split('-')[1]) + 1); j++) {
-            checkAllowCatId[newCat.replace(multiple, '') + j] = newRules;
-            
-	          if (newK && (newK[j - multiple.split('-')[0]] != '')) {
-							var figIds = arestiToFig[newCat.replace(multiple, '') + j];
-							for (var l = 0; l < figIds.length; l++) {
-								fig[figIds[l]].kRules = newK[j - multiple.split('-')[0]];
-							}
-							rulesKFigures[newCat.replace(multiple, '') + j] = true;
-							console.log ('Changed K for ' + newCat.replace(multiple, '') + j + ' to ' + newK[j - multiple.split('-')[0]]);
-							updatedFig = true;
+        if (rules[i].match(/^conv-[^=]+=/)) {
+            // Apply 'conv' rules
+            var convName = rules[i].match(/^conv-([^=]+)/)[1];
+            // log duplicate conversions, use latest
+            if (checkConv[convName]) {
+                console.log('* Error: duplicate conversion "' + convName +
+                    '" at rulenr ' + i);
             }
-          }
-        } else {
-          checkAllowCatId[newCat] = newRules;
-          if (newK) {
-	          var figIds = arestiToFig[newCat];
-						for (var l = 0; l < figIds.length; l++) {
-							fig[figIds[l]].kRules = newK[0];
-						}
-						rulesKFigures[newCat] = true;
-						console.log ('Changed K for ' + newCat + ' to ' + newK[0]);
-						updatedFig = true;
-          }
+            checkConv[convName] = [];
+            var convRules = rules[i].match(/^conv-[^=]+=(.*)$/)[1].split(';');
+            for (var j = 0; j < convRules.length; j++) {
+                var c = convRules[j].split('=');
+                // create regex, make sure it matches to the end
+                checkConv[convName].push({
+                    'regex': new RegExp(c[0] + '.*', 'g'),
+                    'replace': c[1]
+                });
+            }
+        } else if (rules[i].match(/^more=/)) {
+            // Apply 'more' rules
+            var name = rules[i].replace('more=', '').toLowerCase();
+            if (section[name]) {
+                i = section[name];
+                ruleSection = false; // don't go over this section again!
+            } else {
+                console.log('*** Error: rule section "' + name +
+                    '" does not exist');
+            }
+        } else if (rules[i].match(/^allow=/)) {
+            // Apply 'allow' rules
+            var newCatLine = rules[i].replace(/^allow=/, '');
+            var newCat = newCatLine.match(/^[^\s]*/g);
+            var newRules = newCatLine.replace(newCat, '').split(';');
+            for (var j = 0; j < newRules.length; j++) {
+                newRules[j] = newRules[j].replace(/^\s+|\s+$/g, '');
+            }
+            checkAllowRegex.push({ 'regex': RegExp(newCat, ''), 'rules': newRules });
+        } else if (rules[i].match(/^allow-defrules=/)) {
+            // Apply 'allow-defrules' rules
+            var newCatLine = rules[i].replace(/^allow-defrules=/, '');
+            defRules = newCatLine.replace(/[\s]+/g, '').split(';');
+        } else if (rules[i].match(/^[0-9]+\./)) {
+            // Apply figure number rules
+            // The key of checkAllowCatId is equal to the figure number
+            // The value is an array of rules that have to be applied
+            var newCatLine = rules[i];
+            var newCat = newCatLine.match(/^[^\s\(]*/g)[0];
+            // Extract in the array newK the specified K if any
+            var newK = newCatLine.match(/\([0-9,:\s]*\)/);
+            if (newK) {
+                newCatLine = newCatLine.replace(newK[0], '');
+                // change from ':' to ',' is not necessary since rules file
+                // doesn't mix powered and glider
+                newK = newK[0].replace(/[\(\)\s]*/g, '').split(',');
+            }
+            // Create an array with rules that have to be applied to the figure
+            var newRules = newCatLine.replace(newCat, '').replace(/[\s]+/g, '').split(';');
+            // When there are no rules we want an empty array, whereas split
+            // provides an array with one empty string
+            if (newRules[0] == '') newRules = [];
+            // Check if the figure string applies to multiple figures, such as 1.1.1.1-4
+            // If so, make a new checkAllowCatId for each figure
+            var multiple = newCat.match(/[0-9]+\-[0-9]+$/);
+            if (multiple) {
+                multiple = multiple[0];
+                for (var j = multiple.split('-')[0]; j < (parseInt(multiple.split('-')[1]) + 1); j++) {
+                    checkAllowCatId[newCat.replace(multiple, '') + j] = newRules;
+
+                    if (newK && (newK[j - multiple.split('-')[0]] != '')) {
+                        var figIds = arestiToFig[newCat.replace(multiple, '') + j];
+                        for (var l = 0; l < figIds.length; l++) {
+                            fig[figIds[l]].kRules = newK[j - multiple.split('-')[0]];
+                        }
+                        rulesKFigures[newCat.replace(multiple, '') + j] = true;
+                        console.log('Changed K for ' + newCat.replace(multiple, '') + j + ' to ' + newK[j - multiple.split('-')[0]]);
+                        updatedFig = true;
+                    }
+                }
+            } else {
+                checkAllowCatId[newCat] = newRules;
+                if (newK) {
+                    var figIds = arestiToFig[newCat];
+                    for (var l = 0; l < figIds.length; l++) {
+                        fig[figIds[l]].kRules = newK[0];
+                    }
+                    rulesKFigures[newCat] = true;
+                    console.log('Changed K for ' + newCat + ' to ' + newK[0]);
+                    updatedFig = true;
+                }
+            }
+        } else if (rules[i].match(/[^-]+-min=\d+$/)) {
+            // Apply [group]-min rules
+            var group = rules[i].replace(/-min/, '').split('=');
+            if (checkCatGroup[group[0]]) checkCatGroup[group[0]].min = parseInt(group[1]);
+            if (checkFigGroup[group[0]]) checkFigGroup[group[0]].min = parseInt(group[1]);
+        } else if (rules[i].match(/[^-]+-max=\d+$/)) {
+            // Apply [group]-max rules
+            var group = rules[i].replace(/-max/, '').split('=');
+            if (checkCatGroup[group[0]]) checkCatGroup[group[0]].max = parseInt(group[1]);
+            if (checkFigGroup[group[0]]) checkFigGroup[group[0]].max = parseInt(group[1]);
+        } else if (rules[i].match(/[^-]+-repeat=\d+$/)) {
+            // Apply [group]-repeat rules
+            var group = rules[i].replace(/-repeat/, '').split('=');
+            if (checkCatGroup[group[0]]) checkCatGroup[group[0]].repeat = parseInt(group[1]);
+            if (checkFigGroup[group[0]]) checkFigGroup[group[0]].repeat = parseInt(group[1]);
+        } else if (rules[i].match(/[^-]+-totrepeat=\d+$/)) {
+            // Apply [group]-totrepeat rules
+            var group = rules[i].replace(/-totrepeat/, '').split('=');
+            if (checkCatGroup[group[0]]) checkCatGroup[group[0]].totrepeat = parseInt(group[1]);
+            if (checkFigGroup[group[0]]) checkFigGroup[group[0]].totrepeat = parseInt(group[1]);
+        } else if (rules[i].match(/[^-]+-minperfig=\d+$/)) {
+            // Apply [group]-minperfig rules
+            var group = rules[i].replace(/-minperfig/, '').split('=');
+            if (checkCatGroup[group[0]]) checkCatGroup[group[0]].minperfig = parseInt(group[1]);
+            if (checkFigGroup[group[0]]) checkFigGroup[group[0]].minperfig = parseInt(group[1]);
+        } else if (rules[i].match(/[^-]+-maxperfig=\d+$/)) {
+            // Apply [group]-maxperfig rules
+            var group = rules[i].replace(/-maxperfig/, '').split('=');
+            if (checkCatGroup[group[0]]) checkCatGroup[group[0]].maxperfig = parseInt(group[1]);
+            if (checkFigGroup[group[0]]) checkFigGroup[group[0]].maxperfig = parseInt(group[1]);
+        } else if (rules[i].match(/[^-]+-name=.+$/)) {
+            // Apply [group]-name and seqcheck-name rules
+            var group = rules[i].replace(/-name/, '').split('=');
+            if (checkCatGroup[group[0]]) checkCatGroup[group[0]].name = group[1];
+            if (checkFigGroup[group[0]]) checkFigGroup[group[0]].name = group[1];
+            if (ruleSeqCheck[group[0]]) ruleSeqCheck[group[0]].name = group[1];
+        } else if (rules[i].match(/[^-]+-name_[a-z]{2}=.+$/)) {
+            // Apply [group]-name and seqcheck-name rules
+            var group = rules[i].replace(/-name_[a-z]{2}/, '').split('=');
+            if (checkCatGroup[group[0]]) {
+                checkCatGroup[group[0]][rules[i].match(/name_[a-z]{2}/)[0]] = group[1];
+            }
+            if (checkFigGroup[group[0]]) {
+                checkFigGroup[group[0]][rules[i].match(/name_[a-z]{2}/)[0]] = group[1];
+            }
+            if (ruleSeqCheck[group[0]]) {
+                ruleSeqCheck[group[0]][rules[i].match(/name_[a-z]{2}/)[0]] = group[1];
+            }
+        } else if (rules[i].match(/-[^-]+-rule=.+$/)) {
+            // apply rulebook references
+            var part = rules[i].match(/^([^-]+)-([^-]+)-rule=(.*)$/, '');
+            if (checkCatGroup[part[1]] && checkCatGroup[part[1]][part[2]]) {
+                if (!checkCatGroup[part[1]].rule) checkCatGroup[part[1]].rule = [];
+                checkCatGroup[part[1]].rule[part[2]] = part[3];
+            }
+            if (checkFigGroup[part[1]] && checkFigGroup[part[1]][part[2]]) {
+                if (!checkFigGroup[part[1]].rule) checkFigGroup[part[1]].rule = [];
+                checkFigGroup[part[1]].rule[part[2]] = part[3];
+            }
+        } else if (rules[i].match(/-rule=.+$/)) {
+            var newRuleName = rules[i].match(/^[^-]+/)[0];
+            if (checkRule[newRuleName]) {
+                checkRule[newRuleName].rule = rules[i].replace(/^[^=]+=/, '');
+            } else if (ruleSeqCheck[newRuleName]) {
+                ruleSeqCheck[newRuleName].rule = rules[i].replace(/^[^=]+=/, '');
+            }
+        } else if (rules[i].match(/^rule-[^=]+=.+/)) {
+            // Apply rule-x rules
+            var newRuleName = rules[i].match(/[^=]+/)[0].replace(/^rule-/, '');
+            var checkRuleParts = rules[i].replace('rule-' + newRuleName + '=', '');
+            var colonPos = checkRuleParts.indexOf(':');
+            var check = checkRuleParts.substring(colonPos + 1);
+            if (check.match(/^</)) {
+                checkRule[newRuleName] = {
+                    'conv': checkRuleParts.substring(0, colonPos),
+                    'less': parseInt(check.match(/^<(.*)/)[1])
+                };
+                //console.log (checkRule[newRuleName].less);
+            } else if (check.match(/^\+</)) {
+                checkRule[newRuleName] = {
+                    'conv': checkRuleParts.substring(0, colonPos),
+                    'totalLess': parseInt(check.match(/^\+<(.*)/)[1])
+                };
+                //console.log (checkRule[newRuleName].totalLess);
+            } else {
+                checkRule[newRuleName] = {
+                    'conv': checkRuleParts.substring(0, colonPos),
+                    'regex': RegExp(checkRuleParts.substring(colonPos + 1), 'g')
+                };
+            }
+        } else if (rules[i].match(/^why-[^=]+=.+/)) {
+            // Apply why-x rules
+            var newRuleName = rules[i].match(/[^=]+/)[0].replace(/^why-/, '');
+            if (checkRule[newRuleName]) {
+                checkRule[newRuleName].why = rules[i].replace(/^[^=]+=/, '');
+            }
+        } else if (rules[i].match(/^why_[a-z]{2}-[^=]+=.+/)) {
+            // Apply why_cc-x rules where cc = country code
+            var newRuleName = rules[i].match(/[^=]+/)[0].replace(/^why_[a-z]{2}-/, '');
+            if (checkRule[newRuleName]) {
+                checkRule[newRuleName][rules[i].match(/^why_[a-z]{2}/)[0]] = rules[i].replace(/^[^=]+=/, '');
+            }
+        } else if (rules[i].match(/^floating-point/)) {
+            // Apply floating-point rules
+            checkCatGroup.floatingPoint = rules[i].match(/[0-9]+/)[0];
+        } else if (rules[i].match(regexRulesAdditionals)) {
+            // apply Additionals rules
+            var match = rules[i].match(regexRulesAdditionals);
+            additionalFig.max = parseInt(match[2]);
+            additionalFig.totalK = parseInt(match[3]);
+        } else if (rules[i].match(/^posnl/)) {
+            // load positioning and harmony K
+            // Editing is disabled and harmony hidden when 0
+            var pos = rules[i].match(/[0-9+]+/)[0].split('+');
+            postMessage({
+                runFunction: 'setRulesPosHarmony',
+                arguments: [parseInt(pos[0]) || 0, parseInt(pos[1]) || 0]
+            });
+        } else if (rules[i].match(/^infocheck[ ]*=/)) {
+            // define fields that should be checked for not being empty when
+            // saving or printing a sequence
+            infoCheck = rules[i].replace(/ /g, '').match(/=(.*)/)[1].split(';');
+        } else if (rules[i].match(/^figure-letters[ ]*=/)) {
+            // define Figure Letters
+            figureLetters = rules[i].replace(/ /g, '').match(/=(.*)/)[1];
+        } else if (rules[i].match(/^sf[ ]*=/)) {
+            // define Super Families
+            var val = rules[i].replace(/ /g, '').match(/=(.*)/)[1];
+            if (superFamilies[val.toLowerCase()]) {
+                ruleSuperFamily = superFamilies[val.toLowerCase()];
+            } else {
+                var families = val.split(';');
+                for (var j = 0; j < families.length; j++) {
+                    var regex = new RegExp(families[j].split(':')[0]);
+                    var fam = families[j].split(':')[1];
+                    ruleSuperFamily.push([regex, fam]);
+                }
+            }
+        } else if (rules[i].match(/^seqcheck-/)) {
+            var newRuleName = rules[i].split('=')[0].replace(/^seqcheck-/, '');
+            var regex = new RegExp(rules[i].split('=')[1]);
+            ruleSeqCheck[newRuleName] = { 'regex': regex };
+        } else if (rules[i].match(/^reference[\s]*=/)) {
+            // load reference sequence
+            postMessage({
+                runFunction: 'setReferenceSequence',
+                arguments: [rules[i].match(/^reference[\s]*=[\s]*(.*)$/)[1], true]
+            });
+        } else if (rules[i].match(/^logo[\s]*=/)) {
+            activeRules.logo = rules[i].replace(/^logo[\s]*=/, '').trim();
         }
-      } else if (rules[i].match(/[^-]+-min=\d+$/)) {
-      // Apply [group]-min rules
-        var group = rules[i].replace(/-min/, '').split('=');
-        if (checkCatGroup[group[0]]) checkCatGroup[group[0]].min = parseInt(group[1]);
-        if (checkFigGroup[group[0]]) checkFigGroup[group[0]].min = parseInt(group[1]);
-      } else if (rules[i].match(/[^-]+-max=\d+$/)) {
-      // Apply [group]-max rules
-        var group = rules[i].replace(/-max/, '').split('=');
-        if (checkCatGroup[group[0]]) checkCatGroup[group[0]].max = parseInt(group[1]);
-        if (checkFigGroup[group[0]]) checkFigGroup[group[0]].max = parseInt(group[1]);
-      } else if (rules[i].match(/[^-]+-repeat=\d+$/)) {
-      // Apply [group]-repeat rules
-        var group = rules[i].replace(/-repeat/, '').split('=');
-        if (checkCatGroup[group[0]]) checkCatGroup[group[0]].repeat = parseInt(group[1]);
-        if (checkFigGroup[group[0]]) checkFigGroup[group[0]].repeat = parseInt(group[1]);
-      } else if (rules[i].match(/[^-]+-totrepeat=\d+$/)) {
-      // Apply [group]-totrepeat rules
-        var group = rules[i].replace(/-totrepeat/, '').split('=');
-        if (checkCatGroup[group[0]]) checkCatGroup[group[0]].totrepeat = parseInt(group[1]);
-        if (checkFigGroup[group[0]]) checkFigGroup[group[0]].totrepeat = parseInt(group[1]);
-      } else if (rules[i].match(/[^-]+-minperfig=\d+$/)) {
-      // Apply [group]-minperfig rules
-        var group = rules[i].replace(/-minperfig/, '').split('=');
-        if (checkCatGroup[group[0]]) checkCatGroup[group[0]].minperfig = parseInt(group[1]);
-        if (checkFigGroup[group[0]]) checkFigGroup[group[0]].minperfig = parseInt(group[1]);
-      } else if (rules[i].match(/[^-]+-maxperfig=\d+$/)) {
-      // Apply [group]-maxperfig rules
-        var group = rules[i].replace(/-maxperfig/, '').split('=');
-        if (checkCatGroup[group[0]]) checkCatGroup[group[0]].maxperfig = parseInt(group[1]);
-        if (checkFigGroup[group[0]]) checkFigGroup[group[0]].maxperfig = parseInt(group[1]);
-      } else if (rules[i].match(/[^-]+-name=.+$/)) {
-      // Apply [group]-name and seqcheck-name rules
-        var group = rules[i].replace(/-name/, '').split('=');
-        if (checkCatGroup[group[0]]) checkCatGroup[group[0]].name = group[1];
-        if (checkFigGroup[group[0]]) checkFigGroup[group[0]].name = group[1];
-        if (ruleSeqCheck[group[0]]) ruleSeqCheck[group[0]].name = group[1];
-      } else if (rules[i].match(/[^-]+-name_[a-z]{2}=.+$/)) {
-      // Apply [group]-name and seqcheck-name rules
-        var group = rules[i].replace(/-name_[a-z]{2}/, '').split('=');
-        if (checkCatGroup[group[0]]) {
-          checkCatGroup[group[0]][rules[i].match(/name_[a-z]{2}/)[0]] = group[1];
-        }
-        if (checkFigGroup[group[0]]) {
-          checkFigGroup[group[0]][rules[i].match(/name_[a-z]{2}/)[0]] = group[1];
-        }
-        if (ruleSeqCheck[group[0]]) {
-          ruleSeqCheck[group[0]][rules[i].match(/name_[a-z]{2}/)[0]] = group[1];
-        }
-      } else if (rules[i].match(/-[^-]+-rule=.+$/)) {
-        // apply rulebook references
-        var part = rules[i].match (/^([^-]+)-([^-]+)-rule=(.*)$/, '');
-        if (checkCatGroup[part[1]] && checkCatGroup[part[1]][part[2]]) {
-          if (!checkCatGroup[part[1]].rule) checkCatGroup[part[1]].rule = [];
-          checkCatGroup[part[1]].rule[part[2]] = part[3];
-        }
-        if (checkFigGroup[part[1]] && checkFigGroup[part[1]][part[2]]) {
-          if (!checkFigGroup[part[1]].rule) checkFigGroup[part[1]].rule = [];
-          checkFigGroup[part[1]].rule[part[2]] = part[3];
-        }
-      } else if (rules[i].match(/-rule=.+$/)) {
-        var newRuleName = rules[i].match(/^[^-]+/)[0];
-        if (checkRule[newRuleName]) {
-          checkRule[newRuleName].rule = rules[i].replace(/^[^=]+=/, '');
-        } else if (ruleSeqCheck[newRuleName]) {
-          ruleSeqCheck[newRuleName].rule = rules[i].replace(/^[^=]+=/, '');
-        }
-      } else if (rules[i].match(/^rule-[^=]+=.+/)) {
-      // Apply rule-x rules
-        var newRuleName = rules[i].match(/[^=]+/)[0].replace(/^rule-/, '');
-        var checkRuleParts = rules[i].replace('rule-'+newRuleName+'=', '');
-        var colonPos = checkRuleParts.indexOf(':');
-        var check = checkRuleParts.substring(colonPos + 1);
-        if (check.match(/^</)) {
-          checkRule[newRuleName] = {
-            'conv':checkRuleParts.substring(0,colonPos),
-            'less':parseInt(check.match(/^<(.*)/)[1])};
-          //console.log (checkRule[newRuleName].less);
-        } else if (check.match(/^\+</)) {
-          checkRule[newRuleName] = {
-            'conv':checkRuleParts.substring(0,colonPos),
-            'totalLess':parseInt(check.match(/^\+<(.*)/)[1])};
-          //console.log (checkRule[newRuleName].totalLess);
-        } else {
-          checkRule[newRuleName] = {
-            'conv':checkRuleParts.substring(0,colonPos),
-            'regex':RegExp(checkRuleParts.substring(colonPos + 1), 'g')};
-        }
-      } else if (rules[i].match(/^why-[^=]+=.+/)) {
-        // Apply why-x rules
-        var newRuleName = rules[i].match(/[^=]+/)[0].replace(/^why-/, '');
-        if (checkRule[newRuleName]) {
-          checkRule[newRuleName].why = rules[i].replace(/^[^=]+=/, '');
-        }
-      } else if (rules[i].match(/^why_[a-z]{2}-[^=]+=.+/)) {
-        // Apply why_cc-x rules where cc = country code
-        var newRuleName = rules[i].match(/[^=]+/)[0].replace(/^why_[a-z]{2}-/, '');
-        if (checkRule[newRuleName]) {
-          checkRule[newRuleName][rules[i].match(/^why_[a-z]{2}/)[0]] = rules[i].replace(/^[^=]+=/, '');
-        }
-      } else if (rules[i].match(/^floating-point/)) {
-        // Apply floating-point rules
-        checkCatGroup.floatingPoint = rules[i].match(/[0-9]+/)[0];
-      } else if (rules[i].match(regexRulesAdditionals)) {
-        // apply Additionals rules
-        var match = rules[i].match(regexRulesAdditionals);
-        additionalFig.max = parseInt(match[2]);
-        additionalFig.totalK = parseInt(match[3]);
-      } else if (rules[i].match(/^posnl/)) {
-        // load positioning and harmony K
-        // Editing is disabled and harmony hidden when 0
-        var pos = rules[i].match(/[0-9+]+/)[0].split('+');
-        postMessage ({
-					runFunction: 'setRulesPosHarmony',
-					arguments: [parseInt(pos[0]) || 0, parseInt(pos[1]) || 0]
-				});
-      } else if (rules[i].match(/^infocheck[ ]*=/)) {
-        // define fields that should be checked for not being empty when
-        // saving or printing a sequence
-        infoCheck = rules[i].replace(/ /g, '').match(/=(.*)/)[1].split(';');
-      } else if (rules[i].match(/^figure-letters[ ]*=/)) {
-        // define Figure Letters
-        figureLetters = rules[i].replace(/ /g, '').match(/=(.*)/)[1];
-      } else if (rules[i].match(/^sf[ ]*=/)) {
-        // define Super Families
-        var val = rules[i].replace(/ /g, '').match(/=(.*)/)[1];
-        if (superFamilies[val.toLowerCase()]) {
-          ruleSuperFamily = superFamilies[val.toLowerCase()];
-        } else {
-          var families = val.split(';');
-          for (var j = 0; j < families.length; j++) {
-            var regex = new RegExp (families[j].split(':')[0]);
-            var fam = families[j].split(':')[1];
-            ruleSuperFamily.push ([regex, fam]);
-          }
-        }
-      } else if (rules[i].match(/^seqcheck-/)) {
-        var newRuleName = rules[i].split('=')[0].replace(/^seqcheck-/, '');
-        var regex = new RegExp (rules[i].split('=')[1]);
-        ruleSeqCheck[newRuleName] = {'regex' : regex};
-      } else if (rules[i].match (/^reference[\s]*=/)) {
-        // load reference sequence
-        postMessage ({
-					runFunction: 'setReferenceSequence',
-					arguments: [rules[i].match (/^reference[\s]*=[\s]*(.*)$/)[1], true]
-				});
       }
     }
-  }
+ 
   
 	if (checkAllowRegex) {
     for (var i = 0 ; i < checkAllowRegex.length ; i++) {
@@ -634,9 +633,6 @@ function loadRules (ruleName, catName, programName) {
 	    }
 	  }
 	}
-
-  // set rules active
-  rulesActive = year + ruleName + ' ' + catName + ' ' + programName;
   
   postMessage({runFunction: 'activateRules',
 	  arguments: [{
@@ -647,7 +643,7 @@ function loadRules (ruleName, catName, programName) {
 			ruleSuperFamily: ruleSuperFamily,
 			iacForms: (ruleName === 'iac') ? true : false,
 			infoCheck: infoCheck,
-		  rulesActive: rulesActive,
+		    activeRules: activeRules,
 			rulesKFigures: rulesKFigures,
 			updatedFig: (updatedFig ? fig : false)
 		}]
@@ -677,7 +673,7 @@ function unloadRules () {
   postMessage ({runFunction: 'unloadRules',
 		arguments: [updatedFig ? fig : false]});
 
-  rulesActive = false;
+  activeRules = false;
 }
 
 // checkRules will check a complete sequence against the loaded rules
@@ -762,10 +758,10 @@ function checkRules (callbackId, activeSequenceText, figures, figCheckLine, nonA
   }
   
   // see if there are active rules. If not, skip rule checking
-  if (!rulesActive) {
+  if (!activeRules) {
 		log.push ('Rules: no');
   } else {
-    log.push ('Rules: ' + rulesActive);
+      log.push('Rules: ' + activeRules.description);
 	  
 	  for (var i = 0; i < figures.length; i++) {
 	    var aresti = figures[i].aresti;

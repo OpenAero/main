@@ -21,7 +21,7 @@
 -->
 
 <html>
-  <head>
+<head>
     <meta charset="UTF-8">
     <!-- set Google verification tag, essential for installing App from site -->
     <meta name="google-site-verification" content="19PeFg_VefT13gYXLO6E-IJKXjPbzjF3f_iZ2T8pa9E" />
@@ -43,7 +43,11 @@
     <link rel="stylesheet" media="screen" type="text/css" href="css/desktop-largeMobile.css" id="desktopLargeMobileCSS">
     <!-- styles -->
     <style type="text/css" media="print" id="printStyle"></style>
-    <style type="text/css" media="screen">#noScreen {display: none;}</style>
+    <style type="text/css" media="screen">
+        #noScreen {
+            display: none;
+        }
+    </style>
     <style type="text/css" id="fuDesignerStyle"></style>
     <!-- favicons -->
     <link rel="shortcut icon" type="image/png" sizes="16x16" href="img/favicons/favicon16.png">
@@ -64,27 +68,26 @@
     <link rel="apple-touch-startup-image" href="img/startup_ipad_landscape.jpg" media="screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:landscape)" />
     <link rel="apple-touch-startup-image" href="img/startup_ipad_portrait.jpg" media="screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:portrait)" />
     -->
-
     <!-- web manifest for progressive web apps -->
     <link rel="manifest" href="/manifest.webmanifest">
     <!-- service worker for offline caching -->
     <script>
-	    // This is the service worker with the Cache-first network
-	
-			// Check compatibility for the browser we're running this in
-			if ("serviceWorker" in navigator) {
-		    // Register the service worker, unless running from local file
-		    if (window.location.protocol !== 'file:') {
-			    navigator.serviceWorker
-			      .register("pwabuilder-sw.js", {
-			        scope: "./"
-			      })
-			      .then(function (reg) {
-			        console.log("[PWA Builder] Service worker has been registered for scope: " + reg.scope);
-			      });
-				}
-			}
-		</script>
+        // This is the service worker with the Cache-first network
+
+        // Check compatibility for the browser we're running this in
+        if ("serviceWorker" in navigator) {
+            // Register the service worker, unless running from local file
+            if (window.location.protocol !== 'file:') {
+                navigator.serviceWorker
+                    .register("pwabuilder-sw.js", {
+                        scope: "./"
+                    })
+                    .then(function (reg) {
+                        console.log("[PWA Builder] Service worker has been registered for scope: " + reg.scope);
+                    });
+            }
+        }
+    </script>
     <!-- configuration, must be first OpenAero js -->
     <script src="js/config.js" type="text/javascript"></script>
     <script src="cordova.js" type="text/javascript"></script>
@@ -98,16 +101,17 @@
     <!-- rules Worker -->
     <script src="js/rulesWorker.js" type="text/javascript"></script>
     <!-- sequence rules. Start with general and CIVA, then alphabetical -->
-    <script src="js/rules/rules16.js" type="text/javascript"></script>
+    <script src="js/rules/rules20.js" type="text/javascript"></script>
     <script src="js/rules/rules20-civa.js" type="text/javascript"></script>
     <script src="js/rules/rules20-glider-civa.js" type="text/javascript"></script>
-    <script src="js/rules/rules19-aac.js" type="text/javascript"></script>
+    <script src="js/rules/rules20-aac.js" type="text/javascript"></script>
     <script src="js/rules/rules17-baea.js" type="text/javascript"></script>
     <script src="js/rules/rules20-france.js" type="text/javascript"></script>
     <script src="js/rules/rules15-ga.js" type="text/javascript"></script>
     <script src="js/rules/rules20-iac.js" type="text/javascript"></script>
     <script src="js/rules/rules20-glider-iac.js" type="text/javascript"></script>
     <script src="js/rules/rules21-nzac.js" type="text/javascript"></script>
+    <script src="js/rules/rules20-saa.js" type="text/javascript"></script>
     <script src="js/rules/rules16-sac.js" type="text/javascript"></script>
     <script src="js/rules/rules19-vink.js" type="text/javascript"></script>
     <!-- library -->
@@ -118,23 +122,14 @@
     <!-- create zip files. Used for individual figure image output -->
     <!-- https://github.com/Stuk/jszip 3.2.2 3 jul 2019 -->
     <script src="js/jszip.min.js" type="text/javascript"></script>
-    <!-- canvg transforms svg to canvas, used for png output -->
-    <!-- https://github.com/gabelerner/canvg 2.0.0. 18 may 2019 -->
-    <!-- stackblur.js and rgbcolor.js included -->
-    <!--
-    <script src="js/canvg/rgbcolor.js" type="text/javascript"></script>
-    <script src="js/canvg/stackblur.js" type="text/javascript"></script>
-    -->
-    <!-- <script src="js/canvg.js" type="text/javascript"></script> -->
-    
+
     <!-- jsconsole script for debugging only !!! -->
     <!-- <script src="js/http://jsconsole.com/remote.js?8C1754EF-DB29-4859-B5CC-87978E718150"></script> -->
-    
-    <!-- The main script. Put it at the end when everything else is loaded --> 
+    <!-- The main script. Put it at the end when everything else is loaded -->
     <script src="js/main.js" type="text/javascript"></script>
-  </head>
+</head>
   <body>
-		<div id="cordovaStatusBar" class="noDisplay"></div>
+	<div id="cordovaStatusBar" class="noDisplay"></div>
     <div class="noPrint fullscreen">
       <!-- Top block -->
       <div id="topBlock">

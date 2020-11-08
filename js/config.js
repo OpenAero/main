@@ -36,7 +36,7 @@
 // A new x should be used for versions that create sequences not
 // fully backward compatible with the previous version
 
-var version = '2020.1.6';
+var version = '2020.1.10';
 /* versionNew is an object that contains version update information
    The structure is {vvv : [[ttt, n], ...], ...} , where
    vvv = version number
@@ -44,6 +44,12 @@ var version = '2020.1.6';
    n   = importance (higher = more important)
 */
 var versionNew = {
+    '2020.1.10': [
+        ['Added 2020 AAC sequences and Sportsman Free rule update', 3]
+    ],
+    '2020.1.8': [
+        ['Added SAA rules for 2020', 3]
+    ],
     '2020.1.6': [
         ['Updated France rules and sequences for 2020', 3],
         ['Added quarter clovers to the allowed figures for IAC Intermediate Free', 2]
