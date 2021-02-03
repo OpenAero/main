@@ -54,13 +54,14 @@ rules.push (
 "fignorept-name=Family 2 - 8",
 
 // Score, max number of figures and max K
-"posnl=4",                          // Positioning score = 4
+"posnl=15",                         // Positioning score = 15
 "basefig-max=12",                   // Maximum of 12 figures
-"k-max=133",                        // Maximum K is the same as the Known for that year, in 2020 K = 133
+"k-max=144",                        // Maximum K is the same as the Known for that year, in 2021 K = 144
 
 // Mandatory figures (at least one)
 "fam1-min=1",                       // Family 1
 "aacturn-min=1",                    // Family 2.1 - 2.2
+"fam5-min=1",                       // Family 5
 "fam7-min=1",                       // Family 7
 "fam8-min=1",                       // Family 8
 "aacroll-min=1",                    // Family 9.1 - 9.4
