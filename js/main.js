@@ -2526,7 +2526,7 @@ function makeFigStart(params) {
     var rayon = ref_rayon;
     // draw numbers in circles when numberInCircle set AND seqNr present
     if (numberInCircle && seqNr && (activeForm != 'A')) {
-        if (first && (activeForm !== 'G')) {
+        if (first && !(/^G/.test(activeForm))) {
             rayon = ref_rayon + 4;
             var ax = roundTwo(rayon * Math.cos(angle - open));
             var ay = -roundTwo(rayon * Math.sin(angle - open));
@@ -2566,7 +2566,7 @@ function makeFigStart(params) {
             'dy': - Math.sin(angle) * 9
         });
     } else {
-        if (first && (activeForm !== 'A') && (activeForm !== 'G')) {
+        if (first && (activeForm !== 'A') && !(/^G/.test(activeForm))) {
             pathsArray.push({ 'path': 'm 3,-6 a7,7 0 1 1 -6,0', 'style': 'pos' });
         }
         // Add the figure number, except on Form A
@@ -4869,8 +4869,8 @@ function doOnLoad() {
     // retrieve queue from storage
     queueFromStorage();
 
-    // check for latest version in a few seconds
-    setTimeout(getLatestVersion, 3000);
+    // check for latest version in a second
+    setTimeout(getLatestVersion, 1000);
 
     loadComplete = true;
 
@@ -5096,11 +5096,11 @@ function addEventListeners() {
     }, false);
 
     document.getElementById('t_freeKnownGuidancePower').parentNode.addEventListener('mousedown', function () {
-        helpWindow('doc/CIVA-Free-Known-Programme-Guidance-Power-Aircraft-2020-v1.html', 'CIVA Free Known Guidance Power');
+        helpWindow('doc/CIVA-Free-Known-Programme-Guidance-Power-Aircraft.html', 'CIVA Free Known Guidance Power');
     }, false);
 
     document.getElementById('t_freeKnownGuidanceGlider').parentNode.addEventListener('mousedown', function () {
-        helpWindow('doc/CIVA-Free-Known-Programme-Guidance-Glider-Aircraft-2020-v1.html', 'CIVA Free Known Guidance Glider');
+        helpWindow('doc/CIVA-Free-Known-Programme-Guidance-Glider-Aircraft.html', 'CIVA Free Known Guidance Glider');
     }, false);
 
     document.getElementById('t_about').parentNode.addEventListener('mousedown',
@@ -7419,17 +7419,25 @@ function updateFigureComments() {
 
 // getLatestVersion makes sure the latest version is installed
 function getLatestVersion() {
-    if (!/^http/.test(window.location.protocol)) {
+    if (localStorage.getItem("reload")) {
+        localStorage.removeItem("reload");
+    } else {
         getStableVersion(function (latestVersion) {
             if (compVersion(version, latestVersion) == -1) {
-                var banner = document.getElementById('installApp');
-                banner.classList.remove('noDisplay');
-                document.getElementById('t_getTheApp').innerHTML =
-                    sprintf(userText.updateApp, latestVersion);
-                if (platform.android) banner.classList.add('android');
-                if (platform.ios) banner.classList.add('ios');
-                banner.classList.add('update');
-                banner.classList.add('show');
+                if (!/^http/.test(window.location.protocol)) {
+                    var banner = document.getElementById('installApp');
+                    banner.classList.remove('noDisplay');
+                    document.getElementById('t_getTheApp').innerHTML =
+                        sprintf(userText.updateApp, latestVersion);
+                    if (platform.android) banner.classList.add('android');
+                    if (platform.ios) banner.classList.add('ios');
+                    banner.classList.add('update');
+                    banner.classList.add('show');
+                } else {
+                    // Set "reload" in localStorage to make sure we only reload once
+                    localStorage.setItem("reload", "true");
+                    window.location.reload();
+                }
             }
         });
     }
@@ -7441,7 +7449,8 @@ function getLatestVersion() {
 function getStableVersion(f) {
     var xhr = new XMLHttpRequest();
     xhr.timeout = 5000;
-    
+
+    /* CAUSES ERRORS STARTING 2021
     if (platform.cordova && platform.ios) {
         // only check when online as this might crash when offline on iOS 12
         xhr.onload = function () {
@@ -7455,8 +7464,9 @@ function getStableVersion(f) {
             );
         };
     } else {
+    */
         xhr.onload = function () { f(xhr.response) };
-    }
+    //}
     
     xhr.onerror = xhr.ontimeout = function () { f(false) };
     xhr.open('GET', 'https://openaero.net/openaero.php?v', true);
@@ -10077,7 +10087,7 @@ function grabFigure(evt) {
         dragTarget.setAttribute('pointer-events', 'none');
 
         // enlarge svg to cover top and left, except on smallMobile and Grid
-        if (!platform.smallMobile && !(activeForm === 'G')) {
+        if (!platform.smallMobile && !(/^G/.test(activeForm))) {
             var svgRect = svg.getBoundingClientRect();
             var w = parseInt(viewBox[2]) + parseInt(svgRect.left) +
                 parseInt(dragTarget.scrollLeftSave);
@@ -10189,7 +10199,7 @@ function setFigureSelected(figNr) {
                     svgScale = roundTwo(SVGRoot.viewBox.baseVal.width /
                         (SVGRoot.width.baseVal.value || 1)) || 1,
                     showHandles = document.getElementById('showHandles').checked &&
-                        !(activeForm === 'G'),
+                        !(/^G/.test(activeForm)),
                     nodes = el.childNodes,
                     length = nodes.length;
                 selectedFigure = el.getBBox();
@@ -10247,7 +10257,7 @@ function Drag(evt) {
     evt.preventDefault(); // prevent default dag & drop and scrolling on touch devices
 
     // don't drag figures when in grid view
-    if ((activeForm === 'G') && !dragTarget.classList.contains('draggablePanel')) return;
+    if (/^G/.test(activeForm) && !dragTarget.classList.contains('draggablePanel')) return;
 
     // put the coordinates of object evt in TrueCoords global
     if (platform.touch && evt.changedTouches && evt.changedTouches[0] && evt.changedTouches[0].pageX) {
@@ -10498,7 +10508,7 @@ function Drop(evt) {
         /** dropping a complete figure */
 
         // create curveTo for dragged elements when not in grid view
-        if (transform && (activeForm !== 'G')) {
+        if (transform && !(/^G/.test(activeForm))) {
             // make sure a comma is used for x y separation in transform
             var dxdy = transform.match(/[0-9\-\.]+[, ][0-9\-\.]+/) ?
                 transform.replace(/ /, ',').match(/[0-9\-\.]+,[0-9\-\.]+/)[0].split(',') :
@@ -11113,7 +11123,7 @@ function startFuDesigner(dontConfirm) {
                 }
             }
 
-            if ((activeForm === 'G') && noAdditional) {
+            if (/^G/.test(activeForm) && noAdditional) {
                 var text = 'eu';
             } else {
                 // rebuild the sequence according Free (Un)known designer format
@@ -13135,7 +13145,7 @@ function updateDefaultView(queue) {
     if (queue) {
         el.value = 'queue';
     } else {
-        if (activeForm === 'G') {
+        if (/^G/.test(activeForm)) {
             el.value = 'grid:' + document.getElementById('gridColumns').value;
         } else if (activeForm === 'FU') {
             el.value = 'freeUnknown';
@@ -17990,7 +18000,7 @@ function parseSequence() {
         // - the previous figure did not exit on X axis (not applicable
         //   for Grid)
         flipY: if (figure.replace(regexComments, '').match(regexFlipYAxis)) {
-            if (activeForm !== 'G') {
+            if (!(/^G/.test(activeForm))) {
                 for (var j = i - 1; j >= 0; j--) {
                     if (figures[j].aresti) {
                         if (figures[j].exitAxis == 'X') break; else break flipY;
@@ -18211,7 +18221,7 @@ function parseSequence() {
                         Attitude = 180;
                         changeDir(180);
                         // don't show warning in Grid view
-                        if (activeForm !== 'G') {
+                        if (!(/^G/.test(activeForm))) {
                             alertMsgs.push('(' + seqNr + ') ' + userText.setUpright);
                             // draw circle around figure start
                             figures[i].paths = [{
@@ -18227,7 +18237,7 @@ function parseSequence() {
                         Attitude = 0;
                         changeDir(180);
                         // don't show warning in Grid view
-                        if (activeForm !== 'G') {
+                        if (!(/^G/.test(activeForm))) {
                             alertMsgs.push('(' + seqNr + ') ' + userText.setInverted);
                             // draw circle around figure start
                             figures[i].paths = [{

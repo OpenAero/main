@@ -11,10 +11,10 @@ const precacheFiles = [
 'css/mobile.css',
 'css/smallMobile.css',
 'doc/arestisystem.html',
-'doc/CIVA-Free-Known-Programme-Guidance-Glider-Aircraft-2020-v1.html',
-'doc/CIVA-Free-Known-Programme-Guidance-Glider-Aircraft-2020-v1.png',
-'doc/CIVA-Free-Known-Programme-Guidance-Power-Aircraft-2020-v1.html',
-'doc/CIVA-Free-Known-Programme-Guidance-Power-Aircraft-2020-v1.png',
+'doc/CIVA-Free-Known-Programme-Guidance-Glider-Aircraft.html',
+'doc/CIVA-Free-Known-Programme-Guidance-Glider-Aircraft-2021-v1.png',
+'doc/CIVA-Free-Known-Programme-Guidance-Power-Aircraft.html',
+'doc/CIVA-Free-Known-Programme-Guidance-Power-Aircraft-2021-v2.png',
 'doc/gpl_files/combo.css',
 'doc/gpl_files/gplv3-127x51.png',
 'doc/gpl_files/layout.css',
@@ -66,15 +66,15 @@ const precacheFiles = [
 'js/logo.js',
 'js/main.js',
 'js/rules/rules15-ga.js',
-'js/rules/rules16-sac.js',
+'js/rules/rules21-sac.js',
 'js/rules/rules20.js',
 'js/rules/rules17-baea.js',
-'js/rules/rules20-france.js',
-'js/rules/rules20-aac.js',
-'js/rules/rules20-iac.js',
-'js/rules/rules20-glider-iac.js',
-'js/rules/rules20-civa.js',
-'js/rules/rules20-glider-civa.js',
+'js/rules/rules21-france.js',
+'js/rules/rules21-aac.js',
+'js/rules/rules21-iac.js',
+'js/rules/rules21-glider-iac.js',
+'js/rules/rules21-civa.js',
+'js/rules/rules21-glider-civa.js',
 'js/rules/rules21-nzac.js',
 'js/rules/rules19-vink.js',
 'js/rulesWorker.js',
@@ -106,7 +106,10 @@ self.addEventListener("activate", function (event) {
 
 // If any fetch fails, it will look for the request in the cache and serve it from there first
 self.addEventListener("fetch", function (event) { 
-  if (event.request.method !== "GET") return;
+    if (event.request.method !== "GET") return;
+
+    // Never cache PHP
+  if (/\.php/.test(event.request.url)) return;
 
   event.respondWith(
     fromCache(event.request).then(
@@ -129,7 +132,6 @@ self.addEventListener("fetch", function (event) {
           .then(function (response) {
             // If request was success, add or update it in the cache
             event.waitUntil(updateCache(event.request, response.clone()));
-
             return response;
           })
           .catch(function (error) {
@@ -156,7 +158,7 @@ function fromCache(request) {
 }
 
 function updateCache(request, response) {
-  return caches.open(CACHE).then(function (cache) {
-    return cache.put(request, response);
+    return caches.open(CACHE).then(function (cache) {
+      return cache.put(request, response);
   });
 }

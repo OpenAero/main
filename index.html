@@ -76,8 +76,8 @@
 
         // Check compatibility for the browser we're running this in
         if ("serviceWorker" in navigator) {
-            // Register the service worker, unless running from local file
-            if (window.location.protocol !== 'file:') {
+            // Register the service worker when running on http(s)
+            if (/^http/.test(window.location.protocol)) {
                 navigator.serviceWorker
                     .register("pwabuilder-sw.js", {
                         scope: "./"
@@ -102,17 +102,17 @@
     <script src="js/rulesWorker.js" type="text/javascript"></script>
     <!-- sequence rules. Start with general and CIVA, then alphabetical -->
     <script src="js/rules/rules20.js" type="text/javascript"></script>
-    <script src="js/rules/rules20-civa.js" type="text/javascript"></script>
-    <script src="js/rules/rules20-glider-civa.js" type="text/javascript"></script>
-    <script src="js/rules/rules20-aac.js" type="text/javascript"></script>
+    <script src="js/rules/rules21-civa.js" type="text/javascript"></script>
+    <script src="js/rules/rules21-glider-civa.js" type="text/javascript"></script>
+    <script src="js/rules/rules21-aac.js" type="text/javascript"></script>
     <script src="js/rules/rules17-baea.js" type="text/javascript"></script>
-    <script src="js/rules/rules20-france.js" type="text/javascript"></script>
+    <script src="js/rules/rules21-france.js" type="text/javascript"></script>
     <script src="js/rules/rules15-ga.js" type="text/javascript"></script>
-    <script src="js/rules/rules20-iac.js" type="text/javascript"></script>
-    <script src="js/rules/rules20-glider-iac.js" type="text/javascript"></script>
+    <script src="js/rules/rules21-iac.js" type="text/javascript"></script>
+    <script src="js/rules/rules21-glider-iac.js" type="text/javascript"></script>
     <script src="js/rules/rules21-nzac.js" type="text/javascript"></script>
     <script src="js/rules/rules20-saa.js" type="text/javascript"></script>
-    <script src="js/rules/rules16-sac.js" type="text/javascript"></script>
+    <script src="js/rules/rules21-sac.js" type="text/javascript"></script>
     <script src="js/rules/rules19-vink.js" type="text/javascript"></script>
     <!-- library -->
     <script src="js/library.js" type="text/javascript"></script>
@@ -364,10 +364,11 @@
 									<i class="material-icons menuIcon">translate</i>
 									<span class="userText" id="t_openaeroLanguage"></span>
 								</li>
-                <li>
+                                <li>
 									<i class="material-icons menuIcon">multiline_chart</i>
 									<span class="userText" id="t_arestiSystem"></span>
 								</li>
+
 								<li>
 									<i class="material-icons menuIcon">explore</i>
 									<span class="userText" id="t_freeKnownGuidancePower"></span>
@@ -376,7 +377,8 @@
 									<i class="material-icons menuIcon">explore</i>
 									<span class="userText" id="t_freeKnownGuidanceGlider"></span>
 								</li>
-                <li>
+
+                                <li>
 									<i class="material-icons menuIcon">feedback</i>
 									<a class="userText" id="t_feedback" href="https://github.com/OpenAero/main/wiki/Feedback" target="_blank"></a>
 								</li>

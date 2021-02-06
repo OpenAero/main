@@ -1,4 +1,23 @@
-﻿2020.1.10
+﻿2021.1.2
+* Fixed bug causing red circles to appear at start of figure when printing in cases where previous exit is not matched
+* Added 2021 IAC sequences and updated IAC power rules 
+* Updated AAC rules for 2021
+* Updated Alerts to show more than 3 sequential figure numbers in alert as (first...last)
+
+2021.1.1
+* Fixed issue where two reloads would be needed to obtain latest version
+* Updated Free Known guidance documents
+* Added 2021 CIVA Glider sequences (same as 2020)
+* Added 2021 France sequences
+* Added 2021 AAC sequences
+* Fixed Intermediate Free Known reference sequence
+
+2021.1
+* added 2021 CIVA Power rules and sequences
+* temporarily removed Free Known guidance until documents for 2021 become available
+* updated SAC rules for 2021
+
+2020.1.10
 * added 2020 AAC sequences and Sportsman Free rule update
 * added directive to rule files to add a specific logo to specific rules (logo=xxx)
 * updates rules16.js to rules20.js with additional descriptions

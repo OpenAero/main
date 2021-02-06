@@ -1351,12 +1351,19 @@ function checkReferenceSequence (figures) {
 // figureNumbers is called by checkRules. It takes a match array with
 // i items {'match':xxx, 'fig':xxx} and returns the fig numbers as a
 // comma-separated line. Do not add the same number multiple times.
+// When there are more than 3 numbers, all sequential, then
+// first...last is returned.
 function figureNumbers (match) {
-  var figs = [];
-  for (var i = 0; i < match.length; i++) {
-    if (figs.indexOf (match[i].fig) === -1) figs.push (match[i].fig);
-  }
-  return figs.join(',');
+    var
+        figs = [match[0].fig],
+        sequential = true;
+    for (var i = 1; i < match.length; i++) {
+        if (match[i].fig > figs[figs.length - 1] + 1) sequential = false;
+        if (figs.indexOf(match[i].fig) === -1) figs.push(match[i].fig);
+    }
+    if (sequential && figs.length > 3) {
+        return (figs[0] + '...' + figs.pop())
+    } else return figs.join(',');
 }
 
 // checkName creates the correct 'name' string. Priority is:
