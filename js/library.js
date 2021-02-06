@@ -21,7 +21,23 @@
 // This file contains example sequences which will be available
 // in menu Library
 
+
+
+// library is a JSON Object for the Library Menu
+// The Key is the path (Year > Folder > Sequence Name)
+// The Value is the OpenAero configuration as 'XML' Base64URL encoded
+//		- Copy a previous query parameter (s) to make alteration
+//		- You can use this site to decode: https://www.base64decode.org
+//		- Then update the 'XML' on this site (https://www.base64encode.org) to encode 
+//			but remember to tick the "Perform URL safe encoding (uses Base64URL format)."
 var library = {
+	
+	'2021 AAC Graduate Known':
+        'https://openaero.net/?s=PGNhdGVnb3J5PkdyYWR1YXRlPC8-PGRhdGU-MjAyMTwvPjxjbGFzcz5wb3dlcmVkPC8-PHByb2dyYW0-S25vd248Lz48cnVsZXM-QUFDPC8-PHBvc2l0aW9uaW5nPjA8Lz48aGFybW9ueT4wPC8-PHNlcXVlbmNlX3RleHQ-byAoOCwwKSBoICgtMjcsOCkgLDJyYyAoMiw5KSBkICgxMCwwKSBpdi4nNnMuLicgKC0zNCwwKSBtMiAoMzAsMTEpIGogM2ogKC00LDApIDE8Lz48bG9nbz5BQUM8Lz48b2FfdmVyc2lvbj4yMDIxLjEuNTwvPjxkZWZhdWx0X3ZpZXc-QjwvPg',
+
+    '2021 AAC Sportsman Known':
+        'https://openaero.net/?s=PGNhdGVnb3J5PlNwb3J0c21hbjwvPjxkYXRlPjIwMjE8Lz48Y2xhc3M-cG93ZXJlZDwvPjxwcm9ncmFtPktub3duPC8-PHJ1bGVzPkFBQzwvPjxwb3NpdGlvbmluZz4xNTwvPjxoYXJtb255PjA8Lz48c2VxdWVuY2VfdGV4dD5laiBoJzQnJyAoNywwKSAycmMgKC0yNywxNykgbTIgKDksMCkgaXYnJ3MuICgxOCwwKSBgay4nLDInJyAoLTIsNikgYicnICgtMTEsMCkgYy4uLicnMiAoMSwwKSBvICg3LDApIDJqICgtMTEsMCkgMjI8Lz48bG9nbz5BQUM8Lz48b2FfdmVyc2lvbj4yMDIxLjEuNTwvPjxkZWZhdWx0X3ZpZXc-QjwvPg',
+
     '2021 NZAC Primary Known':
         'https://openaero.net/?s=PGNhdGVnb3J5PlByaW1hcnkgPC8-PGRhdGU-MjAyMDwvPjxjbGFzcz5wb3dlcmVkPC8-PHByb2dyYW0-S25vd248Lz48cnVsZXM-MjAvMjEgTlpBQzwvPjxwb3NpdGlvbmluZz4zPC8-PHNlcXVlbmNlX3RleHQ-NSUgZCBpdi4ucy4nJyt-IC0xJSAuLi4nYy4uLjIuLi4rYCAxJSBgYCtvK2AgOCUgfisyaisgLicxK348Lz48bG9nbz5OWkFDPC8-PG9hX3ZlcnNpb24-MjAyMC4xLjU8Lz48ZGVmYXVsdF92aWV3PkI8Lz4',
 
