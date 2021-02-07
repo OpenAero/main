@@ -1,4 +1,5 @@
-﻿2021.1.2
+﻿2021.1.4
+* Skipped version numbers (reason unimportant)
 * Fixed bug causing red circles to appear at start of figure when printing in cases where previous exit is not matched
 * Added 2021 IAC sequences and updated IAC power rules 
 * Updated AAC rules for 2021
