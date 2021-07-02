@@ -31,12 +31,13 @@
 
 
 /**
-*
-* Change History
-*
-* 2019.2.4: Rules for Glider Known, Free, and Unknown programs
-* 2020.1.3: Added floating point correction for Glider Advanced Known
-*
+ *
+ * Change History
+ *
+ * 2019.2.4: Rules for Glider Known, Free, and Unknown programs
+ * 2020.1.3: Added floating point correction for Glider Advanced Known
+ * 2021.1.7: Fixed group-halfroll definition and improved description
+ *
 */
 
 rules.push (
@@ -194,8 +195,8 @@ rules.push (
 "group-fam2fullroll=^2\\.1\\.3\\.|^2\\.2\\.[3-7]\\.|^2\\.3\\.[2-5]\\.|^2\\.4\\.[3-8]\\.",
 "fam2fullroll-name=Family 2 with at least one full roll",
 
-"group-halfroll=^9\\.1\\.[1-5]\\.2\\.",
-"halfroll-name=Family 9.1 half-roll",
+"group-halfroll=^9\\.1\\.[1-5]\\.2",
+"halfroll-name=Family 9.1.1-5.2 (half-roll)",
 
 "group-fam99=^9\\.9\\.",
 "fam99-name=Family 9.9",

@@ -36,7 +36,7 @@
 // A new x should be used for versions that create sequences not
 // fully backward compatible with the previous version
 
-var version = '2021.1.4';
+var version = '2021.1.8';
 /* versionNew is an object that contains version update information
    The structure is {vvv : [[ttt, n], ...], ...} , where
    vvv = version number
@@ -44,6 +44,16 @@ var version = '2021.1.4';
    n   = importance (higher = more important)
 */
 var versionNew = {
+    '2021.1.8': [
+        ['Added indicator colors to figure start points for lettered figures (as in Free (un)knowns)', 4]
+    ],
+    '2021.1.7': [
+        ['Updated NZAC Power rules and sequences for 2021/2022', 3]
+    ],
+    '2021.1.5': [
+        ['Corrected IAC Sportsman Free maximum K to 115', 3],
+        ['Added BAeA and VINK sequences for 2021', 3]
+    ],
     '2021.1.4': [
         ['Added 2021 IAC sequences and updated IAC power rules', 3],
         ['Updated AAC rules for 2021', 2]
@@ -394,7 +404,7 @@ var newTurnPerspective;
 var minFigStartDist = lineElement * 3;
 var minFigStartDistSq = minFigStartDist * minFigStartDist;
 // how much margin to use when automatically separating figures
-var separateMargin = 2;
+var separateMargin = 4;
 
 /**********************************************************************
  * 
@@ -494,8 +504,23 @@ var style = {
   'rollText' : 'font-family: Arial, Sans; font-size: ' + rollFontSize +
     'px; font-weight: bold; fill: red;',
   // Figure Number
-  'figNbr_09' : 'font-family: Verdana, Helvetica, Sans; font-size: 14px; font-weight: bold; fill: black;',
-  'figNbr_10' : 'font-family: Verdana, Helvetica, Sans; font-size: 12px; font-weight: bold; fill: black;',
+    'figNbr_09' : 'font-family: Verdana, Helvetica, Sans; font-size: 16px; font-weight: bold; fill: black;',
+    'figNbr_09-additional': 'font-family: Verdana, Helvetica, Sans; font-size: 16px; font-weight: bold; fill: #6060ff;',
+    'figNbr_09-correct': 'font-family: Verdana, Helvetica, Sans; font-size: 16px; font-weight: bold; fill: #7cb342;',
+    'figNbr_09-error': 'font-family: Verdana, Helvetica, Sans; font-size: 16px; font-weight: bold; fill: #ff6040;',
+    'figNbr_10': 'font-family: Verdana, Helvetica, Sans; font-size: 14px; font-weight: bold; fill: black;',
+    'figNbr_10-additional': 'font-family: Verdana, Helvetica, Sans; font-size: 14px; font-weight: bold; fill: #6060ff;',
+    'figNbr_10-correct': 'font-family: Verdana, Helvetica, Sans; font-size: 14px; font-weight: bold; fill: #7cb342;',
+    'figNbr_10-error': 'font-family: Verdana, Helvetica, Sans; font-size: 14px; font-weight: bold; fill: #ff6040;',
+    'figureStartMarker': 'stroke: black; stroke-width: 1px; fill: black;',
+    'figureStartMarker-additional': 'stroke: #6060f0; stroke-width: 1px; fill: #6060ff;',
+    'figureStartMarker-correct': 'stroke: #7cb342; stroke-width: 1px; fill: #7cb342;',
+    'figureStartMarker-error': 'stroke: #ff6040; stroke-width: 1px; fill: #ff6040;',
+    'openFigureStartMarker': 'stroke: black; stroke-width: 1.5px; fill: none; vector-effect: non-scaling-stroke;',
+    'openFigureStartMarker-additional': 'stroke: #6060ff; stroke-width: 1.5px; fill: none; vector-effect: non-scaling-stroke;',
+    'openFigureStartMarker-correct': 'stroke: #7cb342; stroke-width: 1.5px; fill: none; vector-effect: non-scaling-stroke;',
+    'openFigureStartMarker-error': 'stroke: #ff6040; stroke-width: 1.5px; fill: none; vector-effect: non-scaling-stroke;',
+
   // Text block style
   'textBlock' : 'font-family: verdana, Helvetica, Sans; font-size: 20px; fill: black;',
   'textBlockBorder' : 'stroke: black; stroke-width: 1px; fill: none;',
@@ -522,7 +547,7 @@ var style = {
   'formATextMedium' : 'font-family: verdana, Helvetica, Sans; font-size: 15px; fill: black;',
   'formATextLarge' : 'font-family: verdana, Helvetica, Sans; font-size: 18px; fill: black;',
   'formATextXL' : 'font-family: verdana, Helvetica, Sans; font-size: 21px; fill: black;',
-  'formATextHuge' : 'font-family: verdana, Helvetica, Sans; font-size: 40px; fill: black;',	// Ajout Modif GG 2017
+  'formATextHuge' : 'font-family: verdana, Helvetica, Sans; font-size: 40px; fill: black;',
   'formATextBoldHuge' : 'font-family: verdana, Helvetica, Sans; font-size: 40px; font-weight: bold; fill: black;',
   'formLine' : 'stroke: black; stroke-width: 1px; fill: none;',
   'formLineBold' : 'stroke: black; stroke-width: 4px; fill: none;',

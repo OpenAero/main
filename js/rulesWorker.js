@@ -690,7 +690,7 @@ function checkRules (callbackId, activeSequenceText, figures, figCheckLine, nonA
    1) current language
    2) no language
    3) English */
-  function why (rule) {
+    function why(rule) {
     if (checkRule[rule]['why_' + language]) {
       return checkRule[rule]['why_' + language];
     } else if (checkRule[rule].why) {
@@ -1289,7 +1289,7 @@ function checkRules (callbackId, activeSequenceText, figures, figCheckLine, nonA
 	  // when additionals are allowed, at least one is required
 	  if (additionalFig.max && !additionals) {
 	    checkAlert (
-	      "At least 1 additional figure required",
+	      userText.additionalFigureRequired,
 	      false,
 	      false,
 	      (sportingClass.value === 'glider') ?

@@ -1,4 +1,29 @@
-﻿2021.1.4
+﻿2021.1.8
+* Added horizontal movement and slightly increased margin for automatic figure positioning
+* Fixed incorrect warning for unlinked rolls on diagonal down line in CIVA Unlimited Free that was also shown for other lines
+* Added indicator colors to figure start points for lettered figures (as in Free (un)knowns)
+* increased size of figure start numbers to ensure readability for scaled (vertical) sequences and colors for lettered figures
+* fixed issue where some rules were not translated to French
+* improved rule coding of NORDIAGDOWN, DIAGUP4S and UnlimitedNOU (thank you Gilles!)
+* fixed issue where changing (illegal) 1j5 to 1j could cause crash due to mixup of j and 1j in figure chooser
+* fixed issue where figure placement options in figure chooser were incomplete for queue figures
+* fixed issue where adding a queue figure could lead to a crash by assuring setFigureSelected skips selection of non-figures
+* reduced the number of colors used to improve consistency (list at top of general.css)
+
+2021.1.7
+* Fixed issue where using long press to drag & drop figures in Free Unknown designer on iOS would generate zombie copies
+* Added 2021/2022 NZAC sequences and rules
+* Fixed detection of half rolls in IAC Glider Unlimited Free
+* Replaced fam2 by roller requirement in IAC Power Advanced Free
+
+2021.1.6
+* Corrected Windows Store logo size
+
+2021.1.5
+* Corrected IAC Sportsman Free maximum K to 115
+* Added BAeA and VINK sequences for 2021
+
+2021.1.4
 * Skipped version numbers (reason unimportant)
 * Fixed bug causing red circles to appear at start of figure when printing in cases where previous exit is not matched
 * Added 2021 IAC sequences and updated IAC power rules 

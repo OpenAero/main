@@ -72,6 +72,9 @@ var scale = 1;
 // activeForm == 'C' is true when form C is drawn. It is used in various
 // functions to ensure exact mirroring
 var activeForm = 'B';
+// sequenceEditing is true when the sequence drawing output is set for
+// editing and false when set for output (e.g. printing)
+var sequenceEditing = true;
 // activeSequence holds the current sequence string, separate figures,
 // XML string with all sequence info, undo, redo and filename
 var activeSequence = {
@@ -572,12 +575,12 @@ var iosDragDropShim = {
 
         coordinateSystemForElementFromPoint = navigator.userAgent.match(/OS [1-4](?:_\d+)+ like Mac/) ? "page" : "client";
 
-        /** changed to apply patch to all touchscreens */
-        // var div = doc.createElement('div');
-        // var dragDiv = 'draggable' in div;
-        // var evts = 'ondragstart' in div && 'ondrop' in div;
-        // var needsPatch = !(dragDiv || evts) || /iPad|iPhone|iPod/.test(navigator.userAgent);
-        var needsPatch = platform.touch;
+        /** apply patch in relevant cases (iOS and Android) **/
+        var div = doc.createElement('div');
+        var dragDiv = 'draggable' in div;
+        var evts = 'ondragstart' in div && 'ondrop' in div;
+        var needsPatch = !(dragDiv || evts) || /iPad|iPhone|iPod/.test(navigator.userAgent);
+        //var needsPatch = platform.touch;
 
         log((needsPatch ? "" : "not ") + "patching html5 drag drop");
 
@@ -603,10 +606,12 @@ var iosDragDropShim = {
             this.copy = document.createElement('div');
             this.copy.classList.add('fuSequence');
             if (newNode.tagName === 'TD') {
+                // Copied node is a <td>, implying a single FU figure
                 var table = document.createElement('table');
                 var tr = document.createElement('tr');
                 this.copy.appendChild(table).appendChild(tr).appendChild(newNode);
             } else {
+                // Copied node is a <table>, implying an FU subsequence
                 if (newNode.tagName === 'TABLE') newNode.classList.add('dragDropCopy');
                 this.copy.appendChild(newNode);
             }
@@ -848,10 +853,12 @@ var iosDragDropShim = {
     function touchstart(evt) {
         var el = evt.target;
         do {
-            if (el.getAttribute('draggable') === 'true') {
+            // Check if the element is draggable, or has data-draggable set (for FU figures and subsequences)
+            if (el.getAttribute('draggable') === 'true' || el.getAttribute('data-draggable')) {
                 evt.preventDefault();
+                evt.stopPropagation();
                 new DragDrop(evt, el);
-            } else if (iosDragDropShim.openaero) {
+            } else if (iosDragDropShim.enabled) {
                 if (el.classList.contains('removeFigureButton')) {
                     // event handler is on button
                     evt.preventDefault();
@@ -2285,7 +2292,7 @@ function updateUserTexts() {
     // update userText in rulesWorker
     rulesWorker.postMessage({
         action: 'userText',
-        language: language,
+        language: document.getElementById('language').value,
         userText: userText
     });
 
@@ -2511,32 +2518,40 @@ function drawWind(x, y, signScale, svgEl) {
 }
 
 // makeFigStart creates figure start marker
-function makeFigStart(params) {
-    var seqNr = params.seqNr;
-    var first = params.first;
+function makeFigStart (params) {
+    var
+        seqNr = params.seqNr,
+        first = params.first,
+        pathsArray = [],
+        angle = dirAttToAngle(Direction, Attitude);
 
-    var pathsArray = [];
-    var angle = dirAttToAngle(Direction, Attitude);
     // Create a marker for possible automatic repositioning of the figure
-    // start
+    // start and applying styles after full definition of figure
     pathsArray.push({ 'figureStart': true });
     // Create the first figure mark if applicable
-    var ref_rayon = 9;
-    var open = Math.PI / 6;
-    var rayon = ref_rayon;
+    var
+        ref_radius = 11,
+        open = Math.PI / 6,
+        radius = ref_radius;
     // draw numbers in circles when numberInCircle set AND seqNr present
     if (numberInCircle && seqNr && (activeForm != 'A')) {
         if (first && !(/^G/.test(activeForm))) {
-            rayon = ref_rayon + 4;
-            var ax = roundTwo(rayon * Math.cos(angle - open));
-            var ay = -roundTwo(rayon * Math.sin(angle - open));
-            var Deltax = roundTwo(rayon * Math.cos(angle + open) - ax);
-            var Deltay = roundTwo(-rayon * Math.sin(angle + open) - ay);
+            radius = ref_radius + 4;
+            var ax = roundTwo(radius * Math.cos(angle - open));
+            var ay = -roundTwo(radius * Math.sin(angle - open));
+            var Deltax = roundTwo(radius * Math.cos(angle + open) - ax);
+            var Deltay = roundTwo(-radius * Math.sin(angle + open) - ay);
             pathsArray.push({
-                'path': 'm ' + ax + ',' + ay + ' a' + rayon +
-                    ',' + rayon + ' 0 1 1 ' + Deltax + ',' + Deltay, 'style': 'pos'
+                'path': 'm ' + ax + ',' + ay + ' a' + radius +
+                    ',' + radius + ' 0 1 1 ' + Deltax + ',' + Deltay, 'style': 'openFigureStartMarker'
             });
         }
+        // Make the marker
+        radius = ref_radius + (seqNr < 10 ? 0 : 1);
+        pathsArray.push({
+            'path': 'm ' + (-radius) + ',0 a' + radius + ',' + radius + ' 0 1 1 0,0.01',
+            'style': 'openFigureStartMarker'
+        });
         if (seqNr < 10) {
             // Add the figure number
             if (seqNr) pathsArray.push({
@@ -2546,7 +2561,6 @@ function makeFigStart(params) {
                 'y': 5,
                 'text-anchor': 'middle'
             });
-            rayon = ref_rayon;
         } else {
             // Add the figure number
             pathsArray.push({
@@ -2556,18 +2570,15 @@ function makeFigStart(params) {
                 'y': 5,
                 'text-anchor': 'middle'
             });
-            rayon = ref_rayon + 1;
         }
-        // Make the marker
+        // move the drawing position
         pathsArray.push({
-            'path': 'm ' + (-rayon) + ',0 a' + rayon + ',' + rayon + ' 0 1 1 0,0.01',
-            'style': 'pos',
-            'dx': Math.cos(angle) * 9,
-            'dy': - Math.sin(angle) * 9
+            'dx': Math.cos(angle) * ref_radius,
+            'dy': - Math.sin(angle) * ref_radius
         });
     } else {
         if (first && (activeForm !== 'A') && !(/^G/.test(activeForm))) {
-            pathsArray.push({ 'path': 'm 3,-6 a7,7 0 1 1 -6,0', 'style': 'pos' });
+            pathsArray.push({ 'path': 'm 3,-6 a7,7 0 1 1 -6,0', 'style': 'openFigureStartMarker' });
         }
         // Add the figure number, except on Form A
         if (seqNr && (activeForm !== 'A')) {
@@ -2582,12 +2593,58 @@ function makeFigStart(params) {
         // Make the marker
         pathsArray.push({
             'path': 'm -4,0 a4,4 0 1 1 0,0.01',
-            'style': 'blackfill',
+            'style': 'figureStartMarker',
             'dx': Math.cos(angle) * 4,
             'dy': - Math.sin(angle) * 4
         });
     }
+    pathsArray.push({ 'figureStartEnd': true });
     return pathsArray;
+}
+
+// getFigureStartStyle returns a style for the figure start
+function getFigureStartStyle(f) {
+    // only apply style when editing and not in FU editor
+    if (!sequenceEditing || /^[^BC]/.test(activeForm)) return false;
+
+    if (f.unknownFigureLetter) {
+        // set "additional" style for figures with letter L
+        if (f.unknownFigureLetter == 'L') return 'additional';
+        // check all other figures for use of the same letter
+        for (var i = 0; i < figures.length; i++) {
+            if (figures[i].aresti &&
+                figures[i].seqNr != f.seqNr &&
+                figures[i].unknownFigureLetter === f.unknownFigureLetter) {
+                return 'error';
+            }
+        }
+        // check figures against reference sequence if active
+        if (referenceSequence.figures[f.unknownFigureLetter]) {
+                var refFig = referenceSequence.figures[f.unknownFigureLetter];
+                if (refFig.checkLine !== f.checkLine) {
+                    return 'error';
+                } else if (refFig.entryDir === refFig.exitDir) {
+                    if (f.entryDir !== f.exitDir) {
+                        if (refFig.entryAtt === refFig.exitAtt) {
+                            var text = userText.referenceFigureExitSame;
+                        } else {
+                            var text = userText.referenceFigureExitOpp;
+                        }
+                        return 'error';
+                    }
+                } else if (refFig.entryDir !== refFig.exitDir) {
+                    if (f.entryDir === f.exitDir) {
+                        if (refFig.entryAtt === refFig.exitAtt) {
+                            var text = userText.referenceFigureExitOpp;
+                        } else {
+                            var text = userText.referenceFigureExitSame;
+                        }
+                        return 'error';
+                    }
+            }
+            return "correct";
+        }
+    }
 }
 
 // makeFigStop creates figure stop
@@ -4313,12 +4370,20 @@ function buildShape(shapeName, Params, paths) {
 function drawShape(pathArray, svgElement, prev) {
     var cur = false;
     svgElement = svgElement || SVGRoot.getElementById('sequence');
+
     // decide if we are drawing a path or text or starting a figure
     if (pathArray.path) {
         var path = document.createElementNS(svgNS, "path");
         path.setAttribute('d', 'M ' + roundTwo(X) + ',' + roundTwo(Y) +
             ' ' + pathArray.path);
-        path.setAttribute('style', style[pathArray.style]);
+
+        function pathStyle (styleList) {
+            var styleStrings = [];
+            for (var i = 0; i < styleList.length; i++) styleStrings.push(style[styleList[i]]);
+            return styleStrings.join(';');
+        };
+        path.setAttribute('style', pathStyle(pathArray.style.split(';')));
+
         if (pathArray.class) path.setAttribute('class', pathArray.class);
         if (pathArray.handle && svgElement.id) {
             path.setAttribute('id', svgElement.id + '-' + pathArray.handle);
@@ -9375,6 +9440,7 @@ function switchQueue (el) {
 // (e = object) or from grabFigure (e = figNr) or from certain functions
 // or false
 function selectFigure(e) {
+
     // disable when sequence locked
     if (document.getElementById('lock_sequence').value) return;
 
@@ -9510,8 +9576,8 @@ function selectFigure(e) {
         e = SVGRoot.getElementById('figure' + e);
     }
     var elFT = document.getElementById('t_addFigureText');
-    if (e !== false) {
-        // e!==false => a figure is selected
+    if (e != false && selectedFigure.id !== null) {
+        // => a figure is selected
         // hide the figure selector for smallMobile browsers, but highlight the
         // chosen figure in case the figure selector is shown again
         if (platform.smallMobile) hideFigureSelector();
@@ -9558,7 +9624,7 @@ function selectFigure(e) {
             } else {
                 setFigChooser(figures[selectedFigure.id].figNr);
             }
-        }
+        } else updateFigureSelectorOptions();
 
         // Highlight the figure in the sequence text when we were not editing
         // the comments and not in FU designer
@@ -10154,7 +10220,10 @@ function setFigChooser(figNr) {
         }
         changeFigureGroup(selectedGroup);
         // Select the correct figure and scroll selector there
-        var td = document.getElementById(figNr).parentNode;
+        // First look for the earliest figure with the correct Aresti code
+        // as the same code may be used more than once (e.g. j and 1j)
+        for (var i = 0; i < figNr; i++) if (fig[i] && (fig[i].aresti == fig[figNr].aresti)) break;
+        var td = document.getElementById('figureChooser' + i).parentNode;
         td.classList.add('selected');
         // Set the vertical offset of the <tr> in which the element is
         document.getElementById('figureChooser').scrollTop = td.parentNode.offsetTop;
@@ -10164,7 +10233,12 @@ function setFigChooser(figNr) {
 
 // setFigureSelected sets the active figure and applies color filter
 function setFigureSelected(figNr) {
-    if (figNr === false) figNr = null;
+    // make sure we only select valid figures
+    if (figNr === false || isNaN(figNr)) {
+        figNr = null;
+    }
+    while (figures[figNr] && !figures[figNr].aresti) figNr++;
+
     // define header element for info
     var header = document.getElementById('figureHeader');
 
@@ -10694,15 +10768,12 @@ function separateFigure(id) {
         // need to define bBox here
         figures[i].bBox = myGetBBox(document.getElementById('figure' + i));
         // separate the figure itself
-        if (moveClear(i)) {
-            i++;
-            selectFig++;
-        }
+        moveClear(i);
 
         // select correct figure
         setFigureSelected(selectFig);
         // find the next real figure and separate that one
-        i++;
+        i = selectedFigure.id + 1;
         while (figures[i]) {
             if (figures[i].aresti) {
                 moveClear(i);
@@ -10736,6 +10807,10 @@ function separateFigures(noConfirm) {
                 i++;
             }
         } while (breakLoop);
+        // replace any (0,0) curveTo by a 2> moveForward
+        for (var i = 0; i < figures.length; i++) {
+            if (figures[i].string === "(0,0)") updateSequence(i, '2>', true);
+        }
     }
 
     // only do this when on Form B or C
@@ -10762,7 +10837,12 @@ function moveClear(i) {
     var bBoxI = figures[i].bBox;
     // only do something for real Aresti figures
     if (bBoxI && figures[i].aresti) {
-        var moveDown = 0;
+        var
+            moveLR = 0,
+            // for horizontal movement, move in the same direction as the figure entry
+            moveLRsign = (figures[i].entryDir % 180) == 0 ?
+                (figures[i].entryAtt == figures[i].entryDir ? 1 : -1) : 0,
+            moveDown = 0;
         // loop through all nodes of relevant figures. Whenever we encounter
         // an overlap the figure will be moved down and tests run anew.
         do {
@@ -10778,13 +10858,29 @@ function moveClear(i) {
                         for (var l = 0; l < bBoxI.nodes.length; l++) {
                             // set
                             var bBox = bBoxI.nodes[l];
-                            // check if we have overlap. If so, adjust movedown
+                            // check if we have overlap. If so, try adjusting movedown
                             if (((bBox.right + m) > bBoxK.x) &&
                                 ((bBox.x - m) < (bBoxK.x + bBoxK.width))) {
                                 if (((bBox.bottom + moveDown + m) > bBoxK.y) &&
                                     ((bBox.y + moveDown - m) < (bBoxK.y + bBoxK.height))) {
-                                    moveDown += bBoxK.y + bBoxK.height - (bBox.y + moveDown) + m;
+                                    moveDown = bBoxK.y + bBoxK.height - bBox.y + m;
                                     repeat = true;
+                                }
+                            }
+                            if (moveLRsign != 0) {
+                                // check if we have overlap. If so, try adjusting moveLR
+                                if (((bBox.right + moveLR + m) > bBoxK.x) &&
+                                    ((bBox.x + moveLR - m) < (bBoxK.x + bBoxK.width))) {
+                                    if (((bBox.bottom + m) > bBoxK.y) &&
+                                        ((bBox.y - m) < (bBoxK.y + bBoxK.height))) {
+                                        if (moveLRsign > 0) {
+                                            moveLR = (bBoxK.x + bBoxK.width - bBox.x + m);
+                                        } else {
+                                            moveLR = -(bBox.x + bBox.width - bBoxK.x + m);
+                                        }
+
+                                        repeat = true;
+                                    }
                                 }
                             }
                             if (repeat) break;
@@ -10795,7 +10891,15 @@ function moveClear(i) {
                 }
             }
         } while (repeat);
+
         if (moveDown > 0) {
+            // Movement of the figure required. Round the values of moveLRdown as some spacing is
+            // automatically provided for horizontal movement
+            moveLR = moveLRsign > 0 ? Math.floor(moveLR / lineElement) : Math.ceil(moveLR / lineElement);
+            if (activeForm === 'C') {
+                moveLR = -moveLR;
+                moveLRsign = -moveLRsign;
+            }
             moveDown = Math.ceil(moveDown / lineElement);
             // No longer necessary because we redraw every time. This code could be
             // quicker but needs extra work. Keep it here just in case...
@@ -10803,7 +10907,10 @@ function moveClear(i) {
             //          if (figures[j].bBox) figures[j].bBox.y = figures[j].bBox.y + (moveDown * lineElement)
             //        }
             var xml = activeSequence.xml;
-            updateSequence(i - 1, '(0,' + moveDown + ')', false);
+            // Use whatever requires least movement, with a slight preference for moving down
+            if ((moveLRsign != 0) && (Math.abs(moveLR) < moveDown)) {
+                updateSequence(i - 1, '(' + moveLR + ',0)', false);
+            } else updateSequence(i - 1, '(0,' + moveDown + ')', false);
             // don't add undo for this
             activeSequence.undo.pop();
             breakLoop = true;
@@ -10879,7 +10986,7 @@ function showQueue() {
     showFigureSelector();
 }
 
-// chnageQueueColumns changes the amount of columns in queue
+// changeQueueColumns changes the amount of columns in queue
 function changeQueueColumns() {
     saveSettingsStorage();
     // clear queue figure SVGs first, to allow resizing
@@ -11644,7 +11751,9 @@ function buildFuFiguresTab() {
         } else {
             td.innerHTML = userText[(l === 'L') ? 'additional' : 'free'];
         }
-        td.setAttribute('draggable', true);
+        if (iosDragDropShim.enabled) {
+            td.setAttribute('data-draggable', true);
+        } else td.setAttribute('draggable', true);
         td.addEventListener('dragstart', handleFreeDragFigureStart);
     }
 
@@ -12509,7 +12618,9 @@ function makeFree() {
         freeCellAddHandlers(td);
 
         // add table drag handling
-        table.setAttribute('draggable', true);
+        if (iosDragDropShim.enabled) {
+            table.setAttribute('data-draggable', true);
+        } else table.setAttribute('draggable', true);
         table.addEventListener('dragstart', function (e) {
             handleFreeDragSubStart(e, string);
         });
@@ -12831,7 +12942,7 @@ function displayAlerts() {
 }
 
 // do some kind of draw
-// console.log values for debugging
+
 function draw() {
     rebuildSequenceSvg();
     // reset all drawing variables to default values
@@ -14268,7 +14379,8 @@ function saveFile(data, name, ext, filter, format) {
         }, function (w) {
             writeFileEntry(w, saveData.blob, function () {
                 // this callback is called after succesful write
-                updateSaveFilename(w.name.replace(/\.[^.]*$/, ''));
+                // update filename, except for zipped figure files
+                if (ext != '.zip') updateSaveFilename(w.name.replace(/\.[^.]*$/, ''));
                 if (ext === '.seq') setSequenceSaved(true);
             });
         });
@@ -14293,7 +14405,8 @@ function saveFile(data, name, ext, filter, format) {
                     Windows.Storage.Streams.RandomAccessStream.copyAsync(input, output).then(function () {
                         output.flushAsync().done(function (updateStatus) {
                             //if (updateStatus === Windows.Storage.Provider.FileUpdateStatus.complete) {
-                            updateSaveFilename(file.name.replace(/\.[^.]*$/, ''));
+                            // update filename, except for zipped figure files
+                            if (ext != '.zip') updateSaveFilename(file.name.replace(/\.[^.]*$/, ''));
                             if (ext === '.seq') setSequenceSaved(true);
                             //} else {
                             //	result = false;
@@ -14842,6 +14955,10 @@ function adjustRollFontSize(scale, svg) {
 // from a provided SVG object and activeForm global.
 // The default size of the page is A4, 800x1130
 function buildForm(print) {
+
+    // generate output for saving, not editing
+    sequenceEditing = false;
+
     if (activeForm === ('B' + (print ? '+' : ''))) {
         miniFormA = true;
     } else if (activeForm === ('C' + (print ? '+' : ''))) {
@@ -14856,6 +14973,7 @@ function buildForm(print) {
         draw();
         activeForm = activeFormSave;
     } else draw();
+
     var bBox = SVGRoot.getBBox();
     var mySVG = SVGRoot;
 
@@ -15227,6 +15345,9 @@ function buildForm(print) {
         sequenceSVG = sequenceSVG.replace(/stroke-width:\s*1\.5px;/g, 'stroke-width: 3px;');
         sequenceSVG = sequenceSVG.replace(/stroke-width:\s*1px;/g, 'stroke-width: 2px;');
     }
+
+    // go back to editing output mode
+    sequenceEditing = true;
 
     return sequenceSVG;
 }
@@ -16079,9 +16200,7 @@ function savePNG() {
 // single zip file
 function saveFigs() {
     var
-        fname = activeFileName(' Form ' + activeForm[0]),
-        // save selectedFigure.id
-        id = selectedFigure.id,
+        fname = activeFileName(),
         // create new zip object
         zip = new JSZip(),
         // get image filename pattern
@@ -16091,6 +16210,10 @@ function saveFigs() {
         height = document.getElementById('saveFigsSeparateHeight').value.replace(/[^0-9]/g, '') + 'px',
         i = 0;
 
+    // generate output for saving, not editing
+    sequenceEditing = false;
+    draw();
+
     // go through the active form and get each figure from the edit figure
     // box
     function zipFigure() {
@@ -16099,14 +16222,17 @@ function saveFigs() {
                 .then(function (content) {
                     saveFile(
                         content,
-                        fname,
+                        fname + ' Form ' + activeForm[0],
                         '.zip',
                         { 'name': 'ZIP file', 'filter': '.zip' },
                         'application/zip'
                     );
                 });
-            selectedFigure.id = id;
-            displaySelectedFigure();
+
+            // restore svg to editing mode
+            sequenceEditing = true;
+            selectFigure(false);
+            draw();
         } else if (figures[i].figNr) {
             selectedFigure.id = i;
             displaySelectedFigure();
@@ -16114,7 +16240,7 @@ function saveFigs() {
             svg.setAttribute('width', width);
             svg.setAttribute('height', height);
             // convert svg object to string
-            svg = new XMLSerializer().serializeToString(document.getElementById('selectedFigureSvg'));
+            svg = new XMLSerializer().serializeToString(svg);
             // create correct image filename
             var fName = fPattern;
             fName = fName.replace(/%pilot/g, document.getElementById('pilot').value);
@@ -16154,6 +16280,7 @@ function saveFigs() {
         }
     }
     zipFigure();
+
 }
 
 // svgToPng will convert an svg to a png image
@@ -16294,7 +16421,7 @@ function buildMoveDown(extent, i) {
 // figStringIndex = index of figure (figures[figStringIndex])
 // figure_chooser = Optional argument, true if we are building the
 //                  figure for the figure chooser
-function buildFigure(figNrs, figString, seqNr, figStringIndex, figure_chooser) {
+function buildFigure (figNrs, figString, seqNr, figStringIndex, figure_chooser) {
     var
         figNr = figNrs[0],
         roll = [],
@@ -16785,6 +16912,8 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figure_chooser) {
         }
     }
 
+    figures[figStringIndex].unknownFigureLetter = unknownFigureLetter;
+
     // Now we go through the drawing instructions
     var
         lineLength = 0,
@@ -16799,7 +16928,8 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figure_chooser) {
         paths = buildShape('FigStart',
             {
                 'seqNr': seqNr,
-                'first': firstFigure
+                'first': firstFigure,
+                'figId': figStringIndex
             },
             paths),
         entryLine = true;
@@ -17560,6 +17690,30 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figure_chooser) {
             'glider' : document.getElementById('category').value);
     unknownFigureLetter = false;
 
+    // now that the figure is determined, apply marking to figureStart
+    var figureStartStyle = getFigureStartStyle(figures[figStringIndex]);
+    if (figureStartStyle) {
+        var i = 0;
+        while (i < paths.length && !paths[i].figureStart) i++;
+        while (i < (paths.length - 1) && !paths[i + 1].figureStartEnd) {
+            i++;
+            switch (figureStartStyle) {
+                case "additional":
+                    paths[i].style = paths[i].style + "-additional";
+                    break;
+                case "correct":
+                    paths[i].style = paths[i].style + "-correct";
+                    break;
+                case "error":
+                    paths[i].style = paths[i].style + "-error";
+                    break;
+            }
+        }
+        // copy update to figures.paths
+        figures[figStringIndex].paths = paths;
+    }
+
+
     // set OLAN.inFigureXSwitchFig (used for OLAN sequence autocorrect) to
     // Infinity when we exit on X axis
     if ((Direction == 0) || (Direction == 180)) {
@@ -17766,6 +17920,7 @@ function OLANXSwitch(figStringIndex) {
 
 // when force is true, update will be done even when it seems no change is made
 function updateSequence(figNr, figure, replace, fromFigSel, force) {
+
     var updateSelected = true;
     // make sure figNr is handled as integer
     figNr = parseInt(figNr);
@@ -17852,6 +18007,7 @@ function updateSequence(figNr, figure, replace, fromFigSel, force) {
             string = figures[i].string + ' ' + string;
         }
     }
+
     // with a negative figNr the fig is placed at the beginning
     if (figNr < 0) string = figure + separator + string;
 
@@ -17888,10 +18044,7 @@ function updateSequence(figNr, figure, replace, fromFigSel, force) {
     }
 
     // reselect correct figure
-    if ((selectedFigure.id !== null) &&
-        figures[selectedFigure.id].aresti) {
-        selectFigure(selectedFigure.id);
-    }
+    setFigureSelected(selectedFigure.id);
 }
 
 // comparePreviousSequence returns the old and new figure numbers that
@@ -18269,7 +18422,7 @@ function parseSequence() {
                     goRight = ((Direction == 180) == (Attitude == 0));
                 }
                 // build the figure into the figures object
-                buildFigure(figNrs, figure, seqNr, i);
+                buildFigure (figNrs, figure, seqNr, i);
                 // check if this is a additional
                 if (regexAdditional.test(figure)) {
                     additionals++;

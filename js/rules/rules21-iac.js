@@ -47,6 +47,10 @@
  * 2021.1.2
  * - The maximum number of figures in an Advanced Free is now 14 (was 12)
  * - The maximum number of snap rolls in an Advanced Unknown is now 3 (was 4)
+ * 2021.1.5
+ * - Corrected IAC Sportsman Free maximum K to 116 (115 + 1 fp)
+ * 2021.1.7
+ * - Advanced Free: replaced fam2 by roller requirement
 */
 
 rules.push (
@@ -87,7 +91,7 @@ rules.push (
 
 "posnl=10",
 "basefig-max=12",
-"k-max=130",
+"k-max=116",
 "floating-point=1",
 
 "basefigex11-repeat=1",
@@ -167,6 +171,9 @@ rules.push (
 
 "[IAC Advanced Free]",
 
+"group-roller=^2\\.(1\\.[23]|2\\.[2-7]|3\\.[2-6]|4\\.[2-8])",
+"roller-name=Rolling turn, family 2.1.2 thru 2.1.3, or 2.2.2 thru 2.2.7, or 2.3.2 thru 2.3.6, or 2.4.2 thru 2.4.8",
+
 "posnl=25",
 "basefig-max=14",
 "k-max=301",
@@ -178,7 +185,7 @@ rules.push (
 "spin-repeat=1",
 
 "fam1-min=1",
-"fam2-min=1",
+"roller-min=1",
 "fam5-min=1",
 "fam7-min=1",
 "fam8-min=1",

@@ -241,61 +241,98 @@
 		you click to add a figure then it will be opened again for editing.</p>
 		</span>
 	</div>
-	<div class="documentation">
-    <span>
-      <h3 id="figure_comments">Figure comments</h3>
-      <p>The comment section can be used to enter information about the 
-      figure. Plain text can be used but there is also a variety of
-      useful special codes:</p>
-      <ul>
-        <li>
-          <strong>[</strong> : bold-line the comment box on Form B, C, R &amp; L
-        </li>
-        <li>
-          <strong>[[</strong> : red-line the comment box on Form B, C, R &amp; L
-        </li>
-        <li>
-          <strong>\</strong> : new line
-        </li>
-        <li>
-          <strong>^</strong> : rotate the comment box 90 degrees, e.g. for "^BREAK"
-        </li>
-        <li>
-          <strong>NED</strong> : use three letter 
-          <a href="http://en.wikipedia.org/wiki/List_of_IOC_country_codes#Current_NOCs" target="_blank">
-          IOC country code</a> in capitals to add the country's flag 
-          to Grid view
-        </li>
-      </ul>
-    </span>
-  </div>
-  <div id="free_unknown" class="documentation">
-    <span>
-      <h3>Automated handling of Free and Compulsory&nbsp;/&nbsp;Free&nbsp;Unknown
-      sequence figures</h3>
-      <p>When on the Sequence Info panel a combination of Class : Rules : Category : Program 
-      is set that requires special handling to meet CIVA regulations, 
-      the software will provide the following automated handling:</p>
-      <p><strong>Glider Advanced and Unlimited</strong>
-        <ul>
-          <li>Free sequences: OpenAero will resolve an excess sequence K 
-          total of up to 3 in accordance with 4.3.3.1.b). The original 
-          figure-K is shown in brackets below the adjusted value.</li>
-          <li>Unknown Compulsory sequences: OpenAero will reset up to 2 
-          figures that you designate as 'Free Unknown Link' to 10K total.</li>
-        </ul>
-      </p>
-      <p><strong>Power and Glider Advanced and Unlimited</strong>
-        <ul>
-          <li>Free Unknown sequences: you should identify each submitted 
-          figure with the officially designated alpha character (power 
-          'A' to 'J', glider 'A' to G'). Linking figures should be 
-          identified as 'Free Unknown Link', and OpenAero will reset 
-          them to 24K total (power) or 10K total (glider).</li>
-        </ul>
-      </p>
-    </span>
-  </div>
+    <div class="documentation">
+        <span>
+            <h3 id="figure_comments">Figure comments</h3>
+            <p>
+                The comment section can be used to enter information about the
+                figure. Plain text can be used but there is also a variety of
+                useful special codes:
+            </p>
+            <ul>
+                <li>
+                    <strong>[</strong> : bold-line the comment box on Form B, C, R &amp; L
+                </li>
+                <li>
+                    <strong>[[</strong> : red-line the comment box on Form B, C, R &amp; L
+                </li>
+                <li>
+                    <strong>\</strong> : new line
+                </li>
+                <li>
+                    <strong>^</strong> : rotate the comment box 90 degrees, e.g. for "^BREAK"
+                </li>
+                <li>
+                    <strong>NED</strong> : use three letter
+                    <a href="http://en.wikipedia.org/wiki/List_of_IOC_country_codes#Current_NOCs" target="_blank">
+                        IOC country code
+                    </a> in capitals to add the country's flag
+                    to Grid view
+                </li>
+            </ul>
+        </span>
+    </div>
+    <div id="free_unknown" class="documentation">
+        <span>
+            <h3>
+                Automated handling of Free and Compulsory&nbsp;/&nbsp;Free&nbsp;Unknown
+                sequence figures
+            </h3>
+            <p>
+                When on the Sequence Info panel a combination of Class : Rules : Category : Program
+                is set that requires special handling to meet CIVA regulations,
+                the software will provide the following automated handling:
+            </p>
+            <p>
+                <strong>Glider Advanced and Unlimited</strong>
+                <ul>
+                    <li>
+                        Free sequences: OpenAero will resolve an excess sequence K
+                        total of up to 3 in accordance with 4.3.3.1.b). The original
+                        figure-K is shown in brackets below the adjusted value.
+                    </li>
+                    <li>
+                        Unknown Compulsory sequences: OpenAero will reset up to 2
+                        figures that you designate as 'Free Unknown Link' to 10K total.
+                    </li>
+                </ul>
+            </p>
+            <p>
+                <strong>Power and Glider Advanced and Unlimited</strong>
+                <ul>
+                    <li>
+                        Free Unknown sequences: you should identify each submitted
+                        figure with the officially designated alpha character (power
+                        'A' to 'J', glider 'A' to G'). Linking figures should be
+                        identified as 'Free Unknown Additional', and OpenAero will reset
+                        them to 24K total (power) or 10K total (glider).
+                    </li>
+                </ul>
+            </p>
+        </span>
+        <span>
+            <h3 id="figure_start_colors">Figure start colors</h3>
+            <p>
+                When editing sequences where the figures have a letter, such as Free (Un)known sequences,
+                the start symbol of each figure can have different colors. These indicate the type of figure
+                (defined by its letter) and correctness or errors. The colors are:
+                <ul>
+                    <li>
+                        <strong style="color: #6060ff;">blue</strong> : an additional figure in a (Free) Unknown sequence
+                    </li>
+                    <li>
+                        <strong style="color: #7cb342;">green</strong> : a lettered figure that has been checked against the
+                        reference sequence, which contains the compulsory figures, and is found to be correct
+                    </li>
+                    <li>
+                        <strong style="color: #ff6040;">orange</strong> : a lettered figure with an error. It may be different from the
+                        compulsory figure in the reference sequence or have the same letter as a figure earlier
+                        in the sequence.
+                    </li>
+                </ul>
+            </p>
+        </span>
+    </div>
 	<div id="selecting_moving" class="documentation">
 		<span>
       <h3>Selecting and moving a figure</h3>

@@ -129,7 +129,7 @@
 }
 #fuFigures {
   position: relative;
-  z-index: 4;
+  /*z-index: 4;*/ /* Removed because it hides dragging figures, not sure why it was needed? */
   top: 0;
   margin: 6px 4px 8px 4px;
   /*left: -546px;*/
@@ -533,11 +533,11 @@ table#figureChooserColumns {
   font-size: 1.5em;
   font-weight: strong;
 }
-#fuFiguresTable td.figUsed {
-  transition: background 0.4s, border-color 0.4s;
-  border-color: #00d000;
-  background: #ecffec;
-}
+    #fuFiguresTable td.figUsed {
+        transition: background 0.4s, border-color 0.4s;
+        border-color: #7cb342;
+        background: #ecffec;
+    }
 #fuFiguresTable td.figUsedMulti {
   transition: background 0.4s, border-color 0.4s;
   border-color: #ff6040;

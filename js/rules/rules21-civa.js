@@ -296,8 +296,9 @@ rules.push (
 "conv-upqtrs=^9\\.([1-9]|10)\\.[16]\\.([1-8]) = $2 ; ^9\\.(9|10)\\. = f ; ^9\\. = r ; ^0\\.=z",
 "conv-upstop=^9\\.(1|9|10)\\.[16]=1 ; ^9\\.2\\.1\\.4 = 2 ;^9\\.2\\.1\\.6 = 3 ;^9\\.2\\.1\\.8 = 4 ;^9\\.4\\.1\\.([1-8]) = $1; ^9\\.8\\.1\\.1 = 2;^9\\.8\\.1\\.2 = 4;^9\\.8\\.1\\.3 = 6;^9\\.8\\.1\\.4 = 8 ; ^9\\.(9|10)\\. = f; ^9\\.=r ; ^0\\.=z",
 
+// flicks are counted as 2 stops for application of rules A.2.2.2 and A.2.2.3
 "conv-diagupqtrs=^9\\.([1-9]|10)\\.[27]\\.([1-8]) = $2 ; ^9\\.(9|10)\\. = f ; ^9\\. = r ; ^0\\.=z",
-"conv-diagupstop=^9\\.(1|9|10)\\.[27]=1 ; ^9\\.2\\.2\\.4 = 2 ;^9\\.2\\.2\\.6 = 3 ;^9\\.2\\.2\\.8 = 4 ;^9\\.4\\.2\\.([1-8]) = $1; ^9\\.8\\.2\\.1 = 2;^9\\.8\\.2\\.2 = 4;^9\\.8\\.2\\.3 = 6;^9\\.8\\.2\\.4 = 8 ; ^9\\.(9|10)\\. = f; ^9\\.=r ; ^0\\.=z",
+"conv-diagupstop=^9\\.1\\.2=1 ;^9\\.(9|10)\\.[27]=2 ; ^9\\.2\\.2\\.4 = 2 ;^9\\.2\\.2\\.6 = 3 ;^9\\.2\\.2\\.8 = 4 ;^9\\.4\\.2\\.([1-8]) = $1; ^9\\.8\\.2\\.1 = 2;^9\\.8\\.2\\.2 = 4;^9\\.8\\.2\\.3 = 6;^9\\.8\\.2\\.4 = 8 ; ^9\\.(9|10)\\. = f; ^9\\.=r ; ^0\\.=z",
 
 "conv-downqtrs=^9\\.([1-9]|10)\\.(5|10)\\.([1-8]) = $3 ; ^9\\.(9|10)\\. = f ; ^9\\. = r ; ^0\\.=z",
 // 9.8.5.2 (4x8) is converted to 3, to assure allowing it when it exists alone, but not combined with other rolls
@@ -323,9 +324,9 @@ rules.push (
 "DIAGUP540-rule = Sporting Code Section 6 Part I, A.2.2.2",
 
 "rule-DIAGUP4S = diagupstop:<5",
-"why-DIAGUP4S  = a maximum of 4 stops are allowed on diagonal up opposite rolls",
-"why_fr-DIAGUP4S  = un maximum de 4 arrets est permis sur les rotations combinées à 45° montant",
-"DIAGUP4S-rule = Sporting Code Section 6 Part I, A.2.2.2",
+"why-DIAGUP4S  = a maximum of 4 stops (3 if flick) are allowed on diagonal up opposite rolls",
+"why_fr-DIAGUP4S  = un maximum de 4 arrets (3 si déclenché) est permis sur les rotations combinées à 45° montant",
+"DIAGUP4S-rule = Sporting Code Section 6 Part I, A.2.2.2 and A.2.2.3",
 
 "rule-VDOWN360 = downqtrs:<5",
 "why-VDOWN360  = a maximum of 360 degrees are allowed on vertical down opposite rolls",
@@ -360,9 +361,9 @@ rules.push (
 
 "conv-vdDhfsz=^9\\.[1248]\\.[15]=v;^9\\.[1248]\\.2=d;^9\\.[1248]\\.4=D; ^9\\.[1248]\\.=h; ^9\\.(9|10)\\.[1-5]=f;^9\\.(9|10)\\.=F; ^9\\.1[12]=s ; ^0\\.=z",
 
-"rule-UnlimitedNOU   = vdDhfsz: D[,;][Ff]|v[,;][fF]|[Ff][,;]v|[Ff][,;]d",
-"why-UnlimitedNOU    = opposite or unlinked roll/roll (or flick) combination is not allowed",
-"why_fr-UnlimitedNOU = rotations combinées interdites",
+"rule-UnlimitedNOU   = vdDhfsz:D[,;][Ff]|v[,;][fF]|[Ff][,;]v|[Ff][,;]d|[Ff][,;][Ff]",
+"why-UnlimitedNOU    = this type of opposite or unlinked roll/roll (or flick) combination is not allowed",
+"why_fr-UnlimitedNOU = type de rotations combinées interdites",
 "UnlimitedNOU-rule   = Sporting Code Section 6 Part I, A.2.2",
 
 /* removed 2021.1
@@ -391,9 +392,9 @@ rules.push (
 "why-NORF    = roll,flick combination not allowed",
 "why_fr-NORF = combinaison tonneau,déclenché interdite",
 
-"rule-NORDIAGDOWN   = roll: [1248Ff][,;][1248Ff]",
-"why-NORDIAGDOWN    = opposite or unlinked roll/roll (or flick) combination is not allowed",
-"why_fr-NORDIAGDOWN = rotations combinées interdites",
+"rule-NORDIAGDOWN   = vdDhfsz: D[,;]|[,;]D",
+"why-NORDIAGDOWN    = opposite or unlinked rotation combination on diagonal down line is not allowed",
+"why_fr-NORDIAGDOWN = rotations combinées interdites à lignes 45° descendantes",
 "NORDIAGDOWN-rule   = Sporting Code Section 6 Part I, A.4-A.15",
 
 "allow-defrules=UnlimitedNOU ; VUP450 ; VUP4S ; VDOWN360 ; VDOWN3S ; DIAGUP540 ; DIAGUP4S ; DIAGDOWN540 ; DIAGDOWN3S ; Hor10stop",
