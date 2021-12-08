@@ -84,8 +84,6 @@ lang.fr = {
   '<td>Codage des figures et des règles</td></tr>' +
   '<tr><td><strong>Gilles Guillemard</strong></td>' +
   '<td>Codage des figures, des règles et de parties du logiciel</td></tr>' +
-  '<tr><td><strong>Christian Falck</strong></td>' +
-  '<td>Codage des règles</td></tr>' +
   '</table></p></div>',
 'ac' : 'Avion',
 'addAllToQueue' : 'Ajouter tout à la file',
@@ -405,7 +403,7 @@ lang.fr = {
 'noFigureLetterAssigned' : '(%s) Pas de lettre affectée',
 'noFreeUnknownFig' : 'Pas de lettre',
 'nonArestiRolls' : 'Autoriser les rotations et combinaisons ' +
-  'non-Aresti (essayer <i>41h4,f,4 66</i>)',
+  'non-Aresti ou règles-illegaux (essayer <i>41h4,f,4 66</i>)',
 'none' : 'Aucune',
 'noRollAllowed' : 'Rotation interdite par l\'Aresti',
 'noRules' : 'Pas de règle de vérification disponible.',
@@ -561,7 +559,9 @@ lang.fr = {
 'rollSymbolLarge' : 'Grand',
 'rollSymbolMedium' : 'Moyen',
 'rollSymbolSize' : 'Taille du symbole des rotations',
-'rollTextSize' : 'Taille du texte des rotations',
+    'rollTextSize': 'Taille du texte des rotations',
+    'ruleIllegalRollsEnabled': '<i class="material-icons status bad"></i><span>' +
+        'Les rouleaux illégaux sont activés dans <a href="#">les paramètres</a></span>',
 'rules' : 'Règles',
 'rulesImported' : 'Règles importées du fichier avec succès. Nombre de lignes (hors commentaires) :',
 'rulesImportTitle' : 'Importation du fichier de règles',

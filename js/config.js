@@ -36,7 +36,7 @@
 // A new x should be used for versions that create sequences not
 // fully backward compatible with the previous version
 
-var version = '2021.1.8';
+var version = '2022.1.1';
 /* versionNew is an object that contains version update information
    The structure is {vvv : [[ttt, n], ...], ...} , where
    vvv = version number
@@ -44,6 +44,14 @@ var version = '2021.1.8';
    n   = importance (higher = more important)
 */
 var versionNew = {
+    '2022.1.1': [
+        ['Added 2022 CIVA Power and Glider rules and sequences', 4],
+        ['Added Free (un)known Designer for smartphone', 4],
+        ['Added rules for Aerobatic Club Italy', 3]
+    ],
+    '2021.1.9': [
+        ['Updated CIVA glider rules for 2021', 4]
+    ],
     '2021.1.8': [
         ['Added indicator colors to figure start points for lettered figures (as in Free (un)knowns)', 4]
     ],
@@ -301,17 +309,20 @@ var platform = {
 	// set platform for Android, Chrome, iOS, Windows and UWP
 	android:   /Android/i.test(navigator.userAgent),
 	chrome:    ((typeof chrome !== 'undefined') && chrome.fileSystem),
-	ios:       /i(Pad|Phone|Pod)/i.test(navigator.userAgent),
+    ios:       /i(Pad|Phone|Pod)/i.test(navigator.userAgent) ||
+               /^Mac/.test(navigator.platform) && navigator.maxTouchPoints > 4,
 	windows10: /Windows\ NT\ 1/.test(navigator.userAgent),
 	windowsStore: 'ms-windows-store://pdp/?productid=9PDSX9ZDRB9B',
 	uwp:       window.Windows
 };
 
-// define the labels (=input field ids) for saving/loading sequences
+// Define the labels (=input field ids) for saving/loading sequences.
+// Sequence link saving uses the index (pilot=0, team=1, etc) to shorten the link.
+// For compatibility, NEVER CHANGE THE ORDER OR REMOVE ITEMS, but add new labels at the end.
+// When a label does need to be removed, replace it by ''.
 var sequenceXMLlabels = [
   'pilot',
   'team',
-  'aircraft',
   'actype',
   'acreg',
   'category',
@@ -491,7 +502,9 @@ var style = {
   // Dotted path style
   'dotted' : 'stroke-dasharray: 1, 3; stroke: black; stroke-width: 1px; fill: none; vector-effect: non-scaling-stroke;',
 	// hiddenCurve
-	'hiddenCurve' : 'stroke: transparent; stroke-width: 0; fill: none;',
+    'hiddenCurve': 'stroke: transparent; stroke-width: 0; fill: none;',
+  // Note on IAC Form B and C if required
+    'IACFormEntryNote': 'font-family: verdana, Helvetica, Sans; font-size: 24px; fill: black;',
   // Illegal figure cross style
   'illegalCross' : 'stroke: red; stroke-width: 3px; fill: none;',
   // Illegal figure box style

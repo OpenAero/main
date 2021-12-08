@@ -114,7 +114,7 @@
 		<p>Aerobatic sequences can be created within OpenAero in one of three 
 		ways:</p>
 		<ul>
-			<li>By starting and using the Free (Un)Known Designer (not available in phone layout)</li>
+			<li>By starting and using the Free (Un)Known Designer</li>
 			<li>By selecting and editing figures with the <i>Figure Editor</i></li>
 			<li>By writing the figures in code in the text line above the 
 			sequence</li>
@@ -168,78 +168,107 @@
 	<div class="documentation">
 		<span>
 		<h3 id="adding_a_figure">Adding a figure</h3>
-		<p><img src="../img/OA_FigureAddPanel.png">
-		Go to the <i>Figure editor</i> tab and click on the <i>Add figure</i> box.
-    A figure chooser will appear from which you can choose a group (for 
-		example 1.2 Two Lines) and then a specific base figure. The Aresti
-    number column and row are indicated at the top and left side of the
-    figure chooser.<br>
-    At any point
-    in a figure where the attitude must change from erect to inverted
-    (or the reverse) a half-roll is shown and will be incorporated when
-    the figure is inserted; this is easily changed for an alternate roll
-    using the controls. If there are existing figures select the option 
-		to tell OpenAero where the new figure should be placed. Figures that are eligible 
-		to be placed in the current position (i.e. with the correct entry and/or exit 
-		attitude) are marked by a green line around the top and left sides of 
-		their images.</p>
-    <p><img src="../img/OA_FigureSelection.png" style="float:left;">
-    When there are Sequence rules active that prohibit the use of
-    certain base figures, those figures will not be shown. It is
-    possible to show these figures (with a red border) by unselecting
-    <i>Hide illegal figs</i>.</p>
-		<p>
-		When a figure is added or selected it becomes active and is drawn in 
-		magenta in the sequence area. The Aresti/K table is always updated to display 
-		all the Aresti element codes and K-factors. Base figures and elements that are 
-		not &#39;legal&#39; according to the rules in effect are shown in that table 
-		with zero K.</p>
-		<div class="clearBoth"></div>
-		<img src="../img/OA_FigureInfoPanel.png">
-		<p>The current figure is also shown in the figure editing area where you can:</p>
-		<ul>
-			<li>Set the figure as start of a sub-sequence</li>
-			<li>Change the Y-axis direction</li>
-			<li>Delete the figure</li>
-			<li>Switch X-axis or Y-axis in-figure and exit direction (for some figures)</li>
-			<li>Zoom the figure smaller or larger</li>
-			<li>Move the figure to a different position - with no line, or with 
-			a straight or curved dotted connecting line</li>
-			<li>Extend or shorten the entry and exit lines, or the lengths
-      before and after the rolls</li>
-			<li>Click the figure-start and -end symbols to reverse the current 
-			erect / inverted setting</li>
-			<li>For Free Unknown sequences designate the figure with letters A 
-			to J, or as a Additional figure</li>
-			<li>Add / delete / change rolls, and:
-        <ul>
-          <li>Flip their left / right orientation to avoid location over
-          other elements</li>
-          <li>Flip the roll fraction number (e.g. 3/4)</li>
-          <li>Add a comment (will be placed after fraction number where
-          applicable)</li>
-        </ul>
-        When sequence rules are active, only rolls that are allowed will
-        be shown. Nevertheless, some combinations may not be allowed. If
-        these are used an alert will then be shown in the Alerts section.
-      </li>
-      <li>Add / delete / change figure comments</li>
-		</ul>
-    <p><strong>Some of these options are not available for figures that
-    have a Free Unknown letter to avoid changing Free Unknown figures.
-    </strong></p>
-    <img src="../img/blue_handles.png" style="float:left;">
-    <p>Another way to edit the figure shape is to use the handles (blue
-    circles) that show when selecting the figure. These allow you to
-    change the length of all lines. In the top-right of the figure a
-    magnifier shows which can be used to scale the entire figure.<br />
-    It is possible to disable this way of figure editing through
-    <i>Settings</i>.</p>
-		<p>When you have finished editing the figure click in an adjacent space 
-		to deactivate it, then you can add a new figure at the end of the 
-		sequence or optionally at the beginning. If a figure is highlighted when 
-		you click to add a figure then it will be opened again for editing.</p>
-		</span>
+        <div>
+            <img src="../img/OA_FigureAddPanel.png">
+            <p>
+                Go to the <i>Figure editor</i> tab and click on the <i>Add figure</i> box.
+                A figure chooser will appear from which you can choose a group (for
+                example 1.2 Two Lines) and then a specific base figure. The Aresti
+                number column and row are indicated at the top and left side of the
+                figure chooser.<br>
+                At any point
+                in a figure where the attitude must change from erect to inverted
+                (or the reverse) a half-roll is shown and will be incorporated when
+                the figure is inserted; this is easily changed for an alternate roll
+                using the controls. If there are existing figures select the option
+                to tell OpenAero where the new figure should be placed. Figures that are eligible
+                to be placed in the current position (i.e. with the correct entry and/or exit
+                attitude) are marked by a green line around the top and left sides of
+                their images.
+            </p>
+            </div>
+        <div>
+            <img src="../img/OA_FigureSelection.png" style="float:left;">
+            <p>
+                When there are Sequence rules active that prohibit the use of
+                certain base figures, those figures will not be shown. It is
+                possible to show these figures (with a red border) by unselecting
+                <i>Hide illegal figs</i>.
+            </p>
+            <p>
+                When a figure is added or selected it becomes active and is drawn in
+                magenta in the sequence area. The Aresti/K table is always updated to display
+                all the Aresti element codes and K-factors. Base figures and elements that are
+                not &#39;legal&#39; according to the rules in effect are shown in that table
+                with zero K.
+            </p>
+            </div>
+            <div class="clearBoth"></div>
+            <img src="../img/OA_FigureInfoPanel.png">
+            <p>The current figure is also shown in the figure editing area where you can:</p>
+            <ul>
+                <li>Set the figure as start of a sub-sequence</li>
+                <li>Change the Y-axis direction</li>
+                <li>Delete the figure</li>
+                <li>Switch X-axis or Y-axis in-figure and exit direction (for some figures)</li>
+                <li>Zoom the figure smaller or larger</li>
+                <li>
+                    Move the figure to a different position - with no line, or with
+                    a straight or curved dotted connecting line
+                </li>
+                <li>
+                    Extend or shorten the entry and exit lines, or the lengths
+                    before and after the rolls
+                </li>
+                <li>
+                    Click the figure-start and -end symbols to reverse the current
+                    erect / inverted setting
+                </li>
+                <li>
+                    For Free Unknown sequences designate the figure with letters A
+                    to J, or as a Additional figure
+                </li>
+                <li>
+                    Add / delete / change rolls, and:
+                    <ul>
+                        <li>
+                            Flip their left / right orientation to avoid location over
+                            other elements
+                        </li>
+                        <li>Flip the roll fraction number (e.g. 3/4)</li>
+                        <li>
+                            Add a comment (will be placed after fraction number where
+                            applicable)
+                        </li>
+                    </ul>
+                    When sequence rules are active, only rolls that are allowed will
+                    be shown. Nevertheless, some combinations may not be allowed. If
+                    these are used an alert will then be shown in the Alerts section.
+                </li>
+                <li>Add / delete / change figure comments</li>
+            </ul>
+            <p>
+                <strong>
+                    Some of these options are not available for figures that
+                    have a Free Unknown letter to avoid changing Free Unknown figures.
+                </strong>
+            </p>
+            <img src="../img/blue_handles.png" style="float:left;">
+            <p>
+                Another way to edit the figure shape is to use the handles (blue
+                circles) that show when selecting the figure. These allow you to
+                change the length of all lines. In the top-right of the figure a
+                magnifier shows which can be used to scale the entire figure.<br />
+                It is possible to disable this way of figure editing through
+                <i>Settings</i>.
+            </p>
+            <p>
+                When you have finished editing the figure click in an adjacent space
+                to deactivate it, then you can add a new figure at the end of the
+                sequence or optionally at the beginning. If a figure is highlighted when
+                you click to add a figure then it will be opened again for editing.
+            </p>
+</span>
 	</div>
     <div class="documentation">
         <span>
@@ -425,7 +454,8 @@
       This is an efficient way to design a Free Known or Unknown
       sequence from a list of submitted figures. It can be found under
       the <i>Tools</i> menu on desktop or the main menu on mobile.
-      Because of required screen size it is not available in the phone layout.
+      In phone layout, all the same elements are present but the layout is
+        different because of the smaller screen size.
       <h3>Getting started</h3>
       Open a sequence file containing the Free (Un)known figures from the
       <i>File</i> menu, or by clicking a link holding the sequence that
@@ -494,6 +524,15 @@
       <i>Finalize sequence</i>. Any errors will be
       reported. You will then be returned to the regular sequence editor
       where you can adjust layout.</p>
+    <h3>Smartphone layout</h3>
+        <p><img src="../img/fudesignerPhone.png" style="max-width: 95%;"/>In the smartphone layout, only a single column of Known figures is
+        shown, below which a narrow Alerts section is visible in this
+        scrolled-down image.</p>
+        <p>Whenever the Figure Editor is selected, most of the subsequences
+        will be hidden. By selecting the Figures tab they will again take
+        up most of the screen.</p>
+        <p>Other than that, operation is very similar to large mobile
+        devices and computers.</p>
     </span>
   </div>
 	<div class="documentation">
@@ -610,88 +649,95 @@
 		<span>
       <h3 id="grid_system">The Figure Grid system for Unknown and Free&nbsp;Unknown operations
       </h3>
-      <p>
-        <img src="../img/OA_FigureGrid.gif" style="max-width: 95%">
-        Either from the very start or from an existing sequence, <i>View ... 
-        Figs in Grid</i> will set each figure into a tabular grid format showing the 
-        K-factors and any other relevant information.
-        This grid can be printed for distribution to sequence designers
-        bearing all the relevant figure information, so that submitted
-        sequences conform to CIVA regulations.
-      </p>
-      <p>
-				<img src="../img/OA_GridInfo.png" style="float:left;">
-        The Grid View contains an info box that assists in selection of
-        Free Unknown figures. The box can be dragged to almost any
-        location to prevent overlapping other elements.<br />
-        Use the <i>Grid info</i> to 
-        change the number of grid columns or ordering of figures if
-        required (accessible through Settings on small mobile layout).<br />
-        The box provides information on the amount of
-        positive and negative figure entries and exits, as well as the
-        associated Low, Neutral or High speed.<br />
-        Below this is an indication of the needed number of Additionals
-        to create a full sequence. This is estimated by matching the
-        figures based on attitude and speed
-        <span class="docsExtraInfo">(tap here for full explanation).
-          <span>
-            </br>To determine matching every base figure is assigned Low,
-            Neutral or High speed for entry and exit. This is simply
-            determined by any form of climb or descent at the start and
-            end of the figure.</br>
-            For example, a 45 climbing line has High speed entry and Low
-            speed exit. A downgoing loop has Low speed entry and Low
-            speed exit. A rolling turn has Neutral entry and exit. Etc...
-            Note that this is completely independent from any rolls or
-            further continuation in the figure. It thus presents a
-            simplified but useable categorization.</br>
-            To determine which figures match, the algorithm proceeds as
-            follows:</br>
-            1) For the entire procedure, only match correct upright or
-              inverted attitude</br>
-            2) Try to match the first figure with all following figures,
-              only using exact matches: High speed exit with High speed
-              entry, etc...</br>
-            3) Do 2) for all following figures that have not yet been
-              matched to others</br>
-            4) Start again from 2, but this time also accept matching
-              Neutral speed with High speed or Low speed</br>
-            5) Do an extra run just as the previous, but with all the
-              figures in reverse order</br>
-            6) The lowest number of sets resulting from 4) and 5) is
-              used to determine how many additionals are needed. E.g. 3
-              sets means 2 additionals are needed</br>
-          </span>
-        </span>
-        </br>
-        This is only an indication! The real number needed will
-        also depend on sequence design preferences, box constraints and
-        aircraft performance characteristics.
-      </p>
-      <p>
-        On the grid info panel there is also a button to create groups.
-        In the resulting dialog you can automatically generate semi-random
-        matching figure group proposals. This can be used for selection
-        of matching figure groups out of a large number of figures.</br>
-        When the combination is not acceptable, click <i>Create new
-        proposals</i> for a new combination.</br> 
-        When a satisfactory combination has been generated these can be
-        copy-pasted to another instance of OpenAero or all loaded
-        directly into the Grid.
-      </p>
-      <p>
-        It may be useful to add the submitting Team name or IOC country code 
-        to the figure comments. This can be done in the Figure Editor or
-        by typing it between inverted marks into the sequence string
-        after any Free Unknown identification letter
-        &quot;@A&quot;, &quot;@B&quot; etc. and before the figure code - 
-        for example &quot;@F USA&quot;. This will be shown in the grid 
-        adjacent to the figure designation if present, 
-        or the first Aresti manoeuvre code if not.<br>
-        Also, the country flag will be added to the Grid view 
-        (courtesy of <a href="http://www.icondrawer.com" target="_blank">www.icondrawer.com</a>).
-      </p>
-    </span>
+      <div>
+          <img src="../img/OA_FigureGrid.gif" style="max-width: 95%">
+          <p>
+              Either from the very start or from an existing sequence, <i>
+                  View ...
+                  Figs in Grid
+              </i> will set each figure into a tabular grid format showing the
+              K-factors and any other relevant information.
+              This grid can be printed for distribution to sequence designers
+              bearing all the relevant figure information, so that submitted
+              sequences conform to CIVA regulations.
+          </p>
+        </div>
+      <div>
+          <img src="../img/OA_GridInfo.png" style="float:left;">
+          <p>
+              The Grid View contains an info box that assists in selection of
+              Free Unknown figures. The box can be dragged to almost any
+              location to prevent overlapping other elements.<br />
+              Use the <i>Grid info</i> to
+              change the number of grid columns or ordering of figures if
+              required (accessible through Settings on small mobile layout).<br />
+              The box provides information on the amount of
+              positive and negative figure entries and exits, as well as the
+              associated Low, Neutral or High speed.<br />
+              Below this is an indication of the needed number of Additionals
+              to create a full sequence. This is estimated by matching the
+              figures based on attitude and speed
+              <span class="docsExtraInfo">
+                  (tap here for full explanation).
+                  <span>
+                      </br>To determine matching, every base figure is assigned Low,
+                      Neutral or High speed for entry and exit. This is simply
+                      determined by any form of climb or descent at the start and
+                      end of the figure.</br>
+                      For example, a 45 climbing line has High speed entry and Low
+                      speed exit. A downgoing loop has Low speed entry and Low
+                      speed exit. A rolling turn has Neutral entry and exit. Etc...
+                      Note that this is completely independent from any rolls or
+                      further continuation in the figure. It thus presents a
+                      simplified but useable categorization.</br>
+                      To determine which figures match, the algorithm proceeds as
+                      follows:</br>
+                      1) For the entire procedure, only match correct upright or
+                      inverted attitude</br>
+                      2) Try to match the first figure with all following figures,
+                      only using exact matches: High speed exit with High speed
+                      entry, etc...</br>
+                      3) Do 2) for all following figures that have not yet been
+                      matched to others</br>
+                      4) Start again from 2, but this time also accept matching
+                      Neutral speed with High speed or Low speed</br>
+                      5) Do an extra run just as the previous, but with all the
+                      figures in reverse order</br>
+                      6) The lowest number of sets resulting from 4) and 5) is
+                      used to determine how many additionals are needed. E.g. 3
+                      sets means 2 additionals are needed</br>
+                  </span>
+              </span>
+              </br>
+              This is only an indication! The real number needed will
+              also depend on sequence design preferences, box constraints and
+              aircraft performance characteristics.
+          </p>
+          <p>
+              On the bottom of the grid info panel you find a button to <i>create groups</i>.
+              In the resulting dialog you can automatically generate semi-random
+              matching figure group proposals. This can be used for selection
+              of matching figure groups out of a large number of figures.</br>
+              When the combination is not acceptable, click
+              <i>Create new proposals</i> for a new combination.</br>
+              When a satisfactory combination has been generated these can be
+              copy-pasted to another instance of OpenAero or all loaded
+              directly into the Grid.
+          </p>
+          </div>
+          <p>
+              It may be useful to add the submitting Team name or IOC country code
+              to the figure comments. This can be done in the Figure Editor or
+              by typing it between inverted marks into the sequence string
+              after any Free Unknown identification letter
+              &quot;@A&quot;, &quot;@B&quot; etc. and before the figure code -
+              for example &quot;@F USA&quot;. This will be shown in the grid
+              adjacent to the figure designation if present,
+              or the first Aresti manoeuvre code if not.<br>
+              Also, the country flag will be added to the Grid view
+              (courtesy of <a href="http://www.icondrawer.com" target="_blank">www.icondrawer.com</a>).
+          </p>
+</span>
   </div>
   <div class="documentation">
     <span id="importing_into_acro">

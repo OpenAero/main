@@ -34,7 +34,7 @@ OpenAero 1.4.2
 OpenAero 1.4.3.1
 -corrected civa-glider-rules:
 	*corrected Kmax of Free Unknown and Unknowns
-	*Section 6 part II 4.3.4.2 implemented
+	*Section 6 Part 2 4.3.4.2 implemented
 	*connectors are down- or upgraded in FREE UNKNOWN only
 	*wrong alert "no roll on 1st element" for 4b3if corrected
 	*wrong alert for repitition of 1.1.1.x corrected
@@ -86,6 +86,9 @@ OpenAero 2016.1
  * - added figure K and versatility requirements for Unlimited (Free) Unknown
  * - added figure K and versatility requirements for Advanced (Free) Unknown
  * - corrected total sequence K for Advanced and Unlimited (Free) Unknown
+ * 2022.1.1
+ * - added 2022 reference sequences
+ * - major update of rules to comply with 2021 and 2022 Unknown updates
 */
 
 rules.push (
@@ -119,30 +122,30 @@ rules.push (
 
 "figure-letters=ABCDE",
 
-'reference="@A" id2f,2 "@B" of "@C" b..2if "@D" ita4 "@E" 1jo1',
+'reference="@A" 4,3f- "@B" -1jo5 "@C" 4h "@D" -.ita "@E" o2f,2',
 
 // what info should be filled out
 "infocheck=pilot;actype;acreg;positioning",
 
-// Repetitions of base-figures acc. to CIVA Section 6 part II Ch. 2.3.1.4
+// Repetitions of base-figures acc. to CIVA Section 6 Part 2 Ch. 2.3.1.4
 //==========================================================================
 "basefigex11-repeat=1",// base figures except of 1.1.1. and 9.1
 // may not be repeated in sequence
 
-// Repetitions of rolls acc. to CIVA Section 6 part II Ch. 2.2.1.4
+// Repetitions of rolls acc. to CIVA Section 6 Part 2 Ch. 2.2.1.4
 //==========================================================================
 "hesroll-repeat=1",
 "snap-repeat=1",
 "spin-repeat=1",
 
-// Maximum K-Factor and number of figures acc. to CIVA Section 6 part II Ch. 2.2.1.5
+// Maximum K-Factor and number of figures acc. to CIVA Section 6 Part 2 Ch. 2.2.1.5
 //======================================================================================
 "k-max=233",	// maximum k-factor including maximum floating points
 "basefig-min=10",	// exactly 10 base figures per sequence
 "basefig-max=10",
 "floating-point=3",	// 3 points may be reduced
 
-// Versatility acc. to CIVA Section 6 part II Ch. 2.2.1.6
+// Versatility acc. to CIVA Section 6 Part 2 Ch. 2.2.1.6
 //=======================================================
 "fam5-min=1",// minimum one figure from family 5
 "fam6-min=1",
@@ -174,7 +177,8 @@ rules.push (
 // Sequence entry and exit attitudes acc. to Ch. 2.2.1.8
 //======================================================
 "seqcheck-upend=[\\da-z][~+`'()\"\.>^]*\\s*$",// Sequence exit must be in positive attitude
-"upend-name=Sequence must end flying upright",
+"upend-name=Sequence must be finished in upright flight",
+"upend-rule=Sporting Code Section 6 Part 2 2.2.1.8",
 
 // Positioning k-factors acc. to Ch. 2.3.1.2
 //====================================================
@@ -194,24 +198,24 @@ rules.push (
 // Super Families
 "sf=^9\\.11\\.:3;^9\\.12\\.:3;^9\\.9\\.:4;^9\\.10\\.:4;^2\\.:2;^5\\.:5;^6\\.:6;^1\\.:7;^3\\.:7;^7\\.:7;^8\\.:7;^0\\.:7",
 
-// Repetitions of base-figures acc. to CIVA Section 6 part II Ch. 4.3.3.1 (a)
+// Repetitions of base-figures acc. to CIVA Section 6 Part 2 Ch. 4.3.3.1 (a)
 //==========================================================================
 "basefigex11-repeat=1",// base figures except of 1.1.1. and 9.1
 // may not be repeated in sequence
 
-// Repetitions of rolls acc. to CIVA Section 6 part II Ch. 4.3.3.1 (a)
+// Repetitions of rolls acc. to CIVA Section 6 Part 2 Ch. 4.3.3.1 (a)
 //==========================================================================
 "hesroll-repeat=1",
 "snap-repeat=1",
 "spin-repeat=1",
 
-// Maximum K-Factor and number of figures acc. to CIVA Section 6 part II Ch. 4.3.3.1 (b)
+// Maximum K-Factor and number of figures acc. to CIVA Section 6 Part 2 Ch. 4.3.3.1 (b)
 //======================================================================================
 "k-max=233",	// maximum k-factor including maximum floating points
 "basefig-max=10",	// maximum 10 base figures per sequence
 "floating-point=3",	// 3 points may be reduced
 
-// Versatility acc. to CIVA Section 6 part II Ch. 2.2.1.6
+// Versatility acc. to CIVA Section 6 Part 2 Ch. 2.2.1.6
 //=======================================================
 "fam5-min=1",// minimum one figure from family 5
 "fam6-min=1",
@@ -243,7 +247,8 @@ rules.push (
 // Sequence entry and exit attitudes acc. to Ch. 2.2.1.8
 //======================================================
 "seqcheck-upend=[\\da-z][~+`'()\"\.>^]*\\s*$",// Sequence exit must be in positive attitude
-"upend-name=Sequence must end flying upright",
+"upend-name=Sequence must be finished in upright flight",
+"upend-rule=Sporting Code Section 6 Part 2 2.2.1.8",
 
 // Positioning k-factors acc. to Ch. 2.3.1.2
 //====================================================
@@ -487,61 +492,85 @@ rules.push (
 "9.12.1.4-8",
 
 //###################
-"[glider-CIVA Unlimited Unknown1]",
-//###################
-"more=glider-CIVA Unlimited Unknown3",
-
-//######################
-"[glider-CIVA Unlimited FreeUnknown]",
-//######################
-
-// what info should be filled out
+"[glider-CIVA Unlimited Unknown 1]",
 "infocheck=positioning",
+"more=glider-CIVA Unlimited Unknown",
 
-// Maximum K-Factor and number of figures acc. to CIVA Section 6 part II Ch. 2.3.1.2
+//######################
+"[glider-CIVA Unlimited Free Unknown]",
+"infocheck=pilot;actype;acreg;positioning",
+"more=glider-CIVA Unlimited Unknown",
+
+//###################
+"[glider-CIVA Unlimited Unknown 3]",
+"infocheck=positioning",
+"more=glider-CIVA Unlimited Unknown",
+
+//###################
+"[glider-CIVA Unlimited Unknown 4]",
+"infocheck=positioning",
+"more=glider-CIVA Unlimited Unknown",
+
+//###################
+"[glider-CIVA Unlimited Unknown 5]",
+"infocheck=positioning",
+"more=glider-CIVA Unlimited Unknown",
+
+//###################
+"[glider-CIVA Unlimited Programme 1]",
+"more=glider-CIVA Unlimited Free Known",
+
+//###################
+"[glider-CIVA Unlimited Programme 2]",
+"more=glider-CIVA Unlimited Unknown 1",
+
+    //###################
+    "[glider-CIVA Unlimited Programme 3]",
+    "more=glider-CIVA Unlimited Free Unknown",
+
+    //###################
+    "[glider-CIVA Unlimited Programme 4]",
+    "more=glider-CIVA Unlimited Unknown 3",
+
+    //###################
+    "[glider-CIVA Unlimited Programme 5]",
+    "more=glider-CIVA Unlimited Unknown 4",
+
+    //###################
+    "[glider-CIVA Unlimited Programme 6]",
+    "more=glider-CIVA Unlimited Unknown 5",
+
+//###################
+"(glider-CIVA Unlimited Unknown)",
+
+//###################
+// Maximum K-Factor and number of figures acc. to CIVA Section 6 Part 2 Ch. 2.3.1.2
 //================================================================================
 "figure-letters=ABCDEFG",
-//"k-max=200",	// 2014 : maximum k-factor + 3 floating points
-//"k-min=180",	// 2014 : minimum k-factor
 "basefig-max=7",	// max. 7 base figures per sequence (+ max 2 links)
-//"floating-point=3",	// 3 points may be reduced (4.3.4.6 last sentence -applies to P3,5 and 6 only)
 "additionals=2/10", 	// max 2 additionals with 10K total
-
 // Positioning k-factors acc. to Ch. 2.3.1.2
 //====================================================
-"poslj=15",// positioning k-factor assuming line judges
-"posnl=15",// positioning k-factor assuming no line judges
-"poselec=15",// positioning k-factor assuming electric telemetry
+"poslj=15",	// positioning k-factor assuming line judges
+"posnl=15",	// positioning k-factor assuming no line judges
+"poselec=15",	// positioning k-factor assuming electric telemetry
 
-// Maximum number of each family
-//==============================
-//"fam2-max=1",	outlined in 2014
-//"fam5-max=1",
-//"fam6-max=1",
-//"isnap-max=1",
-//"osnap-max=1",
-//"spin-max=1",
+"k-min=190",
+"k-max=210",
 
 "more=glider-CIVA Unlimited Unknownbase",
 
 //###################
-"[glider-CIVA Unlimited Unknown2]",
-//###################
-"more=glider-CIVA Unlimited Unknown3",
-
-//###################
-"[glider-CIVA Unlimited Unknown3]",
+"[glider-CIVA Unlimited Unknown Figs]",
 
 // what info should be filled out
 "infocheck=positioning",
 
 //###################
-// Maximum K-Factor and number of figures acc. to CIVA Section 6 part II Ch. 2.3.1.2
+// Maximum K-Factor and number of figures acc. to CIVA Section 6 Part 2 Ch. 2.3.1.1-4
 //================================================================================
-//"k-max=193",		// maximum k-factor + maximum floating points
-//"k-min=175",		// minimum k-factor
-"basefig-max=9",		// maximum 9 base figures per sequence (7 chosen + max 2 additional)
-"floating-point = 3",	// maximum floating points (4.3.4.6 last sentence)
+"figure-letters=ABCDEFG",
+    "basefig-max=7",		// maximum 7 selected figures
 
 // Positioning k-factors acc. to Ch. 2.3.1.2
 //====================================================
@@ -549,58 +578,8 @@ rules.push (
 "posnl=15",	// positioning k-factor assuming no line judges
 "poselec=15",	// positioning k-factor assuming electric telemetry
 
-// Maximum number of each family
-//==============================
-//"fam2-max=1",	outlined in 2014
-//"fam5-max=1",
-//"fam6-max=1",
-//"isnap-max=1",
-//"osnap-max=1",
-//"spin-max=1",
-
-"more=glider-CIVA Unlimited Unknownbase",
-
-//###################
-"[glider-CIVA Unlimited Unknown0]",
-//###################
-"basefig-max=35",
-
-// 2.3.1.2 Sentence 1:
-// "Five figures maximum can be chosen in each of Families 2, 5, 6, 9.9, 9.10 and 9.11/12."
-
-"fam2-max = 5",
-"fam5-max = 5",
-"fam6-max = 5",
-"isnap-max = 5",
-"osnap-max = 5",
-"spin-max = 5",
-
-// 2.3.1.2. a) In Unlimited, the minimum acceptable K per figure is 15
-
-"k-minperfig=15",// 2014 : minimum K for every figure
-
-// 2.3.1.2. b) No figure may be selected with a K higher than 40 (AG 35)
-
-"k-maxperfig=40",// 2014 : maximum K for every figure
-
-// 2.3.1.2. c) In the case of teams which select two or more figures, one must be a reversing figure
-//		and the sum of coefficients of the figures proposed by a NAC must not exceed:
-//		60 (AG 55) for two figures
-//		80 (AG 70) for three figures
-//		95 (AG 85) for four figures
-//     110 (AG 95) for five figures
-
-// --- implemented only by warning ---
-
-// 2.3.1.2 c) Needs to be checked manually. Alert displays when there
-// are spaces in the sequence string
-
-"seqcheck-twoormore=^[^ ]*$",
-"twoormore-name=manual check required: section 6 part II 2.3.1.2&nbsp;c)",
-
-// 2.3.1.2 d) The same catalogue number may only be used once, except of fam. 9
-
-"basefig-repeat=1",
+"k-min=180",
+"k-max=200",
 
 "more=glider-CIVA Unlimited Unknownbase",
 
@@ -616,7 +595,7 @@ rules.push (
 //>>> implemented by rule-NOU
 "rule-NOAH=roll:[1248],[1248]",
 "why-NOAH=no opposite aileron or hesitation rolls allowed",
-"NOAH-rule=Sporting Code section 6 part 2 A.2.1.1",
+"NOAH-rule=Sporting Code Section 6 Part 2 A.2.1.1",
 
 "rule-NHR=roll:[248]",
 "why-NHR=no hesitation roll allowed",
@@ -627,7 +606,7 @@ rules.push (
 "conv-hpflick=^9\\.9\\.3\\.4=o ; ^9\\.=r ; ^0\\.=z",//## new converions added ### works perfect
 "rule-nfpf=hpflick:o",
 "why-nfpf=Full horizontal positive flick 9.9.3.4 only at the apex of upward looping figures",
-"nfpf-rule=Sporting Code section 6 part 2 A.21.1.1",
+"nfpf-rule=Sporting Code Section 6 Part 2 A.21.1.1",
 
 // acc. to A.21.1.2 and acc. to A.22.1.2:
 // Positive half flick on negative line 9.8.8.2 only with figures 7.2.2.2 and 7.2.4.1
@@ -636,39 +615,51 @@ rules.push (
 "conv-fignhf=^9\\.9\\.8\\.2=p ;^9\\.10\\.8\\.2=n ; ^9\\.=r ; ^0\\.=z",
 "rule-nhfonl=fignhf: [pn]",
 "why-nhfonl=Positive/Negative half flick on line 9.9.8.2/9.10.8.2 only with 7.2.2.2 and 7.2.4.1",
-"nhfonl-rule=Sporting Code section 6 part 2 A.21.1.2/A.22.1.2",
+"nhfonl-rule=Sporting Code Section 6 Part 2 A.21.1.2/A.22.1.2",
 
 "conv-hnfvd=^9\\.10\\.(5\\.[34]|10\\.[34])=o ; ^9\\.=r ; ^0\\.=z",
 "rule-nopushout=hnfvd:o$",
 "why-nopushout=No inverted exit after more than 1/2 negative flick vertically down",
-"nopushout-rule=Sporting Code section 6 part 2 A.22.1.1",
+"nopushout-rule=Sporting Code Section 6 Part 2 A.22.1.1",
 
 // Sporting code 2.3.1.4
 "group-roller=^2\\.(1\\.[23]|2\\.[2-6])",
 "roller-name=Rolling turn",
 "roller-name_fr=Tonneaux en virage",
-"roller-rule=Sporting Code Section 6 Part II, 2.3.1.4",
+"roller-rule=Sporting Code Section 6 Part 2, 2.3.1.4",
 "roller-min=1",
 
 "group-fam5or6=^[56]\\.",
 "fam5or6-name=Family 5 or 6",
 "fam5or6-name_fr=Famille 5 ou 6",
-"roller-rule=Sporting Code Section 6 Part II, 2.3.1.4",
+"roller-rule=Sporting Code Section 6 Part 2, 2.3.1.4",
 "fam5or6-min=1",
 
-"seqcheck-1fullor2halfflick=^f|.*[^2](if|f)|2(if|f)[^f]*f",
+"seqcheck-1fullor2halfflick=(?<![23]i?)f|2i?f.*2i?f",
 "1fullor2halfflick-name=At least one full or two half flicks required",
-"1fullor2halfflick-rule=Sporting Code Section 6 Part II, 2.3.1.4",
+"1fullor2halfflick-rule=Sporting Code Section 6 Part 2, 2.3.1.4",
+
+    // very complicated rule, split in multiple lines for (some) clarity
+"seqcheck-!max3flick720=(f.*){4}|" +
+    "2i?f.*(3i?f.*(?<![23]i?)f|(?<![23]i?)f.*(?<!2i?)f)|" +
+    "3i?f.*(2i?f.*(?<![23]i?)f|3i?f.*(?<![2]i?)f|(?<![23]i?)f.*f)|" +
+    "(?<![23]i?)f.*(2i?f.*(?<!2i?)f|(?<!2i?)f.*f)",
+"!max3flick720-name=Not more than 3 flicks with 720 degrees total rotation allowed",
+"!max3flick720-rule=Sporting Code Section 6 Part 2, 2.3.1.4",
+
+"seqcheck-first3max110k=\@A.*\@B.*\@C.*\@D",
+"first3max110k-name=Manually check that first 3 figures have no more than 110 K total",
+"first3max110k-rule=Sporting Code Section 6 Part 2, 2.3.1.4",
 
 "k-minperfig=17",
-"k-minperfig-rule=Sporting Code Section 6 Part II, 2.3.1.4",
+"k-minperfig-rule=Sporting Code Section 6 Part 2, 2.3.1.4",
 "k-maxperfig=43",
-"k-maxperfig-rule=Sporting Code Section 6 Part II, 2.3.1.4",
+"k-maxperfig-rule=Sporting Code Section 6 Part 2, 2.3.1.4",
 
-"k-min=180",
-"k-max=200",
+"snap-maxperfig=1",
+"snap-maxperfig-rule=Sporting Code Section 6 Part 2, 2.3.1.4",
 
-// Repetitions of base-figures acc. to CIVA Section 6 part II Ch. 2.3.1.4
+// Repetitions of base-figures acc. to CIVA Section 6 Part 2 Ch. 2.3.1.4
 //==========================================================================
 "group-basefigex1119=^(1\\.1\\.[2-8]\\.|[2-8])\\.",
 "basefigex1119-name=base figures except 1.1.1.x and 9.x",
@@ -891,11 +882,11 @@ rules.push (
 
 "rule-NLRAULR=roll: [12348fFSt] ([12348fFSt])",
 "why-NLRAULR=no rolls on top of loop after roll on up line",
-"NLRAULR-rule=Sporting Code section 6 part 2 A.14.1.1",
+"NLRAULR-rule=Sporting Code Section 6 Part 2 A.14.1.1",
 
 "rule-NFALHR=roll: (.[,;].|[248]) [fFS]$",
 "why-NFALHR=no flick roll on vertical down line after hesitation roll in loop segment",
-"NFALHR-rule=Sporting Code section 6 part 2 A.14.1.2",
+"NFALHR-rule=Sporting Code Section 6 Part 2 A.14.1.2",
 
 "8.6.1.1  NLRAULR ; NOAH:1 ; NOAH:2 ; NF:3",
 "8.6.1.4  NOAH:1 ; nfpf:3", // spin figure
@@ -1020,30 +1011,30 @@ rules.push (
 
 "figure-letters=ABCDE",
 
-'reference="@A" 2a2- "@B" -24q "@C" ita4 "@D" b..4 "@E" o22',
+'reference="@A" p(24) "@B" db- "@C" -t4 "@D" h4 "@E" 2g',
 
 // what info should be filled out
 "infocheck=pilot;actype;acreg;positioning",
 
-// Repetitions of base-figures acc. to CIVA Section 6 part II Ch. 2.2.1.4
+// Repetitions of base-figures acc. to CIVA Section 6 Part 2 Ch. 2.2.1.4
 //==========================================================================
 "basefigex11-repeat=1",// base figures except of 1.1.1. and 9.1
 // may not be repeated in sequence
 
-// Repetitions of rolls acc. to CIVA Section 6 part II Ch. 2.2.1.4
+// Repetitions of rolls acc. to CIVA Section 6 Part 2 Ch. 2.2.1.4
 //==========================================================================
 "hesroll-repeat=1",
 "snap-repeat=1",
 "spin-repeat=1",
 
-// Maximum K-Factor and number of figures acc. to CIVA Section 6 part II Ch. 2.2.1.5
+// Maximum K-Factor and number of figures acc. to CIVA Section 6 Part 2 Ch. 2.2.1.5
 //======================================================================================
 "k-max=178",	// 2014 : maximum k-factor + maximum floating points
 "basefig-min=10",	// exactly 10 base figures per sequence
 "basefig-max=10",
 "floating-point=3",	// 3 points may be reduced
 
-// Versatility acc. to CIVA Section 6 part II Ch. 2.2.1.7
+// Versatility acc. to CIVA Section 6 Part 2 Ch. 2.2.1.7
 //=======================================================
 "fam5-min=1",// minimum one figure from family 5
 "fam6-min=1",
@@ -1066,8 +1057,9 @@ rules.push (
 
 // Sequence entry and exit attitudes acc. to Ch. 2.2.1.8
 //======================================================
-"seqcheck-upend=[\\da-z][~+`'()\"\.>^]*\\s*$",// Sequence exit must be in positive attitude
-"upend-name=Sequence must end flying upright (Section 6, Ch. 2.2.1.8)",
+"seqcheck-upend=([0-9a-tv-z]|(?<!e)u)[~+`'()\\\"\\.>^]*\\s*(eu)?$",// Sequence exit must be in positive attitude
+"upend-name=Sequence must be finished in upright flight",
+"upend-rule=Sporting Code Section 6 Part 2 2.2.1.8",
 
 // Positioning k-factors acc. to Ch. 2.3.1.2
 //====================================================
@@ -1087,24 +1079,24 @@ rules.push (
 // Super Families
 "sf=^9\\.11\\.:3;^9\\.12\\.:3;^9\\.9\\.:4;^9\\.10\\.:4;^2\\.:2;^5\\.:5;^6\\.:6;^1\\.:7;^3\\.:7;^7\\.:7;^8\\.:7;^0\\.:7",
 
-// Repetitions of base-figures acc. to CIVA Section 6 part II Ch. 4.3.3.1 (a)
+// Repetitions of base-figures acc. to CIVA Section 6 Part 2 Ch. 4.3.3.1 (a)
 //==========================================================================
 "basefigex11-repeat=1",// base figures except of 1.1.1. and 9.1
 // may not be repeated in sequence
 
-// Repetitions of rolls acc. to CIVA Section 6 part II Ch. 4.3.3.1 (a)
+// Repetitions of rolls acc. to CIVA Section 6 Part 2 Ch. 4.3.3.1 (a)
 //==========================================================================
 "hesroll-repeat=1",
 "snap-repeat=1",
 "spin-repeat=1",
 
-// Maximum K-Factor and number of figures acc. to CIVA Section 6 part II Ch. 4.3.3.1 (b)
+// Maximum K-Factor and number of figures acc. to CIVA Section 6 Part 2 Ch. 4.3.3.1 (b)
 //======================================================================================
 "k-max=178",	// 2014 : maximum k-factor + maximum floating points
 "basefig-max=10",	// maximum 10 base figures per sequence
 "floating-point=3",	// 3 points may be reduced
 
-// Versatility acc. to CIVA Section 6 part II Ch. 2.2.1.7
+// Versatility acc. to CIVA Section 6 Part 2 Ch. 2.2.1.7
 //=======================================================
 "fam5-min=1",// minimum one figure from family 5
 "fam6-min=1",
@@ -1131,7 +1123,8 @@ rules.push (
 // Sequence entry and exit attitudes acc. to Ch. 2.2.1.8
 //======================================================
 "seqcheck-upend=[\\da-z][~+`'()\"\.>^]*\\s*$",// Sequence exit must be in positive attitude
-"upend-name=Sequence must end flying upright (Section 6, Ch. 2.2.1.8)",
+"upend-name=Sequence must be finished in upright flight",
+"upend-rule=Sporting Code Section 6 Part 2 2.2.1.8",
 
 // Positioning k-factors acc. to Ch. 2.3.1.2
 //====================================================
@@ -1362,97 +1355,92 @@ rules.push (
 "9.11.1.4-8",
 
 //###################
-"[glider-CIVA Advanced Unknown1]",
+"[glider-CIVA Advanced Unknown 1]",
+"infocheck=positioning",
+"more=glider-CIVA Advanced Unknown",
+
+    //######################
+    "[glider-CIVA Advanced Free Unknown]",
+    "infocheck=pilot;actype;acreg;positioning",
+    "more=glider-CIVA Advanced Unknown",
+
+//###################
+"[glider-CIVA Advanced Unknown 3]",
+"infocheck=positioning",
+"more=glider-CIVA Advanced Unknown",
+
+    //###################
+    "[glider-CIVA Advanced Unknown 4]",
+    "infocheck=positioning",
+    "more=glider-CIVA Advanced Unknown",
+
+    //###################
+    "[glider-CIVA Advanced Unknown 5]",
+    "infocheck=positioning",
+    "more=glider-CIVA Advanced Unknown",
+
+    "[glider-CIVA Advanced Programme 1]",
+    "more=glider-CIVA Advanced Free Known",
+
+    "[glider-CIVA Advanced Programme 2]",
+    "more=glider-CIVA Advanced Unknown 1",
+    
+    "[glider-CIVA Advanced Programme 3]",
+    "more=glider-CIVA Advanced Free Unknown",
+    
+    "[glider-CIVA Advanced Programme 4]",
+    "more=glider-CIVA Advanced Unknown 3",
+    
+    "[glider-CIVA Advanced Programme 5]",
+    "more=glider-CIVA Advanced Unknown 4",
+    
+    "[glider-CIVA Advanced Programme 6]",
+    "more=glider-CIVA Advanced Unknown 5",
+
+    //###################
+"[glider-CIVA Advanced Unknown Figs]",
 //###################
 
-"more=glider-CIVA Advanced Unknown3",
-
-//######################
-"[glider-CIVA Advanced FreeUnknown]",
-
-// what info should be filled out
-"infocheck=positioning",
-
-//######################
-// Maximum K-Factor and number of figures acc. to CIVA Section 6 part II Ch. 2.3.1.2
+//###################
+// Maximum K-Factor and number of figures acc. to CIVA Section 6 Part 2 Ch. 2.3.1.2
 //================================================================================
 "figure-letters=ABCDEFG",
-//"k-max=170",		// 2014 : maximum k-factor without maximum floating points
-//"k-min=150",		// 2014 : minimum k-factor
-"basefig-max=7",		// maximum 7 base figures per sequence (max 2 links)
-"additionals=2/10",		// max 2 additionals with 10K total
-
-// Positioning k-factors acc. to Ch. 2.3.1.2
-//====================================================
-"poslj=15",// positioning k-factor assuming line judges
-"posnl=15",// positioning k-factor assuming no line judges
-"poselec=15",// positioning k-factor assuming electric telemetry
-
-// Sequence exit must be positive upright acc. to Ch. 2.3.3.2
-//===========================================================
-"seqcheck-upend=[\\da-z][~+`'()\"\.>^]*\\s*$",// Sequence exit must be in positive attitude
-"upend-name=Sequence must end flying upright (Section 6, Ch. 2.3.3.2)",
-
-
-"more=glider-CIVA Advanced Unknownbase",
-
-//###################
-"[glider-CIVA Advanced Unknown2]",
-//###################
-"more=glider-CIVA Advanced Unknown3",
-
-//###################
-"[glider-CIVA Advanced Unknown3]",
-
-// what info should be filled out
-"infocheck=positioning",
-
-//###################
-// Maximum K-Factor and number of figures acc. to CIVA Section 6 part II Ch. 2.3.1.2
-//================================================================================
-//"k-max=148",		// maximum k-factor including maximum floating points
-//"k-min=130",		// minimum k-factor
-"basefig-max=9",		// maximum 9 base figures per sequence (7 chosen + max 2 additional)
-"floating-point=3",		// 3 points may be reduced
-
+"basefig-max=7",	// max. 7 base figures per sequence (+ max 2 links)
 // Positioning k-factors acc. to Ch. 2.3.1.2
 //====================================================
 "poslj=15",	// positioning k-factor assuming line judges
 "posnl=15",	// positioning k-factor assuming no line judges
 "poselec=15",	// positioning k-factor assuming electric telemetry
 
+"k-min=150",
+"k-max=170",
+
 "more=glider-CIVA Advanced Unknownbase",
 
 //###################
-"[glider-CIVA Advanced Unknown0]",
+"(glider-CIVA Advanced Unknown)",
 //###################
-"basefig-max=35",
-"basefig-min=35",
 
-// 2.3.1.2 Sentence 1:
-// "Five figures maximum can be chosen in each of Families 2, 5, 6 and 9.11/12."
+//###################
+// Maximum K-Factor and number of figures acc. to CIVA Section 6 Part 2 Ch. 2.3.1.2
+//================================================================================
+"figure-letters=ABCDEFG",
+"basefig-max=7",	// max. 7 base figures per sequence (+ max 2 links)
+"additionals=2/10", 	// max 2 additionals with 10K total
+// Positioning k-factors acc. to Ch. 2.3.1.2
+//====================================================
+"poslj=15",	// positioning k-factor assuming line judges
+"posnl=15",	// positioning k-factor assuming no line judges
+"poselec=15",	// positioning k-factor assuming electric telemetry
 
-"fam2-max=5",	// max 5 of fam 2
-"fam5-max=5",	// max 5 of fam 5
-"fam6-max=5",	// max 5 of fam 6
-"spin-max=5",	// max 5 of spins
+"k-min=160",
+"k-max=180",
 
-// 2.3.1.2 b) No figure may be selected with a K higher than 40 (AG 35).
-
-"k-maxperfig=35",
-
-// 2.3.1.2 c) Needs to be checked manually. Alert displays when there
-// are spaces in the sequence string
-
-"seqcheck-twoormore=^[^ ]*$",
-"twoormore-name=manual check required: section 6 part II 2.3.1.2&nbsp;c)",
-
-// 2.3.1.2 d) The same catalogue number cannot be chosen again except for Family 9 ("AG"
-//		Families 5, 6 and 9)
-
-"group-basefigex569=^([1-4]|[7-8])",
-"basefigex569-name=base figures except, fam 5, 6 and 9",
-"basefigex569-repeat=1",
+// Sequence entry and exit attitudes acc. to Ch. 2.3.2.1
+//======================================================
+"seqcheck-upend=[\\da-z][~+`'()\"\.>^]*\\s*$",// Sequence exit must be in positive attitude
+"upend-name=Sequence must be finished in upright flight",
+"upend-rule=Sporting Code Section 6 Part 2 2.3.2.1",
 
 "more=glider-CIVA Advanced Unknownbase",
 
@@ -1466,7 +1454,7 @@ rules.push (
 
 "rule-NOAH=roll:[1248],[1248]",
 "why-NOAH=no opposite aileron or hesitation rolls allowed",
-"NOAH-rule=Sporting Code section 6 part 2 A.2.1.1",
+"NOAH-rule=Sporting Code Section 6 Part 2 A.2.1.1",
 
 //## Opposite slow or hesitation rolls are allowed on horizontal lines
 //>>> implemented by rule-NOU
@@ -1478,18 +1466,15 @@ rules.push (
 "group-fam5or6=^[56]\\.",
 "fam5or6-name=Family 5 or 6",
 "fam5or6-name_fr=Famille 5 ou 6",
-"roller-rule=Sporting Code Section 6 Part II, 2.3.1.4",
+"roller-rule=Sporting Code Section 6 Part 2, 2.3.1.4",
 "fam5or6-min=1",
 
 "k-minperfig=10",
-"k-minperfig-rule=Sporting Code Section 6 Part II, 2.3.1.4",
+"k-minperfig-rule=Sporting Code Section 6 Part 2, 2.3.1.4",
 "k-maxperfig=37",
-"k-maxperfig-rule=Sporting Code Section 6 Part II, 2.3.1.4",
+"k-maxperfig-rule=Sporting Code Section 6 Part 2, 2.3.1.4",
 
-"k-min=150",
-"k-max=170",
-
-    // Repetitions of base-figures acc. to CIVA Section 6 part II Ch. 2.3.1.4
+    // Repetitions of base-figures acc. to CIVA Section 6 Part 2 Ch. 2.3.1.4
     //==========================================================================
     "group-basefigex1119=^(1\\.1\\.[2-8]\\.|[2-8])\\.",
     "basefigex1119-name=base figures except 1.1.1.x and 9.x",

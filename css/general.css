@@ -971,25 +971,21 @@ html.framed ol {
   background: transparent;
 }
 .documentation {
-  width: auto;
-  margin: 1em;
-  padding: 2em;
-  background: #f8f8f8;
-  background: -webkit-linear-gradient(top, #ffffff, #f4f4f4);
-  background: linear-gradient(top, #ffffff, #f4f4f4);
-  -moz-box-shadow: 5px 5px 8px rgba(0, 0, 0, 0.3);
-  -webkit-box-shadow: 5px 5px 8px rgba(0, 0, 0, 0.3);
-  box-shadow: 5px 5px 8px rgba(0, 0, 0, 0.3);
-  overflow: hidden;
+    width: auto;
+    margin: 1em;
+    padding: 2em;
+    background: #f8f8f8;
+    background: -webkit-linear-gradient(top, #ffffff, #f4f4f4);
+    background: linear-gradient(top, #ffffff, #f4f4f4);
+    -moz-box-shadow: 5px 5px 8px rgba(0, 0, 0, 0.3);
+    -webkit-box-shadow: 5px 5px 8px rgba(0, 0, 0, 0.3);
+    box-shadow: 5px 5px 8px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
 }
-
 .docs {
   background: #f8f8f8;
   background: -webkit-linear-gradient(315deg, #ffe0b2, #fff3e0);
   background: linear-gradient(315deg, #ffe0b2, #fff3e0);
-}
-.docs table {
-  margin: 16px;
 }
 .docs li {
     line-height: 1.5rem;
@@ -1013,6 +1009,27 @@ html.framed ol {
 .docsExtraInfo:hover span {
   color: inherit;
   display: block;
+}
+
+/* documentation layout improvement for narrow devices/windows */
+@media (max-width: 44em) {
+    .documentation {
+        margin: 0.5em;
+        padding: 1em;
+    }
+    .docs ul {
+        padding-left: 1em;
+    }
+    .docs ol {
+        padding-left: 2em;
+    }
+    /* minimum paragraph width is 7em (to prevent narrow text beside images) */
+    p:before {
+        content: "";
+        width: 7em;
+        display: block;
+        overflow: hidden;
+    }
 }
 
 #alerts {
@@ -1249,6 +1266,7 @@ option.used {
 /* boxes and dialogs */
 .boxbg {
   background: rgba(0,0,0,0.4);
+  backdrop-filter: blur(2px);
   background-repeat: no-repeat;
   background-position: center; 
   overflow: auto;
@@ -1888,11 +1906,11 @@ option.used {
   margin-top: 16px;
   width: 102px;
   /* font-size: 16px; */
-  transition: all 0.5s ease-in-out;
+  transition: all 0.3s ease-in-out;
 }
 #figureSelector #figureString {
   left: 48px;
-  top: 24px;
+  top: 22px;
 }
 #figureStringInput {
   width: 100px;
@@ -2047,8 +2065,15 @@ t_addFigureText {
 #moveXCont span, #moveYCont span {
   float: left;
 }
+#t_ruleIllegalRollsEnabled {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-grow: 100;
+    padding: 8px;
+}
 .rollElement {
-	display: flex;
+    display: flex;
 }
 #figureInfo .form-group {
 	display: inline-block;
@@ -2356,8 +2381,8 @@ table#figureChooserTable div {
 
 /* combo boxes */
 .combo ul {
-	padding: 8px;
-  min-width: 116px;
+	padding: 4px;
+  min-width: 124px;
   background-color:#fafafa;
   box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.3);
   position:absolute;
@@ -2517,3 +2542,207 @@ table#figureChooserTable div {
 	display: inline-block;
 }
 
+/* Free Unknown Designer */
+#fuFiguresTable td {
+    transition: background 0.4s, border-color 0.4s;
+    position: relative;
+    border: 2px solid #aaa;
+    border-radius: 10px;
+    background: #fff;
+    text-align: center;
+    font-size: 1.5em;
+    font-weight: strong;
+}
+
+    #fuFiguresTable td.figUsed {
+        transition: background 0.4s, border-color 0.4s;
+        border-color: #7cb342;
+        background: #ecffec;
+    }
+
+    #fuFiguresTable td.figUsedMulti {
+        transition: background 0.4s, border-color 0.4s;
+        border-color: #ff6040;
+        background: #ffe8e0;
+    }
+
+#fuX svg, #fuL svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+#fuSequence {
+    box-sizing: border-box;
+    margin-left: 300px; /* enough for figure selector */
+    padding: 8px;
+    height: 100%;
+    overflow-y: auto;
+    z-index: -1;
+    display: none;
+    -webkit-overflow-scrolling: touch;
+    transition: 0.3s ease-in-out;
+}
+
+.fuDesigner #fuSequence {
+    display: block;
+}
+
+.fuSequence table {
+    position: relative;
+    float: left;
+    margin: 3px;
+    border-spacing: 4px;
+    border: 1px solid blue;
+    border-radius: 10px;
+}
+
+    .fuSequence table.dragDropCopy {
+        margin: 0;
+    }
+
+    .fuSequence table td {
+        position: relative;
+        width: 120px;
+        height: 100px;
+        border-radius: 10px;
+        text-align: center;
+        font-size: 1.5em;
+        font-weight: bold;
+    }
+        /* the order of the following two matters ! */
+        .fuSequence table td.active {
+            border: 2px solid magenta !important;
+        }
+
+        .fuSequence table td.hover {
+            border: 2px dashed magenta !important;
+        }
+
+.fuSequence .additionalFigure {
+    background-color: #f0f4ff;
+    border: 2px solid #9090ff;
+    transition: transform 0.3s;
+}
+
+.fuSequence .additionalFigureMulti {
+    background-color: #f0f4ff;
+    border: 2px solid #ff9060;
+    transition: transform 0.3s;
+}
+
+.fuSequence .fuFigure {
+    border: 2px solid #70f070;
+    transition: transform 0.3s;
+}
+
+.fuSequence .fuFigureMulti {
+    border: 2px solid #ff9060;
+    transition: transform 0.3s;
+}
+
+.fuSequence .endBlock {
+    border: 2px solid #c0c0c0;
+}
+
+.fuSequence .fuNewSub {
+    border: 2px solid #ffffff;
+}
+
+#fuSelectFigureFirst {
+    font-size: 16px;
+    margin: 12px;
+}
+
+#fuSequence td::before {
+    z-index: 1;
+    position: absolute;
+}
+
+#fuSequence .prevRight::before {
+    right: -20px;
+    top: 41px;
+    font-family: 'Material Icons';
+    font-size: 36px;
+    direction: ltr;
+    color: #2979ff;
+    content: 'arrow_back';
+}
+
+#fuSequence .prevRightTop::before {
+    right: -20px;
+    top: -20px;
+    font-family: 'Material Icons';
+    font-size: 36px;
+    direction: ltr;
+    color: #2979ff;
+    content: 'arrow_downward';
+    transform: rotate(45deg);
+}
+
+#fuSequence .prevTop::before {
+    right: 51px;
+    top: -20px;
+    font-family: 'Material Icons';
+    font-size: 36px;
+    direction: ltr;
+    color: #2979ff;
+    content: 'arrow_downward';
+}
+
+#fuSequence .prevLeftTop::before {
+    left: -20px;
+    top: -20px;
+    font-family: 'Material Icons';
+    font-size: 36px;
+    direction: ltr;
+    color: #2979ff;
+    content: 'arrow_downward';
+    transform: rotate(-45deg);
+}
+
+#fuSequence .prevLeft::before {
+    left: -20px;
+    top: 41px;
+    font-family: 'Material Icons';
+    font-size: 36px;
+    direction: ltr;
+    color: #2979ff;
+    content: 'arrow_forward';
+}
+
+.fuDesigner #figureInfo.hidden {
+    -webkit-transform: translateX(-280px);
+    transform: translateX(-280px);
+}
+
+.fuDesigner #t_finalizeSequence {
+    display: inline-block;
+}
+
+.fuDesigner #figureSelectorGroupDiv {
+    margin-top: 16px;
+}
+
+.fuDesigner #figureChooser {
+    top: 116px;
+}
+
+#fuFigures {
+    position: relative;
+    /*z-index: 4;*/ /* Removed because it hides dragging figures, not sure why it was needed? */
+    top: 0;
+    margin: 6px 4px 8px 4px;
+    /*left: -546px;*/
+    width: 268px;
+    -webkit-transform: translateX(0);
+    transform: translateX(0);
+    transition: all 0.3s ease-in-out;
+}
+
+#fuFigures.hidden {
+    -webkit-transform: translateX(280px);
+    transform: translateX(280px);
+    margin: -6px 5px 7px 5px !important;
+    visibility: visible;
+}

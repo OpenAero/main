@@ -83,8 +83,6 @@ lang.en = {
   '<td>Figure and rule coding</td></tr>' +
   '<tr><td><strong>Gilles Guillemard</strong></td>' +
   '<td>Figure, rule and software coding</td></tr>' +
-  '<tr><td><strong>Christian Falck</strong></td>' +
-  '<td>Rule coding</td></tr>' +
   '</table></p></div>',
 'ac' : 'A/C',
 'addAllToQueue' : 'Add all to Queue',
@@ -97,7 +95,8 @@ lang.en = {
     'additional': 'Additional',
     'additionalFigureRequired': 'At least 1 additional figure required',
 'addSequenceLink' : 'Add sequence link',
-'addToQueue' : 'Add to Queue',
+    'addToQueue': 'Add to Queue',
+'addWindAfterPilotCardCharacter' : 'Add one of <strong>><=</strong> after pilot card character to choose wind direction.',
 'acreg': 'Aircraft registration',
 'actype': 'Aircraft type',
 'aircraft' : 'A/C type &amp; reg',
@@ -304,7 +303,9 @@ lang.en = {
 'harmony' : 'Harmony',
 'help' : 'Help',
 'hideIllegalFigures' : 'Hide illegal figs (Sequence info Rules)',
-'iacForms' : 'A/B/C Forms in IAC style',
+    'iacForms': 'A/B/C Forms in IAC style',
+    'iacNoteDownwindEntry' : 'Note Downwind Entry',
+'iacNoteYAxisEntry' : 'Note Y Axis Entry',
 'illegalAtEnd' : 'Illegal figure at the end',
 'illegalBefore' : 'Illegal figure before figure ',
 'illegalFig' : ' is illegal, try ',
@@ -396,7 +397,7 @@ lang.en = {
   'and make sure cookies are not blocked.',
 'noFigureLetterAssigned' : '(%s) No figure letter assigned',
 'noFreeUnknownFig' : 'No figure letter',
-'nonArestiRolls' : 'Allow non-Aresti rolls and combinations (try ' + 
+'nonArestiRolls' : 'Allow non-Aresti and rule-illegal rolls and combinations (try ' + 
   'sequence text <i>41h4,f,4 66</i>)',
 'none' : 'None',
 'noRollAllowed' : 'No roll allowed according Aresti Catalog',
@@ -553,7 +554,9 @@ lang.en = {
 'rollSymbolLarge' : 'Large',
 'rollSymbolMedium' : 'Medium',
 'rollSymbolSize' : 'Roll symbol size',
-'rollTextSize' : 'Roll text size',
+    'rollTextSize': 'Roll text size',
+    'ruleIllegalRollsEnabled': '<i class="material-icons status bad"></i><span>' +
+        'Rule-illegal rolls are enabled in <a href="#">settings</a></span>',
 'rules' : 'Rules',
 'rulesImported' : 'Succesfully imported rules from file. Total lines (excluding comments) : ',
 'rulesImportTitle' : 'Rules file import',

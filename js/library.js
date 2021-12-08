@@ -26,6 +26,24 @@
 // The Value is an OpenAero sequence link (use "File->Save as link" in OpenAero to generate)
 
 var library = {
+    '2022 CIVA Unl Free Known':
+        'https://openaero.net/?s=hFVubGltaXRlZIVDSVZBhjIwMjKHcG93ZXJlZIhQcm9ncmFtbWUxiUNJVkGKNDCLMIxDSVZBIDIwMjIgVW5saW1pdGVkIEZyZWUgS25vd24gZmlndXJlc40iQEEiIDIsMmZ6YjQ4LSAoMTMsMCkgIkBCIiAifCI0OzNpZmRoKDQppzVmICgwLLEpICJAQyIgsmFjKDJmKTMsMzQtICgwLDcpICJARCIgLDV0YeAzICgwLDEzKSAiQEUiIC4sMjQucG4oInwiNWY7MykyLo9DSVZBkDIwMjEuMS4xMJFncmlkOjU',
+
+    '2022 CIVA Adv Free Known':
+        'https://openaero.net/?s=hEFkdmFuY2Vkh3Bvd2VyZWSIUHJvZ3JhbW1lMYlDSVZBijMwizCNIkBBIiDg4GArNmZpYycyNODg4C0gKDAsNSkgMSUgIkBCIiA2c2lycCwzMixm4GB-ICgxNiwwKSAiQEMiICw4J-Io4DIpK2AgKDE2LDApICJARCIgLDJwbigssqcpICixLDApICJARSIgNGgyZo9DSVZBkDIwMjEuMS4xMJFncmlkOjU',
+
+    '2022 CIVA Yak52 Free Known':
+        'https://openaero.net/?s=hFlhazUyhjIwMjKHcG93ZXJlZIhQcm9ncmFtbWUxiUNJVkGKMzCLMIxDSVZBIFBvd2VyIEludC1ZNTIgRnJlZSBLbm93biBmaWd1cmVzIDIwMjKNIkBBIiBwKLIpICg4LDApICJAQiIgNGg4ICgwLLEpICJAQyIgbTMyICgwLDkpICJARCIgb2YgKDAsMSkgIkBFIiA2YY9DSVZBkDIwMjEuMS4xMJFncmlkOjU',
+
+    '2022 CIVA Int Free Known':
+        'https://openaero.net/?s=hEludGVybWVkaWF0ZYYyMDIyh3Bvd2VyZWSIUHJvZ3JhbW1lMYlDSVZBijMwizCMQ0lWQSBQb3dlciBJbnQtWTUyIEZyZWUgS25vd24gZmlndXJlcyAyMDIyjSJAQSIgcCiyKSAoOCwwKSAiQEIiIDRoOCAoMCyxKSAiQEMiIG0zMiAoMCw5KSAiQEQiIG9mICgwLDEpICJARSIgNmGPQ0lWQZAyMDIxLjEuMTCRZ3JpZDo1',
+
+    '2022 CIVA-Glider Unl Free Known':
+        'https://openaero.net/?s=hFVubGltaXRlZIdnbGlkZXKIRnJlZSBLbm93bolDSVZBijE1izCMQ0lWQSBHbGlkZXIgVW5saW1pdGVkIEZyZWUgS25vd24gZmlndXJlcyAyMDIyjSJAQSIgNCwzZi0gKDAsMikgIkBCIiAtMWpvNSAoMCwxMCkgIkBDIiA0aCAoMCwxMCkgIkBEIiAtLml0YSAoOSwwKSAiQEUiIG8yZiwyj0NJVkGQMjAyMS4xLjEwkWdyaWQ6NQ',
+
+    '2022 CIVA-Glider Adv Free Known':
+        'https://openaero.net/?s=hEFkdmFuY2Vkh2dsaWRlcohGcmVlIEtub3duiUNJVkGKMTWLMIxDSVZBIEdsaWRlciBBZHZhbmNlZCBGcmVlIEtub3duIGZpZ3VyZXMgMjAyMo0iQEEiIHAoMjQpICgwLDEwKSAiQEIiIGRiLSAoNSwwKSAiQEMiIC10NCAoMCw2KSAiQEQiIGg0ICgwLDE0KSAiQEUiIDJnj0NJVkGQMjAyMS4xLjEwkWdyaWQ6NQ',
+
     '2022 NZAC Primary Known':
         'https://openaero.net/?s=PGNhdGVnb3J5PlByaW1hcnkgPC8-PGNsYXNzPnBvd2VyZWQ8Lz48cHJvZ3JhbT5Lbm93bjwvPjxydWxlcz4yMDIxLzIwMjIgTlpBQzwvPjxwb3NpdGlvbmluZz4zPC8-PHNlcXVlbmNlX3RleHQ-NSUgZCB-fml2LnMuJysrfiAtMSUgLi4uLi4nJ2MuLi4uLDIuLi4uK2AgNiUgb35-IH4rKysuLi4naC4uLi4rKyt-IC4uLicxKyt-fjwvPjxsb2dvPk5aQUM8Lz48b2FfdmVyc2lvbj4yMDIxLjEuNTwvPjxkZWZhdWx0X3ZpZXc-QjwvPg',
 

@@ -641,7 +641,7 @@ function loadRules (ruleName, catName, programName) {
 			checkCatGroup: checkCatGroup,
 			figureLetters: figureLetters,
 			ruleSuperFamily: ruleSuperFamily,
-			iacForms: (ruleName === 'iac') ? true : false,
+            iacForms: (/^(glider-)?iac$/.test(ruleName)) ? true : false,
 			infoCheck: infoCheck,
 		    activeRules: activeRules,
 			rulesKFigures: rulesKFigures,
@@ -1212,11 +1212,13 @@ function checkRules (callbackId, activeSequenceText, figures, figCheckLine, nonA
 	  }
 	  
 	  // Check complete sequence string on seqcheck directives
-	  // When there is NO match for any of the directives, an alert is created
-	  
-	  if (ruleSeqCheck !== []) {
-	    for (var name in ruleSeqCheck) {
-	      if (!ruleSeqCheck[name].regex.test(activeSequenceText)) {
+	  // By default, when there is NO match for any of the directives, an alert is created
+      // When the name starts with !, this logic is reversed
+
+      if (ruleSeqCheck !== []) {
+          for (var name in ruleSeqCheck) {
+            if ((name[0] != '!' && !ruleSeqCheck[name].regex.test(activeSequenceText)) ||
+                name[0] == '!' && ruleSeqCheck[name].regex.test(activeSequenceText)) {
 	        checkAlert (
 	          checkName(ruleSeqCheck[name]),
 	          false,

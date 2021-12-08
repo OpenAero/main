@@ -1,4 +1,33 @@
-﻿2021.1.8
+﻿2022.1.1
+* Fixed issue where a sequence with empty logo would not open when loading sequence URL
+* Implemented automatic IAC form selection for glider-IAC also
+* Added automatic note for downwind or Y axis entry on IAC forms B and C according IAC Rulebook 21.3.4
+* Fixed bug where mini Form A was included on B&C png and svg output when not selected and vv
+* Changed drag&drop (again) to only be used on devices that do not support native, or iOS: CHECK THOROUGHLY BEFORE ROLL OUT!
+* Added wind use clarification for pilot cards to Print Page Set
+* Added 2022 CIVA Power and Glider Known figure sets
+* Updated 2022 CIVA Power Unlimited rules
+* Updated 2022 CIVA Glider rules
+* Added Free (un)known Designer for smartphone
+* Fixed issue of Free Unknown scrolling to top of subsequences on modification
+* Added rules for Aerobatic Club Italy
+
+2021.1.10
+* Improved Help document layout for narrow viewports such as mobile phones
+* Small updates to Help document contents
+* Removed "aircraft" field from saving. Deprecated since 2015 by use of "acreg" and "actype" fields
+* Added support for improved sequence link compression. Compressed output will be activated March 2022
+* Removed Christian Falck from contributors list in About Dialog on own request
+* Added missing figures 2.2.7.x to allowed required figures for Advanced Free Known
+
+2021.1.9
+* Added warning to roll selection section when rules are active and illegal rolls are allowed in settings
+* Fixed issue with selecting Free figures in FU designer caused by update in 2018.1.8
+* Updated CIVA Glider rules for 2021
+* Disabled native drag&drop system introduced in 2021.1.7 as it causes issues for some devices. Reverted back to iosDragDropShim for all touch systems
+* Fixed iOS detection to work on iOS 13
+
+2021.1.8
 * Added horizontal movement and slightly increased margin for automatic figure positioning
 * Fixed incorrect warning for unlinked rolls on diagonal down line in CIVA Unlimited Free that was also shown for other lines
 * Added indicator colors to figure start points for lettered figures (as in Free (un)knowns)

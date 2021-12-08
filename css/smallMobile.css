@@ -86,25 +86,27 @@ select {
   width: 100%;
 }
 #leftBlockContainer {
-	position: absolute;
-  overflow-x: hidden;
-  overflow-y: scroll;
-	/*width: 320px;*/
-	width: 100%;
-	height: 100%;
-	-webkit-overflow-scrolling: touch;
+    position: absolute;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    /*width: 320px;*/
+    width: 100%;
+    height: 100%;
+    -webkit-overflow-scrolling: touch;
+    transition: 0.5s ease-in-out;
 }
 #leftBlock {
-  position: relative;
-  top: 0;
-  left: 0;
-  background: #f4f4f4;
-  /*width: 320px;*/
-  width: 100%;
-  padding: 40px 0 0 0;
-  z-index: 1;
-  overflow: hidden;
-  min-height: 600px;
+    position: relative;
+    top: 0;
+    left: 0;
+    background: #f4f4f4;
+    /*width: 320px;*/
+    width: 100%;
+    padding: 40px 0 0 0;
+    z-index: 1;
+    overflow: hidden;
+    min-height: 600px;
+    transition: 0.5s ease-in-out;
 }
 
 #sequenceInfo div.form-group {
@@ -180,10 +182,11 @@ select {
   flex: 1;
 }
 #leftBlockTabSelector {
-	position: absolute;
-	z-index: 5;
-	/* width: 320px; */
-	width: 100%;
+    position: absolute;
+    z-index: 5;
+    /* width: 320px; */
+    width: 100%;
+    transition: 0.5s ease-in-out;
 }
 #leftBlockTabSelector li {
   display: inline-block;
@@ -449,4 +452,115 @@ table#figureChooserTable td.selected {
 	position: relative;
 	top: -14px;
 	font-size: 14px;
+}
+
+/* styling for Free (Un)known Designer */
+
+.fuDesigner #leftBlockTabSelector {
+    width: 124px;
+}
+
+.fuDesigner #leftBlockTabSelector li {
+    min-width: 58px;
+    max-width: 58px;
+    padding: 0 2px 0 2px;
+    font-size: 12px;
+}
+
+.fuDesigner #leftBlockContainer {
+    width: 124px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+
+.fuDesigner #leftBlock {
+    width: 124px;
+    /* add "tactile" dots to Figures block to show where the block can be scrolled */
+    background: linear-gradient(90deg, #fafafa 3px, transparent 1%) center, linear-gradient(#fafafa 3px, transparent 1%) center, #c0c0c0;
+    background-size: 4px 4px;
+}
+
+.fuDesigner #design {
+    background: #fafafa;
+}
+#fuFigures {
+    width: 110px;
+    background-color: #fafafa;
+    box-shadow: none;
+}
+
+.fuDesigner #alerts {
+    padding-right: 4px;
+}
+
+#t_alerts {
+    padding-left: 8px;
+}
+
+#fuSequence {
+    margin-left: 120px;
+}
+
+.fuSequence table td {
+    width: 100px;
+    height: 80px;
+}
+
+.fuDesigner #figureString {
+    left: 172px;
+    top: 232px;
+}
+
+.fuDesigner #figureChooserColumns {
+    top: 94px;
+}
+
+.fuDesigner .button.small {
+    width: 26px;
+    height: 26px;
+    background-size: 24px;
+    margin: 1px;
+}
+
+.fuDesigner #figEntryButton.button.small, .fuDesigner #figExitButton.button.small {
+    margin-right: 6px;
+}
+
+.fuDesigner .minButton, .fuDesigner .plusButton {
+    font-size: 28px !important;
+    height: 24px;
+    width: 24px;
+}
+
+.fuDesigner .minButton {
+    line-height: 21px;
+}
+
+.fuDesigner .plusButton {
+    line-height: 24px;
+}
+
+.fuDesigner .plusMinText {
+    font-size: 20px;
+    box-sizing: border-box;
+    margin-top: 1px;
+    height: 26px;
+}
+
+.fuDesigner #figureInfo select {
+    height: 24px !important;
+    line-height: 24px;
+    font-size: 20px;
+}
+
+.fuDesigner .rollComment {
+    font-size: 20px;
+    height: 26px;
+}
+
+.fuDesigner .button {
+    margin: 1px !important;
+}
+
+#fuSequence .prevRight::before, #fuSequence .prevLeft::before {
+    top: 28px;
 }

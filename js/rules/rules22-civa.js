@@ -95,6 +95,10 @@ OpenAero 2016.3.2
  * - removed roller-min for 2021 Unlimited Free Known due to CIVA waiver
  * 2021.1.10
  * - Added missing figure 2.2.7 to allowed required figure for Advanced Free Known
+ * 2022.1.1
+ * - added reference sequences for 2022
+ * - updated Unlimited Unknown rules with addition of hesitation rolls, 3/4 snaps and versatility
+ *   (NP2022-12,13,14,15,17,22)
 */
 
 // open the rules.push command
@@ -170,9 +174,8 @@ rules.push (
 "[CIVA Unlimited Free Known]",
 "posnl=40",//assume no line judges
 "poslj=20",
-// !!! Restore roller-min for 2022 !!!
-'reference="@A" ,3if.rp(,22)3,34 "@B" .1n(``,5if,3\')\'- "@C" -.,3ta3f "@D" -2jo1- "@E" 48dh(4)5f',
-// !!! Restore roller-min for 2022 !!!
+
+'reference="@A" 2,2fzb48- "@B" "|"4;3ifdh(4).5f "@C" 22ac(2f)3,34- "@D" ,5ta``3 "@E" .,24.pn("|"5f;3)2.',
 
 "more=CIVA/IAC Unlimited Free Known",
 
@@ -196,7 +199,7 @@ rules.push (
 "roller-name_fr=Tonneaux en virage, famille 2.2.3 à 2.2.7 ou 2.3.2 à 2.3.6 ou 2.4.2 à 2.4.8",
 
 "fam1-min=1",
-// "roller-min=1", // Waived for 2021. Reactivate for 2022!
+"roller-min=1",
 "fam5-min=1",
 "fam6-min=1",
 "fam7-min=1",
@@ -256,8 +259,8 @@ rules.push (
 "two-max=2",
 "isnap-max=4",
 "osnap-max=4",
-"vsnap-min=1",
-"snap-max=6",
+    "vsnap-min=2", // changed in 2022 (NP2022-22)
+"snap-max=8", // changed in 2022 (NP2022-22)
 
 "snap-maxperfig=1",
 
@@ -298,9 +301,13 @@ rules.push (
 "conv-upqtrs=^9\\.([1-9]|10)\\.[16]\\.([1-8]) = $2 ; ^9\\.(9|10)\\. = f ; ^9\\. = r ; ^0\\.=z",
 "conv-upstop=^9\\.(1|9|10)\\.[16]=1 ; ^9\\.2\\.1\\.4 = 2 ;^9\\.2\\.1\\.6 = 3 ;^9\\.2\\.1\\.8 = 4 ;^9\\.4\\.1\\.([1-8]) = $1; ^9\\.8\\.1\\.1 = 2;^9\\.8\\.1\\.2 = 4;^9\\.8\\.1\\.3 = 6;^9\\.8\\.1\\.4 = 8 ; ^9\\.(9|10)\\. = f; ^9\\.=r ; ^0\\.=z",
 
-// flicks are counted as 2 stops for application of rules A.2.2.2 and A.2.2.3
+// changed in 2022 (NP2022-17), old regex kept below
 "conv-diagupqtrs=^9\\.([1-9]|10)\\.[27]\\.([1-8]) = $2 ; ^9\\.(9|10)\\. = f ; ^9\\. = r ; ^0\\.=z",
-"conv-diagupstop=^9\\.1\\.2=1 ;^9\\.(9|10)\\.[27]=2 ; ^9\\.2\\.2\\.4 = 2 ;^9\\.2\\.2\\.6 = 3 ;^9\\.2\\.2\\.8 = 4 ;^9\\.4\\.2\\.([1-8]) = $1; ^9\\.8\\.2\\.1 = 2;^9\\.8\\.2\\.2 = 4;^9\\.8\\.2\\.3 = 6;^9\\.8\\.2\\.4 = 8 ; ^9\\.(9|10)\\. = f; ^9\\.=r ; ^0\\.=z",
+"conv-diagupstop=^9\\.1\\.2=1 ;^9\\.(9|10)\\.[27]=1 ; ^9\\.2\\.2\\.4 = 2 ;^9\\.2\\.2\\.6 = 3 ;^9\\.2\\.2\\.8 = 4 ;^9\\.4\\.2\\.([1-8]) = $1; ^9\\.8\\.2\\.1 = 2;^9\\.8\\.2\\.2 = 4;^9\\.8\\.2\\.3 = 6;^9\\.8\\.2\\.4 = 8 ; ^9\\.(9|10)\\. = f; ^9\\.=r ; ^0\\.=z",
+
+// flicks are counted as 2 stops for application of rules A.2.2.2 and A.2.2.3
+//"conv-diagupqtrs=^9\\.([1-9]|10)\\.[27]\\.([1-8]) = $2 ; ^9\\.(9|10)\\. = f ; ^9\\. = r ; ^0\\.=z",
+//"conv-diagupstop=^9\\.1\\.2=1 ;^9\\.(9|10)\\.[27]=2 ; ^9\\.2\\.2\\.4 = 2 ;^9\\.2\\.2\\.6 = 3 ;^9\\.2\\.2\\.8 = 4 ;^9\\.4\\.2\\.([1-8]) = $1; ^9\\.8\\.2\\.1 = 2;^9\\.8\\.2\\.2 = 4;^9\\.8\\.2\\.3 = 6;^9\\.8\\.2\\.4 = 8 ; ^9\\.(9|10)\\. = f; ^9\\.=r ; ^0\\.=z",
 
 "conv-downqtrs=^9\\.([1-9]|10)\\.(5|10)\\.([1-8]) = $3 ; ^9\\.(9|10)\\. = f ; ^9\\. = r ; ^0\\.=z",
 // 9.8.5.2 (4x8) is converted to 3, to assure allowing it when it exists alone, but not combined with other rolls
@@ -325,6 +332,7 @@ rules.push (
 "why_fr-DIAGUP540  = un maximum de 540° est permis sur les rotations alternées à 45° montant",
 "DIAGUP540-rule = Sporting Code Section 6 Part I, A.2.2.2",
 
+// changed in 2022 (NP2022-17)
 "rule-DIAGUP4S = diagupstop:<5",
 "why-DIAGUP4S  = a maximum of 4 stops (3 if flick) are allowed on diagonal up opposite rolls",
 "why_fr-DIAGUP4S  = un maximum de 4 arrets (3 si déclenché) est permis sur les rotations combinées à 45° montant",
@@ -368,6 +376,13 @@ rules.push (
 "why_fr-UnlimitedNOU = type de rotations combinées interdites",
 "UnlimitedNOU-rule   = Sporting Code Section 6 Part I, A.2.2",
 
+    // new in 2022 (NP2022-15)
+    "conv-3qdownfootflick=^9\\.9\\.[678]\\.3=f;^9\\.9\\.[234]\\.3=F",
+
+    "rule-Unlimited3qdownfootflick   = 3qdownfootflick:[,;]f|F[,;]",
+    "why-Unlimited3qdownfootflick    = 3/4 flick starting or ending with down rudder is not allowed",
+    "Unlimited3qdownfootflick-rule   = Sporting Code Section 6 Part I, A.23.1.1",
+
 /* removed 2021.1
 "rule-NORDIAGDOWNF  = vdDhfsz: d[,;]F",
 "why-NORDIAGDOWNF   = 45-up roll/flick (\"hard way\") combination is not allowed",
@@ -399,7 +414,7 @@ rules.push (
 "why_fr-NORDIAGDOWN = rotations combinées interdites à lignes 45° descendantes",
 "NORDIAGDOWN-rule   = Sporting Code Section 6 Part I, A.4-A.15",
 
-"allow-defrules=UnlimitedNOU ; VUP450 ; VUP4S ; VDOWN360 ; VDOWN3S ; DIAGUP540 ; DIAGUP4S ; DIAGDOWN540 ; DIAGDOWN3S ; Hor10stop",
+"allow-defrules=UnlimitedNOU ; VUP450 ; VUP4S ; VDOWN360 ; VDOWN3S ; DIAGUP540 ; DIAGUP4S ; DIAGDOWN540 ; DIAGDOWN3S ; Hor10stop ; Unlimited3qdownfootflick",
 
 // ~%~  ~i?d%~ ~i?v%~
 "1.1.2.1",
@@ -650,8 +665,7 @@ rules.push (
 "9.1.1.1-5",
 "9.1.2.1-6",
 "9.1.3.1-8",
-"9.1.4.2",
-"9.1.4.4",
+    "9.1.4.1-4", // Added 9.1.4.1 and 9.1.4.3 in 2022 (NP2022-13)
 "9.1.4.6",
 "9.1.5.1-4",
 
@@ -664,6 +678,7 @@ rules.push (
 "9.2.3.6",
 "9.2.3.8",
 "9.2.4.4",
+"9.2.4.6", // Added 2022 (NP2022-12)
 "9.2.5.4",
 
 // v[234]4  d[24]4 [234]4 id[24]4 iv[23]4
@@ -671,8 +686,7 @@ rules.push (
 "9.4.1.2-4",
 "9.4.2.2-4",
 "9.4.3.2-4",
-"9.4.4.2",
-"9.4.4.4",
+    "9.4.4.2-4", // Added 9.4.4.3 in 2022 (NP2022-13)
 "9.4.5.2-3",
 
 // v4?8  d48 [48]8  id48 iv4?8
@@ -681,6 +695,7 @@ rules.push (
 "9.8.2.1-2",
 "9.8.3.1-2",
 "9.8.3.4",
+    "9.8.4.1", // Added 9.8.4.1 in 2022 (NP2022-14)
 "9.8.4.2",
 "9.8.5.1-2",
 
@@ -688,22 +703,16 @@ rules.push (
 // ~v[231]f   ~d[21]f  ~[21]f  ~id[21]f  ~iv[231]f  6f id6f
 // ~v[231]if  ~d[21]if ~[21]if ~id[21]if ~iv[231]if  -6if
 "9.9.1.2-4",
-"9.9.2.2",
-"9.9.2.4",
-"9.9.3.2",
-"9.9.3.4",
+    "9.9.2.2-4", // Added 9.9.2.3 in 2022 (NP2022-15)
+    "9.9.3.2-4", // Added 9.9.3.3 in 2022 (NP2022-15)
 "9.9.3.6",
-"9.9.4.2",
-"9.9.4.4",
+    "9.9.4.2-4", // Added 9.9.4.3 in 2022 (NP2022-15)
 "9.9.4.6",
 "9.9.5.2-4",
 "9.9.6.2-4",
-"9.9.7.2",
-"9.9.7.4",
-"9.9.8.2",
-"9.9.8.4",
-"9.9.9.2",
-"9.9.9.4",
+    "9.9.7.2-4", // Added 9.9.7.3 in 2022 (NP2022-15)
+    "9.9.8.2-4", // Added 9.9.8.3 in 2022 (NP2022-15)
+    "9.9.9.2-4", // Added 9.9.9.3 in 2022 (NP2022-15)
 "9.9.10.2-4",
 
 "9.10.1.2-4",
@@ -832,7 +841,7 @@ rules.push (
 
 "figure-letters=ABCDE",
 
-    'reference="@A" 2dh24 "@B" m,32;f "@C" 2pn(,22\'\')24- "@D" 8pbb(2) "@E" ,24g`1\'',
+    'reference="@A" `````+6fic24``````- "@B" 6sirp,32,f```~ "@C" ,8bb(``2)+` "@D" 2pn(,22) "@E" 4h2f',
 
 // what info should be filled out
 "infocheck=pilot;actype;acreg;positioning",
@@ -1232,7 +1241,7 @@ rules.push (
 
 "figure-letters=ABCDE",
 
-    'reference="@A" 5sirp..\',24,f "@B" m22- "@C" 4h "@D" 24t "@E" -1j1-',
+    'reference="@A" p(22) "@B" 4h8 "@C" m32 "@D" of "@E" 6a',
 
 // what info should be filled out
 "infocheck=pilot;actype;acreg;positioning",
