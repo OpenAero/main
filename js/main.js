@@ -1674,8 +1674,9 @@ function menuTouch() {
 // menuInactiveAll hides all active menus
 function menuInactiveAll() {
     var menu = document.getElementById('mainMenu');
+    if (!menu) return;
     menu.classList.remove('active');
-    
+
     var el = menu.getElementsByClassName('active');
     for (var i = el.length - 1; i >= 0; i--) {
         el[i].classList.remove('active');
@@ -2249,14 +2250,14 @@ function selectTab(e) {
     if (platform.smallMobile && activeForm == 'FU') {
         if (li.id == 'tab-figureInfo') {
             document.getElementById('leftBlockTabSelector').style.width =
-            document.getElementById('leftBlock').style.width =
-            document.getElementById('leftBlockContainer').style.width =
-            document.getElementById('fuSequence').style.marginLeft = '284px';
+                document.getElementById('leftBlock').style.width =
+                document.getElementById('leftBlockContainer').style.width =
+                document.getElementById('fuSequence').style.marginLeft = '284px';
         } else {
             document.getElementById('leftBlockTabSelector').style.width =
-            document.getElementById('leftBlock').style.width =
-            document.getElementById('leftBlockContainer').style.width =
-            document.getElementById('fuSequence').style.marginLeft = '';
+                document.getElementById('leftBlock').style.width =
+                document.getElementById('leftBlockContainer').style.width =
+                document.getElementById('fuSequence').style.marginLeft = '';
         }
     }
     // select correct tab
@@ -2543,7 +2544,7 @@ function drawWind(x, y, signScale, svgEl) {
 }
 
 // makeFigStart creates figure start marker
-function makeFigStart (params) {
+function makeFigStart(params) {
     var
         seqNr = params.seqNr,
         first = params.first,
@@ -2645,27 +2646,27 @@ function getFigureStartStyle(f) {
         }
         // check figures against reference sequence if active
         if (referenceSequence.figures[f.unknownFigureLetter]) {
-                var refFig = referenceSequence.figures[f.unknownFigureLetter];
-                if (refFig.checkLine !== f.checkLine) {
+            var refFig = referenceSequence.figures[f.unknownFigureLetter];
+            if (refFig.checkLine !== f.checkLine) {
+                return 'error';
+            } else if (refFig.entryDir === refFig.exitDir) {
+                if (f.entryDir !== f.exitDir) {
+                    if (refFig.entryAtt === refFig.exitAtt) {
+                        var text = userText.referenceFigureExitSame;
+                    } else {
+                        var text = userText.referenceFigureExitOpp;
+                    }
                     return 'error';
-                } else if (refFig.entryDir === refFig.exitDir) {
-                    if (f.entryDir !== f.exitDir) {
-                        if (refFig.entryAtt === refFig.exitAtt) {
-                            var text = userText.referenceFigureExitSame;
-                        } else {
-                            var text = userText.referenceFigureExitOpp;
-                        }
-                        return 'error';
+                }
+            } else if (refFig.entryDir !== refFig.exitDir) {
+                if (f.entryDir === f.exitDir) {
+                    if (refFig.entryAtt === refFig.exitAtt) {
+                        var text = userText.referenceFigureExitOpp;
+                    } else {
+                        var text = userText.referenceFigureExitSame;
                     }
-                } else if (refFig.entryDir !== refFig.exitDir) {
-                    if (f.entryDir === f.exitDir) {
-                        if (refFig.entryAtt === refFig.exitAtt) {
-                            var text = userText.referenceFigureExitOpp;
-                        } else {
-                            var text = userText.referenceFigureExitSame;
-                        }
-                        return 'error';
-                    }
+                    return 'error';
+                }
             }
             return "correct";
         }
@@ -4404,7 +4405,7 @@ function drawShape(pathArray, svgElement, prev) {
         path.setAttribute('d', 'M ' + roundTwo(X) + ',' + roundTwo(Y) +
             ' ' + pathArray.path);
 
-        function pathStyle (styleList) {
+        function pathStyle(styleList) {
             var styleStrings = [];
             for (var i = 0; i < styleList.length; i++) styleStrings.push(style[styleList[i]]);
             return styleStrings.join(';');
@@ -4622,6 +4623,7 @@ function drawArestiText(figNr, aresti) {
 
 // doOnLoad is only called on initial loading of the page
 function doOnLoad() {
+
     var loading = document.getElementById('loading');
     // immediately remove loading on Windows app as this is handled by the
     // app itself
@@ -4753,7 +4755,7 @@ function doOnLoad() {
     // when smallMobile is checked (loaded from settings), or when screen
     // width is small and no setting is found, switch to smallMobile.
     // Use window.screen.width to get CSS pixels
-    if (document.getElementById('smallMobile').checked) {
+    if (platform.mobile && document.getElementById('smallMobile').checked) {
         switchSmallMobile();
     } else if (window.screen.width < 640) {
         function f(settings) {
@@ -5036,7 +5038,7 @@ function launchURL(launchData) {
                     label = "",
                     result = '<sequence>';
                 while (i < string.length) {
-                    label = sequenceXMLlabels[string.charCodeAt(i)-128];
+                    label = sequenceXMLlabels[string.charCodeAt(i) - 128];
                     result += '<' + label + '>';
                     i++;
                     while (i < string.length &&
@@ -7596,9 +7598,9 @@ function getStableVersion(f) {
         };
     } else {
     */
-        xhr.onload = function () { f(xhr.response) };
+    xhr.onload = function () { f(xhr.response) };
     //}
-    
+
     xhr.onerror = xhr.ontimeout = function () { f(false) };
     xhr.open('GET', 'https://openaero.net/openaero.php?v', true);
     xhr.send();
@@ -8475,7 +8477,7 @@ function parseFiguresFile() {
 // getRuleName will create the correct, active, ruleName
 function getRuleName() {
     return (
-        (document.getElementById('class').value === 'glider' ? 'glider-' : '') +
+        ((document.getElementById('class').value === 'glider') ? 'glider-' : '') +
         document.getElementById('rules').value.toLowerCase()
     );
 }
@@ -9120,7 +9122,7 @@ function changeFigureGroup() {
                     figure = figure.replace(regexHalfRoll, '2');
                     figures[-1] = [];
 
-                    Attitude = Direction = figure[0] != '-' ? 0 : 180;
+                    Attitude = Direction = (figure[0] != '-') ? 0 : 180;
 
                     // build the figure
                     // fig[i].string is only set for Queue figures
@@ -9512,7 +9514,7 @@ function selectFigure(e) {
     if ((e !== false) && !platform.smallMobile) selectTab('tab-figureInfo');
 
     var queueFigure = false;
-    var fromChooser = typeof e === 'object' ? true : false;
+    var fromChooser = (typeof e === 'object') ? true : false;
 
     if (fromChooser) {
         var options = document.getElementById('figureSelectorOptions');
@@ -10961,7 +10963,7 @@ function moveClear(i) {
         if (moveDown > 0) {
             // Movement of the figure required. Round the values of moveLRdown as some spacing is
             // automatically provided for horizontal movement
-            moveLR = moveLRsign > 0 ? Math.floor(moveLR / lineElement) : Math.ceil(moveLR / lineElement);
+            moveLR = (moveLRsign > 0) ? Math.floor(moveLR / lineElement) : Math.ceil(moveLR / lineElement);
             if (activeForm === 'C') {
                 moveLR = -moveLR;
                 moveLRsign = -moveLRsign;
@@ -11681,7 +11683,7 @@ function handleFreeDeselect(e) {
     document.querySelectorAll('.fuFig' + selectedFigure.id).forEach(e => {
         e.classList.remove('active');
     });
-    
+
     selectFigure(false);
     selectTab('tab-fuFigures');
     hideFigureSelector();
@@ -11802,7 +11804,7 @@ function buildFuFiguresTab() {
             figures[-1] = [];
 
             // Set correct attitude and direction for figures starting inverted
-            Attitude = Direction = fuFig[l].base[0] != '-' ? 0 : 180;
+            Attitude = Direction = (fuFig[l].base[0] != '-') ? 0 : 180;
 
             // build the figure
             buildFigure([fuFig[l].figNr], fuFig[l].string, false, -1);
@@ -14688,7 +14690,7 @@ function saveAsURL() {
             // Add label code and value to result if label value exists
             if (label && label[0]) {
                 var labelValue = label[0].childNodes[0].nodeValue;
-                result += String.fromCharCode(i+128);
+                result += String.fromCharCode(i + 128);
                 if (sequenceXMLlabels[i] == 'sequence_text') {
                     // Compress sequence_text by using the property that it hardly ever
                     // contains characters with code > 127
@@ -16617,7 +16619,7 @@ function buildMoveDown(extent, i) {
 // figStringIndex = index of figure (figures[figStringIndex])
 // figure_chooser = Optional argument, true if we are building the
 //                  figure for the figure chooser
-function buildFigure (figNrs, figString, seqNr, figStringIndex, figure_chooser) {
+function buildFigure(figNrs, figString, seqNr, figStringIndex, figure_chooser) {
     var
         figNr = figNrs[0],
         roll = [],
@@ -17745,7 +17747,7 @@ function buildFigure (figNrs, figString, seqNr, figStringIndex, figure_chooser) 
                     var angle = parseInt(drawAngles[figureDraw.charAt(i)]);
                     // add text to description
                     description.push(sprintf(
-                        angle > 0 ? userText.pullLoop : userText.pushLoop, Math.abs(angle)));
+                        (angle > 0) ? userText.pullLoop : userText.pushLoop, Math.abs(angle)));
                     // Draw sharp angles for corners less than 180 unless
                     // specifically told to make a curve by '=' symbol
                     if ((Math.abs(angle) < 180) && (figureDraw.charAt(i + 1) != '=')) {
@@ -18529,13 +18531,15 @@ function parseSequence() {
             }
             // Handle the very special case where there's only an upright
             // or inverted spin
-            if (/^-?i?s-?/.test(base)) {
+            if (/^-?i?s-?$/.test(base)) {
                 figure = figure.replace(/(\d*i?s)/, "iv$1");
                 base = base.replace(/i?s/, 'iv');
             }
             // To continue determining the base we remove all snap, spin and
             // tumble characters. Handle special case of non-Aresti tri figure
-            base = base.replace(/(?<!tr)i?[fseul]/g, '');
+            // Line immediately below is more elegant but causes Safari on iOS to crash
+            // base = base.replace(/(?<!tr)i?[fseul]/g, '');
+            base = base.replace('tri', '#').replace(/i?[fseul]/g, '').replace('#', 'tri');
             // Handle simple horizontal rolls that change from upright to
             // inverted or vv
             if (base == '-') {
@@ -18595,7 +18599,7 @@ function parseSequence() {
                     goRight = ((Direction == 180) == (Attitude == 0));
                 }
                 // build the figure into the figures object
-                buildFigure (figNrs, figure, seqNr, i);
+                buildFigure(figNrs, figure, seqNr, i);
                 // check if this is a additional
                 if (regexAdditional.test(figure) ||
                     (figures[i].unknownFigureLetter && figures[i].unknownFigureLetter == 'L')) {

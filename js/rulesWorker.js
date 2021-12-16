@@ -41,12 +41,14 @@ var checkAllowCatId = [];  // Catalogue Numbers for allowed figures
 var checkCatGroup = [];
 var checkFigGroup = [];
 var checkRule = [];
-var defRules = [];
+    var defRules = [];      // default rules in for rule/cat/seq to be applied to a figure check
+    var excludeRules = [];     // default rules excluded for this figure check
 var activeRules = false;   // Are rules active?  If so, is object {description: xxx, logo: xxx}
 var figureLetters = '';    // Letters that can be assigned to individual figures
 var additionalFig = {'max': 0, 'totalK': 0};    // Additional figures, max and K
 var ruleSuperFamily = [];  // Array of rules for determining figure SF
-var ruleSeqCheck = [];     // rules for checking complete OpenAero seq string
+    var ruleSeqCheck = [];     // rules for checking complete OpenAero seq string
+
 
 // handle message events
 self.onmessage = function (e) {
@@ -411,6 +413,8 @@ function loadRules (ruleName, catName, programName) {
             // Apply 'allow-defrules' rules
             var newCatLine = rules[i].replace(/^allow-defrules=/, '');
             defRules = newCatLine.replace(/[\s]+/g, '').split(';');
+            // Remove multiple instances of the same rule
+            defRules = defRules.filter((x, j, a) => a.indexOf(x) === j);
         } else if (rules[i].match(/^[0-9]+\./)) {
             // Apply figure number rules
             // The key of checkAllowCatId is equal to the figure number
@@ -873,13 +877,26 @@ function checkRules (callbackId, activeSequenceText, figures, figCheckLine, nonA
 	            //log.push('Allowed base figure:' + arestiNr);
 	            // Apply rules to the figure
 	            // Run the checks on the rolls
-	
+
+                  // set the excluded rules to empty at the start
+                  excludeRules = [];
 	            for (var ii = 0; ii < checkAllowCatId[arestiNr].length; ii++) {
 	              // copy checkArray to check
 	              var check = checkArray.slice(0);
 	              // forElement may be used to add element number to 'why'
 	              var forElement = '';
-	              var rule = checkAllowCatId[arestiNr][ii];
+                    var rule = checkAllowCatId[arestiNr][ii];
+                    // Check if the rule matches ^xxx format. If so, this marks
+                    // exclusion of a rule for a figure and should be handled as
+                    // such
+                    if (rule.substring(0, 1) == '^') {
+                        if (/:/.test(rule)) {
+                            log.push('Referenced rule ' + rule + ' is not allowed. ' +
+                                'You can\'t specify a specific roll position while ' +
+                                'excluding a rule("^" and ":" together)' ) ; 
+                        } else excludeRules.push(rule.substring(1));
+                        continue;
+                    }
 	              log.push ('-basefig rule: ' + rule);
 	              // check if this is a rule of form rule:nr
 	              var ruleSplit = rule.split(':');
@@ -964,7 +981,9 @@ function checkRules (callbackId, activeSequenceText, figures, figCheckLine, nonA
 	                var ruleSplit = rule.split(':');
 	                if ((ruleSplit[1] === j) || (ruleSplit.length == 1)) {
 	                  rule = ruleSplit[0];
-	  
+	                  // check if the rule is in excludeRules. If so, skip it
+                        if (excludeRules.includes(rule)) continue;
+                        // apparently not in excludeRules
 	                  log.push ('-basefig rule: ' + rule);
 	                  // Apply conversions to the Aresti number before checking the rule
 	                  if (checkRule[rule].conv) {

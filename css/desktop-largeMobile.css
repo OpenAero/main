@@ -158,11 +158,11 @@
   display: block;
   margin-left: -4px !important;
   margin-right: -4px !important;
-  width: 282px;
+  width: 280px;
 }
 #leftBlockTabSelector li {
-  min-width: 117px;
-  max-width: 117px;
+  min-width: 116px;
+  max-width: 116px;
 }
 
 #svgContainer {

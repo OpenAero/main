@@ -1,6 +1,6 @@
 ﻿2022.1.1
 * Fixed issue where a sequence with empty logo would not open when loading sequence URL
-* Implemented automatic IAC form selection for glider-IAC also
+* Implemented automatic IAC form selection for glider-IAC
 * Added automatic note for downwind or Y axis entry on IAC forms B and C according IAC Rulebook 21.3.4
 * Fixed bug where mini Form A was included on B&C png and svg output when not selected and vv
 * Changed drag&drop (again) to only be used on devices that do not support native, or iOS: CHECK THOROUGHLY BEFORE ROLL OUT!
@@ -11,6 +11,7 @@
 * Added Free (un)known Designer for smartphone
 * Fixed issue of Free Unknown scrolling to top of subsequences on modification
 * Added rules for Aerobatic Club Italy
+* Added rule file option to disable sequence figure check default rules on a per-figure basis (syntax ^[rulename])
 
 2021.1.10
 * Improved Help document layout for narrow viewports such as mobile phones

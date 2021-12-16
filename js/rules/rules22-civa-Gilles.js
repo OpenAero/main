@@ -1,4 +1,4 @@
-﻿// OpenAero rules22-civa.js file
+﻿// OpenAero rules21-civa.js file
 
 // This file is part of OpenAero.
 
@@ -93,12 +93,6 @@ OpenAero 2016.3.2
  * - updated Unlimited Unknown rules with addition of allowed rolls on 45 up and down lines
  *   (NP2021-20, NP2021-22 and NP2021-23)
  * - removed roller-min for 2021 Unlimited Free Known due to CIVA waiver
- * 2021.1.10
- * - Added missing figure 2.2.7 to allowed required figure for Advanced Free Known
- * 2022.1.1
- * - added reference sequences for 2022
- * - updated Unlimited Unknown rules with addition of hesitation rolls, 3/4 snaps and versatility
- *   (NP2022-12,13,14,15,17,22)
 */
 
 // open the rules.push command
@@ -174,8 +168,9 @@ rules.push (
 "[CIVA Unlimited Free Known]",
 "posnl=40",//assume no line judges
 "poslj=20",
-
-'reference="@A" 2,2fzb48- "@B" "|"4;3ifdh(4).5f "@C" 22ac(2f)3,34- "@D" ,5ta``3 "@E" .,24.pn("|"5f;3)2.',
+// !!! Restore roller-min for 2022 !!!
+'reference="@A" ,3if.rp(,22)3,34 "@B" .1n(``,5if,3\')\'- "@C" -.,3ta3f "@D" -2jo1- "@E" 48dh(4)5f',
+// !!! Restore roller-min for 2022 !!!
 
 "more=CIVA/IAC Unlimited Free Known",
 
@@ -199,7 +194,7 @@ rules.push (
 "roller-name_fr=Tonneaux en virage, famille 2.2.3 à 2.2.7 ou 2.3.2 à 2.3.6 ou 2.4.2 à 2.4.8",
 
 "fam1-min=1",
-"roller-min=1",
+// "roller-min=1", // Waived for 2021. Reactivate for 2022!
 "fam5-min=1",
 "fam6-min=1",
 "fam7-min=1",
@@ -218,6 +213,310 @@ rules.push (
 
 // what info should be filled out
 "infocheck=pilot;actype;acreg;positioning",
+
+//#######################################################################################
+//##### CIVA UNLIMITED TEST 3f RULES 2022 (Début) #######################################
+//#######################################################################################
+
+"[CIVA Unlimited Test_2022]",
+
+"conv-3f_vdDhfFsz=^9\\.[1248]\\.[15]=v;^9\\.[1248]\\.2=d;^9\\.[1248]\\.4=D; ^9\\.[1248]\\.=h; ^9\\.9\\.[2-4]\\.3=3f; ^9\\.(9|10)\\.[1-5]=f;^9\\.9\\.[7-9]\\.3=3F;^9\\.(9|10)\\.=F; ^9\\.1[12]=s ; ^0\\.=z",
+
+"rule-UnlimitedNO3f   = 3f_vdDhfFsz:d[,;]3F|3f[,;]D|h[,;]3F$|[vdDhsz,. ]+ 3F[,;]h$|^3f[,;]h",
+// 45° up | 45° down | Horizontal roll first then flick | Horizontal flick first under g load -> final rotation | Horizontal flick first standard load (+- 1g) -> first or only rotation
+//"why-UnlimitedNO3f    = 3/4 positif flick started or stopped with lower feet is not allowed",
+"why-UnlimitedNO3f    = 3/4 flick starting or ending with down rudder is not allowed",
+"why_fr-UnlimitedNO3f = 3/4 déclenché positif départ ou arret pied bas interdit",
+
+//"allow-defrules=UnlimitedNOU ; VUP450 ; VUP4S ; VDOWN360 ; VDOWN3S ; DIAGUP540 ; DIAGUP4S ; DIAGDOWN540 ; DIAGDOWN3S ; Hor10stop",
+
+"allow-defrules=UnlimitedNO3f",
+
+// ~%~  ~i?d%~ ~i?v%~
+"1.1.1.1-4",
+"1.1.2.1",
+"1.1.2.2",
+"1.1.2.3-4",
+"1.1.3.1",
+"1.1.3.2",
+"1.1.3.3-4",
+"1.1.6.1-4",
+"1.1.7.1-4",
+
+// z_- z^ -iz_ -iz^-
+
+"1.1.10.1 NORF",
+"1.1.10.4 NORDIAGDOWN",
+"1.1.11.1 NORF",
+"1.1.11.4 NORDIAGDOWN",
+
+// ~%i?t%~  ~%i?k%~
+
+"1.2.1.1",
+"1.2.1.2",
+"1.2.1.3-4",
+
+"1.2.2.1",
+"1.2.2.2",
+"1.2.2.3-4",
+
+"1.2.3.1",
+"1.2.3.2",
+"1.2.3.3-4",
+
+"1.2.4.1",
+"1.2.4.2",
+"1.2.4.3-4",
+
+"1.2.5.1-2",
+"1.2.5.3",
+"1.2.5.4",
+
+"1.2.6.1-2",
+"1.2.6.3",
+"1.2.6.4",
+
+"1.2.7.1-2",
+"1.2.7.3",
+"1.2.7.4",
+
+"1.2.8.1-2",
+"1.2.8.3",
+"1.2.8.4",
+
+//half loops
+// ~%a%~ ~%m%~ ~o%~ io% -io%-  ~i?qo%~ %dq% -%idq%- qq -iqq-
+
+"7.2.1.1-2  NF:1",
+"7.2.2.1-2  NF:1",
+"7.2.3.1-2  NF:1",
+"7.2.4.1-2  NF:1",
+
+
+"7.2.1.3-4  NF:2",
+"7.2.2.3-4  NF:2",
+"7.2.3.3-4  NF:2",
+"7.2.4.3-4  NF:2",
+
+//goldfish
+// ~%i?g%~
+"7.3.1.1",
+"7.3.1.2",
+"7.3.1.3-4",
+
+"7.3.2.1",
+"7.3.2.2",
+"7.3.2.3-4",
+
+"7.3.3.1",
+"7.3.3.2",
+"7.3.3.3-4",
+
+"7.3.4.1",
+"7.3.4.2",
+"7.3.4.3-4",
+
+//loops
+"7.4.1.1-2 NOU:1",
+"7.4.1.3-4 NOU:1 ; NF:1 ; N88",
+"7.4.2.1-2 NOU:1",
+"7.4.3.1-2",
+"7.4.3.3-4 NF:1",
+"7.4.4.1-2",
+"7.4.4.3-4 NF:1",
+
+"7.4.5.1  NF:1 ; NORDIAGDOWN",
+"7.4.5.4  NF:2 ; NORDIAGDOWN",
+"7.4.6.1",
+
+//cc
+// ~%i?cc%~
+"7.8.1.1-2 NF:1",
+"7.8.2.1-2 NF:1",
+"7.8.3.1-2 NF:1",
+"7.8.4.1-2 NF:1",
+
+"7.8.1.3",
+"7.8.1.4",
+"7.8.2.3",
+"7.8.2.4",
+"7.8.3.3",
+"7.8.3.4",
+"7.8.4.3",
+"7.8.4.4",
+
+//rcc
+"7.8.5.1 NF:3",
+"7.8.5.2 NF:3",
+"7.8.6.1 NF:3",
+"7.8.6.2 NF:3",
+"7.8.7.1 NF:3",
+"7.8.7.2 NF:3",
+"7.8.8.1 NF:3",
+"7.8.8.2 NF:3",
+
+"7.8.5.3-4",
+"7.8.6.3-4",
+"7.8.7.3-4",
+"7.8.8.3-4",
+
+//bumps
+// ~%i?p?b%~
+"8.4.1.1-4",
+"8.4.2.1-4",
+"8.4.3.1-4",
+"8.4.4.1-4",
+
+// %db%~   ~%rdb%~  ~%irdb%~
+"8.4.13.1",
+"8.4.14.1",
+
+"8.4.15.1   NORDIAGDOWN",
+"8.4.15.2-4 NORDIAGDOWN",
+
+"8.4.16.1   NORDIAGDOWN",
+"8.4.16.2-4 NORDIAGDOWN",
+
+"8.4.17.1   NORDIAGDOWN",
+"8.4.17.2-4 NORDIAGDOWN",
+"8.4.18.1   NORDIAGDOWN",
+"8.4.18.2-4 NORDIAGDOWN",
+
+//rc
+// ~%i?c%~  ~%i?rc%~ ~%i?rp%~
+"8.5.1.1  NF:2",
+"8.5.1.2  NF:2",
+"8.5.2.1  NF:2",
+"8.5.2.2  NF:2",
+
+"8.5.3.1  NF:2",
+"8.5.3.2  NF:2",
+"8.5.4.1  NF:2",
+"8.5.4.2  NF:2",
+"8.5.1.3-4",
+"8.5.2.3-4",
+"8.5.3.3-4",
+"8.5.4.3-4",
+
+//rp
+"8.6.1.1-2  NOU:2; NF:3; NF2UP360; NF2UP2STOP",
+"8.6.3.1-2  NOU:2; NF:3; NF2UP360; NF2UP2STOP",
+"8.6.2.1-2  NOU:2; NF:3; NF2UP360; NF2UP2STOP",
+"8.6.4.1-2  NOU:2; NF:3; NF2UP360; NF2UP2STOP",
+
+"8.6.1.3-4",
+"8.6.3.3-4",
+"8.6.2.3-4",
+"8.6.4.3-4",
+
+//c
+"8.5.5.1-2  NF:1",
+"8.5.6.1-2  NF:1",
+"8.5.7.1-2  NF:1",
+"8.5.8.1-2  NF:1",
+"8.5.5.3",
+"8.5.5.4",
+"8.5.6.3",
+"8.5.6.4",
+"8.5.7.3",
+"8.5.7.4",
+"8.5.8.3",
+"8.5.8.4",
+
+//p
+"8.6.5.1-2  NOU:2 ; NF:1 ; NF3TOPH",
+"8.6.6.1-2  NOU:2 ; NF:1 ; NF3TOPH",
+"8.6.7.1-2  NOU:2 ; NF:1 ; NF3TOPH",
+"8.6.8.1-2  NOU:2 ; NF:1 ; NF3TOPH",
+"8.6.5.3-4",
+"8.6.6.3-4",
+"8.6.7.3-4",
+"8.6.8.3-4",
+
+// ROLLS
+// v[42315] d[216] [42316]   id[216] iv[4231]
+"9.1.1.1-5",
+"9.1.2.1-6",
+"9.1.3.1-8",
+"9.1.4.1-6",
+"9.1.5.1-4",
+
+// v22 d22 [23]2   id22 iv22
+
+"9.2.1.4",
+"9.2.2.4",
+"9.2.2.6",
+"9.2.3.4",
+"9.2.3.6",
+"9.2.3.8",
+"9.2.4.4",
+"9.2.5.4",
+
+// v[234]4  d[24]4 [234]4 id[24]4 iv[23]4
+
+"9.4.1.2-4",
+"9.4.2.2-4",
+"9.4.3.2-4",
+"9.4.4.2",
+"9.4.4.4",
+"9.4.5.2-3",
+
+// v4?8  d48 [48]8  id48 iv4?8
+
+"9.8.1.1-2",
+"9.8.2.1-2",
+"9.8.3.1-2",
+"9.8.3.4",
+"9.8.4.2",
+"9.8.5.1-2",
+
+//snaps & spins
+// ~v[231]f   ~d[21]f  ~[21]f  ~id[21]f  ~iv[231]f  6f id6f
+// ~v[231]if  ~d[21]if ~[21]if ~id[21]if ~iv[231]if  -6if
+"9.9.1.2-4",
+"9.9.2.2-4",
+"9.9.3.2-4",
+"9.9.3.6",
+"9.9.4.2-4",
+"9.9.4.6",
+"9.9.5.2-4",
+"9.9.6.2-4",
+"9.9.7.2-4",
+"9.9.8.2-4",
+"9.9.9.2-4",
+"9.9.10.2-4",
+
+"9.10.1.2-4",
+"9.10.2.2",
+"9.10.2.4",
+"9.10.3.2",
+"9.10.3.4",
+"9.10.3.6",
+"9.10.4.2",
+"9.10.4.4",
+"9.10.5.2-4",
+"9.10.6.2-4",
+"9.10.7.2",
+"9.10.7.4",
+"9.10.8.2",
+"9.10.8.4",
+"9.10.9.2",
+"9.10.9.4",
+"9.10.10.2-4",
+
+// [156]i?s
+
+"9.11.1.4-6",
+"9.12.1.4-6",
+
+
+
+//#######################################################################################
+//##### CIVA UNLIMITED TEST 3f RULES 2022 (Fin) #########################################
+//#######################################################################################
+
+
+
 
 //#######################################################################################
 //##### CIVA UNLIMITED UNKNOWNS #########################################################
@@ -259,8 +558,8 @@ rules.push (
 "two-max=2",
 "isnap-max=4",
 "osnap-max=4",
-    "vsnap-min=2", // changed in 2022 (NP2022-22)
-"snap-max=8", // changed in 2022 (NP2022-22)
+"vsnap-min=1",
+"snap-max=6",
 
 "snap-maxperfig=1",
 
@@ -301,13 +600,9 @@ rules.push (
 "conv-upqtrs=^9\\.([1-9]|10)\\.[16]\\.([1-8]) = $2 ; ^9\\.(9|10)\\. = f ; ^9\\. = r ; ^0\\.=z",
 "conv-upstop=^9\\.(1|9|10)\\.[16]=1 ; ^9\\.2\\.1\\.4 = 2 ;^9\\.2\\.1\\.6 = 3 ;^9\\.2\\.1\\.8 = 4 ;^9\\.4\\.1\\.([1-8]) = $1; ^9\\.8\\.1\\.1 = 2;^9\\.8\\.1\\.2 = 4;^9\\.8\\.1\\.3 = 6;^9\\.8\\.1\\.4 = 8 ; ^9\\.(9|10)\\. = f; ^9\\.=r ; ^0\\.=z",
 
-// changed in 2022 (NP2022-17), old regex kept below
-"conv-diagupqtrs=^9\\.([1-9]|10)\\.[27]\\.([1-8]) = $2 ; ^9\\.(9|10)\\. = f ; ^9\\. = r ; ^0\\.=z",
-"conv-diagupstop=^9\\.1\\.2=1 ;^9\\.(9|10)\\.[27]=1 ; ^9\\.2\\.2\\.4 = 2 ;^9\\.2\\.2\\.6 = 3 ;^9\\.2\\.2\\.8 = 4 ;^9\\.4\\.2\\.([1-8]) = $1; ^9\\.8\\.2\\.1 = 2;^9\\.8\\.2\\.2 = 4;^9\\.8\\.2\\.3 = 6;^9\\.8\\.2\\.4 = 8 ; ^9\\.(9|10)\\. = f; ^9\\.=r ; ^0\\.=z",
-
 // flicks are counted as 2 stops for application of rules A.2.2.2 and A.2.2.3
-//"conv-diagupqtrs=^9\\.([1-9]|10)\\.[27]\\.([1-8]) = $2 ; ^9\\.(9|10)\\. = f ; ^9\\. = r ; ^0\\.=z",
-//"conv-diagupstop=^9\\.1\\.2=1 ;^9\\.(9|10)\\.[27]=2 ; ^9\\.2\\.2\\.4 = 2 ;^9\\.2\\.2\\.6 = 3 ;^9\\.2\\.2\\.8 = 4 ;^9\\.4\\.2\\.([1-8]) = $1; ^9\\.8\\.2\\.1 = 2;^9\\.8\\.2\\.2 = 4;^9\\.8\\.2\\.3 = 6;^9\\.8\\.2\\.4 = 8 ; ^9\\.(9|10)\\. = f; ^9\\.=r ; ^0\\.=z",
+"conv-diagupqtrs=^9\\.([1-9]|10)\\.[27]\\.([1-8]) = $2 ; ^9\\.(9|10)\\. = f ; ^9\\. = r ; ^0\\.=z",
+"conv-diagupstop=^9\\.1\\.2=1 ;^9\\.(9|10)\\.[27]=2 ; ^9\\.2\\.2\\.4 = 2 ;^9\\.2\\.2\\.6 = 3 ;^9\\.2\\.2\\.8 = 4 ;^9\\.4\\.2\\.([1-8]) = $1; ^9\\.8\\.2\\.1 = 2;^9\\.8\\.2\\.2 = 4;^9\\.8\\.2\\.3 = 6;^9\\.8\\.2\\.4 = 8 ; ^9\\.(9|10)\\. = f; ^9\\.=r ; ^0\\.=z",
 
 "conv-downqtrs=^9\\.([1-9]|10)\\.(5|10)\\.([1-8]) = $3 ; ^9\\.(9|10)\\. = f ; ^9\\. = r ; ^0\\.=z",
 // 9.8.5.2 (4x8) is converted to 3, to assure allowing it when it exists alone, but not combined with other rolls
@@ -332,7 +627,6 @@ rules.push (
 "why_fr-DIAGUP540  = un maximum de 540° est permis sur les rotations alternées à 45° montant",
 "DIAGUP540-rule = Sporting Code Section 6 Part I, A.2.2.2",
 
-// changed in 2022 (NP2022-17)
 "rule-DIAGUP4S = diagupstop:<5",
 "why-DIAGUP4S  = a maximum of 4 stops (3 if flick) are allowed on diagonal up opposite rolls",
 "why_fr-DIAGUP4S  = un maximum de 4 arrets (3 si déclenché) est permis sur les rotations combinées à 45° montant",
@@ -376,18 +670,6 @@ rules.push (
 "why_fr-UnlimitedNOU = type de rotations combinées interdites",
 "UnlimitedNOU-rule   = Sporting Code Section 6 Part I, A.2.2",
 
-// new in 2022 (NP2022-15)
-"conv-3f_vdDhfFsz=^9\\.[1248]\\.[15]=v;^9\\.[1248]\\.2=d;^9\\.[1248]\\.4=D; ^9\\.[1248]\\.=h; ^9\\.9\\.[2-4]\\.3=3f; ^9\\.(9|10)\\.[1-5]=f;^9\\.9\\.[7-9]\\.3=3F;^9\\.(9|10)\\.=F; ^9\\.1[12]=s ; ^0\\.=z",
-
-"rule-UnlimitedNO3f   = 3f_vdDhfFsz:d[,;]3F|3f[,;]D|h[,;]3F$|[vdDhsz,. ]+ 3F[,;]h$|^3f[,;]h",
-// 45° up | 45° down | Horizontal roll first then flick | Horizontal flick first under g load -> final rotation | Horizontal flick first standard load (+- 1g) -> first or only rotation
-"why-UnlimitedNO3f    = 3/4 flick starting or ending with down rudder is not allowed",
-"why_fr-UnlimitedNO3f = 3/4 déclenché positif départ ou arret pied bas interdit",
-
-"rule-In_loop_3f   = 3f_vdDhfFsz:h[,;]3F$|3F[,;]h$",
-"why-In_loop_3f    = 3/4 flick in a loop starting or ending with down rudder is not allowed",
-"why_fr-In_loop_3f = 3/4 déclenché positif dans une boucle départ ou arret pied bas interdit",
-
 /* removed 2021.1
 "rule-NORDIAGDOWNF  = vdDhfsz: d[,;]F",
 "why-NORDIAGDOWNF   = 45-up roll/flick (\"hard way\") combination is not allowed",
@@ -419,7 +701,7 @@ rules.push (
 "why_fr-NORDIAGDOWN = rotations combinées interdites à lignes 45° descendantes",
 "NORDIAGDOWN-rule   = Sporting Code Section 6 Part I, A.4-A.15",
 
-"allow-defrules=UnlimitedNOU ; VUP450 ; VUP4S ; VDOWN360 ; VDOWN3S ; DIAGUP540 ; DIAGUP4S ; DIAGDOWN540 ; DIAGDOWN3S ; Hor10stop ; UnlimitedNO3f",
+"allow-defrules=UnlimitedNOU ; VUP450 ; VUP4S ; VDOWN360 ; VDOWN3S ; DIAGUP540 ; DIAGUP4S ; DIAGDOWN540 ; DIAGDOWN3S ; Hor10stop",
 
 // ~%~  ~i?d%~ ~i?v%~
 "1.1.2.1",
@@ -537,9 +819,9 @@ rules.push (
 "7.3.4.3-4",
 
 //loops
-"7.4.1.1-2 NOU:1 ; ^UnlimitedNO3f ; In_loop_3f",
-"7.4.1.3-4 NOU:1 ; NF:1 ; N88 ; ^UnlimitedNO3f ; In_loop_3f",
-"7.4.2.1-2 NOU:1 ; ^UnlimitedNO3f ; In_loop_3f",
+"7.4.1.1-2 NOU:1",
+"7.4.1.3-4 NOU:1 ; NF:1 ; N88",
+"7.4.2.1-2 NOU:1",
 "7.4.3.1-2",
 "7.4.3.3-4 NF:1",
 "7.4.4.1-2",
@@ -670,7 +952,8 @@ rules.push (
 "9.1.1.1-5",
 "9.1.2.1-6",
 "9.1.3.1-8",
-    "9.1.4.1-4", // Added 9.1.4.1 and 9.1.4.3 in 2022 (NP2022-13)
+"9.1.4.2",
+"9.1.4.4",
 "9.1.4.6",
 "9.1.5.1-4",
 
@@ -683,7 +966,6 @@ rules.push (
 "9.2.3.6",
 "9.2.3.8",
 "9.2.4.4",
-"9.2.4.6", // Added 2022 (NP2022-12)
 "9.2.5.4",
 
 // v[234]4  d[24]4 [234]4 id[24]4 iv[23]4
@@ -691,7 +973,8 @@ rules.push (
 "9.4.1.2-4",
 "9.4.2.2-4",
 "9.4.3.2-4",
-    "9.4.4.2-4", // Added 9.4.4.3 in 2022 (NP2022-13)
+"9.4.4.2",
+"9.4.4.4",
 "9.4.5.2-3",
 
 // v4?8  d48 [48]8  id48 iv4?8
@@ -700,7 +983,6 @@ rules.push (
 "9.8.2.1-2",
 "9.8.3.1-2",
 "9.8.3.4",
-    "9.8.4.1", // Added 9.8.4.1 in 2022 (NP2022-14)
 "9.8.4.2",
 "9.8.5.1-2",
 
@@ -708,16 +990,22 @@ rules.push (
 // ~v[231]f   ~d[21]f  ~[21]f  ~id[21]f  ~iv[231]f  6f id6f
 // ~v[231]if  ~d[21]if ~[21]if ~id[21]if ~iv[231]if  -6if
 "9.9.1.2-4",
-    "9.9.2.2-4", // Added 9.9.2.3 in 2022 (NP2022-15)
-    "9.9.3.2-4", // Added 9.9.3.3 in 2022 (NP2022-15)
+"9.9.2.2",
+"9.9.2.4",
+"9.9.3.2",
+"9.9.3.4",
 "9.9.3.6",
-    "9.9.4.2-4", // Added 9.9.4.3 in 2022 (NP2022-15)
+"9.9.4.2",
+"9.9.4.4",
 "9.9.4.6",
 "9.9.5.2-4",
 "9.9.6.2-4",
-    "9.9.7.2-4", // Added 9.9.7.3 in 2022 (NP2022-15)
-    "9.9.8.2-4", // Added 9.9.8.3 in 2022 (NP2022-15)
-    "9.9.9.2-4", // Added 9.9.9.3 in 2022 (NP2022-15)
+"9.9.7.2",
+"9.9.7.4",
+"9.9.8.2",
+"9.9.8.4",
+"9.9.9.2",
+"9.9.9.4",
 "9.9.10.2-4",
 
 "9.10.1.2-4",
@@ -781,9 +1069,9 @@ rules.push (
 "snap-repeat=1",
 "spin-repeat=1",
  
-"group-roller=^2\\.(1\\.[23]|2\\.[2-7]|3\\.[2-5]|4\\.[2-8])",
-"roller-name=Rolling turn, family 2.1.2 to 2.1.3, 2.2.2 to 2.2.7, 2.3.2 to 2.3.5, 2.4.2 to 2.4.8",
-"roller-name_fr=Tonneaux en virage, famille 2.1.2, 2.1.3, 2.2.2 à 2.2.7, 2.3.2 à 2.3.5, 2.4.2 à 2.4.8",
+"group-roller=^2\\.(1\\.[23]|2\\.[2-6]|3\\.[2-5]|4\\.[2-8])",
+"roller-name=Rolling turn, family 2.1.2 to 2.1.3, 2.2.2 to 2.2.6, 2.3.2 to 2.3.5, 2.4.2 to 2.4.8",
+"roller-name_fr=Tonneaux en virage, famille 2.1.2, 2.1.3, 2.2.2 à 2.2.6, 2.3.2 à 2.3.5, 2.4.2 à 2.4.8",
  
 "roller-min=1",
 "fam1-min=1",
@@ -823,7 +1111,7 @@ rules.push (
 "snap-repeat=1",
 "spin-repeat=1",
 
-"group-roller=^2\\.(1\\.[23]|2\\.[2-7]|3\\.[2-5]|4\\.[2-8])",
+"group-roller=^2\\.(1\\.[23]|2\\.[2-6]|3\\.[2-5]|4\\.[2-8])",
 "roller-name=Rolling turn, family 2.1.2 to 2.1.3, 2.2.2 to 2.2.7, 2.3.2 to 2.3.6, 2.4.2 to 2.4.8",
 "roller-name_fr=Tonneaux en virage, famille 2.1.2, 2.1.3, 2.2.2 à 2.2.7, 2.3.2 à 2.3.6, 2.4.2 à 2.4.8",
 
@@ -846,7 +1134,7 @@ rules.push (
 
 "figure-letters=ABCDE",
 
-    'reference="@A" `````+6fic24``````- "@B" 6sirp,32,f```~ "@C" ,8bb(``2)+` "@D" 2pn(,22) "@E" 4h2f',
+    'reference="@A" 2dh24 "@B" m,32;f "@C" 2pn(,22\'\')24- "@D" 8pbb(2) "@E" ,24g`1\'',
 
 // what info should be filled out
 "infocheck=pilot;actype;acreg;positioning",
@@ -1246,7 +1534,7 @@ rules.push (
 
 "figure-letters=ABCDE",
 
-    'reference="@A" p(22) "@B" 4h8 "@C" m32 "@D" of "@E" 6a',
+    'reference="@A" 5sirp..\',24,f "@B" m22- "@C" 4h "@D" 24t "@E" -1j1-',
 
 // what info should be filled out
 "infocheck=pilot;actype;acreg;positioning",
