@@ -1,4 +1,4 @@
-// OpenAero rules22-AeCI.js file
+﻿// OpenAero rules22-AeCI.js file
 
 // This file is part of OpenAero.
 

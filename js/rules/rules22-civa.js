@@ -175,7 +175,7 @@ rules.push (
 "posnl=40",//assume no line judges
 "poslj=20",
 
-'reference="@A" 2,2fzb48- "@B" "|"4;3ifdh(4).5f "@C" 22ac(2f)3,34- "@D" ,5ta``3 "@E" .,24.pn("|"5f;3)2.',
+'reference="@A" 2,2fzb48- "@B" "|"4;3ifdh(4).5f "@C" 22ac(2f)3,34- "@D" ,5ta``3 "@E" .,24.pn("|"5f;3)2.-',
 
 "more=CIVA/IAC Unlimited Free Known",
 
@@ -252,8 +252,8 @@ rules.push (
 "two-name=family 8.4.1-4,8.4.7-10,8.5.1-2,8.6.1-2 columns 3&4",
 "two-name_fr=famille 8.4.1-4,8.4.7-10,8.5.1-2,8.6.1-2 colonnes 3 et 4",
 "group-vsnap=^9\\.(9|10)\\.[16]\\.",
-"vsnap-name=vertically climbing flick",
-"vsnap-name_fr=déclenché ascendant vertical",
+"vsnap-name=vertically climbing flick(s)",
+"vsnap-name_fr=déclenché(s) ascendant vertical",
 //"vsnap-rule=Sporting Code Section 6 Part 1 2.3.1.4",
 "one-max=2",
 "two-max=2",
@@ -334,8 +334,8 @@ rules.push (
 
 // changed in 2022 (NP2022-17)
 "rule-DIAGUP4S = diagupstop:<5",
-"why-DIAGUP4S  = a maximum of 4 stops (3 if flick) are allowed on diagonal up opposite rolls",
-"why_fr-DIAGUP4S  = un maximum de 4 arrets (3 si déclenché) est permis sur les rotations combinées à 45° montant",
+"why-DIAGUP4S  = a maximum of 4 stops are allowed on diagonal up opposite rolls",
+"why_fr-DIAGUP4S  = un maximum de 4 arrets est permis sur les rotations combinées à 45° montant",
 "DIAGUP4S-rule = Sporting Code Section 6 Part I, A.2.2.2 and A.2.2.3",
 
 "rule-VDOWN360 = downqtrs:<5",

@@ -484,7 +484,7 @@ lang.en = {
 // new 2020.1.5
     'printPageSet': 'Page set',
     'printPageSetHidesFormSelectors': 'When "Page set" is ' +
-    'active, other form selectors are hidden.',
+    'active, other form selectors are hidden. See manual for codes.',
 'printPilotCards' : 'Pilot cards',
 'printSaveForms' : 'Print/save forms',
 'printSavePdf' : 'Print / Save PDF',

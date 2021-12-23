@@ -1,9 +1,12 @@
-﻿2022.1.1
+﻿2022.1.5
+* Added CIVA Free Known programme guidance for 2022
+
+2022.1.4
 * Fixed issue where a sequence with empty logo would not open when loading sequence URL
 * Implemented automatic IAC form selection for glider-IAC
 * Added automatic note for downwind or Y axis entry on IAC forms B and C according IAC Rulebook 21.3.4
 * Fixed bug where mini Form A was included on B&C png and svg output when not selected and vv
-* Changed drag&drop (again) to only be used on devices that do not support native, or iOS: CHECK THOROUGHLY BEFORE ROLL OUT!
+* Changed drag&drop (again) to only be used on devices that do not support native, or iOS
 * Added wind use clarification for pilot cards to Print Page Set
 * Added 2022 CIVA Power and Glider Known figure sets
 * Updated 2022 CIVA Power Unlimited rules
@@ -12,6 +15,7 @@
 * Fixed issue of Free Unknown scrolling to top of subsequences on modification
 * Added rules for Aerobatic Club Italy
 * Added rule file option to disable sequence figure check default rules on a per-figure basis (syntax ^[rulename])
+* Changed library.js to only include compressed sequence links
 
 2021.1.10
 * Improved Help document layout for narrow viewports such as mobile phones

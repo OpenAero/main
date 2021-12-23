@@ -1376,6 +1376,7 @@ function cordovaSave(blob, filename) {
 }
 
 // cordovaPdf opens a pdf in an external viewer
+/* DISABLED DUE TO ANDROID COMPILE ISSUES
 function cordovaPdf(uri, title) {
     window.resolveLocalFileSystemURL(cordova.file.applicationDirectory + '/www/' + uri, function (fileEntry) {
         window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory, function (dirEntry) {
@@ -1387,6 +1388,7 @@ function cordovaPdf(uri, title) {
         });
     });
 }
+*/
 
 /**************************************************************
  *
@@ -2007,7 +2009,7 @@ function helpWindow(url, title) {
 
     if (platform.cordova) {
         if (platform.android && /\.pdf$/.test(url)) {
-            cordovaPdf(url, title);
+            /* cordovaPdf(url, title); */
         } else {
             var win = cordova.InAppBrowser.open(
                 url, '_blank', 'location=no,hardwareback=no,closebuttoncolor=#fb8c00');
@@ -4706,8 +4708,10 @@ function doOnLoad() {
             setTimeout(
                 function () {
                     navigator.splashscreen.hide();
-                    StatusBar.show();
-                    StatusBar.styleDefault();
+                    if (device.platform.toLowerCase() == 'android') {
+                        StatusBar.show();
+                        StatusBar.styleDefault();
+                    }
                 }, 1000);
         }
     });
@@ -10096,6 +10100,19 @@ function grabFigure(evt) {
     dragTarget = null;
     // find out which element we moused down on
 
+    // First we check if we're trying to drag a draggable panel
+    // E.g.: Grid Info panel
+    if (this.classList.contains('draggablePanel')) {
+        this.classList.add('dragging');
+        dragTarget = this;
+        //evt.preventDefault(); // prevent default drag & drop
+        var transform = dragTarget.style.transform.match(/-?[\d]*px/g) || [0, 0];
+
+        GrabPoint.x = TrueCoords.x - parseInt(transform[0]);
+        GrabPoint.y = TrueCoords.y - parseInt(transform[1]);
+        return;
+    }
+
     // first see if we grabbed a figure handle
     if (evt.target.id.match(/-handle$/)) {
         dragTarget = evt.target;
@@ -10254,15 +10271,6 @@ function grabFigure(evt) {
         }
     } else {
         selectFigure(false);
-        if (this.classList.contains('draggablePanel')) {
-            this.classList.add('dragging');
-            dragTarget = this;
-            //evt.preventDefault(); // prevent default drag & drop
-            var transform = dragTarget.style.transform.match(/-?[\d]*px/g) || [0, 0];
-
-            GrabPoint.x = TrueCoords.x - parseInt(transform[0]);
-            GrabPoint.y = TrueCoords.y - parseInt(transform[1]);
-        }
     }
 }
 
@@ -13285,7 +13293,7 @@ function checkSequenceChanged(force) {
         activeSequence.figures = figure;
 
         // Get current scroll position of the sequence
-        var scrollPosition = SVGRoot.parentNode.scrollTop;
+        var scrollPosition = SVGRoot ? SVGRoot.parentNode.scrollTop : 0;
 
         // Update activeSequence.xml and storage
         changeSequenceInfo();
@@ -13308,7 +13316,7 @@ function checkSequenceChanged(force) {
         }
 
         // Set the correct scroll position
-        SVGRoot.parentNode.scrollTop = scrollPosition;
+        if (SVGRoot) SVGRoot.parentNode.scrollTop = scrollPosition;
 
         // Update figure editor when a figure is being edited
         if (selectedFigure.id !== null) updateFigureEditor();
@@ -13433,7 +13441,7 @@ function programme() {
     if (/^<sequence>/.test(library[key])) {
         activateXMLsequence(library[key]);
     } else {
-        if (!launchURL({ url: library[key] })) {
+        if (!launchURL({ 'url': library[key] })) {
             console.log('Error loading programme ' + key);
         }
     }
@@ -14718,7 +14726,7 @@ function saveAsURL() {
 
     function save() {
         // When activating output of high compression sequence links, uncomment the following line
-        // and comment the active lines up to "alertBox"
+        // and remove the active lines up to "alertBox"
         // var url = 'https://openaero.net/?s=' + encodeBase64Url(compressXml(activeSequence.xml));
 
         // compress xml for shorter URL

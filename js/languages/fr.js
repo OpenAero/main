@@ -489,7 +489,7 @@ lang.fr = {
     // new 2020.1.5
     'printPageSet': 'Ensemble de pages',
     'printPageSetHidesFormSelectors': 'Lorsque "Ensemble de pages" est actif, ' +
-        'les autres sélecteurs de formulaire sont masqués.',
+        'les autres sélecteurs de formulaire sont masqués. Voir le manuel pour les codes.',
     'printPilotCards': 'Fiche pilote',
 'printSaveForms' : 'Imprimer / Enregistrer image',
 'printSavePdf' : 'Imprimer / Enregistrer PDF',

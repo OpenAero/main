@@ -982,7 +982,10 @@ function checkRules (callbackId, activeSequenceText, figures, figCheckLine, nonA
 	                if ((ruleSplit[1] === j) || (ruleSplit.length == 1)) {
 	                  rule = ruleSplit[0];
 	                  // check if the rule is in excludeRules. If so, skip it
-                        if (excludeRules.includes(rule)) continue;
+                        if (excludeRules.includes(rule)) {
+                            excludeRules.splice(excludeRules.indexOf(rule), 1);
+                            continue;
+                        }
                         // apparently not in excludeRules
 	                  log.push ('-basefig rule: ' + rule);
 	                  // Apply conversions to the Aresti number before checking the rule
@@ -1034,7 +1037,11 @@ function checkRules (callbackId, activeSequenceText, figures, figCheckLine, nonA
 	
 	                  }
 	                }
-	              }
+                    }
+                    if (excludeRules.length) {
+                        log.push('Referenced rule ^' + excludeRules.join(',^') + ' is not allowed on figure ' + arestiNr + '. You can\'t exclude a rule that is not set in allow-defrules');
+                        excludeRules = [];
+                    }
 	            }
 	          }
 	        }
