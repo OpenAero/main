@@ -21,6 +21,13 @@
 // This file defines AeCI rules for 2022
 // Adorisio Francesco 2022
 
+/* UPDATES
+ * 2022.1.7
+ * - removed "additionals" in Intermediate Known
+ * - changed "fam9-repeat=2" in Intermediate Known
+ *
+ */
+
 rules.push(
 
     //###############################################################################
@@ -51,7 +58,6 @@ rules.push(
 
 
     "figure-letters=ABCDE",
-    "additionals=4/24",
     //DEFINIZIONE MASTER SET... figure da selezionare nel catalogo AeCI ammesse
     'reference="@A" p(22) (8,0) "@B" 4h8 (0,11) "@C" m32 (0,9) "@D" of (0,1) "@E" 6a ',
 
@@ -59,7 +65,7 @@ rules.push(
     // ripetizioni 
 
     "basefig-repeat=1", // nessuna ripetizione di figura base è permessa
-    "fam9-repeat=1", // nessuna ripetizione di airelon roll è permessa
+    "fam9-repeat=2", // 1 sola ripetizione (massimo 2 figure uguali nella sequenza) di aileron roll è permessa
 
     //"opposite-min=1", //one opposite roll is required!
     //"allow=^[1-9]", //all figures are allowed for the Free program

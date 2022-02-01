@@ -33,21 +33,22 @@ var
 
 // seqCheckAvail indicates if sequence checking is available for a
 // rule/cat/seq combination
-var seqCheckAvail = {};
-// variables used for checking sequence validity
-var checkConv = [];        // conversions
-var checkAllowRegex = [];  // regexes for allowed figures
-var checkAllowCatId = [];  // Catalogue Numbers for allowed figures
-var checkCatGroup = [];
-var checkFigGroup = [];
-var checkRule = [];
-    var defRules = [];      // default rules in for rule/cat/seq to be applied to a figure check
-    var excludeRules = [];     // default rules excluded for this figure check
-var activeRules = false;   // Are rules active?  If so, is object {description: xxx, logo: xxx}
-var figureLetters = '';    // Letters that can be assigned to individual figures
-var additionalFig = {'max': 0, 'totalK': 0};    // Additional figures, max and K
-var ruleSuperFamily = [];  // Array of rules for determining figure SF
-    var ruleSeqCheck = [];     // rules for checking complete OpenAero seq string
+var
+    seqCheckAvail = {},
+    // variables used for checking sequence validity
+    checkConv = [],        // conversions
+    checkAllowRegex = [],  // regexes for allowed figures
+    checkAllowCatId = [],  // Catalogue Numbers for allowed figures
+    checkCatGroup = [],
+    checkFigGroup = [],
+    checkRule = [],
+    defRules = [],      // default rules in for rule/cat/seq to be applied to a figure check
+    excludeRules = [],     // default rules excluded for this figure check
+    activeRules = false,   // Are rules active?  If so, is object {description: xxx, logo: xxx}
+    figureLetters = '',    // Letters that can be assigned to individual figures
+    additionalFig = {'max': 0, 'totalK': 0},    // Additional figures, max and K
+    ruleSuperFamily = [],  // Array of rules for determining figure SF
+    ruleSeqCheck = [];     // rules for checking complete OpenAero seq string
 
 
 // handle message events
@@ -799,9 +800,10 @@ function checkRules (callbackId, activeSequenceText, figures, figCheckLine, nonA
 	      }
 	      log.push ('========= Figure #' + figNr + ': ' + thisFig);
 	      // Check if the figure is an additional
-	      if (figures[i].additional) {
+          if (figures[i].additional) {
+            // no rule checking for additionals
 	        additionals++;
-	        log.push ('is additional? True');
+              log.push('is additional? True');
 	      } else {
 	        log.push ('is additional? False');
 	        var figK = 0;

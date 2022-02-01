@@ -1,4 +1,18 @@
-﻿2022.1.5
+﻿2022.1.7
+* Added "Power" or "Glider" class to Category box on IAC forms
+* Updated header of rules22.js to correctly reflect the method OpenAero uses to check sequences
+* Updated rules22-aeci
+* Added AeCI logo
+* Added a Flying mode in the View menu, for using onboard tablet as a Pilot Card
+* Updated manual for Flying Mode and additional information on other View modes
+* Added AAC Known sequences for 2022
+* Added BAeA Known sequences for 2022
+* Added IAC Known sequences for 2022
+
+2022.1.6
+* Fixed failure to load 2022 Glider Advanced Free Known and Unlimited Unknown rules on Safari (lookbehind regex unsupported)
+
+2022.1.5
 * Added CIVA Free Known programme guidance for 2022
 
 2022.1.4

@@ -177,7 +177,7 @@
   -webkit-overflow-scrolling: touch;
 }
 #svgContainer.grid {
-  padding-right: 220px; /* create margin for gridInfo block */
+  padding-right: 280px; /* create margin for gridInfo block */
 }
 .sequenceOverlay {
   left: -10px !important;

@@ -104,12 +104,12 @@
     <script src="js/rules/rules22.js" type="text/javascript"></script>
     <script src="js/rules/rules22-civa.js" type="text/javascript"></script>
     <script src="js/rules/rules22-glider-civa.js" type="text/javascript"></script>
-    <script src="js/rules/rules21-aac.js" type="text/javascript"></script>
+    <script src="js/rules/rules22-aac.js" type="text/javascript"></script>
     <script src="js/rules/rules22-aeci.js" type="text/javascript"></script>
-    <script src="js/rules/rules17-baea.js" type="text/javascript"></script>
+    <script src="js/rules/rules22-baea.js" type="text/javascript"></script>
     <script src="js/rules/rules21-france.js" type="text/javascript"></script>
     <script src="js/rules/rules15-ga.js" type="text/javascript"></script>
-    <script src="js/rules/rules21-iac.js" type="text/javascript"></script>
+    <script src="js/rules/rules22-iac.js" type="text/javascript"></script>
     <script src="js/rules/rules21-glider-iac.js" type="text/javascript"></script>
     <script src="js/rules/rules22-nzac.js" type="text/javascript"></script>
     <script src="js/rules/rules20-saa.js" type="text/javascript"></script>
@@ -132,6 +132,14 @@
   <body>
 	<div id="cordovaStatusBar" class="noDisplay"></div>
     <div class="noPrint fullscreen">
+        <!-- Flying mode overlay-->
+        <div id="flyingMode" class="flyingModeHidden">
+            <div id="flyingModeTop">
+                <span id="t_exitFlyingMode" class="textButton userText"></span>
+                <span id="t_flyingModeWind" class="textButton userText"></span>
+            </div>
+            <div id="flyingModeSequence"></div>
+        </div>
       <!-- Top block -->
       <div id="topBlock">
 	      <!-- menu hamburger icon -->
@@ -199,31 +207,35 @@
 							<i class="material-icons menuIcon">view_quilt</i>
               <span class="userText" id="t_view"></span>
               <ul>
-                <li>
-									<i class="material-icons menuIcon">view_list</i>
-									<span class="userText" id="t_formA"></span>
-								</li>
-                <li>
-									<i class="material-icons menuIcon" style="transform: rotate(180deg); transform-origin: 50%;">forward</i>
-									<span class="userText" id="t_formB"></span>
-								</li>
-                <li>
-									<i class="material-icons menuIcon">forward</i>
-									<span class="userText" id="t_formC"></span>
-								</li>
-                <li class="divider">
-									<i class="material-icons menuIcon">view_module</i>
-									<span class="userText" id="t_figsInGrid"></span>
-								</li>
-                <li id="zoomMenu">
-									<i class="material-icons menuIcon">zoom_in</i>
-                  <span class="userText" id="t_zoom"></span>
-                  <span>
-                    <i id="zoomMin" class="material-icons">remove</i>
-                    <span id="zoom">100%</span>
-                    <i id="zoomPlus" class="material-icons">add</i>
-                  </span>
-                </li>
+                  <li>
+                      <i class="material-icons menuIcon">view_list</i>
+                      <span class="userText" id="t_formA"></span>
+                  </li>
+                  <li>
+                      <i class="material-icons menuIcon" style="transform: rotate(180deg); transform-origin: 50%;">forward</i>
+                      <span class="userText" id="t_formB"></span>
+                  </li>
+                  <li>
+                      <i class="material-icons menuIcon">forward</i>
+                      <span class="userText" id="t_formC"></span>
+                  </li>
+                  <li>
+                      <i class="material-icons menuIcon">view_module</i>
+                      <span class="userText" id="t_figsInGrid"></span>
+                  </li>
+                  <li class="divider">
+                      <i class="material-icons menuIcon">flight</i>
+                      <span class="userText" id="t_flyingMode"></span>
+                  </li>
+                  <li id="zoomMenu">
+                      <i class="material-icons menuIcon">zoom_in</i>
+                      <span class="userText" id="t_zoom"></span>
+                      <span>
+                          <i id="zoomMin" class="material-icons">remove</i>
+                          <span id="zoom">100%</span>
+                          <i id="zoomPlus" class="material-icons">add</i>
+                      </span>
+                  </li>
               </ul>
             </li>
             <!-- Sequence menu -->

@@ -36,7 +36,7 @@
 // A new x should be used for versions that create sequences not
 // fully backward compatible with the previous version
 
-var version = '2022.1.5';
+var version = '2022.1.7';
 /* versionNew is an object that contains version update information
    The structure is {vvv : [[ttt, n], ...], ...} , where
    vvv = version number
@@ -44,6 +44,12 @@ var version = '2022.1.5';
    n   = importance (higher = more important)
 */
 var versionNew = {
+    '2022.1.7': [
+        ['Added a Flying mode in the View menu, for using an onboard tablet as a Pilot Card', 4],
+        ['Added AAC Known sequences for 2022', 2],
+        ['Added BAeA Known sequences for 2022', 2],
+        ['Added IAC Known sequences for 2022', 3]
+    ],
     '2022.1.1': [
         ['Added 2022 CIVA Power and Glider rules and sequences', 4],
         ['Added Free (un)known Designer for smartphone', 4],

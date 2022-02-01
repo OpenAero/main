@@ -5189,6 +5189,7 @@ function addEventListeners() {
     document.getElementById('t_formB').parentNode.addEventListener('mousedown', function () { selectForm('B') }, false);
     document.getElementById('t_formC').parentNode.addEventListener('mousedown', function () { selectForm('C') }, false);
     document.getElementById('t_figsInGrid').parentNode.addEventListener('mousedown', function () { selectForm('G') }, false);
+    document.getElementById('t_flyingMode').parentNode.addEventListener('mousedown', flyingMode, false);
     document.getElementById('zoomMin').addEventListener('mousedown', function () { appZoom(-1) }, false);
     document.getElementById('zoomPlus').addEventListener('mousedown', function () { appZoom(1) }, false);
 
@@ -5234,6 +5235,10 @@ function addEventListeners() {
 
     document.getElementById('t_about').parentNode.addEventListener('mousedown',
         aboutDialog, false);
+
+    // Flying mode
+    document.getElementById('t_exitFlyingMode').addEventListener('mousedown', exitFlyingMode, false);
+    document.getElementById('t_flyingModeWind').addEventListener('mousedown', switchFlyingModeWind, false)
 
     // sequence string
     document.getElementById('undo').addEventListener('mousedown', clickButton, false);
@@ -13371,6 +13376,56 @@ function setFormLayout(form) {
     }
 }
 
+// flyingMode switches the view to Flying mode
+function flyingMode() {
+    document.getElementById('flyingMode').classList.remove('flyingModeHidden');
+    var activeFormSave = activeForm;
+    for (var form in { B: true, C: true }) {
+        selectForm(form);
+        // Clear sequence svg
+        rebuildSequenceSvg();
+        // Add only the figures
+        for (var i = 0; i < figures.length; i++) {
+            if (figures[i].paths.length) drawFullFigure(i);
+        }
+        // Change the viewBox to make the sequence fit
+        var
+            bBox = SVGRoot.getElementById('sequence').getBBox(),
+            x = parseInt(bBox.x),
+            y = parseInt(bBox.y),
+            w = parseInt(bBox.width),
+            h = parseInt(bBox.height);
+        SVGRoot.setAttribute("viewBox",
+            (x - 3) + ' ' + (y - 3) + ' ' + (w + 5) + ' ' + (h + 5));
+        document.getElementById('flyingModeSequence').appendChild(SVGRoot.cloneNode(true));
+        document.getElementById('flyingModeSequence').lastChild.id = 'flyingModeSequenceForm' + form;
+    }
+    // Select a correct form and setting for the wind button
+    if (activeFormSave === 'C') {
+        document.getElementById('t_flyingModeWind').classList.add('left');
+        document.getElementById('flyingModeSequence').classList.add('windLeft');
+    } else {
+        document.getElementById('t_flyingModeWind').classList.remove('left');
+        document.getElementById('flyingModeSequence').classList.remove('windLeft');
+    }
+}
+// switchFlyingModeWind switches the wind direction in flying mode
+function switchFlyingModeWind() {
+    document.getElementById('t_flyingModeWind').classList.toggle('left');
+    document.getElementById('flyingModeSequence').style = 'transform: rotateY(90deg)';
+    setTimeout(function () {
+        document.getElementById('flyingModeSequence').classList.toggle('windLeft');
+        document.getElementById('flyingModeSequence').style = '';
+    }, 145);
+}
+
+// exitFlyingMode exits the Flying mode
+function exitFlyingMode() {
+    selectForm(document.getElementById('t_flyingModeWind').classList.contains('left') ? 'C' : 'B');
+    document.getElementById('flyingMode').classList.add('flyingModeHidden');
+    // clear sequences after timeout
+    setTimeout(function () { document.getElementById('flyingModeSequence').innerHTML = '' }, 500);
+}
 // updateDefaultView updates the hidden defaultView value
 function updateDefaultView(queue) {
     var el = document.getElementById('default_view');
@@ -14727,8 +14782,8 @@ function saveAsURL() {
     function save() {
         // When activating output of high compression sequence links, uncomment the following line
         // and remove the active lines up to "alertBox"
-        // var url = 'https://openaero.net/?s=' + encodeBase64Url(compressXml(activeSequence.xml));
-
+        var url = 'https://openaero.net/?s=' + encodeBase64Url(compressXml(activeSequence.xml));
+        /*
         // compress xml for shorter URL
         var xml = activeSequence.xml.replace(/\n/g, ''); // remove newlines
         xml = xml.replace(/> +</g, '><'); // remove spaces between tags
@@ -14737,7 +14792,7 @@ function saveAsURL() {
         xml = xml.replace(/<\/[^>]+>/g, '</>'); // remove end tags
 
         var url = 'https://openaero.net/?s=' + encodeBase64Url(xml);
-
+        */
         alertBox('<p>' + userText.saveAsURLFromApp +
             '</p><textarea id="saveAsURLArea" readonly></textarea>',
             userText.saveAsURLTitle,
@@ -15962,7 +16017,8 @@ function buildHeader(svg, logoWidth) {
             drawText(userText.date + ':', 305, 70, 'formAText', 'start', '', svg);
             drawText(document.getElementById('date').value, 350, 100, 'formATextMedium', 'middle', '', svg);
             drawText(userText.category + ':', 405, 70, 'formAText', 'start', '', svg);
-            drawText(document.getElementById('category').value, 460, 100, 'formATextMedium', 'middle', '', svg);
+            drawText(userText[document.getElementById('class').value], 460, 95, 'formATextMedium', 'middle', '', svg);
+            drawText(document.getElementById('category').value, 460, 115, 'formATextMedium', 'middle', '', svg);
             drawText(userText.programme + ':', 525, 70, 'formAText', 'start', '', svg);
             drawText(document.getElementById('program').value, 580, 100, 'formATextMedium', 'middle', '', svg);
             drawText(userText.pilotnumberIAC1, 645, 70, 'formAText', 'start', '', svg);
@@ -15982,8 +16038,8 @@ function buildHeader(svg, logoWidth) {
                 'formATextLarge', 'middle', '', svg);
             drawText(userText.category + ':', 500, 25,
                 'formAText', 'start', '', svg);
-            drawText(document.getElementById('category').value, 565, 47,
-                'formATextLarge', 'middle', '', svg);
+            drawText(userText[document.getElementById('class').value] + " " + document.getElementById('category').value, 565, 47,
+                'formATextMedium', 'middle', '', svg);
             drawText(userText.date + ':', 100, 75,
                 'formAText', 'start', '', svg);
             drawText(document.getElementById('date').value, 190, 97,
@@ -17234,7 +17290,7 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figure_chooser) {
                 rollInfo[rollnr].attitude = Attitude;
                 rollInfo[rollnr].negLoad = NegLoad;
                 // Make a space on the figCheckLine before every possible roll
-                figCheckLine[seqNr] = figCheckLine[seqNr] + ' ';
+                figCheckLine[seqNr] += ' ';
                 // mark rolls in the top
                 if (rollTop) rollInfo[rollnr].rollTop = true;
                 if (roll[rollnr]) {

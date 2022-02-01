@@ -635,15 +635,15 @@ rules.push (
 "roller-rule=Sporting Code Section 6 Part 2, 2.3.1.4",
 "fam5or6-min=1",
 
-"seqcheck-1fullor2halfflick=(?<![23]i?)f|2i?f.*2i?f",
+"seqcheck-1fullor2halfflick=([^23i]|^)i?f|2i?f.*2i?f",
 "1fullor2halfflick-name=At least one full or two half flicks required",
 "1fullor2halfflick-rule=Sporting Code Section 6 Part 2, 2.3.1.4",
 
-    // very complicated rule, split in multiple lines for (some) clarity
+// very complicated rule, split in multiple lines for (some) clarity
 "seqcheck-!max3flick720=(f.*){4}|" +
-    "2i?f.*(3i?f.*(?<![23]i?)f|(?<![23]i?)f.*(?<!2i?)f)|" +
-    "3i?f.*(2i?f.*(?<![23]i?)f|3i?f.*(?<![2]i?)f|(?<![23]i?)f.*f)|" +
-    "(?<![23]i?)f.*(2i?f.*(?<!2i?)f|(?<!2i?)f.*f)",
+    "2i?f.*(3i?f.*([^23i]|^)i?f|([^23i]|^)i?f.*([^2i]|^)i?f)|" +
+    "3i?f.*(2i?f.*([^23i]|^)i?f|3i?f.*([^2i]|^)i?f|([^23i]|^)i?f.*f)|" +
+    "([^23i]|^)i?f.*(2i?f.*([^2i]|^)i?f|([^2i]|^)i?f.*f)",
 "!max3flick720-name=Not more than 3 flicks with 720 degrees total rotation allowed",
 "!max3flick720-rule=Sporting Code Section 6 Part 2, 2.3.1.4",
 
@@ -1057,7 +1057,7 @@ rules.push (
 
 // Sequence entry and exit attitudes acc. to Ch. 2.2.1.8
 //======================================================
-"seqcheck-upend=([0-9a-tv-z]|(?<!e)u)[~+`'()\\\"\\.>^]*\\s*(eu)?$",// Sequence exit must be in positive attitude
+"seqcheck-upend=([0-9a-tv-z]+|[^e]u)[~+`'()\\\"\\.>^]*\\s*(eu)?$",// Sequence exit must be in positive attitude
 "upend-name=Sequence must be finished in upright flight",
 "upend-rule=Sporting Code Section 6 Part 2 2.2.1.8",
 

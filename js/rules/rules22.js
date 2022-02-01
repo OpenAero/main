@@ -50,26 +50,30 @@
  *    rules files
  * 
  * How OpenAero checks a sequence:
+ * On OpenAero startup:
+ *  1. The latest rulesYY file is loaded and the general rules are stored
+ *  2. All rulesYY-rules.js files are loaded, where "rules" is the sequence
+ *     "rules" box (CIVA, glider-CIVA, etc), and stored.
+ *  3. OpenAero goes through all lines of rules and appends them to sequence
+ *     types (e.g.: CIVA Unlimited Free Known)
+ *  3. The sequence type is determined by [section] or (section) statements.
+ *  4. When a "more=section" line is found, appending of rules continues from
+ *     "section".
+ *  5. Rules that are loaded later for the same sequence type (e.g.: CIVA
+ *     Unlimited Free Known) override earlier rules of the same type.
+ * When a sequence is checked:
  *  1. create a form-A like list of the sequence. Each figure on a new line.
- *   first number on line is the base figure.
- *   next are all rolls, with 0.0.0.0(0) indicating an unused optional roll.
- *   opposite or linked rolls are x,y or x;y etc. Figure is id(k)
+ *   The first number on the line is the Aresti code of the base figure.
+ *   Next are all rolls, with 0.0.0.0 indicating an unused optional roll.
+ *   Opposite or linked rolls are x,y or x;y etc. Figure is id(k)
  * 
- *     e.g  2t4,3f line would be:   1.14.1(12) 9.1.2.2(6) 9.1.5.1(2),9.9.5.3(11)
- *     2t  would be:       1.14.1(12) 9.1.2.2(6) 0.0.0.0(0)
+ *     e.g  2t4,3f line would be:   1.2.3.1 9.1.2.2 9.1.5.1,9.9.5.3
+ *     2t  would be:                1.2.3.1 9.1.2.2 0.0.0.0
  * 
- *  2. the rulesYY for the sequence's date(year YY) are loaded.
- *  3. the rulesYY-rules.js file is loaded where "rules" is sequence
- *     "rules" box (CIVA, glider-CIVA, etc)
- *  4. all rules from the start of the file are read until the first [section]
- *  5. a line "[kind program]" is searched in the file and if found, that
- *     section is read
- *  6. a "more=section" line, if read, makes the program read the "more"
- *     section.
- *  7. all "group-xxx" rules have a list of (figure: count) associated
+ *  2. the rules for the sequence type are activated.
+ *  3. all "group-xxx" rules have a list of (figure: count) associated
  *     with them, and a total count.
- *  8. [removed]
- *  9. OpenAero goes over every complete full figure (line from 1 above)
+ *  4. OpenAero goes over every complete full figure (line from 1 above)
  *     and in it, every individual catalog number:
  *     a. every Group-xxx rule (capital G) is matched against the full
  *        figure(line), and if so, counted
@@ -93,7 +97,7 @@
  *     h. for each line, if a group-xxx-minperfig or group-xxx-maxperfig
  *        rule exists, it is checked with the line count
  *     i. for every group so counted, a total for the sequence is added.
- * 10. base rules are checked (item 9f and 9g above) as follows:
+ * 5.  base rules are checked (item 9f and 9g above) as follows:
  *     a. the list of base rules are separated by ";"
  *     b. for a rule "abc" there must be a "rule-abc=xxx:yyy" line
  *     c. the "xxx" is a conversion rule, a reg-ex substitute applied to
@@ -103,7 +107,7 @@
  *        result numbers are summed per element and must be below nn.
  *     f. otherwise, "yyy" is a regex. if the convered result matches
  *        "yyy" an alert is reported
- * 11. conversion rules "conv-xxx=" are used to check for individual
+ * 6.  conversion rules "conv-xxx=" are used to check for individual
  *     figure limitations, mostly to limit rolls on unknown figures
  *     a. the conversion regex is applied for each catalog id on the line
  *     b. the conversion regex is a ";" separated list of regex=replace,
@@ -111,7 +115,7 @@
  *        the replace string.
  *     d. if the replace contains $1, $2 or $3 itself, this is replaced
  *        by the first or 2nd or 3rd () match of the regex
- * 12. after all the full figures been counted for, OpenAero goes through
+ * 7.  after all the full figures been counted for, OpenAero goes through
  *     every group (figure:count) to check for repetitions
  *     a. any specific figure:count with count bigger than group-repeat
  *        is reported
@@ -123,7 +127,7 @@
  *        repetitions in total (ie 4 snaps each had 2 repetitions, or
  *        2 snaps with 3 repeats)
  *     c. and group-min and group-max are checked and reported
- * 13. any seqcheck-xxx rule is matched agains the OpenAero
+ * 8.  any seqcheck-xxx rule is matched agains the OpenAero
  *     representation of the sequence (can be used to test entry etc)
  * 
  * Note that because group-k is special, and group-base is simply a
