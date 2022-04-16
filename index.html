@@ -107,7 +107,7 @@
     <script src="js/rules/rules22-aac.js" type="text/javascript"></script>
     <script src="js/rules/rules22-aeci.js" type="text/javascript"></script>
     <script src="js/rules/rules22-baea.js" type="text/javascript"></script>
-    <script src="js/rules/rules21-france.js" type="text/javascript"></script>
+    <script src="js/rules/rules22-france.js" type="text/javascript"></script>
     <script src="js/rules/rules15-ga.js" type="text/javascript"></script>
     <script src="js/rules/rules22-iac.js" type="text/javascript"></script>
     <script src="js/rules/rules21-glider-iac.js" type="text/javascript"></script>
@@ -123,15 +123,22 @@
     <!-- create zip files. Used for individual figure image output -->
     <!-- https://github.com/Stuk/jszip 3.2.2 3 jul 2019 -->
     <script src="js/jszip.min.js" type="text/javascript"></script>
+    <!-- create QR codes -->
+    <script src="js/qrcode.min.js" type="text/javascript"></script>
 
     <!-- Debugging iOS with weinre and ngrok ? Did not get it to work X-origin blabla -->
     <!-- <script src="https://00ef-2001-1c00-1b38-6000-e98d-3acc-3d84-442a.ngrok.io/target/target-script-min.js#myDevice" type="text/javascript"></script> -->
     <!-- The main script. Put it at the end when everything else is loaded -->
     <script src="js/main.js" type="text/javascript"></script>
 </head>
-  <body>
-	<div id="cordovaStatusBar" class="noDisplay"></div>
-    <div class="noPrint fullscreen">
+<body>
+    <div id="cordovaStatusBar" class="noDisplay"></div>
+    <div id="scanQRcode">
+        <img src="data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgODggODgiIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczpzdmc9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48Y2xpcFBhdGggaWQ9ImNsaXBQYXRoIj48cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIC8+PHJlY3QgeD0iNzIiIHk9IjAiIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgLz48cmVjdCB4PSIwIiB5PSI3MiIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiAvPjxyZWN0IHg9IjcyIiB5PSI3MiIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiAvPjwvY2xpcFBhdGg+PC9kZWZzPjxwYXRoIHN0eWxlPSJmaWxsOm5vbmU7c3Ryb2tlOiNmYjhjMDA7c3Ryb2tlLXdpZHRoOjIiIGQ9Im0gMTIsNCBoIDY0IGMgNCwwIDgsNCA4LDggdiA2NCBjIDAsNCAtNCw4IC04LDggaCAtNjQgYyAtNCwwIC04LC00IC04LC04IHYgLTY0IGMgMCwtNCA0LC04IDgsLTggeiIgY2xpcC1wYXRoPSJ1cmwoI2NsaXBQYXRoKSIgLz48L3N2Zz4=" id="scanQRcorners"></img>
+        <span id="t_cancelQRscan" class="textButton userText"></span>
+    </div>
+    <div id="mainOverlay" class="noPrint fullscreen">
+        <div id="qrcode" class="noDisplay"></div>
         <!-- Flying mode overlay-->
         <div id="flyingMode" class="flyingModeHidden">
             <div id="flyingModeTop">
@@ -140,1382 +147,1389 @@
             </div>
             <div id="flyingModeSequence"></div>
         </div>
-      <!-- Top block -->
-      <div id="topBlock">
-	      <!-- menu hamburger icon -->
-	      <div id="hamburgerMenu">
-		      <i class="material-icons">menu</i>
-		    </div>
-        <div id="t_locked" class="userText hidden"></div>
-        <!-- Menu -->
-        <div id="mainMenu">
-          <ul id="menu">
-            <!-- File menu -->
-            <li id="menuFile">
-							<i class="material-icons menuIcon">save</i>
-              <span class="userText" id="t_file"></span>
-              <ul id="menuFileUl">
-                <li class="fileOpening menuFileItem">
-									<i class="material-icons menuIcon">file_download</i>
-                  <div class="openSequence">
-                    <span class="userText" id="t_openSequence"></span>
-                    <form id="fileForm">
-                      <input type="file" id="file" size=1>
-                    </form>
-                  </div>
-                </li>
-                <li class="divider menuFileItem">
-									<i class="material-icons menuIcon">link</i>
-									<span class="userText" id="t_openSequenceLink"></span>
-								</li>
-                <li class="divider menuFileItem">
-									<i class="material-icons menuIcon">clear</i>
-									<span class="userText" id="t_clearSequence"></span>
-								</li>
-                <li class="menuFileItem">
-									<i class="material-icons menuIcon">save</i>
-									<span class="userText" id="t_saveSequence"></span>
-								</li>
-                <li class="menuFileItem">
-									<i class="material-icons menuIcon">email</i>
-									<a class="userText" id="t_emailSequence" target="_blank"></a>
-								</li>
-                <li class="menuFileItem noDisplay">
-									<i class="material-icons menuIcon">file_upload</i>
-									<span class="userText" id="t_saveShareSequence"></span>
-								</li>
-                <li class="divider menuFileItem">
-									<i class="material-icons menuIcon">link</i>
-									<span class="userText" id="t_saveAsLink"></span>
-								</li>
-								<li id="exitDesigner" class="menuFileItem">
-									<i class="material-icons menuIcon">cancel</i>
-									<span class="userText" id="t_exitDesigner"></span>
-								</li>
-                <li class="divider menuFileItem disableFUdesigner">
-									<i class="material-icons menuIcon">archive</i>
-									<span class="userText disableFUdesigner" id="t_saveFigsSeparate"></span>
-								</li>
-                <li class="menuFileItem disableFUdesigner">
-									<i class="material-icons menuIcon">print</i>
-									<span class="userText" id="t_printSaveForms"></span>
-								</li>
-              </ul>
-            </li>
-            <!-- View menu -->
-            <li id="menuView" class="disableFUdesigner">
-							<i class="material-icons menuIcon">view_quilt</i>
-              <span class="userText" id="t_view"></span>
-              <ul>
-                  <li>
-                      <i class="material-icons menuIcon">view_list</i>
-                      <span class="userText" id="t_formA"></span>
-                  </li>
-                  <li>
-                      <i class="material-icons menuIcon" style="transform: rotate(180deg); transform-origin: 50%;">forward</i>
-                      <span class="userText" id="t_formB"></span>
-                  </li>
-                  <li>
-                      <i class="material-icons menuIcon">forward</i>
-                      <span class="userText" id="t_formC"></span>
-                  </li>
-                  <li>
-                      <i class="material-icons menuIcon">view_module</i>
-                      <span class="userText" id="t_figsInGrid"></span>
-                  </li>
-                  <li class="divider">
-                      <i class="material-icons menuIcon">flight</i>
-                      <span class="userText" id="t_flyingMode"></span>
-                  </li>
-                  <li id="zoomMenu">
-                      <i class="material-icons menuIcon">zoom_in</i>
-                      <span class="userText" id="t_zoom"></span>
-                      <span>
-                          <i id="zoomMin" class="material-icons">remove</i>
-                          <span id="zoom">100%</span>
-                          <i id="zoomPlus" class="material-icons">add</i>
-                      </span>
-                  </li>
-              </ul>
-            </li>
-            <!-- Sequence menu -->
-            <li id="menuSequence" class="disableFUdesigner">
-							<i class="material-icons menuIcon">transform</i>
-              <span class="userText" id="t_sequence"></span>
-              <ul id="sequenceOptions">
-                <li class="entryOption lock">
-									<i class="material-icons menuIcon">compare_arrows</i>
-									<span class="userText" id="t_upwindEntry"></span>
-								</li>
-                <li class="entryOption lock">
-									<img class="material-icons menuIcon" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2ZXJzaW9uPSIxLjEiIHdpZHRoPSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBoZWlnaHQ9IjI0IiBmaWxsPSIjMDAwMDAwIj48ZGVmcyBpZD0iZGVmczQyMDYiPjxwYXRoIGlkPSJhIiBkPSJNMCAwaDI0djI0SDBWMHoiIC8+PC9kZWZzPjxjbGlwUGF0aCBpZD0iYiI+PHVzZSBpZD0idXNlNDIxMCIgeGxpbms6aHJlZj0iI2EiIG92ZXJmbG93PSJ2aXNpYmxlIiAvPjwvY2xpcFBhdGg+PHBhdGggaWQ9InBhdGg0MjIwIiBkPSJtIDUuOTksMTQgNy4wMSwwIDAsMiAtNy4wMSwwIDAsMyAtMy45OSwtNCAzLjk5LC00IDAsMyB6IiAvPjxwYXRoIGlkPSJwYXRoNDIxMiIgZD0ibSAxNC45OSwxMyAwLC0zIDcuMDEsMCAwLC0yIC03LjAxLDAgMCwtMyAtMy45OSw0IDMuOTksNCB6IiAvPjwvc3ZnPiAK">
-									<span class="userText" id="t_downwindEntry"></span>
-								</li>
-                <li class="entryOption lock">
-									<i class="material-icons menuIcon">arrow_downward</i>
-									<span class="userText" id="t_xBoxEntry"></span>
-								</li>
-                <li class="entryOption lock">
-									<i class="material-icons menuIcon">arrow_upward</i>
-									<span class="userText" id="t_xBoxEntryAway"></span>
-								</li>
-                <li class="lock divider">
-									<i class="material-icons menuIcon" style="transform: rotate(180deg)">redo</i>
-									<span class="userText" id="t_flipYAxis"></span>
-								</li>
-                <li class="lock">
-									<i class="material-icons menuIcon">border_clear</i>
-									<span class="userText" id="t_clearPositioning"></span>
-								</li>
-                <li class="lock divider">
-									<i class="material-icons menuIcon">transform</i>
-									<span class="userText" id="t_separateFigures"></span>
-								</li>
-                <li class="divider">
-									<i class="material-icons menuIcon">playlist_add_check</i>
-									<span class="userText" id="t_checkSequence"></span>
-								</li>
-                <li id="lockSequence">
-									<i class="material-icons menuIcon">lock_outline</i>
-									<span class="userText" id="t_lockSequence"></span>
-								</li>
-                <li id="unlockSequence" class="noDisplay">
-									<i class="material-icons menuIcon">lock_open</i>
-									<span class="userText" id="t_unlockSequence"></span>
-								</li>
-              </ul>
-            </li>
-            <!-- Queue menu -->
-            <li id="menuQueue" class="disableFUdesigner">
-							<i class="material-icons menuIcon">queue</i>
-              <span class="userText" id="t_queue"></span>
-              <ul id="queueOptions">
-                <li class="divider">
-									<i class="material-icons menuIcon">view_module</i>
-									<span class="userText" id="t_showQueue"></span>
-								</li>
-                <li>
-									<i class="material-icons menuIcon">add_to_queue</i>
-									<span class="userText" id="t_addToQueue"></span>
-								</li>
-                <li class="divider">
-									<i class="material-icons menuIcon">queue</i>
-									<span class="userText" id="t_addAllToQueue"></span>
-								</li>
-                <li class="divider">
-									<i class="material-icons menuIcon">clear_all</i>
-									<span class="userText" id="t_clearQueue"></span>
-								</li>
-                <li class="fileOpening">
-									<i class="material-icons menuIcon">file_download</i>
-                  <div class="openFile">
-                    <span class="userText" id="t_openQueueFile"></span>
-                    <form id="queueForm">
-                      <input type="file" id="queue" size=1>
-                    </form>
-                  </div>
-                </li>
-                <li>
-									<i class="material-icons menuIcon">save</i>
-									<span class="userText" id="t_saveQueueFile"></span>
-								</li>
-              </ul>          
-            </li>
-            <!-- Library menu -->
-            <li id="menuLibrary" class="disableFUdesigner">
-							<i class="material-icons menuIcon">library_books</i>
-              <span class="userText" id="t_library"></span>
-              <ul id="library" class="right">
-              </ul>
-            </li>
-            <!-- Tools menu -->
-            <li id="menuTools" class="disableFUdesigner">
-							<i class="material-icons menuIcon">build</i>
-              <span class="userText" id="t_tools"></span>
-              <ul class="right">
-                <li class="divider disableFUdesigner">
-									<i class="material-icons menuIcon">create</i>
-                  <span class="userText lock" id="t_fuDesigner"></span>
-                </li>
-                <li>
-									<i class="material-icons menuIcon">playlist_add_check</i>
-                  <span class="userText" id="t_checkMultipleSeq"></span>
-                </li>
-                <li>
-									<i class="material-icons menuIcon">print</i>
-                  <span class="userText" id="t_printMultipleSeq"></span>
-                </li>
-                <li class="fileOpening divider">
-                  <div class="openFile">
-										<i class="material-icons menuIcon">playlist_add</i>
-                    <span class="userText" id="t_importRulesFile"></span>
-                    <form id="rulesFileForm">
-                      <input type="file" id="rulesFile" size=1>
-                    </form>
-                  </div>
-                </li>
-                <li id="settings" class="divider disableFUdesigner">
-									<i class="material-icons menuIcon">settings</i>
-									<span class="userText" id="t_settings"></span>
-								</li>
-								<li id="installDesktopApp" class="disableFUdesigner noDisplay">
-									<i class="material-icons menuIcon">get_app</i>
-									<span id="t_installApp" class="userText"></span>
-								</li>
-              </ul>
-            </li>
-            <!-- Help menu -->
-            <li id="menuHelp">
-							<i class="material-icons menuIcon">help</i>
-              <span class="userText" id="t_help"></span>
-              <ul class="right">
-                <li>
-									<i class="material-icons menuIcon">book</i>
-									<span class="userText" id="t_manual"></span>
-								</li>
-                <li>
-									<i class="material-icons menuIcon">translate</i>
-									<span class="userText" id="t_openaeroLanguage"></span>
-								</li>
-                                <li>
-									<i class="material-icons menuIcon">multiline_chart</i>
-									<span class="userText" id="t_arestiSystem"></span>
-								</li>
-
-								<li>
-									<i class="material-icons menuIcon">explore</i>
-									<span class="userText" id="t_freeKnownGuidancePower"></span>
-								</li>
-								<li>
-									<i class="material-icons menuIcon">explore</i>
-									<span class="userText" id="t_freeKnownGuidanceGlider"></span>
-								</li>
-
-                                <li>
-									<i class="material-icons menuIcon">feedback</i>
-									<a class="userText" id="t_feedback" href="https://github.com/OpenAero/main/wiki/Feedback" target="_blank"></a>
-								</li>
-                <li>
-									<i class="material-icons menuIcon">info</i>
-									<span class="userText" id="t_about"></span>
-								</li>
-              </ul>
-            </li>
-          </ul>
-          <span id="t_finalizeSequence" class="textButton userText"></span>
-        </div>
-        <div class="clearBoth"></div>
-        <!-- Sequence text -->
-        <div id="sequenceTextContainer" class="disableFUdesigner">
-          <div id="sequence_text" contenteditable="true" spellcheck="false" autocapitalize="off" class="lock" tabIndex="-1"></div>
-        </div>
-        <!-- fu_figures is used when saving from Free Unknown designer -->
-        <input type="hidden" id="fu_figures" value="" tabIndex="-1">
-        <!-- undo/redo buttons -->
-        <div id="undoRedo">
-          <div id="undo" class="undoRedoButton navbutton"><i class="material-icons disabled">undo</i></div>
-          <div id="redo" class="undoRedoButton navbutton"><i class="material-icons disabled">redo</i></div>
-        </div>
-      </div>
-      <!-- main sequence area -->
-      <div id="main">
-        <!-- Figure selector -->
-        <div id="figureSelector">
-          <div class="info" id="manual.html_the_figure_chooser">
-            <i class="material-icons info">info</i>
-          </div>
-          <div class="clearBoth"></div>
-          <div>
-            <div id="figureSelectorClose">
-              <i class="material-icons navbutton" id="hideFigureSelector"></i>
+        <!-- Top block -->
+        <div id="topBlock">
+            <!-- menu hamburger icon -->
+            <div id="hamburgerMenu">
+                <i class="material-icons">menu</i>
             </div>
-            <label id="hideIllegalFigures" class="disableFUdesigner">
-              <span class="userText" id="t_hideIllegalFigures"></span>
-              <input type="checkbox" id="hideIllegal" class="material-switch-input" checked="true" tabIndex="-1">
-              <span class="material-switch"></span>
-            </label>
-            <div id="figureSelectorOptionsDiv" class="form-group disableFUdesigner"></div>
-            <div id="figureSelectorGroupDiv" class="form-group">
-              <select id="figureGroup" tabIndex="-1"></select><i class="bar"></i>
-              <!--
-              <div id="t_switchQueue" class="flatTextButton userText disableFUdesigner"></div>
-              -->
-            </div>
-          </div>
-          <table id="figureChooserColumns">
-            <tr>
-              <td>1</td>
-              <td>2</td>
-              <td>3</td>
-              <td>4</td>
-            </tr>
-          </table>
-          <div id="figureChooser">
-            <table id="figureChooserTable"></table>
-          </div>
-        </div>
-				<div id="leftBlockTabSelector" class="tabSelector">
-					<ul>
-						<li id="tab-sequenceInfo" class="activeTab disableFUdesigner">
-							<span class="userText" id="t_sequenceInfo"></span>
-						</li>
-						<li id="tab-figureInfo" class="inactiveTab lock">
-							<span class="userText" id="t_figureEditor"></span>
-						</li>
-						<li id="tab-svgContainer" class="inactiveTab noDisplay">
-							<span class="userText" id="t_sequenceTab"></span>
-						</li>
-						<li id="tab-fuFigures" class="inactiveTab noDisplay">
-							<span class="userText" id="t_fuFiguresTab"></span>
-						</li>
-					</ul>
-				</div>
-        <!-- leftBlockContainer is used only to display scrollbar -->
-        <div id="leftBlockContainer">
-          <!-- Left main block -->
-          <div id="leftBlock">
-            <div id="figureString" class="noDisplay form-group">
-              <input type="text" id="figureStringInput" autocapitalize="off">
-              <label class="userText control-label" id="t_figureString" for="input"></label><i class="bar"></i>
+            <div id="t_locked" class="userText hidden"></div>
+            <!-- Menu -->
+            <div id="mainMenu">
+                <ul id="menu">
+                    <!-- File menu -->
+                    <li id="menuFile">
+                        <i class="material-icons menuIcon">save</i>
+                        <span class="userText" id="t_file"></span>
+                        <ul id="menuFileUl">
+                            <li class="fileOpening menuFileItem">
+                                <i class="material-icons menuIcon">file_download</i>
+                                <div class="openSequence">
+                                    <span class="userText" id="t_openSequence"></span>
+                                    <form id="fileForm">
+                                        <input type="file" id="file" size=1>
+                                    </form>
+                                </div>
+                            </li>
+                            <li class="divider menuFileItem">
+                                <i class="material-icons menuIcon">link</i>
+                                <span class="userText" id="t_openSequenceLink"></span>
+                            </li>
+                            <li class="divider menuFileItem noDisplay">
+                                <i class="material-icons menuIcon">qr_code_2</i>
+                                <span class="userText" id="t_scanQRcode"></span>
+                            </li>
+                            <li class="divider menuFileItem">
+                                <i class="material-icons menuIcon">clear</i>
+                                <span class="userText" id="t_clearSequence"></span>
+                            </li>
+                            <li class="menuFileItem">
+                                <i class="material-icons menuIcon">save</i>
+                                <span class="userText" id="t_saveSequence"></span>
+                            </li>
+                            <li class="menuFileItem">
+                                <i class="material-icons menuIcon">email</i>
+                                <a class="userText" id="t_emailSequence" target="_blank"></a>
+                            </li>
+                            <li class="menuFileItem noDisplay">
+                                <i class="material-icons menuIcon">file_upload</i>
+                                <span class="userText" id="t_saveShareSequence"></span>
+                            </li>
+                            <li class="menuFileItem">
+                                <i class="material-icons menuIcon">link</i>
+                                <span class="userText" id="t_saveAsLink"></span>
+                            </li>
+                            <li class="divider menuFileItem">
+                                <i class="material-icons menuIcon">qr_code_2</i>
+                                <span class="userText" id="t_qrCode"></span>
+                            </li>
+                            <li id="exitDesigner" class="menuFileItem">
+                                <i class="material-icons menuIcon">cancel</i>
+                                <span class="userText" id="t_exitDesigner"></span>
+                            </li>
+                            <li class="divider menuFileItem disableFUdesigner">
+                                <i class="material-icons menuIcon">archive</i>
+                                <span class="userText disableFUdesigner" id="t_saveFigsSeparate"></span>
+                            </li>
+                            <li class="menuFileItem disableFUdesigner">
+                                <i class="material-icons menuIcon">print</i>
+                                <span class="userText" id="t_printSaveForms"></span>
+                            </li>
+                        </ul>
+                    </li>
+                    <!-- View menu -->
+                    <li id="menuView" class="disableFUdesigner">
+                        <i class="material-icons menuIcon">view_quilt</i>
+                        <span class="userText" id="t_view"></span>
+                        <ul>
+                            <li>
+                                <i class="material-icons menuIcon">view_list</i>
+                                <span class="userText" id="t_formA"></span>
+                            </li>
+                            <li>
+                                <i class="material-icons menuIcon" style="transform: rotate(180deg); transform-origin: 50%;">forward</i>
+                                <span class="userText" id="t_formB"></span>
+                            </li>
+                            <li>
+                                <i class="material-icons menuIcon">forward</i>
+                                <span class="userText" id="t_formC"></span>
+                            </li>
+                            <li>
+                                <i class="material-icons menuIcon">view_module</i>
+                                <span class="userText" id="t_figsInGrid"></span>
+                            </li>
+                            <li class="divider">
+                                <i class="material-icons menuIcon">flight</i>
+                                <span class="userText" id="t_flyingMode"></span>
+                            </li>
+                            <li id="zoomMenu">
+                                <i class="material-icons menuIcon">zoom_in</i>
+                                <span class="userText" id="t_zoom"></span>
+                                <span>
+                                    <i id="zoomMin" class="material-icons">remove</i>
+                                    <span id="zoom">100%</span>
+                                    <i id="zoomPlus" class="material-icons">add</i>
+                                </span>
+                            </li>
+                        </ul>
+                    </li>
+                    <!-- Sequence menu -->
+                    <li id="menuSequence" class="disableFUdesigner">
+                        <i class="material-icons menuIcon">transform</i>
+                        <span class="userText" id="t_sequence"></span>
+                        <ul id="sequenceOptions">
+                            <li class="entryOption lock">
+                                <i class="material-icons menuIcon">compare_arrows</i>
+                                <span class="userText" id="t_upwindEntry"></span>
+                            </li>
+                            <li class="entryOption lock">
+                                <img class="material-icons menuIcon" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2ZXJzaW9uPSIxLjEiIHdpZHRoPSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBoZWlnaHQ9IjI0IiBmaWxsPSIjMDAwMDAwIj48ZGVmcyBpZD0iZGVmczQyMDYiPjxwYXRoIGlkPSJhIiBkPSJNMCAwaDI0djI0SDBWMHoiIC8+PC9kZWZzPjxjbGlwUGF0aCBpZD0iYiI+PHVzZSBpZD0idXNlNDIxMCIgeGxpbms6aHJlZj0iI2EiIG92ZXJmbG93PSJ2aXNpYmxlIiAvPjwvY2xpcFBhdGg+PHBhdGggaWQ9InBhdGg0MjIwIiBkPSJtIDUuOTksMTQgNy4wMSwwIDAsMiAtNy4wMSwwIDAsMyAtMy45OSwtNCAzLjk5LC00IDAsMyB6IiAvPjxwYXRoIGlkPSJwYXRoNDIxMiIgZD0ibSAxNC45OSwxMyAwLC0zIDcuMDEsMCAwLC0yIC03LjAxLDAgMCwtMyAtMy45OSw0IDMuOTksNCB6IiAvPjwvc3ZnPiAK">
+                                <span class="userText" id="t_downwindEntry"></span>
+                            </li>
+                            <li class="entryOption lock">
+                                <i class="material-icons menuIcon">arrow_downward</i>
+                                <span class="userText" id="t_xBoxEntry"></span>
+                            </li>
+                            <li class="entryOption lock">
+                                <i class="material-icons menuIcon">arrow_upward</i>
+                                <span class="userText" id="t_xBoxEntryAway"></span>
+                            </li>
+                            <li class="lock divider">
+                                <i class="material-icons menuIcon" style="transform: rotate(180deg)">redo</i>
+                                <span class="userText" id="t_flipYAxis"></span>
+                            </li>
+                            <li class="lock">
+                                <i class="material-icons menuIcon">border_clear</i>
+                                <span class="userText" id="t_clearPositioning"></span>
+                            </li>
+                            <li class="lock divider">
+                                <i class="material-icons menuIcon">transform</i>
+                                <span class="userText" id="t_separateFigures"></span>
+                            </li>
+                            <li class="divider">
+                                <i class="material-icons menuIcon">playlist_add_check</i>
+                                <span class="userText" id="t_checkSequence"></span>
+                            </li>
+                            <li id="lockSequence">
+                                <i class="material-icons menuIcon">lock_outline</i>
+                                <span class="userText" id="t_lockSequence"></span>
+                            </li>
+                            <li id="unlockSequence" class="noDisplay">
+                                <i class="material-icons menuIcon">lock_open</i>
+                                <span class="userText" id="t_unlockSequence"></span>
+                            </li>
+                        </ul>
+                    </li>
+                    <!-- Queue menu -->
+                    <li id="menuQueue" class="disableFUdesigner">
+                        <i class="material-icons menuIcon">queue</i>
+                        <span class="userText" id="t_queue"></span>
+                        <ul id="queueOptions">
+                            <li class="divider">
+                                <i class="material-icons menuIcon">view_module</i>
+                                <span class="userText" id="t_showQueue"></span>
+                            </li>
+                            <li>
+                                <i class="material-icons menuIcon">add_to_queue</i>
+                                <span class="userText" id="t_addToQueue"></span>
+                            </li>
+                            <li class="divider">
+                                <i class="material-icons menuIcon">queue</i>
+                                <span class="userText" id="t_addAllToQueue"></span>
+                            </li>
+                            <li class="divider">
+                                <i class="material-icons menuIcon">clear_all</i>
+                                <span class="userText" id="t_clearQueue"></span>
+                            </li>
+                            <li class="fileOpening">
+                                <i class="material-icons menuIcon">file_download</i>
+                                <div class="openFile">
+                                    <span class="userText" id="t_openQueueFile"></span>
+                                    <form id="queueForm">
+                                        <input type="file" id="queue" size=1>
+                                    </form>
+                                </div>
+                            </li>
+                            <li>
+                                <i class="material-icons menuIcon">save</i>
+                                <span class="userText" id="t_saveQueueFile"></span>
+                            </li>
+                        </ul>
+                    </li>
+                    <!-- Library menu -->
+                    <li id="menuLibrary" class="disableFUdesigner">
+                        <i class="material-icons menuIcon">library_books</i>
+                        <span class="userText" id="t_library"></span>
+                        <ul id="library" class="right"></ul>
+                    </li>
+                    <!-- Tools menu -->
+                    <li id="menuTools" class="disableFUdesigner">
+                        <i class="material-icons menuIcon">build</i>
+                        <span class="userText" id="t_tools"></span>
+                        <ul class="right">
+                            <li class="divider disableFUdesigner">
+                                <i class="material-icons menuIcon">create</i>
+                                <span class="userText lock" id="t_fuDesigner"></span>
+                            </li>
+                            <li>
+                                <i class="material-icons menuIcon">playlist_add_check</i>
+                                <span class="userText" id="t_checkMultipleSeq"></span>
+                            </li>
+                            <li>
+                                <i class="material-icons menuIcon">print</i>
+                                <span class="userText" id="t_printMultipleSeq"></span>
+                            </li>
+                            <li class="fileOpening divider">
+                                <div class="openFile">
+                                    <i class="material-icons menuIcon">playlist_add</i>
+                                    <span class="userText" id="t_importRulesFile"></span>
+                                    <form id="rulesFileForm">
+                                        <input type="file" id="rulesFile" size=1>
+                                    </form>
+                                </div>
+                            </li>
+                            <li id="settings" class="divider disableFUdesigner">
+                                <i class="material-icons menuIcon">settings</i>
+                                <span class="userText" id="t_settings"></span>
+                            </li>
+                            <li id="installDesktopApp" class="disableFUdesigner noDisplay">
+                                <i class="material-icons menuIcon">get_app</i>
+                                <span id="t_installApp" class="userText"></span>
+                            </li>
+                        </ul>
+                    </li>
+                    <!-- Help menu -->
+                    <li id="menuHelp">
+                        <i class="material-icons menuIcon">help</i>
+                        <span class="userText" id="t_help"></span>
+                        <ul class="right">
+                            <li>
+                                <i class="material-icons menuIcon">book</i>
+                                <span class="userText" id="t_manual"></span>
+                            </li>
+                            <li>
+                                <i class="material-icons menuIcon">translate</i>
+                                <span class="userText" id="t_openaeroLanguage"></span>
+                            </li>
+                            <li>
+                                <i class="material-icons menuIcon">multiline_chart</i>
+                                <span class="userText" id="t_arestiSystem"></span>
+                            </li>
+
+                            <li>
+                                <i class="material-icons menuIcon">explore</i>
+                                <span class="userText" id="t_freeKnownGuidancePower"></span>
+                            </li>
+                            <li>
+                                <i class="material-icons menuIcon">explore</i>
+                                <span class="userText" id="t_freeKnownGuidanceGlider"></span>
+                            </li>
+
+                            <li>
+                                <i class="material-icons menuIcon">feedback</i>
+                                <a class="userText" id="t_feedback" href="https://github.com/OpenAero/main/wiki/Feedback" target="_blank"></a>
+                            </li>
+                            <li>
+                                <i class="material-icons menuIcon">info</i>
+                                <span class="userText" id="t_about"></span>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+                <span id="t_finalizeSequence" class="textButton userText"></span>
             </div>
             <div class="clearBoth"></div>
-						<!-- Sequence info -->
-						<div id="sequenceInfo">
-							<div class="section">
-                <div class="item narrowRight">
-									<div class="form-group">
-                    <input type="text" id="pilot" maxlength="30" class="lock">
-                    <label class="control-label userText" id="t_pilot" for="input"></label><i class="bar"></i>
-									</div>
-									<div class="form-group">
-                    <select id="team" class="lock"></select>
-                    <label class="control-label userText" id="t_team" for="select"></label><i class="bar"></i>
-									</div>
-                </div>
-                <div class="item narrowRight">
-                  <input type="hidden" id="aircraft">
-									<div class="form-group">
-                    <input type="text" id="actype" maxlength="30" class="lock">
-                    <label class="control-label userText" id="t_actype" for="input"></label><i class="bar"></i>
-                  </div>
-                  <div class="form-group">
-                    <input type="text" id="acreg" maxlength="30" class="lock">
-                    <label class="control-label userText" id="t_registration" for="input"></label><i class="bar"></i>
-                  </div>
-                </div>
-							</div>
-							<div class="section expansion-panel expanded">
-								<span class="contentLabel" id="rulesLabel">
-									<i id="rulesActive" class="material-icons status"></i>
-									<span id="activeRules"></span>
-									<i class="material-icons expand-toggle">expand_more</i>
-								</span>
-                <div class="item">
-									<div class="form-group">
-	                  <select name="class" id="class" class="lock panelHeader">
-	                    <option value="powered" class="userText" id="t_powered" selected></option>
-	                    <option value="glider" class="userText" id="t_glider"></option>
-	                  </select>
-	                  <label class="control-label userText" id="t_class" for="select"></label><i class="bar"></i>
-	                </div>
-	                <div class="form-group combo">
-	                  <input type="text" id="rules" maxlength="30" autocomplete="off" autocorrect="off" spellcheck="false" class="lock panelHeader">
-	                  <label class="control-label userText" id="t_rules" for="input"></label><i class="bar"></i>
-	                  <ul id="rulesList"></ul>
-	                </div>
-	              </div>
-	              <div class="item">
-	                <div class="form-group combo">
-	                  <input type="text" id="category" maxlength="30" autocomplete="off" autocorrect="off" spellcheck="false" class="lock panelHeader">
-	                  <label class="control-label userText" id="t_category" for="input"></label>
-	                  <i class="bar"></i>
-	                  <ul id="categoryList"></ul>
-	                </div>
-	                <div class="form-group combo">
-	                  <input type="text" id="program" maxlength="30" autocomplete="off" autocorrect="off" spellcheck="false" class="lock panelHeader">
-	                  <label class="control-label userText" id="t_programme" for="input"></label>
-	                  <i class="bar"></i>
-	                  <ul id="programList"></ul>
-	                </div>
-	              </div>
-                <div class="item">
-                  <span class="userText flatTextButton noDisplay" id="t_referenceSequence"></span>
-                </div>
-                <div class="item">
-									<div class="form-group combo">
-	                  <input type="number" name="positioning" id="positioning" maxlength="4" autocomplete="off" class="lock">
-	                  <label class="control-label userText" id="t_positioning" for="input"></label><i class="bar"></i>
-                  </div>
-									<div id="harmonyField" class="hidden form-group combo">
-	                  <input type="number" name="harmony" id="harmony" maxlength="4" autocomplete="off" class="lock">
-	                  <label class="control-label userText" id="t_harmony" for="input"></label><i class="bar"></i>
-	                </div>
-                </div>
-              </div>
-							<div id="contest" class="section expansion-panel expanded">
-								<span class="contentLabel" id="contestLabel">
-									<i id="copyContest" class="material-icons button">content_copy</i>
-									<i id="pasteContest" class="material-icons button">content_paste</i>
-									<i id="lockContest" class="material-icons button">lock_outline</i>
-									<span id="activeContest"></span>
-									<i class="material-icons expand-toggle">expand_more</i>
-								</span>
-                <div class="item narrowRight">
-									<div class="form-group">
-	                  <input type="text" id="location" maxlength="30" class="lock panelHeader">
-	                  <label class="control-label userText" id="t_location" for="input"></label><i class="bar"></i>
-	                </div>
-									<div class="form-group">
-	                  <input type="text" id="date" maxlength="30" class="lock panelHeader">
-	                  <label class="control-label userText" id="t_date" for="input"></label><i class="bar"></i>
-	                </div>
-                </div>
-                <div class="item">
-                  <span>
-                    <span id="t_chooseLogo" class="userText flatTextButton"></span>
-                  </span>
-                  <input type="hidden" id="logo">
-                  <span id="activeLogo">
-										<i id="removeLogo" class="material-icons button noDisplay">close</i>
-                    <span id="logoImage" class="noDisplay"></span>
-                  </span>
-                </div>
-                <div class="clearSpace"></div>
-                <div id="notesItem" class="item">
-									<label id="notesHeader">
-										<span class="userText" id="t_notes"></span>
-										<input type="checkbox" id="printNotes" class="material-switch-input">
-										<span class="material-switch"></span>
-									</label>
-									<div class="form-group">
-	                  <textarea name="notes" id="notes" rows="1" class="lock"></textarea>
-	                  <i class="bar"></i>
-	                </div>
-	              </div>
-                <div class="item">
-									<div>
-										<span class="userText" id="t_fileName"></span>
-									</div>
-									<span id="fileName"></span>
-	              </div>
-                <input type="hidden" id="oa_version" tabIndex="-1">
-                <input type="hidden" id="default_view" tabIndex="-1">
-                <input type="hidden" id="lock_sequence" tabIndex="-1">
-                <input type="hidden" id="pilot_id" tabIndex="-1">
-	              <input type="hidden" id="flight_nb" tabIndex="-1">
-              </div>
-						</div>
-						<!-- Figure Editor -->
-						<div id="figureInfo" class="section hidden">
-							<div class="boxTitle">
-								<span id="figureHeader"></span>
-								<span class="info" id="manual.html_adding_a_figure">
-									<i class="material-icons info">info</i>
-								</span>
-							</div>
-							<!-- sub sequence direction -->
-							<div id="subSequenceDirection" class="divider noDisplay">
-								<div class="form-group">
-									<div class="contentLabel userText" id="t_subSequenceDirection"></div>
-									<select id="subSequenceDirections">
-										<option class="userText disableFUdesigner" value="//" id="t_sameAsBefore"></option>
-										<option class="userText" value="eu" id="t_upwind"></option>
-										<option class="userText" value="ed" id="t_downwind"></option>
-										<option class="userText" value="ej" id="t_xBox"></option>
-										<option class="userText" value="eja" id="t_xBoxAway"></option>
-									</select>
-									<i class="bar"></i>
-								</div>
-							</div>
-							<!-- figure box and option buttons -->
-							<div id="FUfigOptionsDisabled">
-								<span class="userText" id="t_FUfigOptionsDisabled"></span>
-							</div>
-							<div id="fuSelectFigureFirst" class="noDisplay">
-								<span class="userText" id="t_fuSelectFigureFirst"></span>
-							</div>
-							<div id="figureInfoTop">
-								<div id="figureOptions">
-									<div class="disableFUdesigner">
-										<div id="subSequence" class="button"></div>
-										<div id="flipYAxis" class="button"></div>
-										<div id="deleteFig" class="button"><i class="material-icons">delete</i></div>
-										<div class="clearSpace"></div>
-									</div>
-									<div>
-										<div id="switchFirstRoll" class="button disableFUfig"></div>
-										<div id="switchY" class="button"></div>
-										<div id="switchX" class="button"></div>
-										<div class="clearSpace"></div>
-									</div>
-									<div class="disableFUdesigner">
-										<div id="magMin" class="button"><i class="material-icons">zoom_out</i></div>
-										<input type="number" name="scale" id="scale" value="0">
-										<div id="magPlus" class="button"><i class="material-icons">zoom_in</i></div>
-										<div class="clearSpace"></div>
-									</div>
-									<div class="disableFUdesigner">
-										<div id="moveForward" class="button"></div>
-										<div id="straightLine" class="button"></div>     
-										<div id="curvedLine" class="button"></div>
-										<div class="clearBoth"></div>
-										<!-- IMPORTANT : keep following div and span attached -->
-										<div id="moveXCont"><span class="material-icons">arrow_forward</span>
-											<span id="moveX" class="plusMin"></span>
-										</div>
-										<div class="clearBoth"></div>
-										<div id="moveYCont">
-											<span class="material-icons">arrow_downward</span>
-											<span id="moveY" class="plusMin"></span>
-										</div>
-									<div class="clearSpace"></div>
-									</div>
-								</div>
-								<div id="selectedFigure">
-									<svg xmlns="http://www.w3.org/2000/svg" version="1.2" baseProfile="tiny" id="selectedFigureSvg"></svg>
-									<div id="addFigureText">
-                    <div id="t_addFigureText" class="userText"></div>
-                    <div class="material-icons">add_circle</div>
-                  </div>
-								</div>
-								<div id="unknownFigureChooser" class="form-group">
-									<select id="unknownFigure"></select>
-									<i class="bar"></i>
-								</div>
-							</div>
-							<div class="clearBoth divider hideNoFigure"></div>
-							<!-- entry and exit -->
-							<div id="entryExit" class="content divider">
-								<div class="contentLabel userText" id="t_entryExitAttExt"></div>
-								<span id="figEntryButton" class="button small disableFUfig ttRight"></span>
-								<span id="entryExt" class="plusMin"></span>
-								<span><img src="img/ee_ext-figure.png"></span>
-								<span id="exitExt" class="plusMin"></span>
-								<span id="figExitButton" class="button small disableFUfig"></span>
-							</div>
-							<!-- rolls -->
-							<div id="rollInfo">
-							</div>
-							<!-- comments -->
-							<div id="commentSection" class="content disableFUdesigner hideNoFigure">
-								<div>
-									<div class="form-group">
-	                  <textarea id="comments"></textarea>
-	                  <label class="control-label userText" id="t_comments" for="comments"></label>
-	                  <i class="bar"></i>
-	                </div>
-	                <span class="info" id="manual.html_figure_comments">
+            <!-- Sequence text -->
+            <div id="sequenceTextContainer" class="disableFUdesigner">
+                <div id="sequence_text" contenteditable="true" spellcheck="false" autocapitalize="off" class="lock" tabIndex="-1"></div>
+            </div>
+            <!-- fu_figures is used when saving from Free Unknown designer -->
+            <input type="hidden" id="fu_figures" value="" tabIndex="-1">
+            <!-- undo/redo buttons -->
+            <div id="undoRedo">
+                <div id="undo" class="undoRedoButton navbutton"><i class="material-icons disabled">undo</i></div>
+                <div id="redo" class="undoRedoButton navbutton"><i class="material-icons disabled">redo</i></div>
+            </div>
+        </div>
+        <!-- main sequence area -->
+        <div id="main">
+            <!-- Figure selector -->
+            <div id="figureSelector">
+                <div class="info" id="manual.html_the_figure_chooser">
                     <i class="material-icons info">info</i>
-                  </span>
-								</div>
-							</div>
-						</div>
-						<!-- Free Unknown figure chooser -->
-						<div id="fuFigures" class="section hidden noDisplay">
-							<table id="fuFiguresTable" draggable="false"></table>
-						</div>
-            <!-- Alerts -->
-            <div id="alerts" class="section"><div class="boxTitle userText" id="t_alerts"></div></div>
-            <div class="clearBoth"></div>
-            <div id="design"><span>Software & design by Ringo Massa</span></div>
-          </div>
-        </div>
-        <!-- Virtual keyboard for special characters -->
-        <div id="virtualKeyboard" class="noDisplay">
-          <table>
-            <tr>
-              <td>`</td>
-              <td>'</td>
-              <td>.</td>
-              <td>~</td>
-              <td>+</td>
-              <td>-</td>
-              <td>[</td>
-              <td>]</td>
-              <td>&lt;</td>
-              <td>&gt;</td>
-              <td>^</td>
-            </tr>
-          </table>
-        </div>
-				<!-- Grid info -->
-        <div id="gridInfo" class="expansion-panel draggablePanel disableFUdesigner">
-					<span class="contentLabel">
-	          <span id="t_gridInfo" class="userText"></span>
-	          <i class="material-icons expand-toggle">expand_more</i>
-	        </span>
-          <div id="gridInfoContents">
-            <div id="gridColumnsContainer">
-							<div>
-              <span class="userText" id="t_columns"></span>
-              <span class="form-group right">
-	              <select id="gridColumns">
-	                <option value="2">2</option>
-	                <option value="3">3</option>
-	                <option value="4">4</option>
-	                <option value="5" selected>5</option>
-	                <option value="6" class="notSmallMobile">6</option>
-	                <option value="7" class="notSmallMobile">7</option>
-	                <option value="8" class="notSmallMobile">8</option>
-	              </select>
-	              <i class="bar"></i>
-              </span>
-              </div>
-							<div>
-              <span class="userText" id="t_gridOrderBy"></span>
-              <span class="form-group right">
-								<select id="gridOrderBy">
-									<option class="userText" id="t_orderFigureNr" value="seqNr" selected></option>
-									<option class="userText" id="t_orderCountry" value="iocCountry"></option>
-									<option class="userText" id="t_orderLetter" value="unknownFigureLetter"></option>
-									<!-- <option class="userText" id="t_orderK" value="K"></option> -->
-								</select>
-	              <i class="bar"></i>
-              </span>
-              </div>
-						</div>
-            <div>
-              <table>
-                <tr>
-                  <td>
-                    <span class="info" id="manual_html_grid_system">
-                      <i class="material-icons info">info</i>
-                    </span>
-                  </td>
-                  <td colspan="3" class="userText" id="t_gridSpeed"></td>
-                </tr>
-                <tr>
-                  <td></td><td>L</td><td>N</td><td>H</td>
-                </tr>
-                <tr>
-                  <td class="userText" id="t_gridPosEntry"></td>
-                  <td id="gridEntryL"></td>
-                  <td id="gridEntryN"></td>
-                  <td id="gridEntryH"></td>
-                </tr>
-                <tr>
-                  <td class="userText" id="t_gridPosExit"></td>
-                  <td id="gridExitL"></td>
-                  <td id="gridExitN"></td>
-                  <td id="gridExitH"></td>
-                </tr>
-                <tr>
-                  <td class="userText" id="t_gridNegEntry"></td>
-                  <td id="gridEntryl"></td>
-                  <td id="gridEntryn"></td>
-                  <td id="gridEntryh"></td>
-                </tr>
-                <tr>
-                  <td class="userText" id="t_gridNegExit"></td>
-                  <td id="gridExitl"></td>
-                  <td id="gridExitn"></td>
-                  <td id="gridExith"></td>
-                </tr>
-                <tr>
-									<td class="userText" id="t_gridAdditionals"></td>
-									<td colspan="3" id="gridAdditionals"></td>
-                </tr>
-              </table>
-            </div>
-            <div class="flatTextButton userText" id="t_proposalsCreateGroups"></div>
-          </div>
-        </div>
-        <!-- end grid info -->
-        <!-- Container for the sequence svg -->
-        <div id="svgContainer" class="disableFUdesigner"></div>
-        <div id="svgContainerPlacing" class="noDisplay"></div>
-        <!-- Div containing Free Unknown subsequences in FU Designer -->
-        <div id="fuSequence" class="fuSequence">
-        </div>
-      </div>
-      <!-- Container for SVGs for the figure chooser -->
-      <div id="figureSvgContainer">
-        <svg xmlns="http://www.w3.org/2000/svg" version="1.2" baseProfile="tiny" id="figureChooserSvg"></svg>
-      </div>
-		</div>
-		<!-- overlay div for loading -->
-		<div id="loading">
-			<div>
-				<p><img src="img/favicons/favicon195.png"></p>
-				<p>OpenAero</p>
-				<!-- Continue option appears after 5 seconds -->
-				<p id="continueAfterLoading" style="opacity: 0;">
-					<span onmousedown="var el = document.getElementById ('loading');
-					el.parentNode.removeChild (el);">Continue</span>
-				</p>
-				<script type="text/javascript">
-					setTimeout(function(){
-						var el = document.getElementById ('continueAfterLoading');
-						if (el) el.removeAttribute ('style');
-					}, 5000);
-				</script>
-			</div>
-		</div>
-		<!-- overlay div for use with alertBox and loading -->
-		<div id="alertBoxOverlay" style="display:none;">
-			<!-- warn when javascript is disabled -->
-			<noscript>
-				You need a JavaScript-capable browser to use this software.
-				<a href="http://www.google.com/support/bin/answer.py?answer=23852&hl=en">
-					Click here for instructions
-				</a>
-				on how to enable JavaScript in your browser.
-			</noscript>
-		</div>
-		<!-- save dialog -->
-		<div id="saveDialog" class="boxbg noPrint fullscreen noDisplay">
-			<div class="box">
-				<span class="boxTitle userText" id="t_saveFileTitle"></span>
-				<div class="content" id="saveFileMessage"></div>
-				<div class="content noDisplay" id="saveFileAddSequenceLink">
-					<label>
-						<span class="userText" id="t_addSequenceLink"></span>
-						<input type="checkbox" id="addSequenceLink" class="material-switch-input" tabIndex="-1">
-						<span class="material-switch"></span>
-					</label>
-				</div>
-				<div class="content">
-          <span class="form-group">
-            <input type="text" value="" id="dlTextField">
-            <i class="bar"></i>
-            <span id="fileExt"></span>
-					</span>
-				</div>
-				<span class="textButton userText" id="t_saveFile"></span>
-				<span class="textButton userText close" id="t_cancelSave"></span>
-			</div>
-		</div>
-		<!-- iOS save dialog -->
-		<div id="iOSsaveDialog" class="boxbg noPrint fullscreen noDisplay">
-			<div class="box">
-				<span class="boxTitle userText" id="t_iOSsaveFileTitle"></span>
-				<div class="content">
-					<div class="userText" id="iOSsaveFileMessage"></div>
-					<a class="textButton userText" id="t_iOSsaveFile"></a>
-				</div>
-				<span class="textButton userText close" id="t_iOScancelSave"></span>
-			</div>
-		</div>
-		<!-- openSequenceLink dialog -->
-		<div id="openSequenceLink" class="boxbg noPrint fullscreen noDisplay">
-			<div class="box">
-				<span class="boxTitle userText" id="t_openSequenceLinkTitle"></span>
-				<div class="content userText" id="openSequenceLinkMessage"></div>
-				<div class="content">
-					<textarea id="openSequenceLinkUrl" spellcheck="false" autocapitalize="off"></textarea>
-				</div>
-				<span class="textButton userText" id="t_openSequenceLinkOpen"></span>
-				<span class="textButton userText close" id="t_openSequenceLinkCancel"></span>        
-			</div>
-		</div> 
-		<!-- print dialog -->
-		<div id="printDialog" class="boxbg noPrint fullscreen noDisplay">
-			<div class="box">
-				<span class="boxTitle">
-					<span class="userText" id="t_printDialog"></span>
-					<span id="manual.html_save_print" class="info">
-						<i class="material-icons info">info</i>
-					</span>
-				</span>
-				<div class="content">
-					<span class="userText" id="t_printExplain"></span>
-				</div>
-				<!-- print forms -->
-                <div class="content3cols content" id="printForms">
-                    <div id="sectionPrintPageSet" class="clearBoth">
-                        <label>
-                            <input type="checkbox" id="printPageSet" class="material-switch-input">
-                            <span class="material-switch left"></span>
-                            <span class="userText" id="t_printPageSet"></span>
-                        </label>
-                        <span class="form-group">
-                            <input id="printPageSetString" type="text" spellcheck="false" autocapitalize="characters" disabled /><i class="bar"></i>
-                        </span>
-                        <div id="printPageSetLayout" class="noDisplay"></div>
-                        <span class="userText noDisplay" id="t_printPageSetHidesFormSelectors"></span>
+                </div>
+                <div class="clearBoth"></div>
+                <div>
+                    <div id="figureSelectorClose">
+                        <i class="material-icons navbutton" id="hideFigureSelector"></i>
                     </div>
-                    <label>
-                        <input type="checkbox" id="printFormA" checked="true" class="material-switch-input">
-                        <span class="material-switch left"></span>
-                        <span class="userText" id="t_printFormA"></span>
+                    <label id="hideIllegalFigures" class="disableFUdesigner">
+                        <span class="userText" id="t_hideIllegalFigures"></span>
+                        <input type="checkbox" id="hideIllegal" class="material-switch-input" checked="true" tabIndex="-1">
+                        <span class="material-switch"></span>
                     </label>
-                    <div>
-                        <label class="clearNone">
-                            <input type="checkbox" id="printFormB" checked="true" class="material-switch-input">
-                            <span class="material-switch left"></span>
-                            <span class="userText" id="t_printFormB"></span>
-                        </label>
-                        <label class="clearNone">
-                            <input type="checkbox" id="printMiniFormAonB" checked="true" class="material-switch-input">
-                            <span class="material-switch left"></span>
-                            <span class="userText" id="t_printMiniFormAonB"></span>
-                        </label>
-                    </div>
-                    <div>
-                        <label class="clearNone">
-                            <input type="checkbox" id="printFormC" checked="true" class="material-switch-input">
-                            <span class="material-switch left"></span>
-                            <span class="userText" id="t_printFormC"></span>
-                        </label>
-                        <label class="clearNone">
-                            <input type="checkbox" id="printMiniFormAonC" class="material-switch-input">
-                            <span class="material-switch left"></span>
-                            <span class="userText" id="t_printMiniFormAonC"></span>
-                        </label>
-                    </div>
-                    <span id="formRL">
-                        <label>
-                            <input type="checkbox" id="printFormR" class="material-switch-input">
-                            <span class="material-switch left"></span>
-                            <span class="userText" id="t_printFormR"></span>
-                        </label>
-                        <label>
-                            <input type="checkbox" id="printFormL" class="material-switch-input">
-                            <span class="material-switch left"></span>
-                            <span class="userText" id="t_printFormL"></span>
-                        </label>
-                    </span>
-                    <div class="clearBoth">
-                        <label class="clearNone">
-                            <input type="checkbox" id="printFormGrid" class="material-switch-input">
-                            <span class="material-switch left"></span>
-                            <span class="userText" id="t_printFormGrid"></span>
-                        </label>
-                        <label class="clearNone">
-                            <input type="checkbox" id="formGridHeader" class="material-switch-input" checked>
-                            <span class="material-switch left"></span>
-                            <span class="userText" id="t_formGridSequenceInfo"></span>
-                        </label>
-                    </div>
-                    <div class="clearBoth">
-                        <label>
-                            <input type="checkbox" id="printFormPilotCards" class="material-switch-input">
-                            <span class="material-switch left"></span>
-                            <span class="userText" id="t_printPilotCards"></span>
-                        </label>
-                    </div>
-                    <div id="pilotCardLayout" class="folded">
-                        <div id="pilotCardPercent" class="pilotCardLayout active">
-                            <div class="pilotCard">
-                                <img id="pilotCardPercentImage" src="img/PilotCard.svg">
-                                <div class="pilotCardLetter"></div>
-                            </div>
-                            <span><input type="number" step="10" value="60" max="100" id="pilotCardPercentValue">%</span>
-                        </div>
-                        <div id="pilotCard2" class="pilotCardLayout">
-                            <div class="pilotCard">
-                                <img src="img/PilotCard.svg">
-                                <div class="pilotCardLetter"></div>
-                            </div>
-                            <div class="pilotCard">
-                                <img src="img/PilotCard.svg">
-                                <div class="pilotCardLetter"></div>
-                            </div>
-                        </div>
-                        <div id="pilotCard4" class="pilotCardLayout">
-                            <div class="pilotCard">
-                                <img src="img/PilotCard.svg">
-                                <div class="pilotCardLetter"></div>
-                            </div>
-                            <div class="pilotCard">
-                                <img src="img/PilotCard.svg">
-                                <div class="pilotCardLetter"></div>
-                            </div>
-                            <div class="pilotCard">
-                                <img src="img/PilotCard.svg">
-                                <div class="pilotCardLetter"></div>
-                            </div>
-                            <div class="pilotCard">
-                                <img src="img/PilotCard.svg">
-                                <div class="pilotCardLetter"></div>
-                            </div>
-                        </div>
-                        <div id="t_pilotCardExplain" class="userText"></div>
+                    <div id="figureSelectorOptionsDiv" class="form-group disableFUdesigner"></div>
+                    <div id="figureSelectorGroupDiv" class="form-group">
+                        <select id="figureGroup" tabIndex="-1"></select><i class="bar"></i>
+                        <!--
+                        <div id="t_switchQueue" class="flatTextButton userText disableFUdesigner"></div>
+                        -->
                     </div>
                 </div>
-				<!-- end print forms -->
-				<!-- print options -->
-				<div class="content3cols content" id="printOptions">
-					<div class="divider">
-						<label>
-							<span class="userText" id="t_printSF"></span>
-							<input type="checkbox" id="printSF" class="material-switch-input" checked="checked">
-							<span class="material-switch"></span>
-						</label>
-						<label>
-							<span class="userText" id="t_printString"></span>
-							<input type="checkbox" id="printString" class="material-switch-input" checked="checked">
-							<span class="material-switch"></span>
-						</label>
-						<label>
-							<span class="userText" id="t_printCheck"></span>
-							<input type="checkbox" id="printCheck" class="material-switch-input">
-							<span class="material-switch"></span>
-						</label>
-						<label class="divider" id="notesSelection">
-							<span class="userText control-label" id="t_printNotes"></span>
-							<input type="checkbox" id="printNotesCopy" class="material-switch-input">
-							<span class="material-switch"></span>
-						</label>
-						<label>
-							<span class="userText" id="t_iacForms"></span>
-							<input type="checkbox" id="iacForms" class="material-switch-input">
-							<span class="material-switch"></span>
-						</label>
-						<label>
-							<span class="userText" id="t_blackWhite"></span>
-							<input type="checkbox" id="blackWhite" class="material-switch-input">
-							<span class="material-switch"></span>
-						</label>
-						<label>
-							<span class="userText" id="t_inverseForms"></span>
-							<input type="checkbox" id="inverseForms" class="material-switch-input">
-							<span class="material-switch"></span>
-						</label>
-						<label>
-							<span class="userText" id="t_maxScaling"></span>
-							<span id="maxScalingSpan" class="form-group">
-								<input type="number" step="1" min="100" value="300" id="maxScaling"><i class="bar"></i>
-							</span>
-						</label>
-					</div>
-					<div class="divider">
-						<div class="expansion-panel" id="saveImageVariables">
-							<span class="contentLabel">
-                <span class="userText" id="t_saveImageVariables"></span>
-                <i class="material-icons expand-toggle">expand_more</i>
-              </span>
-							<div>
-								<label>
-									<span class="userText" id="t_imageWidth"></span>
-									<span class="form-group">
-                    <input type="number" step="1" value="800" id="imageWidth">
+                <table id="figureChooserColumns">
+                    <tr>
+                        <td>1</td>
+                        <td>2</td>
+                        <td>3</td>
+                        <td>4</td>
+                    </tr>
+                </table>
+                <div id="figureChooser">
+                    <table id="figureChooserTable"></table>
+                </div>
+            </div>
+            <div id="leftBlockTabSelector" class="tabSelector">
+                <ul>
+                    <li id="tab-sequenceInfo" class="activeTab disableFUdesigner">
+                        <span class="userText" id="t_sequenceInfo"></span>
+                    </li>
+                    <li id="tab-figureInfo" class="inactiveTab lock">
+                        <span class="userText" id="t_figureEditor"></span>
+                    </li>
+                    <li id="tab-svgContainer" class="inactiveTab noDisplay">
+                        <span class="userText" id="t_sequenceTab"></span>
+                    </li>
+                    <li id="tab-fuFigures" class="inactiveTab noDisplay">
+                        <span class="userText" id="t_fuFiguresTab"></span>
+                    </li>
+                </ul>
+            </div>
+            <!-- leftBlockContainer is used only to display scrollbar -->
+            <div id="leftBlockContainer">
+                <!-- Left main block -->
+                <div id="leftBlock">
+                    <div id="figureString" class="noDisplay form-group">
+                        <input type="text" id="figureStringInput" autocapitalize="off">
+                        <label class="userText control-label" id="t_figureString" for="input"></label><i class="bar"></i>
+                    </div>
+                    <div class="clearBoth"></div>
+                    <!-- Sequence info -->
+                    <div id="sequenceInfo">
+                        <div class="section">
+                            <div class="item narrowRight">
+                                <div class="form-group">
+                                    <input type="text" id="pilot" maxlength="30" class="lock">
+                                    <label class="control-label userText" id="t_pilot" for="input"></label><i class="bar"></i>
+                                </div>
+                                <div class="form-group">
+                                    <select id="team" class="lock"></select>
+                                    <label class="control-label userText" id="t_team" for="select"></label><i class="bar"></i>
+                                </div>
+                            </div>
+                            <div class="item narrowRight">
+                                <input type="hidden" id="aircraft">
+                                <div class="form-group">
+                                    <input type="text" id="actype" maxlength="30" class="lock">
+                                    <label class="control-label userText" id="t_actype" for="input"></label><i class="bar"></i>
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" id="acreg" maxlength="30" class="lock">
+                                    <label class="control-label userText" id="t_registration" for="input"></label><i class="bar"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="section expansion-panel expanded">
+                            <span class="contentLabel" id="rulesLabel">
+                                <i id="rulesActive" class="material-icons status"></i>
+                                <span id="activeRules"></span>
+                                <i class="material-icons expand-toggle">expand_more</i>
+                            </span>
+                            <div class="item">
+                                <div class="form-group">
+                                    <select name="class" id="class" class="lock panelHeader">
+                                        <option value="powered" class="userText" id="t_powered" selected></option>
+                                        <option value="glider" class="userText" id="t_glider"></option>
+                                    </select>
+                                    <label class="control-label userText" id="t_class" for="select"></label><i class="bar"></i>
+                                </div>
+                                <div class="form-group combo">
+                                    <input type="text" id="rules" maxlength="30" autocomplete="off" autocorrect="off" spellcheck="false" class="lock panelHeader">
+                                    <label class="control-label userText" id="t_rules" for="input"></label><i class="bar"></i>
+                                    <ul id="rulesList"></ul>
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="form-group combo">
+                                    <input type="text" id="category" maxlength="30" autocomplete="off" autocorrect="off" spellcheck="false" class="lock panelHeader">
+                                    <label class="control-label userText" id="t_category" for="input"></label>
+                                    <i class="bar"></i>
+                                    <ul id="categoryList"></ul>
+                                </div>
+                                <div class="form-group combo">
+                                    <input type="text" id="program" maxlength="30" autocomplete="off" autocorrect="off" spellcheck="false" class="lock panelHeader">
+                                    <label class="control-label userText" id="t_programme" for="input"></label>
+                                    <i class="bar"></i>
+                                    <ul id="programList"></ul>
+                                </div>
+                            </div>
+                            <div class="item">
+                                <span class="userText flatTextButton noDisplay" id="t_referenceSequence"></span>
+                            </div>
+                            <div class="item">
+                                <div class="form-group combo">
+                                    <input type="number" name="positioning" id="positioning" maxlength="4" autocomplete="off" class="lock">
+                                    <label class="control-label userText" id="t_positioning" for="input"></label><i class="bar"></i>
+                                </div>
+                                <div id="harmonyField" class="hidden form-group combo">
+                                    <input type="number" name="harmony" id="harmony" maxlength="4" autocomplete="off" class="lock">
+                                    <label class="control-label userText" id="t_harmony" for="input"></label><i class="bar"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="contest" class="section expansion-panel expanded">
+                            <span class="contentLabel" id="contestLabel">
+                                <i id="copyContest" class="material-icons button">content_copy</i>
+                                <i id="pasteContest" class="material-icons button">content_paste</i>
+                                <i id="lockContest" class="material-icons button">lock_outline</i>
+                                <span id="activeContest"></span>
+                                <i class="material-icons expand-toggle">expand_more</i>
+                            </span>
+                            <div class="item narrowRight">
+                                <div class="form-group">
+                                    <input type="text" id="location" maxlength="30" class="lock panelHeader">
+                                    <label class="control-label userText" id="t_location" for="input"></label><i class="bar"></i>
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" id="date" maxlength="30" class="lock panelHeader">
+                                    <label class="control-label userText" id="t_date" for="input"></label><i class="bar"></i>
+                                </div>
+                            </div>
+                            <div class="item">
+                                <span>
+                                    <span id="t_chooseLogo" class="userText flatTextButton"></span>
+                                </span>
+                                <input type="hidden" id="logo">
+                                <span id="activeLogo">
+                                    <i id="removeLogo" class="material-icons button noDisplay">close</i>
+                                    <span id="logoImage" class="noDisplay"></span>
+                                </span>
+                            </div>
+                            <div class="clearSpace"></div>
+                            <div id="notesItem" class="item">
+                                <label id="notesHeader">
+                                    <span class="userText" id="t_notes"></span>
+                                    <input type="checkbox" id="printNotes" class="material-switch-input">
+                                    <span class="material-switch"></span>
+                                </label>
+                                <div class="form-group">
+                                    <textarea name="notes" id="notes" rows="1" class="lock"></textarea>
+                                    <i class="bar"></i>
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div>
+                                    <span class="userText" id="t_fileName"></span>
+                                </div>
+                                <span id="fileName"></span>
+                            </div>
+                            <input type="hidden" id="oa_version" tabIndex="-1">
+                            <input type="hidden" id="default_view" tabIndex="-1">
+                            <input type="hidden" id="lock_sequence" tabIndex="-1">
+                            <input type="hidden" id="pilot_id" tabIndex="-1">
+                            <input type="hidden" id="flight_nb" tabIndex="-1">
+                        </div>
+                    </div>
+                    <!-- Figure Editor -->
+                    <div id="figureInfo" class="section hidden">
+                        <div class="boxTitle">
+                            <span id="figureHeader"></span>
+                            <span class="info" id="manual.html_adding_a_figure">
+                                <i class="material-icons info">info</i>
+                            </span>
+                        </div>
+                        <!-- sub sequence direction -->
+                        <div id="subSequenceDirection" class="divider noDisplay">
+                            <div class="form-group">
+                                <div class="contentLabel userText" id="t_subSequenceDirection"></div>
+                                <select id="subSequenceDirections">
+                                    <option class="userText disableFUdesigner" value="//" id="t_sameAsBefore"></option>
+                                    <option class="userText" value="eu" id="t_upwind"></option>
+                                    <option class="userText" value="ed" id="t_downwind"></option>
+                                    <option class="userText" value="ej" id="t_xBox"></option>
+                                    <option class="userText" value="eja" id="t_xBoxAway"></option>
+                                </select>
+                                <i class="bar"></i>
+                            </div>
+                        </div>
+                        <!-- figure box and option buttons -->
+                        <div id="FUfigOptionsDisabled">
+                            <span class="userText" id="t_FUfigOptionsDisabled"></span>
+                        </div>
+                        <div id="fuSelectFigureFirst" class="noDisplay">
+                            <span class="userText" id="t_fuSelectFigureFirst"></span>
+                        </div>
+                        <div id="figureInfoTop">
+                            <div id="figureOptions">
+                                <div class="disableFUdesigner">
+                                    <div id="subSequence" class="button"></div>
+                                    <div id="flipYAxis" class="button"></div>
+                                    <div id="deleteFig" class="button"><i class="material-icons">delete</i></div>
+                                    <div class="clearSpace"></div>
+                                </div>
+                                <div>
+                                    <div id="switchFirstRoll" class="button disableFUfig"></div>
+                                    <div id="switchY" class="button"></div>
+                                    <div id="switchX" class="button"></div>
+                                    <div class="clearSpace"></div>
+                                </div>
+                                <div class="disableFUdesigner">
+                                    <div id="magMin" class="button"><i class="material-icons">zoom_out</i></div>
+                                    <input type="number" name="scale" id="scale" value="0">
+                                    <div id="magPlus" class="button"><i class="material-icons">zoom_in</i></div>
+                                    <div class="clearSpace"></div>
+                                </div>
+                                <div class="disableFUdesigner">
+                                    <div id="moveForward" class="button"></div>
+                                    <div id="straightLine" class="button"></div>
+                                    <div id="curvedLine" class="button"></div>
+                                    <div class="clearBoth"></div>
+                                    <!-- IMPORTANT : keep following div and span attached -->
+                                    <div id="moveXCont">
+                                        <span class="material-icons">arrow_forward</span>
+                                        <span id="moveX" class="plusMin"></span>
+                                    </div>
+                                    <div class="clearBoth"></div>
+                                    <div id="moveYCont">
+                                        <span class="material-icons">arrow_downward</span>
+                                        <span id="moveY" class="plusMin"></span>
+                                    </div>
+                                    <div class="clearSpace"></div>
+                                </div>
+                            </div>
+                            <div id="selectedFigure">
+                                <svg xmlns="http://www.w3.org/2000/svg" version="1.2" baseProfile="tiny" id="selectedFigureSvg"></svg>
+                                <div id="addFigureText">
+                                    <div id="t_addFigureText" class="userText"></div>
+                                    <div class="material-icons">add_circle</div>
+                                </div>
+                            </div>
+                            <div id="unknownFigureChooser" class="form-group">
+                                <select id="unknownFigure"></select>
+                                <i class="bar"></i>
+                            </div>
+                        </div>
+                        <div class="clearBoth divider hideNoFigure"></div>
+                        <!-- entry and exit -->
+                        <div id="entryExit" class="content divider">
+                            <div class="contentLabel userText" id="t_entryExitAttExt"></div>
+                            <span id="figEntryButton" class="button small disableFUfig ttRight"></span>
+                            <span id="entryExt" class="plusMin"></span>
+                            <span><img src="img/ee_ext-figure.png"></span>
+                            <span id="exitExt" class="plusMin"></span>
+                            <span id="figExitButton" class="button small disableFUfig"></span>
+                        </div>
+                        <!-- rolls -->
+                        <div id="rollInfo">
+                        </div>
+                        <!-- comments -->
+                        <div id="commentSection" class="content disableFUdesigner hideNoFigure">
+                            <div>
+                                <div class="form-group">
+                                    <textarea id="comments"></textarea>
+                                    <label class="control-label userText" id="t_comments" for="comments"></label>
+                                    <i class="bar"></i>
+                                </div>
+                                <span class="info" id="manual.html_figure_comments">
+                                    <i class="material-icons info">info</i>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Free Unknown figure chooser -->
+                    <div id="fuFigures" class="section hidden noDisplay">
+                        <table id="fuFiguresTable" draggable="false"></table>
+                    </div>
+                    <!-- Alerts -->
+                    <div id="alerts" class="section"><div class="boxTitle userText" id="t_alerts"></div></div>
+                    <div class="clearBoth"></div>
+                    <div id="design"><span>Software & design by Ringo Massa</span></div>
+                </div>
+            </div>
+            <!-- Virtual keyboard for special characters -->
+            <div id="virtualKeyboard" class="noDisplay">
+                <table>
+                    <tr>
+                        <td>`</td>
+                        <td>'</td>
+                        <td>.</td>
+                        <td>~</td>
+                        <td>+</td>
+                        <td>-</td>
+                        <td>[</td>
+                        <td>]</td>
+                        <td>&lt;</td>
+                        <td>&gt;</td>
+                        <td>^</td>
+                    </tr>
+                </table>
+            </div>
+            <!-- Grid info -->
+            <div id="gridInfo" class="expansion-panel draggablePanel disableFUdesigner">
+                <span class="contentLabel">
+                    <span id="t_gridInfo" class="userText"></span>
+                    <i class="material-icons expand-toggle">expand_more</i>
+                </span>
+                <div id="gridInfoContents">
+                    <div id="gridColumnsContainer">
+                        <div>
+                            <span class="userText" id="t_columns"></span>
+                            <span class="form-group right">
+                                <select id="gridColumns">
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5" selected>5</option>
+                                    <option value="6" class="notSmallMobile">6</option>
+                                    <option value="7" class="notSmallMobile">7</option>
+                                    <option value="8" class="notSmallMobile">8</option>
+                                </select>
+                                <i class="bar"></i>
+                            </span>
+                        </div>
+                        <div>
+                            <span class="userText" id="t_gridOrderBy"></span>
+                            <span class="form-group right">
+                                <select id="gridOrderBy">
+                                    <option class="userText" id="t_orderFigureNr" value="seqNr" selected></option>
+                                    <option class="userText" id="t_orderCountry" value="iocCountry"></option>
+                                    <option class="userText" id="t_orderLetter" value="unknownFigureLetter"></option>
+                                    <!-- <option class="userText" id="t_orderK" value="K"></option> -->
+                                </select>
+                                <i class="bar"></i>
+                            </span>
+                        </div>
+                    </div>
+                    <div>
+                        <table>
+                            <tr>
+                                <td>
+                                    <span class="info" id="manual_html_grid_system">
+                                        <i class="material-icons info">info</i>
+                                    </span>
+                                </td>
+                                <td colspan="3" class="userText" id="t_gridSpeed"></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>L</td>
+                                <td>N</td>
+                                <td>H</td>
+                            </tr>
+                            <tr>
+                                <td class="userText" id="t_gridPosEntry"></td>
+                                <td id="gridEntryL"></td>
+                                <td id="gridEntryN"></td>
+                                <td id="gridEntryH"></td>
+                            </tr>
+                            <tr>
+                                <td class="userText" id="t_gridPosExit"></td>
+                                <td id="gridExitL"></td>
+                                <td id="gridExitN"></td>
+                                <td id="gridExitH"></td>
+                            </tr>
+                            <tr>
+                                <td class="userText" id="t_gridNegEntry"></td>
+                                <td id="gridEntryl"></td>
+                                <td id="gridEntryn"></td>
+                                <td id="gridEntryh"></td>
+                            </tr>
+                            <tr>
+                                <td class="userText" id="t_gridNegExit"></td>
+                                <td id="gridExitl"></td>
+                                <td id="gridExitn"></td>
+                                <td id="gridExith"></td>
+                            </tr>
+                            <tr>
+                                <td class="userText" id="t_gridAdditionals"></td>
+                                <td colspan="3" id="gridAdditionals"></td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="flatTextButton userText" id="t_proposalsCreateGroups"></div>
+                </div>
+            </div>
+            <!-- end grid info -->
+            <!-- Container for the sequence svg -->
+            <div id="svgContainer" class="disableFUdesigner"></div>
+            <div id="svgContainerPlacing" class="noDisplay"></div>
+            <!-- Div containing Free Unknown subsequences in FU Designer -->
+            <div id="fuSequence" class="fuSequence">
+            </div>
+        </div>
+        <!-- Container for SVGs for the figure chooser -->
+        <div id="figureSvgContainer">
+            <svg xmlns="http://www.w3.org/2000/svg" version="1.2" baseProfile="tiny" id="figureChooserSvg"></svg>
+        </div>
+    </div>
+    <!-- overlay div for loading -->
+    <div id="loading">
+        <div>
+            <p><img src="img/favicons/favicon195.png"></p>
+            <p>OpenAero</p>
+            <!-- Continue option appears after 5 seconds -->
+            <p id="continueAfterLoading" style="opacity: 0;">
+                <span onmousedown="var el = document.getElementById ('loading');
+					el.parentNode.removeChild (el);">Continue</span>
+            </p>
+            <script type="text/javascript">
+                setTimeout(function () {
+                    var el = document.getElementById('continueAfterLoading');
+                    if (el) el.removeAttribute('style');
+                }, 5000);
+            </script>
+        </div>
+    </div>
+    <!-- overlay div for use with alertBox and loading -->
+    <div id="alertBoxOverlay" style="display:none;">
+        <!-- warn when javascript is disabled -->
+        <noscript>
+            You need a JavaScript-capable browser to use this software.
+            <a href="http://www.google.com/support/bin/answer.py?answer=23852&hl=en">
+                Click here for instructions
+            </a>
+            on how to enable JavaScript in your browser.
+        </noscript>
+    </div>
+    <!-- save dialog -->
+    <div id="saveDialog" class="boxbg noPrint fullscreen noDisplay">
+        <div class="box">
+            <span class="boxTitle userText" id="t_saveFileTitle"></span>
+            <div class="content" id="saveFileMessage"></div>
+            <div class="content noDisplay" id="saveFileAddSequenceLink">
+                <label>
+                    <span class="userText" id="t_addSequenceLink"></span>
+                    <input type="checkbox" id="addSequenceLink" class="material-switch-input" tabIndex="-1">
+                    <span class="material-switch"></span>
+                </label>
+            </div>
+            <div class="content">
+                <span class="form-group">
+                    <input type="text" value="" id="dlTextField">
                     <i class="bar"></i>
-                  </span>
-								</label>
-								<label>
-									<span class="userText" id="t_imageHeight"></span>
-									<span class="form-group">
-                    <input type="number" step="1" value="1130" id="imageHeight">
-                    <i class="bar"></i>
-                  </span>
-								</label>
-								<label>
-									<span class="userText" id="t_pageSpacing"></span>
-									<span class="form-group">
-                    <input type="number" step="1" value="40" id="pageSpacing">
-                    <i class="bar"></i>
-                  </span>
-								</label>
-							</div>
-						</div>
-					</div>
-					<div class="expansion-panel" id="printMargins">
-						<span class="contentLabel">
-              <span class="userText" id="t_printMargins"></span>
-              <i class="material-icons expand-toggle">expand_more</i>
+                    <span id="fileExt"></span>
+                </span>
+            </div>
+            <span class="textButton userText" id="t_saveFile"></span>
+            <span class="textButton userText close" id="t_cancelSave"></span>
+        </div>
+    </div>
+    <!-- iOS save dialog -->
+    <div id="iOSsaveDialog" class="boxbg noPrint fullscreen noDisplay">
+        <div class="box">
+            <span class="boxTitle userText" id="t_iOSsaveFileTitle"></span>
+            <div class="content">
+                <div class="userText" id="iOSsaveFileMessage"></div>
+                <a class="textButton userText" id="t_iOSsaveFile"></a>
+            </div>
+            <span class="textButton userText close" id="t_iOScancelSave"></span>
+        </div>
+    </div>
+    <!-- openSequenceLink dialog -->
+    <div id="openSequenceLink" class="boxbg noPrint fullscreen noDisplay">
+        <div class="box">
+            <span class="boxTitle userText" id="t_openSequenceLinkTitle"></span>
+            <div class="content userText" id="openSequenceLinkMessage"></div>
+            <div class="content">
+                <textarea id="openSequenceLinkUrl" spellcheck="false" autocapitalize="off"></textarea>
+            </div>
+            <span class="textButton userText" id="t_openSequenceLinkOpen"></span>
+            <span class="textButton userText close" id="t_openSequenceLinkCancel"></span>
+        </div>
+    </div>
+    <!-- print dialog -->
+    <div id="printDialog" class="boxbg noPrint fullscreen noDisplay">
+        <div class="box">
+            <span class="boxTitle">
+                <span class="userText" id="t_printDialog"></span>
+                <span id="manual.html_save_print" class="info">
+                    <i class="material-icons info">info</i>
+                </span>
             </span>
-						<div>
-							<table>
-								<tr>
-									<td></td>
-									<td><input type="number" min="0" value="4" id="marginTop"></td>
-									<td></td>
-								</tr>
-								<tr>
-									<td><input type="number" min="0" value="4" id="marginLeft"></td>
-									<td>mm</td>
-									<td><input type="number" min="0" value="4" id="marginRight"></td>
-								</tr>
-								<tr>
-									<td></td>
-									<td><input type="number" min="0" value="4" id="marginBottom"></td>
-									<td></td>
-								</tr>
-							</table>
-						</div>
-					</div>
-				</div>
-				<!-- end print options -->
-				<!-- print multi -->
-				<div class="content3cols content" id="printMulti">
-					<label>
-						<span class="userText" id="t_showFileName"></span>
-						<input type="checkbox" id="showFileName" class="material-switch-input">
-						<span class="material-switch"></span>
-					</label>
-					<label>
-						<span class="userText" id="t_anonymousSequences"></span>
-						<input type="checkbox" id="anonymousSequences" class="material-switch-input">
-						<span class="material-switch"></span>
-					</label>
-					<label>
-						<span class="userText" id="t_printMultiOverrideRules"></span>
-						<span id="printMultiCurrentRules"></span>
-						<input type="checkbox" id="printMultiOverrideRules" class="material-switch-input" checked="checked">
-						<span class="material-switch"></span>
-					</label>
-					<span class="form-group">
-						<select id="multiLogo">
-							<option class="userText" id="t_multiOriginalLogo" value="original"></option>
-							<option class="userText" id="t_multiRemoveLogo" value="remove"></option>
-							<option class="userText" id="t_multiActiveLogo" value="active"></option>
-						</select>
-						<i class="bar"></i>
-					</span>
-					<div id="fileDropPrint" class="fileDrop">
-						<div id="fileDropPrintFiles"></div>
-						<form id="printMultiFileForm">
-							<input type="file" id="printMultiFiles" multiple>
-					    <label for="printMultiFiles" class="userText textButton" id="t_chooseFilesPrint"></label>
-						</form>
-					</div>
-				</div>
-				<!-- end print multi -->
-				<div class="clearBoth">
-					<span class="textButton userText" id="t_printSavePdf"></span>
-					<span class="textButton userText noDisplay" id="t_print"></span>
-					<span class="textButton userText noDisplay" id="t_savePdf"></span>
-					<span class="textButton userText" id="t_saveAsPNG"></span>
-					<span class="textButton userText" id="t_saveAsSVG"></span>
-					<span class="textButton userText close" id="t_cancelPrint"></span>
-				</div>
-			</div>
-		</div>
-		
-		<!-- check sequence -->
-		<div id="checkSequence" class="boxbg noPrint fullscreen noDisplay">
-			<div class="box">
-				<span class="boxTitle">
-					<span class="userText" id="t_checkSequenceResult"></span>
-				</span>
-				<div class="content" id="checkSequenceContent"></div>
-				<span class="textButton userText" id="t_checkSequenceOK"></span>
-				<span class="textButton userText" id="t_checkSequenceLog"></span>
-			</div>
-		</div>
-		<!-- end check sequence -->
-		
-		<!-- check multiple -->
-		<div id="checkMulti" class="boxbg noPrint fullscreen noDisplay">
-			<div class="box">
-				<span class="boxTitle">
-					<span class="userText" id="t_checkMulti"></span>
-				</span>
-				<div class="content">
-					<label>
-						<span class="userText" id="t_multiOverrideRules"></span>
-						<span id="multiCurrentRules"></span>
-						<input type="checkbox" id="multiOverrideRules" class="material-switch-input" checked="checked">
-						<span class="material-switch"></span>
-					</label>
-					<label>
-						<span class="userText" id="t_checkMultiUseReference"></span>
-						<input type="checkbox" id="multiUseReference" class="material-switch-input" checked="checked">
-						<span class="material-switch"></span>
-					</label>
-					<label>
-						<span class="userText" id="t_showFullLog"></span>
-						<input type="checkbox" id="multiFullLog" class="material-switch-input">
-						<span class="material-switch"></span>
-					</label>
-					<div id="fileDrop" class="fileDrop">
-						<div id="fileDropFiles"></div>
-						<form id="checkMultiFileForm">
-							<input type="file" id="checkMultiFiles" multiple>
-							<label for="checkMultiFiles" class="userText textButton" id="t_chooseFiles"></label>
-						</form>
-					</div>
-				</div>
-				<div class="textButton userText" id="t_checkSequences"></div>
-				<div class="textButton close userText" id="t_checkMultiClose"></div>
-			</div>
-		</div>
-		<!-- end check multiple -->
-
-		<!-- logo chooser -->
-		<div id="logoChooserContainer" class="boxbg noPrint fullscreen noDisplay">
-			<div class="box">
-				<span class="boxTitle">
-					<span id="t_logoChooserTitle" class="userText"></span>
-					<span class="info" id="manual_html_contest_information">
-						<i class="material-icons info">info</i>
-					</span>
-				</span>
-				<div class="content" id="chooseLogo">
-					<div id="fileDropLogo" class="fileDrop">
-						<form id="logoFileForm">
-							<input type="file" id="logoFile" accept="image/*">
-					    <label for="logoFile">+</label>
-						</form>
-					</div>
-				</div>
-				<div class="textButton close userText" id="t_logoChooserCancel"></div>
-			</div>
-		</div>
-
-		<!-- Settings -->
-		<div id="settingsDialog" class="boxbg noPrint fullscreen noDisplay">
-			<div class="box">
-				<span class="boxTitle">
-					<span class="userText" id="t_settingsTitle"></span>
-					<span class="info" id="manual.html_settings">
-						<i class="material-icons info">info</i>
-					</span>
-				</span>
-				<span class="tabSelector">
-					<ul>
-						<li id="tab-general" class="activeTab">
-							<span class="userText" id="t_general"></span>
-						</li>
-						<li id="tab-styling" class="inactiveTab">
-							<span class="userText" id="t_styling"></span>
-						</li>
-						<li id="tab-expert" class="inactiveTab">
-							<span class="userText" id="t_expert"></span>
-						</li>
-					</ul>
-				</span>
-				<!-- General settings -->
-				<div id="general">
-					<div class="content divider">
-						<span class="userText" id="t_language"></span>  
-						<span class="form-group right">
-							<select id="language"></select><i class="bar"></i>
-						</span>
-					</div>
-					<div id="smallMobileSetting" class="content divider">
-						<label>
-							<span class="userText" id="t_smallMobile"></span>
-							<input type="checkbox" id="smallMobile" class="material-switch-input">
-							<span class="material-switch"></span>
-						</label>
-					</div>
-					<div class="content divider">
-						<span class="userText" id="t_queueLabel"></span>
-						<span class="userText" id="t_queueColumns"></span>
-						<span class="form-group right">
-							<select id="queueColumns">
-								<option value="2">2</option>
-								<option value="3" selected>3</option>
-								<option value="4">4</option>
-							</select><i class="bar"></i>
-						</span>
-					</div>
-					<div class="content divider">
-						<span class="userText" id="t_gridView"></span>        
-					</div>
-					<div class="content divider">
-						<label>
-							<span class="userText" id="t_positionClearAuto"></span>
-							<input type="checkbox" id="positionClearAuto" class="material-switch-input" checked>
-							<span class="material-switch"></span>
-						</label>
-						<label>
-							<span class="userText" id="t_showHandles"></span>
-							<input type="checkbox" id="showHandles" class="material-switch-input" checked>
-							<span class="material-switch"></span>
-						</label>
-					</div>
-					<div class="content">
-						<span class="contentLabel userText" id="t_saveFigsSeparateTitle"></span>
-						<div class="clearBoth"></div>
-						<span>
-							<span class="userText" id="t_imageFormat"></span>
-							<input type="radio" name="saveFigsSeparateImageFormat" value="png" id="imageFormatPNG" checked>
-							<span class="userText" id="t_png"></span>
-							<input type="radio" name="saveFigsSeparateImageFormat" value="svg" id="imageFormatSVG">
-							<span class="userText" id="t_svg"></span>
-						</span>
-						<div class="clearBoth"></div>
-						<span>
-							<span class="userText" id="t_imageSize"></span>
-							<div class="form-group">
-                <input type="number" id="saveFigsSeparateWidth" value="600">
-                <i class="bar"></i>
-              </div>
-							X
-							<div class="form-group">
-                <input type="number" id="saveFigsSeparateHeight" value="600">
-                <i class="bar"></i>
-              </div>
-						</span>
-						<div class="clearBoth"></div>
-						<span>
-							<span class="userText" id="t_zipImageFilenamePattern"></span>
-							<div class="form-group">
-                <input type="text" id="zipImageFilenamePattern" autocapitalize="off">
-                <i class="bar"></i>
-              </div>
-						</span>
-					</div>
-				</div>
-				<!-- Styling settings -->
-				<div id="styling" class="hidden">
-					<div class="userText content divider" id="t_styleSettingsHeader"></div>
-					<div class="content divider">
-						<label>
-							<span class="userText" id="t_numberInCircle"></span>
-							<input type="checkbox" id="numberInCircle" class="material-switch-input">
-							<span class="material-switch"></span>
-						</label>
-					</div>
-					<div class="content">
-						<span>
-							<span class="userText" id="t_rollTextSize"></span>
-							<span class="form-group right">
-                <select id="rollFontSize">
-                  <option id="t_rollSmall" class="userText"></option>
-                  <option id="t_rollMedium" class="userText"></option>
-                  <option id="t_rollLarge" class="userText"></option>
-                </select><i class="bar"></i>
-							</span>
-						</span>
-					</div>
-					<div class="content">
-						<span>
-							<span class="userText" id="t_rollSymbolSize"></span>
-							<span class="form-group right">
-                <select id="rollSymbolSize">
-                  <option id="t_rollSymbolMedium" value="medium" selected class="userText"></option>
-                  <option id="t_rollSymbolLarge" value="large" class="userText"></option>
-                </select><i class="bar"></i>
-							</span>
-						</span>
-					</div>
-				</div>
-				<!-- Expert settings -->
-				<div id="expert" class="hidden">
-					<div class="content divider">
-						<label>
-							<span class="userText" id="t_nonArestiRolls"></span>
-							<input type="checkbox" id="nonArestiRolls" class="material-switch-input">
-							<span class="material-switch"></span>
-						</label>
-					</div>
-					<div class="content divider">
-						<span class="contentLabel userText" id="t_drawingStyles"></span>
-						<span>
-							<span class="userText" id="t_drawingStylesExplain"></span>
-							<span>
-								<div class="form-group">
-                  <select id="styles"></select>
-                  <i class="bar"></i>
+            <div class="content">
+                <span class="userText" id="t_printExplain"></span>
+            </div>
+            <!-- print forms -->
+            <div class="content3cols content" id="printForms">
+                <div id="sectionPrintPageSet" class="clearBoth">
+                    <label>
+                        <input type="checkbox" id="printPageSet" class="material-switch-input">
+                        <span class="material-switch left"></span>
+                        <span class="userText" id="t_printPageSet"></span>
+                    </label>
+                    <span class="form-group">
+                        <input id="printPageSetString" type="text" spellcheck="false" autocapitalize="characters" disabled /><i class="bar"></i>
+                    </span>
+                    <div id="printPageSetLayout" class="noDisplay"></div>
+                    <span class="userText noDisplay" id="t_printPageSetHidesFormSelectors"></span>
                 </div>
-								<div class="form-group">
-                  <input type="text" id="styleString" size="40" autocapitalize="off">
-                  <i class="bar"></i>
+                <label>
+                    <input type="checkbox" id="printFormA" checked="true" class="material-switch-input">
+                    <span class="material-switch left"></span>
+                    <span class="userText" id="t_printFormA"></span>
+                </label>
+                <div>
+                    <label class="clearNone">
+                        <input type="checkbox" id="printFormB" checked="true" class="material-switch-input">
+                        <span class="material-switch left"></span>
+                        <span class="userText" id="t_printFormB"></span>
+                    </label>
+                    <label class="clearNone">
+                        <input type="checkbox" id="printMiniFormAonB" checked="true" class="material-switch-input">
+                        <span class="material-switch left"></span>
+                        <span class="userText" id="t_printMiniFormAonB"></span>
+                    </label>
                 </div>
-							</span>
-							<span style="display:inline-block;">
-								<span class="textButton userText" id="t_changeStyle"></span>
-								<span class="textButton userText" id="t_resetStyle"></span>
-								<span class="textButton userText" id="t_resetStyleAll"></span>
-							</span>
-						</span>
-					</div>
-					<div class="content divider">
-						<label>
-							<span class="userText" id="t_newTurnPerspective"></span>
-							<input type="checkbox" id="newTurnPerspective" class="material-switch-input">
-							<span class="material-switch"></span>
-						</label>
-					</div>
-					<div class="content">
-						<span class="textButton userText" id="t_restoreDefaultSettings"></span>
-					</div>
-				</div>
-				<div class="textButton close userText" id="t_settingsClose"></div>
-			</div>
-		</div>
-		<!-- end Settings -->
-		
-		<!-- reference sequence dialog -->
-		<div id="referenceSequenceDialog" class="boxbg noPrint fullscreen noDisplay">
-			<div class="box">
-				<span class="boxTitle userText" id="t_referenceSequenceTitle"></span>
-				<div class="content">
-					<div class="userText" id="t_referenceSequenceExplain"></div>
-					<div class="userText noDisplay" id="t_referenceSequenceFixed"></div>
-					<textarea id="referenceSequenceString" spellcheck="false" autocapitalize="off"></textarea>
-					<div id="referenceSequenceAlerts"></div>
-					<div id="referenceSequenceSvgContainer">
-						<svg xmlns="http://www.w3.org/2000/svg" version="1.2" baseProfile="tiny" id="referenceSequenceSvg"></svg>
-					</div>
-				</div>
-				<div class="textButton close userText" id="t_referenceSequenceClose"></div>
-			</div>
-		</div>
-		<!-- end reference sequence -->
+                <div>
+                    <label class="clearNone">
+                        <input type="checkbox" id="printFormC" checked="true" class="material-switch-input">
+                        <span class="material-switch left"></span>
+                        <span class="userText" id="t_printFormC"></span>
+                    </label>
+                    <label class="clearNone">
+                        <input type="checkbox" id="printMiniFormAonC" class="material-switch-input">
+                        <span class="material-switch left"></span>
+                        <span class="userText" id="t_printMiniFormAonC"></span>
+                    </label>
+                </div>
+                <span id="formRL">
+                    <label>
+                        <input type="checkbox" id="printFormR" class="material-switch-input">
+                        <span class="material-switch left"></span>
+                        <span class="userText" id="t_printFormR"></span>
+                    </label>
+                    <label>
+                        <input type="checkbox" id="printFormL" class="material-switch-input">
+                        <span class="material-switch left"></span>
+                        <span class="userText" id="t_printFormL"></span>
+                    </label>
+                </span>
+                <div class="clearBoth">
+                    <label class="clearNone">
+                        <input type="checkbox" id="printFormGrid" class="material-switch-input">
+                        <span class="material-switch left"></span>
+                        <span class="userText" id="t_printFormGrid"></span>
+                    </label>
+                    <label class="clearNone">
+                        <input type="checkbox" id="formGridHeader" class="material-switch-input" checked>
+                        <span class="material-switch left"></span>
+                        <span class="userText" id="t_formGridSequenceInfo"></span>
+                    </label>
+                </div>
+                <div class="clearBoth">
+                    <label>
+                        <input type="checkbox" id="printFormPilotCards" class="material-switch-input">
+                        <span class="material-switch left"></span>
+                        <span class="userText" id="t_printPilotCards"></span>
+                    </label>
+                </div>
+                <div id="pilotCardLayout" class="folded">
+                    <div id="pilotCardPercent" class="pilotCardLayout active">
+                        <div class="pilotCard">
+                            <img id="pilotCardPercentImage" src="img/PilotCard.svg">
+                            <div class="pilotCardLetter"></div>
+                        </div>
+                        <span><input type="number" step="10" value="60" max="100" id="pilotCardPercentValue">%</span>
+                    </div>
+                    <div id="pilotCard2" class="pilotCardLayout">
+                        <div class="pilotCard">
+                            <img src="img/PilotCard.svg">
+                            <div class="pilotCardLetter"></div>
+                        </div>
+                        <div class="pilotCard">
+                            <img src="img/PilotCard.svg">
+                            <div class="pilotCardLetter"></div>
+                        </div>
+                    </div>
+                    <div id="pilotCard4" class="pilotCardLayout">
+                        <div class="pilotCard">
+                            <img src="img/PilotCard.svg">
+                            <div class="pilotCardLetter"></div>
+                        </div>
+                        <div class="pilotCard">
+                            <img src="img/PilotCard.svg">
+                            <div class="pilotCardLetter"></div>
+                        </div>
+                        <div class="pilotCard">
+                            <img src="img/PilotCard.svg">
+                            <div class="pilotCardLetter"></div>
+                        </div>
+                        <div class="pilotCard">
+                            <img src="img/PilotCard.svg">
+                            <div class="pilotCardLetter"></div>
+                        </div>
+                    </div>
+                    <div id="t_pilotCardExplain" class="userText"></div>
+                </div>
+            </div>
+            <!-- end print forms -->
+            <!-- print options -->
+            <div class="content3cols content" id="printOptions">
+                <div class="divider">
+                    <label>
+                        <span class="userText" id="t_printSF"></span>
+                        <input type="checkbox" id="printSF" class="material-switch-input" checked="checked">
+                        <span class="material-switch"></span>
+                    </label>
+                    <label>
+                        <span class="userText" id="t_printString"></span>
+                        <input type="checkbox" id="printString" class="material-switch-input" checked="checked">
+                        <span class="material-switch"></span>
+                    </label>
+                    <label>
+                        <span class="userText" id="t_printCheck"></span>
+                        <input type="checkbox" id="printCheck" class="material-switch-input">
+                        <span class="material-switch"></span>
+                    </label>
+                    <label class="divider" id="notesSelection">
+                        <span class="userText control-label" id="t_printNotes"></span>
+                        <input type="checkbox" id="printNotesCopy" class="material-switch-input">
+                        <span class="material-switch"></span>
+                    </label>
+                    <label>
+                        <span class="userText" id="t_iacForms"></span>
+                        <input type="checkbox" id="iacForms" class="material-switch-input">
+                        <span class="material-switch"></span>
+                    </label>
+                    <label>
+                        <span class="userText" id="t_blackWhite"></span>
+                        <input type="checkbox" id="blackWhite" class="material-switch-input">
+                        <span class="material-switch"></span>
+                    </label>
+                    <label>
+                        <span class="userText" id="t_inverseForms"></span>
+                        <input type="checkbox" id="inverseForms" class="material-switch-input">
+                        <span class="material-switch"></span>
+                    </label>
+                    <label>
+                        <span class="userText" id="t_maxScaling"></span>
+                        <span id="maxScalingSpan" class="form-group">
+                            <input type="number" step="1" min="100" value="300" id="maxScaling"><i class="bar"></i>
+                        </span>
+                    </label>
+                </div>
+                <div class="divider">
+                    <div class="expansion-panel" id="saveImageVariables">
+                        <span class="contentLabel">
+                            <span class="userText" id="t_saveImageVariables"></span>
+                            <i class="material-icons expand-toggle">expand_more</i>
+                        </span>
+                        <div>
+                            <label>
+                                <span class="userText" id="t_imageWidth"></span>
+                                <span class="form-group">
+                                    <input type="number" step="1" value="800" id="imageWidth">
+                                    <i class="bar"></i>
+                                </span>
+                            </label>
+                            <label>
+                                <span class="userText" id="t_imageHeight"></span>
+                                <span class="form-group">
+                                    <input type="number" step="1" value="1130" id="imageHeight">
+                                    <i class="bar"></i>
+                                </span>
+                            </label>
+                            <label>
+                                <span class="userText" id="t_pageSpacing"></span>
+                                <span class="form-group">
+                                    <input type="number" step="1" value="40" id="pageSpacing">
+                                    <i class="bar"></i>
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="expansion-panel" id="printMargins">
+                    <span class="contentLabel">
+                        <span class="userText" id="t_printMargins"></span>
+                        <i class="material-icons expand-toggle">expand_more</i>
+                    </span>
+                    <div>
+                        <table>
+                            <tr>
+                                <td></td>
+                                <td><input type="number" min="0" value="4" id="marginTop"></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td><input type="number" min="0" value="4" id="marginLeft"></td>
+                                <td>mm</td>
+                                <td><input type="number" min="0" value="4" id="marginRight"></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td><input type="number" min="0" value="4" id="marginBottom"></td>
+                                <td></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- end print options -->
+            <!-- print multi -->
+            <div class="content3cols content" id="printMulti">
+                <label>
+                    <span class="userText" id="t_showFileName"></span>
+                    <input type="checkbox" id="showFileName" class="material-switch-input">
+                    <span class="material-switch"></span>
+                </label>
+                <label>
+                    <span class="userText" id="t_anonymousSequences"></span>
+                    <input type="checkbox" id="anonymousSequences" class="material-switch-input">
+                    <span class="material-switch"></span>
+                </label>
+                <label>
+                    <span class="userText" id="t_printMultiOverrideRules"></span>
+                    <span id="printMultiCurrentRules"></span>
+                    <input type="checkbox" id="printMultiOverrideRules" class="material-switch-input" checked="checked">
+                    <span class="material-switch"></span>
+                </label>
+                <span class="form-group">
+                    <select id="multiLogo">
+                        <option class="userText" id="t_multiOriginalLogo" value="original"></option>
+                        <option class="userText" id="t_multiRemoveLogo" value="remove"></option>
+                        <option class="userText" id="t_multiActiveLogo" value="active"></option>
+                    </select>
+                    <i class="bar"></i>
+                </span>
+                <div id="fileDropPrint" class="fileDrop">
+                    <div id="fileDropPrintFiles"></div>
+                    <form id="printMultiFileForm">
+                        <input type="file" id="printMultiFiles" multiple>
+                        <label for="printMultiFiles" class="userText textButton" id="t_chooseFilesPrint"></label>
+                    </form>
+                </div>
+            </div>
+            <!-- end print multi -->
+            <div class="clearBoth">
+                <span class="textButton userText" id="t_printSavePdf"></span>
+                <span class="textButton userText noDisplay" id="t_print"></span>
+                <span class="textButton userText noDisplay" id="t_savePdf"></span>
+                <span class="textButton userText" id="t_saveAsPNG"></span>
+                <span class="textButton userText" id="t_saveAsSVG"></span>
+                <span class="textButton userText close" id="t_cancelPrint"></span>
+            </div>
+        </div>
+    </div>
 
-		<!-- figure combination proposals dialog -->
-		<div id="createProposalsDialog" class="boxbg noPrint fullscreen noDisplay">
-			<div class="box">
-				<span class="boxTitle userText" id="t_proposalsTitle"></span>
-				<div class="userText content" id="t_proposalsExplain"></div>
-				<!--<div class="content">
-					<span class="userText" id="t_proposalsFigureCount"></span>
-					<input type="number" min="1" value="7" id="proposalsFigureCount">
-				</div>-->
-				<div id="proposalsSequenceSvgContainer">
-					<svg xmlns="http://www.w3.org/2000/svg" version="1.2" baseProfile="tiny" id="proposalsSequenceSvg"></svg>
-				</div>
-				<pre class="userText content" id="proposals"></pre>
-				<div class="userText content" id="proposalsTotalK"></div>
-				<div class="userText content" id="t_proposalsIncomplete"></div>
-				<div class="textButton userText" id="t_proposalsCreate"></div>
-				<div class="textButton userText" id="t_proposalsToGrid"></div>        
-				<div class="textButton close userText" id="t_proposalsDialogClose"></div>
-			</div>
-		</div>
-		<!-- various message boxes. Put them after the dialogs so they are
-				 shown on top -->
-		<!-- infoBox -->
-		<div id="infoBox" class="boxbg noPrint fullscreen noDisplay">
-			<div class="box">
-				<span class="boxTitle" id="infoTitle"></span>
-				<div class="content" id="infoMessage"></div>
-			</div>
-		</div>
-		<!-- confirmBox -->
-		<div id="confirmBox" class="boxbg noPrint fullscreen noDisplay">
-			<div class="box">
-				<span class="boxTitle" id="confirmTitle"></span>
-				<div class="content" id="confirmMessage"></div>
-				<span class="textButton userText" id="t_confirmBoxYes"></span>
-				<span class="textButton userText" id="t_confirmBoxNo"></span>
-				</div>
-		</div>
-		<!-- alertBox, after confirmBox so it's shown on top -->
-		<div id="alertBox" class="boxbg noPrint fullscreen noDisplay">
-			<div class="box">
-				<span class="boxTitle" id="alertTitle"></span>
-				<div class="content" id="alertMessage"></div>
-				<span class="textButton userText close" id="t_closeAlert"></span>
-			</div>
-		</div>
-		<!-- helpBox -->
-		<div id="helpBox" class="boxbg noPrint fullscreen noDisplay">
-			<div class="box">
-				<span class="boxTitle" id="helpTitle"></span>
-				<i id="closeHelp" class="material-icons">close</i>
-				<div id="helpContent"><iframe></iframe></div>
-			 </div>
-		</div>
-		<!-- installApp -->
-		<div id="installApp" class="noPrint noDisplay">
-			<i id="closeInstallApp" class="material-icons">close</i>
-			<span id="t_getTheApp" class="userText"></span>
-			<a id="playStore" href="https://play.google.com/store/apps/details?id=net.openaero" target="_blank">
-				<img src="img/google-play-badge.png">
-			</a>
-			<a id="appStore" href="https://itunes.apple.com/us/app/openaero/id1343773321" target="_blank">
-				<img src="img/ios-appstore-badge.svg">
-			</a>
-			<a id="mobileInstallPWA" target="_blank">
-				<img src="img/pwa-badge.png">
-			</a>
-		</div>
+    <!-- check sequence -->
+    <div id="checkSequence" class="boxbg noPrint fullscreen noDisplay">
+        <div class="box">
+            <span class="boxTitle">
+                <span class="userText" id="t_checkSequenceResult"></span>
+            </span>
+            <div class="content" id="checkSequenceContent"></div>
+            <span class="textButton userText" id="t_checkSequenceOK"></span>
+            <span class="textButton userText" id="t_checkSequenceLog"></span>
+        </div>
+    </div>
+    <!-- end check sequence -->
+    <!-- check multiple -->
+    <div id="checkMulti" class="boxbg noPrint fullscreen noDisplay">
+        <div class="box">
+            <span class="boxTitle">
+                <span class="userText" id="t_checkMulti"></span>
+            </span>
+            <div class="content">
+                <label>
+                    <span class="userText" id="t_multiOverrideRules"></span>
+                    <span id="multiCurrentRules"></span>
+                    <input type="checkbox" id="multiOverrideRules" class="material-switch-input" checked="checked">
+                    <span class="material-switch"></span>
+                </label>
+                <label>
+                    <span class="userText" id="t_checkMultiUseReference"></span>
+                    <input type="checkbox" id="multiUseReference" class="material-switch-input" checked="checked">
+                    <span class="material-switch"></span>
+                </label>
+                <label>
+                    <span class="userText" id="t_showFullLog"></span>
+                    <input type="checkbox" id="multiFullLog" class="material-switch-input">
+                    <span class="material-switch"></span>
+                </label>
+                <div id="fileDrop" class="fileDrop">
+                    <div id="fileDropFiles"></div>
+                    <form id="checkMultiFileForm">
+                        <input type="file" id="checkMultiFiles" multiple>
+                        <label for="checkMultiFiles" class="userText textButton" id="t_chooseFiles"></label>
+                    </form>
+                </div>
+            </div>
+            <div class="textButton userText" id="t_checkSequences"></div>
+            <div class="textButton close userText" id="t_checkMultiClose"></div>
+        </div>
+    </div>
+    <!-- end check multiple -->
+    <!-- logo chooser -->
+    <div id="logoChooserContainer" class="boxbg noPrint fullscreen noDisplay">
+        <div class="box">
+            <span class="boxTitle">
+                <span id="t_logoChooserTitle" class="userText"></span>
+                <span class="info" id="manual_html_contest_information">
+                    <i class="material-icons info">info</i>
+                </span>
+            </span>
+            <div class="content" id="chooseLogo">
+                <div id="fileDropLogo" class="fileDrop">
+                    <form id="logoFileForm">
+                        <input type="file" id="logoFile" accept="image/*">
+                        <label for="logoFile">+</label>
+                    </form>
+                </div>
+            </div>
+            <div class="textButton close userText" id="t_logoChooserCancel"></div>
+        </div>
+    </div>
+
+    <!-- Settings -->
+    <div id="settingsDialog" class="boxbg noPrint fullscreen noDisplay">
+        <div class="box">
+            <span class="boxTitle">
+                <span class="userText" id="t_settingsTitle"></span>
+                <span class="info" id="manual.html_settings">
+                    <i class="material-icons info">info</i>
+                </span>
+            </span>
+            <span class="tabSelector">
+                <ul>
+                    <li id="tab-general" class="activeTab">
+                        <span class="userText" id="t_general"></span>
+                    </li>
+                    <li id="tab-styling" class="inactiveTab">
+                        <span class="userText" id="t_styling"></span>
+                    </li>
+                    <li id="tab-expert" class="inactiveTab">
+                        <span class="userText" id="t_expert"></span>
+                    </li>
+                </ul>
+            </span>
+            <!-- General settings -->
+            <div id="general">
+                <div class="content divider">
+                    <span class="userText" id="t_language"></span>
+                    <span class="form-group right">
+                        <select id="language"></select><i class="bar"></i>
+                    </span>
+                </div>
+                <div id="smallMobileSetting" class="content divider">
+                    <label>
+                        <span class="userText" id="t_smallMobile"></span>
+                        <input type="checkbox" id="smallMobile" class="material-switch-input">
+                        <span class="material-switch"></span>
+                    </label>
+                </div>
+                <div class="content divider">
+                    <span class="userText" id="t_queueLabel"></span>
+                    <span class="userText" id="t_queueColumns"></span>
+                    <span class="form-group right">
+                        <select id="queueColumns">
+                            <option value="2">2</option>
+                            <option value="3" selected>3</option>
+                            <option value="4">4</option>
+                        </select><i class="bar"></i>
+                    </span>
+                </div>
+                <div class="content divider">
+                    <span class="userText" id="t_gridView"></span>
+                </div>
+                <div class="content divider">
+                    <label>
+                        <span class="userText" id="t_positionClearAuto"></span>
+                        <input type="checkbox" id="positionClearAuto" class="material-switch-input" checked>
+                        <span class="material-switch"></span>
+                    </label>
+                    <label>
+                        <span class="userText" id="t_showHandles"></span>
+                        <input type="checkbox" id="showHandles" class="material-switch-input" checked>
+                        <span class="material-switch"></span>
+                    </label>
+                </div>
+                <div class="content">
+                    <span class="contentLabel userText" id="t_saveFigsSeparateTitle"></span>
+                    <div class="clearBoth"></div>
+                    <span>
+                        <span class="userText" id="t_imageFormat"></span>
+                        <input type="radio" name="saveFigsSeparateImageFormat" value="png" id="imageFormatPNG" checked>
+                        <span class="userText" id="t_png"></span>
+                        <input type="radio" name="saveFigsSeparateImageFormat" value="svg" id="imageFormatSVG">
+                        <span class="userText" id="t_svg"></span>
+                    </span>
+                    <div class="clearBoth"></div>
+                    <span>
+                        <span class="userText" id="t_imageSize"></span>
+                        <div class="form-group">
+                            <input type="number" id="saveFigsSeparateWidth" value="600">
+                            <i class="bar"></i>
+                        </div>
+                        X
+                        <div class="form-group">
+                            <input type="number" id="saveFigsSeparateHeight" value="600">
+                            <i class="bar"></i>
+                        </div>
+                    </span>
+                    <div class="clearBoth"></div>
+                    <span>
+                        <span class="userText" id="t_zipImageFilenamePattern"></span>
+                        <div class="form-group">
+                            <input type="text" id="zipImageFilenamePattern" autocapitalize="off">
+                            <i class="bar"></i>
+                        </div>
+                    </span>
+                </div>
+            </div>
+            <!-- Styling settings -->
+            <div id="styling" class="hidden">
+                <div class="userText content divider" id="t_styleSettingsHeader"></div>
+                <div class="content divider">
+                    <label>
+                        <span class="userText" id="t_numberInCircle"></span>
+                        <input type="checkbox" id="numberInCircle" class="material-switch-input">
+                        <span class="material-switch"></span>
+                    </label>
+                </div>
+                <div class="content">
+                    <span>
+                        <span class="userText" id="t_rollTextSize"></span>
+                        <span class="form-group right">
+                            <select id="rollFontSize">
+                                <option id="t_rollSmall" class="userText"></option>
+                                <option id="t_rollMedium" class="userText"></option>
+                                <option id="t_rollLarge" class="userText"></option>
+                            </select><i class="bar"></i>
+                        </span>
+                    </span>
+                </div>
+                <div class="content">
+                    <span>
+                        <span class="userText" id="t_rollSymbolSize"></span>
+                        <span class="form-group right">
+                            <select id="rollSymbolSize">
+                                <option id="t_rollSymbolMedium" value="medium" selected class="userText"></option>
+                                <option id="t_rollSymbolLarge" value="large" class="userText"></option>
+                            </select><i class="bar"></i>
+                        </span>
+                    </span>
+                </div>
+            </div>
+            <!-- Expert settings -->
+            <div id="expert" class="hidden">
+                <div class="content divider">
+                    <label>
+                        <span class="userText" id="t_nonArestiRolls"></span>
+                        <input type="checkbox" id="nonArestiRolls" class="material-switch-input">
+                        <span class="material-switch"></span>
+                    </label>
+                </div>
+                <div class="content divider">
+                    <span class="contentLabel userText" id="t_drawingStyles"></span>
+                    <span>
+                        <span class="userText" id="t_drawingStylesExplain"></span>
+                        <span>
+                            <div class="form-group">
+                                <select id="styles"></select>
+                                <i class="bar"></i>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" id="styleString" size="40" autocapitalize="off">
+                                <i class="bar"></i>
+                            </div>
+                        </span>
+                        <span style="display:inline-block;">
+                            <span class="textButton userText" id="t_changeStyle"></span>
+                            <span class="textButton userText" id="t_resetStyle"></span>
+                            <span class="textButton userText" id="t_resetStyleAll"></span>
+                        </span>
+                    </span>
+                </div>
+                <div class="content divider">
+                    <label>
+                        <span class="userText" id="t_newTurnPerspective"></span>
+                        <input type="checkbox" id="newTurnPerspective" class="material-switch-input">
+                        <span class="material-switch"></span>
+                    </label>
+                </div>
+                <div class="content">
+                    <span class="textButton userText" id="t_restoreDefaultSettings"></span>
+                </div>
+            </div>
+            <div class="textButton close userText" id="t_settingsClose"></div>
+        </div>
+    </div>
+    <!-- end Settings -->
+    <!-- reference sequence dialog -->
+    <div id="referenceSequenceDialog" class="boxbg noPrint fullscreen noDisplay">
+        <div class="box">
+            <span class="boxTitle userText" id="t_referenceSequenceTitle"></span>
+            <div class="content">
+                <div class="userText" id="t_referenceSequenceExplain"></div>
+                <div class="userText noDisplay" id="t_referenceSequenceFixed"></div>
+                <textarea id="referenceSequenceString" spellcheck="false" autocapitalize="off"></textarea>
+                <div id="referenceSequenceAlerts"></div>
+                <div id="referenceSequenceSvgContainer">
+                    <svg xmlns="http://www.w3.org/2000/svg" version="1.2" baseProfile="tiny" id="referenceSequenceSvg"></svg>
+                </div>
+            </div>
+            <div class="textButton close userText" id="t_referenceSequenceClose"></div>
+        </div>
+    </div>
+    <!-- end reference sequence -->
+    <!-- figure combination proposals dialog -->
+    <div id="createProposalsDialog" class="boxbg noPrint fullscreen noDisplay">
+        <div class="box">
+            <span class="boxTitle userText" id="t_proposalsTitle"></span>
+            <div class="userText content" id="t_proposalsExplain"></div>
+            <!--<div class="content">
+                <span class="userText" id="t_proposalsFigureCount"></span>
+                <input type="number" min="1" value="7" id="proposalsFigureCount">
+            </div>-->
+            <div id="proposalsSequenceSvgContainer">
+                <svg xmlns="http://www.w3.org/2000/svg" version="1.2" baseProfile="tiny" id="proposalsSequenceSvg"></svg>
+            </div>
+            <pre class="userText content" id="proposals"></pre>
+            <div class="userText content" id="proposalsTotalK"></div>
+            <div class="userText content" id="t_proposalsIncomplete"></div>
+            <div class="textButton userText" id="t_proposalsCreate"></div>
+            <div class="textButton userText" id="t_proposalsToGrid"></div>
+            <div class="textButton close userText" id="t_proposalsDialogClose"></div>
+        </div>
+    </div>
+    <!-- various message boxes. Put them after the dialogs so they are
+             shown on top -->
+    <!-- infoBox -->
+    <div id="infoBox" class="boxbg noPrint fullscreen noDisplay">
+        <div class="box">
+            <span class="boxTitle" id="infoTitle"></span>
+            <div class="content" id="infoMessage"></div>
+        </div>
+    </div>
+    <!-- confirmBox -->
+    <div id="confirmBox" class="boxbg noPrint fullscreen noDisplay">
+        <div class="box">
+            <span class="boxTitle" id="confirmTitle"></span>
+            <div class="content" id="confirmMessage"></div>
+            <span class="textButton userText" id="t_confirmBoxYes"></span>
+            <span class="textButton userText" id="t_confirmBoxNo"></span>
+        </div>
+    </div>
+    <!-- alertBox, after confirmBox so it's shown on top -->
+    <div id="alertBox" class="boxbg noPrint fullscreen noDisplay">
+        <div class="box">
+            <span class="boxTitle" id="alertTitle"></span>
+            <div class="content" id="alertMessage"></div>
+            <span class="textButton userText close" id="t_closeAlert"></span>
+        </div>
+    </div>
+    <!-- helpBox -->
+    <div id="helpBox" class="boxbg noPrint fullscreen noDisplay">
+        <div class="box">
+            <span class="boxTitle" id="helpTitle"></span>
+            <i id="closeHelp" class="material-icons">close</i>
+            <div id="helpContent"><iframe></iframe></div>
+        </div>
+    </div>
+    <!-- installApp -->
+    <div id="installApp" class="noPrint noDisplay">
+        <i id="closeInstallApp" class="material-icons">close</i>
+        <span id="t_getTheApp" class="userText"></span>
+        <a id="playStore" href="https://play.google.com/store/apps/details?id=net.openaero" target="_blank">
+            <img src="img/google-play-badge.png">
+        </a>
+        <a id="appStore" href="https://itunes.apple.com/us/app/openaero/id1343773321" target="_blank">
+            <img src="img/ios-appstore-badge.svg">
+        </a>
+        <a id="mobileInstallPWA" target="_blank">
+            <img src="img/pwa-badge.png">
+        </a>
+    </div>
     <div id="noScreen"></div>
-  </body>
+</body>
 </html>

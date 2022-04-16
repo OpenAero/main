@@ -1,4 +1,12 @@
-﻿2022.1.7
+﻿2022.2
+* Activated high compression sequence links
+* Added sequence QR code display option to File menu
+* Added QR code scanning from app
+* Added 2022 VINK sequences
+* Added 2023 NZAC sequences
+* Corrected some France rules
+
+2022.1.7
 * Added "Power" or "Glider" class to Category box on IAC forms
 * Updated header of rules22.js to correctly reflect the method OpenAero uses to check sequences
 * Updated rules22-aeci

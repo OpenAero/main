@@ -1368,7 +1368,7 @@ function cordovaSave(blob, filename) {
         }
         if (document.getElementById('addSequenceLink').checked) {
             options.message = userText.emailHeader + '\r\n\r\n' +
-                'https://openaero.net/?s=' + encodeBase64Url(activeSequence.xml);
+                'https://openaero.net/?s=' + encodeBase64Url(compressSequence(activeSequence.xml));
         }
         window.plugins.socialsharing.shareWithOptions(options);
     }
@@ -1914,6 +1914,15 @@ function printDialog(show) {
     document.getElementById('printNotesCopy').checked = document.getElementById('printNotes').checked;
 
     if (show) {
+        // Generate QR code. Not needed immediately but it is created asynchronously and may later
+        // be added to a printed sequence.
+        var url = 'https://openaero.net/?s=' + encodeBase64Url(compressSequence(activeSequence.xml));
+        div = document.getElementById('qrcode');
+        div.innerHTML = '';
+        new QRCode(div, {
+            text: url,
+            correctLevel: QRCode.CorrectLevel.L
+        });
         missingInfoCheck(function () {
             setPrintPageSet();
             document.getElementById('printDialog').classList.remove('noDisplay');
@@ -4655,9 +4664,14 @@ function doOnLoad() {
             });
 
             // set File menu and dialog items
+            // Update menu for QR code scanning
+            document.getElementById('t_openSequenceLink').parentNode.classList.remove('divider');
+            document.getElementById('t_scanQRcode').parentNode.classList.remove('noDisplay');
+            // Update menu for saving, emailing and sharing of sequence
             document.getElementById('t_saveSequence').parentNode.classList.add('noDisplay');
             document.getElementById('t_emailSequence').parentNode.classList.add('noDisplay');
             document.getElementById('t_saveShareSequence').parentNode.classList.remove('noDisplay');
+            // Update save dialog
             document.getElementById('saveFileAddSequenceLink').classList.remove('noDisplay');
 
             switch (device.platform.toLowerCase()) {
@@ -5176,11 +5190,13 @@ function addEventListeners() {
     document.getElementById('file').addEventListener('change', openSequence, false);
     document.getElementById('t_openSequence').parentNode.addEventListener('mousedown', document.getElementById('file').mousedown, false);
     document.getElementById('t_openSequenceLink').parentNode.addEventListener('mousedown', openSequenceLink, false);
+    document.getElementById('t_scanQRcode').parentNode.addEventListener('mousedown', scanQRcode, false);
     document.getElementById('t_clearSequence').parentNode.addEventListener('mousedown', clearSequence, false);
     document.getElementById('t_saveSequence').parentNode.addEventListener('mousedown', saveSequence, false);
     document.getElementById('t_emailSequence').parentNode.addEventListener('mousedown', emailSequence, false);
     document.getElementById('t_saveShareSequence').parentNode.addEventListener('mousedown', saveSequence, false);
     document.getElementById('t_saveAsLink').parentNode.addEventListener('mousedown', saveAsURL, false);
+    document.getElementById('t_qrCode').parentNode.addEventListener('mousedown', QRcode, false);
     document.getElementById('exitDesigner').addEventListener('mousedown', function () { exitFuDesigner(false) }, false);
     document.getElementById('t_saveFigsSeparate').parentNode.addEventListener('mousedown', saveFigs, false);
     document.getElementById('t_printSaveForms').parentNode.addEventListener('mousedown', function () { printDialog(true) }, false);
@@ -5492,6 +5508,9 @@ function addEventListeners() {
         'mousedown', function () {
             removeBanner(document.getElementById('installApp'));
         });
+
+    // QR code scanner
+    document.getElementById('t_cancelQRscan').addEventListener('mousedown', cancelQRscan, false);
 }
 
 // addMenuEventListeners adds event listeners for showing and hiding
@@ -8189,9 +8208,9 @@ function logoChooser() {
         } else fileDropLogo.classList.remove('noDisplay');
         // build the logos in correct order
         for (var i = 0; i < keys.length; i++) {
-            logoName = keys[i];
             var div = document.createElement('div');
             container.appendChild(div);
+            logoName = keys[i];
             div.setAttribute("alt", logoName);
             div.addEventListener('mousedown', selectLogo, false);
             div.appendChild(buildLogoSvg(logoImages[logoName], 0, 0, width, height));
@@ -14730,59 +14749,60 @@ function decodeBase64Url(t) {
     }
 }
 
+// compressSequence compresses the xml to minimize the size of the sequence link. Steps:
+// - replace each sequenceXMLlabel and xml markup in the original xml
+//   by a single character with code 128-159.
+// - compress sequence_text (see explanation in code)
+function compressSequence(xml) {
+    var
+        parser = new DOMParser(),
+        xmlDoc = parser.parseFromString(xml, "text/xml"),
+        result = "";
+
+    if (sequenceXMLlabels.length > 31) {
+        throw new Error('Compression will not work when there are more than 31 labels.');
+    }
+
+    for (var i = 0; i < sequenceXMLlabels.length; i++) {
+        var label = xmlDoc.getElementsByTagName(sequenceXMLlabels[i]);
+        // Add label code and value to result if label value exists
+        if (label && label[0]) {
+            var labelValue = label[0].childNodes[0].nodeValue;
+            result += String.fromCharCode(i + 128);
+            if (sequenceXMLlabels[i] == 'sequence_text') {
+                // Compress sequence_text by using the property that it hardly ever
+                // contains characters with code > 127
+                for (var j = 0; j < labelValue.length; j++) {
+                    if (labelValue.charCodeAt(j) >= 128) {
+                        // Characters with code >= 128 are preceded by code 255 and not compressed
+                        result += String.fromCharCode(255) + labelValue[j];
+                    } else if (labelValue.charCodeAt(j) > 31 &&
+                        j < (labelValue.length - 1) &&
+                        labelValue[j] === labelValue[j + 1]) {
+                        // Compress double identical characters with code between 32 and 127 (most common).
+                        // The pair fits in a single byte.
+                        result += String.fromCharCode(labelValue.charCodeAt(j) + 128);
+                        j++;
+                    } else {
+                        // Do not compress characters with code < 32 or non-repeating
+                        result += labelValue[j];
+                    }
+                }
+            } else result += labelValue;
+        }
+    }
+    return result;
+}
+
+
 // saveAsURL provides a URL encoded sequence that the user can copy
 // and then email, bookmark or whatever
 function saveAsURL() {
-
-    // compressXML compresses the xml to minimize the size of the sequence link. Steps:
-    // - replace each sequenceXMLlabel and xml markup in the original xml
-    //   by a single character with code 128-159.
-    // - compress sequence_text (see explanation in code)
-    function compressXml(xml) {
-        var
-            parser = new DOMParser(),
-            xmlDoc = parser.parseFromString(xml, "text/xml"),
-            result = "";
-
-        if (sequenceXMLlabels.length > 31) {
-            throw new Error('Compression will not work when there are more than 31 labels.');
-        }
-
-        for (var i = 0; i < sequenceXMLlabels.length; i++) {
-            var label = xmlDoc.getElementsByTagName(sequenceXMLlabels[i]);
-            // Add label code and value to result if label value exists
-            if (label && label[0]) {
-                var labelValue = label[0].childNodes[0].nodeValue;
-                result += String.fromCharCode(i + 128);
-                if (sequenceXMLlabels[i] == 'sequence_text') {
-                    // Compress sequence_text by using the property that it hardly ever
-                    // contains characters with code > 127
-                    for (var j = 0; j < labelValue.length; j++) {
-                        if (labelValue.charCodeAt(j) >= 128) {
-                            // Characters with code >= 128 are preceded by code 255 and not compressed
-                            result += String.fromCharCode(255) + labelValue[j];
-                        } else if (labelValue.charCodeAt(j) > 31 &&
-                            j < (labelValue.length - 1) &&
-                            labelValue[j] === labelValue[j + 1]) {
-                            // Compress double identical characters with code between 32 and 127 (most common).
-                            // The pair fits in a single byte.
-                            result += String.fromCharCode(labelValue.charCodeAt(j) + 128);
-                            j++;
-                        } else {
-                            // Do not compress characters with code < 32 or non-repeating
-                            result += labelValue[j];
-                        }
-                    }
-                } else result += labelValue;
-            }
-        }
-        return result;
-    }
-
+    
     function save() {
         // When activating output of high compression sequence links, uncomment the following line
         // and remove the active lines up to "alertBox"
-        var url = 'https://openaero.net/?s=' + encodeBase64Url(compressXml(activeSequence.xml));
+        var url = 'https://openaero.net/?s=' + encodeBase64Url(compressSequence(activeSequence.xml));
         /*
         // compress xml for shorter URL
         var xml = activeSequence.xml.replace(/\n/g, ''); // remove newlines
@@ -14812,6 +14832,64 @@ function saveAsURL() {
     missingInfoCheck(save);
 }
 
+// QRcode shows an alertBox containing a QR code holding the sequence link
+function QRcode() {
+    alertBox('<div id="QRcode"></div>',
+        userText.qrCodeTitle);
+    new QRCode(
+        document.getElementById('QRcode'),
+        'https://openaero.net/?s=' + encodeBase64Url(compressSequence(activeSequence.xml)),
+    );
+}
+
+// scanQRcode opens the scanner for QR code sequences (Cordova only)
+function scanQRcode() {
+    // Hide all menus
+    menuInactiveAll();
+
+    // Make the webview transparent so the video preview is visible behind it.
+    QRScanner.show();
+
+    // Hide normal interface and show QR scan overlay
+    document.body.parentNode.style = "background: none transparent;";
+    document.body.style = "background: none transparent;";
+    document.getElementById('mainOverlay').classList.add('movedFromView');
+
+    QRScanner.scan(function (err, sequenceLink) {
+        // Shut down QRScanner
+        QRScanner.destroy();
+
+        // Restore normal interface and hide QR scan overlay
+        document.body.parentNode.style = "";
+        document.body.style = "";
+        document.getElementById('mainOverlay').classList.remove('movedFromView');
+
+        if (err && err.name == 'SCAN_CANCELED') {
+            // Error code 6 = scan cancelled 
+            return;
+        } else if (err) {
+            // Other error
+            alertBox(
+                sprintf(userText.qrScanFail, err.name),
+                userText.openSequenceLink
+            );
+        } else if (!launchURL({ url: sequenceLink })) {
+            // Show an error when launchURL gives an error
+            alertBox(
+                sprintf(userText.openSequenceLinkError, sequenceLink),
+                userText.openSequenceLink
+            );
+            // Should be good...
+        } else updateSaveFilename(); // clear filename
+    });
+
+}
+
+// cancelQRscan cancels QR code scanning
+function cancelQRscan() {
+    QRScanner.cancelScan();
+}
+
 // emailSequence creates an email with a complete sequence as a URL in
 // the body and the set save name as subject
 function emailSequence() {
@@ -14821,7 +14899,7 @@ function emailSequence() {
         // create body with descriptive text, newlines and sequence URL
         // also replace single ticks (') and + as they may break the link
         var body = userText.emailHeader + '\r\n\r\n' +
-            'https://openaero.net/?s=' + encodeBase64Url(activeSequence.xml);
+            'https://openaero.net/?s=' + encodeBase64Url(compressSequence(activeSequence.xml));
         var subject = activeFileName() || 'Sequence';
         el.setAttribute('href', 'mailto:%20?subject=' + encodeURI(subject) +
             '&body=' + encodeURI(body));
@@ -15725,7 +15803,7 @@ function addFormElementsLR(svg, print) {
     // logo
     var logoWidth = 0;
     if (logoImg) {
-        var logoSvg = buildLogoSvg(logoImg, 0, 0, 120, 70,
+        var logoSvg = buildLogoSvg(logoImg, 0, 0, 120, 120,
             document.getElementById('blackWhite').checked);
         svg.appendChild(logoSvg);
         logoWidth = parseInt(logoSvg.getBBox().width);
@@ -15771,6 +15849,18 @@ function addFormElementsLR(svg, print) {
         drawText(userText.team + ':', 740, 1128, 'formATextSmall', 'end', '', svg);
         drawText(document.getElementById('team').value, 745, 1128, 'formATextLarge', 'start', '', svg);
     }
+
+    var qrcode = false;
+    /* QR code on Form R/L disabled because it becomes too large. Maybe future development?
+    // Add QR code at bottom left, if switched on
+    if (true) {
+        qrcode = document.getElementById('qrcode').lastChild;
+        drawImage({
+            x: 0, y: 1130 - qrcode.height / 2, width: qrcode.width / 2, height: qrcode.height / 2,
+            preserveAspectRatio: 'xMaxYMax', href: qrcode.src
+        }, svg);
+    }
+    */
 
     // Aresti and K block
     var
@@ -15837,10 +15927,12 @@ function addFormElementsLR(svg, print) {
     for (var i = 1; i < figureNr; i++) {
         drawLine(i * 80, 0, 0, bBox.height + 10, 'formLine', g);
     }
-    // scale width to fit, but don't upscale more than 20%
-    var scaleX = Math.min(799 / (bBox.width + 10), 1.2);
+
+    // Scale width to fit, but don't upscale more than 20%.
+    // When QR code is added, move block to the right 110px.
+    var scaleX = Math.min((qrcode ? 789 - qrcode.width / 2 : 799) / (bBox.width + 10), 1.2);
     var blockTop = roundTwo(1100 - bBox.height);
-    g.setAttribute('transform', 'translate (0,' + blockTop + ') scale (' + scaleX + ',1)');
+    g.setAttribute('transform', 'translate (' + (qrcode ? qrcode.width / 2 + 10 : 0) + ',' + blockTop + ') scale (' + scaleX + ',1)');
 
     // figureK and totalK
     drawText(totalK, 535, 41, 'formATextXL', 'middle', '', svg);

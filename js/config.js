@@ -36,7 +36,7 @@
 // A new x should be used for versions that create sequences not
 // fully backward compatible with the previous version
 
-var version = '2022.1.7';
+var version = '2022.2';
 /* versionNew is an object that contains version update information
    The structure is {vvv : [[ttt, n], ...], ...} , where
    vvv = version number
@@ -44,6 +44,11 @@ var version = '2022.1.7';
    n   = importance (higher = more important)
 */
 var versionNew = {
+    '2022.2': [
+        ['Added support for generating sequence QR codes and for reading QR codes from the app', 4],
+        ['Added NZAC Known sequences for 2023', 2],
+        ['Added VINK Known sequences for 2022', 2]
+    ],
     '2022.1.7': [
         ['Added a Flying mode in the View menu, for using an onboard tablet as a Pilot Card', 4],
         ['Added AAC Known sequences for 2022', 2],

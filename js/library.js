@@ -25,6 +25,24 @@
 // The Value is an OpenAero sequence link (use "File->Save as link" in OpenAero to generate)
 
 var library = {
+    '2023 NZAC Primary Known':
+        'https://openaero.net/?s=hFByaW1hcnkgh3Bvd2VyZWSIS25vd26JMjAyMi8yMyBOWkFDijOMTlpBQyBQcmltYXJ5IEtub3dujTUlIGQg_ml2LnMuJ6t-IC0xJSCuri6nY66uLDKuritgIDYlIG_-IH6rK64uJ2iurqsrfiCuLicxq_6PTlpBQ5AyMDIyLjEuN5FC',
+
+    '2023 NZAC Recreational Known':
+        'https://openaero.net/?s=hFJlY3JlYXRpb25hbIdwb3dlcmVkiEtub3duIIkyMDIyLzIzIE5aQUOKNo0nbTIgKC0xOCwwKSA4JSD-Mmr-IP4raXanc6f-IH4rJ2iuJyt-IP5gYi4nICgtNiwwKSAtMiUgYGOuricyK-AgLTElIOArbytgICcxYH6PTlpBQ5AyMDIyLjEuN5FC',
+
+    '2023 NZAC Sports Known':
+        'https://openaero.net/?s=hFNwb3J0c4dwb3dlcmVkiEtub3duIIkyMDIyLzIzIE5aQUOKMTCNYi6nIGQgaXY2c66nqyt-IP6rq2syNK6uLicgbTKrK_4gNz4gOSUgMmogp2lyYzJ-IDEzJSBgMjRhK2AgbyBop_4gMY9OWkFDkDIwMjIuMS44kUI',
+
+    '2023 NZAC Intermediate Known':
+        'https://openaero.net/?s=hEludGVybWVkaWF0ZYdwb3dlcmVkiEtub3duIIkyMDIyLzIzIE5aQUOKMTWNbTGtLf-gsSUgLTJqLSAtMmlyYzI0_iAoLTgsMjEpIDI0aWFvK2AgMmZpcDT-XiB-KzVzrq4uaXJwMis-IDEwJSAuMmGrfiBkaK6uq6srfiCrLDhiLDSuLicr4GAgYWMoMjQpMo9OWkFDkDIwMjIuMS44kUI',
+
+    '2023 NZAC Advanced Known':
+        'https://openaero.net/?s=hEFkdmFuY2VkhU5aQUMgTmF0aW9uYWxzhjIwMjIvMjOHcG93ZXJlZIhLbm93bolOWkFDijI1jE5PVEUgWS1CT1ggRU5UUlmNZWogL6suNHBuKGYuKSw4Lq1eIDclIOBgLeDgNWlzridpYuBgMjRgK-BgPiAyPiCurmlycGatra2tLX4gMTIlIC3g4ODg4GBpY-A0LDPg4OBgLeAg4C0zajMtfiCtcGKuLDMuK-BgPiCnLDMuaDNmpyv-IP4rb7QrfiAyPiAubTOnLDM0Jy0gKDAsMTQpIC0xaWFjKCw0OCm4j05aQUOQMjAyMi4xLjiRQg',
+
+    '2023 NZAC Unlimited Known':
+        'https://openaero.net/?s=hFVubGltaXRlZIVOWkFDIE5hdGlvbmFsc4YyMDIyLzIzh3Bvd2VyZWSIS25vd26JTlpBQ4o0MI1-Ky4nMiwyZnpipzQ4rietrf4gLSwzZmKuri41rq4gMSUgNj4gOWFjKDZpZmApsi1gIC2uLqdwbignM2anOzWuKSwyNK0t_iDgYC3g4DVpcycsMmaurq6uLmliMy0gMyUgLS4xLmlycDJmOzQ4LX4gMTMlIODgLTJqbzEtID4g_q0nLDh0YWAsM6cr4D4gJzUnaC4zaWYuK34g_itvuCv-j05aQUOQMjAyMi4xLjiRQg',
+
     '2022 CIVA Unl Free Known':
         'https://openaero.net/?s=hFVubGltaXRlZIVDSVZBhjIwMjKHcG93ZXJlZIhQcm9ncmFtbWUxiUNJVkGKNDCLMIxDSVZBIDIwMjIgVW5saW1pdGVkIEZyZWUgS25vd24gZmlndXJlc40iQEEiIDIsMmZ6YjQ4LSAoMTMsMCkgIkBCIiAifCI0OzNpZmRoKDQppzVmICgwLLEpICJAQyIgsmFjKDJmKTMsMzQtICgwLDcpICJARCIgLDV0YeAzICgwLDEzKSAiQEUiIC4sMjQucG4oInwiNWY7MykyLi2PQ0lWQZAyMDIyLjEuMZFncmlkOjU',
 
@@ -99,13 +117,13 @@ var library = {
 
     '2022 NZAC Unlimited Known':
         'https://openaero.net/?s=hFVubGltaXRlZIdwb3dlcmVkiEtub3duiTIwMjEvMjAyMiBOWkFDijQwizCNMacsOW2yJyw2aWarfiBbLTYsMF0g4G4orq4uNmlmrq6urqcprq4up7Kuri6nrS1-IH4taW85Lf4g_q0tpzGurq4uJ2liLDM0YC1eIH4tpzVpc6csMq6uaXJwJzNmLiwzNOAtPiAv4C0zam8xNSB0YTNmLqd-PiDgKzMncGInNKcsMqerqyt-IKsrLqc0pywzrmRoKCc0pymuLic1Zq4up6v-IKdhYygyaWYpuK2PTlpBQ5AyMDIxLjEuNZFC',
-/*
+
     '2022 VINK Club Known':
         'https://openaero.net/?s=hENsdWKGMjAyModwb3dlcmVkiEtub3duiVZJTkuKMTCLMI1vIC0yJSBjMq6uLiAyPiBoqysgMmogMY9WSU5LkDIwMjIuMS43kUI',
 
     '2022 VINK Sports Known':
-        'https://openaero.net/?s=hFNwb3J0c4YyMDIyh3Bvd2VyZWSIS25vd26JVklOS4oxNYswjXHg4CBoricgND4gKzJnIGl24DVzrierq6sgbTIgLTIlIH4zaivg4CAoLTksMTcpIODg4ODgYGOnMuDgYCtgIG8gMmogMY9WSU5LkDIwMjIuMS43kUI',
-*/
+        'https://openaero.net/?s=hFNwb3J0c4VET05BQ4YyMDIyh3Bvd2VyZWSIS25vd26JVklOS4oxNYswjXHg4CBoricgND4gKzJnIGl24DVzrierq6sgbTL-IC0yJSB-M2or4OAgKDIsMTApIGlnrjKuIC0xJSBtMqsrfiA5JSA2PiAyaiAxj1ZJTkuQMjAyMi4xLjeRQg',
+
     '2021 CIVA Unl Free Known':
         'https://openaero.net/?s=hFVubGltaXRlZIdwb3dlcmVkiFByb2dyYW1tZTGJQ0lWQYo0MIswjSJAQSIgLDNpZi5ycCgssikzLDM0ICJAQiIgLjFuKOAsNWlmLDMnKSctICJAQyIgLS4sM3RhM2YgIkBEIiAtMmpvMS0gIkBFIiA0OGRoKDQpNWaPQ0lWQZAyMDIwLjEuMTCRZ3JpZDo1',
 
