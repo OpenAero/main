@@ -771,6 +771,10 @@ textarea {
     transition: all 0.3s ease-in-out;
 }
 
+#mainOverlay.iosCordova {
+    top: 32px;
+}
+
 #topBlock {
 	position: absolute;
 	transform: translateZ(0); /* to assure it is shown when keyboard pops up on iOS */
@@ -2834,7 +2838,7 @@ table#figureChooserTable div {
     text-align: center;
 }
 #QRcode img {
-    display: initial !important;
+    display: inline-block !important;
     max-width: 100%;
     -webkit-user-select: initial;
     -webkit-touch-callout: initial;
@@ -2861,5 +2865,5 @@ table#figureChooserTable div {
     bottom: 16px;
 }
 #mainOverlay.movedFromView {
-    top: 100%;
+    top: 100% !important;
 }

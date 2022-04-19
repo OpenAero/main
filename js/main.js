@@ -1916,6 +1916,7 @@ function printDialog(show) {
     if (show) {
         // Generate QR code. Not needed immediately but it is created asynchronously and may later
         // be added to a printed sequence.
+        /*
         var url = 'https://openaero.net/?s=' + encodeBase64Url(compressSequence(activeSequence.xml));
         div = document.getElementById('qrcode');
         div.innerHTML = '';
@@ -1923,6 +1924,7 @@ function printDialog(show) {
             text: url,
             correctLevel: QRCode.CorrectLevel.L
         });
+        */
         missingInfoCheck(function () {
             setPrintPageSet();
             document.getElementById('printDialog').classList.remove('noDisplay');
@@ -4695,9 +4697,8 @@ function doOnLoad() {
                     });
 
                     // add status bar inside webview
-                    var bar = document.getElementById('cordovaStatusBar');
-                    bar.classList.remove('noDisplay');
-                    bar.nextElementSibling.style.top = '32px';
+                    document.getElementById('cordovaStatusBar').classList.remove('noDisplay');
+                    document.getElementById('mainOverlay').classList.add('iosCordova');
 
                     break;
                 case 'android':
@@ -5785,7 +5786,7 @@ function clickButton() {
             document.getElementById('curvedLine').classList.remove('on');
             if (e.classList.contains('on')) {
                 // remove disabled for move
-                document.getElementById('moveXCont').firstChild.classList.add('noDisplay');
+                document.getElementById('moveXCont').firstElementChild.classList.add('noDisplay');
                 document.getElementById('moveXCont').classList.remove('collapsed');
                 // set default of 2 if no value was set
                 var el = document.getElementById('moveX-value');
@@ -5796,7 +5797,7 @@ function clickButton() {
             document.getElementById('moveForward').classList.remove('on');
             document.getElementById('curvedLine').classList.remove('on');
             if (e.classList.contains('on')) {
-                document.getElementById('moveXCont').firstChild.classList.remove('noDisplay');
+                document.getElementById('moveXCont').firstElementChild.classList.remove('noDisplay');
                 document.getElementById('moveXCont').classList.remove('collapsed');
                 document.getElementById('moveYCont').classList.remove('collapsed');
             }
@@ -5805,7 +5806,7 @@ function clickButton() {
             document.getElementById('straightLine').classList.remove('on');
             document.getElementById('moveForward').classList.remove('on');
             if (e.classList.contains('on')) {
-                document.getElementById('moveXCont').firstChild.classList.remove('noDisplay');
+                document.getElementById('moveXCont').firstElementChild.classList.remove('noDisplay');
                 document.getElementById('moveXCont').classList.remove('collapsed');
                 document.getElementById('moveYCont').classList.remove('collapsed');
             }
@@ -6908,7 +6909,7 @@ function updateFigureOptions(figureId) {
                     document.getElementById('moveY-value').value = prevFig.moveTo[1];
                     document.getElementById('straightLine').classList.add('on');
                     document.getElementById('moveXCont').classList.remove('collapsed');
-                    document.getElementById('moveXCont').firstChild.classList.remove('noDisplay');
+                    document.getElementById('moveXCont').firstElementChild.classList.remove('noDisplay');
                     document.getElementById('moveYCont').classList.remove('collapsed');
                     break;
                 } else if (prevFig.curveTo) {
@@ -6917,14 +6918,14 @@ function updateFigureOptions(figureId) {
                     document.getElementById('moveY-value').value = prevFig.curveTo[1];
                     document.getElementById('curvedLine').classList.add('on');
                     document.getElementById('moveXCont').classList.remove('collapsed');
-                    document.getElementById('moveXCont').firstChild.classList.remove('noDisplay');
+                    document.getElementById('moveXCont').firstElementChild.classList.remove('noDisplay');
                     document.getElementById('moveYCont').classList.remove('collapsed');
                     break;
                 } else if (prevFig.moveForward) {
                     document.getElementById('moveX-value').value = prevFig.moveForward;
                     document.getElementById('moveForward').classList.add('on');
                     document.getElementById('moveXCont').classList.remove('collapsed');
-                    document.getElementById('moveXCont').firstChild.classList.add('noDisplay');
+                    document.getElementById('moveXCont').firstElementChild.classList.add('noDisplay');
                     break;
                 }
             }

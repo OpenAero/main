@@ -1,4 +1,8 @@
-﻿2022.2
+﻿2022.2.4
+* Fixed bug causing crash when dragging figures
+* Fixed iOS Cordova statusbar
+
+2022.2
 * Activated high compression sequence links
 * Added sequence QR code display option to File menu
 * Added QR code scanning from app

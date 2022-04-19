@@ -133,12 +133,12 @@
 </head>
 <body>
     <div id="cordovaStatusBar" class="noDisplay"></div>
-    <div id="scanQRcode">
+    <div id="scanQRcode" class="noPrint">
         <img src="data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgODggODgiIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczpzdmc9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48Y2xpcFBhdGggaWQ9ImNsaXBQYXRoIj48cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIC8+PHJlY3QgeD0iNzIiIHk9IjAiIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgLz48cmVjdCB4PSIwIiB5PSI3MiIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiAvPjxyZWN0IHg9IjcyIiB5PSI3MiIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiAvPjwvY2xpcFBhdGg+PC9kZWZzPjxwYXRoIHN0eWxlPSJmaWxsOm5vbmU7c3Ryb2tlOiNmYjhjMDA7c3Ryb2tlLXdpZHRoOjIiIGQ9Im0gMTIsNCBoIDY0IGMgNCwwIDgsNCA4LDggdiA2NCBjIDAsNCAtNCw4IC04LDggaCAtNjQgYyAtNCwwIC04LC00IC04LC04IHYgLTY0IGMgMCwtNCA0LC04IDgsLTggeiIgY2xpcC1wYXRoPSJ1cmwoI2NsaXBQYXRoKSIgLz48L3N2Zz4=" id="scanQRcorners"></img>
         <span id="t_cancelQRscan" class="textButton userText"></span>
     </div>
     <div id="mainOverlay" class="noPrint fullscreen">
-        <div id="qrcode" class="noDisplay"></div>
+        <!-- <div id="qrcode" class="noDisplay"></div> -->
         <!-- Flying mode overlay-->
         <div id="flyingMode" class="flyingModeHidden">
             <div id="flyingModeTop">
@@ -673,7 +673,6 @@
                                     <div id="straightLine" class="button"></div>
                                     <div id="curvedLine" class="button"></div>
                                     <div class="clearBoth"></div>
-                                    <!-- IMPORTANT : keep following div and span attached -->
                                     <div id="moveXCont">
                                         <span class="material-icons">arrow_forward</span>
                                         <span id="moveX" class="plusMin"></span>
