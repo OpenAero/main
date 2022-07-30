@@ -33,10 +33,6 @@ if (!window.requestFileSystem && window.webkitRequestFileSystem) {
 var savefile = [];
 // interval id
 var intervalID = [];
-// svg Name Space
-var svgNS = "http://www.w3.org/2000/svg";
-// xlink Name Space for including image in svg
-var xlinkNS = "http://www.w3.org/1999/xlink";
 
 // True_Drawing_Angle is used for correctly drawing on Y axis
 var True_Drawing_Angle;
@@ -1046,7 +1042,7 @@ var iosDragDropShim = {
     document.documentElement.appendChild(testDiv);
     testDiv.style.WebkitOverflowScrolling = 'touch';
     var scrollSupport = 'getComputedStyle' in window && window.getComputedStyle(testDiv)['-webkit-overflow-scrolling'] === 'touch';
-    document.documentElement.removeChild(testDiv);
+    testDiv.remove();
 
     if (scrollSupport) {
         enable();
@@ -1084,6 +1080,13 @@ function encode_utf8(s) {
 // decode_utf8 returns a string that can be correctly used by atob
 function decode_utf8(s) {
     return decodeURIComponent(escape(s));
+}
+
+// removeChildNodes removes all childNodes from a DOM element
+function removeChildNodes(container) {
+    while (container.childNodes.length) {
+        container.lastChild.remove();
+    }
 }
 
 /* FileSaver.js
@@ -1290,6 +1293,13 @@ if (!HTMLCanvasElement.prototype.toBlob) {
 
             callback(new Blob([arr], { type: type || 'image/png' }));
         }
+    });
+}
+
+// findLastIndex polyfill
+if (!Array.prototype.findLastIndex) {
+    Array.prototype.findLastIndex = (function (f) {
+        return this.length - 1 - [...this].reverse().findIndex(f);
     });
 }
 
@@ -1701,9 +1711,7 @@ function newSvg() {
 // SVGRoot is a global SVG object
 function rebuildSequenceSvg() {
     var container = document.getElementById("svgContainer");
-    while (container.childNodes.length) {
-        container.removeChild(container.lastChild);
-    }
+    removeChildNodes(container);
     SVGRoot = newSvg();
     SVGRoot.setAttribute("xmlns:xlink", xlinkNS);
     SVGRoot.setAttribute("id", "sequenceSvg");
@@ -1734,7 +1742,7 @@ function rebuildSequenceSvg() {
 
 // prepareSvg clears a provided svg and prepares it for figure addition
 function prepareSvg(svg) {
-    while (svg.childNodes.length) svg.removeChild(svg.lastChild);
+    removeChildNodes(svg);
     var group = document.createElementNS(svgNS, "g")
     group.setAttribute('id', 'sequence');
     svg.appendChild(group);
@@ -1785,7 +1793,7 @@ function alertBox(message, title, buttons) {
         // remove old buttons
         var closeButton = document.getElementById('t_closeAlert');
         var button = closeButton.parentNode.getElementsByClassName('addedButton');
-        while (button.length > 0) button[0].parentNode.removeChild(button[0]);
+        while (button.length) button[0].remove();
         // add new buttons
         if (buttons) for (var i = 0; i < buttons.length; i++) {
             var button = document.createElement('span');
@@ -1915,16 +1923,19 @@ function printDialog(show) {
 
     if (show) {
         // Generate QR code. Not needed immediately but it is created asynchronously and may later
-        // be added to a printed sequence.
-        /*
-        var url = 'https://openaero.net/?s=' + encodeBase64Url(compressSequence(activeSequence.xml));
-        div = document.getElementById('qrcode');
-        div.innerHTML = '';
-        new QRCode(div, {
-            text: url,
-            correctLevel: QRCode.CorrectLevel.L
-        });
-        */
+        // be added to a pilot card. Generate at twice the pilot card resolution for improved scanning.
+        setTimeout(function () {
+            div = document.getElementById('qrCodeForPrint');
+            div.innerHTML = '';
+            new QRCode(
+                div,
+                {
+                    text: 'https://openaero.net/?s=' + encodeBase64Url(compressSequence(activeSequence.xml)),
+                    width: 600,
+                    height: 600
+                }
+            );
+        }, 10);
         missingInfoCheck(function () {
             setPrintPageSet();
             document.getElementById('printDialog').classList.remove('noDisplay');
@@ -1995,7 +2006,7 @@ function referenceSequenceDialog(e) {
 
 // proposalsDialog shows or hides the figure group proposals dialog
 function proposalsDialog(e) {
-    var div = document.getElementById('createProposalsDialog');
+    const div = document.getElementById('createProposalsDialog');
     if (e === false) {
         div.classList.add('noDisplay');
     } else {
@@ -2217,7 +2228,7 @@ if (!(false && 'options' in document.createElement('datalist'))) {
             self.list[i].addEventListener(
                 'mousedown',
                 function () {
-                    self.inp.value = this.firstChild.data;
+                    self.inp.value = this.firstChild ? this.firstChild.data : '';
                     self.rset(self);
                 },
                 false
@@ -4640,7 +4651,7 @@ function doOnLoad() {
     var loading = document.getElementById('loading');
     // immediately remove loading on Windows app as this is handled by the
     // app itself
-    if (platform.uwp) loading.parentNode.removeChild(loading);
+    if (platform.uwp) loading.remove();
 
     // check browser and capabilities
     checkBrowser();
@@ -4717,7 +4728,7 @@ function doOnLoad() {
             }
 
             if (loading && loading.parentNode) {
-                loading.parentNode.removeChild(loading);
+                loading.remove();
             }
 
             setTimeout(
@@ -4990,7 +5001,7 @@ function doOnLoad() {
     // load (mostly) completed, remove loading icon in 1/2 second
     if (!(platform.cordova || platform.uwp)) {
         setTimeout(function () { loading.style = 'opacity: 0.01;'; }, 100);
-        setTimeout(function () { loading.parentNode.removeChild(loading); }, 500);
+        setTimeout(function () { loading.remove(); }, 500);
     }
 
     // load Google Analytics, but not on Cordova
@@ -5491,6 +5502,7 @@ function addEventListeners() {
     document.getElementById('pilotCardPercentValue').addEventListener('input', changePilotCardPercent, false);
     document.getElementById('pilotCard2').addEventListener('mousedown', setPilotCardLayout, false);
     document.getElementById('pilotCard4').addEventListener('mousedown', setPilotCardLayout, false);
+    document.getElementById('pilotCard2QR').addEventListener('mousedown', setPilotCardLayout, false);
     document.getElementById('imageWidth').addEventListener('change', saveImageSizeAdjust, false);
     document.getElementById('imageHeight').addEventListener('change', saveImageSizeAdjust, false);
     document.getElementById('pageSpacing').addEventListener('change', saveImageSizeAdjust, false);
@@ -5512,6 +5524,9 @@ function addEventListeners() {
 
     // QR code scanner
     document.getElementById('t_cancelQRscan').addEventListener('mousedown', cancelQRscan, false);
+
+    // Printing
+    window.onbeforeprint = beforePrint;
 }
 
 // addMenuEventListeners adds event listeners for showing and hiding
@@ -5832,8 +5847,7 @@ function clickButton() {
 function addPlusMinElements() {
     var el = document.getElementsByClassName('plusMin');
     for (var i = el.length - 1; i >= 0; i--) {
-        // clear element
-        while (el[i].childNodes.length) el[i].removeChild(el[i].lastChild);
+        removeChildNodes(el[i]);
         buildPlusMinElement(el[i].id + '-value', 0, el[i]);
     }
 }
@@ -6589,6 +6603,12 @@ function updatePrintPageSetValue() {
             } else if (document.getElementById('pilotCard4').classList.contains('formRL')) {
                 value += 'F=';
             } else value += 'F<';
+        } else if (document.getElementById('pilotCard2QR').classList.contains('active')) {
+            if (document.getElementById('pilotCard2QR').classList.contains('formL')) {
+                value += 'Q>';
+            } else if (document.getElementById('pilotCard2QR').classList.contains('formRL')) {
+                value += 'Q=';
+            } else value += 'Q<';
         }
     }
     document.getElementById('printPageSetString').value = value;
@@ -6603,11 +6623,11 @@ function updatePrintPageSetLayout() {
 
     for (var i = 0; i < string.length; i++) {
         if (/[ABCRLG_ ]/.test(string[i]) ||
-            (/[0-9][><]|[TF][><=]/.test(string.substring(i, i + 2)))) {
+            (/[0-9][><]|[TFQ][><=]/.test(string.substring(i, i + 2)))) {
             page++;
             if (page % 2) html += '<div class="pageSet">';
             html += '<div class="singlePage">';
-            if (/[BCG]\+|[0-9][><]|[TF][><=]/.test(string.substring(i, i + 2))) {
+            if (/[BCG]\+|[0-9][><]|[TFQ][><=]/.test(string.substring(i, i + 2))) {
                 html += string.substring(i, i + 2);
                 i++;
             } else if (/[_ ]/.test(string[i])) {
@@ -6620,7 +6640,7 @@ function updatePrintPageSetLayout() {
     if (page % 2) html += '</div>';
 
     // Show information to add wind direction after pilot card character
-    if (/[0-9TF]$/.test(string)) {
+    if (/[0-9TFQ]$/.test(string)) {
         html += '<p>' + userText.addWindAfterPilotCardCharacter + '</p>';
     }
 
@@ -6958,7 +6978,7 @@ function updateFigureOptions(figureId) {
         var el = document.getElementById('unknownFigure');
         if ((figureLetters !== '') || f.unknownFigureLetter) {
             // clear select list
-            while (el.childNodes.length) el.removeChild(el.lastChild);
+            removeChildNodes(el);
             // build select list
             var listLetters = figureLetters;
             var option = document.createElement('option');
@@ -7089,7 +7109,7 @@ function addRollSelectors(figureId) {
         myEl.classList.remove('noDisplay');
         var rolls = fig[figures[figureId].figNr].rolls;
         // clear selectors
-        while (myEl.childNodes.length) myEl.removeChild(myEl.lastChild);
+        removeChildNodes(myEl);
         // show the applicable roll selectors
         if (rolls) {
             // check if rule-illegal rolls are allowed in settings and present warning if so
@@ -7694,8 +7714,7 @@ function checkUpdateDone() {
             }
             list.sort(function (a, b) { return b[1] - a[1] });
             var li = '';
-            for (var i = 0; i < list.length; i++) {
-                if (i === versionNewMax) break;
+            for (var i = 0; i < Math.min(list.length, versionNewMax); i++) {
                 li += '<li>' + list[i][0] + '</li>\n';
             }
             alertBox(sprintf(userText.versionNew, oldVersion, version, li));
@@ -7725,14 +7744,15 @@ function changeSequenceInfo() {
     // page using API
     if (document.getElementById('sequenceInfo')) {
         // change the web page title to reflect the sequence info
-        var title = 'OpenAero - ';
-        title += document.getElementById('category').value + ' ';
-        title += document.getElementById('program').value + ' ';
-        title += document.getElementById('location').value + ' - ';
-        title += document.getElementById('date').value + ' - ';
-        title += document.getElementById('pilot').value;
-        title = title.replace(/- +-/g, '-');
-        document.title = title.replace(/[ -]+$/, '');
+        document.title =
+            (
+                'OpenAero - ' +
+                document.getElementById('category').value + ' ' +
+                document.getElementById('program').value + ' ' +
+                document.getElementById('location').value + ' - ' +
+                document.getElementById('date').value + ' - ' +
+                document.getElementById('pilot').value
+            ).replace(/- +-/g, '-').replace(/[ -]+$/, '');
 
         // create sequence XML
         var xml = '<sequence>\n'
@@ -7742,8 +7762,13 @@ function changeSequenceInfo() {
                 var value = ('value' in el) ? el.value : el.innerText;
                 if (value !== '') {
                     xml += '<' + sequenceXMLlabels[i] + '>' +
-                        value.replace(/</g, '&lt;') + '</' +
-                        sequenceXMLlabels[i] + '>\n';
+                        value
+                            .replace(/&/g, "&amp;")
+                            .replace(/</g, "&lt;")
+                            .replace(/>/g, "&gt;")
+                            .replace(/"/g, "&quot;")
+                            .replace(/'/g, "&#039;") +
+                        '</' + sequenceXMLlabels[i] + '>\n';
                 }
             }
         }
@@ -8177,7 +8202,7 @@ function logoChooser() {
     fileDropLogo.style.width = (width - 40) + 'px';
     fileDropLogo.style.height = (height - 40) + 'px';
     while (container.lastChild !== fileDropLogo) {
-        container.removeChild(container.lastChild);
+        container.lastChild.remove();
     }
     // add logoImages
     getLocal('logoSelectionCount', function (count) {
@@ -8293,7 +8318,7 @@ function drawActiveLogo() {
         document.getElementById('t_chooseLogo').classList.add('noDisplay');
         // Create logo svg
         var link = document.getElementById('logoImage');
-        if (link.firstChild) link.removeChild(link.firstChild);
+        if (link.firstChild) link.firstChild.remove();
         link.appendChild(buildLogoSvg(logoImg, 0, 0, width, height));
 
         document.getElementById('removeLogo').classList.remove('noDisplay');
@@ -8323,7 +8348,7 @@ function removeLogo() {
 function deleteLogo(evt) {
     noPropagation(evt);
     var logoName = this.id.replace(/^deleteLogo-/, '');
-    this.parentNode.parentNode.removeChild(this.parentNode);
+    this.parentNode.remove();
     document.getElementById('fileDropLogo').classList.remove('noDisplay');
     delete logoImages[logoName];
     privateLogoImages = {};
@@ -8519,22 +8544,28 @@ function updateRulesList(avail) {
             document.getElementById('rulesList'),
         fragment = document.createDocumentFragment();
 
+    function addRuleItem(name) {
+        if (document.getElementById('rules').list) {
+            var listItem = document.createElement('option');
+            listItem.value = name;
+        } else {
+            var listItem = document.createElement('li');
+            listItem.innerHTML = name;
+        }
+        fragment.appendChild(listItem);
+    }
+
     if (avail) seqCheckAvail = avail; // update when avail provided
 
     // clear list
-    while (el.firstChild) el.removeChild(el.firstChild);
+    removeChildNodes(el);
+    // Start with empty option
+    addRuleItem('');
     // build list for powered or glider
     for (ruleName in seqCheckAvail) {
         if ((document.getElementById('class').value === 'glider') === /^glider-/.test(ruleName)) {
             if (seqCheckAvail[ruleName].show) {
-                if (document.getElementById('rules').list) {
-                    var listItem = document.createElement('option');
-                    listItem.value = seqCheckAvail[ruleName].name;
-                } else {
-                    var listItem = document.createElement('li');
-                    listItem.innerHTML = seqCheckAvail[ruleName].name;
-                }
-                fragment.appendChild(listItem);
+                addRuleItem(seqCheckAvail[ruleName].name);
             }
         }
     }
@@ -8550,7 +8581,7 @@ function updateCategoryList() {
             document.getElementById('categoryList'),
         fragment = document.createDocumentFragment();
 
-    while (el.firstChild) el.removeChild(el.firstChild);
+    removeChildNodes(el);
     // Populate category list
     if (seqCheckAvail[ruleName]) {
         for (n in seqCheckAvail[ruleName].cats) {
@@ -8576,7 +8607,7 @@ function updateProgramList() {
             document.getElementById('programList'),
         fragment = document.createDocumentFragment();
 
-    while (el.firstChild) el.removeChild(el.firstChild);
+    removeChildNodes(el);
     // Populate program list
     if (seqCheckAvail[ruleName] && seqCheckAvail[ruleName].cats[categoryName]) {
         for (n in seqCheckAvail[ruleName].cats[categoryName].seqs) {
@@ -8719,8 +8750,8 @@ function checkSequence(show) {
     var div = document.getElementById('checkSequence');
     if (show) {
         if (show === 'log') {
-            checkRules(function (data) {
-                alertBox(function () {
+            checkRules((data) => {
+                alertBox((evt) => {
                     // show log page
                     var div = document.createElement('div');
                     var pre = document.createElement('pre');
@@ -8753,7 +8784,7 @@ function checkSequence(show) {
             var contentDiv = document.getElementById('checkSequenceContent');
             contentDiv.innerHTML = document.getElementById('alerts').innerHTML;
             // remove label
-            contentDiv.removeChild(contentDiv.firstChild);
+            contentDiv.firstChild.remove();
             if (contentDiv.innerHTML == '') {
                 // no alerts
                 if (activeRules) {
@@ -8883,10 +8914,7 @@ function changeReferenceSequence(auto) {
 
     activeForm = activeFormSave;
 
-    var figCount = 0;
-    for (var i = 0; i < figures.length; i++) {
-        if (figures[i].aresti) figCount++;
-    }
+    var figCount = figures.filter((figure) => figure.aresti).length;
 
     var div = document.getElementById('referenceSequenceDialog');
     var noDisplay = div.classList.contains('noDisplay');
@@ -8994,8 +9022,7 @@ function missingInfoCheck(f) {
 function updateFigureSelectorOptions(selectedOption) {
     var container = document.getElementById('figureSelectorOptionsDiv');
     if (container) {
-        // clear container
-        while (container.firstChild) container.removeChild(container.firstChild);
+        removeChildNodes(container);
         // find first and last (if any) real figures
         var firstFigure = false;
         var lastFigure = false;
@@ -9134,8 +9161,7 @@ function changeFigureGroup() {
 
     firstFigure = false;
 
-    // clear the figureChooser table
-    while (table.firstChild) table.removeChild(table.firstChild);
+    removeChildNodes(table);
     for (var i = 0; i < fig.length; i++) {
         if (fig[i]) {
             // Only draw figures that are in this group AND have not been
@@ -10357,7 +10383,7 @@ function setFigureSelected(figNr) {
                 }
                 if (nodes[i].id &&
                     nodes[i].id.match(/^(.*-handle|magnifier|selectedFigureBox)$/)) {
-                    selFig.removeChild(nodes[i]);
+                    nodes[i].remove();
                 }
             }
         }
@@ -10545,7 +10571,7 @@ function Drag(evt) {
                 // Adjust magnifier position
                 // Do this by first removing it, then determining the bBox and
                 // putting it back
-                dragTarget.parentNode.removeChild(dragTarget.parentNode.lastChild);
+                dragTarget.parentNode.lastChild.remove();
                 var
                     bBox = dragTarget.parentNode.getBBox(),
                     svgScale = roundTwo(SVGRoot.viewBox.baseVal.width /
@@ -11143,9 +11169,10 @@ function addToQueue(e) {
     // correct X/Y axis switch where necessary. Queue figures always
     // start on X axis
     if (f.entryAxis == 'Y') {
-        string = string.replace(regexSwitchDirY, '#').
-            replace(regexSwitchDirX, userpat.switchDirY).
-            replace(/#/g, userpat.switchDirX);
+        string = string
+            .replace(regexSwitchDirY, '#')
+            .replace(regexSwitchDirX, userpat.switchDirY)
+            .replace(/#/g, userpat.switchDirX);
     }
     // Handle the very special case where there's only an upright or
     // inverted spin and the base figure is an iv
@@ -11447,7 +11474,9 @@ function exitFuDesigner(newSequence) {
                 checkSequenceChanged();
 
                 separateFigures(true);
-                sequenceText.innerText = sequenceText.innerText.trim().replace(/ e(u|d|j|ja)$/, '').replace(/^eu[ ]*/, '');
+                sequenceText.innerText = sequenceText.innerText.trim()
+                    .replace(/ e(u|d|j|ja)$/, '')
+                    .replace(/^eu[ ]*/, '');
 
                 checkSequenceChanged();
             }
@@ -11486,7 +11515,7 @@ function exitFuDesigner(newSequence) {
         var div = document.createElement('div');
         div.innerHTML = document.getElementById('alerts').innerHTML;
         // remove label
-        div.removeChild(div.firstChild);
+        div.firstChild.remove();
 
         var myAlerts = div.innerHTML;
 
@@ -11824,8 +11853,7 @@ function buildFuFiguresTab() {
     firstFigure = false;
 
     fu_figures.value = '';
-    // clear
-    while (table.firstChild) table.removeChild(table.firstChild);
+    removeChildNodes(table);
     // put figures in table. In essence this is a trimmed version of the
     // routine in changeFigureGroup
     for (var i = 0; i < letters.length; i++) {
@@ -11894,9 +11922,7 @@ function buildFuFiguresTab() {
             var textDiv = td.appendChild(document.createElement('div'));
             textDiv.innerHTML = userText[(l === 'L') ? 'additional' : 'free'];
         }
-        if (iosDragDropShim.enabled) {
-            td.setAttribute('data-draggable', true);
-        } else td.setAttribute('draggable', true);
+        td.setAttribute(iosDragDropShim.enabled ? 'data-draggable' : 'draggable', true);
         td.addEventListener('dragstart', handleFreeDragFigureStart);
     }
 
@@ -11929,9 +11955,7 @@ function makeFormA() {
     var modifiedK = [];
     // Count how many real figures there are
     for (var i = 0; i < figures.length; i++) {
-        var aresti = figures[i].aresti;
-        var paths = figures[i].paths;
-        if (aresti) {
+        if (figures[i].aresti) {
             // Build the figure at the top-left
             X = Y = 0;
             drawFullFigure(i, false);
@@ -12410,7 +12434,7 @@ function makeFormGrid(cols, width, svg) {
  * N(eutral) and H(igh). Lowercase is used for inverted attitudes.
  * Speeds are determined by selection defined in config.js.
  *
- * Here we match these until no more matches are possible.
+ * Here, we match these until no more matches are possible.
  *
  * sets    : figures entry/exit of form [xx, xx, xx, ...]
  * maxSize : maximum size per set (defaults to Infinity)
@@ -12470,13 +12494,7 @@ function getFigureSets(sets, maxSize) {
 
 // shuffle accepts an array and returns it's shuffled version
 function shuffle(array) {
-    for (var i = array.length - 1; i > 0; i--) {
-        var j = Math.floor(Math.random() * (i + 1));
-        var temp = array[i];
-        array[i] = array[j];
-        array[j] = temp;
-    }
-    return array;
+    return array.sort(() => 0.5 - Math.random());
 }
 
 // createFigureProposals creates groups of figures, based on matching by
@@ -12504,7 +12522,7 @@ function createFigureProposals() {
 
     // now sort by Superfamily. This prevents filling up proposals before
     // "difficult" Superfamilies are spread out
-    realFigs.sort(function (a, b) {
+    realFigs.sort((a, b) => {
         return (figures[a].superFamily - figures[b].superFamily);
     });
 
@@ -12650,7 +12668,7 @@ function makeFree() {
 
     // make sure the sequence is shown
     document.body.classList.add('fuDesigner');
-    while (div.firstChild) div.removeChild(div.firstChild);
+    removeChildNodes(div);
     var table = document.createElement('table');
     div.appendChild(table);
 
@@ -13051,7 +13069,7 @@ function displayAlerts() {
     if (container) {
         // Clear any previous messages but make sure we don't remove the label (1 node)
         while (container.childNodes.length > 1) {
-            container.removeChild(container.lastChild);
+            container.lastChild.remove();
         }
         // sort messages alphabetically/by number. Specific figure messages
         // will be shown first as '(' comes before all letters
@@ -13428,6 +13446,8 @@ function flyingMode() {
         document.getElementById('t_flyingModeWind').classList.remove('left');
         document.getElementById('flyingModeSequence').classList.remove('windLeft');
     }
+    // start keep awaking (Cordova only)
+    if (window.plugins && window.plugins.insomnia) window.plugins.insomnia.keepAwake();
 }
 // switchFlyingModeWind switches the wind direction in flying mode
 function switchFlyingModeWind() {
@@ -13441,6 +13461,9 @@ function switchFlyingModeWind() {
 
 // exitFlyingMode exits the Flying mode
 function exitFlyingMode() {
+    // stop keep awaking (Cordova only)
+    if (window.plugins && window.plugins.insomnia) window.plugins.insomnia.allowSleepAgain();
+    // switch to normal view
     selectForm(document.getElementById('t_flyingModeWind').classList.contains('left') ? 'C' : 'B');
     document.getElementById('flyingMode').classList.add('flyingModeHidden');
     // clear sequences after timeout
@@ -13637,13 +13660,11 @@ function checkMultiDialog(show) {
 
 // clearFileListContainer is called to clear file list containers
 function clearFileListContainer(container) {
-    while (container.childNodes.length > 0) {
-        container.removeChild(container.lastChild);
-    }
+    removeChildNodes(container);
     // make sure we remove all els with fileListFileRemove class
     var e = document.getElementsByClassName('fileListFileRemove');
     for (var i = e.length - 1; i >= 0; i--) {
-        e[i].parentNode.removeChild(e[i]);
+        e[i].remove();
     }
 }
 
@@ -13800,7 +13821,7 @@ function checkSequenceMulti(body) {
                 var div = document.createElement('div');
                 div.innerHTML = document.getElementById('alerts').innerHTML;
                 // remove label
-                div.removeChild(div.firstChild);
+                div.firstChild.remove();
 
                 if (div.innerHTML == '') {
                     if (activeRules) {
@@ -13887,7 +13908,12 @@ function loadedSequence(evt, name) {
         // update the sequence if OLAN.sequence was true
         if (OLAN.sequence) {
             OLAN.sequence = false;
-            updateSequence(-1, '');
+            /* Removed next line in 2022.2.5 as it appears to cause issues
+               with loading OLAN sequences. Use may be conflicting with earlier
+               changes made in activeSequence update logic. Unlikely that anyone
+               will still be trying to open an OLAN sequence, but you never know...
+            */
+            //updateSequence(-1, '');
             activeSequence.text = '';
             checkSequenceChanged();
         }
@@ -14037,12 +14063,21 @@ function OLANtoXML(string) {
                 string += '<' + key + '>';
                 activeKey = key;
             } else activeKey = false;
-        } else if (activeKey) string += lines[i];
+        } else if (activeKey) {
+            // Add the value, but make sure to escape XML special characters
+            string += lines[i]
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
     }
     if (activeKey) string += '</' + activeKey + '>';
     // end with current oa_version to prevent some error messages
     string += '<oa_version>' + version + '</oa_version></sequence>';
     OLAN.bumpBugCheck = true;
+
     return string;
 }
 
@@ -14352,8 +14387,6 @@ function checkOpenAeroVersion() {
     // Older OpenAero versions would just disregard those
     if (compVersion(oa_version.value, '2016.1.1') < 0) {
         while (sequenceText.innerText.match(/(^| )[^" ]+"[^"]*"( |$)/)) {
-            console.log('Correcting Pre-2016.1.1 sequence');
-            console.log(sequenceText.innerText);
             sequenceText.innerText = sequenceText.innerText.replace(/(^| )[^" ]+"[^"]*"( |$)/, ' ');
         }
         // check for X-Y direction changers when loading as Grid
@@ -14835,12 +14868,25 @@ function saveAsURL() {
 
 // QRcode shows an alertBox containing a QR code holding the sequence link
 function QRcode() {
-    alertBox('<div id="QRcode"></div>',
+    // Show alertBox with temporary "generating" text
+    alertBox('<div id="QRcode">' + userText.generatingQRCode + '</div>',
         userText.qrCodeTitle);
-    new QRCode(
-        document.getElementById('QRcode'),
-        'https://openaero.net/?s=' + encodeBase64Url(compressSequence(activeSequence.xml)),
-    );
+    // Use setTimeout to generate QR code asynchronously
+    setTimeout(function () {
+        const div = document.createElement('div');
+        // Create QR code at 600x600, then scale down to 300x300. This improves QR code
+        // recognition for very large sequences.
+        new QRCode(
+            div,
+            {
+                text: 'https://openaero.net/?s=' + encodeBase64Url(compressSequence(activeSequence.xml)),
+                width: 600,
+                height: 600
+            }
+        );
+        document.getElementById('QRcode').innerHTML =
+            '<img src="' + div.children[0].toDataURL("image/png") + '" style="width: 300px; height: 300px;">';
+    }, 10);
 }
 
 // scanQRcode opens the scanner for QR code sequences (Cordova only)
@@ -14995,40 +15041,56 @@ function aircraft() {
     return (document.getElementById('actype').value + ' ' +
         document.getElementById('acreg').value).trim();
 }
+
 // printForms will print selected forms
 // Depending on the system a method will be chosen:
 // 1) Integrate print into main page and use screen and media print styles
 // 2) Check if called from "Save PDF" on Cordova app
-
 function printForms(evt) {
-    // update the print style with margins
-    var style = document.getElementById('printStyle');
-    style.innerHTML = '@page {size: auto; margin: ' +
-        document.getElementById('marginTop').value + 'mm ' +
-        document.getElementById('marginRight').value + 'mm ' +
-        document.getElementById('marginBottom').value + 'mm ' +
-        document.getElementById('marginLeft').value + 'mm}' +
-        'html {height: 100%; overflow: initial;}' +
-        'body {margin: 0; height: 100%; overflow: initial;}' +
-        '.noPrint {display: none;}' +
-        '#noScreen {height: 100%;}' +
-        '.breakAfter {position: relative; display:block; ' +
-        'page-break-inside:avoid; page-break-after:always; ' +
-        'height: 100%;}' +
-        'svg {position: absolute; top: 0; height: 100%;}';
 
-    window.document.title = '';
-    // construct and print pages
+    if (platform.cordova) {
+        beforePrint(evt);
+    } else {
+        window.print();
+    }
+
+    // restore title (changed in beforePrint)
+    changeSequenceInfo();
+
+    return true;
+}
+
+// Before printing, adjust layout. When using Cordova, printing is
+// activated from this function also
+function beforePrint(evt) {
     buildForms(window, function (printBody) {
+        // update the print style with margins
+        var style = document.getElementById('printStyle');
+        style.innerHTML = '@page {size: auto; margin: ' +
+            document.getElementById('marginTop').value + 'mm ' +
+            document.getElementById('marginRight').value + 'mm ' +
+            document.getElementById('marginBottom').value + 'mm ' +
+            document.getElementById('marginLeft').value + 'mm}' +
+            'html {height: 100%; overflow: initial;}' +
+            'body {margin: 0; height: 100%; overflow: initial;}' +
+            '.noPrint {display: none;}' +
+            '#noScreen {height: 100%;}' +
+            '.breakAfter {position: relative; display:block; ' +
+            'page-break-inside:avoid; page-break-after:always; ' +
+            'height: 100%;}' +
+            'svg {position: absolute; top: 0; height: 100%;}';
+
+        window.document.title = '';
         // clear noScreen div
         var div = document.getElementById('noScreen');
-        while (div.firstChild) div.removeChild(div.firstChild);
+        removeChildNodes(div);
         // add all nodes that will be printed
         while (printBody.childNodes.length > 0) {
             div.appendChild(printBody.childNodes[0]);
         }
         window.document.title = activeFileName();
 
+        // On Cordova, start printing now
         if (platform.cordova) {
             var printHtml =
                 '<html>' +
@@ -15047,12 +15109,8 @@ function printForms(evt) {
             } else {
                 cordova.plugins.printer.print(printHtml);
             }
-        } else {
-            window.print();
         }
 
-        // restore title
-        changeSequenceInfo();
     });
 }
 
@@ -15137,8 +15195,8 @@ function buildForms(win, callback) {
         var string = document.getElementById('printPageSetString').value.toUpperCase();
         for (var i = 0; i < string.length; i++) {
             if (/[ABCRLGD_ ]/.test(string[i]) ||
-                (/[0-9][><]|[TF][><=]/.test(string.substring(i, i + 2)))) {
-                if (/[BCG]\+|[0-9][><]|[TF][><=]/.test(string.substring(i, i + 2))) {
+                (/[0-9][><]|[TFQ][><=]/.test(string.substring(i, i + 2)))) {
+                if (/[BCG]\+|[0-9][><]|[TFQ][><=]/.test(string.substring(i, i + 2))) {
                     activeForm = string.substring(i, i + 2);
                     i++;
                 } else activeForm = string[i];
@@ -15152,23 +15210,23 @@ function buildForms(win, callback) {
                     // make sure we only keep the svg images in the div
                     var nodes = div.childNodes;
                     for (var k = nodes.length - 1; k >= 0; k--) {
-                        if (!/svg/i.test(nodes[k].tagName)) div.removeChild(nodes[k]);
+                        if (!/svg/i.test(nodes[k].tagName)) nodes[k].remove();
                     }
                     body.appendChild(div);
                 } else {
                     // remove newlines from SVG to simplify regex matching
-                    formSVG = formSVG.replace(/[\n\r]/g, '');
-                    // remove end tag from all SVGs
-                    formSVG = formSVG.replace(/<\/svg>$/, '');
+                    // and remove end tag from all SVGs
+                    formSVG = formSVG.replace(/[\n\r]/g, '').replace(/<\/svg>$/, '');
                     if (svg === '') {
                         // use first SVG start tag and adjust width
                         svg = formSVG.replace(/(<svg[^>]*width=")([^"]*)/, '$1' +
                             document.getElementById('imageWidth').value);
                     } else {
                         // remove subsequent SVGs start tags
-                        formSVG = formSVG.replace(/^.*?<svg[^>]*>/, '');
-                        // remove xml declarations
-                        formSVG = formSVG.replace(/<\?xml[^>]*>/, '');
+                        formSVG = formSVG
+                            .replace(/^.*?<svg[^>]*>/, '')
+                            // remove xml declarations
+                            .replace(/<\?xml[^>]*>/, '');
                         // add translated group with formSVG
                         svg += '<g transform="translate (0,' +
                             roundTwo(translateY) + ')">' + formSVG + '</g>';
@@ -15195,18 +15253,16 @@ function buildForms(win, callback) {
                 var height = translateY -
                     parseInt(document.getElementById('pageSpacing').value) + 10;
                 // update first rectangle
-                svg = svg.replace(/<rect [^>]+>/, '<rect x="-5" y="-20" ' +
+                svg = svg
+                    .replace(/<rect [^>]+>/, '<rect x="-5" y="-20" ' +
                     'width="810" height="' + (height + 40) + '" ' +
-                    'style="fill: white;"/>');
-                // Update viewBox
-                // Add some margin to make sure bold lines etc are correctly shown
-                svg = svg.replace(/viewBox="[^"]*"/, 'viewBox="-5 -5 810 ' +
-                    height + '"');
-                // replace first width and height. These should be for complete SVG
-                svg = svg.replace(/width="[^"]*"/, 'width="' +
-                    document.getElementById('imageWidth').value + 'px"');
-                svg = svg.replace(/height="[^"]*"/, 'height="' +
-                    document.getElementById('imageHeight').value + 'px"');
+                    'style="fill: white;"/>')
+                    // Update viewBox
+                    // Add some margin to make sure bold lines etc are correctly shown
+                    .replace(/viewBox="[^"]*"/, `viewBox="-5 -5 810 ${height}"`)
+                    // replace first width and height. These should be for complete SVG
+                    .replace(/width="[^"]*"/, `width="${document.getElementById('imageWidth').value}px"`)
+                    .replace(/height="[^"]*"/, `height="${document.getElementById('imageHeight').value}px"`);
             }
 
             if (multi.processing) {
@@ -15276,7 +15332,7 @@ function buildForm(print) {
 
     miniFormA = /[BC]\+/.test(activeForm);
 
-    if (/^[0-9TF]/.test(activeForm)) {
+    if (/^[0-9TFQ]/.test(activeForm)) {
         var activeFormSave = activeForm.toString();
         activeForm = (activeForm[1] === '>') ? 'L' : 'R';
         draw();
@@ -15286,7 +15342,7 @@ function buildForm(print) {
     var bBox = SVGRoot.getBBox();
     var mySVG = SVGRoot;
 
-    switch (activeForm.replace(/[0-9TF][><=]/, 'P')) {
+    switch (activeForm.replace(/[0-9TFQ][><=]/, 'P')) {
         case 'G':
         case 'G+':
             addFormElementsGrid(mySVG);
@@ -15306,6 +15362,11 @@ function buildForm(print) {
                     break;
                 case 'F':
                     var copies = 4;
+                    var width = 400;
+                    var height = 565;
+                    break;
+                case 'Q':
+                    var copies = 2;
                     var width = 400;
                     var height = 565;
                     break;
@@ -15344,7 +15405,9 @@ function buildForm(print) {
                     ') scale(' + scale + ')');
             }
 
+            // Handle pilot card prints with more than 1 copy
             if (copies !== 1) {
+                var addQRcode = /^Q/.test(activeForm);
                 if (flipSecond) {
                     activeForm = 'L';
                     draw();
@@ -15361,12 +15424,27 @@ function buildForm(print) {
                             ((width - w * scale) / 2)) + ')');
                 } else {
                     seq2.setAttribute('transform', 'translate(' +
-                        roundTwo(((flipSecond ? -x2 : -x) * scale) + width) + ',' +
-                        roundTwo(-y * scale) + ') scale(' + scale + ')');
+                        roundTwo(((flipSecond ? -x2 : -x) * scale) + (addQRcode ? 0 : width)) + ',' +
+                        roundTwo(-y * scale + (addQRcode ? height : 0)) + ') scale(' + scale + ')');
                 }
                 mySVG.appendChild(seq2);
+                // See if we need to add the QR codes. These have a fixed size of 300x300
+                if (addQRcode) {
+                    var qrImage = document.getElementById('qrCodeForPrint').children[0].toDataURL("image/png");
+                    drawImage({
+                        x: width + 50, y: 20, width: 300, height: 300,
+                        preserveAspectRatio: 'xMaxYMax',
+                        href: qrImage
+                    }, mySVG);
+                    drawImage({
+                        x: width + 50, y: height + 20, width: 300, height: 300,
+                        preserveAspectRatio: 'xMaxYMax',
+                        href: qrImage
+                    }, mySVG);
+                }
             }
 
+            // Handle pilot card prints with 2 copies
             if (copies === 4) {
                 var seq3 = seq1.cloneNode(true);
                 seq3.setAttribute('id', 'seq2');
@@ -15384,7 +15462,7 @@ function buildForm(print) {
             mySVG.setAttribute('viewBox', '0 0 800 1130');
             mySVG.setAttribute("width", '100%');
             break;
-
+        
         case 'L':
         case 'R':
             addFormElementsLR(mySVG, print);
@@ -15437,14 +15515,12 @@ function buildForm(print) {
 
                 // remove wind arrow
                 var el = mySVG.getElementById('windArrow');
-                if (el) el.parentNode.removeChild(el);
+                if (el) el.remove();
 
                 if (activeForm === 'A') {
-                    // check if the columns should be stretched
-                    var maxStretch = 1.2;
+                    // check if the columns should be stretched (max factor 1.2)
                     moveRight = 0;
-                    var xScale = scale;
-                    if ((xScale * w) < 580) xScale = Math.min(580 / w, maxStretch);
+                    var xScale = (scale * w) < 580 ? Math.min(580 / w, 1.2) : scale;
 
                     mySVG.getElementById('sequence').setAttribute('transform', 'translate(' +
                         roundTwo(moveRight - (bBox.x * scale)) + ',' +
@@ -15465,7 +15541,8 @@ function buildForm(print) {
                 function IACnoUpwindNote() {
                     for (var i = 0; i < figures.length; i++) {
                         if (figures[i].aresti) {
-                            if (figures[i].entryDir != (activeForm[0] === 'B' ? 0 : 180)) {
+                            if ((figures[i].entryDir + figures[i].entryAtt) % 360 !=
+                                (activeForm[0] === 'B' ? 0 : 180)) {
                                 el = drawText(
                                     figures[i].entryDir % 180 == 90 ? userText.iacNoteYAxisEntry : userText.iacNoteDownwindEntry,
                                     activeForm[0] === 'B' ? 10 : 730,
@@ -15551,16 +15628,9 @@ function buildForm(print) {
                 mySVG = adjustRollFontSize(scale, mySVG);
 
                 if (activeForm === 'A') {
-                    // check if the columns should be stretched
-                    var maxStretch = 1.2;
+                    // check if the columns should be stretched (maximum factor 1.2)
                     moveRight = 0;
-                    var xScale = scale;
-                    if ((xScale * w) < 620) {
-                        xScale = 620 / w;
-                        if (xScale > maxStretch) {
-                            xScale = maxStretch;
-                        }
-                    }
+                    var xScale = (scale * w < 620) ? Math.min(620 / w, 1.2) : scale;
                     mySVG.getElementById('sequence').setAttribute('preserveAspectRatio', 'none');
 
                     mySVG.getElementById('sequence').setAttribute('transform', 'translate(' +
@@ -15614,9 +15684,7 @@ function buildForm(print) {
         // rebuild entire svg in group
         var g = document.createElementNS(svgNS, 'g');
         while (mySVG.childNodes.length > 0) {
-            var node = mySVG.firstChild;
-            mySVG.removeChild(node);
-            g.appendChild(node);
+            g.appendChild(mySVG.firstChild);
         }
         // temporarily attach text to SVGRoot. Needed as after possible
         // roll scaling, mySVG may be detached from DOM and t.getBBox()
@@ -15661,29 +15729,28 @@ function buildForm(print) {
 
     // create Black & White forms when checked
     if (document.getElementById('blackWhite').checked) {
-        // replace style neg by negBW
-        var regex = RegExp('"' + style.neg + '"', 'g');
-        sequenceSVG = sequenceSVG.replace(regex, '"' + style.negBW + '"');
-        // replace style negfill by negfillBW
-        var regex = RegExp('"' + style.negfill + '"', 'g');
-        sequenceSVG = sequenceSVG.replace(regex, '"' + style.negfillBW + '"');
-        // replace remaining red by black
-        sequenceSVG = sequenceSVG.replace(/\bred;/g, 'black;');
+        sequenceSVG = sequenceSVG
+            // replace style neg by negBW
+            .replace(RegExp(`"${style.neg}"`, 'g'), `"${style.negBW}"`)
+            // replace style negfill by negfillBW
+            .replace(RegExp(`"${style.negfill}"`, 'g'), `"${style.negfillBW}"`)
+            // replace remaining red by black
+            .replace(/\bred;/g, 'black;');
     }
 
     // create inverse forms when checked
     if (document.getElementById('inverseForms').checked) {
         // build sequence white-on-black
-        sequenceSVG = sequenceSVG.replace(/\bwhite;/g, 'BLACK;');
-        sequenceSVG = sequenceSVG.replace(/\bblack;/g, 'white;');
-        sequenceSVG = sequenceSVG.replace(/\bBLACK;/g, 'black;');
-        // change red to lighter red
-        sequenceSVG = sequenceSVG.replace(/\bred;/g, '#ff6040;');
-
-        // fatten lines
-        sequenceSVG = sequenceSVG.replace(/stroke-width:\s*2px;/g, 'stroke-width: 4px;');
-        sequenceSVG = sequenceSVG.replace(/stroke-width:\s*1\.5px;/g, 'stroke-width: 3px;');
-        sequenceSVG = sequenceSVG.replace(/stroke-width:\s*1px;/g, 'stroke-width: 2px;');
+        sequenceSVG = sequenceSVG
+            .replace(/\bwhite;/g, 'BLACK;')
+            .replace(/\bblack;/g, 'white;')
+            .replace(/\bBLACK;/g, 'black;')
+            // change red to lighter red
+            .replace(/\bred;/g, '#ff6040;')
+            // fatten lines
+            .replace(/stroke-width:\s*2px;/g, 'stroke-width: 4px;')
+            .replace(/stroke-width:\s*1\.5px;/g, 'stroke-width: 3px;')
+            .replace(/stroke-width:\s*1px;/g, 'stroke-width: 2px;');
     }
 
     // go back to editing output mode
@@ -15715,7 +15782,7 @@ function addSequenceString(svg, textBox, print) {
 
         var box = g.getBBox();
         if (box.width > textBox.width) {
-            g.removeChild(g.firstChild);
+            g.firstChild.remove();
             // medium to long text
             // split on last possible space, might create three lines
             var words = txt.split(' ');
@@ -15968,7 +16035,7 @@ function addFormElementsLR(svg, print) {
 
     // remove wind arrow
     var el = svg.getElementById('windArrow');
-    if (el) el.parentNode.removeChild(el);
+    if (el) el.remove();
 
     // rebuild wind arrow in the correct place, and add form letter
     if (activeForm === 'R') {
@@ -16002,7 +16069,7 @@ function addFormElementsLR(svg, print) {
         redrawSVG = adjustRollFontSize(scaleX, svg);
         // remove wind arrow
         var el = redrawSVG.getElementById('windArrow');
-        if (el) el.parentNode.removeChild(el);
+        if (el) el.remove();
         sequence.innerHTML = redrawSVG.getElementById('sequence').innerHTML;
     }
 
@@ -16456,8 +16523,7 @@ function activeFileName(append) {
         fname += document.getElementById('category').value + ' ' +
             document.getElementById('program').value + ' ' +
             document.getElementById('pilot').value;
-        fname = fname.replace(/\s\s+/g, ' ');
-        fname = fname.replace(/^\s+|\s+$/g, '');
+        fname = sanitizeSpaces(fname);
         updateSaveFilename(fname);
     } else {
         fname = fileName.innerText;
@@ -16474,8 +16540,8 @@ function saveImageSizeAdjust() {
         count = 0;
     for (var i = 0; i < string.length; i++) {
         if (/[ABCRLG_ ]/.test(string[i]) ||
-            (/[0-9][><]|[TF][><=]/.test(string.substring(i, i + 2)))) {
-            if (/[BCG]\+|[0-9][><]|[TF][><=]/.test(string.substring(i, i + 2))) {
+            (/[0-9][><]|[TFQ][><=]/.test(string.substring(i, i + 2)))) {
+            if (/[BCG]\+|[0-9][><]|[TFQ][><=]/.test(string.substring(i, i + 2))) {
                 i++;
             }
             count++;
@@ -16662,7 +16728,7 @@ function svgToPng(svg, callback) {
         ctx.canvas.width = img.width;
         ctx.canvas.height = img.height;
         ctx.drawImage(img, 0, 0);
-        document.lastChild.removeChild(canvas);
+        canvas.remove();
         if (callback) callback(canvas); else return canvas;
     }
     // convert svg to canvas
@@ -18878,14 +18944,10 @@ function parseSequence() {
     // Build the last figure stop shape at the last real figure after
     // all's done.
     if (!firstFigure && !(/^(G)|(FU)$/.test(activeForm))) {
-        for (var i = figures.length - 1; i >= 0; i--) {
-            if (figures[i].aresti) {
-                // remove space at end of figure
-                figures[i].paths.pop();
-                figures[i].paths = buildShape('FigStop', true, figures[i].paths);
-                break;
-            }
-        }
+        const i = figures.findLastIndex((figure) => figure.aresti);
+        // remove space at end of figure
+        figures[i].paths.pop();
+        figures[i].paths = buildShape('FigStop', true, figures[i].paths);
     }
 }
 

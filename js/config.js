@@ -1,49 +1,58 @@
-﻿// config.js
+﻿/*
+config.js
 
-// This file is part of OpenAero.
+This file is part of OpenAero.
 
-//  OpenAero was originally designed by Ringo Massa and built upon ideas
-//  of Jose Luis Aresti, Michael Golan, Alan Cassidy and many others. 
+ OpenAero was originally designed by Ringo Massa and built upon ideas
+ of Jose Luis Aresti, Michael Golan, Alan Cassidy and many others. 
 
-//  OpenAero is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published by
-//  the Free Software Foundation, either version 3 of the License, or
-//  (at your option) any later version.
+ OpenAero is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
 
-//  OpenAero is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU General Public License for more details.
+ OpenAero is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
 
-//  You should have received a copy of the GNU General Public License
-//  along with OpenAero.  If not, see <http://www.gnu.org/licenses/>.
+ You should have received a copy of the GNU General Public License
+ along with OpenAero.  If not, see <http://www.gnu.org/licenses/>.
 
-// **************************************************************
-// *
-// *           BASE VARIABLES
-// *
-// * These variables can be used to change the look of sequences
-// * and even the way they are parsed.
-// *
-// * Changing these variables is at your own risk and might stop
-// * the software from functioning!
-// *
-// **************************************************************
+ **************************************************************
+ *
+ *           BASE VARIABLES
+ *
+ * These variables can be used to change the look of sequences
+ * and even the way they are parsed.
+ *
+ * Changing these variables is at your own risk and might stop
+ * the software from functioning!
+ *
+ * Variables that should never be changed during execution are
+ * defined as const.
+ *
+ **************************************************************
 
-// **************
-// Define active version number of OpenAero
-// It is of format yyyy.x.z
-// A new x should be used for versions that create sequences not
-// fully backward compatible with the previous version
-
-var version = '2022.2.4';
+ **************
+ Define active version number of OpenAero
+ It is of format yyyy.x.z
+ A new x should be used for versions that create sequences not
+ fully backward compatible with the previous version
+*/
+const version = '2022.2.5';
 /* versionNew is an object that contains version update information
    The structure is {vvv : [[ttt, n], ...], ...} , where
    vvv = version number
    ttt = update text
    n   = importance (higher = more important)
 */
-var versionNew = {
+const versionNew = {
+    '2022.2.5': [
+        ['Added France sequences for 2022', 3],
+        [`Added printing of a sequence card/QR code combination.
+        Folding the card will give you the QR code on the back for easy sharing`, 3]
+    ],
     '2022.2': [
         ['Added support for generating sequence QR codes and for reading QR codes from the app', 4],
         ['Added NZAC Known sequences for 2023', 2],
@@ -310,10 +319,15 @@ var versionNew = {
   ]
 }
 // versionNewMax defines the maximum updates to show when upgrading
-var versionNewMax = 10;
+const versionNewMax = 10;
+
+// svg Name Space
+const svgNS = "http://www.w3.org/2000/svg";
+// xlink Name Space for including image in svg
+const xlinkNS = "http://www.w3.org/1999/xlink";
 
 // platform holds various platform variables
-var platform = {
+const platform = {
   // platform.cordova is set to true here. It is set to false in
 	// cordova.js when not compiled on Cordova
   cordova:   true,
@@ -331,7 +345,7 @@ var platform = {
 // Sequence link saving uses the index (pilot=0, team=1, etc) to shorten the link.
 // For compatibility, NEVER CHANGE THE ORDER OR REMOVE ITEMS, but add new labels at the end.
 // When a label does need to be removed, replace it by ''.
-var sequenceXMLlabels = [
+const sequenceXMLlabels = [
   'pilot',
   'team',
   'actype',
@@ -367,7 +381,7 @@ var sequenceXMLlabels = [
 var lineElement = 10;
 // basic curve size
 var curveRadius = 40;
-var rollSymbolSizes = {'medium': 8, 'large': 12};
+const rollSymbolSizes = {'medium': 8, 'large': 12};
 function setRollSymbolSizes (sizeDescription) {
 	var rollSymbolSize = rollSymbolSizes[sizeDescription];
 	// roll curve size
@@ -409,13 +423,13 @@ Math.Tau = Math.PI * 2;
 Math.degToRad = Math.PI / 180;
 Math.radToDeg = 180 / Math.PI;
 // define the offset for figures in the y axis in degrees
-var yAxisOffsetDefault = 30;
+const yAxisOffsetDefault = 30;
 // define the scale factor on the y axis for perspective drawing
-var yAxisScaleFactor = 0.7;
+const yAxisScaleFactor = 0.7;
 // how much to flatten turns in the Y axis
-var flattenTurn = 0.7;
+const flattenTurn = 0.7;
 // set scaleLine object to prevent calculations in makeLine
-var scaleLine = {'x':1, 'y':1};
+const scaleLine = {'x':1, 'y':1};
 // define whether to show numbers in circles
 var numberInCircle = false;
 // define whether to show curves in perspective on Y axis
@@ -423,10 +437,10 @@ var curvePerspective = true;
 // newTurnPerspective is a checkbox in settings
 var newTurnPerspective;
 // how far apart the starts of figures should at least be
-var minFigStartDist = lineElement * 3;
-var minFigStartDistSq = minFigStartDist * minFigStartDist;
+const minFigStartDist = lineElement * 3;
+const minFigStartDistSq = minFigStartDist * minFigStartDist;
 // how much margin to use when automatically separating figures
-var separateMargin = 4;
+const separateMargin = 4;
 
 /**********************************************************************
  * 
@@ -435,7 +449,7 @@ var separateMargin = 4;
  **********************************************************************/
 
 // define if we show an error when running from file://
-var presentFileError = true;
+const presentFileError = false;
 // show mini Form A on Form B and C
 var miniFormA = true;
 // define whether to draw IAC style forms by default
@@ -443,7 +457,7 @@ var iacForms = false;
 // define default pattern for figure images saved in ZIP
 var zipImageFilenamePattern = '%location %category %program %pilot Form %form_fig_%figure';
 // define which settings will be saved in localStorage and sequence XML
-var saveSettings = [
+const saveSettings = [
   'language',
   'marginBottom',
   'marginLeft',
@@ -462,16 +476,16 @@ var saveSettings = [
   'rollSymbolSize',
   'nonArestiRolls'];
 // define which settings will be loaded from sequence
-var loadSettings = [
+const loadSettings = [
   'numberInCircle',
   'rollFontSize',
   'nonArestiRolls'];
 // define default language
-var defaultLanguage = 'en';
+const defaultLanguage = 'en';
 // define language object
 var lang = [];
 // entryOptions are in reverse order of displayed
-var entryOptions = {
+const entryOptions = {
   'eja': 'xBoxEntryAway',
   'ej': 'xBoxEntry',
   'ed': 'downwindEntry',
@@ -488,14 +502,14 @@ var rollsPerRollElement = 2;
 var rollFontSize = 20;
 // Roll sizes. User displayed names are set through index.html and
 // language files
-var rollFont = {'small': 15, 'medium': 20, 'large': 25};
+const rollFont = {'small': 15, 'medium': 20, 'large': 25};
 
 // styleSave is used for restoring after change by user
 var styleSave = [];
 
 // style holds the style objects
 // !!! don't use 'entry' or 'exit', they are reserved !!!
-var style = {
+const style = {
   // Positive line style
   'pos' : 'stroke: black; stroke-width: 1.5px; fill: none; vector-effect: non-scaling-stroke;',
   //'chooserPos' : 'stroke: black; stroke-width: 3px; fill: none;',
@@ -597,7 +611,7 @@ var style = {
 // For every category the list of SF is defined below. The order MATTERS!
 // The SF will be decided by the first aresti fig nr match
 // Superfamilies are also used for creation of figure group proposals
-var superFamilies = {
+const superFamilies = {
 	unlimited : [
 	  [/^2\./,'2'],
 	  [/^5\./,'5'],
@@ -648,7 +662,7 @@ rollTypes.push('8:2x8');
 for (var i = 2; i < 9; i++) {
   rollTypes.push((i*2) + '8:' + (i*2) + 'x8');
 }
-var posFlickTypes = [
+const posFlickTypes = [
   '2f:1/2 pos flick',
   '3f:3/4 pos flick',
   '1f:1 pos flick',
@@ -656,7 +670,7 @@ var posFlickTypes = [
   '6f:1 1/2 pos flick',
   '7f:1 3/4 pos flick',
   '9f:2 pos flick'];
-var negFlickTypes = [
+const negFlickTypes = [
   '2if:1/2 neg flick',
   '3if:3/4 neg flick',
   '1if:1 neg flick',
@@ -664,19 +678,19 @@ var negFlickTypes = [
   '6if:1 1/2 neg flick',
   '7if:1 3/4 neg flick',
   '9if:2 neg flick'];
-var posSpinTypes = [
+const posSpinTypes = [
   '1s:1 pos spin',
   '5s:1 1/4 pos spin',
   '6s:1 1/2 pos spin',
   '7s:1 3/4 pos spin',
   '9s:2 pos spin'];
-var negSpinTypes = [
+const negSpinTypes = [
   '1is:1 neg spin',
   '5is:1 1/4 neg spin',
   '6is:1 1/2 neg spin',
   '7is:1 3/4 neg spin',
   '9is:2 neg spin'];
-var gliderRollTypes = [
+const gliderRollTypes = [
   '33:3x3',
   '63:6x3',
   '02:1/2 Slow Roll',
@@ -695,7 +709,7 @@ var gliderRollTypes = [
 
 // Never use '#' as a pattern! It is used in various places in OpenAero
 // as a placeholder for switch operations.
-var userpat = {
+const userpat = {
   'comment' : '"',
   'additional' : '=',
   'curveTo' : '(',
@@ -723,7 +737,7 @@ var userpat = {
 // Define patterns for the software figure string
 // ***************
 
-var figpat = {
+const figpat = {
   'forward' : '\'',
   'longforward' : '~',
   'fullroll' : '_',
@@ -738,14 +752,14 @@ var figpat = {
   'pushPointTip' : 'U'
 };
 
-var drawAngles = {
+const drawAngles = {
   'd':45, 'v':90, 'z':135, 'm':180,
   'c':225, 'p':270, 'r':315, 'o':360,
   'D':-45, 'V':-90, 'Z':-135, 'M':-180,
   'C':-225, 'P':-270, 'R':-315, 'O':-360
 };
 
-var rollAttitudes = {'0':'', '45':'d', '90':'v', '135':'d',
+const rollAttitudes = {'0':'', '45':'d', '90':'v', '135':'d',
   '180':'', '225':'id', '270':'iv', '315':'id'
 };
 
@@ -753,7 +767,7 @@ var rollAttitudes = {'0':'', '45':'d', '90':'v', '135':'d',
 // define Regex patterns for drawing and sequence parsing
 // ****************
 
-var
+const
 	regexRollFontSize = /font-size:[ ]*([\d]+)px/,
 	regexChangeDir = new RegExp ('[\\' + userpat.switchDirX + '\\' + userpat.switchDirY + ']'),
 	// match all comments
@@ -880,7 +894,7 @@ var
 // The flags global will hold all country flags as base64 PNG images
 // Flags are courtesy of www.icondrawer.com
 
-var flags = {
+const flags = {
 'ad' : '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',
 'ae' : 'iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1MAAA6mAAADqYAAAXb5JfxUYAAALLSURBVHja7JlLbtRAEIa/8jgTITJEQkJIOQEbLhBxBMSWFWfgACw4ACdhxSW4AeIKCAkpEEYifnRVsXD7MZ5J7MmCscWU5LHL3V3Tf/9V3V1tcXfmLAkzlyOAI4D/HYAAC+A03uckCuQp8Oj76zdX+7R8++bZJBB8fPnucQqcuxkPXlyObnh5cXHwzn/+9hXgPK3cx3BV7Pq6Ku0ubiLtszuIcHWzutO44whyqz623W11zk8fgjnAaVp5k0MIEHQ3gNjxuqx07QWSNMZb3Rt9O/BkJ8hddXY9Bzc06hUAM7ws8bIcRV8wPaj7BA2YWQeAGhRFdTWTk/cmq1YvNOw91fnA8z5SmKJ0ALgplhdYA2DAgJYHZSAPBWZ9FyqK0S5UWjgogMICtsGAKuQZ5Pm4ETgwA0st0H4MeJbjebE/AB8MmVaXThs6OgP1e21OyrQPIOBZhufZLBhYJMlmEKOG/cnwbBwDn169n8hG7kMdAwHLbkYzMCWJAAy5iUEsd/hk32+nAgBTbL2eZT6QxrUZD+WMAZhhV7/mC8A14G7zBWDB6v31bKQ+kGs2c7JY4CHMFIAGBN9MZLbW/vtufv9FDAStOrcVB97p/7Q6v5HQeFAwbo0Djz81HycnaYcX6WWhjsj27s1d2vTawaW3LjYkV8km4oh37NQD6MJyuSSNfUhrNI4zdFLtDXrvvfONPNfdQGpQbRnuuAjiMYF3MImD4K1fN87qMRMWB6vtVLZNrQtAQZJeDAweIcTh8yYp977b1W+8om+jU97TeycPTfmGybamxrw8bf4gkb1ngF0x7UP07V84IgbUqoPFkQxM4aOIasVAAmDdc58ZiIg0g5hMZUTvu5A1AGT2DMwUQDWNxlkgOTsbZWClq0ltJRTg5/r36Ebr6WRvKsBT4DnwZGZx/AP4IlSfl1bxPifJgbUcv9QfARwBHAEcVP4OAIDLxftXYXE7AAAAAElFTkSuQmCC',
 'af' : 'iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1MAAA6mAAADqYAAAXb5JfxUYAAAfxSURBVHja7JlbiF1XGcd/a+99Ljkzk8lkEkvTxIkpiaFJai6ihdaEVl9KE4stSPsgCBXEF0HUNy9PKkJRSzWgT74YH3zwUlKIRS0tiKi5YEt0SHNpGifJTDM5yZmcc/bea63Ph31be5+T2DkKEpw1cM4+e9Za+/t/l//3fWsrEeFuHh53+VgBsALg/x2AAnygkX7fTcMAYQCsPnjw4OKou/z4ffdRpWKlVH5PoRDK1wqVqA74wv41SL4Oiq2KNVTuJ/vAS5/97toAmLTWcuDAgZEANFdPlx6YS5ZdSvVbSg7wyJZW/u9iUnkLd/dsvHbuFMBkADSstRhjaLfbyWTnIUqpXAARwVOqtJm1g2EkIsm6TAIriXqrwIBrt+L8piB4jpXEAZQsSf6mmhPYZINGkDzQorVGa12gdZ/pKMZkP1MBRMcVPamKxqQsccVK2poCNArtuFjuhkrlhvMUxFZj0nUBgDWWKIqI43jZLiTaVJU69Drzb9fPFRAbPdQyqERJkt1L12oL2pgcXADJjSiKiKJo+QBS0FUfldtEhq3Mia3OJ1X3KMCWrRcajRVbABCR0QGkazLmUY6QBeuALfl0IVCk4zyAM3YZYKGKIiITYaxjAWMMYRjeGcAgQaQqjEuPk5IIWeglS9WQiOjrOI+1OxXGruvVdYxxLWCModfr0e/3l2+BMMpTuh0apsNdJxuhiXNYKg/cAmqZYpOd+zrCiBm0QBiGywagowhPBElV5Hs+qrEKr9mEegC9HqrVArFEV69iXZGUItRRybxlEFULJPQcar8cA1rrkS1gwzAXyUfhrZ1AQk189Qqr9u1FjKF36iS1iTU07tlA950LuYatSrSphgTwMGLKhq88tHEAWGvp9XojWUDCyGEcRf/y5fx3be4Keu4ycRRhwnl4d57W1m3YpU4yT0GoY0fCVPPqNukjA4CHsRULdLtder3eCCwUokSYeu454jNnab/2KjU8DJZg0wbCi+fx0zkxEGzZTOuxAyy+cJju+bP046iUpAVJOT+tpxQoUYgqKhHlqSEu1O0ShhGSp1iH1LJSItWOqxjph6x+9hn8zZvo/uZlJIxoHXqCpZeOMvbofoKNGwn/+CdsFBHP/oPuy7+lvn0bk595lvBr3yQ0kSt6QQAKRFTFjdLPWNBuEFtrudnpjFTM1ddMseqxA+hz5+ief4uxmc3Ut25l7ec/hzWGxkf2Ut++jfb3X6R17wZuvX0Bf3wMajWaOx+gry+WSgXlwHFzgEujoY7xPa9sgVHKCIDGtq2YixeJz17AC0PGnnicYHyM8N1rdL7zPeo7dzD2zNOILzQf/QTdw4eJLv2TYGoNeD6RU3+Vy+kyI5XDQqh7tbIFFhdHawniqwvYSKMXr1O7dyO3jr3C+FNPEp04ifRDFn9+hFUf3Udt5n56R49Ra01CL0TW+kgYc6178w6ZM62GhbwnyECuH5ssW8BaOxKA4P4ZpN+nsXsXjd07ufLFL9PYtxeJNK1PHaI2+0HiucvYhQV6b5xg+ktfIZjZCM0mwZYZ7OKpIeVfymlpIIsU/1ZJjA+WEqMecNn56/hbNmMuvE3npz/DitB8+CFqex6kNjGO+fBugvXriN48jY4MvddfRzVq1HZsJzrxN9hcSCVpzi58X0rFnCJhI5GiDM8BeJ6X9wO364IGEouC8PgJ9Mf3Y+au4K+bptmaoP+7V7FxTB+FMgYVBNBsMrbp/TT37MHGEfrMWfp/OY6ZmSoaEFf7TmOUsimiBLFCzQ8GAbid2J1sIZUf3bl3mJpfQDUa1PftYfzQ4yx89euEvQ6N8Qlq922iP/t3xj72CNMvPE80ewZ8n/D4ScI4zCvYJIglF9amLJTxvZDEQl6W3wnAso41rKX9gx+x7sXn8YKA8K3zTH/rG8RX51FhhBhN69NP4TXqdH7xS1oPP4Rpt7l+5Eiq5VTU1DWk1BuIkx0krXZBrGBxq9G0qxJr0z7SbYVUfllkzMJSAvQ7bW7+8CfUHtyJshaZmqSx4wG8qUlst490bhBfukzjAzMs/foo3WOvINYm7pH1C04eMLnPU2IiweYle6mlNNZixSZobdGCJCWuTTOigCWvOnMLiCAitP/6Z1bfuEnr6U9SWzeNWVpCz88jKGy7TfNDu+j86ii93/+BUIep0InLFII5+ktZyErWKCQNf6b5Ui1krSllw6IJKbOAFFSRx1xfLC2BQIRbs6e59e3T1IM64nnEUT/vFRQBGo2XPtQAWqlK85k9L61WpXo2VMwt1ULWWnzfH4gB+XdhLNCSMkMpwJgYDPglpZj8HDO7VU99XoaeBKm8zbS5SxdzjKnkgWEA3ls5mnwYp++zqWsNkmNWqClU3j/L0BM5V/jUHk6HDMbq4nC3dBA1GgJQCi8/M0r2U+kDPEenHsoBJwPnF5kVVXqAppw6NbtWjjt5o9LnAJ2KYCQJtHTTgYToDWuWUY7fO8SZn64VsIa52n9sAXedcgSQkk7BUwqy2uY9H32oimtlO3qIlf+SC4mT/CtgSsAEh1Wqn8NObNy5WW+gEtdUlUycjYmJieVbYKxVCdLBs2Zx4kBKQivGG6sKxskTlpsPBvsEnGYno2Q6I3Zk7U4n0dfGTQPnoSLJYSworAieIk9M/twlUIrOjeZAATn0PUF+8leKBaOAe4BdwPq77A3NAvCGSl8vTaTfd9MIgY5aeVO/AmAFwAqA/+n41wA0RdfLiHUdlQAAAABJRU5ErkJggg==',
@@ -1107,7 +1121,7 @@ var flags = {
 }
  
 // define IOC (International Olympic Commitee) countries for flags
-var iocCountries = {"AD":"AND","AE":"UAE","AF":"AFG","AG":"ANT",
+const iocCountries = {"AD":"AND","AE":"UAE","AF":"AFG","AG":"ANT",
   "AI":"AIA","AL":"ALB","AM":"ARM","AO":"ANG","AQ":"ATA",
   "AR":"ARG","AS":"ASA","AT":"AUT","AU":"AUS","AW":"ARU",
   "AZ":"AZE","BA":"BIH","BB":"BAR","BD":"BAN","BE":"BEL","BF":"BUR",
@@ -1129,7 +1143,7 @@ var iocCountries = {"AD":"AND","AE":"UAE","AF":"AFG","AG":"ANT",
   "JP":"JPN","KE":"KEN","KG":"KGZ","KH":"CAM","KI":"KIR","KM":"COM",
   "KN":"SKN","KP":"PRK","KR":"KOR","KW":"KUW","KY":"CAY","KZ":"KAZ",
   "LA":"LAO","LB":"LIB","LC":"LCA","LI":"LIE","LK":"SRI","LR":"LBR",
-  "LS":"LES","LT":"LTU","LU":"LUX","LV":"ESA","LY":"LBA","MA":"MAR",
+  "LS":"LES","LT":"LTU","LU":"LUX","LV":"LAT","LY":"LBA","MA":"MAR",
   "MC":"MON","MD":"MDA","ME":"MNE","MG":"MAD","MH":"MHL",
   "MK":"MKD","ML":"MLI","MM":"MYA","MN":"MGL",
   "MR":"MTN","MT":"MLT","MU":"MRI","MV":"MDV",
@@ -1154,7 +1168,7 @@ var iocCountriesReverse = [];
 for (key in iocCountries) iocCountriesReverse[iocCountries[key]] = key;
 
 // define iso countries for flags
-var isoCountries = {"AD":"AND","AE":"ARE","AF":"AFG","AG":"ATG",
+const isoCountries = {"AD":"AND","AE":"ARE","AF":"AFG","AG":"ATG",
   "AI":"AIA","AL":"ALB","AM":"ARM","AN":"ANT","AO":"AGO","AQ":"ATA",
   "AR":"ARG","AS":"ASM","AT":"AUT","AU":"AUS","AW":"ABW","AX":"ALA",
   "AZ":"AZE","BA":"BIH","BB":"BRB","BD":"BGD","BE":"BEL","BF":"BFA",

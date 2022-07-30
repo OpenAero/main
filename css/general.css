@@ -1456,7 +1456,7 @@ option.used {
   display: inline-block;
   width: 70px;
   height: 98px;
-  margin: 4px;
+  margin: 4px -6px 4px -6px !important;
   padding: 4px !important;
   overflow-y: hidden;
   border: 2px solid #fff;
@@ -1475,9 +1475,11 @@ option.used {
   opacity: 1;
   border-color: #f4b;
 }
-.pilotCard {
-	display: inline-block;
-	position: relative;
+.pilotCard, .pilotCardQR {
+    display: inline-block;
+    position: relative;
+    width: 32px;
+    height: 48px;
 }
 #pilotCardPercent .pilotCard {
 	width: 70px;
@@ -1487,9 +1489,11 @@ option.used {
 	width: 70px;
 	height: 48px;
 }
-#pilotCard4 .pilotCard {
-	width: 32px;
-	height: 48px;
+#pilotCard4 .pilotCard,
+#pilotCard2QR .pilotCard,
+#pilotCard2QR .pilotCardQR {
+    width: 32px;
+    height: 48px;
 }
 .pilotCard img {
 	position: absolute;
@@ -1508,6 +1512,10 @@ option.used {
 	width: 35px;
 	height: 48px;
 }
+#pilotCard2QR .pilotCard img {
+    width: 35px;
+    height: 48px;
+}
 .pilotCardLetter {
 	position: absolute;
 	left: 4px;
@@ -1518,29 +1526,29 @@ option.used {
 .pilotCardLetter:after {
 	content: "R";
 }
-.formL img {
-	transform: rotate3d(0, 1, 0, 180deg);
-}
-#pilotCard2.formL img {
-	transform: rotate(90deg) rotate3d(0, 1, 0, 180deg) translateX(23px);
-}
+#pilotCard2.formL img,
 #pilotCard2.formRL div:last-of-type img {
-	transform: rotate(90deg) rotate3d(0, 1, 0, 180deg) translateX(23px);
+    transform: rotate(90deg) rotate3d(0, 1, 0, 180deg) translateX(23px);
 }
-#pilotCard4.formRL div:nth-of-type(even) img {
-	transform: rotate3d(0, 1, 0, 180deg);
+.formL img,
+#pilotCard4.formRL div:nth-of-type(even) img,
+#pilotCard2QR.formRL div:first-of-type img {
+    transform: rotate3d(0, 1, 0, 180deg);
 }
-.formL .pilotCardLetter:after {
-	content: "L";
-}
-.formRL div:nth-of-type(even) .pilotCardLetter:after {
-	content: "L";
+.formL .pilotCardLetter:after,
+.formRL div:nth-of-type(even) .pilotCardLetter:after,
+#pilotCard2QR.formRL div:first-of-type .pilotCardLetter:after {
+    content: "L";
 }
 #pilotCardPercent span {
   position: absolute;
   left: 10px;
   bottom: 9px;
   background-color: rgba(255,255,255,0.8);
+}
+.pilotCardQR .material-icons {
+    position: absolute;
+    font-size: 36px;
 }
 .folded #pilotCardPercent span {
   visibility: hidden;
@@ -1644,17 +1652,17 @@ option.used {
   margin-right: 5px !important;
 }
 #t_locked {
-  position: absolute;
-  background: red;
-  opacity: 0.8;
-  color: white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-  font-weight: bold;
-  text-align: center;
-  padding: 6px 16px 3px 16px;
-  bottom: 0;
-  z-index: 8;
-  transition: all 0.3s ease-in-out;
+    position: absolute;
+    background: #fb8c00;
+    opacity: 0.93;
+    color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    font-weight: bold;
+    text-align: center;
+    padding: 6px 16px 3px 16px;
+    bottom: 0;
+    z-index: 8;
+    transition: all 0.3s ease-in-out;
 }
 #t_locked.hidden {
   -webkit-transform: translateY(-90px);
@@ -2407,7 +2415,9 @@ table#figureChooserTable div {
   margin-right: -8px;
   text-indent: -16px;
 }
-
+.combo li:empty {
+    height: 1em;
+}
 ::-webkit-input-placeholder {
   font-size: 12px;
   line-height: 28px;

@@ -63,9 +63,9 @@
 			the full-screen browser mode (usually by pressing F11 on your keyboard) 
 			to have the maximum screen space available when using OpenAero.</p>
 			<p>The latest version of the software is always presented when you are 
-			online, and will be installed automatically. Once you have visted
+			online, and will be installed automatically. Once you have visited
 			<a href="https://openaero.net/" target="_blank">openaero.net</a> your
-	    current version of the software will also be available to you when
+	    current version of the software may also be available to you when
 	    you are offline. For small tablets and smartphones it will help to
 	    select <i>Phone layout</i> in <i>Settings</i> so the layout will be adjusted
 	    to fit the narrower screen format.</p>
@@ -84,6 +84,7 @@
 				<li>improved handling of .seq sequence files</li>
 				<li>guaranteed offline performance</li>
 				<li>supporting OpenAero development with your financial contribution</li>
+                <li>Several other app-only features</li>
 	    </ul>
 	    </p>
 	    <p class="badges">
@@ -583,24 +584,27 @@
 
             <p>Note that you can use the <strong>Page set</strong> option for printing complex sets of pages.
             Character codes are used to define which pages you want to print. The options are:
-                <table>
-                    <tr><td>A</td><td>Form A</td><td rowspan="6"></td></tr>
-                    <tr><td>B</td><td>Form B. To add mini form A use B+</td></tr>
-                    <tr><td>C</td><td>Form C. To add mini form A use C+</td></tr>
-                    <tr><td>R</td><td>Form R</td></tr>
-                    <tr><td>L</td><td>Form L</td></tr>
-                    <tr><td>G</td><td>Form Grid. To include sequence info use G+</td></tr>
-                    <tr><td>0</td><td>Single full page pilot card</td>
-                        <td rowspan="4" width="40%" style="padding-left:1em;">
-                            After a pilot card character, add <strong>></strong> for wind from the left,
-                            <strong><</strong> for wind from the right or <strong>=</strong> for both.
-                        </td>
-                    </tr>
-                    <tr><td>1 - 9</td><td>Single pilot card with scale 10-100% in steps of 10</td></tr>
-                    <tr><td>T</td><td>Two pilot cards</td></tr>
-                    <tr><td>F</td><td>Four pilot cards</td></tr>
-                    <tr><td>_ or space</td><td>Empty page</td><td></td></tr>
-                </table>
+                                         <table style="border-collapse: collapse;">
+                                             <tr><td>A</td><td>Form A</td><td rowspan="6"></td></tr>
+                                             <tr><td>B</td><td>Form B. To add mini form A use B+</td></tr>
+                                             <tr><td>C</td><td>Form C. To add mini form A use C+</td></tr>
+                                             <tr><td>R</td><td>Form R</td></tr>
+                                             <tr><td>L</td><td>Form L</td></tr>
+                                             <tr><td>G</td><td>Form Grid. To include sequence info use G+</td></tr>
+                                             <tr>
+                                                 <td>0</td>
+                                                 <td style="border-top: dotted 1px; border-right:solid 1px;">Single full page pilot card</td>
+                                                 <td rowspan="5" width="40%" style="padding-left:1em; padding-top: 2.5em;">
+                                                     After a pilot card character, add <strong>></strong> for wind from the left,
+                                                     <strong><</strong> for wind from the right or <strong>=</strong> for both.
+                                                 </td>
+                                             </tr>
+                                             <tr><td>1 - 9</td><td style="border-right:solid 1px;">Single pilot card with scale 10-90% in steps of 10%</td></tr>
+                                             <tr><td>T</td><td style="border-right:solid 1px;">Two pilot cards</td></tr>
+                                             <tr><td>F</td><td style="border-right:solid 1px;">Four pilot cards</td></tr>
+                                             <tr><td>Q</td><td style="border-bottom: dotted 1px; border-right:solid 1px;">Two pilot cards with QR code</td></tr>
+                                             <tr><td>_ or space</td><td>Empty page</td><td></td></tr>
+                                         </table>
             </p>
             <p>
                 For example, using the character code <strong>LLLLR_F=_C+</strong> would create a package of:
@@ -772,7 +776,8 @@
                         <strong>Flying Mode</strong><br />
                         <img src="../img/OA_FlyingMode.png">
                         A&nbsp;view&nbsp;mode to be used with an onboard tablet device. The wind direction can be changed by tapping the
-                        WIND button. To exit the Flying Mode and return to editing mode, tap EXIT.
+                        WIND button. To exit the Flying Mode and return to editing mode, tap EXIT.<br />
+                        When using the OpenAero app, the screen will be kept awake while using the Flying Mode.
                     </li>
                 </ul>
             </p>

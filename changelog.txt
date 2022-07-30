@@ -1,4 +1,18 @@
-﻿2022.2.4
+﻿2022.2.5
+* Corrected Latvia IOC code to LAT
+* Keep screen awake when using the Flying Mode (App only)
+* Added 2022 France sequences
+* Increased QR code size to 300x300 pixels to allow scanning very large sequences
+* Added a combination print of sequence card and QR code
+* Fixed escaping of XML special characters in activeSequence.xml
+* Added option to select empty Rules
+* Improved printing responsiveness and reduced browser blocking by using onbeforeprint
+* Fixed OLAN sequence loading (broken since at least 2020.1 without reports...)
+* Converted many "var" statements to "const" as part of ES6 refactoring
+* Changed "Locked" bar background color from red (too extreme) to orange
+* Fixed IAC "Downwind entry" note for inverted entries
+
+2022.2.4
 * Fixed bug causing crash when dragging figures
 * Fixed iOS Cordova statusbar
 

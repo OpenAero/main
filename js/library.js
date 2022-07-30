@@ -73,6 +73,24 @@ var library = {
     '2022 BAeA Sports Known':
         'https://openaero.net/?s=hFNwb3J0c4dwb3dlcmVkiEtub3duiUJBZUGKMTWLMI1x4OAgaK4nqyv-IDJnICgzLDApIGl24DVzrierq6sgbTIgLTIlIH4zaivg4CAoLTksMTcpIODg4ODgYGOnMuBgfiBtMiAoLTEwLDE0KSAyaiAoNCwwKSAxj0JBZUGQMjAyMi4xLjeRQg',
 
+    '2022 France Espoirs connu':
+        'https://openaero.net/?s=hEVzcG9pcnOFMjAyModwb3dlcmVkiGNvbm51iUZyYW5jZYoxMIswjENvbm51IEVzcG9pciAyMDIyjWVqYSD-aXY1cyBkaK6urv4gcGIgbTIgKDEsMjEpIP7gYLL-ICJCcmVhayIg_m2tLX4gMTklIP4tMmot4CAoMCw4KSAtNiAoLTIsMCkg4GDjKK4upzKupykupzLg4GCPRkZBdm9sdGlnZZAyMDIyLjIuNJFCkjE',
+
+    '2022 France Desavois/promotion connu':
+        'https://openaero.net/?s=hERlc2F2b2lzL3Byb21vdGlvboUyMDIyh3Bvd2VyZWSIY29ubnWJRnJhbmNlijE1izCMQ29ubnUgUHJvbW90aW9uIDIwMjKNZWogdjQtICgwLDApIC1pdmlzrqcgKC0xMCwwKSBrri6nLSAiQnJlYWsiIC1kaK6urS3-IC2udK6upyv-IDM-IDI0aK6uLqcgbTEsMjQgKC02LDApIDJmZyAoNywwKSB-q6syam8yj0ZGQXZvbHRpZ2WQMjAyMi4yLjSRQpIx',
+
+    '2022 France National_2 connu 1':
+        'https://openaero.net/?s=hE5hdGlvbmFsXzKFTrAxIC2GMjAyModwb3dlcmVkiGNvbm51iUZyYW5jZYoyMIswjENvbm51IE6wMSAtIDIwMjKNdjT-XiD-aXY1cz4gMmRori6nLSAoLTgsNSkgLTRoq35eIP6rqysnLDRgcnAyK34gKLEsMCkgIkJyZWFrIiBkZiAxNyUg4GBhLSD-rS3g4G0sMi0gKDcsMTQpIDMlIH4tMmpvMTUr4GAg_jM0YCwz4Ct-IH4sNKdiriw0rqcrIP5vMf6PRkZBdm9sdGlnZZAyMDIyLjIuNJFCkjE',
+
+    '2022 France National_2 connu 2':
+        'https://openaero.net/?s=hE5hdGlvbmFsXzKFTrAyIC2GMjAyModwb3dlcmVkiGNvbm51iUZyYW5jZYoyMIswjENvbm51IE6wMiAtIDIwMjKNLSwifCIyaXQsNC3-XiD-LWl2NWlzrj4gND4gOWOuJy0gKDAsNykgIkJyZWFrIiAtYCw0p2KuLi0gLa6uJ22yIDNqb2kzICg4LDApIH4rpzJmp3Surq4up6v-IGRiMjQuICgzLDIxKSAxbTM0LDMtIDI-IC0yaWY7tI9GRkF2b2x0aWdlkDIwMjIuMi40kUKSMQ',
+
+    '2022 France Doret/excellence connu 1':
+        'https://openaero.net/?s=gEFMTIFGUkGCU0ODRkeERG9yZXQvZXhjZWxsZW5jZYdwb3dlcmVkiGNvbm51iUZyYW5jZYozNYswjENPTk5VIDEuMjKNLDV0YTMuPiAyLGZyYzQsMy0gKC05LDE4KSAtsm0yZiw2K-AgKC0xLDIpIDRqMiAsNOIoMzQpLT4gKC05LLEpIOBgLeA1aXMsInwiNC4naW4oLqc0pywzri4nKa6uICg4LLEpILJraWYsMiCnM2lmLminNK4gKDgsMCkgMzJtNyw1LY9GRkF2b2x0aWdlkDIwMjIuMi40kUI',
+
+    '2022 France Doret/excellence connu 2':
+        'https://openaero.net/?s=gEFMTIFGUkGCU0ODRkeERG9yZXQvZXhjZWxsZW5jZYVDSEFNQkxFWYYwNi8yModwb3dlcmVkiGNvbm51iUZyYW5jZYozNYswjENPTk5VIDIuMjKNZWogpywzZidycDQsNS0gLTRqMi0gLacsNDh0YTYuICgtNCw4KSA44iinKTMgNXM7NGlycDJmLDl-IDFkaC5pZi6nICgtMTAsMTIpIDQsNWRiMmlmLiAoMCwyKSAxcnA4LDcgKDAsMjMpIDQ4bTM0LDOPRkZBdm9sdGlnZZAyMDIyLjIuNJFC',
+
     '2022 IAC Primary Known':
         'https://openaero.net/?s=hFByaW1hcnmGMjAyModwb3dlcmVkiEtub3duiUlBQ4o1izCNZCBpdmA2c66nIC5jLicyYCvgICgtOCwxNCkgbyAyaisgMY9JQUOQMjAyMi4xLjeRQg',
 

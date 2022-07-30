@@ -296,7 +296,8 @@ lang.fr = {
 'FUstartOnLoad' : 'Le programme est identifié comme une liste de figures d\'Inconnu-Libre. ' +
   'Voulez-vous lancer l\'assembleur d\'Inconnu-Libre?',
 'FUexitEntryMatch' : 'Certaines attitudes d\'entrée / sortie de figures sont incompatibles',
-'gaps' : 'Espaces',
+    'gaps': 'Espaces',
+    'generatingQRCode': 'Génération du code QR...',
 'general' : 'Général',
 'getChrome' : 'Pour une utilisation optimale d\OpenAero, téléchargez la ' +
   'dernière version du navigateur <a href="https://www.google.com/intl/en/chrome/browser/">' +
@@ -397,9 +398,8 @@ lang.fr = {
 'multiRemoveLogo' : 'Supprimer le logo', 
 'multiOriginalLogo' : 'Utiliser le logo d\'origine',
 'newCopySubsequence' : 'Créer / Copier sous-partie',
-'newTurnPerspective' : 'Vraie perspective pour les virages ' +
-  '<font color=red>EXPERIMENTAL, A EVITER EN COMPETITION INTERNATIONALE!' +
-  '</font>',
+'newTurnPerspective' : `Vraie perspective pour les virages<br />
+    <font color=red>EXPERIMENTAL, A EVITER EN COMPETITION INTERNATIONALE!</font>`,
 'noCookies' : 'Il semble que les cookies sont invalidés dans votre navigateur.' +
   'Certaines fonctions d\'OpenAero ne marcheront pas.<br>' +
   'Pour autoriser les cookies dans Chrome, copier l\'url ' +
@@ -521,8 +521,8 @@ lang.fr = {
     'proposalsTotalK': 'K total de chaque proposition: ',
     'pullLoop': 'Tirez %s degrés',
     'pushLoop': 'Poussez %s degrés',
-    'qrCode': 'QR Code',
-    'qrCodeTitle': 'QR Code du programme',
+    'qrCode': 'Code QR',
+    'qrCodeTitle': 'Code QR du programme',
     'qrScanFail': 'La numérisation du code QR a échoué: %s',
 'queue' : 'File/Tampon',
 'queueColumns' : 'Colonnes',

@@ -42,7 +42,35 @@
     <link rel="stylesheet" media="screen" type="text/css" href="css/desktop.css" id="desktopCSS">
     <link rel="stylesheet" media="screen" type="text/css" href="css/desktop-largeMobile.css" id="desktopLargeMobileCSS">
     <!-- styles -->
-    <style type="text/css" media="print" id="printStyle"></style>
+    <style type="text/css" media="print" id="printStyle">
+        html {
+            height: 100%;
+            overflow: initial;
+        }
+        body {
+            margin: 0;
+            height: 100%;
+            overflow: initial;
+        }
+        .noPrint {
+            display: none;
+        }
+        #noScreen {
+            height: 100%;
+        }
+        .breakAfter {
+            position: relative;
+            display:block;
+            page-break-inside:avoid;
+            page-break-after:always;
+            height: 100%;
+        }
+        svg {
+            position: absolute;
+            top: 0;
+            height: 100%;
+        }
+    </style>
     <style type="text/css" media="screen">
         #noScreen {
             display: none;
@@ -123,7 +151,7 @@
     <!-- create zip files. Used for individual figure image output -->
     <!-- https://github.com/Stuk/jszip 3.2.2 3 jul 2019 -->
     <script src="js/jszip.min.js" type="text/javascript"></script>
-    <!-- create QR codes -->
+    <!-- create QR codes https://github.com/davidshimjs/qrcodejs -->
     <script src="js/qrcode.min.js" type="text/javascript"></script>
 
     <!-- Debugging iOS with weinre and ngrok ? Did not get it to work X-origin blabla -->
@@ -133,8 +161,9 @@
 </head>
 <body>
     <div id="cordovaStatusBar" class="noDisplay"></div>
+    <div id="qrCodeForPrint" class="noPrint hidden"></div>
     <div id="scanQRcode" class="noPrint">
-        <img src="data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgODggODgiIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczpzdmc9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48Y2xpcFBhdGggaWQ9ImNsaXBQYXRoIj48cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIC8+PHJlY3QgeD0iNzIiIHk9IjAiIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgLz48cmVjdCB4PSIwIiB5PSI3MiIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiAvPjxyZWN0IHg9IjcyIiB5PSI3MiIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiAvPjwvY2xpcFBhdGg+PC9kZWZzPjxwYXRoIHN0eWxlPSJmaWxsOm5vbmU7c3Ryb2tlOiNmYjhjMDA7c3Ryb2tlLXdpZHRoOjIiIGQ9Im0gMTIsNCBoIDY0IGMgNCwwIDgsNCA4LDggdiA2NCBjIDAsNCAtNCw4IC04LDggaCAtNjQgYyAtNCwwIC04LC00IC04LC04IHYgLTY0IGMgMCwtNCA0LC04IDgsLTggeiIgY2xpcC1wYXRoPSJ1cmwoI2NsaXBQYXRoKSIgLz48L3N2Zz4=" id="scanQRcorners"></img>
+        <img src="data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgODggODgiIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczpzdmc9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48Y2xpcFBhdGggaWQ9ImNsaXBQYXRoIj48cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIC8+PHJlY3QgeD0iNzIiIHk9IjAiIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgLz48cmVjdCB4PSIwIiB5PSI3MiIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiAvPjxyZWN0IHg9IjcyIiB5PSI3MiIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiAvPjwvY2xpcFBhdGg+PC9kZWZzPjxwYXRoIHN0eWxlPSJmaWxsOm5vbmU7c3Ryb2tlOiNmYjhjMDA7c3Ryb2tlLXdpZHRoOjIiIGQ9Im0gMTIsNCBoIDY0IGMgNCwwIDgsNCA4LDggdiA2NCBjIDAsNCAtNCw4IC04LDggaCAtNjQgYyAtNCwwIC04LC00IC04LC04IHYgLTY0IGMgMCwtNCA0LC04IDgsLTggeiIgY2xpcC1wYXRoPSJ1cmwoI2NsaXBQYXRoKSIgLz48L3N2Zz4=" id="scanQRcorners">
         <span id="t_cancelQRscan" class="textButton userText"></span>
     </div>
     <div id="mainOverlay" class="noPrint fullscreen">
@@ -1045,6 +1074,22 @@
                         <div class="pilotCard">
                             <img src="img/PilotCard.svg">
                             <div class="pilotCardLetter"></div>
+                        </div>
+                    </div>
+                    <div id="pilotCard2QR" class="pilotCardLayout">
+                        <div class="pilotCard">
+                            <img src="img/PilotCard.svg">
+                            <div class="pilotCardLetter"></div>
+                        </div>
+                        <div class="pilotCardQR">
+                            <i class="material-icons">qr_code_2</i>
+                        </div>
+                        <div class="pilotCard">
+                            <img src="img/PilotCard.svg">
+                            <div class="pilotCardLetter"></div>
+                        </div>
+                        <div class="pilotCardQR">
+                            <i class="material-icons">qr_code_2</i>
                         </div>
                     </div>
                     <div id="t_pilotCardExplain" class="userText"></div>

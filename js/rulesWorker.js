@@ -177,7 +177,8 @@ function loadedRulesFile (lines) {
 // are available
 function parseRules (start) {
   start = start || 0;
-  
+
+    var log = [];
   var sections = [];
   var year = rulesYear();
   
@@ -196,7 +197,7 @@ function parseRules (start) {
         parts.splice(parts.length - 1, 1);
         parts.splice(0, 1);
         var catName = parts.join(' ');
-        console.log('Parsing ' + rules[i]);
+        log.push('Parsing ' + rules[i]);
         // only add square-bracket names to rules
         if (!seqCheckAvail[rnLower]) {
           // remove 'glider-' in display name, if present
@@ -246,11 +247,15 @@ function parseRules (start) {
     var match = rules[i].toLowerCase().match (/^more[\s]*=[\s]*(.*)$/);
     if (match) {
       if (sections.indexOf (match[1]) === -1) {
-        console.log ('*** Error: section ' + currentSection +
+        log.push ('*** Error: section ' + currentSection +
           ' references non-existing section "' + match[1] + '"');
       }
     }
-  }
+    }
+
+    console.log('*** Parsing rules ***');
+    console.log(log);
+
   postMessage ({runFunction: 'updateRulesList', arguments: [seqCheckAvail]});
   // add submenu showing/hiding
   postMessage ({runFunction: 'addMenuEventListeners'});

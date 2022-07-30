@@ -290,7 +290,8 @@ lang.en = {
   'Unknown. Do you want to start the Free (Un)known designer?',
 'FUexitEntryMatch' : 'Some figure exit / entry attitudes do not match',
 'gaps' : 'Gaps',
-'general' : 'General',
+    'general': 'General',
+'generatingQRCode' : 'Generating QR code...',
 'getChrome' : 'For optimum use of OpenAero, please download the ' +
   'latest version of the <a href="https://www.google.com/intl/en/chrome/browser/">' +
   'Google Chrome</a> browser.',
@@ -391,9 +392,8 @@ lang.en = {
 'multiRemoveLogo' : 'Remove logo',
 'multiOriginalLogo' : 'Use original logo',
 'newCopySubsequence' : 'New / copy subsequence',
-'newTurnPerspective' : 'Realistic-looking perspective for turns ' +
-  '<font color=red>EXPERIMENTAL, DO NOT USE FOR COMPETITION SEQUENCES!' +
-  '</font>',
+'newTurnPerspective' : `Realistic-looking perspective for turns<br />
+    <font color=red>EXPERIMENTAL, DO NOT USE FOR COMPETITION SEQUENCES!</font>`,
 'noCookies' : 'It seems cookies are disabled in your browser. ' +
   'This means some functions of OpenAero will not work.<br>' +
   'To enable cookies in the Chrome browser, please copy the following ' +
