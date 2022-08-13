@@ -773,6 +773,7 @@ textarea {
 
 #mainOverlay.iosCordova {
     top: 32px;
+    top: max(32px, env(safe-area-inset-top));
 }
 
 #topBlock {

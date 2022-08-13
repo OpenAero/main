@@ -406,7 +406,8 @@ table#figureChooserTable td.selected {
 
 /* message and other boxes */
 .box {
-  top: 1%;
+    top: 1%;
+  top: max(1%, env(safe-area-inset-top));
   left: 1%;
   width: 95%;
 }

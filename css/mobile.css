@@ -34,6 +34,7 @@ body.menuOpen {
     right: 0;
     left: 0;
     height: 32px;
+    height: max(32px, env(safe-area-inset-top));
     background-color: #ede7f6;
 }
 #topBlock {

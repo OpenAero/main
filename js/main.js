@@ -1298,8 +1298,8 @@ if (!HTMLCanvasElement.prototype.toBlob) {
 
 // findLastIndex polyfill
 if (!Array.prototype.findLastIndex) {
-    Array.prototype.findLastIndex = (function (f) {
-        return this.length - 1 - [...this].reverse().findIndex(f);
+    Object.defineProperty(Array.prototype, 'findLastIndex', {
+        value: function (f) { return this.length - 1 - [...this].reverse().findIndex(f); }
     });
 }
 
@@ -4600,9 +4600,13 @@ function drawText(text, x, y, styleId, anchor, id, svg) {
 // be determined automatically
 function drawTextArea(text, x, y, w, h, styleId, id, svg) {
     svg = svg || SVGRoot.getElementById('sequence');
+
+    // determine current svg width for later checking of correct
+    // foreignObject handling
+    var svgWidth = svg.getBBox().width;
+
     var newText = document.createElementNS(svgNS, "foreignObject");
     var div = document.createElement('div');
-    if (id) newText.setAttribute('id', id);
     newText.setAttribute('x', roundTwo(x));
     newText.setAttribute('y', roundTwo(y));
     if (w) {
@@ -4614,7 +4618,49 @@ function drawTextArea(text, x, y, w, h, styleId, id, svg) {
     if (styleId) div.setAttribute('style', style[styleId]);
     newText.appendChild(div);
     svg.appendChild(newText);
+
+    // A bug in the Windows app causes the width of the svg to
+    // be incorrect when using foreignObject. So we check the new
+    // width. If it's wrong, redo everything as text lines
+    if (w && svg.getBBox().width > Math.max(svgWidth, x + w)) {
+        newText.remove();
+        var
+            newText = document.createElementNS(svgNS, 'g'),
+            words = text.split(' '),
+            textLine = document.createElementNS(svgNS, "text"),
+            textNode = document.createTextNode('|');
+
+        // First we find out the line height using | character
+        textLine.appendChild(textNode);
+        newText.appendChild(textLine);
+        svg.appendChild(newText);
+        if (styleId) newText.setAttribute('style', style[styleId]);
+        var lineHeight = textLine.getBBox().height;
+        y += lineHeight;
+        // Now that we know, start building the lines, word by word
+        textLine.firstChild.data = words[0];
+        textLine.setAttribute('x', roundTwo(x));
+        textLine.setAttribute('y', roundTwo(y));
+        for (var i = 1; i < words.length; i++) {
+            var len = textNode.data.length;
+            textLine.firstChild.data += " " + words[i];
+            if (textLine.getComputedTextLength() > w) {
+                textLine.firstChild.data = textLine.firstChild.data.slice(0, len);
+                textLine = document.createElementNS(svgNS, "text");
+                y += lineHeight;
+                textLine.setAttribute("x", roundTwo(x));
+                textLine.setAttribute("y", roundTwo(y));
+                textNode = document.createTextNode(words[i]);
+                textLine.appendChild(textNode);
+                newText.appendChild(textLine);
+            }
+        }
+    }
+
+    if (id) newText.setAttribute('id', id);
+
     return newText;
+
 }
 
 // drawCircle draws a circle
@@ -10009,9 +10055,10 @@ function makeMiniFormA(x, y, tiny) {
             blockY + 4,
             totalWidth - 8,
             100, // height is determined later but needs to be set for iOS
+            'miniFormAModifiedK',
             'miniFormAModifiedK'
         )
-        blockY += parseInt(text.firstChild.getBoundingClientRect().height);
+        blockY += parseInt(text.getBoundingClientRect().height);
     }
 
     return { 'width': totalWidth + 1, 'height': blockY - y };
@@ -10115,6 +10162,7 @@ function makeTinyFormA(x, y) {
             blockY + 4,
             56,
             100, // height is determined later but needs to be set for iOS
+            'miniFormAModifiedK',
             'miniFormAModifiedK'
         )
         blockY += parseInt(text.firstChild.getBoundingClientRect().height);
@@ -13015,6 +13063,7 @@ function makeFormDescription(svg) {
     drawTextArea(text, 0, 0, 800, 990, 'formATextLarge', 'textBox', svg);
     addFormElementsGrid(svg);
 }
+
 // addFormElements adds wind & mini form A and adjusts size
 function addFormElements(form) {
     // Find out how big the SVG has become and adjust margins

@@ -398,7 +398,7 @@ rules.push (
 "why-NF3TOPH    = no flick roll on vertical down line after hesitation in the loop",
 "why_fr-NF3TOPH = pas de déclenché sur la verticale descendante aprés des facettes dans la boucle",
 
-"rule-NF2UP360   = upqtrs: ^([5-8]|[,;]4|4[,;]|2[,;]3|3[,;][23]) f",
+"rule-NF2UP360   = upqtrs: ^([5-8]|[1-8][,;]4|4[,;][1-8]|2[,;]3|3[,;][23]) f",
 "why-NF2UP360    = no flick roll on loop top after more than 360 roll going up",
 "why_fr-NF2UP360 = pas de déclenché en haut de boucle si plus de 360° de rotation verticale montante",
 

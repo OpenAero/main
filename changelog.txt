@@ -1,4 +1,4 @@
-﻿2022.2.5
+2022.2.5
 * Corrected Latvia IOC code to LAT
 * Keep screen awake when using the Flying Mode (App only)
 * Added 2022 France sequences
@@ -11,6 +11,9 @@
 * Converted many "var" statements to "const" as part of ES6 refactoring
 * Changed "Locked" bar background color from red (too extreme) to orange
 * Fixed IAC "Downwind entry" note for inverted entries
+* Fixed rule for checking maximum 360 degree vertical up roll before flick in top
+* Improved message box positioning for iOS devices with notch
+* Fixed issue in Windows app (caused by Windows bug) where width was incorrect when using a text block below Mini Form A
 
 2022.2.4
 * Fixed bug causing crash when dragging figures
