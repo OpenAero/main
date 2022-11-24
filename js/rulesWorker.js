@@ -580,13 +580,20 @@ function loadRules (ruleName, catName, programName) {
             var match = rules[i].match(regexRulesAdditionals);
             additionalFig.max = parseInt(match[2]);
             additionalFig.totalK = parseInt(match[3]);
-        } else if (rules[i].match(/^posnl/)) {
-            // load positioning and harmony K
-            // Editing is disabled and harmony hidden when 0
-            var pos = rules[i].match(/[0-9+]+/)[0].split('+');
+        } else if (/^pos(nl)?=/.test(rules[i])) {
+            // Split positioning options on ;
+            var posOptions = rules[i].replace(/^pos[^=]*=/, '').split(';');
+            var pos = [];
+            // Go through positioning options. When there are multiple, each
+            // should have a description. Format 'p+h:d; p+h:d; ...'
+            // First match is description, second positioning and harmony K.
+            for (var j = 0; j < posOptions.length; j++) {
+                var matches = posOptions[j].trim().match(/^([0-9]+\+?[0-9]*):?(.+)?$/);
+                pos.push({ posHarm: matches[1], description: matches[2] });
+            }
             postMessage({
                 runFunction: 'setRulesPosHarmony',
-                arguments: [parseInt(pos[0]) || 0, parseInt(pos[1]) || 0]
+                arguments: [pos]
             });
         } else if (rules[i].match(/^infocheck[ ]*=/)) {
             // define fields that should be checked for not being empty when

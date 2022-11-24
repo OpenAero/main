@@ -125,6 +125,12 @@
 #sequenceInfo div.form-group:last-of-type {
   width: 118px;
 }
+#positioningText {
+    position: absolute;
+    width: 118px;
+    top: 0;
+    right: 0;
+}
 .narrowRight div.form-group:first-of-type {
   width: 148px !important;
 }

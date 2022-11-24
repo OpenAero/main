@@ -40,7 +40,7 @@ This file is part of OpenAero.
  A new x should be used for versions that create sequences not
  fully backward compatible with the previous version
 */
-const version = '2022.2.5';
+const version = '2023.1';
 /* versionNew is an object that contains version update information
    The structure is {vvv : [[ttt, n], ...], ...} , where
    vvv = version number
@@ -383,7 +383,7 @@ var lineElement = 10;
 var curveRadius = 40;
 const rollSymbolSizes = {'medium': 8, 'large': 12};
 function setRollSymbolSizes (sizeDescription) {
-	var rollSymbolSize = rollSymbolSizes[sizeDescription];
+	window.rollSymbolSize = rollSymbolSizes[sizeDescription];
 	// roll curve size
 	window.rollcurveRadius = rollSymbolSize * 2.5;
 	// basic Snap element size
@@ -485,6 +485,7 @@ const defaultLanguage = 'en';
 // define language object
 var lang = [];
 // entryOptions are in reverse order of displayed
+// They are also hardcoded in several locations in main.js!
 const entryOptions = {
   'eja': 'xBoxEntryAway',
   'ej': 'xBoxEntry',

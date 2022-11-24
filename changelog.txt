@@ -1,3 +1,8 @@
+2023.1
+* Added option to choose CIVA glider positioning K for judges only or electronic tracking
+* Added feature to rotate figures in Grid view by setting as a subsequence with defined entry direction
+* Several changes to roll font positioning and roll font scaling for tall sequences to keep roll text readable while preventing overlap
+
 2022.2.5
 * Corrected Latvia IOC code to LAT
 * Keep screen awake when using the Flying Mode (App only)

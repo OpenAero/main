@@ -131,13 +131,13 @@
     <!-- sequence rules. Start with general and CIVA, then alphabetical -->
     <script src="js/rules/rules22.js" type="text/javascript"></script>
     <script src="js/rules/rules22-civa.js" type="text/javascript"></script>
-    <script src="js/rules/rules22-glider-civa.js" type="text/javascript"></script>
+    <script src="js/rules/rules23-glider-civa.js" type="text/javascript"></script>
     <script src="js/rules/rules22-aac.js" type="text/javascript"></script>
     <script src="js/rules/rules22-aeci.js" type="text/javascript"></script>
     <script src="js/rules/rules22-baea.js" type="text/javascript"></script>
     <script src="js/rules/rules22-france.js" type="text/javascript"></script>
     <script src="js/rules/rules15-ga.js" type="text/javascript"></script>
-    <script src="js/rules/rules22-iac.js" type="text/javascript"></script>
+    <script src="js/rules/rules23-iac.js" type="text/javascript"></script>
     <script src="js/rules/rules21-glider-iac.js" type="text/javascript"></script>
     <script src="js/rules/rules22-nzac.js" type="text/javascript"></script>
     <script src="js/rules/rules20-saa.js" type="text/javascript"></script>
@@ -587,12 +587,16 @@
                             <div class="item">
                                 <div class="form-group combo">
                                     <input type="number" name="positioning" id="positioning" maxlength="4" autocomplete="off" class="lock">
+                                    <select id="positioningText" class="hidden"></select>
                                     <label class="control-label userText" id="t_positioning" for="input"></label><i class="bar"></i>
                                 </div>
-                                <div id="harmonyField" class="hidden form-group combo">
+                            </div>
+                            <div id="harmonyField" class="hidden item">
+                                <div class="form-group combo">
                                     <input type="number" name="harmony" id="harmony" maxlength="4" autocomplete="off" class="lock">
                                     <label class="control-label userText" id="t_harmony" for="input"></label><i class="bar"></i>
                                 </div>
+                                <div></div>
                             </div>
                         </div>
                         <div id="contest" class="section expansion-panel expanded">
@@ -697,7 +701,7 @@
                                     <div id="magPlus" class="button"><i class="material-icons">zoom_in</i></div>
                                     <div class="clearSpace"></div>
                                 </div>
-                                <div class="disableFUdesigner">
+                                <div id="moveControls" class="disableFUdesigner">
                                     <div id="moveForward" class="button"></div>
                                     <div id="straightLine" class="button"></div>
                                     <div id="curvedLine" class="button"></div>
@@ -712,6 +716,9 @@
                                         <span id="moveY" class="plusMin"></span>
                                     </div>
                                     <div class="clearSpace"></div>
+                                </div>
+                                <div id="rotateControls" class="disableFUdesigner hidden">
+                                    <div id="rotate90" class="button"><i class="material-icons">360</i></div>
                                 </div>
                             </div>
                             <div id="selectedFigure">

@@ -120,6 +120,12 @@ select {
   width: 47%;
   margin-right: 0;
 }
+#positioningText {
+    position: absolute;
+    width: 47%;
+    top: 0;
+    right: 0;
+}
 .narrowRight div.form-group:first-of-type {
   width: 54% !important;
 }

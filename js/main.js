@@ -3425,21 +3425,24 @@ function makeRollText(extent, stops, sign, comment, radSin, radCos) {
             if (text.length > 0) text = ' ' + text;
             text = ((extent % 360) / 90) + '/4' + text;
         }
+
+        // rollcurveRadius is mostly used for determining spacing. Although rollSymbolSize would
+        // seem more logical, its value is too low for correct spacing.
         if (flipText) {
             if (extent >= 360) { // make room for 'tail' of roll symbol
-                dx = sign * (radSin * (rollcurveRadius + ((rollFontSize / 5) * text.length)));
-                dy = sign * (radCos * (rollcurveRadius + rollFontSize / 2)) + (rollFontSize / 5) + 1;
+                dx = sign * (radSin * (rollcurveRadius / 1.5 + ((rollFontSize / 3.5) * text.length)));
+                dy = sign * (radCos * (rollcurveRadius / 1.5 + rollFontSize / 2)) + rollFontSize / 4 + 2;
             } else {             // no tail
-                dx = sign * (radSin * (rollcurveRadius / 2 + ((rollFontSize / 5) * text.length)));
-                dy = sign * (radCos * (rollcurveRadius / 2 + rollFontSize / 2)) + (rollFontSize / 5) + 1;
+                dx = sign * (radSin * (4 + ((rollFontSize / 3.5) * text.length)));
+                dy = sign * (radCos * (4 + rollFontSize / 2)) + rollFontSize / 4 + 2;
             }
         } else {
             if (extent > 360) { // make room for roll connect line
-                dx = -sign * (radSin * (rollcurveRadius + 4 + ((rollFontSize / 4) * text.length)));
-                dy = -sign * (radCos * (rollcurveRadius + 4 + rollFontSize / 3)) + (rollFontSize / 4) + 2;
+                dx = -sign * (radSin * (rollcurveRadius + 4 + ((rollFontSize / 3.5) * text.length)));
+                dy = -sign * (radCos * (rollcurveRadius + 4 + rollFontSize / 2)) + rollFontSize / 4 + 2;
             } else {
-                dx = -sign * (radSin * (rollcurveRadius + ((rollFontSize / 4) * text.length)));
-                dy = -sign * (radCos * (rollcurveRadius + rollFontSize / 3)) + (rollFontSize / 4) + 2;
+                dx = -sign * (radSin * (rollcurveRadius + ((rollFontSize / 3.5) * text.length)));
+                dy = -sign * (radCos * (rollcurveRadius + rollFontSize / 2)) + rollFontSize / 4 + 2;
             }
         }
     }
@@ -5407,6 +5410,7 @@ function addEventListeners() {
     document.getElementById('curvedLine').addEventListener('click', clickButton, false);
     document.getElementById('moveX').addEventListener('change', updateFigure, false);
     document.getElementById('moveY').addEventListener('change', updateFigure, false);
+    document.getElementById('rotate90').addEventListener('click', clickButton, false);
     document.getElementById('unknownFigure').addEventListener('change', updateFigure, false);
     document.getElementById('figEntryButton').addEventListener('click', clickButton, false);
     document.getElementById('figExitButton').addEventListener('click', clickButton, false);
@@ -5872,6 +5876,38 @@ function clickButton() {
                 document.getElementById('moveYCont').classList.remove('collapsed');
             }
             break;
+        case 'rotate90':
+            // Define subsequent rotation steps
+            var rotate = {
+                '//': 'ej',
+                eu: 'ej',
+                ej: 'ed',
+                ed: 'eja',
+                eja: ''
+            };
+            // The first figure rotation is changed by changing sequence entry
+            if (figures[selectedFigure.id].seqNr == 1) {
+                if (figures[0] && entryOptions[figures[0].string]) {
+                    updateSequence(0, rotate[figures[0].string], true);
+                } else {
+                    document.getElementById('t_xBoxEntry').dispatchEvent(new Event('mousedown'));
+                }
+            } else
+            // Subsequent figure rotations are changed using subsequence logic
+            if (figures[selectedFigure.id].seqNr > 1) {
+                if (figures[selectedFigure.id].subSequence) {
+                    document.getElementById('subSequenceDirections').value =
+                        rotate[document.getElementById('subSequenceDirections').value];
+                    if (!document.getElementById('subSequenceDirections').value) {
+                        document.getElementById('subSequence').classList.remove('on');
+                    }
+                } else {
+                    document.getElementById('subSequenceDirections').value = 'ej';
+                    document.getElementById('subSequence').classList.add('on');
+                    // updateSequence(selectedFigure.id - 1, 'ej', false);
+                }
+                updateFigure();
+            }
         case 'figEntryButton':
         case 'figExitButton':
             // switch button upright/inverted
@@ -6723,7 +6759,7 @@ function selectPwrdGlider() {
             if (sportingClass.value === 'powered') {
                 el.classList.add('hidden');
                 document.getElementById('harmony').setAttribute('disabled', true);
-            } else {
+            } else if (!activeRules) {
                 el.classList.remove('hidden');
                 document.getElementById('harmony').removeAttribute('disabled');
             }
@@ -6732,15 +6768,47 @@ function selectPwrdGlider() {
 }
 
 // setRulesPosHarmony sets positioning and harmony from rule Worker
-function setRulesPosHarmony(positioning, harmony) {
-    var el = document.getElementById('positioning');
-    el.value = positioning;
-    el.setAttribute('disabled', true);
-    var el = document.getElementById('harmony');
-    el.value = harmony;
-    el.setAttribute('disabled', true);
-    if (!harmony) {
-        document.getElementById('harmonyField').classList.add('hidden');
+function setRulesPosHarmony(pos) {
+
+    function setValues(posHarm) {
+        var el = document.getElementById('positioning');
+        el.value = parseInt(posHarm.split('+')[0]) || 0;
+        el.setAttribute('disabled', true);
+        var el = document.getElementById('harmony');
+        var harmony = parseInt(posHarm.split('+')[1]) || 0;
+        el.value = harmony;
+        el.setAttribute('disabled', true);
+        if (harmony == 0) {
+            document.getElementById('harmonyField').classList.add('hidden');
+        } else {
+            document.getElementById('harmonyField').classList.remove('hidden');
+        }
+    }
+
+    var el = document.getElementById('positioningText');
+    // Check if we have multiple positioning/harmony options. If so,
+    // create select list, display it, and if relevant select correct option
+    if (pos.length > 1) {
+        el.innerHTML = '';
+        el.onchange = ((e) => { setValues(e.target.value); });
+        // Preselect first option
+        el.value = pos[0].posHarm;
+        for (var i = 0; i < pos.length; i++) {
+            // Create option
+            el.appendChild(document.createElement('option'));
+            el.lastChild.textContent = pos[i].description;
+            el.lastChild.value = pos[i].posHarm;
+            // Preselect option which matches current positioning K, if any
+            if (parseInt(pos[i].posHarm.split('+')[0]) == document.getElementById('positioning').value) {
+                el.value = pos[i].posHarm;
+            }
+        }
+        el.classList.remove('hidden');
+        setValues(el.value);
+        // otherwise, hide select list
+    } else {
+        el.classList.add('hidden');
+        setValues(pos[0].posHarm);
     }
 }
 
@@ -8696,10 +8764,13 @@ function activateRules(data) {
     activeRules = data.activeRules;
     ruleSuperFamily = data.ruleSuperFamily;
 
-    // set the activeRules marker and fold rules section
+    // set the activeRules marker
     document.getElementById('rulesActive').classList.add('good');
-    document.getElementById('rulesLabel').parentNode.classList.remove('expanded');
-    panelHeader(document.getElementById('activeRules'));
+    // Fold rules section, unless there are multiple pos K options
+    if (document.getElementById('positioningText').classList.contains('hidden')) {
+        document.getElementById('rulesLabel').parentNode.classList.remove('expanded');
+        panelHeader(document.getElementById('activeRules'));
+    }
 
     // set a rule based logo if applicable
     if (activeRules.logo) selectLogo(activeRules.logo);
@@ -8757,6 +8828,8 @@ function unloadRules(updatedFig) {
     if (sportingClass.value !== 'powered') {
         document.getElementById('harmonyField').classList.remove('hidden');
     }
+    // Hide options for choosing positioning K
+    document.getElementById('positioningText').classList.add('hidden');
     // update sequence
     checkSequenceChanged(true);
     // hide reference sequence button
@@ -12235,9 +12308,8 @@ function makeFormC() {
 }
 
 // makeFormGrid creates a grid of figures
-function makeFormGrid(cols, width, svg) {
-    svg = svg || SVGRoot;
-    width = width || 800;
+function makeFormGrid(cols, width, svg = SVGRoot) {
+    width = width || 800; // capture negative widths
 
     var
         cw = parseInt(width / cols),
@@ -13443,7 +13515,7 @@ function selectForm(form) {
     // always do a full redraw of the form and figure editor as these may
     // change when switching to or from Grid view
     checkSequenceChanged(true);
-    // draw (form);
+
     if (selectedFigure.id) updateFigureEditor();
     if (platform.smallMobile) selectTab('tab-svgContainer');
     setFormLayout(form);
@@ -13451,7 +13523,14 @@ function selectForm(form) {
 
 // setFormLayout sets the correct layout for each Form view
 function setFormLayout(form) {
-    if ((form === 'G') && !platform.smallMobile) {
+    if (/^G/.test(form)) {
+        document.getElementById('moveControls').classList.add('hidden');
+        document.getElementById('rotateControls').classList.remove('hidden');
+    } else {
+        document.getElementById('moveControls').classList.remove('hidden');
+        document.getElementById('rotateControls').classList.add('hidden');
+    }
+    if (/^G/.test(form) && !platform.smallMobile) {
         document.getElementById('gridInfo').classList.remove('hidden');
         document.getElementById('svgContainer').classList.add('grid');
     } else if (form === 'A' && platform.smallMobile) {
@@ -14241,7 +14320,8 @@ function activateXMLsequence(xml, noLoadRules) {
         if (sportingClass.value === 'powered') {
             el.classList.add('hidden');
             document.getElementById('harmony').setAttribute('disabled', true);
-        } else {
+        } else if (!activeRules) {
+            // Activate for glider if no rules are active, otherwise should be set by rules
             el.classList.remove('hidden');
             document.getElementById('harmony').removeAttribute('disabled');
         }
@@ -15355,16 +15435,13 @@ function buildForms(win, callback) {
 
 // adjustRollFontSize will adjust the rollFontSize to compensate for
 // scaling in buildForm
-function adjustRollFontSize(scale, svg) {
+function adjustRollFontSize(scale, svg = SVGRoot) {
     var baseRollFontSize = rollFontSize;
-    if (svg) {
-        SVGRoot = svg;
-    } else {
-        svg = SVGRoot;
-    }
+    SVGRoot = svg; // make sure this svg and SVGRoot are synchronized
+
     // increase rollFontSize for significant downscaling, and redraw
-    if (parseInt(rollFontSize / scale) > rollFontSize) {
-        changeRollFontSize(parseInt(rollFontSize / scale));
+    if (parseInt(rollFontSize / Math.sqrt(scale)) > rollFontSize) {
+        changeRollFontSize(parseInt(rollFontSize / Math.sqrt(scale)));
         draw();
         changeRollFontSize(baseRollFontSize);
     }
@@ -18600,10 +18677,12 @@ function parseSequence() {
         figures[i].paths = [];
 
         figure = figures[i].string;
-        // always start figure LTR for Figures in grid view. But this means
+        // always start figure LTR for Figures in grid view, except for the
+        // first figure of a subsequence. This means
         // we have to correct direction switchers if the figure would start
         // on Y axis on Form B
-        if (/^G/.test(activeForm)) {
+        if (/^G/.test(activeForm) && !(
+            (seqNr == 1 && Direction != 0) || subSequence)) {
             formBDirection += Direction;
             if (formBDirection >= 360) formBDirection -= 360;
             if ((formBDirection === 90) || (formBDirection === 270)) {
