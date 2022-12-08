@@ -309,7 +309,7 @@ lang.en = {
 'harmony' : 'Harmony',
 'help' : 'Help',
 'hideIllegalFigures' : 'Hide illegal figs (Sequence info Rules)',
-    'iacForms': 'A/B/C Forms in IAC style',
+    'iacForms': 'Forms in IAC style',
     'iacNoteDownwindEntry' : 'Note Downwind Entry',
 'iacNoteYAxisEntry' : 'Note Y Axis Entry',
 'illegalAtEnd' : 'Illegal figure at the end',
@@ -441,7 +441,8 @@ lang.en = {
   'to you as a link (e.g. through email), copy it completely. Then ' +
   'paste it in the box below',
 'openSequenceLinkOpen' : 'Open',
-'openSequenceLinkTitle' : 'Open sequence from link',
+    'openSequenceLinkTitle': 'Open sequence from link',
+'optimalSequenceAreaExceeded': 'Sequence exceeds optimal size',
 'orderCountry' : 'Country',
 'orderFigureNr' : 'Figure Nr',
 'orderK' : 'K factor',
@@ -535,8 +536,7 @@ lang.en = {
 'referenceSequenceExplain' : 'In the box below you can enter a ' +
   'sequence string that is used as a reference for checking sequences ' +
   'with required figures, such as Free Known and ' +
-  'Unknown sequences. Checks are done to confirm correct letters, ' +
-  'figure Aresti numbers and entry/exit direction combination.',
+  'Unknown sequences.',
 'referenceSequenceFixed' : 'This reference sequence can not be ' +
   'changed as it is coupled to the active sequence rules.',
 'referenceSequenceTitle' : 'Reference sequence',

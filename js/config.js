@@ -40,7 +40,7 @@ This file is part of OpenAero.
  A new x should be used for versions that create sequences not
  fully backward compatible with the previous version
 */
-const version = '2023.1';
+const version = '2023.1.1';
 /* versionNew is an object that contains version update information
    The structure is {vvv : [[ttt, n], ...], ...} , where
    vvv = version number
@@ -589,7 +589,8 @@ const style = {
   'formATextHuge' : 'font-family: verdana, Helvetica, Sans; font-size: 40px; fill: black;',
   'formATextBoldHuge' : 'font-family: verdana, Helvetica, Sans; font-size: 40px; font-weight: bold; fill: black;',
   'formLine' : 'stroke: black; stroke-width: 1px; fill: none;',
-  'formLineBold' : 'stroke: black; stroke-width: 4px; fill: none;',
+    'formLineBold': 'stroke: black; stroke-width: 4px; fill: none;',
+    'formRect': 'stroke: black; stroke-width: 1px; fill: white;',
   // Print styles
   'formBackground' : 'fill: white;',
   'modifiedK' : 'font-family: monospace; font-size: 8px; color: red; fill: red;',

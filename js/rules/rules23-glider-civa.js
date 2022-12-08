@@ -89,6 +89,10 @@ OpenAero 2016.1
  * 2022.1.1
  * - added 2022 reference sequences
  * - major update of rules to comply with 2021 and 2022 Unknown updates
+ * 2023.1.1
+ * - Added 2023 reference sequences
+ * - No flicks on 45 down lines after a looping segment that passed through
+ *   vertical down. E.g. 8.7.5.1 (NP2023-16)
 */
 
 rules.push (
@@ -120,7 +124,7 @@ rules.push (
 
 "figure-letters=ABCDE",
 
-'reference="@A" 4,3f- "@B" -1jo5 "@C" 4h "@D" -.ita "@E" o2f,2',
+'reference="@A" 4,3if- "@B" o24- "@C" -h4- "@D" -,4ita "@E" -,2y-',
 
 // what info should be filled out
 "infocheck=pilot;actype;acreg;positioning",
@@ -756,7 +760,7 @@ rules.push (
 
 // Goldfishes
 //-----------
-"7.3.1.1-4 NOAH",
+"7.3.1.1-2 NOAH",
 "7.3.2.1-4 NOAH",
 "7.3.3.1-4 NOAH",
 "7.3.4.1-4 NOAH",
@@ -822,21 +826,21 @@ rules.push (
 
 // Diagonal bumps
 //---------------
-// no flick rolls on diagonal down lines in 8.4.15-16.2, 8.4.17-18.1 ### acc. to A.12.1.2
+// no flick rolls on diagonal down lines in 8.4.15-16.1-2, 8.4.17-18.1-2 ### acc. to A.12.1.2
 // no rolls on lines
 "8.4.13.1-2 NOAH ; NR:1",
 "8.4.14.1-2 NOAH ; NR:1",
-"8.4.15.1 NOAH",
+"8.4.15.1 NOAH ; NF:2",
 "8.4.15.2 NOAH ; NF:2",
 "8.4.15.3-4 NOAH ; NR:2",
-"8.4.16.1 NOAH",
+"8.4.16.1 NOAH ; NF:2",
 "8.4.16.2 NOAH ; NF:2",
 "8.4.16.4 NOAH",
 "8.4.17.1 NOAH ; NF:2 ; NR:1",
-"8.4.17.2 NOAH ; NR:1",
+"8.4.17.2 NOAH ; NR:1 ; NF:2",
 "8.4.17.3 NOAH ; NR:2",
 "8.4.18.1 NOAH ; NF:2",
-"8.4.18.2 NOAH ; NR:1",
+"8.4.18.2 NOAH ; NR:1 ; NF:2",
 "8.4.18.3 NOAH",
 
 // Half Cuban Eight, diagonal lines first
@@ -922,11 +926,11 @@ rules.push (
 //--------
 // no hesitation rolls on top of 8.7.5|6.2    ### acc. to A.16.1.2
 // no rolls on lines
-"8.7.5.1  NOAH:2 ; NOAH:3 ; nfpf:1",
-"8.7.5.2  NHR:2 ; NOAH:2 ; NOAH:3 ; nfpf:1",
+"8.7.5.1  NOAH:2 ; NOAH:3 ; nfpf:1 ; NF:3",
+"8.7.5.2  NHR:2 ; NOAH:2 ; NOAH:3 ; nfpf:1 ; NF:3",
 "8.7.5.4  NR:2 ; NR:3 ; nfpf:1",
-"8.7.6.1  NOAH:2 ; NOAH:3 ; nfpf:1",
-"8.7.6.2  NHR:2 ; NOAH:2 ; NOAH:3 ; nfpf:1",
+"8.7.6.1  NOAH:2 ; NOAH:3 ; nfpf:1 ; NF:3",
+"8.7.6.2  NHR:2 ; NOAH:2 ; NOAH:3 ; nfpf:1 ; NF:3",
 "8.7.6.4  NOAH:2 ; nfpf:1",
 
 // Rolls
@@ -1000,7 +1004,7 @@ rules.push (
 
 "figure-letters=ABCDE",
 
-'reference="@A" p(24) "@B" db- "@C" -t4 "@D" h4 "@E" 2g',
+'reference="@A" 48,2 "@B" m24 "@C" o44 "@D" 1j1 "@E" -,4irp-~',
 
 // what info should be filled out
 "infocheck=pilot;actype;acreg;positioning",

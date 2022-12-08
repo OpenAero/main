@@ -25,6 +25,51 @@
 // The Value is an OpenAero sequence link (use "File->Save as link" in OpenAero to generate)
 
 var library = {
+    '2023 CIVA Unl Free Known':
+        'https://openaero.net/?s=hFVubGltaXRlZIdwb3dlcmVkiEZyZWUgS25vd26JQ0lWQYo0MIswjSJAQSIgLDNpZmgzNKd-ICJAQiIgMjQnLDZtNmYsuCAiQEMiIC0sZiwyp2lyZGIsNDguJytgICJARCIgJyyyLmssM2lmLDX_oCJARSIgLeBgaXMsNC4naWJwYigsMzIupyksOCs-j0NJVkGQMjAyMy4xkWdyaWQ6NQ',
+
+    '2023 CIVA Adv Free Known':
+        'https://openaero.net/?s=hEFkdmFuY2Vkh3Bvd2VyZWSIRnJlZSBLbm93bolDSVZBijMwizCNIkBBIiAtM2gzZiAiQEIiIDI0YTMsMzQgIkBDIiA2Y2YgIkBEIiAxbWY7InwiNDggIkBFIiAyNOIoMyk4LY9DSVZBkDIwMjMuMZFncmlkOjU',
+
+    '2023 CIVA Int Free Known':
+        'https://openaero.net/?s=hEludGVybWVkaWF0ZYdwb3dlcmVkiEZyZWUgS25vd26JQ0lWQYozMIswjSJAQSIg4OA2cy5pazI0LSAiQEIiIGRoOCAiQEMiIP4sNHBiICJARCIgfjMsNGljLjEr_6AiQEUiIHFvj0NJVkGQMjAyMy4xkWdyaWQ6NQ',
+
+    '2023 CIVA-Glider Unl Free Known':
+        'https://openaero.net/?s=hFVubGltaXRlZIYyMDIzh2dsaWRlcohGcmVlIEtub3duiUNJVkGKMTWLMI0iQEEiIDQsM2lmLSAiQEIiIG8yNC0gIkBDIiAtaDQtICJARCIgLSw0aXRhICJARSIgLSwyeS2PQ0lWQZAyMDIzLjGRZ3JpZDo1',
+
+    '2023 CIVA-Glider Adv Free Known':
+        'https://openaero.net/?s=hEFkdmFuY2Vkh2dsaWRlcohGcmVlIEtub3duiUNJVkGKMTWLMI0iQEEiIDQ4LDIgIkBCIiBtMjQgIkBDIiBvtCAiQEQiIDFqMSAiQEUiIC0sNGlycC1-j0NJVkGQMjAyMy4xkWdyaWQ6NQ',
+
+    '2023 IAC Primary Known':
+        'https://openaero.net/?s=hFByaW1hcnmGMjAyM4dwb3dlcmVkiEtub3duiUlBQ4o1izCNZCBpdmA2c66nIC5jLicyYCvgICgtMTUsMTMpIG8gNSUgMmorIDGPSUFDkDIwMjIuMi41kUI',
+
+    '2023 IAC Sportsman Known':
+        'https://openaero.net/?s=hFNwb3J0c21hboYyMDIzh3Bvd2VyZWSIS25vd26JSUFDijEwizCNbyBkaCjgKa6nq6ur_iAoLTIsMCkgK2uurqcyNK6nIGBtMiBgMX4gKC00LDApIDUlIP4yaiAoLTIsMTApIGQg_itpdjVzJyBiLic0IK5jLjIuJ49JQUOQMjAyMi4yLjWRQg',
+
+    '2023 IAC Intermediate Known':
+        'https://openaero.net/?s=hEludGVybWVkaWF0ZYdwb3dlcmVkiEtub3duiUlBQ4oxNYswjEludGVybWVkaWF0ZSBLbm93bo1xbyDgK3YuNF4gaXbgNnOuri4nIGIuJzQgMSUgfqcycmMrYCAoLTQssikgYCtvZiA0JSDgbbItICgtOCwwKSCyJSAtMmot4OAgLTI0IDIlIODg4ODg4GAyaWFjKOAyKSvg4GAgZGiuLicgKC0yNiwwKSB-p2uuMjQuj0lBQ5AyMDIyLjIuNZFC',
+
+    '2023 IAC Advanced Known':
+        'https://openaero.net/?s=hEFkdmFuY2VkhjIwMjOHcG93ZXJlZIhLbm93bolJQUOKMjWNMjRkaCgnKS4nMmYuK34gL_6rq66ubigsNDguKacsMjSnrSAoMTMsMCkgLTVpc66urq6uJ2liLDgtICgtMiwwKSAtaWRxLSAxNSUgLeBhLDYtICg3LDApIC0zLmKurjMupyvgYCA0JSBvsiAoLTYsMCkg_mAyp2uuri6nsq6nICg1LDApIOBtpzMyJzs2Zi1-ICgtMTIsMCkgLTNqMy0-j0lBQ5AyMDIyLjIuNZFC',
+
+    '2023 IAC Unlimited Known':
+        'https://openaero.net/?s=hFVubGltaXRlZIYyMDIzh3Bvd2VyZWSIS25vd26JSUFDijQwizCNMmlmcnAotCknMy6nLDj-IC4sOHRhM2auLqcgKDIsMCkgLzMucOIoLiw1Zq4pLiw0pywyp34g4GA1czsyaWauLmlycCcyNC6nLDEr4OAgL-ArM2oxNS0grXBiLqc1riCrq6szaWYnaC4nMy6nIODgsmFjKDZpZuApJzinLDUt4ODgIDglIC3gYGlmYTEsOf6PSUFDkDIwMjIuMi41kUI',
+
+    '2023 IAC-Glider Primary Known':
+        'https://openaero.net/?s=hFByaW1hcnmHZ2xpZGVyiEtub3duiUlBQ4o1jf5pZC6rfiAoMiwwKSCrb2qrq_4gNiUgYCszaitgICcxfiBgKy5qd66uLitgIC0xJSBvj0lBQ5AyMDIzLjGRQg',
+
+    '2023 IAC-Glider Sportsman Known':
+        'https://openaero.net/?s=hFNwb3J0c21hbodnbGlkZXKIS25vd26JSUFDijE1izCNZCcg_ml2JzZzri4rIG8gMnJkYq4u_iAuYy4sMq6uLid-IDMlIODgK29q_iB-aqsrfiAnMf6PSUFDkDIwMjIuMi41kUI',
+
+    '2023 IAC-Glider Intermediate Known':
+        'https://openaero.net/?s=hEludGVybWVkaWF0ZYdnbGlkZXKIS25vd26JSUFDijE1izCNc2lycKcy_iAyLSAxNCUgLWEg4HJ5IP4nMqd0Lic0Lif-ICsnaCw0LicrfiAxMCUgYCvg4OBgMmByYyvg4GAgKDEsMCkgLTIlIP6rKycyLnJkYq6urq6uK-Dg4CA2JSBtLDKPSUFDkDIwMjIuMi41kUI',
+
+    '2023 IAC-Glider Advanced Known':
+        'https://openaero.net/?s=hEFkdmFuY2Vkh2dsaWRlcohLbm93bolJQUOKMjWLMI00OC0gLXSurq6nIFstMTIsMF0gK3JwKDI0KSv-ICgtMiwwKSCndGGupyvg4GAgfiwycmRiLn4gri6ncCgyKa6nfiBvMjQsMiB-qydoNC4g4GAr4HBiLDQnK-AgtJAyMDIyLjIuNZFC',
+
+    '2023 IAC-Glider Unlimited Known':
+        'https://openaero.net/?s=hFVubGltaXRlZIdnbGlkZXKIS25vd26JSUFDijI1izCNaWSnMjSnLSAtMnJjLSAoLTcsMTIpIC0yYzJpZi4gMjQtIC2ndGE0Licr4CBirjNpZiA0JSBvMjQsMiAvpzQuaCt-IDFqbzGPSUFDkDIwMjIuMi41kUI',
+
     '2023 NZAC Primary Known':
         'https://openaero.net/?s=hFByaW1hcnkgh3Bvd2VyZWSIS25vd26JMjAyMi8yMyBOWkFDijOMTlpBQyBQcmltYXJ5IEtub3dujTUlIGQg_ml2LnMuJ6t-IC0xJSCuri6nY66uLDKuritgIDYlIG_-IH6rK64uJ2iurqsrfiCuLicxq_6PTlpBQ5AyMDIyLjEuN5FC',
 

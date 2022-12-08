@@ -34,176 +34,200 @@
 
 <BODY class="docs">
 
-	<div class="documentation">
-		<span>
-      <h1>The OpenAero Manual</h1>
-      <ol>
-        <li><a href="#general">General</a></li>
-        <li><a href="#creating_sequences">Creating sequences</a></li>
-        <li><a href="#free_unknown">Automated handling of Free sequence figures</a></li>
-        <li><a href="#free_unknown_designer">The Free (Un)known designer</a></li>
-        <li><a href="#opening_saving">Opening, Saving and Printing sequences</a></li>
-        <li><a href="#grid_system">The Figure Grid system for Unknown and Free Unknown operations</a></li>
-        <li><a href="#view_mode">View modes for design and flying</a></li>
-        <li><a href="#importing_into_acro">Importing OpenAero files into ACRO</a></li>
-        <li><a href="#settings">Settings</a></li>
-      </ol>
-    </span>
-	</div>
-	<div class="documentation">
-		<span id="general"><h3>General</h3>
-		<span class="noCordova noUWP">
-			<p>OpenAero is aerobatic sequence design software available from
-			<a href="https://openaero.net/" target="_blank">OpenAero.net</a> that
-	    runs inside your web browser. This makes it available on practically
-	    any computer, tablet and even smartphone. For the best experience the
-			<a href="http://www.google.com/intl/en_uk/chrome/browser/" target="_blank">Google Chrome</a> 
-			web browser is recommended, but most browsers published from 2016
-			onward should function correctly. It is useful to set 
-			the full-screen browser mode (usually by pressing F11 on your keyboard) 
-			to have the maximum screen space available when using OpenAero.</p>
-			<p>The latest version of the software is always presented when you are 
-			online, and will be installed automatically. Once you have visited
-			<a href="https://openaero.net/" target="_blank">openaero.net</a> your
-	    current version of the software may also be available to you when
-	    you are offline. For small tablets and smartphones it will help to
-	    select <i>Phone layout</i> in <i>Settings</i> so the layout will be adjusted
-	    to fit the narrower screen format.</p>
-	    <p>OpenAero should update automatically to the latest version
-	    whenever you are online and open OpenAero. However, if you suspect
-	    you do not have the latest version you can check this through
-	    <i>About</i> in the <i>Help</i> menu. If this shows you have an
-	    outdated version and you are using openaero.net on Google Chrome
-	    (but not as an app) it may help to clear the appCache. Enter
-	    <strong>chrome://appcache-internals</strong> in your address bar
-	    and <strong>Remove</strong> all entries that contain OpenAero.</p>
-	    <h3>iOS, Android and Windows 10 app</h3>
-	    <p>An app is available for most common platforms. Beside normal
-	    OpenAero functionality this offers:
-	    <ul>
-				<li>improved handling of .seq sequence files</li>
-				<li>guaranteed offline performance</li>
-				<li>supporting OpenAero development with your financial contribution</li>
-                <li>Several other app-only features</li>
-	    </ul>
-	    </p>
-	    <p class="badges">
-				<a href="https://itunes.apple.com/us/app/openaero/id1343773321" target="_blank">
-					<img src="../img/ios-appstore-badge.svg">
-				</a>
-				<a href="https://play.google.com/store/apps/details?id=net.openaero" target="_blank">
-					<img src="../img/google-play-badge.png">
-				</a>
-				<a href="https://www.microsoft.com/store/apps/58124MassAppz.OpenAero" target="_blank">
-					<img src="../img/microsoft-badge.svg">
-				</a>
-	    </p>
-    </span>
-		<p>Even though no other software besides OpenAero is necessary to 
-		produce complete and valid aerobatic sequences, the ready availability 
-		of an official and current copy of the relevant power or glider
-		<a href="http://www.arestisystem.com/" target="_blank">Aresti catalog</a>
-    is recommended for checking.</p>
-    <p>This manual is intended for users of OpenAero. If you are interested in 
-    development of additions to OpenAero, including (national) rules, please 
-    refer to the <a href="https://github.com/OpenAero/main/wiki/Developers" target="_blank">
-    developers wiki page</a>.</p>
-    </span>
-	</div>
-	<div class="documentation">
-		<span>
-		<h3 id="creating_sequences">Creating sequences</h3>
-		<p>Aerobatic sequences can be created within OpenAero in one of three 
-		ways:</p>
-		<ul>
-			<li>By starting and using the Free (Un)Known Designer</li>
-			<li>By selecting and editing figures with the <i>Figure Editor</i></li>
-			<li>By writing the figures in code in the text line above the 
-			sequence</li>
-		</ul>
-		<p>The descriptions here refer to using the 
-		<i>Figure Editor</i>. For the 
-		correct codes when using the text line above the sequence area please 
-		refer to <a href="language.html" target="_blank">OpenAero language <i>Help</i></a>.</p>
-		</span>
-	</div>
-	<div class="documentation">
-		<span>
-      <h3>Beginning a sequence</h3>
-      <img src="../img/sequence_info.png">
-      <p>
-				When opening a Free Known or Unknown figures file you will be
-				asked if you want to start the Free (Un)Known Designer. If you
-				do, you will fill out the Sequence Info panel later.<br />
-				Please refer to chapter <a href="#free_unknown_designer">
-				The Free (Un)Known Designer</a>.
-			</p>
-			<p>
-        In all other cases, always start by filling in the Sequence
-        Info panel. The <i>Rules, Category</i> and <i>Program</i>
-        information will be used for determining sequence 
-        validity. If actual rule checking is active for the chosen
-        combination, <i class="material-icons status good"></i> will be
-        shown at the top of the Rules card. Otherwise it will show
-        <i class="material-icons status bad"></i>.
-        In the latter case sequences are only checked for basic Aresti
-        compliance.
-      </p>
-      <h4 id="contest_information">Contest information</h4>
-      <p>
-	  The contest information box can be used to enter location, date,
-      logo and notes for the contest.
-      </p>
-      <p>It is possible to copy, paste or lock this information. When
-      locked it can not be changed, not even by opening another 
-      sequence.
-      </p>
-      <p>You can choose one of the
-      predefined logos or add your own. A maximum of 3 logos can be
-      added. If you want to add another, delete one of the older ones.
-      </p>
-      <h4>Sequence entry direction</h4>
-      <p>In the Sequence menu you can choose to start the sequence 
-      down-wind or cross-box. This can always be changed at a later stage.</p>
-		</span>
-	</div>
-	<div class="documentation">
-		<span>
-		<h3 id="adding_a_figure">Adding a figure</h3>
-        <div>
-            <img src="../img/OA_FigureAddPanel.png">
+    <div class="documentation">
+        <span>
+            <h1>The OpenAero Manual</h1>
+            <ol>
+                <li><a href="#general">General</a></li>
+                <li><a href="#creating_sequences">Creating sequences</a></li>
+                <li><a href="#free_unknown">Automated handling of Free sequence figures</a></li>
+                <li><a href="#free_unknown_designer">The Free (Un)known designer</a></li>
+                <li><a href="#opening_saving">Opening, Saving and Printing sequences</a></li>
+                <li><a href="#grid_system">The Figure Grid system for Unknown and Free Unknown operations</a></li>
+                <li><a href="#view_mode">View modes for design and flying</a></li>
+                <li><a href="#importing_into_acro">Importing OpenAero files into ACRO</a></li>
+                <li><a href="#settings">Settings</a></li>
+            </ol>
+        </span>
+    </div>
+    <div class="documentation">
+        <span id="general">
+            <h3>General</h3>
+            <span class="noCordova noUWP">
+                <p>
+                    OpenAero is aerobatic sequence design software available from
+                    <a href="https://openaero.net/" target="_blank">OpenAero.net</a> that
+                    runs inside your web browser. This makes it available on practically
+                    any computer, tablet and even smartphone. For the best experience the
+                    <a href="http://www.google.com/intl/en_uk/chrome/browser/" target="_blank">Google Chrome</a>
+                    web browser is recommended, but most browsers published from 2016
+                    onward should function correctly. It is useful to set
+                    the full-screen browser mode (usually by pressing F11 on your keyboard)
+                    to have the maximum screen space available when using OpenAero.
+                </p>
+                <p>
+                    The latest version of the software is always presented when you are
+                    online, and will be installed automatically. Once you have visited
+                    <a href="https://openaero.net/" target="_blank">openaero.net</a> your
+                    current version of the software may also be available to you when
+                    you are offline. For small tablets and smartphones it will help to
+                    select <i>Phone layout</i> in <i>Settings</i> so the layout will be adjusted
+                    to fit the narrower screen format.
+                </p>
+                <p>
+                    OpenAero should update automatically to the latest version
+                    whenever you are online and open OpenAero. However, if you suspect
+                    you do not have the latest version you can check this through
+                    <i>About</i> in the <i>Help</i> menu. If this shows you have an
+                    outdated version and you are using openaero.net on Google Chrome
+                    (but not as an app) it may help to clear the appCache. Enter
+                    <strong>chrome://appcache-internals</strong> in your address bar
+                    and <strong>Remove</strong> all entries that contain OpenAero.
+                </p>
+                <h3>iOS, Android and Windows 10 app</h3>
+                <p>
+                    An app is available for most common platforms. Beside normal
+                    OpenAero functionality this offers:
+                    <ul>
+                        <li>improved handling of .seq sequence files</li>
+                        <li>guaranteed offline performance</li>
+                        <li>supporting OpenAero development with your financial contribution</li>
+                        <li>Several other app-only features</li>
+                    </ul>
+                </p>
+                <p class="badges">
+                    <a href="https://itunes.apple.com/us/app/openaero/id1343773321" target="_blank">
+                        <img src="../img/ios-appstore-badge.svg">
+                    </a>
+                    <a href="https://play.google.com/store/apps/details?id=net.openaero" target="_blank">
+                        <img src="../img/google-play-badge.png">
+                    </a>
+                    <a href="https://www.microsoft.com/store/apps/58124MassAppz.OpenAero" target="_blank">
+                        <img src="../img/microsoft-badge.svg">
+                    </a>
+                </p>
+            </span>
             <p>
-                Go to the <i>Figure editor</i> tab and click on the <i>Add figure</i> box.
-                A figure chooser will appear from which you can choose a group (for
-                example 1.2 Two Lines) and then a specific base figure. The Aresti
-                number column and row are indicated at the top and left side of the
-                figure chooser.<br>
-                At any point
-                in a figure where the attitude must change from erect to inverted
-                (or the reverse) a half-roll is shown and will be incorporated when
-                the figure is inserted; this is easily changed for an alternate roll
-                using the controls. If there are existing figures select the option
-                to tell OpenAero where the new figure should be placed. Figures that are eligible
-                to be placed in the current position (i.e. with the correct entry and/or exit
-                attitude) are marked by a green line around the top and left sides of
-                their images.
+                Even though no other software besides OpenAero is necessary to
+                produce complete and valid aerobatic sequences, the ready availability
+                of an official and current copy of the relevant power or glider
+                <a href="http://www.arestisystem.com/" target="_blank">Aresti catalog</a>
+                is recommended for checking.
             </p>
+            <p>
+                This manual is intended for users of OpenAero. If you are interested in
+                development of additions to OpenAero, including (national) rules, please
+                refer to the <a href="https://github.com/OpenAero/main/wiki/Developers" target="_blank">
+                    developers wiki page
+                </a>.
+            </p>
+        </span>
+    </div>
+    <div class="documentation">
+        <span>
+            <h3 id="creating_sequences">Creating sequences</h3>
+            <p>
+                Aerobatic sequences can be created within OpenAero in one of three
+                ways:
+            </p>
+            <ul>
+                <li>By starting and using the Free (Un)Known Designer</li>
+                <li>By selecting and editing figures with the <i>Figure Editor</i></li>
+                <li>
+                    By writing the figures in code in the text line above the
+                    sequence
+                </li>
+            </ul>
+            <p>
+                The descriptions here refer to using the
+                <i>Figure Editor</i>. For the
+                correct codes when using the text line above the sequence area please
+                refer to <a href="language.html" target="_blank">OpenAero language <i>Help</i></a>.
+            </p>
+        </span>
+    </div>
+    <div class="documentation">
+        <span>
+            <h3>Beginning a sequence</h3>
+            <img src="../img/sequence_info.png">
+            <p>
+                When opening a Free Known or Unknown figures file you will be
+                asked if you want to start the Free (Un)Known Designer. If you
+                do, you will fill out the Sequence Info panel later.<br />
+                Please refer to chapter <a href="#free_unknown_designer">
+                    The Free (Un)Known Designer
+                </a>.
+            </p>
+            <p>
+                In all other cases, always start by filling in the Sequence
+                Info panel. The <i>Rules, Category</i> and <i>Program</i>
+                information will be used for determining sequence
+                validity. If actual rule checking is active for the chosen
+                combination, <i class="material-icons status good"></i> will be
+                shown at the top of the Rules card. Otherwise it will show
+                <i class="material-icons status bad"></i>.
+                In the latter case sequences are only checked for basic Aresti
+                compliance.
+            </p>
+            <h4 id="contest_information">Contest information</h4>
+            <p>
+                The contest information box can be used to enter location, date,
+                logo and notes for the contest.
+            </p>
+            <p>
+                It is possible to copy, paste or lock this information. When
+                locked it can not be changed, not even by opening another
+                sequence.
+            </p>
+            <p>
+                You can choose one of the
+                predefined logos or add your own. A maximum of 3 logos can be
+                added. If you want to add another, delete one of the older ones.
+            </p>
+            <h4>Sequence entry direction</h4>
+            <p>
+                In the Sequence menu you can choose to start the sequence
+                down-wind or cross-box. This can always be changed at a later stage.
+            </p>
+        </span>
+    </div>
+    <div class="documentation">
+        <span>
+            <h3 id="adding_a_figure">Adding a figure</h3>
+            <div>
+                <img src="../img/OA_FigureAddPanel.png">
+                <p>
+                    Go to the <i>Figure editor</i> tab and click on the <i>Add figure</i> box.
+                    A figure chooser will appear from which you can choose a group (for
+                    example 1.2 Two Lines) and then a specific base figure. The Aresti
+                    number column and row are indicated at the top and left side of the
+                    figure chooser.<br>
+                    At any point
+                    in a figure where the attitude must change from erect to inverted
+                    (or the reverse) a half-roll is shown and will be incorporated when
+                    the figure is inserted; this is easily changed for an alternate roll
+                    using the controls. If there are existing figures select the option
+                    to tell OpenAero where the new figure should be placed. Figures that are eligible
+                    to be placed in the current position (i.e. with the correct entry and/or exit
+                    attitude) are marked by a green line around the top and left sides of
+                    their images.
+                </p>
             </div>
-        <div>
-            <img src="../img/OA_FigureSelection.png" style="float:left;">
-            <p>
-                When there are Sequence rules active that prohibit the use of
-                certain base figures, those figures will not be shown. It is
-                possible to show these figures (with a red border) by unselecting
-                <i>Hide illegal figs</i>.
-            </p>
-            <p>
-                When a figure is added or selected it becomes active and is drawn in
-                magenta in the sequence area. The Aresti/K table is always updated to display
-                all the Aresti element codes and K-factors. Base figures and elements that are
-                not &#39;legal&#39; according to the rules in effect are shown in that table
-                with zero K.
-            </p>
+            <div>
+                <img src="../img/OA_FigureSelection.png" style="float:left;">
+                <p>
+                    When there are Sequence rules active that prohibit the use of
+                    certain base figures, those figures will not be shown. It is
+                    possible to show these figures (with a red border) by unselecting
+                    <i>Hide illegal figs</i>.
+                </p>
+                <p>
+                    When a figure is added or selected it becomes active and is drawn in
+                    magenta in the sequence area. The Aresti/K table is always updated to display
+                    all the Aresti element codes and K-factors. Base figures and elements that are
+                    not &#39;legal&#39; according to the rules in effect are shown in that table
+                    with zero K.
+                </p>
             </div>
             <div class="clearBoth"></div>
             <img src="../img/OA_FigureInfoPanel.png">
@@ -270,8 +294,8 @@
                 sequence or optionally at the beginning. If a figure is highlighted when
                 you click to add a figure then it will be opened again for editing.
             </p>
-</span>
-	</div>
+        </span>
+    </div>
     <div class="documentation">
         <span>
             <h3 id="figure_comments">Figure comments</h3>
@@ -303,6 +327,24 @@
             </ul>
         </span>
     </div>
+    <div class="documentation">
+        <span>
+            <h3 id="optimal_sequence_area">Optimal sequence area</h3>
+            <p>
+                It's important to design a sequence that is easily readable on judge's forms. To
+                help with this, the sequence design area shows a dashed outline. The outline
+                shows the approximate size of a sequence as printed on Form L or R.
+            </p>
+            <p>
+                As long as the
+                sequence fits, the outline is green. When the sequence goes well outside of the
+                boundary, the outline becomes orange. When printed, OpenAero will scale down such
+                a sequence to fit on the form. However, to maintain readability, roll number size
+                will be scaled down less, which may result in numbers overlapping.
+            </p>
+        </span>
+    </div>
+
     <div id="free_unknown" class="documentation">
         <span>
             <h3>
@@ -364,247 +406,323 @@
             </p>
         </span>
     </div>
-	<div id="selecting_moving" class="documentation">
-		<span>
-      <h3>Selecting and moving a figure</h3>
-      <p>To select a figure, click on it or select it in the sequence
-      text line. The figure is now magenta and can be edited with the 
-      figure editor. For repositioning it can be dragged anywhere by holding 
-      down the mouse button after clicking the figure. Note: this can
-      not be done for figure 1.</p>
-      <p>After moving a figure it's possible to change the curved line 
-      to a straight line by clicking the <i>Straight line</i> button in
-      the Figure editor. It's also possible to remove the line, but for
-      clarity only for horizontal moves. This can be done by clicking the
-      <i>Move figure forward</i> button.</p>
-      <p><i>TIP</i> : A poorly laid-out sequence that is difficult to 
-      follow can be a real problem for judges - time spent creating an 
-      easily understood flow of figures can be a good way to help improve 
-      your marks. Make sure to use the straight and curved dotted lines to 
-      show how your figures follow each other.</p>
-		</span>
-	</div>
-	<div class="documentation">
-		<span>
-		<h3>Using the OpenAero &#39;Queue&#39;</h3>
-		<p>The queue system provides a way to copy selected figures to a 
-		temporary list, from which they may conveniently be selected for 
-		insertion at other positions in the sequence. This enables the figures 
-		in any sequence to be re-ordered to improve the sequence design, though 
-		you must take care of erect or inverted entry conditions and continue / 
-		reverse / change axis effects. The queue and its figures can also be 
-		saved to disk for later re-use - when re-opened they are accessible 
-		through the &quot;* Figure Queue&quot; item at the top of the figure / family 
-		selection drop-list.</p>
-    <p>The background of queue figures will be green when the figure is
-    already present in the sequence. It will be red if the figure is
-    used multiple times.</p>
-    <p>All figures in a sequence can be added to the queue at once by 
-    clicking <i>Add all to queue</i>. All figures can be removed from
-    the queue with <i>Clear queue</i>.</p>
-		</span>
-		<span>
-    </span>
-	</div>
-	<div class="documentation">
-		<span>
-      <h3>Keeping the figures separate</h3>
-      <p>When figures are overlapping they can be dragged to a new position. 
-      It is also possible to use <i>Separate figures</i> from the <i>Sequence menu</i> to 
-      separate all figures from each other.</p>
-       <p>OpenAero can position new and updated figures clear
-      of previous and subsequent figures automatically. To activate
-      this, go to <i>General Settings</i> and select the option
-      <i>Automatically position new/changed figures clear of others</i>.
-      </p>
-      <p>To remove all current sequence formatting choose 
-      <i>Clear positioning</i> from the <i>Sequence menu</i>.</p>
-		</span>
-	</div>
-	<div class="documentation">
-		<span>
-		<h3>Checking sequences against the selected Rules</h3>
-		<p>Choose <i>Sequence ... Check sequence</i> and your sequence will be checked 
-		against the rules that you have selected in the <i>Sequence Info</i> setup. 
-		Note that any construction errors are shown in the <i>Alerts</i> box below the 
-		figure editor. If you print the sequence you can opt to add the <i>Sequence 
-		Check Result</i> to the bottom of your Form B, C, R or L.</p>
-		<p class="noCordova">Several sequences can be checked simultaneously by choosing and/or dragging 
-		their files to the box shown when you click menu item <i>Tools ... Check 
-		multiple seq</i>.</p>
-    <p>When creating a Free Unknown sequence, it is possible to use the
-    original submitted figures to check if they are correct in your
-    sequence. To do this, click <i>Reference sequence</i> in the
-    <i>Sequence info</i> tab. A dialog will show where you can enter
-    a sequence string for a reference sequence. This string can for
-    example be copied from the main sequence text area when you have
-    the original submitted figures opened in OpenAero.</p>
-    <p>For the Free Known, the reference sequence will automatically be
-    loaded when activating the Free Known rules.</p>
-    <h3>Floating Point correction</h3>
-    <p>In some sequence types, a Floating Point correction is
-    allowed. This means that one or more K points may be deducted from
-    the figures with the highest K factors if this is necessary to
-    reduce total sequence K to the maximum allowed.</p>
-    <p>The Floating Point correction is automatically applied when
-    corresponding rules are set in the Sequence Info.</p>
-		</span>
-	</div>
-  <div class="documentation">
-    <span id="free_unknown_designer">
-      <h2>The Free (Un)known designer</h2>
-      This is an efficient way to design a Free Known or Unknown
-      sequence from a list of submitted figures. It can be found under
-      the <i>Tools</i> menu on desktop or the main menu on mobile.
-      In phone layout, all the same elements are present but the layout is
-        different because of the smaller screen size.
-      <h3>Getting started</h3>
-      Open a sequence file containing the Free (Un)known figures from the
-      <i>File</i> menu, or by clicking a link holding the sequence that
-      has been provided to you. If the sequence is correctly formatted
-      (correct rules, all figure letters assigned, no other figures)
-      OpenAero should automatically start the Free (Un)known designer.<br />
-      Otherwise, you can start it from the menu.<br />
-      If OpenAero detects it is just a figures file you will start with
-      an empty sequence. Otherwise, the current sequence will be shown.
-      <p><img src="../img/OA_FreeUnknownDesignerMain.png" style="max-width: 95%"></img></p>
-      <h3>Sequence layout</h3>
-      <p>The purpose of the designer is to quickly create a sequence. For
-      this reason, layout is schematic and fully automated. There are no
-      options for changing this.<br />
-      Multiple subsequences can be used, joined and copied in the design
-      environment.<br />
-      In the sequences, Master figures are marked with a green border.
-      Additional (for the Unknown) or Free (for the Known) figures
-      are marked with a blue border.</p>
-      <ul>
-			  <li>To put a Master figure into the sequence:
-		      <ul>
-					  <li>For the first figure - drag & drop it the onto the
-			      "Drop Figure Here" box</li>
-			      <li>For subsequent figures - drag & drop it where you want
-			      to insert it</li>
-				  </ul>
-			  </li>
-			  <li>To put a Free figure into the sequence:
-			  <ul>
-					<li>Drag & drop the orange "Free x/5" rectangle where you
-				  want to insert it, then click the desired Free figure to put
-				  it there.</li>
-			  </ul>
-			</ul>
-      <h3>Adding and changing figures in a subsequence</h3>
-      <p>All submitted Free (Un)known figures are visible on the lefthand
-      <i>Figures</i> tab. They can be dragged and dropped into a
-      subsequence and will be placed before the figure over which they
-      are dropped. To create a new subsequence, drag the figure to
-      <i>New / copy subsequence</i>.<br />
-      Figures that are used exactly once in any of the subsequences are
-      marked by a green border. Figures that are used multiple times (or
-      more than the maximum amount of Additionals/Free for the Additional/Free
-      figure) are marked orange.</p>
-      <p>To remove a figure, click the cross in the righthand upper
-      corner.</p>
-      <p>Additional or Free figures can be added by dropping the
-      'Additional' or 'Free'
-      block. After this has been done the figure can be changed
-      after selecting it by clicking.<br />
-      The submitted figures also have some options that can be changed
-      when selected.<br />
-      </p>
-      <h3>Manipulating subsequences</h3>
-      The entry direction of each subsequence can be chosen by selecting
-      the first figure of it and setting <i>Sub sequence entry
-      direction</i>.<br />
-      Subsequences can be dragged as a whole into another subsequence.
-      The whole subsequence will then be inserted before the figure over
-      which it is dragged. Dragging a subsequence to <i>New /copy
-      subsequence</i> will create a copy of the subsequence.
-      <h3>Finalizing the sequence</h3>
-      <p>When the sequence is complete, with all submitted figures and
-      required Additional or Free figures, it can be finalized by clicking
-      <i>Finalize sequence</i>. Any errors will be
-      reported. You will then be returned to the regular sequence editor
-      where you can adjust layout.</p>
-    <h3>Smartphone layout</h3>
-        <p><img src="../img/fudesignerPhone.png" style="max-width: 95%;"/>In&nbsp;the&nbsp;smartphone layout, only a single column of Known figures is
-        shown, below which a narrow Alerts section is visible in this
-        scrolled-down image.</p>
-        <p>Whenever the Figure Editor is selected, most of the subsequences
-        will be hidden. By selecting the Figures tab they will again take
-        up most of the screen.</p>
-        <p>Other than that, operation is very similar to large mobile
-        devices and computers.</p>
-    </span>
-  </div>
-	<div class="documentation">
-		<span id="opening_saving">
-      <h3>Opening, Saving and Printing sequences</h3>
-      <h4>Opening sequences</h4>
-      <p>To open an existing sequence, choose <i>Open sequence</i> in
-      the <i>File menu</i> and navigate to locate and open the required
-      sequence file. Sequence files have a &quot;.seq&quot; extension.
-      <span class="noCordova">You can also drag a
-      sequence file from your system's file browser to the OpenAero
-      window to open it.</span><br />
-      Alternatively, by using <i>Open sequence link</i>, you can open a
-      sequence link provided to you by email or other means.<br />
-    When using the app, you can open sequences by scanning a sequence QR code.
-      </p>
-      <h4>Saving sequences</h4>
-      <p class="noCordova">To save the current sequence as a
-      <i>&quot;filename.seq&quot;</i>
-      file, choose <i>Save sequence</i> in the <i>File menu</i>.
-      <span class="noUWP">
-		  Depending
-      on how you have set your browser, your computer will ask 
-      for a file name to save the sequence; in Chrome be sure to use the
-      '≡' Customize and control button in the header area, then click
-      the Settings item so that you can tick "Ask where to save each
-      file before downloading" on the Advanced Settings page. Always be
-      sure to give the sequence a file name ending in <i>&quot;.seq&quot;.</i>
-      </span>
-      </p>
-      <p class="noUWP">The OpenAero app for mobile has a variety of options for saving
-      and sharing your sequence under <i>File ... Save/share sequence</i>
-      </p>
-      <p>To create a link that holds your complete sequence, choose <i>Save as 
-      link</i> in the <i>File menu</i>.</p>
-    <p>Use <i>QR code</i> if you want to generate a QR code holding your sequence.
-            You can then scan the code with another device, or save the code for later use,
-            printing etc.</p>
-      <h4 id="save_print">Saving or Printing sequence forms</h4>
-      <p>To save or print some or all of the sequence forms, choose
-      <i>Print/save forms</i> in the <i>File menu</i>, and select the
-      appropriate options. <span class="noCordova noUWP">To save the forms as
-      a PDF file in Windows you may need some software that does this for you, such as
-      <a href="http://sourceforge.net/projects/pdfcreator" target="_blank">PDFcreator</a> or 
-      <a href="http://www.exp-systems.com/pdfredirect/downloads.htm" target="_blank">PDF reDirect v2</a>. 
-      In a Mac OSX or Linux machine you can simply choose to &#39;print to PDF&#39;.</span></p>
+    <div id="selecting_moving" class="documentation">
+        <span>
+            <h3>Selecting and moving a figure</h3>
+            <p>
+                To select a figure, click on it or select it in the sequence
+                text line. The figure is now magenta and can be edited with the
+                figure editor. For repositioning it can be dragged anywhere by holding
+                down the mouse button after clicking the figure. Note: this can
+                not be done for figure 1.
+            </p>
+            <p>
+                After moving a figure it's possible to change the curved line
+                to a straight line by clicking the <i>Straight line</i> button in
+                the Figure editor. It's also possible to remove the line, but for
+                clarity only for horizontal moves. This can be done by clicking the
+                <i>Move figure forward</i> button.
+            </p>
+            <p>
+                <i>TIP</i> : A poorly laid-out sequence that is difficult to
+                follow can be a real problem for judges - time spent creating an
+                easily understood flow of figures can be a good way to help improve
+                your marks. Make sure to use the straight and curved dotted lines to
+                show how your figures follow each other.
+            </p>
+        </span>
+    </div>
+    <div class="documentation">
+        <span>
+            <h3>Using the OpenAero &#39;Queue&#39;</h3>
+            <p>
+                The queue system provides a way to copy selected figures to a
+                temporary list, from which they may conveniently be selected for
+                insertion at other positions in the sequence. This enables the figures
+                in any sequence to be re-ordered to improve the sequence design, though
+                you must take care of erect or inverted entry conditions and continue /
+                reverse / change axis effects. The queue and its figures can also be
+                saved to disk for later re-use - when re-opened they are accessible
+                through the &quot;* Figure Queue&quot; item at the top of the figure / family
+                selection drop-list.
+            </p>
+            <p>
+                The background of queue figures will be green when the figure is
+                already present in the sequence. It will be red if the figure is
+                used multiple times.
+            </p>
+            <p>
+                All figures in a sequence can be added to the queue at once by
+                clicking <i>Add all to queue</i>. All figures can be removed from
+                the queue with <i>Clear queue</i>.
+            </p>
+        </span>
+        <span>
+        </span>
+    </div>
+    <div class="documentation">
+        <span>
+            <h3>Keeping the figures separate</h3>
+            <p>
+                When figures are overlapping they can be dragged to a new position.
+                It is also possible to use <i>Separate figures</i> from the <i>Sequence menu</i> to
+                separate all figures from each other.
+            </p>
+            <p>
+                OpenAero can position new and updated figures clear
+                of previous and subsequent figures automatically. To activate
+                this, go to <i>General Settings</i> and select the option
+                <i>Automatically position new/changed figures clear of others</i>.
+            </p>
+            <p>
+                To remove all current sequence formatting choose
+                <i>Clear positioning</i> from the <i>Sequence menu</i>.
+            </p>
+        </span>
+    </div>
+    <div class="documentation">
+        <span>
+            <h3>Checking sequences against the selected Rules</h3>
+            <p>
+                Choose <i>Sequence ... Check sequence</i> and your sequence will be checked
+                against the rules that you have selected in the <i>Sequence Info</i> setup.
+                Note that any construction errors are shown in the <i>Alerts</i> box below the
+                figure editor. If you print the sequence you can opt to add the <i>
+                    Sequence
+                    Check Result
+                </i> to the bottom of your Form B, C, R or L.
+            </p>
+            <p class="noCordova">
+                Several sequences can be checked simultaneously by choosing and/or dragging
+                their files to the box shown when you click menu item <i>
+                    Tools ... Check
+                    multiple seq
+                </i>.
+            </p>
+            <p>
+                When creating a Free Unknown sequence, it is possible to use the
+                original submitted figures to check if they are correct in your
+                sequence. To do this, click <i>Reference sequence</i> in the
+                <i>Sequence info</i> tab. A dialog will show where you can enter
+                a sequence string for a reference sequence. This string can for
+                example be copied from the main sequence text area when you have
+                the original submitted figures opened in OpenAero.
+            </p>
+            <p>
+                For the Free Known, the reference sequence will automatically be
+                loaded when activating the Free Known rules.
+            </p>
+            <h3>Floating Point correction</h3>
+            <p>
+                In some sequence types, a Floating Point correction is
+                allowed. This means that one or more K points may be deducted from
+                the figures with the highest K factors if this is necessary to
+                reduce total sequence K to the maximum allowed.
+            </p>
+            <p>
+                The Floating Point correction is automatically applied when
+                corresponding rules are set in the Sequence Info.
+            </p>
+        </span>
+    </div>
+    <div class="documentation">
+        <span id="free_unknown_designer">
+            <h2>The Free (Un)known designer</h2>
+            This is an efficient way to design a Free Known or Unknown
+            sequence from a list of submitted figures. It can be found under
+            the <i>Tools</i> menu on desktop or the main menu on mobile.
+            In phone layout, all the same elements are present but the layout is
+            different because of the smaller screen size.
+            <h3>Getting started</h3>
+            Open a sequence file containing the Free (Un)known figures from the
+            <i>File</i> menu, or by clicking a link holding the sequence that
+            has been provided to you. If the sequence is correctly formatted
+            (correct rules, all figure letters assigned, no other figures)
+            OpenAero should automatically ask if you want to start the Free (Un)known designer.<br />
+            Otherwise, you can start it from the menu.<br />
+            If OpenAero detects it is just a figures file you will start with
+            an empty sequence. Otherwise, the current sequence will be shown.
+            <p><img src="../img/OA_FreeUnknownDesignerMain.png" style="max-width: 95%"></p>
+            <h3>Sequence layout</h3>
+            <p>
+                The purpose of the designer is to quickly create a sequence. For
+                this reason, layout is schematic and fully automated. There are no
+                options for changing this.<br />
+                Multiple subsequences can be used, joined and copied in the design
+                environment.<br />
+                In the sequences, Master figures are marked with a green border.
+                Additional (for the Unknown) or Free (for the Known) figures
+                are marked with a blue border.
+            </p>
+            <ul>
+                <li>
+                    To put a Master figure into the sequence:
+                    <ul>
+                        <li>
+                            For the first figure - drag & drop it the onto the
+                            "Drop Figure Here" box
+                        </li>
+                        <li>
+                            For subsequent figures - drag & drop it where you want
+                            to insert it
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    To put a Free figure into the sequence:
+                    <ul>
+                        <li>
+                            Drag & drop the orange "Free x/5" rectangle where you
+                            want to insert it, then click the desired Free figure to put
+                            it there.
+                        </li>
+                    </ul>
+            </ul>
+            <h3>Adding and changing figures in a subsequence</h3>
+            <p>
+                All submitted Free (Un)known figures are visible on the lefthand
+                <i>Figures</i> tab. They can be dragged and dropped into a
+                subsequence and will be placed before the figure over which they
+                are dropped. To create a new subsequence, drag the figure to
+                <i>New / copy subsequence</i>.<br />
+                Figures that are used exactly once in any of the subsequences are
+                marked by a green border. Figures that are used multiple times (or
+                more than the maximum amount of Additionals/Free for the Additional/Free
+                figure) are marked orange.
+            </p>
+            <p>
+                To remove a figure, click the cross in the righthand upper
+                corner.
+            </p>
+            <p>
+                Additional or Free figures can be added by dropping the
+                'Additional' or 'Free'
+                block. After this has been done the figure can be changed
+                after selecting it by clicking.<br />
+                The submitted figures also have some options that can be changed
+                when selected.<br />
+            </p>
+            <h3>Manipulating subsequences</h3>
+            The entry direction of each subsequence can be chosen by selecting
+            the first figure of it and setting <i>
+                Sub sequence entry
+                direction
+            </i>.<br />
+            Subsequences can be dragged as a whole into another subsequence.
+            The whole subsequence will then be inserted before the figure over
+            which it is dragged. Dragging a subsequence to <i>
+                New /copy
+                subsequence
+            </i> will create a copy of the subsequence.
+            <h3>Finalizing the sequence</h3>
+            <p>
+                When the sequence is complete, with all submitted figures and
+                required Additional or Free figures, it can be finalized by clicking
+                <i>Finalize sequence</i>. Any errors will be
+                reported. You will then be returned to the regular sequence editor
+                where you can adjust layout.
+            </p>
+            <h3>Smartphone layout</h3>
+            <p>
+                <img src="../img/fudesignerPhone.png" style="max-width: 95%;" />In&nbsp;the&nbsp;smartphone layout, only a single column of Known figures is
+                shown, below which a narrow Alerts section is visible in this
+                scrolled-down image.
+            </p>
+            <p>
+                Whenever the Figure Editor is selected, most of the subsequences
+                will be hidden. By selecting the Figures tab they will again take
+                up most of the screen.
+            </p>
+            <p>
+                Other than that, operation is very similar to large mobile
+                devices and computers.
+            </p>
+        </span>
+    </div>
+    <div class="documentation">
+        <span id="opening_saving">
+            <h3>Opening, Saving and Printing sequences</h3>
+            <h4>Opening sequences</h4>
+            <p>
+                To open an existing sequence, choose <i>Open sequence</i> in
+                the <i>File menu</i> and navigate to locate and open the required
+                sequence file. Sequence files have a &quot;.seq&quot; extension.
+                <span class="noCordova">
+                    You can also drag a
+                    sequence file from your system's file browser to the OpenAero
+                    window to open it.
+                </span><br />
+                Alternatively, by using <i>Open sequence link</i>, you can open a
+                sequence link provided to you by email or other means.<br />
+                When using the app, you can open sequences by scanning a sequence QR code.
+            </p>
+            <h4>Saving sequences</h4>
+            <p class="noCordova">
+                To save the current sequence as a
+                <i>&quot;filename.seq&quot;</i>
+                file, choose <i>Save sequence</i> in the <i>File menu</i>.
+                <span class="noUWP">
+                    Depending
+                    on how you have set your browser, your computer will ask
+                    for a file name to save the sequence; in Chrome be sure to use the
+                    '≡' Customize and control button in the header area, then click
+                    the Settings item so that you can tick "Ask where to save each
+                    file before downloading" on the Advanced Settings page. Always be
+                    sure to give the sequence a file name ending in <i>&quot;.seq&quot;.</i>
+                </span>
+            </p>
+            <p class="noUWP">
+                The OpenAero app for mobile has a variety of options for saving
+                and sharing your sequence under <i>File ... Save/share sequence</i>
+            </p>
+            <p>
+                To create a link that holds your complete sequence, choose <i>
+                    Save as
+                    link
+                </i> in the <i>File menu</i>.
+            </p>
+            <p>
+                Use <i>QR code</i> if you want to generate a QR code holding your sequence.
+                You can then scan the code with another device, or save the code for later use,
+                printing etc.
+            </p>
+            <h4 id="save_print">Saving or Printing sequence forms</h4>
+            <p>
+                To save or print some or all of the sequence forms, choose
+                <i>Print/save forms</i> in the <i>File menu</i>, and select the
+                appropriate options. <span class="noCordova noUWP">
+                    To save the forms as
+                    a PDF file in Windows you may need some software that does this for you, such as
+                    <a href="http://sourceforge.net/projects/pdfcreator" target="_blank">PDFcreator</a> or
+                    <a href="http://www.exp-systems.com/pdfredirect/downloads.htm" target="_blank">PDF reDirect v2</a>.
+                    In a Mac OSX or Linux machine you can simply choose to &#39;print to PDF&#39;.
+                </span>
+            </p>
 
-            <p>Note that you can use the <strong>Page set</strong> option for printing complex sets of pages.
-            Character codes are used to define which pages you want to print. The options are:
-                                         <table style="border-collapse: collapse;">
-                                             <tr><td>A</td><td>Form A</td><td rowspan="6"></td></tr>
-                                             <tr><td>B</td><td>Form B. To add mini form A use B+</td></tr>
-                                             <tr><td>C</td><td>Form C. To add mini form A use C+</td></tr>
-                                             <tr><td>R</td><td>Form R</td></tr>
-                                             <tr><td>L</td><td>Form L</td></tr>
-                                             <tr><td>G</td><td>Form Grid. To include sequence info use G+</td></tr>
-                                             <tr>
-                                                 <td>0</td>
-                                                 <td style="border-top: dotted 1px; border-right:solid 1px;">Single full page pilot card</td>
-                                                 <td rowspan="5" width="40%" style="padding-left:1em; padding-top: 2.5em;">
-                                                     After a pilot card character, add <strong>></strong> for wind from the left,
-                                                     <strong><</strong> for wind from the right or <strong>=</strong> for both.
-                                                 </td>
-                                             </tr>
-                                             <tr><td>1 - 9</td><td style="border-right:solid 1px;">Single pilot card with scale 10-90% in steps of 10%</td></tr>
-                                             <tr><td>T</td><td style="border-right:solid 1px;">Two pilot cards</td></tr>
-                                             <tr><td>F</td><td style="border-right:solid 1px;">Four pilot cards</td></tr>
-                                             <tr><td>Q</td><td style="border-bottom: dotted 1px; border-right:solid 1px;">Two pilot cards with QR code</td></tr>
-                                             <tr><td>_ or space</td><td>Empty page</td><td></td></tr>
-                                         </table>
+            <p>
+                Note that you can use the <strong>Page set</strong> option for printing complex sets of pages.
+                Character codes are used to define which pages you want to print. The options are:
+                <table style="border-collapse: collapse;">
+                    <tr><td>A</td><td>Form A</td><td rowspan="6"></td></tr>
+                    <tr><td>B</td><td>Form B. To add mini form A use B+</td></tr>
+                    <tr><td>C</td><td>Form C. To add mini form A use C+</td></tr>
+                    <tr><td>R</td><td>Form R</td></tr>
+                    <tr><td>L</td><td>Form L</td></tr>
+                    <tr><td>G</td><td>Form Grid. To include sequence info use G+</td></tr>
+                    <tr>
+                        <td>0</td>
+                        <td style="border-top: dotted 1px; border-right:solid 1px;">Single full page pilot card</td>
+                        <td rowspan="5" width="40%" style="padding-left:1em; padding-top: 2.5em;">
+                            After a pilot card character, add <strong>></strong> for wind from the left,
+                            <strong><</strong> for wind from the right or <strong>=</strong> for both.
+                        </td>
+                    </tr>
+                    <tr><td>1 - 9</td><td style="border-right:solid 1px;">Single pilot card with scale 10-90% in steps of 10%</td></tr>
+                    <tr><td>T</td><td style="border-right:solid 1px;">Two pilot cards</td></tr>
+                    <tr><td>F</td><td style="border-right:solid 1px;">Four pilot cards</td></tr>
+                    <tr><td>Q</td><td style="border-bottom: dotted 1px; border-right:solid 1px;">Two pilot cards with QR code</td></tr>
+                    <tr><td>_ or space</td><td>Empty page</td><td></td></tr>
+                </table>
             </p>
             <p>
                 For example, using the character code <strong>LLLLR_F=_C+</strong> would create a package of:
@@ -617,137 +735,143 @@
                     <li>One page with form C including mini form A.</li>
                 </ul>
             </p>
-      <p>For saving one or multiple forms as as image, you can use:</p>
-      <ul>
-        <li>
-          <strong>PNG</strong> : For saving images that can be viewed by
-          any computer, tablet or smartphone. Make sure to save these images
-          in a large enough resolution (set at <i>Saving PNG or SVG image</i>).
-        </li>
-        <li class="noIOS">
-          <strong>SVG</strong> : For images that will always stay sharp,
-          even when viewed with large magnification. These images can be
-          opened in most browsers and many other applications - see
-          <a href="http://www.fileinfo.com" target="_blank">www.fileinfo.com</a>
-          for further advice.
-        </li>
-      </ul>
-      <p class="noUWP">
-	      <span class="noCordova">In Safari, you can then tap the
-	      <span class="iOSsaveIcon"></span>
-	      button to save or print the image.</span>
-      </p>
-      <h4 class="noCordova">Printing multiple sequences</h4>
+            <p>For saving one or multiple forms as as image, you can use:</p>
+            <ul>
+                <li>
+                    <strong>PNG</strong> : For saving images that can be viewed by
+                    any computer, tablet or smartphone. Make sure to save these images
+                    in a large enough resolution (set at <i>Saving PNG or SVG image</i>).
+                </li>
+                <li class="noIOS">
+                    <strong>SVG</strong> : For images that will always stay sharp,
+                    even when viewed with large magnification. These images can be
+                    opened in most browsers and many other applications - see
+                    <a href="http://www.fileinfo.com" target="_blank">www.fileinfo.com</a>
+                    for further advice.
+                </li>
+            </ul>
+            <p class="noUWP">
+                <span class="noCordova">
+                    In Safari, you can then tap the
+                    <span class="iOSsaveIcon"></span>
+                    button to save or print the image.
+                </span>
+            </p>
+            <h4 class="noCordova">Printing multiple sequences</h4>
             <p class="noCordova">
-      Multiple sequences can be printed without opening each sequence
-      separately. This option can be found in the <i>Tools</i> menu.<br />
-      This is especially useful for contest organisers.</p>
-      <h4>Saving a sequence's figures as separate images</h4>
-      <p>To save the current sequence figures as separate images, choose
-      <i>Save figs separate</i> in the <i>File</i> menu. You will then get
-      the option to save a ZIP file that 
-      contains every figure of your sequence as a separate image.<br />
-      In the <i>Settings</i> menu, you can change the image format (png or
-      svg) and the image size.<br />
-      The images are oriented according the sequence flow and the form 
-      currently being viewed (B or C).</p>
-      <p>The image naming pattern can be set in <i>Settings</i>.</p>
-		</span>
-	</div>
-	<div class="documentation">
-		<span>
-      <h3 id="grid_system">The Figure Grid system for Unknown and Free&nbsp;Unknown operations
-      </h3>
-      <div>
-          <img src="../img/OA_FigureGrid.gif" style="max-width: 95%">
-          <p>
-              Either from the very start or from an existing sequence, <i>
-                  View ...
-                  Figs in Grid
-              </i> will set each figure into a tabular grid format showing the
-              K-factors and any other relevant information.
-              This grid can be printed for distribution to sequence designers
-              bearing all the relevant figure information, so that submitted
-              sequences conform to CIVA regulations.
-          </p>
-        </div>
-      <div>
-          <img src="../img/OA_GridInfo.png" style="float:left;">
-          <p>
-              The Grid View contains an info box that assists in selection of
-              Free Unknown figures. The box can be dragged to almost any
-              location to prevent overlapping other elements.<br />
-              Use the <i>Grid info</i> to
-              change the number of grid columns or ordering of figures if
-              required (accessible through Settings on small mobile layout).<br />
-              The box provides information on the amount of
-              positive and negative figure entries and exits, as well as the
-              associated Low, Neutral or High speed.<br />
-              Below this is an indication of the needed number of Additionals
-              to create a full sequence. This is estimated by matching the
-              figures based on attitude and speed
-              <span class="docsExtraInfo">
-                  (tap here for full explanation).
-                  <span>
-                      </br>To determine matching, every base figure is assigned Low,
-                      Neutral or High speed for entry and exit. This is simply
-                      determined by any form of climb or descent at the start and
-                      end of the figure.</br>
-                      For example, a 45 climbing line has High speed entry and Low
-                      speed exit. A downgoing loop has Low speed entry and Low
-                      speed exit. A rolling turn has Neutral entry and exit. Etc...
-                      Note that this is completely independent from any rolls or
-                      further continuation in the figure. It thus presents a
-                      simplified but useable categorization.</br>
-                      To determine which figures match, the algorithm proceeds as
-                      follows:</br>
-                      1) For the entire procedure, only match correct upright or
-                      inverted attitude</br>
-                      2) Try to match the first figure with all following figures,
-                      only using exact matches: High speed exit with High speed
-                      entry, etc...</br>
-                      3) Do 2) for all following figures that have not yet been
-                      matched to others</br>
-                      4) Start again from 2, but this time also accept matching
-                      Neutral speed with High speed or Low speed</br>
-                      5) Do an extra run just as the previous, but with all the
-                      figures in reverse order</br>
-                      6) The lowest number of sets resulting from 4) and 5) is
-                      used to determine how many additionals are needed. E.g. 3
-                      sets means 2 additionals are needed</br>
-                  </span>
-              </span>
-              </br>
-              This is only an indication! The real number needed will
-              also depend on sequence design preferences, box constraints and
-              aircraft performance characteristics.
-          </p>
-          <p>
-              On the bottom of the grid info panel you find a button to <i>create groups</i>.
-              In the resulting dialog you can automatically generate semi-random
-              matching figure group proposals. This can be used for selection
-              of matching figure groups out of a large number of figures.</br>
-              When the combination is not acceptable, click
-              <i>Create new proposals</i> for a new combination.</br>
-              When a satisfactory combination has been generated these can be
-              copy-pasted to another instance of OpenAero or all loaded
-              directly into the Grid.
-          </p>
-          </div>
-          <p>
-              It may be useful to add the submitting Team name or IOC country code
-              to the figure comments. This can be done in the Figure Editor or
-              by typing it between inverted marks into the sequence string
-              after any Free Unknown identification letter
-              &quot;@A&quot;, &quot;@B&quot; etc. and before the figure code -
-              for example &quot;@F USA&quot;. This will be shown in the grid
-              adjacent to the figure designation if present,
-              or the first Aresti manoeuvre code if not.<br>
-              Also, the country flag will be added to the Grid view
-              (courtesy of <a href="http://www.icondrawer.com" target="_blank">www.icondrawer.com</a>).
-          </p>
-</span>
-  </div>
+                Multiple sequences can be printed without opening each sequence
+                separately. This option can be found in the <i>Tools</i> menu.<br />
+                This is especially useful for contest organisers.
+            </p>
+            <h4>Saving a sequence's figures as separate images</h4>
+            <p>
+                To save the current sequence figures as separate images, choose
+                <i>Save figs separate</i> in the <i>File</i> menu. You will then get
+                the option to save a ZIP file that
+                contains every figure of your sequence as a separate image.<br />
+                In the <i>Settings</i> menu, you can change the image format (png or
+                svg) and the image size.<br />
+                The images are oriented according the sequence flow and the form
+                currently being viewed (B or C).
+            </p>
+            <p>The image naming pattern can be set in <i>Settings</i>.</p>
+        </span>
+    </div>
+    <div class="documentation">
+        <span>
+            <h3 id="grid_system">
+                The Figure Grid system for Unknown and Free&nbsp;Unknown operations
+            </h3>
+            <div>
+                <img src="../img/OA_FigureGrid.gif" style="max-width: 95%">
+                <p>
+                    Either from the very start or from an existing sequence, <i>
+                        View ...
+                        Figs in Grid
+                    </i> will set each figure into a tabular grid format showing the
+                    K-factors and any other relevant information.
+                    This grid can be printed for distribution to sequence designers
+                    bearing all the relevant figure information, so that submitted
+                    sequences conform to CIVA regulations.
+                </p>
+            </div>
+            <div>
+                <img src="../img/OA_GridInfo.png" style="float:left;">
+                <p>
+                    The Grid View contains an info box that assists in selection of
+                    Free Unknown figures. The box can be dragged to almost any
+                    location to prevent overlapping other elements.<br />
+                    Use the <i>Grid info</i> to
+                    change the number of grid columns or ordering of figures if
+                    required (accessible through Settings on small mobile layout).<br />
+                    The box provides information on the amount of
+                    positive and negative figure entries and exits, as well as the
+                    associated Low, Neutral or High speed.<br />
+                    Below this is an indication of the needed number of Additionals
+                    to create a full sequence. This is estimated by matching the
+                    figures based on attitude and speed
+                    <span class="docsExtraInfo">
+                        (tap here for full explanation).
+                        <span>
+                            <br>To determine matching, every base figure is assigned Low,
+                            Neutral or High speed for entry and exit. This is simply
+                            determined by any form of climb or descent at the start and
+                            end of the figure.<br>
+                            For example, a 45 climbing line has High speed entry and Low
+                            speed exit. A downgoing loop has Low speed entry and Low
+                            speed exit. A rolling turn has Neutral entry and exit. Etc...
+                            Note that this is completely independent from any rolls or
+                            further continuation in the figure. It thus presents a
+                            simplified but useable categorization.<br>
+                            To determine which figures match, the algorithm proceeds as
+                            follows:<br>
+                            1) For the entire procedure, only match correct upright or
+                            inverted attitude<br>
+                            2) Try to match the first figure with all following figures,
+                            only using exact matches: High speed exit with High speed
+                            entry, etc...<br>
+                            3) Do 2) for all following figures that have not yet been
+                            matched to others<br>
+                            4) Start again from 2, but this time also accept matching
+                            Neutral speed with High speed or Low speed<br>
+                            5) Do an extra run just as the previous, but with all the
+                            figures in reverse order<br>
+                            6) The lowest number of sets resulting from 4) and 5) is
+                            used to determine how many additionals are needed. E.g. 3
+                            sets means 2 additionals are needed<br>
+                        </span>
+                    </span>
+                    <br>
+                    This is only an indication! The real number needed will
+                    also depend on sequence design preferences, box constraints and
+                    aircraft performance characteristics.
+                </p>
+                <p>
+                    On the bottom of the grid info panel you find a button to <i>create groups</i>.
+                    In the resulting dialog you can automatically generate semi-random
+                    matching figure group proposals. This can be used for selection
+                    of matching figure groups out of a large number of figures.<br>
+                    When the combination is not acceptable, click
+                    <i>Create new proposals</i> for a new combination.<br>
+                    When a satisfactory combination has been generated these can be
+                    copy-pasted to another instance of OpenAero or all loaded
+                    directly into the Grid.
+                </p>
+            </div>
+            <p>
+                It may be useful to add the submitting Team name or IOC country code
+                to the figure comments. This can be done in the Figure Editor or
+                by typing it between inverted marks into the sequence string
+                after any Free Unknown identification letter
+                &quot;@A&quot;, &quot;@B&quot; etc. and before the figure code -
+                for example &quot;@F USA&quot;. This will be shown in the grid
+                adjacent to the figure designation if present,
+                or the first Aresti manoeuvre code if not.<br>
+                Also, the country flag will be added to the Grid view
+                (courtesy of <a href="http://www.icondrawer.com" target="_blank">www.icondrawer.com</a>).
+            </p>
+        </span>
+    </div>
     <div class="documentation">
         <span id="view_mode">
             <h3>View modes for design and flying</h3>
@@ -783,72 +907,88 @@
             </p>
         </span>
     </div>
-  <div class="documentation">
-    <span id="importing_into_acro">
-      <h3>Importing OpenAero files into ACRO</h3>
-      <p>
-        OpenAero files that are stored in <i>&quot;filename.seq&quot;</i> format can be 
-        directly imported into the ACRO scoring software, thus providing a swift 
-        and accurate method for transferring all of the required figure 
-        information. Note that the OpenAero figure text string does not 
-        provide the necessary data for this procedure, and should generally be 
-        avoided if possible.
-      </p>
-    </span>
-  </div>
-	<div class="documentation">
-		<span>
-      <h3 id="settings">Settings</h3>
-      <p>The <i>Settings</i> dialog offers options for changing the look
-      &amp; feel of OpenAero. There are three tabs:</p>
-      <ul>
-        <li>General
-        <ul>
-          <li>Change the interface language</li>
-          <li>Set phone or normal layout (only for mobile devices)</li>
-          <li>Change the number of columns in the queue figure chooser</li>
-          <li>Change the number of columns in Grid View when using phone layout</li>
-          <li>Choose if new or changed figures should be positioned
-          clear of previous and subsequent figures automatically. This
-          will only be done when the figure is completely new or not
-          similar to a replaced figure and only when selected from the
-          figure chooser</li>
-          <li>Choose to display the blue handles when editing figures or not</li>
-          <li>Change the image format (png or svg) and the image size for
-          saving all figures as separate images in a ZIP file</li>
-          <li>Change the filename pattern for saving all figures as
-          separate images in a ZIP file. The following replacement
-          patterns are available: %pilot %aircraft %location %date %class
-          %rules %category %program %form %figure</li>
-        </ul>
-        </li>
-        <li>Styling
-        <ul>
-          <li>Select if figure start numbers should be in a circle or not</li>
-          <li>Change the roll font size</li>
-          <li>Change the roll symbol size</li>
-        </ul>
-        </li>
-        <li>Expert
-        <ul>
-          <li>Allow non-Aresti rolls. This can be useful for designing
-          Freestyle or demo sequences</li>
-          <li>Change all drawing styles, such as:
-          <ul>
-            <li><strong>pos</strong> : positive line</li>
-            <li><strong>neg</strong> : negative line</li>
-            <li><strong>rollText</strong> : roll font (e.g. 2x8, 3/4 etc)</li>
-          </ul>
-          </li>
-          <li>Set realistic-looking perspective for turns</li>
-          <li>Restore all settings to their default values</li>
-        </ul>
-        </li>
-      </ul>
-      <p>Please keep in mind that when somebody opens your sequence
-      on another system it will look different from your version if you
-      change some of the Styling or Expert values!</p>
-    </span>
-	</div>
-</body>
+    <div class="documentation">
+        <span id="importing_into_acro">
+            <h3>Importing OpenAero files into ACRO</h3>
+            <p>
+                OpenAero files that are stored in <i>&quot;filename.seq&quot;</i> format can be
+                directly imported into the ACRO scoring software, thus providing a swift
+                and accurate method for transferring all of the required figure
+                information. Note that the OpenAero figure text string does not
+                provide the necessary data for this procedure, and should generally be
+                avoided if possible.
+            </p>
+        </span>
+    </div>
+    <div class="documentation">
+        <span>
+            <h3 id="settings">Settings</h3>
+            <p>
+                The <i>Settings</i> dialog offers options for changing the look
+                &amp; feel of OpenAero. There are three tabs:
+            </p>
+            <ul>
+                <li>
+                    General
+                    <ul>
+                        <li>Change the interface language</li>
+                        <li>Set phone or normal layout (only for mobile devices)</li>
+                        <li>Change the number of columns in the queue figure chooser</li>
+                        <li>Change the number of columns in Grid View when using phone layout</li>
+                        <li>
+                            Choose if new or changed figures should be positioned
+                            clear of previous and subsequent figures automatically. This
+                            will only be done when the figure is completely new or not
+                            similar to a replaced figure and only when selected from the
+                            figure chooser
+                        </li>
+                        <li>Choose to display the blue handles when editing figures or not</li>
+                        <li>
+                            Change the image format (png or svg) and the image size for
+                            saving all figures as separate images in a ZIP file
+                        </li>
+                        <li>
+                            Change the filename pattern for saving all figures as
+                            separate images in a ZIP file. The following replacement
+                            patterns are available: %pilot %aircraft %location %date %class
+                            %rules %category %program %form %figure
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    Styling
+                    <ul>
+                        <li>Select if figure start numbers should be in a circle or not</li>
+                        <li>Change the roll font size</li>
+                        <li>Change the roll symbol size</li>
+                    </ul>
+                </li>
+                <li>
+                    Expert
+                    <ul>
+                        <li>
+                            Allow non-Aresti rolls. This can be useful for designing
+                            Freestyle or demo sequences
+                        </li>
+                        <li>
+                            Change all drawing styles, such as:
+                            <ul>
+                                <li><strong>pos</strong> : positive line</li>
+                                <li><strong>neg</strong> : negative line</li>
+                                <li><strong>rollText</strong> : roll font (e.g. 2x8, 3/4 etc)</li>
+                            </ul>
+                        </li>
+                        <li>Set realistic-looking perspective for turns</li>
+                        <li>Restore all settings to their default values</li>
+                    </ul>
+                </li>
+            </ul>
+            <p>
+                Please keep in mind that when somebody opens your sequence
+                on another system it will look different from your version if you
+                change some of the Styling or Expert values!
+            </p>
+        </span>
+    </div>
+</BODY>
 </html>

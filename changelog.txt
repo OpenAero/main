@@ -2,6 +2,15 @@
 * Added option to choose CIVA glider positioning K for judges only or electronic tracking
 * Added feature to rotate figures in Grid view by setting as a subsequence with defined entry direction
 * Several changes to roll font positioning and roll font scaling for tall sequences to keep roll text readable while preventing overlap
+* Removed print dialog settings conversion (old format deprecated in 2019)
+* Added 2023 CIVA sequences and guidance
+* Updated CIVA rules for 2023
+* Added Forms L & R for IAC
+* Increased minimum gap between rolls from 1 to 2 units to assure clear roll separation
+* Slightly reduced logo size on Form L & R to make CIVA logo match header block height
+* Moved wind arrow right on Form L when logo extends below header block
+* CIVA logo with gradients did not print correctly, so removed gradients
+* Added indication and explanation for optimal sequence size
 
 2022.2.5
 * Corrected Latvia IOC code to LAT

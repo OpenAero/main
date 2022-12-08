@@ -317,7 +317,7 @@ lang.fr = {
 'harmony' : 'Harmonie',
 'help' : 'Aide',
 'hideIllegalFigures' : 'Masquer les figures non autorisées',
-'iacForms' : 'Formes A/B/C au style IAC',
+'iacForms' : 'Formes au style IAC',
 'illegalAtEnd' : 'Figure illégale à la fin',
 'illegalBefore' : 'Figure illégale avant la figure',
 'illegalFig' : ' est interdit, essayez ',
@@ -539,9 +539,7 @@ lang.fr = {
 'referenceSequenceClose' : 'Fermer',
 'referenceSequenceExplain' : 'Dans l\'emplacement ci-dessous, vous pouvez ' +
   'entrer le texte de référence des figures obligatoires pour la ' +
-  'construction d\'un programme, tel qu\'un programme d\'(In)Connu-Libre. ' +
-  'La vérification des lettres, des codes Aresti et des directions ' +
-  'relatives d\'entrée / sortie des figures seront alors effectués.',
+  'construction d\'un programme, tel qu\'un programme d\'(In)Connu-Libre.',
 'referenceSequenceFixed' : 'Ce programme de référence ne peut pas être changé ' +
   'car il est lié aux règles de vérification du programme en cours.',
 'referenceSequenceTitle' : 'Figures de référence pour les ' +

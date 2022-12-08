@@ -51,10 +51,8 @@ html, body {
   font-family: Roboto, Helvetica, Verdana, sans-serif;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
-  -khtml-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
-  -o-user-select: none;
   -ms-overflow-style: scrollbar;
   user-select: none;
   background-color: #fff;
@@ -606,12 +604,10 @@ fieldset {
 /* end material design */
 
 body.docs {
-  -webkit-touch-callout: normal;
+  -webkit-touch-callout: initial;
   -webkit-user-select: text;
-  -khtml-user-select: text;
   -moz-user-select: text;
   -ms-user-select: text;
-  -o-user-select: text;
   user-select: text;
 }
 #canvas {
@@ -709,7 +705,6 @@ textarea {
 .blur {
   -moz-filter: blur (20px);
   -webkit-filter: blur (20px);
-  -o-filter: blur(20px);
   filter: blur (20px);
 }
 .noWrap {
@@ -1827,7 +1822,7 @@ option.used {
 .figureStart {
   z-index: 1;
   position: absolute;
-  display: hidden;
+  display: none;
 }
 .figureStart hover {
   display: block;
@@ -1964,7 +1959,7 @@ option.used {
   font-size: 24px;
   color: rgba(0,0,0,0.7);
   text-align: center;
-  vertical-align: center;
+  vertical-align: middle;
 }
 t_addFigureText {
 	opacity: 0.7;
@@ -2239,7 +2234,7 @@ t_addFigureText {
 #logoChooserContainer img {
   float: right;
   margin: 0 0 2px 2px;
-  vertical-align: center;
+  vertical-align: middle;
 }
 
 #logoChooserContainer input {
@@ -2366,7 +2361,7 @@ table#figureChooserTable div {
   transition: background 0.4s, border-color 0.4s;
   border-color: #7cb342;
   background: #ecffec;
-  background-opacity: 1;
+  opacity: 1;
 }
 .queueUsedMulti {
   transition: background 0.4s, border-color 0.4s;
@@ -2571,7 +2566,7 @@ table#figureChooserTable div {
     background: #fff;
     text-align: center;
     font-size: 1.5em;
-    font-weight: strong;
+    font-weight: bold;
 }
 
     #fuFiguresTable td.figUsed {

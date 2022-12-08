@@ -77,7 +77,7 @@
   background: linear-gradient(top, #f4f4f4, #e8e8e8);
   -moz-box-shadow: 2px 0 2px -2px rgba(0,0,0,0.5);
   -webkit-box-shadow: 2px 0 2px -2px rgba(0,0,0,0.5);
-  box-shadow: 0px 3px 6px rgba(0,0,0,0.5);
+  box-shadow: 0 3px 6px rgba(0,0,0,0.5);
   overflow: hidden;
   width: 276px;
   padding: 40px 0 0 0;
@@ -101,13 +101,16 @@
   visibility: visible;
 }
 #figureInfo {
-  position: relative;
-  float: left;
-  /*left: -268px;*/
-  width: 268px;
-  -webkit-transform: translateX(0);
-  transform: translateX(0);
-  transition: all 0.3s ease-in-out;
+    position: relative;
+    float: left;
+    /*left: -268px;*/
+    width: 268px;
+    -moz-transform: translateX(0);
+    -o-transform: translateX(0);
+    -ms-transform: translateX(0);
+    -webkit-transform: translateX(0);
+    transform: translateX(0);
+    transition: all 0.3s ease-in-out;
 }
 #figureInfo.hidden {
   transform: translateX(280px);
@@ -185,12 +188,49 @@
 #svgContainer.grid {
   padding-right: 280px; /* create margin for gridInfo block */
 }
+#optimalSequenceArea {
+    position: absolute;
+    top: 15px;
+    left: 6px;
+    width: 560px;
+    height: 1080px;
+    border: 1px dashed rgba(0,128,0,0.5);
+}
+#optimalSequenceArea.exceeded {
+    border: 1px dashed #fb8c00;
+}
+#optimalSequenceArea.windL {
+    text-align: right;
+}
+#manual_html_optimal_sequence_area {
+    position: absolute;
+    z-index: 1; /* ensures info is clickable */
+    padding: 0 !important;
+    margin-left: -12px;
+}
+#optimalSequenceArea span {
+    display: none;
+    padding: 4px 20px 4px 2px;
+    vertical-align: middle;
+    background: #fb8c00;
+    color: white;
+}
+#optimalSequenceArea.exceeded span {
+    display: inline-block;
+}
+#optimalSequenceArea .info {
+    display: inline-block;
+}
+#svgContainer svg {
+    position: absolute;
+}
+
 .sequenceOverlay {
-  left: -10px !important;
-  top: -20px !important;
-  z-index: 1000;
-  background-color: rgba(255, 255, 255, 0.8) !important;
-  transition: background-color 2000ms ease;
+    left: -10px !important;
+    top: -20px !important;
+    z-index: 1000;
+    background-color: rgba(255, 255, 255, 0.8) !important;
+    transition: background-color 2000ms ease;
 }
 #gridInfo {
 	position: absolute;
@@ -278,17 +318,12 @@
   margin: 0 16px 0 16px;
   background-color: white;
   border: 1px solid #ccc;
-  -webkit-touch-callout: normal;
+  -webkit-touch-callout: initial;
   -webkit-user-select: text;
-  -khtml-user-select: text;
   -moz-user-select: text;
   -ms-user-select: text;
-  -o-user-select: text;
   user-select: text;
   white-space: pre-wrap;       /* css-3 */
-  white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
-  white-space: -pre-wrap;      /* Opera 4-6 */
-  white-space: -o-pre-wrap;    /* Opera 7 */
   word-wrap: break-word;       /* Internet Explorer 5.5+ */
 }
 #proposalsSequenceSvgContainer {
@@ -364,13 +399,13 @@
   max-width: 246px;
   margin: 8px 4px;
 }
-#hideIllegalFigures span.material-switch {
+#hideIllegalFigures .material-switch {
 	float: right;
 }
 #figureChooser {
   bottom: 32px;
 }
-table#figureChooserColumns {
+#figureChooserColumns {
   position: relative;
   left: 12px;
   width: 284px;

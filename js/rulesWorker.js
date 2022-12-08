@@ -336,10 +336,9 @@ function loadRules (ruleName, catName, programName) {
       // when parseSection = true, continue
       // First we remove any spaces around '=', this makes parsing easier
       rules[i] = rules[i].replace(/ *= */g, '=');
-      // We also remove spaces around : or ; except when it is a 'why-' line
-      if (!rules[i].match(/^why-.+/)) {
-        rules[i] = rules[i].replace(/ *: */g, ':');
-        rules[i] = rules[i].replace(/ *; */g, ';');
+      // We also remove spaces around : or ; except when it is a 'why-' or 'why_' line
+      if (!/^why[-_].+/.test(rules[i])) {
+        rules[i] = rules[i].replace(/ *([:;]) */g, '$1');
       }
       if (rules[i].match(/^more=/)) {
         // Apply 'more' rules
@@ -348,15 +347,15 @@ function loadRules (ruleName, catName, programName) {
           i = section[name];
           ruleSection = false; // don't go over this section again!
         }
-      } else if (rules[i].match(/^group-/)) {
+      } else if (/^group-/.test(rules[i])) {
         // Apply 'group' rules => single catalog id match
         var newGroup = rules[i].replace(/^group-/, '').split('=');
-        checkCatGroup[newGroup[0]] = [];
-        checkCatGroup[newGroup[0]].regex = RegExp(newGroup[1] + '[0-9\.]*', '');
-      } else if (rules[i].match(/^Group-/)) {
+        checkCatGroup[newGroup[0]] = { regex: RegExp(newGroup[1] + '[0-9\.]*', '') };
+      } else if (/^Group-/.test(rules[i])) {
         // Apply 'Group' rules => full figure (multiple catalog id) match
-        var newGroup = rules[i].replace(/^Group-/, '').split('=');
-        checkFigGroup[newGroup[0]] = [];
+          var newGroup = rules[i].replace(/^Group-/, '').split('=');
+          /* Code below was simplified late 2022. Not sure why catch all was needed
+          checkFigGroup[newGroup[0]] = [];
         // when regex ends with $, assume it's fully formatted.
         // Otherwise, add catch all
         if (newGroup[1].slice(-1) === '$') {
@@ -364,6 +363,8 @@ function loadRules (ruleName, catName, programName) {
         } else {
           checkFigGroup[newGroup[0]].regex = RegExp(newGroup[1] + '[0-9\. ]*', 'g');
         }
+        */
+          checkFigGroup[newGroup[0]] = { regex: RegExp(newGroup[1], 'g') };
       }
     }
   }
@@ -740,11 +741,11 @@ function checkRules (callbackId, activeSequenceText, figures, figCheckLine, nonA
       if (!nonArestiRolls) {
         // check for more than two roll elements on a roll position
         // Aresti Catalogue Part I - 17
-        if (figCheckLine[seqNr].replace(/[^,; ]/g, '').match(/[,;][,;]/)) {
+        if (/[,;][^ ]*[,;]/.test(figCheckLine[seqNr])) {
           checkAlert (userText.alert.maxTwoRotationElements,
           false,
           seqNr,
-          'Aresti Catalogue');
+          'Aresti Catalogue Part I - 17');
         }
         // check for same direction same type unlinked rolls
         // Aresti Catalogue Part I - 19
@@ -752,20 +753,20 @@ function checkRules (callbackId, activeSequenceText, figures, figCheckLine, nonA
           checkAlert (userText.alert.unlinkedSameNotAllowed,
           false,
           seqNr,
-          'Aresti Catalogue');
+          'Aresti Catalogue Part I - 19');
         }
         // check if a spin is preceded by another roll element
         // Aresti Catalogue 27
-        if (figCheckLine[seqNr].match(/[,;]9\.1[12]\./)) {
+        if (/[,;]9\.1[12]\./.test(figCheckLine[seqNr])) {
           checkAlert (userText.alert.spinFirst,
           false,
           seqNr,
-          'Aresti Catalogue');
+          'Aresti Catalogue 27');
         }
       }
       // check if there is a roll on family 1.1.1
       // Aresti Catalogue 7.2
-      if (figCheckLine[seqNr].match(/^1\.1\.1[^0]+0\.0\.0\.0$/)) {
+      if (/^1\.1\.1[^0]+0\.0\.0\.0$/.test(figCheckLine[seqNr])) {
         checkAlert (userText.alert.family111RollMissing,
         false,
         seqNr,
@@ -1497,4 +1498,3 @@ rulesWorker.onmessage = function (e) {
 		window[e.data.runFunction].apply (null, e.data.arguments);
 	}
 }
-
