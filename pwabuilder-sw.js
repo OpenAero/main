@@ -70,7 +70,7 @@ const precacheFiles = [
 'js/qrcode.min.js',
 'js/rules/rules15-ga.js',
 'js/rules/rules21-sac.js',
-'js/rules/rules22.js',
+'js/rules/rules23.js',
 'js/rules/rules22-baea.js',
 'js/rules/rules22-france.js',
 'js/rules/rules22-aac.js',

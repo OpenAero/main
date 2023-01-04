@@ -1,4 +1,7 @@
-2023.1
+2023.2.1
+* Updated JSZip to 3.10.1
+
+2023.1.3
 * Added option to choose CIVA glider positioning K for judges only or electronic tracking
 * Added feature to rotate figures in Grid view by setting as a subsequence with defined entry direction
 * Several changes to roll font positioning and roll font scaling for tall sequences to keep roll text readable while preventing overlap
@@ -6,11 +9,18 @@
 * Added 2023 CIVA sequences and guidance
 * Updated CIVA rules for 2023
 * Added Forms L & R for IAC
-* Increased minimum gap between rolls from 1 to 2 units to assure clear roll separation
+* Added 2023 IAC sequences
+* Updated IAC rules for 2023
+* Increased minimum gap between rolls to assure clear roll separation
 * Slightly reduced logo size on Form L & R to make CIVA logo match header block height
 * Moved wind arrow right on Form L when logo extends below header block
 * CIVA logo with gradients did not print correctly, so removed gradients
-* Added indication and explanation for optimal sequence size
+* Added indication and explanation for optimal sequence size (except on phone layout)
+* Added conversion for full figures in rule checking (Issue #35)
+* Refactored part of rulesWorker.js
+* Removed function makeTinyFormA as this is included in makeMiniFormA
+* Fixed height of modified K warning in mini Form A as automatic determination failed
+* Fixed iOS website printing by changing "Print / save pdf" element from <span> to <button>
 
 2022.2.5
 * Corrected Latvia IOC code to LAT

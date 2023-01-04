@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <!--
   index.html
   This file is part of OpenAero.
@@ -129,7 +129,7 @@
     <!-- rules Worker -->
     <script src="js/rulesWorker.js" type="text/javascript"></script>
     <!-- sequence rules. Start with general and CIVA, then alphabetical -->
-    <script src="js/rules/rules22.js" type="text/javascript"></script>
+    <script src="js/rules/rules23.js" type="text/javascript"></script>
     <script src="js/rules/rules23-civa.js" type="text/javascript"></script>
     <script src="js/rules/rules23-glider-civa.js" type="text/javascript"></script>
     <script src="js/rules/rules22-aac.js" type="text/javascript"></script>
@@ -154,8 +154,6 @@
     <!-- create QR codes https://github.com/davidshimjs/qrcodejs -->
     <script src="js/qrcode.min.js" type="text/javascript"></script>
 
-    <!-- Debugging iOS with weinre and ngrok ? Did not get it to work X-origin blabla -->
-    <!-- <script src="https://00ef-2001-1c00-1b38-6000-e98d-3acc-3d84-442a.ngrok.io/target/target-script-min.js#myDevice" type="text/javascript"></script> -->
     <!-- The main script. Put it at the end when everything else is loaded -->
     <script src="js/main.js" type="text/javascript"></script>
 </head>
@@ -1251,12 +1249,12 @@
             </div>
             <!-- end print multi -->
             <div class="clearBoth">
-                <span class="textButton userText" id="t_printSavePdf"></span>
-                <span class="textButton userText noDisplay" id="t_print"></span>
-                <span class="textButton userText noDisplay" id="t_savePdf"></span>
-                <span class="textButton userText" id="t_saveAsPNG"></span>
-                <span class="textButton userText" id="t_saveAsSVG"></span>
-                <span class="textButton userText close" id="t_cancelPrint"></span>
+                <button class="textButton userText" id="t_printSavePdf"></button>
+                <button class="textButton userText noDisplay" id="t_print"></>
+                <button class="textButton userText noDisplay" id="t_savePdf"></button>
+                <button class="textButton userText" id="t_saveAsPNG"></button>
+                <button class="textButton userText" id="t_saveAsSVG"></button>
+                <button class="textButton userText close" id="t_cancelPrint"></button>
             </div>
         </div>
     </div>
