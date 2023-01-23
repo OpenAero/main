@@ -65,21 +65,21 @@ rules.push (
 //###############################################################################
 
 "[IAC Primary Known]",
-"posnl=10",
+"posnl=5",
 
 //###############################################################################
 //##### IAC Sportsman KNOWN #######################################################
 //###############################################################################
 
 "[IAC Sportsman Known]",
-"posnl=20",
+"posnl=10",
 
 //###############################################################################
 //##### IAC Intermediate KNOWN #######################################################
 //###############################################################################
 
 "[IAC Intermediate Known]",
-    "pos=30",
+    "pos=20",
 
 //###############################################################################
 //##### IAC Sportsman FREE ###############################################
@@ -90,7 +90,7 @@ rules.push (
 "group-fam7274=^7\\.(2\\.[1-4]|4\\.[1-6])\\.",
 "fam7274-name=7.2.1 thru 7.2.4, or 7.4.1 thru 7.4.6",
 
-"posnl=20",
+"posnl=10",
 "basefig-max=12",
 "k-max=121",
 "floating-point=1",
@@ -122,7 +122,7 @@ rules.push (
 "group-snapor44=^9\\.(9|10|4\\.3\\.4)",
 "snapor44-name=snap roll or 9.4.3.4",
 
-"pos=30",
+"pos=20",
 "basefig-max=15",
 "k-max=191",
 "floating-point=1",
@@ -153,7 +153,7 @@ rules.push (
 
 "[IAC Intermediate Unknown]",
 
-"pos=30",
+"pos=20",
 "basefig-max=12",
 "basefig-min=6",
 "k-max=175",
@@ -174,7 +174,7 @@ rules.push (
 "group-roller=^2\\.(1\\.[23]|2\\.[2-7]|3\\.[2-6]|4\\.[2-8])",
 "roller-name=Rolling turn, family 2.1.2 thru 2.1.3, or 2.2.2 thru 2.2.7, or 2.3.2 thru 2.3.6, or 2.4.2 thru 2.4.8",
 
-"pos=50",
+"pos=30",
 "basefig-max=14",
 "k-max=301",
 "floating-point=1",
@@ -210,7 +210,7 @@ rules.push (
 
 "[IAC Advanced Unknown]",
 
-"pos=50",
+"pos=30",
 "basefig-max=14",
 "basefig-min=10",
 "k-max=275",
@@ -229,7 +229,7 @@ rules.push (
 
 "[IAC Unlimited Free]",
 
-"posnl=80",
+"posnl=40",
 "k-max=421",
 "floating-point=1",
 

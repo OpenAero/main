@@ -107,7 +107,6 @@ self.onmessage = function (e) {
 				e.data.callbackId,
 				e.data.activeSequenceText,
 				e.data.figures,
-				e.data.figCheckLine,
 				e.data.nonArestiRolls,
 				e.data.multi);
 			break;
@@ -350,7 +349,7 @@ function loadRules (ruleName, catName, programName) {
       } else if (/^group-/.test(rules[i])) {
         // Apply 'group' rules => single catalog id match
         var newGroup = rules[i].replace(/^group-/, '').split('=');
-        checkCatGroup[newGroup[0]] = { regex: RegExp(newGroup[1] + '[0-9\.]*', '') };
+        checkCatGroup[newGroup[0]] = { regex: RegExp(newGroup[1] + '[0-9.]*', '') };
       } else if (/^Group-/.test(rules[i])) {
         // Apply 'Group' rules => full figure (multiple catalog id) match
           var newGroup = rules[i].replace(/^Group-/, '').split('=');
@@ -379,22 +378,23 @@ function loadRules (ruleName, catName, programName) {
       parseSection = (i == section[ruleSection]) ? true : false;
     } else if (parseSection) {
       // when parseSection = true, continue
-        if (rules[i].match(/^conv-[^=]+=/)) {
-            // Apply 'conv' rules
-            var convName = rules[i].match(/^conv-([^=]+)/)[1];
+        if (/^[Cc]onv-[^=]+=/.test(rules[i])) {
+            // Apply 'conv' and 'Conv' rules
+            var convName = rules[i].match(/^[Cc]onv-([^=]+)/)[1];
             // log duplicate conversions, use latest
             if (checkConv[convName]) {
                 console.log('* Error: duplicate conversion "' + convName +
                     '" at rulenr ' + i);
             }
             checkConv[convName] = [];
-            var convRules = rules[i].match(/^conv-[^=]+=(.*)$/)[1].split(';');
+            var convRules = rules[i].match(/^[Cc]onv-[^=]+=(.*)$/)[1].split(';');
             for (var j = 0; j < convRules.length; j++) {
                 var c = convRules[j].split('=');
                 // create regex, make sure it matches to the end
                 checkConv[convName].push({
                     'regex': new RegExp(c[0] + '.*', 'g'),
-                    'replace': c[1]
+                    'replace': c[1],
+                    'fullFigure': (/^Conv-[^=]+=/.test(rules[i])) ? true : false
                 });
             }
         } else if (rules[i].match(/^more=/)) {
@@ -659,7 +659,7 @@ function loadRules (ruleName, catName, programName) {
 			checkCatGroup: checkCatGroup,
 			figureLetters: figureLetters,
 			ruleSuperFamily: ruleSuperFamily,
-            iacForms: (/^(glider-)?iac$/.test(ruleName)) ? true : false,
+      formStyle: /^(glider-)?(iac|imac)$/.test(ruleName) ? ruleName.match(/(iac|imac)/)[1] : 'civa',
 			infoCheck: infoCheck,
 		    activeRules: activeRules,
 			rulesKFigures: rulesKFigures,
@@ -696,11 +696,9 @@ function unloadRules () {
 
 // checkRules will check a complete sequence against the loaded rules
 // and produce alerts where necessary.
-// The Aresti list according description in allowed.js is in the array
-// figCheckLine
 // The required callback is called with a single argument object
 // containing alertMsgs, alertMsgRules and log
-function checkRules (callbackId, activeSequenceText, figures, figCheckLine, nonArestiRolls, multi) {
+function checkRules (callbackId, activeSequenceText, figures, nonArestiRolls, multi) {
   
   if (!callbackId) throw new Error ('Callback is required for checkRules');
   
@@ -741,7 +739,7 @@ function checkRules (callbackId, activeSequenceText, figures, figCheckLine, nonA
       if (!nonArestiRolls) {
         // check for more than two roll elements on a roll position
         // Aresti Catalogue Part I - 17
-        if (/[,;][^ ]*[,;]/.test(figCheckLine[seqNr])) {
+        if (/[,;][^ ]*[,;]/.test(figures[i].checkLine)) {
           checkAlert (userText.alert.maxTwoRotationElements,
           false,
           seqNr,
@@ -749,7 +747,7 @@ function checkRules (callbackId, activeSequenceText, figures, figCheckLine, nonA
         }
         // check for same direction same type unlinked rolls
         // Aresti Catalogue Part I - 19
-        if (regexUnlinkedRolls.test(figCheckLine[seqNr])) {
+        if (regexUnlinkedRolls.test(figures[i].checkLine)) {
           checkAlert (userText.alert.unlinkedSameNotAllowed,
           false,
           seqNr,
@@ -757,7 +755,7 @@ function checkRules (callbackId, activeSequenceText, figures, figCheckLine, nonA
         }
         // check if a spin is preceded by another roll element
         // Aresti Catalogue 27
-        if (/[,;]9\.1[12]\./.test(figCheckLine[seqNr])) {
+        if (/[,;]9\.1[12]\./.test(figures[i].checkLine)) {
           checkAlert (userText.alert.spinFirst,
           false,
           seqNr,
@@ -766,11 +764,11 @@ function checkRules (callbackId, activeSequenceText, figures, figCheckLine, nonA
       }
       // check if there is a roll on family 1.1.1
       // Aresti Catalogue 7.2
-      if (/^1\.1\.1[^0]+0\.0\.0\.0$/.test(figCheckLine[seqNr])) {
+      if (/^1\.1\.1[^0]+0\.0\.0\.0$/.test(figures[i].checkLine)) {
         checkAlert (userText.alert.family111RollMissing,
         false,
         seqNr,
-        'Aresti Catalogue');
+        'Aresti Catalogue 7.2');
       }
     }
   }
@@ -781,32 +779,20 @@ function checkRules (callbackId, activeSequenceText, figures, figCheckLine, nonA
   } else {
       log.push('Rules: ' + activeRules.description);
 	  
-	  for (var i = 0; i < figures.length; i++) {
+      for (var i = 0; i < figures.length; i++) {
 	    var aresti = figures[i].aresti;
-	    if (aresti) {
-	      var k = figures[i].k;
-	      var figString = figCheckLine[figures[i].seqNr];
-	      figNr++;
-	      if (aresti.length > 1) {
-	        var checkLine = figString.replace(aresti[0] + ' ', '');
-	      } else {
-	        var checkLine = '';
-	      }
-	      var a = '';
-	      var checkArray = [];
-	      for (var ii = 0; ii < checkLine.length; ii++) {
-	        if (checkLine[ii].match(/[ ,;]/)) {
-	          checkArray.push(a);
-	          checkArray.push(checkLine[ii]);
-	          a = '';
-	        } else {
-	          a += checkLine[ii];
-	        }
-	      }
-	      checkArray.push(a);
-	
+          if (aresti) {
+            var
+                k = figures[i].k,
+                // fullCheckLine contains all aresti numbers, including base figure
+                fullCheckLine = figures[i].checkLine,
+                // Define checkline WITHOUT base figure (only rolls). Content can change during rule checking
+                checkLine = figures[i].checkLine.replace(/^[0-9.]* /, ''),
+                // Build checkArray from rolls, with # as placeholder for splitting
+                checkArray = checkLine.replace(/([ ,;])/g, "#$1#").split('#');
+            figNr++;
 	      // format thisFig for logging
-	      var thisFig = figString.replace(/;/g, ',');
+	      var thisFig = fullCheckLine.replace(/;/g, ',');
 	      for (var j = 0; j < aresti.length; j++) {
 	        var regex = new RegExp ('(' + aresti[j].replace(/\./g, '\\.') + ')( |,|$)');
 	        thisFig = thisFig.replace(regex, '$1(' + k[j] + ')$2');
@@ -886,7 +872,7 @@ function checkRules (callbackId, activeSequenceText, figures, figCheckLine, nonA
 	        // checkAllowCatId object is not empty
 	        if (Object.keys(checkAllowCatId).length > 0) {
 	          //log.push ('Checking rules on specific allowed figures');
-	          var arestiNr = figString.split(' ')[0];
+	          var arestiNr = fullCheckLine.split(' ')[0];
 	          //console.log(arestiNr);
 	          if ((arestiNr in checkAllowCatId) && (checkAllowCatId[arestiNr][0] !== '')) {
 	            //log.push('Allowed base figure:' + arestiNr);
@@ -937,18 +923,24 @@ function checkRules (callbackId, activeSequenceText, figures, figCheckLine, nonA
 		                var conversion = checkRule[rule].conv;
 		                log.push ('Apply: ' + checkRule[rule].conv);
 		                logLine = 'Converted: ' + check.join('') + ' => ';
-		                for (var l = 0; l < checkConv[conversion].length; l++) {
-		                  for (var m = 0; m < check.length; m++) {
-		                    if (!check[m].match(/[ ,;]/)) {
-		                      check[m] = check[m].replace(checkConv[conversion][l].regex,
-		                      checkConv[conversion][l].replace);
-		                    }
-		                  }
+                          for (var l = 0; l < checkConv[conversion].length; l++) {                            
+                              if (checkConv[conversion][l].fullFigure) {
+                                  log.push ('Full figure conversions are only supported in "allow-defrules"')
+                              } else {
+                                  // Check for individual roll Aresti number conversions
+                                  for (var m = 0; m < check.length; m++) {
+                                      if (!check[m].match(/[ ,;]/)) {
+                                          check[m] = check[m].replace(checkConv[conversion][l].regex,
+                                              checkConv[conversion][l].replace);
+                                      }
+                                  }
+                              }
 		                }
 		                checkLine = check.join('');
 		
 		                log.push (logLine + checkLine);
-		              }
+                      }
+
 		              if (checkRule[rule].regex) {
 		                if (checkLine.match(checkRule[rule].regex)) {
 		                  checkAlert (why(rule) + forElement, 'rule', figNr, checkRule[rule].rule);
@@ -957,9 +949,7 @@ function checkRules (callbackId, activeSequenceText, figures, figCheckLine, nonA
 		              } else if (checkRule[rule].less) {
 		                var sum = 0;
 		                for (var l = check.length - 1; l >= 0; l--) {
-		                  if (check[l].match(/^[0-9]/)) {
-		                    sum += parseInt (check[l]);
-		                  }
+                          if (/^[0-9]/.test(check[l])) sum += parseInt (check[l]);
 		                  if ((check[l] == ' ') || (l == 0)) {
 		                    if (sum >= parseInt (checkRule[rule].less)) {
 		                      checkAlert (why(rule) + forElement, 'rule', figNr, checkRule[rule].rule);
@@ -971,52 +961,63 @@ function checkRules (callbackId, activeSequenceText, figures, figCheckLine, nonA
 		              } else if (checkRule[rule].totalLess) {
 		                var sum = 0;
 		                for (var l = check.length - 1; l >= 0; l--) {
-		                  if (check[l].match(/^[0-9]/)) {
-		                    sum += parseInt (check[l]);
-		                  }
+                            if (/^[0-9]/.test(check[l])) sum += parseInt(check[l]);
 		                }
 		                if (sum >= parseInt (checkRule[rule].totalLess)) {
 		                  checkAlert (why(rule) + forElement, 'rule', figNr, checkRule[rule].rule);
 		                  log.push ('*** Error: Fig ' + figNr + ': ' + checkRule[rule].why + forElement);
 		                }
 		              }
-								} else console.log ('Referenced rule "' + rule +
-									'" does not exist');
+					} else console.log (`Referenced rule "${rule}" does not exist`);
 	              
 	            }
 	            // Check default rules when applicable
 	            if (defRules != []) {
-	              for (k = 0; k < defRules.length; k++) {
-	                // copy checkArray to check
-	                var check = checkArray.slice(0);
-	                
-	                var checkLine = figString.replace(arestiNr + ' ', '');
-	                rule = defRules[k];
-	                // check if this is a rule of form rule:nr
-	                var ruleSplit = rule.split(':');
-	                if ((ruleSplit[1] === j) || (ruleSplit.length == 1)) {
-	                  rule = ruleSplit[0];
-	                  // check if the rule is in excludeRules. If so, skip it
-                        if (excludeRules.includes(rule)) {
-                            excludeRules.splice(excludeRules.indexOf(rule), 1);
+                    for (k = 0; k < defRules.length; k++) {
+                        // copy fullCheckLine to checkLine
+                        rule = defRules[k];
+                        // Skip rule if it doesn't exist
+                        if (!checkRule[rule]) {
+                            console.log (`Rule ${rule} from allow-defrules doesn't exist`)
                             continue;
                         }
+	                    // check if this is a rule of form rule:nr
+	                    var ruleSplit = rule.split(':');
+	                    if ((ruleSplit[1] === j) || (ruleSplit.length == 1)) {
+	                      rule = ruleSplit[0];
+	                      // check if the rule is in excludeRules. If so, skip it
+                            if (excludeRules.includes(rule)) {
+                                excludeRules.splice(excludeRules.indexOf(rule), 1);
+                                continue;
+                            }
                         // apparently not in excludeRules
 	                  log.push ('-basefig rule: ' + rule);
 	                  // Apply conversions to the Aresti number before checking the rule
 	                  if (checkRule[rule].conv) {
 	                    var conversion = checkRule[rule].conv;
 	                    log.push ('Apply: ' + checkRule[rule].conv);
-	                    logLine = 'Converted: ' + checkLine + ' => ';
-	                    for (var l = 0; l < checkConv[conversion].length; l++) {
-	                      for (var m = 0; m < check.length; m++) {
-	                        if (!check[m].match(/[ ,;]/)) {
-	                          check[m] = check[m].replace(checkConv[conversion][l].regex,
-	                          checkConv[conversion][l].replace);
-	                        }
-	                      }
+                          if (checkConv[conversion][0].fullFigure) {
+                              checkLine = fullCheckLine.slice();
+                              logLine = 'Converted: ' + checkLine + ' => ';
+                              // Check for full figure conversions
+                              for (var l = 0; l < checkConv[conversion].length; l++) {
+                                  checkLine = checkLine.replace(checkConv[conversion][l].regex,
+                                      checkConv[conversion][l].replace);
+                              }
+                          } else {
+                              // Check for individual roll Aresti number conversions
+                              var check = checkArray.slice();
+                              logLine = 'Converted: ' + check.join('') + ' => ';
+                              for (var l = 0; l < checkConv[conversion].length; l++) {
+                                  for (var m = 0; m < check.length; m++) {
+                                      if (!check[m].match(/[ ,;]/)) {
+                                          check[m] = check[m].replace(checkConv[conversion][l].regex,
+                                              checkConv[conversion][l].replace);
+                                      }
+                                  }
+                              }
+                              checkLine = check.join('');
 	                    }
-	                    checkLine = check.join('');
 	                    log.push (logLine + checkLine);
 	                  }
 	                  if (checkRule[rule].regex) {
@@ -1062,7 +1063,7 @@ function checkRules (callbackId, activeSequenceText, figures, figCheckLine, nonA
 	        }
 	        // Check the Group rules for complete figures
 	        for (group in checkFigGroup) {
-	          var match = figString.match(checkFigGroup[group].regex);
+	          var match = fullCheckLine.match(checkFigGroup[group].regex);
 	          if (match) {
 	            if (!groupMatch[group]) groupMatch[group] = [];
 	            for (j = 0; j < match.length; j++) {

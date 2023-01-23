@@ -217,6 +217,9 @@ select {
 #svgContainer.hidden {
 	transform: translateX(100vw);
 }
+#optimalSequenceArea {
+    display: none;
+}
 #gridInfo {
   display: none;
 }
@@ -427,7 +430,16 @@ table#figureChooserTable td.selected {
 }
 
 /* help box */
+#helpContent {
+    scroll-margin-top: 40px;
+}
+#helpBox {
+    position: fixed;
+    overflow: hidden;
+}
 #helpBox .box {
+    position: fixed;
+    overflow: hidden;
 	top: 0;
 	left: 0;
 	width: 100%;
@@ -570,4 +582,13 @@ table#figureChooserTable td.selected {
 
 #fuSequence .prevRight::before, #fuSequence .prevLeft::before {
     top: 28px;
+}
+ /* Print dialog */
+.pilotCardLayout {
+    padding: 3px !important;
+    -webkit-transform: scale(0.7,0.7);
+    transform: scale(0.7,0.7);
+}
+#pilotCardLayout.folded {
+    max-height: 1px;
 }

@@ -194,23 +194,23 @@
     left: 6px;
     width: 560px;
     height: 1080px;
-    border: 1px dashed rgba(0,128,0,0.5);
+    border: 1px solid rgba(0,128,0,0.5);
 }
 #optimalSequenceArea.exceeded {
-    border: 1px dashed #fb8c00;
+    border: 1px solid #fb8c00;
 }
 #optimalSequenceArea.windL {
     text-align: right;
 }
 #manual_html_optimal_sequence_area {
-    position: absolute;
+    position: relative;
     z-index: 1; /* ensures info is clickable */
     padding: 0 !important;
-    margin-left: -12px;
+    margin: 0;
 }
 #optimalSequenceArea span {
     display: none;
-    padding: 4px 20px 4px 2px;
+    padding: 4px 4px 4px 2px;
     vertical-align: middle;
     background: #fb8c00;
     color: white;

@@ -202,7 +202,6 @@ var seqCheckAvail = {};
 // variables used for checking sequence validity
 var checkAllowCatId = [];  // Catalogue Numbers for allowed figures
 var checkCatGroup = [];
-var figCheckLine = [];
 var activeRules = false;   // Are rules active? If so, is object {description: ,logo:}
 var infoCheck = [];        // Seq info fields to be filled out when saving or printing
 var figureLetters = '';    // Letters that can be assigned to individual figures
@@ -2115,7 +2114,7 @@ function aboutDialog() {
             }
         }
         alertBox(
-            sprintf(userText.aboutText, version, stableVersion, compText),
+            sprintf(userText.aboutText, version, stableVersion.split(' ')[0], compText),
             userText.about);
         document.getElementById('viewChangelog').addEventListener(
             'mousedown',
@@ -2320,23 +2319,22 @@ function updateUserTexts() {
         value,
         els = document.getElementsByClassName('userText');
 
-    // add a warning to the console for every missing key. Helps in
-    // creating new translations
-    for (var key in lang.en) {
-        if (!(key in language) && (key != 'en')) {
-            console.log('Key "' + key + '" missing in language "' +
-                document.getElementById('language').value + '"');
-        }
-    }
-    // put language values in userText
-    for (var key in language) userText[key] = language[key];
-
-    for (var i = els.length - 1; i >= 0; i--) {
+    // Go over all elements with class userText
+    for (var i = 0; i < els.length; i++) {
         id = els[i].id.replace(/^t_/, '');
-        value = userText[id];
-        if (!value) value = '';
+        // Find the value for the current language
+        value = id.split('.').reduce((a, b) => a ? a[b] : false, language);
+        // If the value does not exist, fall back to English and add a
+        // warning to the console. Helps in creating new translations
+        if (!value) {
+            console.log(`Key "${id}" missing in language "${document.getElementById('language').value}"`);
+            value = id.split('.').reduce((a, b) => a ? a[b] : false, lang.en) || '';
+        }
         els[i].innerHTML = value;
     }
+
+    // Merge the active language over English into userText
+    userText = {...lang.en, ...language};
 
     // update userText in rulesWorker
     rulesWorker.postMessage({
@@ -2560,7 +2558,7 @@ function drawWind(x, y, signScale, svgEl) {
     path.setAttribute('d', pathNode);
     path.setAttribute('style', style.windArrow);
     g.appendChild(path);
-    drawText(iacForms ? userText.windIAC : userText.wind,
+    drawText(/^(iac|imac)$/.test(formStyle) ? userText.windIAC : userText.wind,
         x - (signScale * 50), y + 20, 'miniFormA', 'middle', '', g);
     svgEl.appendChild(g);
     return { width: Math.abs(signScale * 90 + sign * 16), height: 32 };
@@ -4718,6 +4716,11 @@ function doOnLoad() {
     document.addEventListener("deviceready", function () {
         if (typeof cordova !== 'undefined') platform.cordova = true; // should already have been set
         if (platform.cordova) { // make sure we only do this for Cordova app
+            // immediately remove loading as this is handled by the app itself
+            if (loading && loading.parentNode) {
+                loading.remove();
+            }
+            
             // scroll input field into view where applicable
             // Supported in Chrome and Safari 2018-01-17
             window.addEventListener('keyboardDidShow', function () {
@@ -4755,9 +4758,14 @@ function doOnLoad() {
                         sequenceText.setAttribute('contentEditable', true);
                     });
 
+                    // Make sure full height is used before selecting keyboard
+                    // (seems like iOS bug)
+                    sequenceText.focus();
+
                     // add status bar inside webview
                     document.getElementById('cordovaStatusBar').classList.remove('noDisplay');
                     document.getElementById('mainOverlay').classList.add('iosCordova');
+                    setTimeout(function(){StatusBar.styleDefault();},1000);
 
                     break;
                 case 'android':
@@ -4773,10 +4781,6 @@ function doOnLoad() {
                     // in the background
                     window.plugins.intent.getCordovaIntent(cordovaHandleIntent);
                     break;
-            }
-
-            if (loading && loading.parentNode) {
-                loading.remove();
             }
 
             setTimeout(
@@ -5023,7 +5027,7 @@ function doOnLoad() {
         }
     }
 
-    // check if we are running from a file (DEPRECATED)
+    // check if we are running from a file
     if (!platform.cordova && window.location.protocol === 'file:') {
         if (presentFileError) errors.push(userText.runFromFile);
     }
@@ -6024,8 +6028,8 @@ function addRollSelectElement(figNr, rollEl, elNr, parent) {
         }
     }
 
-    // build the positive flick options, also allow opposite attitude as
-    // flick may have been proceeded by half roll
+    // Build the positive flick options. Also allow opposite attitude as
+    // flick may have been proceeded by half roll, except on vertical
     thisAttitude = (thisRoll.negLoad ? '-' : '+') +
         rollAttitudes[thisRoll.attitude];
     var oppAttitude = (thisRoll.negLoad ? '+' : '-') +
@@ -6039,7 +6043,8 @@ function addRollSelectElement(figNr, rollEl, elNr, parent) {
         if (rollPattern == pattern || !ruleCheckRolls ||
             document.getElementById('nonArestiRolls').checked ||
             (rollFig[thisAttitude + roll[0]].aresti) in checkAllowCatId ||
-            (rollFig[oppAttitude + roll[0]].aresti) in checkAllowCatId) {
+            (((thisRoll.attitude % 180) != 90 &&
+            rollFig[oppAttitude + roll[0]].aresti) in checkAllowCatId)) {
             html += '<option value="' + rollPattern +
                 '" class="posFlickSelectOption"';
             if (rollPattern == pattern) html += ' selected="selected"';
@@ -6047,8 +6052,8 @@ function addRollSelectElement(figNr, rollEl, elNr, parent) {
         }
     }
 
-    // build the negative flick options, also allow opposite attitude as
-    // flick may have been proceeded by half roll
+    // Build the negative flick options. Also allow opposite attitude as
+    // flick may have been proceeded by half roll, except on vertical
     for (var i = 0; i < negFlickTypes.length; i++) {
         var
             roll = negFlickTypes[i].split(':'),
@@ -6056,7 +6061,8 @@ function addRollSelectElement(figNr, rollEl, elNr, parent) {
         if (rollPattern == pattern || !ruleCheckRolls ||
             document.getElementById('nonArestiRolls').checked ||
             (rollFig[thisAttitude + roll[0]].aresti) in checkAllowCatId ||
-            (rollFig[oppAttitude + roll[0]].aresti) in checkAllowCatId) {
+            (((thisRoll.attitude % 180) != 90 &&
+            rollFig[oppAttitude + roll[0]].aresti) in checkAllowCatId)) {
             html += '<option value="' + rollPattern +
                 '" class="negFlickSelectOption"';
             if (rollPattern == pattern) html += ' selected="selected"';
@@ -6620,7 +6626,7 @@ function setPilotCardLayout(evt) {
 // changePilotCardPercent is activated when changing pilotCardPercentValue
 function changePilotCardPercent() {
     document.getElementById('pilotCardPercentImage').style.height =
-        Math.min(100, document.getElementById('pilotCardPercentValue').value) + 'px';
+        Math.min(90, document.getElementById('pilotCardPercentValue').value * 0.9) + 'px';
     updatePrintPageSetValue();
 }
 
@@ -7711,12 +7717,15 @@ function getLatestVersion() {
         localStorage.removeItem("reload");
     } else {
         getStableVersion(function (latestVersion) {
-            if (compVersion(version, latestVersion) == -1) {
+            // Show a warning banner when the version is older than Stable
+            // AND Stable is at least 48 hours old
+            if (compVersion(version, latestVersion) == -1 &&
+            parseInt(latestVersion.split(' ')[1]) > 172800) {
                 if (!/^http/.test(window.location.protocol)) {
                     var banner = document.getElementById('installApp');
                     banner.classList.remove('noDisplay');
                     document.getElementById('t_getTheApp').innerHTML =
-                        sprintf(userText.updateApp, latestVersion);
+                        sprintf(userText.updateApp, latestVersion.split(' ')[0]);
                     if (platform.android) banner.classList.add('android');
                     if (platform.ios) banner.classList.add('ios');
                     banner.classList.add('update');
@@ -7737,25 +7746,7 @@ function getLatestVersion() {
 function getStableVersion(f) {
     var xhr = new XMLHttpRequest();
     xhr.timeout = 5000;
-
-    /* CAUSES ERRORS STARTING 2021
-    if (platform.cordova && platform.ios) {
-        // only check when online as this might crash when offline on iOS 12
-        xhr.onload = function () {
-            window.AppUpdate.checkAppUpdate(
-                function (latestVersion) {
-                    f(latestVersion);
-                },
-                function (fail) {
-                    f(false);
-                }, 'OpenAero', {}
-            );
-        };
-    } else {
-    */
     xhr.onload = function () { f(xhr.response) };
-    //}
-
     xhr.onerror = xhr.ontimeout = function () { f(false) };
     xhr.open('GET', 'https://openaero.net/openaero.php?v', true);
     xhr.send();
@@ -7775,15 +7766,19 @@ function checkUpdateDone() {
         if (!oldVersion) {
             // First install
 
-            // check for French browser
+            // Set numberInCircle for French browser
             if (navigator.language == 'fr') {
                 if (!document.getElementById('numberInCircle').checked) {
                     document.getElementById('numberInCircle').checked = true;
                     numberInCircle = true;
                 }
+            }
+
+            // Adjust language when available
+            if (navigator.language != 'en' && lang[navigator.language]) {
                 // change language next, this will also saveSettingsStorage
-                if (document.getElementById('language').value != 'fr') {
-                    document.getElementById('language').value = 'fr';
+                if (document.getElementById('language').value != navigator.language) {
+                    document.getElementById('language').value = navigator.language;
                     changeLanguage();
                 }
             }
@@ -8033,13 +8028,9 @@ function changeCombo(id, callback) {
         // set default logo for rules
         if (rulesLogo[ruleName]) selectLogo(rulesLogo[ruleName]);
 
-        // set CIVA or IAC forms default
-        iacForms = (/^iac$/i.test(rules.value)) ? true : false;
-        if (iacForms) {
-            document.getElementById('iacForms').setAttribute('checked', 'checked');
-        } else {
-            document.getElementById('iacForms').removeAttribute('checked');
-        }
+        // set CIVA, IAC or IMAC forms default
+        formStyle = /^(iac|imac)$/i.test(rules.value) ? strToLower(rules.value).match(/(iac|imac)/)[1] : 'civa';
+        document.getElementById('formStyle').value = formStyle;
 
         // clear category if these rules exist but do not contain the category
         if (seqCheckAvail[ruleName] && !seqCheckAvail[ruleName].cats[categoryName]) {
@@ -8506,7 +8497,8 @@ function parseFiguresFile() {
             // add an option for the group to the figure selector
             var option = document.createElement('option');
             option.setAttribute('value', figGroupNr);
-            option.innerHTML = line.replace(/^F/, '');
+            option.setAttribute('id', `t_figureGroups.${figGroup[figGroupNr].name}`);
+            option.classList.add ('userText');
             if (figMainGroup != line[1]) {
                 figMainGroup = line[1];
                 groupClass = 1 - groupClass;
@@ -8740,7 +8732,6 @@ function checkRules(callback) {
         action: 'checkRules',
         activeSequenceText: activeSequence.text,
         figures: simplifyFigures(),
-        figCheckLine: figCheckLine,
         nonArestiRolls: document.getElementById('nonArestiRolls').checked,
         multi: multi,
         callbackId: id
@@ -8778,12 +8769,8 @@ function activateRules(data) {
         document.getElementById('t_referenceSequence').classList.add('noDisplay');
     }
 
-    // set CIVA or IAC forms default
-    if (data.iacForms) {
-        document.getElementById('iacForms').setAttribute('checked', 'checked');
-    } else {
-        document.getElementById('iacForms').removeAttribute('checked');
-    }
+    // set formStyle (civa, iac or imac)
+    document.getElementById('formStyle').value = data.formStyle;
 
     // by default, disable "Print Super Family", but enable change
     // enable when rules with sf definition active and disable change
@@ -8832,13 +8819,9 @@ function unloadRules(updatedFig) {
     refSeqEl.removeAttribute('disabled');
     document.getElementById('t_referenceSequenceFixed').classList.add('noDisplay');
 
-    // Set iacForms value depending on Rules field only
-    iacForms = (/^iac$/i.test(document.getElementById('rules').value)) ? true : false;
-    if (iacForms) {
-        document.getElementById('iacForms').setAttribute('checked', 'checked');
-    } else {
-        document.getElementById('iacForms').removeAttribute('checked');
-    }
+    // Set formStyle value depending on Rules field only
+    formStyle = /^(iac|imac)$/i.test(rules.value) ? strToLower(rules.value).match(/(iac|imac)/)[1] : 'civa';
+    document.getElementById('formStyle').value = formStyle;
 
     // make sure only available figure groups are shown in chooser
     availableFigureGroups();
@@ -9986,27 +9969,30 @@ function makeMiniFormA(x, y, tiny) {
         modifiedK = [],
         widths = tiny ? [28, 0, 0, 35] : [30, 60, 26, 25],
         totalWidth = widths.reduce(function (a, b) { return a + b; }, 0),
-        background = drawRectangle(x, y, totalWidth, 1, 'formRect');
+        svg = SVGRoot.getElementById('sequence').appendChild(document.createElementNS(svgNS, 'g')),
+        background = drawRectangle(x, y, totalWidth, 1, 'formRect', svg);
+        
+    svg.id = 'miniFormA';
 
     if (!tiny) {
         // set the header for the correct sporting class
         if (sportingClass.options[sportingClass.selectedIndex]) {
             var myClass = sportingClass.options[sportingClass.selectedIndex].innerHTML;
-            drawText(myClass, blockX + 4, blockY + 17, 'miniFormATotal');
-            drawRectangle(blockX, blockY, totalWidth, 24, 'formLine');
+            drawText(myClass, blockX + 4, blockY + 17, 'miniFormATotal', 'start', '', svg);
+            drawRectangle(blockX, blockY, totalWidth, 24, 'formLine', svg);
             blockY += 24;
         }
     }
 
-    drawText('Fig', blockX + widths[0] / 2, blockY + 17, 'formATextBold', 'middle');
+    drawText('Fig', blockX + widths[0] / 2, blockY + 17, 'formATextBold', 'middle', '', svg);
     drawText('K', blockX + widths[0] + widths[1] + (widths[2] + widths[3]) / 2,
-        blockY + 17, 'formATextBold', 'middle');
-    drawRectangle(blockX, blockY, totalWidth, 24, 'formLine');
-    drawLine(blockX + widths[0], blockY, 0, 24, 'formLine');
+        blockY + 17, 'formATextBold', 'middle', '', svg);
+    drawRectangle(blockX, blockY, totalWidth, 24, 'formLine', svg);
+    drawLine(blockX + widths[0], blockY, 0, 24, 'formLine', svg);
     if (!tiny) {
         drawText('Aresti', blockX + widths[0] + widths[1] / 2,
-            blockY + 17, 'formATextBold', 'middle');
-        drawLine(blockX + widths[0] + widths[1], blockY, 0, 24, 'formLine');
+            blockY + 17, 'formATextBold', 'middle', '', svg);
+        drawLine(blockX + widths[0] + widths[1], blockY, 0, 24, 'formLine', svg);
     }
     blockY += 24;
 
@@ -10022,9 +10008,9 @@ function makeMiniFormA(x, y, tiny) {
                 if (aresti[j] in rulesKFigures) modifiedK.push(figNr);
                 figK += parseInt(k[j]);
                 if (!tiny) {
-                    drawText(aresti[j], blockX + widths[0] + 4, blockY + 16, 'miniFormA');
+                    drawText(aresti[j], blockX + widths[0] + 4, blockY + 16, 'miniFormA', 'start', '', svg);
                     drawText(k[j], blockX + widths[0] + widths[1] + widths[2] - 4,
-                        blockY + 16, 'miniFormA', 'end');
+                        blockY + 16, 'miniFormA', 'end', '', svg);
                     blockY += 12;
                 }
             }
@@ -10033,7 +10019,7 @@ function makeMiniFormA(x, y, tiny) {
                 if (aresti.length < 2) blockY += 12;
                 drawText(figNr, blockX + widths[0] - 4,
                     (topBlockY + blockY) / 2 + 4,
-                    tiny ? 'formATextMedium' : 'miniFormA', 'end');
+                    tiny ? 'formATextMedium' : 'miniFormA', 'end', '', svg);
                 if (figures[i].unknownFigureLetter == 'L') {
                     if (additionals <= additionalFig.max) {
                         figK = additionalFig.totalK / additionals;
@@ -10047,78 +10033,78 @@ function makeMiniFormA(x, y, tiny) {
                     }
                     drawText('Add.', blockX + widths[0] - 4,
                         (topBlockY + blockY) / 2 + 16,
-                        tiny ? 'formATextBold' : 'miniFormABold', 'end');
+                        tiny ? 'formATextBold' : 'miniFormABold', 'end', '', svg);
                 } else {
                     drawText(figures[i].unknownFigureLetter,
                         blockX + widths[0] - 4,
                         (topBlockY + blockY) / 2 + 16,
-                        tiny ? 'formATextBold' : 'miniFormA', 'end');
+                        tiny ? 'formATextBold' : 'miniFormA', 'end', '', svg);
                 }
             } else {
                 drawText(figNr, blockX + widths[0] - 4,
                     (topBlockY + blockY) / 2 + 10,
-                    tiny ? 'formATextMedium' : 'miniFormA', 'end');
+                    tiny ? 'formATextMedium' : 'miniFormA', 'end', '', svg);
             }
             // adjust figure K for floating point
             if (figures[i].floatingPoint) {
                 if (topBlockY == blockY) blockY += 12;
                 drawText('(' + figK + ')', blockX + totalWidth - 4,
-                    (topBlockY + blockY) / 2 + 15, 'miniFormASmall', 'end');
+                    (topBlockY + blockY) / 2 + 15, 'miniFormASmall', 'end', '', svg);
                 figK -= 1;
                 drawText(figK, blockX + totalWidth - 4,
                     (topBlockY + blockY) / 2 + 5,
-                    tiny ? 'formATextMedium' : 'miniFormA', 'end');
+                    tiny ? 'formATextMedium' : 'miniFormA', 'end', '', svg);
             } else {
                 drawText(figK, blockX + totalWidth - 4,
                     (topBlockY + blockY) / 2 + 10,
-                    tiny ? 'formATextMedium' : 'miniFormA', 'end');
+                    tiny ? 'formATextMedium' : 'miniFormA', 'end', '', svg);
             }
-            drawLine(blockX, topBlockY, totalWidth, 0, 'formLine');
+            drawLine(blockX, topBlockY, totalWidth, 0, 'formLine', svg);
             var vertSize = (blockY - topBlockY + 12);
-            drawLine(blockX, topBlockY, 0, vertSize, 'formLine');
-            drawLine(blockX + widths[0], topBlockY, 0, vertSize, 'formLine');
+            drawLine(blockX, topBlockY, 0, vertSize, 'formLine', svg);
+            drawLine(blockX + widths[0], topBlockY, 0, vertSize, 'formLine', svg);
             if (!tiny) {
                 drawLine(blockX + widths[0] + widths[1], topBlockY,
-                    0, vertSize, 'formLine');
+                    0, vertSize, 'formLine', svg);
                 drawLine(blockX + widths[0] + widths[1] + widths[2], topBlockY,
-                    0, vertSize, 'formLine');
+                    0, vertSize, 'formLine', svg);
             }
-            drawLine(blockX + totalWidth, topBlockY, 0, vertSize, 'formLine');
+            drawLine(blockX + totalWidth, topBlockY, 0, vertSize, 'formLine', svg);
             figureK += figK;
             blockY += 12;
         }
     }
 
     if (tiny) {
-        drawText('Total K', blockX + 32, blockY + 17, 'formATextMedium', 'middle');
-        drawText(figureK, blockX + 32, blockY + 38, 'formATextXL', 'middle');
+        drawText('Total K', blockX + 32, blockY + 17, 'formATextMedium', 'middle', '', svg);
+        drawText(figureK, blockX + 32, blockY + 38, 'formATextXL', 'middle', '', svg);
         // add maximum K (corrected for Floating Point) where applicable
         if (activeRules && checkCatGroup.k && checkCatGroup.k.max) {
             var max = checkCatGroup.k.max;
             if (checkCatGroup.floatingPoint) max -= checkCatGroup.floatingPoint;
             drawText('Max K', blockX + totalWidth / 2, blockY + 54,
-                'formATextMedium', 'middle');
+                'formATextMedium', 'middle', '', svg);
             drawText(max, blockX + totalWidth / 2, blockY + 74,
-                'formATextLarge', 'middle');
-            drawRectangle(blockX, blockY, totalWidth, 80, 'formLine');
+                'formATextLarge', 'middle', '', svg);
+            drawRectangle(blockX, blockY, totalWidth, 80, 'formLine', svg);
             blockY += 80;
         } else {
-            drawRectangle(blockX, blockY, totalWidth, 44, 'formLine');
+            drawRectangle(blockX, blockY, totalWidth, 44, 'formLine', svg);
             blockY += 44;
         }
     } else {
-        drawText('Total K = ' + figureK, blockX + 4, blockY + 17, 'miniFormATotal');
+        drawText('Total K = ' + figureK, blockX + 4, blockY + 21, 'miniFormATotal', 'start', '', svg);
         // add maximum K (corrected for Floating Point) where applicable
         if (activeRules && checkCatGroup.k && checkCatGroup.k.max) {
             var max = checkCatGroup.k.max;
             if (checkCatGroup.floatingPoint) max -= checkCatGroup.floatingPoint;
             drawText('(max K = ' + max + ')',
-                blockX + 4, blockY + 32, 'miniFormAMax');
-            drawRectangle(blockX, blockY, totalWidth, 40, 'formLine');
-            blockY += 40;
+                blockX + 4, blockY + 36, 'miniFormAMax', 'start', '', svg);
+            drawRectangle(blockX, blockY, totalWidth, 48, 'formLine', svg);
+            blockY += 48;
         } else {
-            drawRectangle(blockX, blockY, totalWidth, 24, 'formLine');
-            blockY += 24;
+            drawRectangle(blockX, blockY, totalWidth, 32, 'formLine', svg);
+            blockY += 32;
         }
     }
 
@@ -10129,124 +10115,18 @@ function makeMiniFormA(x, y, tiny) {
             blockX + 4,
             blockY + 4,
             totalWidth - 8,
-            100, // height is determined later but needs to be set for iOS
+            10000 / totalWidth , // height is set greater for narrower widths
             'miniFormAModifiedK',
-            'miniFormAModifiedK'
+            'miniFormAModifiedK',
+            svg
         )
-        blockY += parseInt(text.getBoundingClientRect().height);
+        blockY += 10000 / totalWidth + 8;
     }
 
     // Set background to correct size
     background.setAttribute('height', blockY - y);
 
     return { 'width': totalWidth + 1, 'height': blockY - y };
-}
-
-// makeTinyFormA creates a tiny form A (only fig nr, K and total K) for
-// mobile devices
-// It starts at (x, y) and returns width and height of the block
-function makeTinyFormA(x, y) {
-    var
-        blockX = x,
-        blockY = y,
-        figNr = 0,
-        figureK = 0,
-        modifiedK = [];
-
-    drawText('Fig', blockX + 14, blockY + 17, 'formATextBold', 'middle');
-    drawText('K', blockX + 46, blockY + 17, 'formATextBold', 'middle');
-    drawRectangle(blockX, blockY, 64, 24, 'formLine');
-    drawLine(blockX + 28, blockY, 0, 24, 'formLine');
-    blockY += 24;
-
-    for (var i = 0; i < figures.length; i++) {
-        var aresti = figures[i].aresti;
-        var k = figures[i].k;
-        if (aresti) {
-            figNr++;
-            var figK = 0;
-            topBlockY = blockY;
-            blockY += 24;
-            for (var j = 0; j < aresti.length; j++) {
-                if (aresti[j] in rulesKFigures) modifiedK.push(figNr);
-                figK += parseInt(k[j]);
-            }
-            // Adjust figure K for additionals
-            if (figures[i].unknownFigureLetter) {
-                drawText(figNr, blockX + 24, (topBlockY + blockY) / 2 + 4,
-                    'formATextMedium', 'end');
-                if (figures[i].unknownFigureLetter == 'L') {
-                    if (additionals <= additionalFig.max) {
-                        figK = additionalFig.totalK / additionals;
-                    } else {
-                        if (additionalFig.max > 0) {
-                            figK = additionalFig.totalK / additionalFig.max;
-                        }
-                        checkAlert(sprintf(userText.maxAdditionals, additionalFig.max),
-                            false,
-                            figNr);
-                    }
-                    drawText('Add.', blockX + 24, (topBlockY + blockY) / 2 + 16,
-                        'formATextBold', 'end');
-                } else {
-                    drawText(figures[i].unknownFigureLetter, blockX + 24,
-                        (topBlockY + blockY) / 2 + 16, 'formATextBold', 'end');
-                }
-            } else {
-                drawText(figNr, blockX + 24, (topBlockY + blockY) / 2 + 10,
-                    'formATextMedium', 'end');
-            }
-            // adjust figure K for floating point
-            if (figures[i].floatingPoint) {
-                if (topBlockY == blockY) blockY += 12;
-                drawText('(' + figK + ')', blockX + 60,
-                    (topBlockY + blockY) / 2 + 15, 'formATextMedium', 'end');
-                figK -= 1;
-                drawText(figK, blockX + 60, (topBlockY + blockY) / 2 + 5,
-                    'formATextMedium', 'end');
-            } else {
-                drawText(figK, blockX + 60, (topBlockY + blockY) / 2 + 10,
-                    'formATextMedium', 'end');
-            }
-            drawLine(blockX, topBlockY, 63, 0, 'formLine');
-            var vertSize = (blockY - topBlockY + 12);
-            drawLine(blockX, topBlockY, 0, vertSize, 'formLine');
-            drawLine(blockX + 28, topBlockY, 0, vertSize, 'formLine');
-            drawLine(blockX + 63, topBlockY, 0, vertSize, 'formLine');
-            figureK += figK;
-            blockY += 12;
-        }
-    }
-    drawText('Total K', blockX + 32, blockY + 17, 'formATextMedium', 'middle');
-    drawText(figureK, blockX + 32, blockY + 36, 'formATextLarge', 'middle');
-    // add maximum K (corrected for Floating Point) where applicable
-    if (activeRules && checkCatGroup.k && checkCatGroup.k.max) {
-        var max = checkCatGroup.k.max;
-        if (checkCatGroup.floatingPoint) max -= checkCatGroup.floatingPoint;
-        drawText('Max K', blockX + 32, blockY + 54, 'formATextMedium', 'middle');
-        drawText(max, blockX + 32, blockY + 74, 'formATextLarge', 'middle');
-        drawRectangle(blockX, blockY, 63, 80, 'formLine');
-        blockY += 80;
-    } else {
-        drawRectangle(blockX, blockY, 63, 44, 'formLine');
-        blockY += 44;
-    }
-
-    // add text when K has been modified by rules
-    if (modifiedK.length) {
-        var text = drawTextArea(
-            changedFigureKText(modifiedK, activeRules.description),
-            blockX + 4,
-            blockY + 4,
-            56,
-            100, // height is determined later but needs to be set for iOS
-            'miniFormAModifiedK',
-            'miniFormAModifiedK'
-        )
-        blockY += parseInt(text.firstChild.getBoundingClientRect().height);
-    }
-
-    return { 'width': 64, 'height': blockY - y };
 }
 
 /**********************************************************************
@@ -10522,7 +10402,7 @@ function setFigureSelected(figNr) {
             // fill selectedFigure with BBox values
             var el = SVGRoot.getElementById('figure' + figNr);
 
-            header.innerHTML = userText.editingFigure + figures[figNr].seqNr +
+            header.innerHTML = sprintf(userText.editingFigure, figures[figNr].seqNr) +
                 ' (' + figures[figNr].k.reduce(function (a, v) { return a + v; }) + 'K)';
 
             if (el) {
@@ -12097,26 +11977,34 @@ function makeFormA() {
     // The final form will be 800x1000px, leaving room for the print header
     var columnTitleHeight = 50;
     // define column titles and widths
-    if (iacForms) {
-        var columnTitles = ['No:20', 'Symbol:100', 'Cat. No.:70', 'K:30', 'Total K:60', 'Grade:80', 'Remarks:260'];
-        var columnWidths = [20, 100, 70, 30, 60, 80, 259];
-    } else {
-        var columnTitles = ['No:20', 'Symbol:100', 'Cat. No.:70', 'K:30', 'Total K:60', 'Grade:70', 'Pos:48', 'Remarks:222'];
-        var columnWidths = [20, 100, 70, 30, 60, 70, 48, 221];
+    switch (formStyle) {
+        case 'iac':
+            var columnTitles = ['No', 'Symbol', 'Cat. No.', 'K', 'Total K', 'Grade', 'Remarks'];
+            var columnWidths = [20, 100, 70, 30, 60, 80, 259];
+            break;
+        case 'imac':
+            columnTitleHeight = 30;
+            var columnTitles = ['No', 'Symbol', 'Catalogue No.', 'K', 'Total K', 'Score', 'Remarks'];
+            var columnWidths = [20, 90, 97, 33, 50, 60, 209];
+            break;
+        default:
+            var columnTitles = ['No', 'Symbol', 'Cat. No.', 'K', 'Total K', 'Grade', 'Pos', 'Remarks'];
+            var columnWidths = [20, 100, 70, 30, 60, 70, 48, 221];
     }
     // define height of each row
     var rowHeight = Math.min(parseInt((1000 - columnTitleHeight) / figNr), 125);
     // build column titles
     var x = 0;
     for (var i = 0; i < columnTitles.length; i++) {
-        drawRectangle(x, 0, columnTitles[i].split(':')[1], columnTitleHeight, 'formLine');
+        var lastColumnPlusOne = i == columnTitles.length -1 ? 1 : 0;
+        drawRectangle(x, 0, columnWidths[i] + lastColumnPlusOne, columnTitleHeight, 'formLine');
         drawText(
-            columnTitles[i].split(':')[0],
-            x + columnTitles[i].split(':')[1] / 2,
-            columnTitleHeight / 2,
+            columnTitles[i],
+            x + columnWidths[i] / 2,
+            columnTitleHeight / 1.8,
             'formAText',
             'middle');
-        x += parseInt(columnTitles[i].split(':')[1])
+        x += columnWidths[i];
     }
     var y = columnTitleHeight;
     var row = 0;
@@ -12164,12 +12052,12 @@ function makeFormA() {
                         for (var j = 0; j < aresti.length; j++) {
                             if (aresti[j] in rulesKFigures) modifiedK.push(row + 1);
                             drawText(aresti[j],
-                                x + columnWidths[column] / 2,
-                                y + (j + 1) * fontsize,
-                                'formATextBold' + fontsize + 'px',
-                                'middle');
+                                x + 10,
+                                y + (j + 1.5) * fontsize,
+                                'formAText' + fontsize + 'px',
+                                'start');
                         }
-                        if (figures[i].floatingPoint && iacForms) {
+                        if (figures[i].floatingPoint && /^(iac|imac)$/.test(formStyle)) {
                             // add 'F.P.' to IAC form A when applicable
                             drawText('F.P.',
                                 x + columnWidths[column] / 2,
@@ -12189,10 +12077,10 @@ function makeFormA() {
                             8);
                         for (var j = 0; j < aresti.length; j++) {
                             drawText(k[j],
-                                x + columnWidths[column] / 2,
-                                y + (j + 1) * fontsize,
-                                'formATextBold' + fontsize + 'px',
-                                'middle');
+                                x + columnWidths[column] - 7,
+                                y + (j + 1.5) * fontsize,
+                                'formAText' + fontsize + 'px',
+                                'end');
                             figK += parseInt(k[j]);
                         }
                         // Adjust figure K for additionals
@@ -12221,13 +12109,13 @@ function makeFormA() {
                             drawText(figK,
                                 x + columnWidths[column] / 2,
                                 y + rowHeight / 2 - 8,
-                                'formATextLarge',
+                                'formATextBoldLarge',
                                 'middle');
                         } else {
                             drawText(figK,
                                 x + columnWidths[column] / 2,
                                 y + rowHeight / 2,
-                                'formATextLarge',
+                                'formATextBoldLarge',
                                 'middle');
                         }
                         if ((document.getElementById('printSF').checked === true) &&
@@ -12255,7 +12143,7 @@ function makeFormA() {
                         figureK += figK;
                         break;
                     case (5):
-                        if (!iacForms) {
+                        if (formStyle == 'civa') {
                             drawCircle({
                                 cx: x + columnWidths[column] / 2,
                                 cy: y + rowHeight * 0.8, r: 2, fill: 'black'
@@ -13169,11 +13057,19 @@ function addFormElements(form) {
         var windArrow = drawWind(x, y, -1);
     }
 
-    // Check if the sequence is not exceeding the optimal sequence area
-    if (/^[BC]/.test(form)) {
-        var optArea = document.getElementById('optimalSequenceArea');
-        optArea.classList.remove('noDisplay')
-        if (w > optArea.getBoundingClientRect().width || h + windArrow.height > optArea.getBoundingClientRect().height) {
+    // Set optimal sequence area size and check if the sequence is not exceeding it
+    // SmallMobile code is not working correctly yet in 2023.1.1. Keep for later update.
+    if (/^[BC]/.test(form) && !platform.smallMobile) {
+        var
+            optArea = document.getElementById('optimalSequenceArea'),
+            optWidth = (formStyle == 'civa') ? 561 : 605,
+            optHeight = (formStyle == 'civa') ? 1080 : 1090,
+            scaleSvg = platform.smallMobile ? Math.min((window.innerWidth - 8) / (w + 5), 2) : 1;
+
+        optArea.classList.remove('noDisplay');
+        optArea.style.width = `${optWidth * scaleSvg}px`;
+        optArea.style.height = `${optHeight * scaleSvg}px`;
+        if (w > optWidth || h + windArrow.height > optHeight) {
             optArea.classList.add('exceeded');
         } else optArea.classList.remove('exceeded');
         if (/^C/.test(form)) {
@@ -15437,7 +15333,7 @@ function buildForms(win, callback) {
         }
     }
 
-    iacForms = document.getElementById('iacForms').checked;
+    formStyle = document.getElementById('formStyle').value;
 
     // make sure no figure is selected
     selectFigure(false);
@@ -15481,7 +15377,7 @@ function buildForm(print) {
     // generate output for saving, not editing
     sequenceEditing = false;
 
-    miniFormA = /[BC]\+/.test(activeForm);
+    miniFormA = /^[BC]\+/.test(activeForm);
 
     if (/^[0-9TFQ]/.test(activeForm)) {
         var activeFormSave = activeForm.toString();
@@ -15622,208 +15518,300 @@ function buildForm(print) {
             makeFormDescription(mySVG);
             break;
         default:
-            // Find the size and adjust scaling if necessary, upscaling to a
-            // maximum factor of 2.
+            // Handle forms A, B and C
+            // Find the size and adjust scaling if necessary
+            
             // The sequence max width=800, height=1000 (Form A) or 950 (Form B & C)
-            w = parseInt(bBox.width);
-            h = parseInt(bBox.height + 20); // add some margin to the bottom
+            var maxHeight = activeForm === 'A' ? 1000 :
+                (document.getElementById('printCheck').checked ? 938 : 950);
 
-            if (activeForm === 'A') {
-                var maxHeight = 1000;
-            } else {
-                var maxHeight = 950;
-                if (document.getElementById('printCheck').checked) {
-                    maxHeight -= 12;
-                }
-            }
+            switch (formStyle) {
+                case 'iac':
+                    // IAC forms
+                    var
+                        moveRight = 15;
+                        w = parseInt(bBox.width);
+                        h = parseInt(bBox.height + 20); // add some margin to the bottom
 
-            if (iacForms) {
-                // IAC forms
-                var moveRight = 15;
-                // check maximum scale from print dialog
-                var maxScale = document.getElementById('maxScaling').value / 100;
+                    // check maximum scale from print dialog
+                    var maxScale = document.getElementById('maxScaling').value / 100;
 
-                // For form A we need to add the righthand scoring column, so
-                // max width = 580
-                if (activeForm === 'A') {
-                    var scale = Math.min(580 / w, maxScale);
-                    var marginTop = 130;
-                } else {
-                    var scale = Math.min(700 / w, maxScale);
-                    var marginTop = 120;
-                }
-                // check for max height
-                if ((maxHeight / h) < scale) {
-                    scale = Math.min(maxHeight / h, maxScale);
-                    // height limited, so we can move the sequence right for centering
-                    moveRight = Math.max((700 - (w * scale)) / 2, 0) + 15;
-                }
+                    // For form A we need to add the righthand scoring column, so
+                    // max width = 580
+                    if (activeForm === 'A') {
+                        var scale = Math.min(580 / w, maxScale);
+                        var marginTop = 130;
+                    } else {
+                        var scale = Math.min(700 / w, maxScale);
+                        var marginTop = 120;
+                    }
+                    // check for max height
+                    if ((maxHeight / h) < scale) {
+                        scale = Math.min(maxHeight / h, maxScale);
+                        // height limited, so we can move the sequence right for centering
+                        moveRight = Math.max((700 - (w * scale)) / 2, 0) + 15;
+                    }
 
-                // Check if roll font size should be enlarged because of downscaling.
-                // Do this before adding wind and box around sequence as sequence
-                // may be redrawn!
-                mySVG = adjustRollFontSize(scale, mySVG);
+                    // Check if roll font size should be enlarged because of downscaling.
+                    // Do this before adding wind and box around sequence as sequence
+                    // may be redrawn!
+                    mySVG = adjustRollFontSize(scale, mySVG);
 
-                // remove wind arrow
-                var el = mySVG.getElementById('windArrow');
-                if (el) el.remove();
+                    // remove wind arrow
+                    var el = mySVG.getElementById('windArrow');
+                    if (el) el.remove();
 
-                if (activeForm === 'A') {
-                    // check if the columns should be stretched (max factor 1.2)
-                    moveRight = 0;
-                    var xScale = (scale * w) < 580 ? Math.min(580 / w, 1.2) : scale;
+                    if (activeForm === 'A') {
+                        // check if the columns should be stretched (max factor 1.2)
+                        moveRight = 0;
+                        var xScale = (scale * w) < 580 ? Math.min(580 / w, 1.2) : scale;
 
-                    mySVG.getElementById('sequence').setAttribute('transform', 'translate(' +
-                        roundTwo(moveRight - (bBox.x * scale)) + ',' +
-                        roundTwo(marginTop - bBox.y * scale) +
-                        ') scale(' + xScale + ',' + scale + ')');
-                    mySVG.getElementById('sequence').setAttribute('preserveAspectRatio', 'none');
-                } else {
-                    // Insert box containing sequence
-                    drawRectangle(0, 126, 740, 945, 'formLine', mySVG);
+                        mySVG.getElementById('sequence').setAttribute('transform', 'translate(' +
+                            roundTwo(moveRight - (bBox.x * scale)) + ',' +
+                            roundTwo(marginTop - bBox.y * scale) +
+                            ') scale(' + xScale + ',' + scale + ')');
+                        mySVG.getElementById('sequence').setAttribute('preserveAspectRatio', 'none');
+                    } else {
+                        // Insert box containing sequence
+                        drawRectangle(0, 126, 740, 945, 'formLine', mySVG);
 
-                    mySVG.getElementById('sequence').setAttribute('transform', 'translate(' +
-                        roundTwo(moveRight - (bBox.x * scale)) + ',' +
-                        roundTwo(marginTop - bBox.y * scale) +
-                        ') scale(' + scale + ')');
-                }
+                        mySVG.getElementById('sequence').setAttribute('transform', 'translate(' +
+                            roundTwo(moveRight - (bBox.x * scale)) + ',' +
+                            roundTwo(marginTop - bBox.y * scale) +
+                            ') scale(' + scale + ')');
+                    }
 
-                // IACnoUpwindNote adds text for sequences that do not start upwind
-                function IACnoUpwindNote() {
-                    for (var i = 0; i < figures.length; i++) {
-                        if (figures[i].aresti) {
-                            if ((figures[i].entryDir + figures[i].entryAtt) % 360 !=
-                                (activeForm[0] === 'B' ? 0 : 180)) {
-                                el = drawText(
-                                    figures[i].entryDir % 180 == 90 ? userText.iacNoteYAxisEntry : userText.iacNoteDownwindEntry,
-                                    activeForm[0] === 'B' ? 10 : 730,
-                                    136, 'IACFormEntryNote',
-                                    activeForm[0] === 'B' ? 'start' : 'end',
-                                    'IACFormEntryNote', mySVG);
-                                // add white background over sequence border
-                                bBox = el.getBBox();
-                                drawRectangle(
-                                    roundTwo(bBox.x - 4),
-                                    roundTwo(bBox.y - 4),
-                                    roundTwo(bBox.width + 8),
-                                    roundTwo(bBox.height + 8),
-                                    'formBackground',
-                                    mySVG);
-                                // re-append the text element to put it above white background
-                                mySVG.appendChild(el);
+                    // IACnoUpwindNote adds text for sequences that do not start upwind
+                    function IACnoUpwindNote() {
+                        for (var i = 0; i < figures.length; i++) {
+                            if (figures[i].aresti) {
+                                if ((figures[i].entryDir + figures[i].entryAtt) % 360 !=
+                                    (activeForm[0] === 'B' ? 0 : 180)) {
+                                    el = drawText(
+                                        figures[i].entryDir % 180 == 90 ? userText.iacNoteYAxisEntry : userText.iacNoteDownwindEntry,
+                                        activeForm[0] === 'B' ? 10 : 730,
+                                        136, 'IACFormEntryNote',
+                                        activeForm[0] === 'B' ? 'start' : 'end',
+                                        'IACFormEntryNote', mySVG);
+                                    // add white background over sequence border
+                                    bBox = el.getBBox();
+                                    drawRectangle(
+                                        roundTwo(bBox.x - 4),
+                                        roundTwo(bBox.y - 4),
+                                        roundTwo(bBox.width + 8),
+                                        roundTwo(bBox.height + 8),
+                                        'formBackground',
+                                        mySVG);
+                                    // re-append the text element to put it above white background
+                                    mySVG.appendChild(el);
+                                }
+                                break;
                             }
-                            break;
                         }
                     }
-                }
 
-                // rebuild wind arrow in the correct place and check if a note
-                // needs to be added for non-upwind start
-                if (activeForm[0] === 'B') {
-                    drawWind(740, 110, 1, mySVG);
-                    IACnoUpwindNote();
-                } else if (activeForm[0] === 'C') {
-                    drawWind(0, 110, -1, mySVG);
-                    IACnoUpwindNote();
-                }
+                    // rebuild wind arrow in the correct place and check if a note
+                    // needs to be added for non-upwind start
+                    if (activeForm[0] === 'B') {
+                        drawWind(740, 110, 1, mySVG);
+                        IACnoUpwindNote();
+                    } else if (activeForm[0] === 'C') {
+                        drawWind(0, 110, -1, mySVG);
+                        IACnoUpwindNote();
+                    }
 
-                //mySVG.setAttribute("viewBox", '0 0 800 1130');
-                //mySVG.setAttribute("width", '100%');
-                // Add all necessary elements
-                if (logoImg) {
+                    //mySVG.setAttribute("viewBox", '0 0 800 1130');
+                    //mySVG.setAttribute("width", '100%');
+                    // Add all necessary elements
+                    if (logoImg) {
+                        if (activeForm === 'A') {
+                            var logoSvg = buildLogoSvg(logoImg, 610, 930, 110, 110,
+                                document.getElementById('blackWhite').checked);
+                        } else {
+                            var logoSvg = buildLogoSvg(logoImg, 0, 10, 80, 100,
+                                document.getElementById('blackWhite').checked);
+                        }
+                        mySVG.appendChild(logoSvg);
+                    }
+                    buildHeader(mySVG);
                     if (activeForm === 'A') {
-                        var logoSvg = buildLogoSvg(logoImg, 610, 930, 110, 110,
+                        buildScoreColumn(mySVG);
+                        buildCornertab(mySVG);
+                    }
+                    break;
+                case 'imac':
+                    // IMAC forms
+
+                    // Remove wind arrow and miniFormA to get correct scaling
+                    // mySVG.querySelectorAll('#windArrow, #miniFormA').forEach(el => el.remove());
+
+                    var
+                        moveRight = 15,
+                        bBox = mySVG.getBBox(),
+                        w = parseInt(bBox.width),
+                        h = parseInt(bBox.height + 20), // add some margin to the bottom
+                        // define the width of the basic form, without scoring column
+                        formWidth = activeForm === 'A' ? 540 : 800,
+                        // maximum scale from print dialog
+                        maxScale = document.getElementById('maxScaling').value / 100,
+                        scale = Math.min(formWidth / w, maxScale),
+                        marginTop = activeForm === 'A' ? 90 : 100,
+                        miniFormAGroup = mySVG.getElementById('miniFormA');
+                    
+                    if (miniFormAGroup) var miniFormAbBox = miniFormAGroup.getBBox();
+
+                    // check for max height
+                    if ((maxHeight / h) < scale) {
+                        scale = Math.min(maxHeight / h, maxScale);
+                        // height limited, so we can move the sequence right for centering
+                        moveRight = Math.max((formWidth - (w * scale)) / 2, 0) + 15;
+                        // Move form C to the right when miniFormA was used
+                        // (in original drawing, miniFormA is always on the right)
+                        if (miniFormAGroup && /^C/.test(activeForm)) {
+                            moveRight += miniFormAbBox.width;
+                        }
+                    }
+
+                    // Check if roll font size should be enlarged because of downscaling.
+                    // Do this before adding wind and box around sequence as sequence
+                    // may be redrawn!
+                    mySVG = adjustRollFontSize(scale, mySVG);
+
+                    // Remove wind arrow and miniFormA
+                    mySVG.querySelectorAll('#windArrow,#miniFormA').forEach(el => el.remove());
+
+                    if (activeForm === 'A') {
+                        // check if the columns should be stretched (max factor 1.2)
+                        moveRight = 0;
+                        var xScale = (scale * w) < formWidth ? Math.min(formWidth / w, 1.2) : scale;
+
+                        mySVG.getElementById('sequence').setAttribute('transform', 'translate(' +
+                            roundTwo(moveRight - (bBox.x * scale)) + ',' +
+                            roundTwo(marginTop - bBox.y * scale) +
+                            ') scale(' + xScale + ',' + scale + ')');
+                        mySVG.getElementById('sequence').setAttribute('preserveAspectRatio', 'none');
+
+                        buildScoreColumn(mySVG);
+                    } else {
+                        // Insert box containing sequence
+                        drawRectangle(0, 110, formWidth, 965, 'formLine', mySVG);
+
+                        mySVG.getElementById('sequence').setAttribute('transform', 'translate(' +
+                            roundTwo(moveRight - (bBox.x * scale)) + ',' +
+                            roundTwo(marginTop - bBox.y * scale) +
+                            ') scale(' + scale + ')');
+
+                        // rebuild wind arrow and miniFormA in the correct place
+                        if (/^B/.test(activeForm)) {
+                            drawWind(formWidth, 94, 1, mySVG);
+                        } else {
+                            drawWind(0, 94, -1, mySVG);
+                        }
+                        if (miniFormAGroup) {
+                            // append miniFormA to the svg at top level
+                            mySVG.appendChild(miniFormAGroup);
+                            var miniFormAbBox = miniFormAGroup.getBBox();
+                            miniFormAGroup.setAttribute('transform', 'translate(' +
+                                roundTwo(-miniFormAbBox.x +
+                                    (/^B/.test(activeForm) ? 800 - miniFormAbBox.width : 0)
+                                ) + ',' +
+                                roundTwo(1075 - (miniFormAbBox.y + miniFormAbBox.height)) +
+                                ')');
+                        }
+                    }
+
+                    // Add chosen logo image or IMAC default
+                    if (activeForm === 'A') {
+                        var logoSvg = buildLogoSvg(logoImg || logoImages.IMAC, 550, 0, 240, 110,
                             document.getElementById('blackWhite').checked);
                     } else {
-                        var logoSvg = buildLogoSvg(logoImg, 0, 10, 80, 100,
+                        var logoSvg = buildLogoSvg(logoImg || logoImages.IMAC, 610, 0, 190, 100,
                             document.getElementById('blackWhite').checked);
                     }
                     mySVG.appendChild(logoSvg);
-                }
-                buildHeader(mySVG);
-                if (activeForm === 'A') {
-                    buildScoreColumn(mySVG);
+
+                    // Add form header
+                    buildHeader(mySVG);
+                    break;
+                case 'civa':
+                    // CIVA forms
+                    var
+                        moveRight = 10,
+                        w = parseInt(bBox.width),
+                        h = parseInt(bBox.height + 20), // add some margin to the bottom
+                        // set maximum scale from print dialog
+                        maxScale = document.getElementById('maxScaling').value / 100;
+
+                    // take the tear-off tab into account with no miniFormA
+                    // (defined by X + Y = 1620)
+                    if (!miniFormA && (1620 / (w + h)) < maxScale) maxScale = 1620 / (w + h);
+
+                    // For form A we need to add the righthand scoring column, so
+                    // max width = 620. For Form B and C max width = 788 to always
+                    // provide 10px left and 2px right margin to sequence.
+                    if (activeForm === 'A') {
+                        var scale = Math.min(600 / w, maxScale);
+                        var marginTop = 130;
+                    } else {
+                        var scale = Math.min(788 / w, maxScale);
+                        var marginTop = 140;
+                    }
+                    // check for max height
+                    if ((maxHeight / h) < scale) {
+                        scale = Math.min(maxHeight / h, maxScale);
+                        // height limited, so we can move the sequence right for centering
+                        // limit this on tear-off tab
+                        moveRight = Math.max(1620 - ((w + h) * scale), 0) / 2;
+                    }
+
+                    mySVG = adjustRollFontSize(scale, mySVG);
+
+                    if (activeForm === 'A') {
+                        // check if the columns should be stretched (maximum factor 1.2)
+                        moveRight = 0;
+                        var xScale = (scale * w < 620) ? Math.min(620 / w, 1.2) : scale;
+                        mySVG.getElementById('sequence').setAttribute('preserveAspectRatio', 'none');
+
+                        mySVG.getElementById('sequence').setAttribute('transform', 'translate(' +
+                            roundTwo(moveRight - (bBox.x * scale)) + ',' +
+                            roundTwo(marginTop - bBox.y * scale) +
+                            ') scale(' + xScale + ',' + scale + ')');
+                    } else {
+                        mySVG.getElementById('sequence').setAttribute('transform', 'translate(' +
+                            roundTwo(moveRight - (bBox.x * scale)) + ',' +
+                            roundTwo(marginTop - bBox.y * scale) +
+                            ') scale(' + scale + ')');
+                    }
+
+                    // Add all necessary elements
+                    var logoWidth = 0;
+                    if (logoImg) {
+                        var logoSvg = buildLogoSvg(logoImg, 0, 0, 200, 120,
+                            document.getElementById('blackWhite').checked);
+                        mySVG.appendChild(logoSvg);
+                        logoWidth = parseInt(logoSvg.getBBox().width) + 10;
+                    }
+                    var header = document.createElementNS(svgNS, 'g');
+                    buildHeader(header, logoWidth);
+                    mySVG.appendChild(header);
+
+                    if (activeForm === 'A') buildScoreColumn(mySVG);
                     buildCornertab(mySVG);
                 }
-            } else {
-                // CIVA forms
-                var moveRight = 10;
 
-                // set maximum scale from print dialog
-                var maxScale = document.getElementById('maxScaling').value / 100;
+                if (/^[BC]/.test(activeForm)) {
+                    // add sequence string when checked.
+                    if (document.getElementById('printString').checked) {
+                        addSequenceString(mySVG, { x: 10, y: 1085, width: 600, height: 40 }, print);
+                    }
 
-                // take the tear-off tab into account with no miniFormA
-                // (defined by X + Y = 1620)
-                if (!miniFormA) {
-                    if ((1620 / (w + h)) < maxScale) maxScale = 1620 / (w + h);
+                    // add check result when checked
+                    if (document.getElementById('printCheck').checked) {
+                        addCheckResult(mySVG, { x: 10, y: 1082 });
+                    }
                 }
-
-                // For form A we need to add the righthand scoring column, so
-                // max width = 620. For Form B and C max width = 788 to always
-                // provide 10px left and 2px right margin to sequence.
-                if (activeForm === 'A') {
-                    var scale = Math.min(600 / w, maxScale);
-                    var marginTop = 130;
-                } else {
-                    var scale = Math.min(788 / w, maxScale);
-                    var marginTop = 140;
-                }
-                // check for max height
-                if ((maxHeight / h) < scale) {
-                    scale = Math.min(maxHeight / h, maxScale);
-                    // height limited, so we can move the sequence right for centering
-                    // limit this on tear-off tab
-                    moveRight = Math.max(1620 - ((w + h) * scale), 0) / 2;
-                }
-
-                mySVG = adjustRollFontSize(scale, mySVG);
-
-                if (activeForm === 'A') {
-                    // check if the columns should be stretched (maximum factor 1.2)
-                    moveRight = 0;
-                    var xScale = (scale * w < 620) ? Math.min(620 / w, 1.2) : scale;
-                    mySVG.getElementById('sequence').setAttribute('preserveAspectRatio', 'none');
-
-                    mySVG.getElementById('sequence').setAttribute('transform', 'translate(' +
-                        roundTwo(moveRight - (bBox.x * scale)) + ',' +
-                        roundTwo(marginTop - bBox.y * scale) +
-                        ') scale(' + xScale + ',' + scale + ')');
-                } else {
-                    mySVG.getElementById('sequence').setAttribute('transform', 'translate(' +
-                        roundTwo(moveRight - (bBox.x * scale)) + ',' +
-                        roundTwo(marginTop - bBox.y * scale) +
-                        ') scale(' + scale + ')');
-                }
-
-                // Add all necessary elements
-                var logoWidth = 0;
-                if (logoImg) {
-                    var logoSvg = buildLogoSvg(logoImg, 0, 0, 200, 120,
-                        document.getElementById('blackWhite').checked);
-                    mySVG.appendChild(logoSvg);
-                    logoWidth = parseInt(logoSvg.getBBox().width) + 10;
-                }
-                var header = document.createElementNS(svgNS, 'g');
-                buildHeader(header, logoWidth);
-                mySVG.appendChild(header);
-
-                if (activeForm === 'A') buildScoreColumn(mySVG);
-                buildCornertab(mySVG);
-            }
-
-            if (/^[BC]/.test(activeForm)) {
-                // add sequence string when checked.
-                if (document.getElementById('printString').checked) {
-                    addSequenceString(mySVG, { x: 10, y: 1085, width: 600, height: 40 }, print);
-                }
-
-                // add check result when checked
-                if (document.getElementById('printCheck').checked) {
-                    addCheckResult(mySVG, { x: 10, y: 1082 });
-                }
-            }
-            mySVG.setAttribute("viewBox", '0 0 800 1130');
-            mySVG.setAttribute("width", '100%');
+                mySVG.setAttribute("viewBox", '0 0 800 1130');
+                mySVG.setAttribute("width", '100%');
     }
 
     // remove height when printing
@@ -16028,67 +16016,71 @@ function addFormElementsLR(svg, print) {
         logoWidth = parseInt(logoSvg.getBBox().width);
     }
     // header
-    if (iacForms) {
-        // Sequence info
-        drawRectangle(logoWidth + 10, 2, 526 - logoWidth, 45, 'formLine', svg);
-        drawLine(logoWidth + 10, 23, 526 - logoWidth, 0, 'formLine', svg);
-        drawText('Çategory: ' + document.getElementById('category').value,
-            logoWidth + 20, 17, 'formAText', 'start', '', svg);
-        drawText('Date: ' + document.getElementById('date').value,
-            378, 17, 'formAText', 'start', '', svg);
-        drawText('Program: ' + document.getElementById('program').value +
-            ((document.getElementById('class').value === 'glider') ? ' Glider' : ''),
-            logoWidth + 20, 40, 'formAText', 'start', '', svg);
+    switch (formStyle) {
+        case 'iac':
+        case 'imac':
+            // Sequence info
+            drawRectangle(logoWidth + 10, 2, 526 - logoWidth, 45, 'formLine', svg);
+            drawLine(logoWidth + 10, 23, 526 - logoWidth, 0, 'formLine', svg);
+            drawText('Çategory: ' +
+                ((document.getElementById('class').value === 'glider') ? ' Glider' : 'Power') + ' ' +
+                document.getElementById('category').value,
+                logoWidth + 20, 17, 'formAText', 'start', '', svg);
+            drawText('Date: ' + document.getElementById('date').value,
+                378, 17, 'formAText', 'start', '', svg);
+            drawText('Program: ' + document.getElementById('program').value,
+                logoWidth + 20, 40, 'formAText', 'start', '', svg);
 
-        // Header K block
-        drawRectangle(553, 2, 41, 75, 'formLine', svg);
-        drawText(userText.figureK, 573, 12, 'formATextTiny', 'middle', '', svg);
-        drawLine(553, 38, 41, 0, 'formLine', svg);
-        drawText(userText.totalK, 573, 48, 'formATextTiny', 'middle', '', svg);
+            // Header K block
+            drawRectangle(553, 2, 41, 75, 'formLine', svg);
+            drawText(userText.figureK, 573, 12, 'formATextTiny', 'middle', '', svg);
+            drawLine(553, 38, 41, 0, 'formLine', svg);
+            drawText(userText.totalK, 573, 48, 'formATextTiny', 'middle', '', svg);
 
-        // Header judges block
-        drawRectangle(602, 2, 129, 75, 'formLineBold', svg);
-        drawText('Judge Name', 610, 15, 'formATextSmall', 'start', '', svg);
-        drawText('IAC#', 695, 13, 'formATextSmall', 'start', '', svg);
-        drawLine(602, 38, 129, 0, 'formLine', svg);
-        drawText('Asst. Name', 610, 51, 'formATextSmall', 'start', '', svg);
-        drawText('IAC#', 695, 51, 'formATextSmall', 'start', '', svg);
+            // Header judges block
+            drawRectangle(602, 2, 129, 75, 'formLineBold', svg);
+            drawText('Judge Name', 610, 15, 'formATextSmall', 'start', '', svg);
+            drawText('IAC#', 695, 13, 'formATextSmall', 'start', '', svg);
+            drawLine(602, 38, 129, 0, 'formLine', svg);
+            drawText('Asst. Name', 610, 51, 'formATextSmall', 'start', '', svg);
+            drawText('IAC#', 695, 51, 'formATextSmall', 'start', '', svg);
 
-        // Header Pilot # block
-        drawRectangle(738, 2, 60, 75, 'formLine', svg);
-        drawText('Pilot #', 767, 13, 'formATextSmall', 'middle', '', svg);
-        drawText(document.getElementById('flight_nb').value, 767, 40, 'formATextXL', 'middle', '', svg);
-    } else {
-        drawRectangle(logoWidth + 10, 2, 490 - logoWidth, 68, 'formLine', svg);
-        drawLine(logoWidth + 10, 36, 490 - logoWidth, 0, 'formLine', svg);
-        drawText(document.getElementById('rules').value,
-            logoWidth + 20, 25, 'formATextLarge', 'start', '', svg);
-        drawText(document.getElementById('category').value +
-            ((document.getElementById('class').value === 'glider') ? ' Glider' : ''),
-            logoWidth / 2 + 250, 25, 'formATextLarge', 'middle', '', svg);
-        drawText(document.getElementById('date').value,
-            490, 25, 'formATextLarge', 'end', '', svg);
-        drawText(document.getElementById('program').value,
-            logoWidth + 20, 60, 'formATextLarge', 'start', '', svg);
-        drawText(document.getElementById('location').value,
-            490, 60, 'formATextLarge', 'end', '', svg);
+            // Header Pilot # block
+            drawRectangle(738, 2, 60, 75, 'formLine', svg);
+            drawText('Pilot #', 767, 13, 'formATextSmall', 'middle', '', svg);
+            drawText(document.getElementById('flight_nb').value, 767, 40, 'formATextXL', 'middle', '', svg);
+            break;
+        default:
+            drawRectangle(logoWidth + 10, 2, 490 - logoWidth, 68, 'formLine', svg);
+            drawLine(logoWidth + 10, 36, 490 - logoWidth, 0, 'formLine', svg);
+            drawText(document.getElementById('rules').value,
+                logoWidth + 20, 25, 'formATextLarge', 'start', '', svg);
+            drawText(document.getElementById('category').value +
+                ((document.getElementById('class').value === 'glider') ? ' Glider' : ''),
+                logoWidth / 2 + 250, 25, 'formATextLarge', 'middle', '', svg);
+            drawText(document.getElementById('date').value,
+                490, 25, 'formATextLarge', 'end', '', svg);
+            drawText(document.getElementById('program').value,
+                logoWidth + 20, 60, 'formATextLarge', 'start', '', svg);
+            drawText(document.getElementById('location').value,
+                490, 60, 'formATextLarge', 'end', '', svg);
 
-        // Header K block
-        drawRectangle(510, 2, 50, 98, 'formLine', svg);
-        drawText(userText.figureK, 535, 15, 'formATextSmall', 'middle', '', svg);
-        drawLine(510, 51, 50, 0, 'formLine', svg);
-        drawText(userText.totalK, 535, 64, 'formATextSmall', 'middle', '', svg);
+            // Header K block
+            drawRectangle(510, 2, 50, 98, 'formLine', svg);
+            drawText(userText.figureK, 535, 15, 'formATextSmall', 'middle', '', svg);
+            drawLine(510, 51, 50, 0, 'formLine', svg);
+            drawText(userText.totalK, 535, 64, 'formATextSmall', 'middle', '', svg);
 
-        // Header judges block
-        drawRectangle(570, 2, 150, 98, 'formLineBold', svg);
-        drawText(userText.judgesName, 580, 13, 'formATextTiny', 'start', '', svg);
-        drawLine(570, 51, 150, 0, 'formLine', svg);
-        drawText(userText.signature, 580, 62, 'formATextTiny', 'start', '', svg);
-        drawText(userText.number, 670, 62, 'formATextTiny', 'start', '', svg);
+            // Header judges block
+            drawRectangle(570, 2, 150, 98, 'formLineBold', svg);
+            drawText(userText.judgesName, 580, 13, 'formATextTiny', 'start', '', svg);
+            drawLine(570, 51, 150, 0, 'formLine', svg);
+            drawText(userText.signature, 580, 62, 'formATextTiny', 'start', '', svg);
+            drawText(userText.number, 670, 62, 'formATextTiny', 'start', '', svg);
 
-        drawRectangle(730, 2, 68, 98, 'formLineBold', svg);
-        drawText(userText.flightNr, 765, 15, 'formATextSmall', 'middle', '', svg);
-        drawText(document.getElementById('flight_nb').value, 764, 55, 'formATextXL', 'middle', '', svg);
+            drawRectangle(730, 2, 68, 98, 'formLineBold', svg);
+            drawText(userText.flightNr, 765, 15, 'formATextSmall', 'middle', '', svg);
+            drawText(document.getElementById('flight_nb').value, 764, 55, 'formATextXL', 'middle', '', svg);
     }
 
     // continue from bottom
@@ -16189,17 +16181,23 @@ function addFormElementsLR(svg, print) {
 
     // figureK and totalK
     // Header K block
-    if (iacForms) {
-        drawText(totalK, 573, 32, 'formATextLarge', 'middle', '', svg);
-    } else {
-        drawText(totalK, 535, 41, 'formATextXL', 'middle', '', svg);
+    switch (formStyle) {
+        case 'iac':
+        case 'imac':
+            drawText(totalK, 573, 32, 'formATextLarge', 'middle', '', svg);
+            break;
+        default:
+            drawText(totalK, 535, 41, 'formATextXL', 'middle', '', svg);
     }
     totalK += parseInt(document.getElementById('positioning').value || 0) +
         parseInt(document.getElementById('harmony').value || 0);
-    if (iacForms) {
-        drawText(totalK, 573, 68, 'formATextLarge', 'middle', '', svg);
-    } else {
-        drawText(totalK, 535, 90, 'formATextXL', 'middle', '', svg);
+    switch (formStyle) {
+        case 'iac':
+        case 'imac':
+            drawText(totalK, 573, 68, 'formATextLarge', 'middle', '', svg);
+            break;
+        default:
+            drawText(totalK, 535, 90, 'formATextXL', 'middle', '', svg);
     }
 
     var seqBottom = blockTop;
@@ -16229,28 +16227,34 @@ function addFormElementsLR(svg, print) {
 
     // rebuild wind arrow in the correct place, and add form letter
     if (activeForm === 'R') {
-        if (iacForms) {
-            bBox = drawWind(485, 55, 0.8, svg);
-            drawText('R', 515, 85, 'formATextBoldHuge', 'middle', '', svg);
-        } else {
-            bBox = drawWind(450, 75, 0.8, svg);
-            drawText('R', 480, 105, 'formATextBoldHuge', 'middle', '', svg);
+        switch (formStyle) {
+            case 'iac':
+            case 'imac':
+                bBox = drawWind(485, 55, 0.8, svg);
+                drawText('R', 515, 85, 'formATextBoldHuge', 'middle', '', svg);
+                break;
+            default:
+                bBox = drawWind(450, 75, 0.8, svg);
+                drawText('R', 480, 105, 'formATextBoldHuge', 'middle', '', svg);
         }
     } else {
-        if (iacForms) {
-            bBox = drawWind(logoWidth + 50, 55, -0.8, svg);
-            drawText('L', logoWidth + 20, 85, 'formATextBoldHuge', 'middle', '', svg);
-        } else {
-            // Move wind arrow right of logo if the logo extends below header block
-            var rightOfLogo = (logoWidth > 0 && logoSvg.getBBox().height > 70) ? logoWidth : 0;
-            bBox = drawWind(45 + rightOfLogo, 75, -0.8, svg);
-            drawText('L', 20 + rightOfLogo, 105, 'formATextBoldHuge', 'middle', '', svg);
+        switch (formStyle) {
+            case 'iac':
+            case 'imac':
+                bBox = drawWind(logoWidth + 50, 55, -0.8, svg);
+                drawText('L', logoWidth + 20, 85, 'formATextBoldHuge', 'middle', '', svg);
+                break;
+            default:
+                // Move wind arrow right of logo if the logo extends below header block
+                var rightOfLogo = (logoWidth > 0 && logoSvg.getBBox().height > 70) ? logoWidth : 0;
+                bBox = drawWind(45 + rightOfLogo, 75, -0.8, svg);
+                drawText('L', 20 + rightOfLogo, 105, 'formATextBoldHuge', 'middle', '', svg);
         }
     }
 
     // scale and position sequence
     var
-        width = iacForms ? 523 : 480,
+        width = (formStyle == 'civa') ? 480 : 523,
         maxScale = document.getElementById('maxScaling').value / 100,
         sequence = svg.getElementById('sequence');
 
@@ -16279,7 +16283,7 @@ function addFormElementsLR(svg, print) {
     }
 
     // penalty block
-    if (!iacForms) {
+    if (formStyle == 'civa') {
         blockTop -= 114;
         drawRectangle(510, blockTop, 289, 104, 'formLine', svg);
         drawRectangle(614, blockTop, 39, 104, 'formLineBold', svg);
@@ -16299,72 +16303,79 @@ function addFormElementsLR(svg, print) {
     }
 
     // position and harmony
-    if (iacForms) {
-        blockTop -= 55;
-        drawRectangle(553, blockTop, 143, 45, 'formLine', svg);
-        drawRectangle(636, blockTop, 60, 45, 'formLineBold', svg);
-        drawCircle({ cx: 666, cy: blockTop + 32, r: 2, fill: 'black' }, svg);
-        drawText('Presentation', 595, blockTop + 12, 'formATextSmall', 'middle', '', svg);
-        drawText(document.getElementById('positioning').value,
-            595, blockTop + 34, 'formATextLarge', 'middle', '', svg);
-    } else {
-        blockTop -= 50;
-        drawRectangle(510, blockTop, 143, 40, 'formLine', svg);
-        drawRectangle(593, blockTop, 60, 40, 'formLineBold', svg);
-        drawCircle({ cx: 623, cy: blockTop + 27, r: 2, fill: 'black' }, svg);
-        drawText(userText.positioning, 552, blockTop + 12, 'formATextSmall', 'middle', '', svg);
-        drawText(document.getElementById('positioning').value,
-            552, blockTop + 32, 'formATextLarge', 'middle', '', svg);
+    switch (formStyle) {
+        case 'iac':
+        case 'imac':
+            blockTop -= 55;
+            drawRectangle(553, blockTop, 143, 45, 'formLine', svg);
+            drawRectangle(636, blockTop, 60, 45, 'formLineBold', svg);
+            drawCircle({ cx: 666, cy: blockTop + 32, r: 2, fill: 'black' }, svg);
+            drawText('Presentation', 595, blockTop + 12, 'formATextSmall', 'middle', '', svg);
+            drawText(document.getElementById('positioning').value,
+                595, blockTop + 34, 'formATextLarge', 'middle', '', svg);
+            break;
+        default:
+            blockTop -= 50;
+            drawRectangle(510, blockTop, 143, 40, 'formLine', svg);
+            drawRectangle(593, blockTop, 60, 40, 'formLineBold', svg);
+            drawCircle({ cx: 623, cy: blockTop + 27, r: 2, fill: 'black' }, svg);
+            drawText(userText.positioning, 552, blockTop + 12, 'formATextSmall', 'middle', '', svg);
+            drawText(document.getElementById('positioning').value,
+                552, blockTop + 32, 'formATextLarge', 'middle', '', svg);
 
-        if (document.getElementById('harmony').value &&
-            document.getElementById('harmony').value > 0) {
-            drawRectangle(668, blockTop, 130, 40, 'formLine', svg);
-            drawRectangle(738, blockTop, 60, 40, 'formLineBold', svg);
-            drawCircle({ cx: 768, cy: blockTop + 27, r: 2, fill: 'black' }, svg);
-            drawText(userText.harmony, 703, blockTop + 12, 'formATextSmall', 'middle', '', svg);
-            drawText(document.getElementById('harmony').value,
-                703, blockTop + 32, 'formATextLarge', 'middle', '', svg);
-        }
+            if (document.getElementById('harmony').value &&
+                document.getElementById('harmony').value > 0) {
+                drawRectangle(668, blockTop, 130, 40, 'formLine', svg);
+                drawRectangle(738, blockTop, 60, 40, 'formLineBold', svg);
+                drawCircle({ cx: 768, cy: blockTop + 27, r: 2, fill: 'black' }, svg);
+                drawText(userText.harmony, 703, blockTop + 12, 'formATextSmall', 'middle', '', svg);
+                drawText(document.getElementById('harmony').value,
+                    703, blockTop + 32, 'formATextLarge', 'middle', '', svg);
+            }
     }
+
     // figure grading block
-    if (iacForms) {
-        drawRectangle(553, 90, 245, blockTop - 105, 'formLine', svg);
-        drawRectangle(583, 110, 215, blockTop - 125, 'formLineBold', svg);
-        drawLine(583, 90, 0, 20, 'formLine', svg);
-        drawLine(643, 90, 0, blockTop - 105, 'formLine', svg);
+    switch (formStyle) {
+        case 'iac':
+        case 'imac':
+            drawRectangle(553, 90, 245, blockTop - 105, 'formLine', svg);
+            drawRectangle(583, 110, 215, blockTop - 125, 'formLineBold', svg);
+            drawLine(583, 90, 0, 20, 'formLine', svg);
+            drawLine(643, 90, 0, blockTop - 105, 'formLine', svg);
 
-        drawText('Fig', 568, 103, 'formATextSmall', 'middle', '', svg);
-        drawText('Grade', 615, 103, 'formATextSmall', 'middle', '', svg);
-        drawText('Remarks', 724, 103, 'formATextSmall', 'middle', '', svg);
+            drawText('Fig', 568, 103, 'formATextSmall', 'middle', '', svg);
+            drawText('Grade', 615, 103, 'formATextSmall', 'middle', '', svg);
+            drawText('Remarks', 724, 103, 'formATextSmall', 'middle', '', svg);
 
-        var y = 110;
-        var dy = (blockTop - 125) / figureNr;
-        for (var i = 1; i <= figureNr; i++) {
-            drawLine(553, y, 246, 0, 'formLine', svg);
-            drawText(i, 568, y + (dy / 2) + 5, 'formATextLarge', 'middle', '', svg);
-            drawCircle({ cx: 612, cy: roundTwo(y + dy - 15), r: 2, fill: 'black' }, svg);
-            y += dy;
-        }
-    } else {
-        drawRectangle(510, 110, 288, blockTop - 120, 'formLine', svg);
-        drawRectangle(540, 130, 258, blockTop - 140, 'formLineBold', svg);
-        drawLine(540, 110, 0, 20, 'formLine', svg);
-        drawLine(600, 110, 0, blockTop - 120, 'formLine', svg);
-        drawLine(648, 110, 0, blockTop - 120, 'formLine', svg);
+            var y = 110;
+            var dy = (blockTop - 125) / figureNr;
+            for (var i = 1; i <= figureNr; i++) {
+                drawLine(553, y, 246, 0, 'formLine', svg);
+                drawText(i, 568, y + (dy / 2) + 5, 'formATextLarge', 'middle', '', svg);
+                drawCircle({ cx: 612, cy: roundTwo(y + dy - 15), r: 2, fill: 'black' }, svg);
+                y += dy;
+            }
+            break;
+        default:
+            drawRectangle(510, 110, 288, blockTop - 120, 'formLine', svg);
+            drawRectangle(540, 130, 258, blockTop - 140, 'formLineBold', svg);
+            drawLine(540, 110, 0, 20, 'formLine', svg);
+            drawLine(600, 110, 0, blockTop - 120, 'formLine', svg);
+            drawLine(648, 110, 0, blockTop - 120, 'formLine', svg);
 
-        drawText('Fig', 525, 123, 'formATextSmall', 'middle', '', svg);
-        drawText('Grade', 570, 123, 'formATextSmall', 'middle', '', svg);
-        drawText('Pos', 624, 123, 'formATextSmall', 'middle', '', svg);
-        drawText('Remarks', 724, 123, 'formATextSmall', 'middle', '', svg);
+            drawText('Fig', 525, 123, 'formATextSmall', 'middle', '', svg);
+            drawText('Grade', 570, 123, 'formATextSmall', 'middle', '', svg);
+            drawText('Pos', 624, 123, 'formATextSmall', 'middle', '', svg);
+            drawText('Remarks', 724, 123, 'formATextSmall', 'middle', '', svg);
 
-        var y = 130;
-        var dy = (blockTop - 140) / figureNr;
-        for (var i = 1; i <= figureNr; i++) {
-            drawLine(510, y, 289, 0, 'formLine', svg);
-            drawText(i, 525, y + (dy / 2) + 5, 'formATextLarge', 'middle', '', svg);
-            drawCircle({ cx: 569, cy: roundTwo(y + dy - 15), r: 2, fill: 'black' }, svg);
-            y += dy;
-        }
+            var y = 130;
+            var dy = (blockTop - 140) / figureNr;
+            for (var i = 1; i <= figureNr; i++) {
+                drawLine(510, y, 289, 0, 'formLine', svg);
+                drawText(i, 525, y + (dy / 2) + 5, 'formATextLarge', 'middle', '', svg);
+                drawCircle({ cx: 569, cy: roundTwo(y + dy - 15), r: 2, fill: 'black' }, svg);
+                y += dy;
+            }
     }
     // set correct viewbox and size for the form
     svg.setAttribute("viewBox", '0 0 800 1130');
@@ -16373,108 +16384,152 @@ function addFormElementsLR(svg, print) {
 
 // buildHeader will append the sequence header
 function buildHeader(svg, logoWidth) {
-    if (!iacForms) {
-        // CIVA Forms
-        drawRectangle(logoWidth, 0, 720 - logoWidth, 65, 'formLine', svg);
-        drawText(document.getElementById('location').value + ' ' +
-            document.getElementById('date').value, 425, 33, 'formATextLarge', 'middle', '', svg);
-        drawRectangle(720, 0, 79, 65, 'formLine', svg);
-        drawText('Form ' + activeForm[0], 760, 33, 'formATextLarge', 'middle', '', svg);
-        drawRectangle(logoWidth, 65, 80, 65, 'formLine', svg);
-        drawText(userText.pilotID, logoWidth + 5, 75, 'miniFormA', 'start', '', svg);
-        drawText(document.getElementById('pilot_id').value, logoWidth + 40, 115, 'formATextHuge', 'middle', '', svg);
-        drawRectangle(logoWidth + 80, 65, 640 - logoWidth, 65, 'formLine', svg);
-        drawText(
-            document.getElementById('rules').value + ' ' +
-            ((document.getElementById('class').value === 'glider') ? 'Glider ' : '') +
-            document.getElementById('category').value + ' ' +
-            document.getElementById('program').value,
-            475, 105, 'formATextLarge', 'middle', '', svg);
-        drawRectangle(720, 65, 79, 65, 'formLine', svg);
-        drawText(userText.flightNr, 725, 75, 'miniFormA', 'start', '', svg);
-        drawText(document.getElementById('flight_nb').value, 760, 115, 'formATextHuge', 'middle', '', svg);
-    } else {
-        // IAC Forms
-        if (activeForm === 'A') {
-            drawRectangle(0, 0, 60, 130, 'formLine', svg);
-            drawRectangle(60, 0, 740, 50, 'formLine', svg);
-            drawRectangle(60, 50, 240, 80, 'formLine', svg);
-            drawRectangle(300, 50, 100, 80, 'formLine', svg);
-            drawRectangle(400, 50, 120, 80, 'formLine', svg);
-            drawRectangle(520, 50, 120, 80, 'formLine', svg);
-            drawRectangle(640, 50, 70, 80, 'formLine', svg);
-            drawRectangle(710, 50, 89, 80, 'formLineBold', svg);
-            drawText(activeForm[0], 30, 75, 'formATextBoldHuge', 'middle', '', svg);
-            drawText('INTERNATIONAL AEROBATIC CLUB SCORESHEET', 430, 35, 'formATextLarge', 'middle', '', svg);
-            drawText(userText.contest + ':', 65, 70, 'formAText', 'start', '', svg);
-            drawText(document.getElementById('location').value, 180, 100, 'formATextMedium', 'middle', '', svg);
-            drawText(userText.date + ':', 305, 70, 'formAText', 'start', '', svg);
-            drawText(document.getElementById('date').value, 350, 100, 'formATextMedium', 'middle', '', svg);
-            drawText(userText.category + ':', 405, 70, 'formAText', 'start', '', svg);
-            drawText(userText[document.getElementById('class').value], 460, 95, 'formATextMedium', 'middle', '', svg);
-            drawText(document.getElementById('category').value, 460, 115, 'formATextMedium', 'middle', '', svg);
-            drawText(userText.programme + ':', 525, 70, 'formAText', 'start', '', svg);
-            drawText(document.getElementById('program').value, 580, 100, 'formATextMedium', 'middle', '', svg);
-            drawText(userText.pilotnumberIAC1, 645, 70, 'formAText', 'start', '', svg);
-            drawText(userText.pilotnumberIAC2, 645, 95, 'formAText', 'start', '', svg);
-        } else {
-            // sequence info box
-            drawRectangle(90, 10, 550, 100, 'formLine', svg);
-            drawRectangle(570, 60, 70, 50, 'formLineBold', svg);
-            drawLine(90, 60, 550, 0, 'formLine', svg); // ---
-            drawLine(140, 10, 0, 50, 'formLine', svg); // |
-            drawLine(490, 10, 0, 100, 'formLine', svg);// ||
-            drawLine(290, 60, 0, 50, 'formLine', svg); // |
-            drawText(activeForm[0], 115, 48, 'formATextBoldHuge', 'middle', '', svg);
-            drawText(userText.contest + ':', 150, 25,
-                'formAText', 'start', '', svg);
-            drawText(document.getElementById('location').value, 315, 47,
-                'formATextLarge', 'middle', '', svg);
-            drawText(userText.category + ':', 500, 25,
-                'formAText', 'start', '', svg);
-            drawText(userText[document.getElementById('class').value] + " " + document.getElementById('category').value, 565, 47,
-                'formATextMedium', 'middle', '', svg);
-            drawText(userText.date + ':', 100, 75,
-                'formAText', 'start', '', svg);
-            drawText(document.getElementById('date').value, 190, 97,
-                'formATextLarge', 'middle', '', svg);
-            drawText(userText.program + ':', 300, 75,
-                'formAText', 'start', '', svg);
-            drawText(document.getElementById('program').value, 390, 97,
-                'formATextLarge', 'middle', '', svg);
-            drawText(userText.pilotNo, 530, 90,
-                'formAText', 'middle', '', svg);
+    switch (formStyle) {
+        case 'iac':
+            // IAC Forms
+            if (activeForm === 'A') {
+                drawRectangle(0, 0, 60, 130, 'formLine', svg);
+                drawRectangle(60, 0, 740, 50, 'formLine', svg);
+                drawRectangle(60, 50, 240, 80, 'formLine', svg);
+                drawRectangle(300, 50, 100, 80, 'formLine', svg);
+                drawRectangle(400, 50, 120, 80, 'formLine', svg);
+                drawRectangle(520, 50, 120, 80, 'formLine', svg);
+                drawRectangle(640, 50, 70, 80, 'formLine', svg);
+                drawRectangle(710, 50, 89, 80, 'formLineBold', svg);
+                drawText(activeForm[0], 30, 75, 'formATextBoldHuge', 'middle', '', svg);
+                drawText('INTERNATIONAL AEROBATIC CLUB SCORESHEET', 430, 35, 'formATextLarge', 'middle', '', svg);
+                drawText(userText.contest + ':', 65, 70, 'formAText', 'start', '', svg);
+                drawText(document.getElementById('location').value, 180, 100, 'formATextMedium', 'middle', '', svg);
+                drawText(userText.date + ':', 305, 70, 'formAText', 'start', '', svg);
+                drawText(document.getElementById('date').value, 350, 100, 'formATextMedium', 'middle', '', svg);
+                drawText(userText.category + ':', 405, 70, 'formAText', 'start', '', svg);
+                drawText(userText[document.getElementById('class').value], 460, 95, 'formATextMedium', 'middle', '', svg);
+                drawText(document.getElementById('category').value, 460, 115, 'formATextMedium', 'middle', '', svg);
+                drawText(userText.programme + ':', 525, 70, 'formAText', 'start', '', svg);
+                drawText(document.getElementById('program').value, 580, 100, 'formATextMedium', 'middle', '', svg);
+                drawText(userText.pilotnumberIAC1, 645, 70, 'formAText', 'start', '', svg);
+                drawText(userText.pilotnumberIAC2, 645, 95, 'formAText', 'start', '', svg);
+            } else {
+                // sequence info box
+                drawRectangle(90, 10, 550, 100, 'formLine', svg);
+                drawRectangle(570, 60, 70, 50, 'formLineBold', svg);
+                drawLine(90, 60, 550, 0, 'formLine', svg); // ---
+                drawLine(140, 10, 0, 50, 'formLine', svg); // |
+                drawLine(490, 10, 0, 100, 'formLine', svg);// ||
+                drawLine(290, 60, 0, 50, 'formLine', svg); // |
+                drawText(activeForm[0], 115, 48, 'formATextBoldHuge', 'middle', '', svg);
+                drawText(userText.contest + ':', 150, 25,
+                    'formAText', 'start', '', svg);
+                drawText(document.getElementById('location').value, 315, 47,
+                    'formATextLarge', 'middle', '', svg);
+                drawText(userText.category + ':', 500, 25,
+                    'formAText', 'start', '', svg);
+                drawText(userText[document.getElementById('class').value] + " " + document.getElementById('category').value, 565, 47,
+                    'formATextMedium', 'middle', '', svg);
+                drawText(userText.date + ':', 100, 75,
+                    'formAText', 'start', '', svg);
+                drawText(document.getElementById('date').value, 190, 97,
+                    'formATextLarge', 'middle', '', svg);
+                drawText(userText.program + ':', 300, 75,
+                    'formAText', 'start', '', svg);
+                drawText(document.getElementById('program').value, 390, 97,
+                    'formATextLarge', 'middle', '', svg);
+                drawText(userText.pilotNo, 530, 90,
+                    'formAText', 'middle', '', svg);
 
-            // tear-off tab
-            drawLine(640, 0, 159, 160, 'formLine', svg);
-            drawLine(650, 0, 149, 150, 'dotted', svg);
-            drawText(userText.pilot + ': ' +
-                document.getElementById('pilot').value, 670, 10, 'formAText',
-                'start', 'pilotText', svg);
-            // rotate pilot text elements by 45 degr CW
-            var el = svg.getElementById('pilotText');
-            el.setAttribute('transform', 'rotate(45 ' +
-                el.getAttribute('x') + ' ' + el.getAttribute('y') + ')');
+                // tear-off tab
+                drawLine(640, 0, 159, 160, 'formLine', svg);
+                drawLine(650, 0, 149, 150, 'dotted', svg);
+                drawText(userText.pilot + ': ' +
+                    document.getElementById('pilot').value, 670, 10, 'formAText',
+                    'start', 'pilotText', svg);
+                // rotate pilot text elements by 45 degr CW
+                var el = svg.getElementById('pilotText');
+                el.setAttribute('transform', 'rotate(45 ' +
+                    el.getAttribute('x') + ' ' + el.getAttribute('y') + ')');
 
-            // check line
-            drawLine(799, 420, 0, 460, 'dotted', svg);
-            drawText('FREE PROGRAM CHECK BY:', 790, 1080, 'formAText',
-                'start', 'checkByText', svg);
-            drawText('(signature/date)', 790, 880, 'formAText', 'start',
-                'signText', svg);
-            drawText('A/C: ' + document.getElementById('actype').value,
-                790, 380, 'formAText', 'start', 'acText', svg);
-            // rotate text elements by 90 degr CCW
-            var el = svg.getElementById('checkByText');
-            el.setAttribute('transform', 'rotate(-90 ' +
-                el.getAttribute('x') + ' ' + el.getAttribute('y') + ')');
-            var el = svg.getElementById('signText');
-            el.setAttribute('transform', 'rotate(-90 ' +
-                el.getAttribute('x') + ' ' + el.getAttribute('y') + ')');
-            var el = svg.getElementById('acText');
-            el.setAttribute('transform', 'rotate(-90 ' +
-                el.getAttribute('x') + ' ' + el.getAttribute('y') + ')');
-        }
+                // check line
+                drawLine(799, 420, 0, 460, 'dotted', svg);
+                drawText('FREE PROGRAM CHECK BY:', 790, 1080, 'formAText',
+                    'start', 'checkByText', svg);
+                drawText('(signature/date)', 790, 880, 'formAText', 'start',
+                    'signText', svg);
+                drawText('A/C: ' + document.getElementById('actype').value,
+                    790, 380, 'formAText', 'start', 'acText', svg);
+                // rotate text elements by 90 degr CCW
+                var el = svg.getElementById('checkByText');
+                el.setAttribute('transform', 'rotate(-90 ' +
+                    el.getAttribute('x') + ' ' + el.getAttribute('y') + ')');
+                var el = svg.getElementById('signText');
+                el.setAttribute('transform', 'rotate(-90 ' +
+                    el.getAttribute('x') + ' ' + el.getAttribute('y') + ')');
+                var el = svg.getElementById('acText');
+                el.setAttribute('transform', 'rotate(-90 ' +
+                    el.getAttribute('x') + ' ' + el.getAttribute('y') + ')');
+            }
+            break;
+        case 'imac':
+            // IMAC Forms
+            if (activeForm === 'A') {
+                drawRectangle(0, 0, 540, 90, 'formLine', svg);
+                drawLine(40, 0, 0, 90, 'formLine', svg); //  |
+                drawLine(40, 30, 500, 0, 'formLine', svg); // +---------------------------
+                drawLine(200, 30, 0, 60, 'formLine', svg); //            |
+                drawLine(300, 30, 0, 60, 'formLine', svg); //                   |
+                drawText('A', 20, 55, 'formATextBoldXXL', 'middle', '', svg);
+                drawText(`${document.getElementById('date').value} 
+                    ${document.getElementById('program').value}  
+                    Scoresheet`,
+                    290, 17, 'formATextBold', 'middle', '', svg);
+                drawText(`${userText.contest}:`, 45, 45, 'formAText', 'start', '', svg);
+                drawText(document.getElementById('location').value, 120, 75, 'formATextMedium', 'middle', '', svg);
+                drawText(`${userText.date}:`, 205, 45, 'formAText', 'start', '', svg);
+                drawText(document.getElementById('date').value, 250, 75, 'formATextMedium', 'middle', '', svg);
+                drawText(`${userText.category}:`, 305, 45, 'formAText', 'start', '', svg);
+                drawText(document.getElementById('category').value, 420, 75, 'formATextXL', 'middle', '', svg);
+            } else {
+                // sequence info box
+                drawRectangle(0, 10, 600, 80, 'formLine', svg);
+                drawLine(40, 10, 0, 40, 'formLine', svg); //  |
+                drawLine(0, 50, 600, 0, 'formLine', svg); // --------------------
+                drawLine(160, 50, 0, 40, 'formLine', svg);//      |
+                drawText(activeForm[0], 20, 40, 'formATextBoldXXL', 'middle', '', svg);
+                drawText(`${userText.contest}:`, 48, 25,
+                    'formAText', 'start', '', svg);
+                drawText(document.getElementById('location').value, 320, 37,
+                    'formATextLarge', 'middle', '', svg);
+                drawText(document.getElementById('category').value, 230, 77,
+                    'formATextLarge', 'start', '', svg);
+                drawText(`${userText.date}:`, 8, 66,
+                    'formAText', 'start', '', svg);
+                drawText(document.getElementById('date').value, 45, 77,
+                    'formATextLarge', 'start', '', svg);
+                drawText(`${userText.program}:`, 168, 66,
+                    'formAText', 'start', '', svg);
+                drawText(document.getElementById('program').value, 590, 77,
+                    'formATextLarge', 'end', '', svg);
+            }
+            break;
+        default:
+            // CIVA Forms
+            drawRectangle(logoWidth, 0, 720 - logoWidth, 65, 'formLine', svg);
+            drawText(document.getElementById('location').value + ' ' +
+                document.getElementById('date').value, 425, 33, 'formATextLarge', 'middle', '', svg);
+            drawRectangle(720, 0, 79, 65, 'formLine', svg);
+            drawText('Form ' + activeForm[0], 760, 33, 'formATextLarge', 'middle', '', svg);
+            drawRectangle(logoWidth, 65, 80, 65, 'formLine', svg);
+            drawText(userText.pilotID, logoWidth + 5, 75, 'miniFormA', 'start', '', svg);
+            drawText(document.getElementById('pilot_id').value, logoWidth + 40, 115, 'formATextHuge', 'middle', '', svg);
+            drawRectangle(logoWidth + 80, 65, 640 - logoWidth, 65, 'formLine', svg);
+            drawText(
+                document.getElementById('rules').value + ' ' +
+                ((document.getElementById('class').value === 'glider') ? 'Glider ' : '') +
+                document.getElementById('category').value + ' ' +
+                document.getElementById('program').value,
+                475, 105, 'formATextLarge', 'middle', '', svg);
+            drawRectangle(720, 65, 79, 65, 'formLine', svg);
+            drawText(userText.flightNr, 725, 75, 'miniFormA', 'start', '', svg);
+            drawText(document.getElementById('flight_nb').value, 760, 115, 'formATextHuge', 'middle', '', svg);
     }
 }
 
@@ -16524,169 +16579,221 @@ function addFormElementsGrid(svg) {
 
 // buildScoreColumn will append the righthand scoring column
 function buildScoreColumn(svg) {
-    if (iacForms) {
-        drawRectangle(580, 130, 120, 50, 'formLine', svg);
-        drawText('Item', 650, 155, 'formAText', 'middle', '', svg);
-        drawRectangle(700, 130, 40, 50, 'formLine', svg);
-        drawText('K', 720, 155, 'formAText', 'middle', '', svg);
-        drawRectangle(740, 130, 59, 50, 'formLine', svg);
-        drawText('Score', 770, 155, 'formAText', 'middle', '', svg);
+    switch (formStyle) {
+        case 'iac':
+            drawRectangle(580, 130, 120, 50, 'formLine', svg);
+            drawText('Item', 650, 155, 'formAText', 'middle', '', svg);
+            drawRectangle(700, 130, 40, 50, 'formLine', svg);
+            drawText('K', 720, 155, 'formAText', 'middle', '', svg);
+            drawRectangle(740, 130, 59, 50, 'formLine', svg);
+            drawText('Score', 770, 155, 'formAText', 'middle', '', svg);
 
-        drawRectangle(580, 180, 120, 50, 'formLine', svg);
-        drawText('Presentation', 590, 205, 'formATextBold', 'start', '', svg);
-        drawRectangle(700, 180, 40, 50, 'formLine', svg);
-        drawText(document.getElementById('positioning').value, 720, 205,
-            'formATextLarge', 'middle', '', svg);
-        drawRectangle(740, 180, 59, 50, 'formLineBold', svg);
-        drawLine(740, 180, 0, 50, 'formLine', svg);
+            drawRectangle(580, 180, 120, 50, 'formLine', svg);
+            drawText('Presentation', 590, 205, 'formATextBold', 'start', '', svg);
+            drawRectangle(700, 180, 40, 50, 'formLine', svg);
+            drawText(document.getElementById('positioning').value, 720, 205,
+                'formATextLarge', 'middle', '', svg);
+            drawRectangle(740, 180, 59, 50, 'formLineBold', svg);
+            drawLine(740, 180, 0, 50, 'formLine', svg);
 
-        drawText('FIGURE TOTAL K =', 590, 270, 'formAText', 'start', '', svg);
-        drawRectangle(740, 240, 59, 40, 'formLine', svg);
-        drawText('INC. PRESENTATION =', 590, 320, 'formAText', 'start', '', svg);
-        drawRectangle(740, 290, 59, 40, 'formLine', svg);
+            drawText('FIGURE TOTAL K =', 590, 270, 'formAText', 'start', '', svg);
+            drawRectangle(740, 240, 59, 40, 'formLine', svg);
+            drawText('INC. PRESENTATION =', 590, 320, 'formAText', 'start', '', svg);
+            drawRectangle(740, 290, 59, 40, 'formLine', svg);
 
-        drawText(figureK, 770, 265, 'formATextLarge', 'middle', '', svg);
-        var totalK = figureK;
-        if (parseInt(document.getElementById('positioning').value)) {
-            totalK += parseInt(document.getElementById('positioning').value);
-        }
+            drawText(figureK, 770, 265, 'formATextLarge', 'middle', '', svg);
+            var totalK = figureK;
+            if (parseInt(document.getElementById('positioning').value)) {
+                totalK += parseInt(document.getElementById('positioning').value);
+            }
 
-        drawText(totalK, 770, 315, 'formATextLarge', 'middle', '', svg);
+            drawText(totalK, 770, 315, 'formATextLarge', 'middle', '', svg);
 
-        drawRectangle(590, 340, 209, 60, 'formLine', svg);
-        drawText('Aircraft type:', 600, 355, 'formAText', 'start', '', svg);
-        drawText(document.getElementById('actype').value, 695, 380,
-            'formATextLarge', 'middle', '', svg);
+            drawRectangle(590, 340, 209, 60, 'formLine', svg);
+            drawText('Aircraft type:', 600, 355, 'formAText', 'start', '', svg);
+            drawText(document.getElementById('actype').value, 695, 380,
+                'formATextLarge', 'middle', '', svg);
 
-        // "checked by" block
-        drawRectangle(640, 430, 159, 280, 'formLine', svg);
-        drawLine(695, 430, 0, 280, 'formLine', svg);
-        drawLine(750, 430, 0, 280, 'formLine', svg);
-        drawLine(750, 610, 49, 0, 'formLine', svg);
-        drawText('FREE PROGRAM CHECKED BY:', 630, 700, 'formAText', 'start', 'checkedBy1', svg);
-        drawText('Signature:', 655, 700, 'formAText', 'start', 'checkedBy2', svg);
-        drawText('Printed Name:', 710, 700, 'formAText', 'start', 'checkedBy3', svg);
-        drawText('IAC No:', 765, 700, 'formAText', 'start', 'checkedBy4', svg);
-        drawText('Date:', 765, 600, 'formAText', 'start', 'checkedBy5', svg);
-        // rotate all text elements by 90 degr CCW
-        for (var i = 1; i < 6; i++) {
-            var el = svg.getElementById('checkedBy' + i);
-            el.setAttribute('transform', 'rotate(-90 ' +
-                el.getAttribute('x') + ' ' + el.getAttribute('y') + ')');
-        }
+            // "checked by" block
+            drawRectangle(640, 430, 159, 280, 'formLine', svg);
+            drawLine(695, 430, 0, 280, 'formLine', svg);
+            drawLine(750, 430, 0, 280, 'formLine', svg);
+            drawLine(750, 610, 49, 0, 'formLine', svg);
+            drawText('FREE PROGRAM CHECKED BY:', 630, 700, 'formAText', 'start', 'checkedBy1', svg);
+            drawText('Signature:', 655, 700, 'formAText', 'start', 'checkedBy2', svg);
+            drawText('Printed Name:', 710, 700, 'formAText', 'start', 'checkedBy3', svg);
+            drawText('IAC No:', 765, 700, 'formAText', 'start', 'checkedBy4', svg);
+            drawText('Date:', 765, 600, 'formAText', 'start', 'checkedBy5', svg);
+            // rotate all text elements by 90 degr CCW
+            for (var i = 1; i < 6; i++) {
+                var el = svg.getElementById('checkedBy' + i);
+                el.setAttribute('transform', 'rotate(-90 ' +
+                    el.getAttribute('x') + ' ' + el.getAttribute('y') + ')');
+            }
 
-        // judge details
-        var y = 740;
-        drawRectangle(590, y, 209, 75, 'formLine', svg);
-        drawLine(590, y + 50, 209, 0, 'formLine', svg);
-        drawText('Judge', 595, y + 15, 'formAText', 'start', '', svg);
-        drawText(
-            'Name:',
-            595,
-            y + 15 + parseInt(style.formAText.match(/font-size[ ]*:[ ]*([0-9]+)px/)[1]),
-            'formAText',
-            'start',
-            '',
-            svg);
-        drawText('IAC #', 595, y + 67, 'formAText', 'start', '', svg);
+            // judge details
+            var y = 740;
+            drawRectangle(590, y, 209, 75, 'formLine', svg);
+            drawLine(590, y + 50, 209, 0, 'formLine', svg);
+            drawText('Judge', 595, y + 15, 'formAText', 'start', '', svg);
+            drawText(
+                'Name:',
+                595,
+                y + 15 + parseInt(style.formAText.match(/font-size[ ]*:[ ]*([0-9]+)px/)[1]),
+                'formAText',
+                'start',
+                '',
+                svg);
+            drawText('IAC #', 595, y + 67, 'formAText', 'start', '', svg);
 
-        // assistant details
-        var y = 830;
-        drawRectangle(590, y, 209, 75, 'formLine', svg);
-        drawLine(590, y + 50, 209, 0, 'formLine', svg);
-        drawText('Assistant', 595, y + 15, 'formAText', 'start', '', svg);
-        drawText(
-            'Name:',
-            595,
-            y + 15 + parseInt(style.formAText.match(/font-size[ ]*:[ ]*([0-9]+)px/)[1]),
-            'formAText',
-            'start',
-            '',
-            svg);
-        drawText('IAC #', 595, y + 67, 'formAText', 'start', '', svg);
-    } else {
-        drawRectangle(620, 130, 60, 50, 'formLine', svg);
-        drawText('Item', 650, 155, 'formAText', 'middle', '', svg);
-        drawRectangle(680, 130, 40, 50, 'formLine', svg);
-        drawText('K', 700, 155, 'formAText', 'middle', '', svg);
-        drawRectangle(720, 130, 79, 50, 'formLine', svg);
-        drawText('Grade', 760, 155, 'formAText', 'middle', '', svg);
+            // assistant details
+            var y = 830;
+            drawRectangle(590, y, 209, 75, 'formLine', svg);
+            drawLine(590, y + 50, 209, 0, 'formLine', svg);
+            drawText('Assistant', 595, y + 15, 'formAText', 'start', '', svg);
+            drawText(
+                'Name:',
+                595,
+                y + 15 + parseInt(style.formAText.match(/font-size[ ]*:[ ]*([0-9]+)px/)[1]),
+                'formAText',
+                'start',
+                '',
+                svg);
+            drawText('IAC #', 595, y + 67, 'formAText', 'start', '', svg);
+            break;
+        case 'imac':
+            // Sound box
+            drawRectangle(540, 120, 260, 70, 'formLine', svg);
+            drawLine(740, 120, 0, 20, 'formLine', svg);
+            drawLine(540, 140, 260, 0, 'formLine', svg);
+            drawRectangle(740, 140, 59, 50, 'formLineBold', svg);
+            drawText('Item', 640, 134, 'formAText', 'middle', '', svg);
+            drawText('Score', 770, 134, 'formAText', 'middle', '', svg);
+            drawText('Sound', 550, 170, 'formATextBoldLarge', 'start', '', svg);
 
-        // Positioning
-        drawRectangle(620, 180, 60, 50, 'formLine', svg);
-        drawText('Pos.', 650, 205, 'formAText', 'middle', '', svg);
-        drawRectangle(680, 180, 40, 50, 'formLine', svg);
-        drawText(document.getElementById('positioning').value, 700, 205, 'formATextLarge', 'middle', '', svg);
-        if (!document.getElementById('harmony').value) {
-            drawRectangle(720, 180, 79, 50, 'formLineBold', svg);
-        }
-        drawLine(760, 180, 0, 50, 'formLine', svg);
+            // Pilot/Panel box
+            drawRectangle(540, 210, 260, 70, 'formLine', svg);
+            drawLine(740, 210, 0, 20, 'formLine', svg);
+            drawLine(540, 230, 260, 0, 'formLine', svg);
+            drawRectangle(740, 230, 59, 50, 'formLineBold', svg);
+            drawText('Item', 640, 224, 'formAText', 'middle', '', svg);
+            drawText('Yes/No', 770, 224, 'formAText', 'middle', '', svg);
+            drawText('Pilot/Panel', 550, 260, 'formATextBoldLarge', 'start', '', svg);
 
-        // Harmony
-        if (document.getElementById('harmony').value) {
-            drawRectangle(620, 230, 60, 50, 'formLine', svg);
-            drawText('Harm.', 650, 255, 'formAText', 'middle', '', svg);
-            drawRectangle(680, 230, 40, 50, 'formLine', svg);
-            drawText(document.getElementById('harmony').value, 700, 255, 'formATextLarge', 'middle', '', svg);
-            drawRectangle(720, 180, 79, 100, 'formLineBold', svg);
-            drawLine(760, 230, 0, 50, 'formLine', svg);
-            drawLine(720, 230, 79, 0, 'formLine', svg);
-        }
+            // Air Space Control box
+            drawRectangle(540, 300, 260, 70, 'formLine', svg);
+            drawLine(740, 300, 0, 20, 'formLine', svg);
+            drawLine(540, 320, 260, 0, 'formLine', svg);
+            drawRectangle(740, 320, 59, 50, 'formLineBold', svg);
+            drawText('Item', 640, 314, 'formAText', 'middle', '', svg);
+            drawText('Score', 770, 314, 'formAText', 'middle', '', svg);
+            drawText('Air Space Control', 550, 350, 'formATextBoldLarge', 'start', '', svg);
 
-        drawRectangle(620, 280, 90, 25, 'formLine', svg);
-        drawText('Fig K', 665, 295, 'formAText', 'middle', '', svg);
-        drawRectangle(710, 280, 89, 25, 'formLine', svg);
-        drawText('Total K', 755, 295, 'formAText', 'middle', '', svg);
-        drawRectangle(620, 305, 90, 50, 'formLine', svg);
-        drawText(figureK, 665, 330, 'formATextLarge', 'middle', '', svg);
-        drawRectangle(710, 305, 89, 50, 'formLine', svg);
-        var totalK = figureK;
-        if (parseInt(document.getElementById('positioning').value)) {
-            totalK += parseInt(document.getElementById('positioning').value);
-        }
-        if (parseInt(document.getElementById('harmony').value)) {
-            totalK += parseInt(document.getElementById('harmony').value);
-        }
+            // Total K
+            drawRectangle(740, 400, 59, 40, 'formLine', svg);
+            drawText('TOTAL K =', 620, 425, 'formATextLarge', 'start', '', svg);
+            drawText(figureK, 770, 425, 'formATextBoldLarge', 'middle', '', svg);
 
-        drawText(totalK, 755, 330, 'formATextLarge', 'middle', '', svg);
-        drawRectangle(620, 355, 179, 25, 'formLine', svg);
-        drawText('Penalties', 710, 370, 'formATextBold', 'middle', '', svg);
-        var penalties = [
-            'tooLow',
-            'tooHigh',
-            'interruptions',
-            'insertions',
-            'trgViolation',
-            'wingRocks',
-            'disqualified',
-            'otherNote'];
-        var y = 380;
-        drawRectangle(750, y, 49, penalties.length * 25, 'formLineBold', svg);
-        for (var i = 0; i < penalties.length; i++) {
+            // pilot and A/C Type block
+            drawLine(680, 480, 0, 580, 'dotted', svg);
+            drawLine(770, 480, 0, 580, 'dotted', svg);
+            function rotateLeft90(el) {
+                el.setAttribute('transform', 'rotate(-90 ' +
+                    el.getAttribute('x') + ' ' + el.getAttribute('y') + ')');
+            }
+            var el = drawText(document.getElementById('pilot').value, 666, 1055, 'formATextHuge', 'start', '', svg);
+            rotateLeft90(el);
+            el = drawText('pilot', 700, 1055, 'formATextLarge', 'start', '', svg);
+            rotateLeft90(el);
+            el = drawText(document.getElementById('actype').value, 756, 1055, 'formATextHuge', 'start', '', svg);
+            rotateLeft90(el);
+            el = drawText('A/C Type', 790, 1055, 'formATextLarge', 'start', '', svg);
+            rotateLeft90(el);
+            break;
+        default:
+            // CIVA forms
+            drawRectangle(620, 130, 60, 50, 'formLine', svg);
+            drawText('Item', 650, 155, 'formAText', 'middle', '', svg);
+            drawRectangle(680, 130, 40, 50, 'formLine', svg);
+            drawText('K', 700, 155, 'formAText', 'middle', '', svg);
+            drawRectangle(720, 130, 79, 50, 'formLine', svg);
+            drawText('Grade', 760, 155, 'formAText', 'middle', '', svg);
+
+            // Positioning
+            drawRectangle(620, 180, 60, 50, 'formLine', svg);
+            drawText('Pos.', 650, 205, 'formAText', 'middle', '', svg);
+            drawRectangle(680, 180, 40, 50, 'formLine', svg);
+            drawText(document.getElementById('positioning').value, 700, 205, 'formATextLarge', 'middle', '', svg);
+            if (!document.getElementById('harmony').value) {
+                drawRectangle(720, 180, 79, 50, 'formLineBold', svg);
+            }
+            drawLine(760, 180, 0, 50, 'formLine', svg);
+
+            // Harmony
+            if (document.getElementById('harmony').value) {
+                drawRectangle(620, 230, 60, 50, 'formLine', svg);
+                drawText('Harm.', 650, 255, 'formAText', 'middle', '', svg);
+                drawRectangle(680, 230, 40, 50, 'formLine', svg);
+                drawText(document.getElementById('harmony').value, 700, 255, 'formATextLarge', 'middle', '', svg);
+                drawRectangle(720, 180, 79, 100, 'formLineBold', svg);
+                drawLine(760, 230, 0, 50, 'formLine', svg);
+                drawLine(720, 230, 79, 0, 'formLine', svg);
+            }
+
+            drawRectangle(620, 280, 90, 25, 'formLine', svg);
+            drawText('Fig K', 665, 295, 'formAText', 'middle', '', svg);
+            drawRectangle(710, 280, 89, 25, 'formLine', svg);
+            drawText('Total K', 755, 295, 'formAText', 'middle', '', svg);
+            drawRectangle(620, 305, 90, 50, 'formLine', svg);
+            drawText(figureK, 665, 330, 'formATextLarge', 'middle', '', svg);
+            drawRectangle(710, 305, 89, 50, 'formLine', svg);
+            var totalK = figureK;
+            if (parseInt(document.getElementById('positioning').value)) {
+                totalK += parseInt(document.getElementById('positioning').value);
+            }
+            if (parseInt(document.getElementById('harmony').value)) {
+                totalK += parseInt(document.getElementById('harmony').value);
+            }
+
+            drawText(totalK, 755, 330, 'formATextLarge', 'middle', '', svg);
+            drawRectangle(620, 355, 179, 25, 'formLine', svg);
+            drawText('Penalties', 710, 370, 'formATextBold', 'middle', '', svg);
+            var penalties = [
+                'tooLow',
+                'tooHigh',
+                'interruptions',
+                'insertions',
+                'trgViolation',
+                'wingRocks',
+                'disqualified',
+                'otherNote'];
+            var y = 380;
+            drawRectangle(750, y, 49, penalties.length * 25, 'formLineBold', svg);
+            for (var i = 0; i < penalties.length; i++) {
+                drawRectangle(620, y, 179, 25, 'formLine', svg);
+                drawText(userText[penalties[i]], 628, y + 18, 'formAText', 'start', '', svg);
+                y += 25;
+            }
+
             drawRectangle(620, y, 179, 25, 'formLine', svg);
-            drawText(userText[penalties[i]], 628, y + 18, 'formAText', 'start', '', svg);
-            y += 25;
-        }
+            drawText('Final Freestyle', 710, y + 15, 'formATextBold', 'middle', '', svg);
+            drawRectangle(620, y + 25, 80, 50, 'formLine', svg);
+            drawText('Duration', 660, y + 50, 'formAText', 'middle', '', svg);
+            drawRectangle(700, y + 25, 50, 50, 'formLine', svg);
+            drawText('Min', 725, y + 40, 'formAText', 'middle', '', svg);
+            drawRectangle(750, y + 25, 49, 50, 'formLine', svg);
+            drawText('Sec', 775, y + 40, 'formAText', 'middle', '', svg);
+            drawRectangle(700, y + 50, 99, 25, 'formLineBold', svg);
 
-        drawRectangle(620, y, 179, 25, 'formLine', svg);
-        drawText('Final Freestyle', 710, y + 15, 'formATextBold', 'middle', '', svg);
-        drawRectangle(620, y + 25, 80, 50, 'formLine', svg);
-        drawText('Duration', 660, y + 50, 'formAText', 'middle', '', svg);
-        drawRectangle(700, y + 25, 50, 50, 'formLine', svg);
-        drawText('Min', 725, y + 40, 'formAText', 'middle', '', svg);
-        drawRectangle(750, y + 25, 49, 50, 'formLine', svg);
-        drawText('Sec', 775, y + 40, 'formAText', 'middle', '', svg);
-        drawRectangle(700, y + 50, 99, 25, 'formLineBold', svg);
-
-        // judge details
-        drawRectangle(620, y + 85, 179, 25, 'formLine', svg);
-        drawText('Judges Details', 710, y + 100, 'formATextBold', 'middle', '', svg);
-        drawRectangle(620, y + 110, 179, 160, 'formLineBold', svg);
-        drawLine(620, y + 170, 179, 0, 'formLine', svg);
-        drawLine(620, y + 220, 179, 0, 'formLine', svg);
-        drawText('Signature', 628, y + 128, 'formAText', 'start', '', svg);
-        drawText('Name', 628, y + 188, 'formAText', 'start', '', svg);
-        drawText('Number', 628, y + 238, 'formAText', 'start', '', svg);
+            // judge details
+            drawRectangle(620, y + 85, 179, 25, 'formLine', svg);
+            drawText('Judges Details', 710, y + 100, 'formATextBold', 'middle', '', svg);
+            drawRectangle(620, y + 110, 179, 160, 'formLineBold', svg);
+            drawLine(620, y + 170, 179, 0, 'formLine', svg);
+            drawLine(620, y + 220, 179, 0, 'formLine', svg);
+            drawText('Signature', 628, y + 128, 'formAText', 'start', '', svg);
+            drawText('Name', 628, y + 188, 'formAText', 'start', '', svg);
+            drawText('Number', 628, y + 238, 'formAText', 'start', '', svg);
     }
 }
 
@@ -16725,7 +16832,7 @@ function buildCornertab(svg) {
         newText.setAttribute('x', 755);
         newText.setAttribute('y', 1085);
         newText.setAttribute('transform', 'rotate(-45 755 1085)');
-        if (iacForms) {
+        if (formStyle = 'iac') {
             var textNode = document.createTextNode(document.getElementById('acreg').value);
         } else {
             var textNode = document.createTextNode(aircraft());
@@ -16785,8 +16892,6 @@ function saveImageSizeAdjust() {
     // multiply this if doing printMulti
     if (fileList.length > 1) count = count * fileList.length;
 
-    // don't do anything if no pages marked
-    if (count === 0) return;
     // calculate ratio (Y / X) in base units
     var ratio = ((count * 1130) +
         ((count - 1) * document.getElementById('pageSpacing').value)) / 800;
@@ -17090,7 +17195,8 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figure_chooser) {
         entryAxis = ((Direction % 180) == 0) ? 'X' : 'Y',
         entryAtt = Attitude,
         entryDir = Direction,
-        description = [];
+        description = [],
+        figCheckLine = '';
 
     // goFront is set to true for every new figure that starts to front
     if (((Direction == 90) && (Attitude == 0)) || ((Direction == 270) && (Attitude == 180))) {
@@ -17507,7 +17613,7 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figure_chooser) {
         }
     } else var kFactors = [parseInt(fig[figNr].kRules)];
     figures[figStringIndex].figNr = figNr;
-    figCheckLine[seqNr] = fig[figNr].aresti;
+    figCheckLine = fig[figNr].aresti;
 
     // consolidate gaps for lines without rolls
     for (var i = 0; i < roll.length; i++) {
@@ -17683,7 +17789,7 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figure_chooser) {
                 rollInfo[rollnr].attitude = Attitude;
                 rollInfo[rollnr].negLoad = NegLoad;
                 // Make a space on the figCheckLine before every possible roll
-                figCheckLine[seqNr] += ' ';
+                figCheckLine += ' ';
                 // mark rolls in the top
                 if (rollTop) rollInfo[rollnr].rollTop = true;
                 if (roll[rollnr]) {
@@ -17804,16 +17910,12 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figure_chooser) {
                             var k = j - 1;
                             while (k > -1) {
                                 if (roll[rollnr][k].type != 'line') {
-                                    if ((roll[rollnr][j].extent / roll[rollnr][k].extent) > 0) {
-                                        figCheckLine[seqNr] += ';';
-                                    } else {
-                                        figCheckLine[seqNr] += ',';
-                                    }
+                                    figCheckLine += ((roll[rollnr][j].extent / roll[rollnr][k].extent) > 0) ? ';' : ',';
                                     break;
                                 }
                                 k--;
                             }
-                            figCheckLine[seqNr] += thisRoll.aresti;
+                            figCheckLine += thisRoll.aresti;
                         } else {
                             // disable non-Aresti rolls
                             if (!document.getElementById('nonArestiRolls').checked) {
@@ -18318,9 +18420,8 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figure_chooser) {
 
     // Replace double spaces or a space at the end on the figCheckLine
     // with the fake Aresti code for no roll 0.0.0.0
-    while (figCheckLine[seqNr].match(/(  )|( $)/)) {
-        figCheckLine[seqNr] = figCheckLine[seqNr].replace('  ', ' 0.0.0.0 ');
-        figCheckLine[seqNr] = figCheckLine[seqNr].replace(/ $/, ' 0.0.0.0');
+    while (/(  )|( $)/.test(figCheckLine)) {
+        figCheckLine = figCheckLine.replace('  ', ' 0.0.0.0 ').replace(/ $/, ' 0.0.0.0');
     }
 
     // The figure is complete. Create the final figure object for later
@@ -18341,7 +18442,7 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figure_chooser) {
     figures[figStringIndex].exitAtt = Attitude;
     figures[figStringIndex].exitDir = Direction;
     figures[figStringIndex].unknownFigureLetter = unknownFigureLetter;
-    figures[figStringIndex].checkLine = figCheckLine[seqNr];
+    figures[figStringIndex].checkLine = figCheckLine;
     figures[figStringIndex].superFamily = getSuperFamily(arestiNrs,
         (document.getElementById('class').value == 'glider') ?
             'glider' : document.getElementById('category').value);
@@ -18763,8 +18864,6 @@ function parseSequence() {
         formBDirection = 0,
         match = false;
 
-    // Clear the figCheckLine array
-    figCheckLine = [];
     // Clear the figureStart array
     figureStart = [];
 

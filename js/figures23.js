@@ -1,4 +1,4 @@
-﻿// figures19.js
+﻿// figures23.js
 
 // This file is part of OpenAero.
 
@@ -74,7 +74,7 @@ var figs = [
 //
 
 // Family 1.1. Single Lines
-"F1.1 Single Lines",
+"F1.1 singleLines",
 
 // 1.1.1.1 through 1.1.1.4 (was 1.1.1 through 1.1.4)
 "+_+ 1.1.1.1(2) ~_~",
@@ -157,7 +157,7 @@ var figs = [
 "-iz^- 1.1.11.4(10:0) ~''z~_~D''~",
 
 // Family 1.2. Two Lines
-"F1.2 Two Lines",
+"F1.2 twoLines",
 
 // 1.2.1.1-4
 "+_t&+ 1.2.1.1(13) ~d~_~Z~_~v~",
@@ -256,7 +256,7 @@ var figs = [
 "-$ikz^- 1.2.16.4(17:0) ~v~_~Z~_~z~~",
 
 // Family 1.3. Three lines
-"F1.3 Three Lines",
+"F1.3 threeLines",
 
 // 1.3.1.1-4
 "+_w(&)_- 1.3.1.1(22:0) ~d''_''~~Z~_~Z~~_~d~",
@@ -359,7 +359,7 @@ var figs = [
 //
 
 // Family 2.1. 90 degree turns
-"F2.1 90 degree Turns",
+"F2.1 90degreeTurns",
 
 // 2.1.1.1-2 (90 degree turn, no roll)
 // can be written as j or 1j
@@ -381,7 +381,7 @@ var figs = [
 "-1jo1- 2.1.3.4(16:22) ~''j11''~",
 
 // Family 2.2. 180 degree turns
-"F2.2 180 degree Turns",
+"F2.2 180degreeTurns",
 
 // 2.2.1.1-2 (180 degree turn, no roll)
 "+2j+ 2.2.1.1(4) ~j2~",
@@ -424,7 +424,7 @@ var figs = [
 "-2joi51+ 2.2.7.4(26:39) ~''jio251''~",
 
 // Family 2.3. 270 degree turns
-"F2.3 270 degree Turns",
+"F2.3 270degreeTurns",
 
 // 2.3.1.1-2: (270 degree turn, no roll)
 "+3j+ 2.3.1.1(5) ~''j3''~",
@@ -462,7 +462,7 @@ var figs = [
 "-3joi51+ 2.3.6.4(37:0) ~~jio351~~",
 
 // Family 2.4. 360 degree turns
-"F2.4 360 degree Turns",
+"F2.4 360degreeTurns",
 
 // 2.4.1.1-2
 "+4j+ 2.4.1.1(6) ~j4~",
@@ -516,7 +516,7 @@ var figs = [
 //
 
 // Family 3.3 Three Corners
-"F3 Combinations of Lines",
+"F3 combinationsOfLines",
 
 // 3.3.1.1-4
 "+dz- 3.3.1.1(9) ~d~v~d~",
@@ -551,7 +551,7 @@ var figs = [
 //
 
 // Family 5.2. Two Line Stall Turns
-"F5.2 Two line Stall Turns",
+"F5.2 twoLineStallTurns",
 
 // 5.2.1.1-4
 "+&h&+ 5.2.1.1(17) ~v~_~h~_''v~",
@@ -560,7 +560,7 @@ var figs = [
 "-&h&+ 5.2.1.4(22) ~V~_~H~_''v~",
 
 // Family 5.3. Three Line Stall Turns
-"F5.3 Three line Stall Turns",
+"F5.3 threeLineStallTurns",
 
 // 5.3.1.1-4
 "+_dh(&)&+ 5.3.1.1(18:0) ~d~_~d~_~h~_''v~",
@@ -587,7 +587,7 @@ var figs = [
 "-&hd(&)^+ 5.3.4.4(25:0) ~V~_~H~_''D~_~d~",
 
 // Family 5.4. Four Line Stall Turns
-"F5.4 Four line Stall Turns",
+"F5.4 fourLineStallTurns",
 
 // 5.4.1.1-4
 "+_dhd(&)(&)_+ 5.4.1.1(19:0) ~d~_~d~_~h~_''d~_~d~",
@@ -616,7 +616,7 @@ var figs = [
 //
 // Family 6. Tail Slides
 //
-"F6.2 Tail Slides",
+"F6.2 tailSlides",
 
 // Family 6.2. Two Line Tail Slides
 
@@ -638,7 +638,7 @@ var figs = [
 //
 
 // Family 7.2. Half Loops
-"F7.2 Half Loops",
+"F7.2 halfLoops",
 
 // 7.2.1.1-4
 "+_m_- 7.2.1.1(6) ~_m_~",
@@ -665,7 +665,7 @@ var figs = [
 "-^a^+ 7.2.4.4(8) ~_M_~",
 
 // Family 7.3. Three-Quarter Loops
-"F7.3 Three-Quarter Loops",
+"F7.3 threeQuarterLoops",
 
 // 7.3.1.1-4
 "+_g_- 7.3.1.1(16) ~d~~_''P~~_''d~",
@@ -692,7 +692,7 @@ var figs = [
 "-^ig^+ 7.3.4.4(15) ~d~~_''p~~_''d~",
 
 // Family 7.4. Whole Loops
-"F7.4 Whole Loops",
+"F7.4 wholeLoops",
 
 // 7.4.1.1-4
 "+o_+ 7.4.1.1(10) ~''o!_''~",
@@ -731,10 +731,9 @@ var figs = [
 "-iqq- 7.4.6.4(19:0) ~~d~d~d~d~d~d~d~d~~",
 
 // Family 7.4. (cont) Reversing Whole Loops
-// New for 2012 - coded by Wouter Liefting
 // coded as "ao" (Alternating O) when the reverse is after 3/4 loop,
 // and as "rao" (Rev Alternating O) when the reverse is after 1/4 loop.
-"F7.4 Reversing Whole Loops",
+"F7.4 reversingWholeLoops",
 
 // 7.4.7.1-4
 "+_ao(_)_- 7.4.7.1(11) ~_v=m!_V=_~",
@@ -786,7 +785,6 @@ var figs = [
 
 // PREVIOUS CODING KEPT FOR BACKWARD COMPATIBILITY
 // Family 7.4. (cont) Reversing Whole Loops
-// New for 2012 - coded by Wouter Liefting
 // coded as "or" when the reverse is after 3/4 loop,
 // and as "ro" when the reverse is after 1/4 loop.
 
@@ -839,9 +837,8 @@ var figs = [
 "-^iro(_)^+ 7.4.14.4(11) ~_V=m!_v=_~",
 
 // Family 7.5. Horizontal Ss
-// New for 2012 - coded by Wouter Liefting
 // coded as "ac" - for Alternating Cuban
-"F7.5 Horizontal \"S\"s",
+"F7.5 horizontalSs",
 
 // 7.5.1.1-4
 "+_ac(_)_+ 7.5.1.1(16) ~~~~_c'''_'''C_~~~~",
@@ -946,7 +943,7 @@ var figs = [
 
 
 // Family 7.5. (cont) Vertical Ss
-"F7.5 Vertical \"S\"s",
+"F7.5 verticalSs",
 
 // 7.5.9.1-4
 "+mm+ 7.5.9.1(12:0) ~~mM~~",
@@ -961,7 +958,7 @@ var figs = [
 "-imm^+ 7.5.10.4(10:0) ~~m_m~~",
 
 // Family 7.8. Horizontal 8s
-"F7.8 Horizontal \"8\"s",
+"F7.8 horizontal8s",
 
 // 7.8.1.1-4
 "+_cc(_)_+ 7.8.1.1(20) ~~~~_c''_''~P''_~~''d~~",
@@ -1012,7 +1009,7 @@ var figs = [
 "-^ircc(^)_- 7.8.8.4(20) ~~d''''_~~p''_''~c_~~~~",
 
 // Family 7.8. (cont) Horizontal Super 8s
-"F7.8 Horizontal Super \"8\"s",
+"F7.8 horizontalSuper8s",
 
 // 7.8.9.1-4
 "+_gg(_)_+ 7.8.9.1(23) ~~d''_''~P~''_''~p~~''_''D~~",
@@ -1063,7 +1060,7 @@ var figs = [
 "-^igg(^)^+ 7.8.16.4(24) ~~d''_''~p~''_''~p~~''_''d~~",
 
 // Family 7.8. (cont) Vertical 8s
-"F7.8 Vertical \"8\"s",
+"F7.8 vertical8s",
 
 // 7.8.17.1-4
 "+oo+ 7.8.17.1(22:0) ~mOm~",
@@ -1106,7 +1103,7 @@ var figs = [
 //
 
 // Family 8.4. Humpty Bumps
-"F8.4 Humpty Bumps",
+"F8.4 humptyBumps",
 
 // 8.4.1.1-4
 "+&b&+ 8.4.1.1(13) ~''v~''_''m/~''_~v''~",
@@ -1133,7 +1130,7 @@ var figs = [
 "-$ipb&+ 8.4.4.4(16) -~''v~''_''M/~''_~V''~",
 
 // Family 8.4. (cont) Diagonal Humpty Bumps
-"F8.4 Diagonal Humpty Bumps",
+"F8.4 diagonalHumptyBumps",
 
 // 8.4.5.1-4
 "+_bz_+ 8.4.5.1(13:0) ~~~d~''_''m~''_~~z~~~~",
@@ -1280,7 +1277,7 @@ var figs = [
 "-^izb^- 8.4.28.4(18:0) ~~~~z~''_''~M''_''~d''~",
 
 // Family 8.5. Half Cubans
-"F8.5 Half Cubans",
+"F8.5 halfCubans",
 
 // 8.5.1.1-4
 "+_rc_- 8.5.1.1(12) ~d~~''_~C_''~~~",
@@ -1331,7 +1328,7 @@ var figs = [
 "-^ic^+ 8.5.8.4(14) ~~~''_C'''_'~~D~",
 
 // Family 8.5. (cont) Vertical 5/8th Loops
-"F8.5 Vertical 5/8ths Loops",
+"F8.5 vertical58Loops",
 
 // 8.5.9.1-4
 "+_y&+ 8.5.9.1(12) ~d~''_''c~''_''~v~",
@@ -1430,7 +1427,7 @@ var figs = [
 "-$iryz^+ 8.5.24.4(20:0) ~~v~~_~C~_~Z~",
 
 // Family 8.6. P Loops
-'F8.6 "P" Loops',
+'F8.6 pLoops',
 
 // 8.6.1.1-4
 "+&rp(_)_+ 8.6.1.1(11) ~v''_''~p!__''~",
@@ -1481,11 +1478,10 @@ var figs = [
 "-^ip(~)&- 8.6.8.4(15) ~~_P!_~~_''v~",
 
 // Family 8.6. (cont) Reversing P Loops
-// New for 2012 - coded by Wouter Liefting
 // coded as follows (based on pre-2012 porpoise)
 // pp = 3/4 loop with reverse, line, 1/4 loop
 // rpp = 1/4 loop, line, 3/4 loop with reverse
-'F8.6 Reversing "P" Loops',
+'F8.6 reversingPLoops',
 
 // 8.6.9.1-4
 "+&rpp(_)_- 8.6.9.1(13) ~~~~v~_~m!_V=_~",
@@ -1535,8 +1531,8 @@ var figs = [
 "+^ipp&+ 8.6.16.3(15) ~_v=M~_~V~",
 "-^ipp&- 8.6.16.4(13) ~_V=m~_~v~",
 
-// Updated 2018. Added full roll elements
-'F8.6 "P" Loops w/ half rolls on top',
+// P loops with half rolls on top
+'F8.6 pLoopsHalfRollsOnTop',
 
 // 8.6.17.1-4
 "+&rp(^)_- 8.6.17.1(14) ~v'''_~'''p!__''~",
@@ -1587,7 +1583,7 @@ var figs = [
 "-^ip(^)&+ 8.6.24.4(15) ~~_P!_~'''_'''V~",
 
 // Family 8.7. Q Loops
-'F8.7 "Q" Loops',
+'F8.7 qLoops',
 
 // 8.7.1.1-4
 "+_rq(_)_+ 8.7.1.1(11) ~d''_''~r!__~~",
@@ -1638,12 +1634,11 @@ var figs = [
 "-^iq^- 8.7.8.4(17) ~~_R~~_''d~",
 
 // Family 8.8. Double bumps
-// New for 2012
 // bb = pull, pull
 // pbb = push, pull
 // bpb = pull, push
 // pbpb = push, push
-'F8.8 Double Humpty Bumps',
+'F8.8 doubleHumptyBumps',
 
 // 8.8.1.1-4
 "+&bb(&)&- 8.8.1.1(18) ~''v~'_'m/~~''_~m/''_~v''~",
@@ -1693,7 +1688,7 @@ var figs = [
 "+$ibb(&)&+ 8.8.8.3(19) ~''V~'_'m/~~''_~m/''_~v''~",
 "-$ipbpb(&)&- 8.8.8.4(25:0) -~''v~'_'M/~~''_~M/''_~V''~",
 
-// Double Humpty Bumps with first half loop large (since 2014)
+// Double Humpty Bumps with first half loop large
 "+&Bb(&)&-    8.8.1.1(18)	   ~''v~'_'m~~''_~m/''_~v''~",
 "-&pBpb(&)&+  8.8.1.2(25)	  -~''V~'_'M~~''_~M/''_~V''~",
 "+$ipBpb(&)&- 8.8.1.3(25)	   ~''V~'_'M~~''_~M/''_~V''~",
@@ -1734,7 +1729,7 @@ var figs = [
 "+$iBb(&)&+   8.8.8.3(19)	   ~''V~'_'m~~''_~m/''_~v''~",
 "-$ipBpb(&)&- 8.8.8.4(25)	  -~''v~'_'M~~''_~M/''_~V''~",
 
-// Double Humpty Bumps with second half loop large (since 2014)
+// Double Humpty Bumps with second half loop large
 "+&bB(&)&-    8.8.1.1(18)	   ~''v~'_'m/~~''_~m''_~v''~",
 "-&pbpB(&)&+  8.8.1.2(25)	  -~''V~'_'M/~~''_~M''_~V''~",
 "+$ipbpB(&)&- 8.8.1.3(25)	   ~''V~'_'M/~~''_~M''_~V''~",
@@ -1776,7 +1771,7 @@ var figs = [
 "-$ipbpB(&)&- 8.8.8.4(25)	  -~''v~'_'M/~~''_~M''_~V''~",
 
 // Family 8.10. Reversing 1.25 Loops
-'F8.10 Reversing 1 1/4 Loops',
+'F8.10 reversing114Loops',
 
 // 8.10.1.1-4
 "+_co&+ 8.10.1.1(19) ~~~_pM''_''V~",
@@ -1791,10 +1786,10 @@ var figs = [
 "-_ico&+ 8.10.2.4(18) ~~~_pM''_''v~",
 
 /* family 9 placeholder */
-'F9 Rolls and spins',
+'F9 rollsAndSpins',
 
 //############ family 0 figures - non FAI catalog ################
-'F0 non-Aresti catalog',
+'F0 nonArestiCatalog',
 
 // wingover
 "+_jw_+ 0.0(8) ~d''_''j2~_~d~",

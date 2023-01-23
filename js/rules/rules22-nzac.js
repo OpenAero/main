@@ -81,11 +81,6 @@ rules.push (
 "fspinrec-max=1",
 "more=NZAC Base",
 
-/***********************************************************************
- * 2019 NZAC rules as copied from 2018 CIVA rules **********************
- **********************************************************************/
- 
-
 //#######################################################################################
 //#
 //# Define Unlimited programmes.
@@ -97,7 +92,7 @@ rules.push (
 "[NZAC Unlimited Free Known]",
 "posnl=40",//assume no line judges
 "poslj=20",
-'reference="@A" -`````5,8.\'\'gf\'\' "@B" -,5ta``3f "@C" 6ac(22),3if,8 "@D" 4,3ifh6 "@E" -3joi3-',
+'reference="@A" 2,2fzb48- "@B" "|"4;3ifdh(4).5f "@C" 22ac(2f)3,34- "@D" ,5ta``3 "@E" .,24.pn("|"5f;3)2.-',
 
 "more=NZAC/IAC Unlimited Free Known",
 
@@ -653,7 +648,7 @@ rules.push (
 
 "figure-letters=ABCDE",
 
-    'reference="@A" ,4h3f "@B" ````6s.\'\'ik4,3- "@C" 24iac(6) "@D" 2pb``,3\'\' "@E" 24w,1',
+'reference="@A" `````+6fic24``````- "@B" 6sirp,32,f```~ "@C" ,8bb(``2)+` "@D" 2pn(,22) "@E" 4h2f',
 
 // what info should be filled out
 "infocheck=pilot;actype;acreg;positioning",
@@ -1017,7 +1012,7 @@ rules.push (
 
 "figure-letters=ABCDE",
 
-    'reference="@A" sirp2~~ "@B" 24t+ "@C" 2fic\'\'2- "@D" ,4pb "@E" 1j5-',
+'reference="@A" p(22) "@B" 4h8 "@C" m32 "@D" of "@E" 6a',
 
 // what info should be filled out
 "infocheck=pilot;actype;acreg;positioning",

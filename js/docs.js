@@ -34,6 +34,7 @@ function load () {
         var els = document.getElementsByClassName('noIOS');
         for (var i = 0; i < els.length; i++) els[i].classList.add('noDisplay');
     }
+    //fixAnchors();
 }
 
 // This is the service worker with the Cache-first network
@@ -52,7 +53,7 @@ if ("serviceWorker" in navigator) {
 	}
 }
 
-/*
+
 // fixAnchors fixes anchor handling as they do not work well in Cordova
 // iframe
 function fixAnchors () {
@@ -80,4 +81,4 @@ function fixAnchors () {
 		}
 	}
 } 
-*/
+

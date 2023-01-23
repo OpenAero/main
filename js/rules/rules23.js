@@ -293,6 +293,16 @@ var rules = [
 "fam8-name_fr=Famille 8",
 "fam9-name_fr=Famille 9",
 
+"fam1-name_de=Familie 1",
+"fam2-name_de=Familie 2",
+"fam3-name_de=Familie 3",
+"fam4-name_de=Familie 4",
+"fam5-name_de=Familie 5",
+"fam6-name_de=Familie 6",
+"fam7-name_de=Familie 7",
+"fam8-name_de=Familie 8",
+"fam9-name_de=Familie 9",
+
 "group-froll=^9\\.1\\.",
 "group-hroll=^9\\.2",
 "group-troll=^9\\.3",
@@ -351,7 +361,7 @@ var rules = [
 "conv-roll=^9\\.([1248])\\.=$1; ^9\\.(9|10)\\.([6-9]|10)=F; ^9\\.(9|10)=f; ^9\\.1[12]=s ; ^9\\.13=t ; ^0\\.=z",
 
 //replace rolls added to figure with single digit 1-8 for # of qtrs
-"conv-qtrs=^9\\.\\d+\\.\\d.([1-8])=$1; ^0\\.=0",
+"conv-qtrs= ^9.1[1|2].1.[4-8] = 0; ^9\\.\\d+\\.\\d+.([1-8])=$1; ^0\\.=0 ",
 
 // NF:1 - no flick on roll#1
 // NF:2 - no flick on roll#2

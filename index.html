@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <!--
   index.html
   This file is part of OpenAero.
@@ -121,11 +121,12 @@
     <script src="cordova.js" type="text/javascript"></script>
     <!-- interface languages -->
     <script src="js/languages/en.js" type="text/javascript"></script>
+    <script src="js/languages/de.js" type="text/javascript"></script>
     <script src="js/languages/fr.js" type="text/javascript"></script>
     <!-- logos -->
     <script src="js/logo.js" type="text/javascript"></script>
     <!-- figure definitions -->
-    <script src="js/figures19.js" type="text/javascript"></script>
+    <script src="js/figures23.js" type="text/javascript"></script>
     <!-- rules Worker -->
     <script src="js/rulesWorker.js" type="text/javascript"></script>
     <!-- sequence rules. Start with general and CIVA, then alphabetical -->
@@ -138,6 +139,7 @@
     <script src="js/rules/rules22-france.js" type="text/javascript"></script>
     <script src="js/rules/rules15-ga.js" type="text/javascript"></script>
     <script src="js/rules/rules23-iac.js" type="text/javascript"></script>
+    <script src="js/rules/rules23-imac.js" type="text/javascript"></script>
     <script src="js/rules/rules21-glider-iac.js" type="text/javascript"></script>
     <script src="js/rules/rules22-nzac.js" type="text/javascript"></script>
     <script src="js/rules/rules20-saa.js" type="text/javascript"></script>
@@ -1113,6 +1115,17 @@
             <!-- print options -->
             <div class="content3cols content" id="printOptions">
                 <div class="divider">
+                    <label class="justify">
+                        <span class="userText" id="t_formStyle"></span>
+                        <span id="formStyleSpan" class="form-group">
+                            <select id="formStyle">
+                                <option value="civa">CIVA</option>
+                                <option value="iac">IAC</option>
+                                <option value="imac">IMAC</option>
+                            </select>
+                            <i class="bar"></i>
+                        </span>
+                    </label>
                     <label>
                         <span class="userText" id="t_printSF"></span>
                         <input type="checkbox" id="printSF" class="material-switch-input" checked="checked">
@@ -1133,11 +1146,13 @@
                         <input type="checkbox" id="printNotesCopy" class="material-switch-input">
                         <span class="material-switch"></span>
                     </label>
-                    <label>
-                        <span class="userText" id="t_iacForms"></span>
-                        <input type="checkbox" id="iacForms" class="material-switch-input">
-                        <span class="material-switch"></span>
-                    </label>
+                    <!--
+                        <label>
+                            <span class="userText" id="t_iacForms"></span>
+                            <input type="checkbox" id="iacForms" class="material-switch-input">
+                            <span class="material-switch"></span>
+                        </label>
+                    -->
                     <label>
                         <span class="userText" id="t_blackWhite"></span>
                         <input type="checkbox" id="blackWhite" class="material-switch-input">
@@ -1148,7 +1163,7 @@
                         <input type="checkbox" id="inverseForms" class="material-switch-input">
                         <span class="material-switch"></span>
                     </label>
-                    <label>
+                    <label class="justify">
                         <span class="userText" id="t_maxScaling"></span>
                         <span id="maxScalingSpan" class="form-group">
                             <input type="number" step="1" min="100" value="300" id="maxScaling"><i class="bar"></i>
@@ -1532,7 +1547,7 @@
             <div id="proposalsSequenceSvgContainer">
                 <svg xmlns="http://www.w3.org/2000/svg" version="1.2" baseProfile="tiny" id="proposalsSequenceSvg"></svg>
             </div>
-            <pre class="userText content" id="proposals"></pre>
+            <pre class="content" id="proposals"></pre>
             <div class="userText content" id="proposalsTotalK"></div>
             <div class="userText content" id="t_proposalsIncomplete"></div>
             <div class="textButton userText" id="t_proposalsCreate"></div>

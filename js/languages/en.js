@@ -57,7 +57,6 @@ lang.en = {
 	'<img src="img/ios-appstore-badge.svg" width="200"></a>',
 'aboutUnknown' : 'Unable to determine Stable version. You are ' +
   'probably offline.',
-// changed 2020.1.1
 'aboutText' : '<div class="divider">' +
   '<p>This&nbsp;version:<strong>%s</strong> &nbsp; ' +
   'Stable&nbsp;version:<strong>%s</strong></p><p>%s</p>' +
@@ -218,7 +217,7 @@ lang.en = {
   '<strong>neg</strong>=negative line, <strong>rollText</strong>=roll ' +
   'font (e.g. 2x8).</p>',
 'dropFigureHere' : 'Drop Figure here',
-'editingFigure' : 'Edit figure ',
+'editingFigure' : 'Edit figure %s',
 'emailHeader' : 'Click the link below to open the sequence in OpenAero. ' +
   'Or you can copy the link and use "File -> Open sequence link" ' +
   'in your OpenAero app.', 
@@ -237,6 +236,42 @@ lang.en = {
 'figsInGrid' : 'Figs in grid',
 'figureAlreadyInQueue' : 'This figure is already in the queue',
 'figureEditor' : 'Figure editor',
+'figureGroups' :
+{
+  singleLines         : '1.1 Single Lines',
+  twoLines            : '1.2 Two Lines',
+  threeLines          : '1.3 Three Lines',
+  '90degreeTurns'     : '2.1 90 degree Turns',
+  '180degreeTurns'    : '2.2 180 degree Turns',
+  '270degreeTurns'    : '2.3 270 degree Turns',
+  '360degreeTurns'    : '2.4 360 degree Turns',
+  combinationsOfLines : '3 Combinations of Lines',
+  twoLineStallTurns   : '5.2 Two line Stall Turns',
+  threeLineStallTurns : '5.3 Three line Stall Turns',
+  fourLineStallTurns  : '5.4 Four line Stall Turns',
+  tailSlides          : '6.2 Tail Slides',
+  halfLoops           : '7.2 Half Loops',
+  threeQuarterLoops   : '7.3 Three-Quarter Loops',
+  wholeLoops          : '7.4 Whole Loops',
+  reversingWholeLoops : '7.4 Reversing Whole Loops',
+  horizontalSs        : '7.5 Horizontal "S"s',
+  verticalSs          : '7.5 Vertical "S"s',
+  horizontal8s        : '7.8 Horizontal "8"s',
+  horizontalSuper8s   : '7.8 Horizontal Super "8"s',
+  vertical8s          : '7.8 Vertical "8"s',
+  humptyBumps         : '8.4 Humpty Bumps',
+  diagonalHumptyBumps : '8.4 Diagonal Humpty Bumps',
+  halfCubans          : '8.5 Half Cubans',
+  vertical58Loops     : '8.5 Vertical 5/8ths Loops',
+  pLoops              : '8.6 "P" Loops',
+  reversingPLoops     : '8.6 Reversing "P" Loops',
+  pLoopsHalfRollsOnTop: '8.6 "P" Loops w/ half rolls on top',
+  qLoops              : '8.7 "Q" Loops',
+  doubleHumptyBumps   : '8.8 Double Humpty Bumps',
+  reversing114Loops   : '8.10 Reversing 1 1/4 Loops',
+  rollsAndSpins       : '9 Rolls and spins',
+  nonArestiCatalog    : '0 non-Aresti catalog'
+},
 'figureK' : 'Figure K',
 'figureLetterNotAllowed' : '(%s) Figure letter %s is not allowed',
 'figurePositioning' : 'Figure positioning',
@@ -258,6 +293,7 @@ lang.en = {
 'formGridSequenceInfo' : 'with sequence info',
 'formL' : 'Form L',
 'formR' : 'Form R',
+'formStyle' : 'Form style',
 'free' : 'Free',
 'freeKnownGuidancePower' : 'Free Known Power',
 'freeKnownGuidanceGlider' : 'Free Known Glider',
@@ -309,7 +345,7 @@ lang.en = {
 'harmony' : 'Harmony',
 'help' : 'Help',
 'hideIllegalFigures' : 'Hide illegal figs (Sequence info Rules)',
-    'iacForms': 'Forms in IAC style',
+ //   'iacForms': 'Forms in IAC style',
     'iacNoteDownwindEntry' : 'Note Downwind Entry',
 'iacNoteYAxisEntry' : 'Note Y Axis Entry',
 'illegalAtEnd' : 'Illegal figure at the end',
@@ -321,7 +357,6 @@ lang.en = {
 'imageWidth' : 'Width',
 'importRulesFile' : 'Import rules file',
 'insertions' : 'Insertions',
-// new 2020.1.1
 'installApp' : 'Install app',
 'installation' : 'Installation',
 'installed' : '<p>OpenAero has now been installed ' +
@@ -374,7 +409,6 @@ lang.en = {
 'logo' : 'Logo',
 'logoChooserCancel' : 'Cancel',
 'logoChooserTitle' : 'Choose logo',
-// new 2020.1
 'logoFileTooLarge' : 'Logo file is too large. Please limit file size ' +
 	'to 1 MB.',
 'manual' : 'Manual',
@@ -427,7 +461,6 @@ lang.en = {
   'ones following may be drawn differently in OLAN and OpenAero!</font> ' +
   'Please check correct direction.<br>' +
   'This message will not be shown for this sequence again.',
-// changed 2020.1
 'oldBrowser' : 'Your browser is not capable of running OpenAero.<br>',
 'openaeroLanguage' : 'OpenAero language',
 'openQueueFile' : 'Open queue file',
@@ -464,7 +497,6 @@ lang.en = {
 'print' : 'Print',
 'printCheck' : 'Sequence check result',
 'printDialog' : 'Print options',
-// changed 2020.1.1
 'printExplain' : 'You can set the options for printing below.<br>' +
   'To <i>save</i> your forms as PDF, click <strong>Print</strong> and ' +
   'then choose <i>destination</i> <strong>Save as PDF</strong> in the ' +
@@ -487,7 +519,6 @@ lang.en = {
 'printMultiWait' : 'Printing %s sequences.<br>This may ' +
     'take some time. Please wait...',
 'printNotes': 'Notes (top of pages)',
-// new 2020.1.5
     'printPageSet': 'Page set',
     'printPageSetHidesFormSelectors': 'When "Page set" is ' +
     'active, other form selectors are hidden. See manual for codes.',
@@ -572,7 +603,6 @@ lang.en = {
   'is not a valid rules file? Please refer to ' +
   '<a href="http://code.google.com/p/open-aero/wiki/Developers#Creating_rule_checking_files" '+
   'target="_blank">Creating rule checking files</a> for more information.',
-// changed 2020.1.1
 'runFromFile' : 'It seems you are running OpenAero directly from ' +
   'a file. As of version 1.2.3 (february 2013) this is no longer ' +
   'recommended as some functions will be unavailable.<br />' +
@@ -684,7 +714,6 @@ lang.en = {
   'changelog.txt</a> if interested)</li>' +
   '</ul>',
 'view' : 'View',
-// new 2020.1.1
 'warningChrome' : '<p><i class="material-icons" style="color:red">warning</i> ' +
 	'You are using the Chrome app. This will no longer ' +
 	'be supported by Google in the near future.</p>' +

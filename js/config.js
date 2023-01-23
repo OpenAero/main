@@ -40,7 +40,7 @@ This file is part of OpenAero.
  A new x should be used for versions that create sequences not
  fully backward compatible with the previous version
 */
-const version = '2023.1.1';
+const version = '2023.3.1';
 /* versionNew is an object that contains version update information
    The structure is {vvv : [[ttt, n], ...], ...} , where
    vvv = version number
@@ -48,6 +48,19 @@ const version = '2023.1.1';
    n   = importance (higher = more important)
 */
 const versionNew = {
+  '2023.3.1': [
+    ['Added IMAC forms, rules and sequences for 2023', 4],
+    ['Added German language for interface', 3]
+  ],
+  '2023.2.1': [
+    ['Updated NZAC rules for 2022', 3]
+  ],
+    '2023.1.3': [
+        ['Added 2023 CIVA Power and Glider rules and sequences', 4],
+        ['Added 2023 IAC sequences, rules and L&R forms', 3],
+        ['Added 2023 France sequences', 3],
+        ['Added indication and explanation for optimal sequence size (except on phone layout)', 4]
+    ],
     '2022.2.5': [
         ['Added France sequences for 2022', 3],
         [`Added printing of a sequence card/QR code combination.
@@ -365,8 +378,8 @@ const sequenceXMLlabels = [
   'oa_version',
   'default_view',
   'lock_sequence',
-  'pilot_id',	// Ajout Modif GG 2017
-  'flight_nb'	// Ajout Modif GG 2017
+  'pilot_id',
+  'flight_nb'
   ];
 
 /**********************************************************************
@@ -452,8 +465,8 @@ const separateMargin = 4;
 const presentFileError = false;
 // show mini Form A on Form B and C
 var miniFormA = true;
-// define whether to draw IAC style forms by default
-var iacForms = false;
+// define default form style (CIVA, IAC or IMAC)
+var formStyle = 'CIVA';
 // define default pattern for figure images saved in ZIP
 var zipImageFilenamePattern = '%location %category %program %pilot Form %form_fig_%figure';
 // define which settings will be saved in localStorage and sequence XML
@@ -483,7 +496,7 @@ const loadSettings = [
 // define default language
 const defaultLanguage = 'en';
 // define language object
-var lang = [];
+const lang = {};
 // entryOptions are in reverse order of displayed
 // They are also hardcoded in several locations in main.js!
 const entryOptions = {
@@ -506,7 +519,7 @@ var rollFontSize = 20;
 const rollFont = {'small': 15, 'medium': 20, 'large': 25};
 
 // styleSave is used for restoring after change by user
-var styleSave = [];
+const styleSave = {};
 
 // style holds the style objects
 // !!! don't use 'entry' or 'exit', they are reserved !!!
@@ -577,6 +590,12 @@ const style = {
   'formATextSmall' : 'font-family: verdana, Helvetica, Sans; font-size: 10px; fill: black;',
   'formAText' : 'font-family: verdana, Helvetica, Sans; font-size: 12px; fill: black;',
   'formATextBold' : 'font-family: verdana, Helvetica, Sans; font-size: 12px; font-weight: bold; fill: black;',
+  'formAText8px' : 'font-family: verdana, Helvetica, Sans; font-size: 8px; fill: black;',
+  'formAText9px' : 'font-family: verdana, Helvetica, Sans; font-size: 9px; fill: black;',
+  'formAText10px' : 'font-family: verdana, Helvetica, Sans; font-size: 10px; fill: black;',
+  'formAText11px' : 'font-family: verdana, Helvetica, Sans; font-size: 11px; fill: black;',
+  'formAText12px' : 'font-family: verdana, Helvetica, Sans; font-size: 12px; fill: black;',
+  'formAText13px' : 'font-family: verdana, Helvetica, Sans; font-size: 13px; fill: black;',
   'formATextBold8px' : 'font-family: verdana, Helvetica, Sans; font-size: 8px; font-weight: bold; fill: black;',
   'formATextBold9px' : 'font-family: verdana, Helvetica, Sans; font-size: 9px; font-weight: bold; fill: black;',
   'formATextBold10px' : 'font-family: verdana, Helvetica, Sans; font-size: 10px; font-weight: bold; fill: black;',
@@ -587,6 +606,8 @@ const style = {
   'formATextLarge' : 'font-family: verdana, Helvetica, Sans; font-size: 18px; fill: black;',
   'formATextXL' : 'font-family: verdana, Helvetica, Sans; font-size: 21px; fill: black;',
   'formATextHuge' : 'font-family: verdana, Helvetica, Sans; font-size: 40px; fill: black;',
+  'formATextBoldLarge' : 'font-family: verdana, Helvetica, Sans; font-size: 18px; font-weight: bold; fill: black;',
+  'formATextBoldXXL' : 'font-family: verdana, Helvetica, Sans; font-size: 28px; font-weight: bold; fill: black;',
   'formATextBoldHuge' : 'font-family: verdana, Helvetica, Sans; font-size: 40px; font-weight: bold; fill: black;',
   'formLine' : 'stroke: black; stroke-width: 1px; fill: none;',
     'formLineBold': 'stroke: black; stroke-width: 4px; fill: none;',
@@ -644,7 +665,7 @@ superFamilies.intermediate = superFamilies.advanced;
 superFamilies.glider = superFamilies.advanced;
 
 // available rolls
-var rollTypes = [
+const rollTypes = [
   ':none',
   '4:1/4',
   '2:1/2',
@@ -1166,7 +1187,7 @@ const iocCountries = {"AD":"AND","AE":"UAE","AF":"AFG","AG":"ANT",
   "VU":"VAN","WS":"SAM","YE":"YEM","ZA":"RSA",
   "ZM":"ZAM","ZW":"ZIM"};
 // also for key and value reversed
-var iocCountriesReverse = []; 
+const iocCountriesReverse = {}; 
 for (key in iocCountries) iocCountriesReverse[iocCountries[key]] = key;
 
 // define iso countries for flags
@@ -1213,5 +1234,5 @@ const isoCountries = {"AD":"AND","AE":"ARE","AF":"AFG","AG":"ATG",
   "VU":"VUT","WF":"WLF","WS":"WSM","YE":"YEM","YT":"MYT","ZA":"ZAF",
   "ZM":"ZMB","ZW":"ZWE"};
 // also for key and value reversed
-var isoCountriesReverse = []; 
+const isoCountriesReverse = {}; 
 for (key in isoCountries) isoCountriesReverse[isoCountries[key]] = key;

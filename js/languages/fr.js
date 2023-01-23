@@ -222,8 +222,7 @@ lang.fr = {
   '<strong>neg</strong>=ligne negative, <strong>rollText</strong>=texte' +
   ' de la rotation (e.g. 2x8).</p>',
 'dropFigureHere' : 'Placez une figure ici',
-'editingFigure' : 'Edition figure',
-// updated 2018.1.9
+'editingFigure' : 'Edition figure %s',
 'emailHeader' : 'Cliquez sur le lien ci-dessous pour ouvrir le programme avec OpenAero. ' +
   'ou copiez le lien et utilisez "Fichier -> Ouvrir le lien vers un programme" ' +
   'du menu d\'OpenAero.',

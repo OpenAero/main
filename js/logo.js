@@ -38,6 +38,7 @@ var rulesLogo = {
     'france': 'FFAvoltige',
     'german-aerobatics': 'GermanAerobatics',
     'iac': 'IAC',
+    'imac': 'IMAC',
     'nzac': 'NZAC',
     'aac': 'AAC',
     'sac': 'SAC',

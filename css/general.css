@@ -107,6 +107,9 @@ html, body {
 img.menuIcon {
 	opacity: 0.54;
 }
+button {
+  border: 0;
+}
 .navbutton {
   width: 24px;
   height: 24px;
@@ -547,7 +550,10 @@ fieldset {
   left: 0;
   width: 100%;
 }
-
+.justify {
+  display: flex !important;
+  justify-content: space-between;
+}
 /*
 .button {
   position: relative;
@@ -865,6 +871,28 @@ html.framed h1 {
 }
 html.framed .docs table {
 	margin: 0;
+}
+@media print {
+  .docs .documentation {
+    background: transparent;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    border-bottom: 1px solid lightgrey;
+    padding: 0;
+    orphans: 5;
+  }
+  .docs .newPage {
+    page-break-before: always;
+  }
+  .docs img {
+    page-break-before: auto;
+    page-break-after: auto; 
+    page-break-inside: avoid;
+    position: relative;
+  }
+  .docs h3 {
+    page-break-after: avoid;
+  }
 }
 html.framed ol {
 	padding: 24px;
@@ -1251,7 +1279,7 @@ option.used {
 }
 #activeContest, #activeRules {
 	position: absolute;
-	left: 60px;
+	left: 56px;
 	right: 28px;
 }
 #chooseLogo div {
@@ -1450,8 +1478,8 @@ option.used {
 }
 .pilotCardLayout {
   display: inline-block;
-  width: 70px;
-  height: 98px;
+  width: 66px;
+  height: 90px;
   margin: 4px -6px 4px -6px !important;
   padding: 4px !important;
   overflow-y: hidden;
@@ -1474,43 +1502,43 @@ option.used {
 .pilotCard, .pilotCardQR {
     display: inline-block;
     position: relative;
-    width: 32px;
-    height: 48px;
+    width: 30px;
+    height: 44px;
 }
 #pilotCardPercent .pilotCard {
-	width: 70px;
-	height: 100px;
+	width: 64px;
+	height: 91px;
 }
 #pilotCard2 .pilotCard {
-	width: 70px;
-	height: 48px;
+	width: 64px;
+	height: 44px;
 }
 #pilotCard4 .pilotCard,
 #pilotCard2QR .pilotCard,
 #pilotCard2QR .pilotCardQR {
-    width: 32px;
-    height: 48px;
+    width: 30px;
+    height: 44px;
 }
 .pilotCard img {
 	position: absolute;
 	transition: all 0.3s;
 }
 #pilotCardPercent .pilotCard img {
-	height: 60px;
+	height: 55px;
 }
 #pilotCard2 .pilotCard img {
-	width: 48px;
-	height: 70px;
-	transform-origin: 35px 35px;
+	width: 44px;
+	height: 64px;
+	transform-origin: 32px 32px;
 	transform: rotate(90deg);
 }
 #pilotCard4 .pilotCard img {
-	width: 35px;
-	height: 48px;
+	width: 32px;
+	height: 44px;
 }
 #pilotCard2QR .pilotCard img {
-    width: 35px;
-    height: 48px;
+    width: 32px;
+    height: 44px;
 }
 .pilotCardLetter {
 	position: absolute;
@@ -1524,7 +1552,7 @@ option.used {
 }
 #pilotCard2.formL img,
 #pilotCard2.formRL div:last-of-type img {
-    transform: rotate(90deg) rotate3d(0, 1, 0, 180deg) translateX(23px);
+    transform: rotate(90deg) rotate3d(0, 1, 0, 180deg) translateX(21px);
 }
 .formL img,
 #pilotCard4.formRL div:nth-of-type(even) img,
@@ -1564,11 +1592,8 @@ option.used {
 #printDialog .expansion-panel {
 	line-height: 32px;
 }
-#maxScalingSpan {
-  float: right;
-  display: inline-block;
-}
-#maxScaling {
+#maxScaling, #formStyle {
+  margin-top: -4px;
   width: 4em;
   text-align: right;
 }
@@ -1607,7 +1632,8 @@ option.used {
   line-height: 0.6;
   overflow: hidden !important;
 }
-#logoFileForm{
+#logoFileForm label {
+  transform: translateY(-6px);
 }
 #printMultiFileForm {
 	margin-top: 8px;
@@ -1630,6 +1656,7 @@ option.used {
 }
 #t_printSavePdf {
 	margin-left: 4px;
+    border: 0; /* this is a <button> element. Make sure it doesn't have a border */
 }
 /* end print dialog */
 
@@ -1708,7 +1735,8 @@ option.used {
   border: 0;
 }
 #helpTitle {
-	position: relative;
+	position: sticky;
+    top: 0;
 	left: 0;
 	right: 0;
 }
@@ -1746,10 +1774,8 @@ option.used {
   background-color: white;
   -webkit-touch-callout: text;
   -webkit-user-select: text;
-  -khtml-user-select: text;
   -moz-user-select: text;
   -ms-user-select: text;
-  -o-user-select: text;
   user-select: text;
   overflow: auto;
 	left: 0;
@@ -2149,6 +2175,7 @@ t_addFigureText {
 #figureInfo .boxTitle {
   min-height: 32px;
   background-color: #673ab7;
+  padding: 8px;
   margin-bottom: 6px;
 }
 #figureInfo.section select {
@@ -2213,7 +2240,7 @@ t_addFigureText {
   padding: 0;
 }
 #figureHeader {
-  font-size: 18px;
+  font-size: 17px;
   vertical-align: middle;
 }
 /* roll selector */
