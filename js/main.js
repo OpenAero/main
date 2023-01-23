@@ -15720,15 +15720,17 @@ function buildForm(print) {
                         }
                     }
 
-                    // Add chosen logo image or IMAC default
-                    if (activeForm === 'A') {
-                        var logoSvg = buildLogoSvg(logoImg || logoImages.IMAC, 550, 0, 240, 110,
-                            document.getElementById('blackWhite').checked);
-                    } else {
-                        var logoSvg = buildLogoSvg(logoImg || logoImages.IMAC, 610, 0, 190, 100,
-                            document.getElementById('blackWhite').checked);
+                    // Add chosen logo image
+                    if (logoImg) {
+                        if (activeForm === 'A') {
+                            var logoSvg = buildLogoSvg(logoImg, 550, 0, 240, 110,
+                                document.getElementById('blackWhite').checked);
+                        } else {
+                            var logoSvg = buildLogoSvg(logoImg, 610, 0, 190, 100,
+                                document.getElementById('blackWhite').checked);
+                        }
+                        mySVG.appendChild(logoSvg);
                     }
-                    mySVG.appendChild(logoSvg);
 
                     // Add form header
                     buildHeader(mySVG);

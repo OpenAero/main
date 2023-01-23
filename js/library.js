@@ -25,42 +25,24 @@
 // The Value is an OpenAero sequence link (use "File->Save as link" in OpenAero to generate)
 
 var library = {
-    '2023 CIVA Unl Free Known':
-        'https://openaero.net/?s=hFVubGltaXRlZIdwb3dlcmVkiEZyZWUgS25vd26JQ0lWQYo0MIswjSJAQSIgLDNpZmgzNKd-ICJAQiIgMjQnLDZtNmYsuCAiQEMiIC0sZiwyp2lyZGIsNDguJytgICJARCIgJyyyLmssM2lmLDX_oCJARSIgLeBgaXMsNC4naWJwYigsMzIupyksOCs-j0NJVkGQMjAyMy4xkWdyaWQ6NQ',
+    '2023 CIVA Unl Free Known':'https://openaero.net/?s=hFVubGltaXRlZIdwb3dlcmVkiEZyZWUgS25vd26JQ0lWQYo0MIswjSJAQSIgLDNpZmgzNKd-ICJAQiIgMjQnLDZtNmYsuCAiQEMiIC0sZiwyp2lyZGIsNDguJytgICJARCIgJyyyLmssM2lmLDX_oCJARSIgLeBgaXMsNC4naWJwYigsMzIupyksOCs-j0NJVkGQMjAyMy4xkWdyaWQ6NQ',
+    '2023 CIVA Adv Free Known':'https://openaero.net/?s=hEFkdmFuY2Vkh3Bvd2VyZWSIRnJlZSBLbm93bolDSVZBijMwizCNIkBBIiAtM2gzZiAiQEIiIDI0YTMsMzQgIkBDIiA2Y2YgIkBEIiAxbWY7InwiNDggIkBFIiAyNOIoMyk4LY9DSVZBkDIwMjMuMZFncmlkOjU',
+    '2023 CIVA Int Free Known':'https://openaero.net/?s=hEludGVybWVkaWF0ZYdwb3dlcmVkiEZyZWUgS25vd26JQ0lWQYozMIswjSJAQSIg4OA2cy5pazI0LSAiQEIiIGRoOCAiQEMiIP4sNHBiICJARCIgfjMsNGljLjEr_6AiQEUiIHFvj0NJVkGQMjAyMy4xkWdyaWQ6NQ',
+    '2023 CIVA-Glider Unl Free Known':'https://openaero.net/?s=hFVubGltaXRlZIYyMDIzh2dsaWRlcohGcmVlIEtub3duiUNJVkGKMTWLMI0iQEEiIDQsM2lmLSAiQEIiIG8yNC0gIkBDIiAtaDQtICJARCIgLSw0aXRhICJARSIgLSwyeS2PQ0lWQZAyMDIzLjGRZ3JpZDo1',
+    '2023 CIVA-Glider Adv Free Known':'https://openaero.net/?s=hEFkdmFuY2Vkh2dsaWRlcohGcmVlIEtub3duiUNJVkGKMTWLMI0iQEEiIDQ4LDIgIkBCIiBtMjQgIkBDIiBvtCAiQEQiIDFqMSAiQEUiIC0sNGlycC1-j0NJVkGQMjAyMy4xkWdyaWQ6NQ',
 
-    '2023 CIVA Adv Free Known':
-        'https://openaero.net/?s=hEFkdmFuY2Vkh3Bvd2VyZWSIRnJlZSBLbm93bolDSVZBijMwizCNIkBBIiAtM2gzZiAiQEIiIDI0YTMsMzQgIkBDIiA2Y2YgIkBEIiAxbWY7InwiNDggIkBFIiAyNOIoMyk4LY9DSVZBkDIwMjMuMZFncmlkOjU',
+    '2023 AAC Graduate Known':'https://openaero.net/?s=gUFVU4RHcmFkdWF0ZYVHcmFkdWF0ZYZQZXJwZXR1YWyHcG93ZXJlZIhLbm93bolBQUOKMTCNbyBoICgtNyw4KSDgYCtjLjKnK-BgIOArZCvgIGAraXYuJzZzLitgICgtMjAsMCkgbTIgKDYsMTIpIGogM2ogMY9BQUOQMjAyMy4yLjGRQg',   
+    '2023 AAC Sportsman Known': 'https://openaero.net/?s=gUFVU4RTcG9ydHNtYW6FQXVzdHJhbGlhhjIwMjOHcG93ZXJlZIhLbm93bolBQUOKMzCLMI3jKDIpMivg4CAoMywwKSBoICgtNiw3KSAyZyAoNiw2KSBpdi42cy4gKC00LDApIGIgKC0yLLEpIGsyNCAoNCwwKSBtMiAoLTIsMTYpIDNqIGogso9BQUOQMjAyMy4yLjGRQg',
+    
+    '2023 IMAC Basic Known': 'https://openaero.net/?s=hEJhc2ljhjIwMjOHcG93ZXJlZIhLbm93bolJTUFDjTEgMnQgKDAssSkgYiAoLTMsMCkgMnJkYiBbLTMsOV0gbyAoMiwwKSBori4nICgtOCwxKSCup3muLiwyLicgY66uJywyYCAoLTMsMSkgbTIgKDE4LDApIGl2NnOuJ49JTUFDkDIwMjMuMy4xkUI',
+    '2023 IMAC Sportsman Known':'https://openaero.net/?s=hFNwb3J0c21hboYyMDIzh3Bvd2VyZWSIS25vd26JSU1BQ4wyMDIzIElNQUMgU3BvcnRzbWFuIEtub3dujTF5ICgzLDApIGZtLDI0ICgtMjYsLTMpIGl2MjSuri4gKDEzLDIpIDJyYzEgWzYsMTZdIG8xIGg4IP6nMa4nYmAzrq6nICgyLDApIGRmICg0LDApIGl2NnOuriAoLTQsMCkgsmFjKDI0KS2PSU1BQ5AyMDIzLjMuMZFC',
+    '2023 IMAC Intermediate Known':'https://openaero.net/?s=hEludGVybWVkaWF0ZYYyMDIzh3Bvd2VyZWSIS25vd26JSU1BQ4wyMDIzIElNQUMgSW50ZXJtZWRpYXRljS1pZmlhYzI0LDItIC0uLLQup2iuLi0gKC0yLDApIP4tb7ItIH6tM3BiMjQuJyD-NC5rrjanIHonLDQsOC4gKDQsMCkgaXY3cywzrq4uLSCtLS4nMzIuenSuLierfiAoLTIsMCkgZmMuJzQ4LqcgMWoxj0lNQUOQMjAyMy4zLjGRQg',
+    '2023 IMAC Intermediate Alt-Known':'https://openaero.net/?s=hEludGVybWVkaWF0ZYYyMDIzh3Bvd2VyZWSIS25vd26JSU1BQ4wyMDIzIElNQUMgSW50ZXJtZWRpYXRlIEFsdI0taWZpYWMyNCwyLSAtLiy0Lqdori4tICgtMiwwKSD-LW-yLSB-rTNwYjI0Licg_jQua642pyB6Jyw0LDguICg0LDApIGl2N3MsM66uLi0grS0uJzMyLnp0ri4nq34gKC0yLDApIGZjLic0OK4upyAoOCwtMSkgYW8yj0lNQUOQMjAyMy4zLjGRQg',
+    '2023 IMAC Advanced Known':'https://openaero.net/?s=hEFkdmFuY2VkhjIwMjOHcG93ZXJlZIhLbm93bolJTUFDjDIwMjMgSU1BQyBBZHZhbmNlZCBLbm93bo00OHJxNmlmILJwNSAoLTEsMSkg_qsrM2ozqyt-ICgyLDEpICwzZiw4aDGuri0gMiUgLW-0LSAoLTQsMCkgL_6trS6nMmYsMjQuJ3p0rq4uJzNpZi0gKDAsMikgMSUgLac0OKdCYiiuLic1ZicpLqcxpy0-ICixLDApIK1pduDgNmlzLDI0rq6uJyAoLbEsMSkgLGY7MnJjuCv-ICgwLDE4KSBy8DYr_o9JTUFDkDIwMjMuMy4xkUI',
+    '2023 IMAC Advanced Alt-Known':'https://openaero.net/?s=hEFkdmFuY2VkhjIwMjOHcG93ZXJlZIhBbHQtS25vd26JSU1BQ4wyMDIzIElNQUMgQWR2YW5jZWQgQWx0jTQ4cnE2aWYgsnA1ICgtNCwzKSB-LDNwYiwyNCAoNiwwKSAsM2YsOGgxrq4tIDIlIC1vtC0gKC00LDApIC_-ra0upzJmLDI0Lid6dK6uLiczaWYtICgwLDQpIDElIC0uNDinQmIori4nNWZgKa4nMeBgLeBgPiAoMTMsMCkgrWl24OA2aXMsMjSuriAoLbEsMSkgLGY7MnJjuCv-ICgwLDE4KSBy8DYr_o9JTUFDkDIwMjMuMy4xkUI',
+    '2023 IMAC Unlimited Known':'https://openaero.net/?s=hFVubGltaXRlZIYyMDIzh3Bvd2VyZWSIS25vd26JSU1BQ40tNGoxLT4gKC0yLDApIC3gYCw3aWYsNHmuLqcxJy0gLW8zNCwzaWYtIC0uNTSuJ3BicGIo4GA5rq6uJykuNWlm4Ksg4OA3cycsM66uJ2lrei4nLDJgLDI0Lv4gKDIsMCkgsSUg4DZmYTQ4LDEt4CAoLTEsNCkgNCUg4C1gLLRgcmM1LDVmK-DgYCAoLTUsMTUpIODg4OArYGlmLDLgemInsi3-IC0sM2lmLDhopzauLictIC1ycCgsMjQpLDJmLDKPSU1BQ5AyMDIzLjMuMZFC',
+    '2023 IMAC Unlimited Alt-Known':'https://openaero.net/?s=hFVubGltaXRlZIYyMDIzh3Bvd2VyZWSIQWx0LUtub3duiUlNQUONMzQsM2lhYygxKSw0OC0gKC0yLDApIC3gYCw3aWYsNHmuLqcxJy0gLW8zNCwzaWYtIC0nNTSncGJwQijgOa4uKS41aWZgqyDg4DdzJywzrq4naWt6LicsMmAsMjQu_iAoMiwwKSCxJSDgNmZhNDgsMS3gICgtMSw0KSA0JSDgLWAstGByYzUsNWYr4OBgICgtNSwxNSkg4ODg4CtgaWYsMuB6YieyLf4gLSwzaWYsOGinNq4uJy0gLXJwKCwyNCksMmYsMo9JTUFDkDIwMjMuMy4xkUI',
 
-    '2023 CIVA Int Free Known':
-        'https://openaero.net/?s=hEludGVybWVkaWF0ZYdwb3dlcmVkiEZyZWUgS25vd26JQ0lWQYozMIswjSJAQSIg4OA2cy5pazI0LSAiQEIiIGRoOCAiQEMiIP4sNHBiICJARCIgfjMsNGljLjEr_6AiQEUiIHFvj0NJVkGQMjAyMy4xkWdyaWQ6NQ',
-
-    '2023 CIVA-Glider Unl Free Known':
-        'https://openaero.net/?s=hFVubGltaXRlZIYyMDIzh2dsaWRlcohGcmVlIEtub3duiUNJVkGKMTWLMI0iQEEiIDQsM2lmLSAiQEIiIG8yNC0gIkBDIiAtaDQtICJARCIgLSw0aXRhICJARSIgLSwyeS2PQ0lWQZAyMDIzLjGRZ3JpZDo1',
-
-    '2023 CIVA-Glider Adv Free Known':
-        'https://openaero.net/?s=hEFkdmFuY2Vkh2dsaWRlcohGcmVlIEtub3duiUNJVkGKMTWLMI0iQEEiIDQ4LDIgIkBCIiBtMjQgIkBDIiBvtCAiQEQiIDFqMSAiQEUiIC0sNGlycC1-j0NJVkGQMjAyMy4xkWdyaWQ6NQ',
-
-    '2023 IMAC Basic Known':
-        'https://openaero.net/?s=hEJhc2ljhjIwMjOHcG93ZXJlZIhLbm93bolJTUFDjTEgMnQgKDAssSkgYiAoLTMsMCkgMnJkYiBbLTMsOV0gbyAoMiwwKSBori4nICgtOCwxKSCup3muLiwyLicgY66uJywyYCAoLTMsMSkgbTIgKDE4LDApIGl2NnOuJ5AyMDIzLjIuMZFC',
-
-    '2023 IMAC Sportsman Known':
-        'https://openaero.net/?s=hFNwb3J0c21hbodwb3dlcmVkiEtub3duiUlNQUOMMjAyMyBJTUFDIFNwb3J0c21hbiBLbm93bo0xeSAoMywwKSBmbSwyNCAoLTI2LC0zKSBpdjI0rq4uICgxMywyKSAycmMxIFs2LDE2XSBvMSBoOCD-pzGuJ2JgM66upyAoMiwwKSBkZiAoNCwwKSBpdjZzrq4gKC00LDApILJhYygyNCktkDIwMjMuMi4xkUI',
-
-    '2023 IMAC Intermediate Known':
-        'https://openaero.net/?s=hEludGVybWVkaWF0ZYdwb3dlcmVkiEtub3duiUlNQUONLWlmaWFjMjQsMi0gLS4stC6naK4uLSAoLTIsMCkg_i1vsi0gfq0zcGIyNC4nIP40LmuuNqcgeicsNCw4LiAoNCwwKSBpdjdzLDOuri4tIK0tLiczMi56dK4uJ6t-ICgtMiwwKSBmYy4nNDgupyAxajGQMjAyMy4yLjGRQg',
-
-    '2023 IMAC Advanced Known':
-        'https://openaero.net/?s=hEFkdmFuY2Vkh3Bvd2VyZWSIS25vd26JSU1BQ400OHJxNmlmILJwNSAoLTEsMSkg_qsrM2ozqyt-ICgyLDEpICwzZiw4aDGuri0gMiUgLW-0LSAoLTQsMCkgL_6trS6nMmYsMjQuJ3p0rq4uJzNpZi0gKDAsMikgMSUgLac0OKdCYiiuLic1ZicpLqcxpy0-ICixLDApIK1pduDgNmlzLDI0rq6uJyAoLbEsMSkgLGY7MnJjuCv-ICgwLDE4KSBy8DYr_pAyMDIzLjIuMZFC',
-
-    '2023 IMAC Advanced Alternate Known':
-        'https://openaero.net/?s=hEFkdmFuY2Vkh3Bvd2VyZWSIS25vd26JSU1BQ400OHJxNmlmILJwNSAoLTQsMykgfiwzcGIsMjQgKDYsMCkgLDNmLDhoMa6uLSAyJSAtb7QtICgtNCwwKSAv_q2tLqcyZiwyNC4nenSuri4nM2lmLSAoMCw0KSAxJSAtLjQ4p0JiKK4uJzVmYCmuJzHgYC3gYD4gKDEzLDApIK1pduDgNmlzLDI0rq4gKC2xLDEpICxmOzJyY7gr_iAoMCwxOCkgcvA2K_6QMjAyMy4yLjGRQg',
-
-    '2023 IMAC Unlimited Known':
-        'https://openaero.net/?s=hFVubGltaXRlZIdwb3dlcmVkiEtub3duiUlNQUONLTRqMS0-ICgtMiwwKSAt4GAsN2lmLDR5ri6nMSctIC1vMzQsM2lmLSAtLjU0ridwYnBiKOBgOa6uricpLjVpZuCrIODgN3MnLDOuridpa3ouJywyYCwyNC7-ICgyLDApILElIOA2ZmE0OCwxLeAgKC0xLDQpIDQlIOAtYCy0YHJjNSw1Zivg4GAgKC01LDE1KSDg4ODgK2BpZiwy4HpiJ7It_iAtLDNpZiw4aKc2ri4nLSAtcnAoLDI0KSwyZiwykDIwMjMuMi4xkUI',
-
-    '2023 IMAC Unlimited Alternate Known':
-        'https://openaero.net/?s=hFVubGltaXRlZIdwb3dlcmVkiEtub3duiUlNQUONMzQsM2lhYygxKSw0OC0gKC0yLDApIC3gYCw3aWYsNHmuLqcxJy0gLW8zNCwzaWYtIC0nNTSncGJwQijgOa4uKS41aWZgqyDg4DdzJywzrq4naWt6LicsMmAsMjQu_iAoMiwwKSCxJSDgNmZhNDgsMS3gICgtMSw0KSA0JSDgLWAstGByYzUsNWYr4OBgICgtNSwxNSkg4ODg4CtgaWYsMuB6YieyLf4gLSwzaWYsOGinNq4uJy0gLXJwKCwyNCksMmYsMpAyMDIzLjIuMZFC',
-        
     '2023 France Espoirs connu':
         'https://openaero.net/?s=hEVzcG9pcnOGMjAyM4dwb3dlcmVkiGNvbm51iUZyYW5jZYoxMIswjWVqYSAnba4sMisgK2l2Lic1c64gKDksMCkg_i5rLiJ8IjIuJyAiQnJlYWsiIDQlIGgupyA2JSB-b34g4GOuri4yrqcgLTElIG0xrS0gKDEwLDApILElIH4tMmotfiAtMiwxj0ZGQXZvbHRpZ2WQMjAyMy4xLjGRQg',
 
