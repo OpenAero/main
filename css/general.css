@@ -150,6 +150,7 @@ input[type="number"]::-webkit-inner-spin-button {
 }
 input[type=number] {
     -moz-appearance:textfield;
+    appearance: textfield;
 }
 
 .expansion-panel {
@@ -178,6 +179,7 @@ input[type=number] {
 
 select {
 	-webkit-appearance: none;
+  appearance: none;
 }
 select {
 	background-size: 12px 8px;
@@ -2472,6 +2474,7 @@ table#figureChooserTable div {
 .material-switch {
   -webkit-appearance: none;
   -moz-appearance: none;
+  appearance: none;
   -webkit-transition: .3s all;
   transition: .3s all;
   margin: 0 15px;
