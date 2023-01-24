@@ -9,6 +9,7 @@
 * Updated code, including figuresXX.js, to allow for figure family translation
 * Added IMAC forms
 * Added IMAC rules and sequences for 2023
+* Added 2023 AAC sequences and updated AAC Sportsman Free max K
 
 2023.2.1
 * Updated JSZip to 3.10.1

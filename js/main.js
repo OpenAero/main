@@ -2135,7 +2135,10 @@ function aboutDialog() {
 function combo(id) {
     var self = this;
     self.inp = document.getElementById(id);
-    /** DISABLED datalist. Not sure if I want to use this */
+    /** DISABLED datalist. The autocomplete "feature" causes only rules
+     * matching the current value to show. This is not the desired
+     * behaviour for these fields.
+    */
     if (false && 'options' in document.createElement('datalist')) {
         var datalistId = 'datalist-' + id;
         self.inp.setAttribute('list', datalistId);
@@ -8029,7 +8032,8 @@ function changeCombo(id, callback) {
         if (rulesLogo[ruleName]) selectLogo(rulesLogo[ruleName]);
 
         // set CIVA, IAC or IMAC forms default
-        formStyle = /^(iac|imac)$/i.test(rules.value) ? strToLower(rules.value).match(/(iac|imac)/)[1] : 'civa';
+        formStyle = /^(iac|imac)$/i.test(rules.value) ?
+            rules.value.match(/(iac|imac)/i)[1].toLowerCase() : 'civa';
         document.getElementById('formStyle').value = formStyle;
 
         // clear category if these rules exist but do not contain the category
