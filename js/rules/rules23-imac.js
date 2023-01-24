@@ -501,7 +501,9 @@ rules.push (
 	"rule-climbmax540 = climbqtrs:+<7",
 	"why-climbmax540 = maximum of 540 degrees total rotation on all up lines vertical and diagonal for Family 5.3",
 	
-	"conv-downqtrs=^9.([1-9]|10).[123678].([1-8]) = z ; ^9\\.([1-9]|10)\\.[459|10]\\.([1-8]) = $2",
+//	"conv-downqtrs=^9.([1-9]|10).[123678].([1-8]) = z ; ^9\\.([1-9]|10)\\.[459|10]\\.([1-8]) = $2",
+	"conv-downqtrs=^9\\.([1-9]|10)\\.([459]|10)\\.([1-8]) = $3; ^9\\.([1-9]|10)\\.[123678]\\.([1-8]) = z ",
+
 	"rule-downmax360 = downqtrs:+<5",
 	"why-downmax360 = maximum of 360 degrees rotation total on all down lines vertical and diagonal for Family 5.2 and 5.3", 
 	
@@ -980,31 +982,27 @@ rules.push (
 	"rule-NOPOINT=roll:[248]",
 	"why-NOPOINT=no point roll allowed",
 	
-	"conv-hordiagqtrs=^9\\.([1-9]|10)\\.[234789]\\.([1-8]) = $2; ^9\\.[1-9]|10|11|12\\.[1569]|10\\.[1-8] = z",
+	"conv-hordiagqtrs=^9\\.([1-9]|10)\\.[234789]\\.([1-8]) = $2; ^9\\.([1-9]|10|11|12)\\.([1569]|10)\\.[1-8] = z",
 	"rule-maxdiahor720= hordiagqtrs:<9",
 	"why-maxdiahor720 = Combination or total roll elements on horizontal and 45º may not exceed 720º (2 rolls).",
 	
-	"conv-uppoconv= ^9\\.[2-8]\\.[1-2]=p ; ^9\\.[^(2-8)]\\.[(1-2)|(5-6)]=o",
+	"conv-uppoconv= ^9\\.[2-8]\\.[1-2]=p ; ^9\\.[1|9|10]=o",
 	"rule-only1pntrollup=uppoconv: (p,o p,o)|(o,p p,o)|(o,p o,p)|(p,o o,p)|(p p)|(p o,p)]|(p,o p)|(p,p)",
 	"why-only1pntrollup = point roll only allowed on one of the uplines",
 	
-	"conv-dnpoconv= ^9\\.[2-8]\\.[4-5]=p ; ^9\\.[^(4-5)]\\.[(4-5)|(7-8)]=o",
+	"conv-dnpoconv= ^9\\.[2-8]\\.[4-5]=p ; ^9\\.[1|9|10]=o",
 	"rule-only1pntrolldn=dnpoconv: (p,o p,o)|(o,p p,o)|(o,p o,p)|(p,o o,p)|(p p)|(p o,p)]|(p,o p)|(p,p)",
 	"why-only1pntrolldn = point roll only allowed on one of the down lines",
 	
-	"conv-upqtrs=^9.[1-9]|10.[1-2]|[5-6]\\d.([1-8])=$1; ^0\\.=0",
-	"rule-UPQTRS720 = upqtrs<9",
-	"why-UPQTRS720 = maximum of 720 degrees rotation on all up lines vertical and diagonal",
-	
-	"conv-vertqtrs=^9\\.([1-9]|10)\\.[156|10]\\.([1-8]) = $2; ^9\\.[1-9]|10|11|12\\.[234789]\\.[1-8] = z",
+	"conv-vertqtrs=^9\\.([1-9]|10)\\.[156|10]\\.([1-8]) = $2; ^9\\.([1-9]|10|11|12)\\.[234789]\\.[1-8] = z",
 	"rule-maxvert540=vertqtrs:<7",
 	"why-maxvert540 = Combination or total roll elements on vertical lines or looping maneuvers may not exceed 540º degrees (1-1/2 rolls), except for spins",
 	
 	"conv-climbqtrs=^9\\.([1-9]|10)\\.[1267]\\.([1-8]) = $2; ^9.([1-9]|10).([459]|10)\\.[1-8] = z; ^9\\.([1-9]|10)\\.3\\.([1-8]) = 0",
 	"rule-climbmax720 = climbqtrs:+<9",
 	"why-climbmax720 = maximum of 720 degrees total rotation on all up lines vertical and diagonal for Family 5.3 and 5.4",
-	
-	"conv-downqtrs=^9.([1-9]|10).[123678].([1-8]) = z ; ^9\\.([1-9]|10)\\.[459|10]\\.([1-8]) = $2",
+
+	"conv-downqtrs=^9\\.([1-9]|10)\\.([459]|10)\\.([1-8]) = $3; ^9\\.([1-9]|10)\\.[123678]\\.([1-8]) = z ",
 	"rule-downmax540 = downqtrs:+<7",
 	"why-downmax540 = maximum of 540 degrees rotation total on all down lines vertical and diagonal for Family 5.2 and 5.3", 
 	
@@ -1012,15 +1010,11 @@ rules.push (
 	"rule-maxptsqtr2= ptsqtr:<3",
 	"why-maxptsqtr2= Point rolls, if used, may not exceed 180 degrees of rotation.",  
 	
-	
-	
 	//Default rules
 	"allow-defrules=maxdiahor720; maxvert540",
 	
 	//Family 1.1 Single Lines - need a rule to limit roll elements to 360 degrees, excluding spins
 	/*
-	
-	
 	Family One special rules:
 	1. Total roll degree limitation for the 45º down-lines on applicable figures in family one is 540º.
 	*/
@@ -1509,9 +1503,8 @@ rules.push (
 	"[IMAC Unlimited Alt-Unknown]",
 	"rule-MAX720dn45=qtrs:<9",
 	"why-MAX720dn45= On 45º down-lines that require a 135º push or pull to figure exit, roll elements may not exceed 720º (2 rolls)", 
-	
-	"conv-downqtrs=^9.([1-9]|10).[123678].([1-8]) = z ; ^9\\.([1-9]|10)\\.[459|10]\\.([1-8]) = $2;  ^9\\.(1[12])\\.1\\.([4-8]) = $2",
-	
+
+	"conv-downqtrs=^9\\.([1-9]|10)\\.([459]|10)\\.([1-8]) = $3; ^9\\.(1[12])\\.1\\.([4-8]) = $2; ^9\\.([1-9]|10)\\.[123678]\\.([1-8]) = z ",
 	"rule-downmax900 = downqtrs:<11",
 	"why-downmax900 = Combination or total roll elements on down-lines of 45º and vertical may not exceed 900º (2-1/2 rolls).",
 	
@@ -1529,11 +1522,11 @@ rules.push (
 	"rule-maxpts4 = ptsct:<5",
 	"why-maxpts4 = Point rolls, if used on 5.3 and 5.4, may not exceed 4 points",
 	
-	"conv-uppoconv= ^9\\.[2-8]\\.[1-2]=p ; ^9\\.[^(2-8)]\\.[(1-2)|(5-6)]=o",
+	"conv-uppoconv= ^9\\.[2-8]\\.[1-2]=p ; ^9\\.[1|9|10]=o",
 	"rule-only1pntrollup=uppoconv: (p,o p,o)|(o,p p,o)|(o,p o,p)|(p,o o,p)|(p p)|(p o,p)]|(p,o p)|(p,p)",
 	"why-only1pntrollup = point roll only allowed on one of the uplines",
 	
-	"conv-dnpoconv= ^9\\.[2-8]\\.[4-5]=p ; ^9\\.[^(4-5)]\\.[(4-5)|(7-8)]=o",
+	"conv-dnpoconv= ^9\\.[2-8]\\.[4-5]=p ; ^9\\.[1|9|10]=o",
 	"rule-only1pntrolldn=dnpoconv: (p,o p,o)|(o,p p,o)|(o,p o,p)|(p,o o,p)|(p p)|(p o,p)]|(p,o p)|(p,p)",
 	"why-only1pntrolldn = point roll only allowed on one of the down lines",
 	
@@ -1796,10 +1789,10 @@ rules.push (
 	"8.5.10.1-4",
 	"8.5.11.1-4",
 	"8.5.12.1-4",
-	"8.5.13.1-2",
-	"8.5.14.1-2",
-	"8.5.15.1-2",
-	"8.5.16.1-2",
+	"8.5.13.1-4",
+	"8.5.14.1-4",
+	"8.5.15.1-4",
+	"8.5.16.1-4",
 	"8.5.17.1-2",
 	"8.5.17.3-4",
 	"8.5.18.1-2",
