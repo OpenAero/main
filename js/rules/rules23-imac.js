@@ -475,7 +475,7 @@ rules.push (
 	*/
 	
 	"[IMAC Intermediate Alt-Unknown]",
-	
+	"conv-qtrs=^9\\.([1-9]|10)\\.[123456789|10]\\.([1-8]) = $2; ^9\\.1[12]\\.1\\.([456]) = $1; ^9\\.1[12]\\.1\\.([78]) = 6",
 	"rule-MAX540=qtrs:<7",
 	"why-MAX540=maximum of 540 degrees rotation allowed, except spins",
 	"rule-MAX360=qtrs:<5",
@@ -978,13 +978,13 @@ rules.push (
 	"rule-MAX360=qtrs:<5",
 	"why-MAX360=maximum of 360 degrees rotation allowed",
 	"rule-MAX720=qtrs:<9",
-	"why-MAX720= 1. Combination or total roll elements on horizontal and 45º may not exceed 720º (2 rolls).", 
+	"why-MAX720= 1. Combination or total roll elements on horizontal and 45º uplines may not exceed 720º (2 rolls).", 
 	"rule-NOPOINT=roll:[248]",
 	"why-NOPOINT=no point roll allowed",
 	
 	"conv-hordiagqtrs=^9\\.([1-9]|10)\\.[234789]\\.([1-8]) = $2; ^9\\.([1-9]|10|11|12)\\.([1569]|10)\\.[1-8] = z",
 	"rule-maxdiahor720= hordiagqtrs:<9",
-	"why-maxdiahor720 = Combination or total roll elements on horizontal and 45º may not exceed 720º (2 rolls).",
+	"why-maxdiahor720 = Combination or total roll elements on horizontal and 45º uplines may not exceed 720º (2 rolls).",
 	
 	"conv-uppoconv= ^9\\.[2-8]\\.[1-2]=p ; ^9\\.[1|9|10]=o",
 	"rule-only1pntrollup=uppoconv: (p,o p,o)|(o,p p,o)|(o,p o,p)|(p,o o,p)|(p p)|(p o,p)]|(p,o p)|(p,p)",
@@ -994,9 +994,9 @@ rules.push (
 	"rule-only1pntrolldn=dnpoconv: (p,o p,o)|(o,p p,o)|(o,p o,p)|(p,o o,p)|(p p)|(p o,p)]|(p,o p)|(p,p)",
 	"why-only1pntrolldn = point roll only allowed on one of the down lines",
 	
-	"conv-vertqtrs=^9\\.([1-9]|10)\\.[156|10]\\.([1-8]) = $2; ^9\\.([1-9]|10|11|12)\\.[234789]\\.[1-8] = z",
+	"conv-vertqtrs=^9\\.([1-9]|10)\\.[14569|10]\\.([1-8]) = $2; ^9\\.1[12]\\.1\\.([456]) = $1; ^9\\.1[12]\\.1\\.([78]) = 6;^9\\.([1-9]|10)\\.[2378]\\.[1-8] = z",
 	"rule-maxvert540=vertqtrs:<7",
-	"why-maxvert540 = Combination or total roll elements on vertical lines or looping maneuvers may not exceed 540º degrees (1-1/2 rolls), except for spins",
+	"why-maxvert540 = Combination or total roll elements on vertical lines, diagonal down lines or looping maneuvers may not exceed 540º degrees (1-1/2 rolls), except for spins",
 	
 	"conv-climbqtrs=^9\\.([1-9]|10)\\.[1267]\\.([1-8]) = $2; ^9.([1-9]|10).([459]|10)\\.[1-8] = z; ^9\\.([1-9]|10)\\.3\\.([1-8]) = 0",
 	"rule-climbmax720 = climbqtrs:+<9",
@@ -1020,8 +1020,10 @@ rules.push (
 	*/
 	//
 	"1.1.1.1-4",
-	"1.1.2.1-4",
-	"1.1.3.1-4",
+	"1.1.2.1-2",
+	"1.1.2.3-4 MAX540",
+	"1.1.3.1-2",
+	"1.1.3.3-4 MAX540",
 	"1.1.4.1-2",
 	"1.1.4.3-4 MAX360; NOU",
 	"1.1.5.1-2",
@@ -1243,9 +1245,9 @@ rules.push (
 	
 	
 	
-	//8.5 Half Cubans
+	//8.5 Half Cubans /*need to check line limit rules on 8.5. Missing some figures*/
 	"8.5.1.1-2",
-	"8.5.1.3-4 MAX540:1",
+	"8.5.1.3-4",
 	"8.5.2.1-2",
 	"8.5.2.3-4 MAX540:1",
 	"8.5.3.1-2",
@@ -1264,26 +1266,19 @@ rules.push (
 	
 	
 	//8.5 Vertical 5/8ths Loops
-	"8.5.9.2-4",
+	"8.5.9.1-2",
 	"8.5.9.3-4 MAX540:1",
-	"8.5.10.2-4",
-	"8.5.10.3-4 MAX540:1",
-	"8.5.11.2-4",
-	"8.5.11.3-4 MAX540:1",
-	"8.5.12.2-4",
-	"8.5.12.3-4 MAX540:1",
+	"8.5.10.1-4",
+	"8.5.11.1-4",
+	"8.5.12.1-4",
 	"8.5.13.1-2",
 	"8.5.14.1-2",
 	"8.5.15.1-2",
 	"8.5.16.1-2",
-	"8.5.17.1-2 MAX540:1",
-	"8.5.17.3-4",
-	"8.5.18.1-2 MAX540:1",
-	"8.5.18.3-4",
-	"8.5.19.1-2 MAX540:1",
-	"8.5.19.3-4",
-	"8.5.20.1-2 MAX540:1",
-	"8.5.20.3-4",
+	"8.5.17.1-4",
+	"8.5.18.1-4",
+	"8.5.19.1-4",
+	"8.5.20.1-4",
 	"8.5.21.1-2 MAX360:2; NOU:2",
 	"8.5.21.3-4",
 	"8.5.22.1-2 MAX360:2; NOU:2",
