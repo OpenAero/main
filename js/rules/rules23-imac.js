@@ -475,7 +475,7 @@ rules.push (
 	*/
 	
 	"[IMAC Intermediate Alt-Unknown]",
-	"conv-qtrs=^9\\.([1-9]|10)\\.[123456789|10]\\.([1-8]) = $2; ^9\\.1[12]\\.1\\.([456]) = $1; ^9\\.1[12]\\.1\\.([78]) = 6",
+	"conv-qtrs=^9\\.([1-9]|10)\\.([123456789]|10)\\.([1-8]) = $3; ^9\\.1[12]\\.1\\.([456]) = $1; ^9\\.1[12]\\.1\\.([78]) = 6",
 	"rule-MAX540=qtrs:<7",
 	"why-MAX540=maximum of 540 degrees rotation allowed, except spins",
 	"rule-MAX360=qtrs:<5",
@@ -994,7 +994,7 @@ rules.push (
 	"rule-only1pntrolldn=dnpoconv: (p,o p,o)|(o,p p,o)|(o,p o,p)|(p,o o,p)|(p p)|(p o,p)]|(p,o p)|(p,p)",
 	"why-only1pntrolldn = point roll only allowed on one of the down lines",
 	
-	"conv-vertqtrs=^9\\.([1-9]|10)\\.[14569|10]\\.([1-8]) = $2; ^9\\.1[12]\\.1\\.([456]) = $1; ^9\\.1[12]\\.1\\.([78]) = 6;^9\\.([1-9]|10)\\.[2378]\\.[1-8] = z",
+	"conv-vertqtrs=^9\\.([1-9]|10)\\.([14569]|10)\\.([1-8]) = $3; ^9\\.1[12]\\.1\\.([456]) = $1; ^9\\.1[12]\\.1\\.([78]) = 6;^9\\.([1-9]|10)\\.[2378]\\.[1-8] = z",
 	"rule-maxvert540=vertqtrs:<7",
 	"why-maxvert540 = Combination or total roll elements on vertical lines, diagonal down lines or looping maneuvers may not exceed 540º degrees (1-1/2 rolls), except for spins",
 	
