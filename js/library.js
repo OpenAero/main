@@ -32,7 +32,7 @@ var library = {
     '2023 CIVA-Glider Adv Free Known':'https://openaero.net/?s=hEFkdmFuY2Vkh2dsaWRlcohGcmVlIEtub3duiUNJVkGKMTWLMI0iQEEiIDQ4LDIgIkBCIiBtMjQgIkBDIiBvtCAiQEQiIDFqMSAiQEUiIC0sNGlycC1-j0NJVkGQMjAyMy4xkWdyaWQ6NQ',
 
     '2023 AAC Graduate Known':'https://openaero.net/?s=gUFVU4RHcmFkdWF0ZYVHcmFkdWF0ZYZQZXJwZXR1YWyHcG93ZXJlZIhLbm93bolBQUOKMTCNbyBoICgtNyw4KSDgYCtjLjKnK-BgIOArZCvgIGAraXYuJzZzLitgICgtMjAsMCkgbTIgKDYsMTIpIGogM2ogMY9BQUOQMjAyMy4yLjGRQg',   
-    '2023 AAC Sportsman Known': 'https://openaero.net/?s=gUFVU4RTcG9ydHNtYW6FQXVzdHJhbGlhhjIwMjOHcG93ZXJlZIhLbm93bolBQUOKMzCLMI3jKDIpMivg4CAoMywwKSBoICgtNiw3KSAyZyAoNiw2KSBpdi42cy4gKC00LDApIGIgKC0yLLEpIGsyNCAoNCwwKSBtMiAoLTIsMTYpIDNqIGogso9BQUOQMjAyMy4yLjGRQg',
+    '2023 AAC Sportsman Known': 'https://openaero.net/?s=gUFVU4RTcG9ydHNtYW6FQXVzdHJhbGlhhjIwMjOHcG93ZXJlZIhLbm93bolBQUOKMTWLMI3jKDIpMivg4CAoMywwKSBoICgtNiw3KSAyZyAoNiw2KSBpdi42cy4gKC00LDApIGIgKC0yLLEpIGsyNCAoNCwwKSBtMiAoLTIsMTYpIDNqIGogso9BQUOQMjAyMy4zLjGRQg',
     
     '2023 IMAC Basic Known': 'https://openaero.net/?s=hEJhc2ljhjIwMjOHcG93ZXJlZIhLbm93bolJTUFDjTEgMnQgKDAssSkgYiAoLTMsMCkgMnJkYiBbLTMsOV0gbyAoMiwwKSBori4nICgtOCwxKSCup3muLiwyLicgY66uJywyYCAoLTMsMSkgbTIgKDE4LDApIGl2NnOuJ49JTUFDkDIwMjMuMy4xkUI',
     '2023 IMAC Sportsman Known':'https://openaero.net/?s=hFNwb3J0c21hboYyMDIzh3Bvd2VyZWSIS25vd26JSU1BQ4wyMDIzIElNQUMgU3BvcnRzbWFuIEtub3dujTF5ICgzLDApIGZtLDI0ICgtMjYsLTMpIGl2MjSuri4gKDEzLDIpIDJyYzEgWzYsMTZdIG8xIGg4IP6nMa4nYmAzrq6nICgyLDApIGRmICg0LDApIGl2NnOuriAoLTQsMCkgsmFjKDI0KS2PSU1BQ5AyMDIzLjMuMZFC',
@@ -43,65 +43,29 @@ var library = {
     '2023 IMAC Unlimited Known':'https://openaero.net/?s=hFVubGltaXRlZIYyMDIzh3Bvd2VyZWSIS25vd26JSU1BQ40tNGoxLT4gKC0yLDApIC3gYCw3aWYsNHmuLqcxJy0gLW8zNCwzaWYtIC0uNTSuJ3BicGIo4GA5rq6uJykuNWlm4Ksg4OA3cycsM66uJ2lrei4nLDJgLDI0Lv4gKDIsMCkgsSUg4DZmYTQ4LDEt4CAoLTEsNCkgNCUg4C1gLLRgcmM1LDVmK-DgYCAoLTUsMTUpIODg4OArYGlmLDLgemInsi3-IC0sM2lmLDhopzauLictIC1ycCgsMjQpLDJmLDKPSU1BQ5AyMDIzLjMuMZFC',
     '2023 IMAC Unlimited Alt-Known':'https://openaero.net/?s=hFVubGltaXRlZIYyMDIzh3Bvd2VyZWSIQWx0LUtub3duiUlNQUONMzQsM2lhYygxKSw0OC0gKC0yLDApIC3gYCw3aWYsNHmuLqcxJy0gLW8zNCwzaWYtIC0nNTSncGJwQijgOa4uKS41aWZgqyDg4DdzJywzrq4naWt6LicsMmAsMjQu_iAoMiwwKSCxJSDgNmZhNDgsMS3gICgtMSw0KSA0JSDgLWAstGByYzUsNWYr4OBgICgtNSwxNSkg4ODg4CtgaWYsMuB6YieyLf4gLSwzaWYsOGinNq4uJy0gLXJwKCwyNCksMmYsMo9JTUFDkDIwMjMuMy4xkUI',
 
-    '2023 France Espoirs connu':
-        'https://openaero.net/?s=hEVzcG9pcnOGMjAyM4dwb3dlcmVkiGNvbm51iUZyYW5jZYoxMIswjWVqYSAnba4sMisgK2l2Lic1c64gKDksMCkg_i5rLiJ8IjIuJyAiQnJlYWsiIDQlIGgupyA2JSB-b34g4GOuri4yrqcgLTElIG0xrS0gKDEwLDApILElIH4tMmotfiAtMiwxj0ZGQXZvbHRpZ2WQMjAyMy4xLjGRQg',
+    '2023 France Espoirs connu':'https://openaero.net/?s=hEVzcG9pcnOGMjAyM4dwb3dlcmVkiGNvbm51iUZyYW5jZYoxMIswjWVqYSAnba4sMisgK2l2Lic1c64gKDksMCkg_i5rLiJ8IjIuJyAiQnJlYWsiIDQlIGgupyA2JSB-b34g4GOuri4yrqcgLTElIG0xrS0gKDEwLDApILElIH4tMmotfiAtMiwxj0ZGQXZvbHRpZ2WQMjAyMy4xLjGRQg',
+    '2023 France Desavois/promotion connu':'https://openaero.net/?s=hERlc2F2b2lzL3Byb21vdGlvboYyMDIzh3Bvd2VyZWSIY29ubnWJRnJhbmNlijE1izCN_icyNGin_iAoLTIsMCkg_qsra66uri0gMiUgLW0gJzJgrSAoNywwKSAtaXZpc66uri4nICKvIiA3JSBvMSAuJzTgYHJwra0grS5opzSurqer_iAoNywwKSA1JSCubTIgKC05LDApIDJqaW8yICcyNCwyNCuPRkZBdm9sdGlnZZAyMDIzLjEuMZFC',
+    '2023 France National_2 connu 1':'https://openaero.net/?s=hE5hdGlvbmFsXzKFTrAxhjIwMjOHcG93ZXJlZIhjb25udYlGcmFuY2WKMjCLMI0yZGiurietrS3-IDIlIC3gYG0yrSAoMTMsMCkgLWl2NWlzri6rqyt-ICgtMiwxKSAzJSCup21mLSAtM2ozLT4gKC0xMCwxNykgLSwzMv4gIkJyZWFrIiA0JSAsNGIuJzinICsnLDI0J2iuqyBtMyw1ICgtMiwxOSkgfq4uJzI0ri4ndK6urq4nIC4nNKdycDn-j0ZGQXZvbHRpZ2WQMjAyMy4xLjGRQg',
+    '2023 France National_2 connu 2':'https://openaero.net/?s=hE5hdGlvbmFsXzKFQ09OTlUgTrAyhjIwMjOHcG93ZXJlZIhjb25udYlGcmFuY2WKMjCLMI1laiAtMSUgK3anNKcgaXZzri6nLf4gKC00LDApIC1tMi0gKDAsMTApIDYlIC0yam8xNSC0Y66uJzKuIDMlIGAyp3BiInwiNC4gIkJyZWFrIiAyJSAnOGgtfj4gMyUgLWKuLicgNyUgK2-0IDUlIG1mLDIgKC04LDI1KSAyJSAxYy4tIOAtZKcyNCePRkZBdm9sdGlnZZAyMDIzLjEuMZFC',
 
-    '2023 France Desavois/promotion connu':
-        'https://openaero.net/?s=hERlc2F2b2lzL3Byb21vdGlvboYyMDIzh3Bvd2VyZWSIY29ubnWJRnJhbmNlijE1izCN_icyNGin_iAoLTIsMCkg_qsra66uri0gMiUgLW0gJzJgrSAoNywwKSAtaXZpc66uri4nICKvIiA3JSBvMSAuJzTgYHJwra0grS5opzSurqer_iAoNywwKSA1JSCubTIgKC05LDApIDJqaW8yICcyNCwyNCuPRkZBdm9sdGlnZZAyMDIzLjEuMZFC',
+    '2023 IAC Primary Known':'https://openaero.net/?s=hFByaW1hcnmGMjAyM4dwb3dlcmVkiEtub3duiUlBQ4o1izCNZCBpdmA2c66nIC5jLicyYCvgICgtMTUsMTMpIG8gNSUgMmorIDGPSUFDkDIwMjIuMi41kUI',
+    '2023 IAC Sportsman Known':'https://openaero.net/?s=hFNwb3J0c21hboYyMDIzh3Bvd2VyZWSIS25vd26JSUFDijEwizCNbyBkaCjgKa6nq6ur_iAoLTIsMCkgK2uurqcyNK6nIGBtMiBgMX4gKC00LDApIDUlIP4yaiAoLTIsMTApIGQg_itpdjVzJyBiLic0IK5jLjIuJ49JQUOQMjAyMi4yLjWRQg',
+    '2023 IAC Intermediate Known':'https://openaero.net/?s=hEludGVybWVkaWF0ZYdwb3dlcmVkiEtub3duiUlBQ4oxNYswjEludGVybWVkaWF0ZSBLbm93bo1xbyDgK3YuNF4gaXbgNnOuri4nIGIuJzQgMSUgfqcycmMrYCAoLTQssikgYCtvZiA0JSDgbbItICgtOCwwKSCyJSAtMmot4OAgLTI0IDIlIODg4ODg4GAyaWFjKOAyKSvg4GAgZGiuLicgKC0yNiwwKSB-p2uuMjQuj0lBQ5AyMDIyLjIuNZFC',
+    '2023 IAC Advanced Known':'https://openaero.net/?s=hEFkdmFuY2VkhjIwMjOHcG93ZXJlZIhLbm93bolJQUOKMzCNMjRkaCgnKS4nMmYuK34gL_6rq66ubigsNDguKacsMjSnrSAoMTMsMCkgLTVpc66urq6uJ2liLDgtICgtMiwwKSAtaWRxLSAxNSUgLeBhLDYtICg3LDApIC0zLmKurjMupyvgYCA0JSBvsiAoLTYsMCkg_mAyp2uuri6nsq6nICg1LDApIOBtpzMyJzs2Zi1-ICgtMTIsMCkgLTNqMy0-j0lBQ5AyMDIzLjEuMZFC',
+    '2023 IAC Unlimited Known':'https://openaero.net/?s=hFVubGltaXRlZIYyMDIzh3Bvd2VyZWSIS25vd26JSUFDijQwizCNMmlmcnAotCknMy6nLDj-IC4sOHRhM2auLqcgKDIsMCkgLzMucOIoLiw1Zq4pLiw0pywyp34g4GA1czsyaWauLmlycCcyNC6nLDEr4OAgL-ArM2oxNS0grXBiLqc1riCrq6szaWYnaC4nMy6nIODgsmFjKDZpZuApJzinLDUt4ODgIDglIC3gYGlmYTEsOf6PSUFDkDIwMjIuMi41kUI',
 
-    '2023 France National_2 connu 1':
-        'https://openaero.net/?s=hE5hdGlvbmFsXzKFTrAxhjIwMjOHcG93ZXJlZIhjb25udYlGcmFuY2WKMjCLMI0yZGiurietrS3-IDIlIC3gYG0yrSAoMTMsMCkgLWl2NWlzri6rqyt-ICgtMiwxKSAzJSCup21mLSAtM2ozLT4gKC0xMCwxNykgLSwzMv4gIkJyZWFrIiA0JSAsNGIuJzinICsnLDI0J2iuqyBtMyw1ICgtMiwxOSkgfq4uJzI0ri4ndK6urq4nIC4nNKdycDn-j0ZGQXZvbHRpZ2WQMjAyMy4xLjGRQg',
+    '2023 IAC-Glider Primary Known':'https://openaero.net/?s=hFByaW1hcnmHZ2xpZGVyiEtub3duiUlBQ4oxMI1pZC4gMyUgL-BgK29qfiB-qzNqICgtMSw5KSAnMX4gYCsuaneuri4rYCAzJSBvj0lBQ5AyMDIzLjIuMpFC',
+    '2023 IAC-Glider Sportsman Known':'https://openaero.net/?s=hFNwb3J0c21hbodnbGlkZXKIS25vd26JSUFDijE1izCNZCcg_ml2JzZzri4rIG8gMnJkYq4u_iAuYy4sMq6uLid-IDMlIODgK29q_iB-aqsrfiAnMf6PSUFDkDIwMjIuMi41kUI',
+    '2023 IAC-Glider Intermediate Known':'https://openaero.net/?s=hEludGVybWVkaWF0ZYdnbGlkZXKIS25vd26JSUFDijE1izCNc2lycKcy_iAyLSAxNCUgLWEg4HJ5IP4nMqd0Lic0Lif-ICsnaCw0LicrfiAxMCUgYCvg4OBgMmByYyvg4GAgKDEsMCkgLTIlIP6rKycyLnJkYq6urq6uK-Dg4CA2JSBtLDKPSUFDkDIwMjIuMi41kUI',
+    '2023 IAC-Glider Advanced Known':'https://openaero.net/?s=hEFkdmFuY2Vkh2dsaWRlcohLbm93bolJQUOKMjWLMI00OC0gLXSurq6nIFstMTIsMF0gK3JwKDI0KSv-ICgtMiwwKSCndGGupyvg4GAgfiwycmRiLn4gri6ncCgyKa6nfiBvMjQsMiB-qydoNC4g4GAr4HBiLDQnK-AgtJAyMDIyLjIuNZFC',
+    '2023 IAC-Glider Unlimited Known':'https://openaero.net/?s=hFVubGltaXRlZIdnbGlkZXKIS25vd26JSUFDijI1izCNaWSnMjSnLSAtMnJjLSAoLTcsMTIpIC0yYzJpZi4gMjQtIC2ndGE0Licr4CBirjNpZiA0JSBvMjQsMiAvpzQuaCt-IDFqbzGPSUFDkDIwMjIuMi41kUI',
 
-    '2023 France National_2 connu 2':
-        'https://openaero.net/?s=hE5hdGlvbmFsXzKFQ09OTlUgTrAyhjIwMjOHcG93ZXJlZIhjb25udYlGcmFuY2WKMjCLMI1laiAtMSUgK3anNKcgaXZzri6nLf4gKC00LDApIC1tMi0gKDAsMTApIDYlIC0yam8xNSC0Y66uJzKuIDMlIGAyp3BiInwiNC4gIkJyZWFrIiAyJSAnOGgtfj4gMyUgLWKuLicgNyUgK2-0IDUlIG1mLDIgKC04LDI1KSAyJSAxYy4tIOAtZKcyNCePRkZBdm9sdGlnZZAyMDIzLjEuMZFC',
-
-    '2023 IAC Primary Known':
-        'https://openaero.net/?s=hFByaW1hcnmGMjAyM4dwb3dlcmVkiEtub3duiUlBQ4o1izCNZCBpdmA2c66nIC5jLicyYCvgICgtMTUsMTMpIG8gNSUgMmorIDGPSUFDkDIwMjIuMi41kUI',
-
-    '2023 IAC Sportsman Known':
-        'https://openaero.net/?s=hFNwb3J0c21hboYyMDIzh3Bvd2VyZWSIS25vd26JSUFDijEwizCNbyBkaCjgKa6nq6ur_iAoLTIsMCkgK2uurqcyNK6nIGBtMiBgMX4gKC00LDApIDUlIP4yaiAoLTIsMTApIGQg_itpdjVzJyBiLic0IK5jLjIuJ49JQUOQMjAyMi4yLjWRQg',
-
-    '2023 IAC Intermediate Known':
-        'https://openaero.net/?s=hEludGVybWVkaWF0ZYdwb3dlcmVkiEtub3duiUlBQ4oxNYswjEludGVybWVkaWF0ZSBLbm93bo1xbyDgK3YuNF4gaXbgNnOuri4nIGIuJzQgMSUgfqcycmMrYCAoLTQssikgYCtvZiA0JSDgbbItICgtOCwwKSCyJSAtMmot4OAgLTI0IDIlIODg4ODg4GAyaWFjKOAyKSvg4GAgZGiuLicgKC0yNiwwKSB-p2uuMjQuj0lBQ5AyMDIyLjIuNZFC',
-
-    '2023 IAC Advanced Known':
-        'https://openaero.net/?s=hEFkdmFuY2VkhjIwMjOHcG93ZXJlZIhLbm93bolJQUOKMzCNMjRkaCgnKS4nMmYuK34gL_6rq66ubigsNDguKacsMjSnrSAoMTMsMCkgLTVpc66urq6uJ2liLDgtICgtMiwwKSAtaWRxLSAxNSUgLeBhLDYtICg3LDApIC0zLmKurjMupyvgYCA0JSBvsiAoLTYsMCkg_mAyp2uuri6nsq6nICg1LDApIOBtpzMyJzs2Zi1-ICgtMTIsMCkgLTNqMy0-j0lBQ5AyMDIzLjEuMZFC',
-
-    '2023 IAC Unlimited Known':
-        'https://openaero.net/?s=hFVubGltaXRlZIYyMDIzh3Bvd2VyZWSIS25vd26JSUFDijQwizCNMmlmcnAotCknMy6nLDj-IC4sOHRhM2auLqcgKDIsMCkgLzMucOIoLiw1Zq4pLiw0pywyp34g4GA1czsyaWauLmlycCcyNC6nLDEr4OAgL-ArM2oxNS0grXBiLqc1riCrq6szaWYnaC4nMy6nIODgsmFjKDZpZuApJzinLDUt4ODgIDglIC3gYGlmYTEsOf6PSUFDkDIwMjIuMi41kUI',
-
-    '2023 IAC-Glider Primary Known':
-        'https://openaero.net/?s=hFByaW1hcnmHZ2xpZGVyiEtub3duiUlBQ4oxMI3-aWQuq34gKDIsMCkgq29qq6v-IDYlIGArM2orYCAnMX4gYCsuaneuri4rYCAtMSUgb49JQUOQMjAyMy4yLjKRQg',
-
-    '2023 IAC-Glider Sportsman Known':
-        'https://openaero.net/?s=hFNwb3J0c21hbodnbGlkZXKIS25vd26JSUFDijE1izCNZCcg_ml2JzZzri4rIG8gMnJkYq4u_iAuYy4sMq6uLid-IDMlIODgK29q_iB-aqsrfiAnMf6PSUFDkDIwMjIuMi41kUI',
-
-    '2023 IAC-Glider Intermediate Known':
-        'https://openaero.net/?s=hEludGVybWVkaWF0ZYdnbGlkZXKIS25vd26JSUFDijE1izCNc2lycKcy_iAyLSAxNCUgLWEg4HJ5IP4nMqd0Lic0Lif-ICsnaCw0LicrfiAxMCUgYCvg4OBgMmByYyvg4GAgKDEsMCkgLTIlIP6rKycyLnJkYq6urq6uK-Dg4CA2JSBtLDKPSUFDkDIwMjIuMi41kUI',
-
-    '2023 IAC-Glider Advanced Known':
-        'https://openaero.net/?s=hEFkdmFuY2Vkh2dsaWRlcohLbm93bolJQUOKMjWLMI00OC0gLXSurq6nIFstMTIsMF0gK3JwKDI0KSv-ICgtMiwwKSCndGGupyvg4GAgfiwycmRiLn4gri6ncCgyKa6nfiBvMjQsMiB-qydoNC4g4GAr4HBiLDQnK-AgtJAyMDIyLjIuNZFC',
-
-    '2023 IAC-Glider Unlimited Known':
-        'https://openaero.net/?s=hFVubGltaXRlZIdnbGlkZXKIS25vd26JSUFDijI1izCNaWSnMjSnLSAtMnJjLSAoLTcsMTIpIC0yYzJpZi4gMjQtIC2ndGE0Licr4CBirjNpZiA0JSBvMjQsMiAvpzQuaCt-IDFqbzGPSUFDkDIwMjIuMi41kUI',
-
-    '2023 NZAC Primary Known':
-        'https://openaero.net/?s=hFByaW1hcnkgh3Bvd2VyZWSIS25vd26JMjAyMi8yMyBOWkFDijOMTlpBQyBQcmltYXJ5IEtub3dujTUlIGQg_ml2LnMuJ6t-IC0xJSCuri6nY66uLDKuritgIDYlIG_-IH6rK64uJ2iurqsrfiCuLicxq_6PTlpBQ5AyMDIyLjEuN5FC',
-
-    '2023 NZAC Recreational Known':
-        'https://openaero.net/?s=hFJlY3JlYXRpb25hbIdwb3dlcmVkiEtub3duIIkyMDIyLzIzIE5aQUOKNo0nbTIgKC0xOCwwKSA4JSD-Mmr-IP4raXanc6f-IH4rJ2iuJyt-IP5gYi4nICgtNiwwKSAtMiUgYGOuricyK-AgLTElIOArbytgICcxYH6PTlpBQ5AyMDIyLjEuN5FC',
-
-    '2023 NZAC Sports Known':
-        'https://openaero.net/?s=hFNwb3J0c4dwb3dlcmVkiEtub3duIIkyMDIyLzIzIE5aQUOKMTCNYi6nIGQgaXY2c66nqyt-IP6rq2syNK6uLicgbTKrK_4gNz4gOSUgMmogp2lyYzJ-IDEzJSBgMjRhK2AgbyBop_4gMY9OWkFDkDIwMjIuMS44kUI',
-
-    '2023 NZAC Intermediate Known':
-        'https://openaero.net/?s=hEludGVybWVkaWF0ZYdwb3dlcmVkiEtub3duIIkyMDIyLzIzIE5aQUOKMTWNbTGtLf-gsSUgLTJqLSAtMmlyYzI0_iAoLTgsMjEpIDI0aWFvK2AgMmZpcDT-XiB-KzVzrq4uaXJwMis-IDEwJSAuMmGrfiBkaK6uq6srfiCrLDhiLDSuLicr4GAgYWMoMjQpMo9OWkFDkDIwMjIuMS44kUI',
-
-    '2023 NZAC Advanced Known':
-        'https://openaero.net/?s=hEFkdmFuY2VkhU5aQUMgTmF0aW9uYWxzhjIwMjIvMjOHcG93ZXJlZIhLbm93bolOWkFDijI1jE5PVEUgWS1CT1ggRU5UUlmNZWogL6suNHBuKGYuKSw4Lq1eIDclIOBgLeDgNWlzridpYuBgMjRgK-BgPiAyPiCurmlycGatra2tLX4gMTIlIC3g4ODg4GBpY-A0LDPg4OBgLeAg4C0zajMtfiCtcGKuLDMuK-BgPiCnLDMuaDNmpyv-IP4rb7QrfiAyPiAubTOnLDM0Jy0gKDAsMTQpIC0xaWFjKCw0OCm4j05aQUOQMjAyMi4xLjiRQg',
-
-    '2023 NZAC Unlimited Known':
-        'https://openaero.net/?s=hFVubGltaXRlZIVOWkFDIE5hdGlvbmFsc4YyMDIyLzIzh3Bvd2VyZWSIS25vd26JTlpBQ4o0MI1-Ky4nMiwyZnpipzQ4rietrf4gLSwzZmKuri41rq4gMSUgNj4gOWFjKDZpZmApsi1gIC2uLqdwbignM2anOzWuKSwyNK0t_iDgYC3g4DVpcycsMmaurq6uLmliMy0gMyUgLS4xLmlycDJmOzQ4LX4gMTMlIODgLTJqbzEtID4g_q0nLDh0YWAsM6cr4D4gJzUnaC4zaWYuK34g_itvuCv-j05aQUOQMjAyMi4xLjiRQg',
+    '2023 NZAC Primary Known':'https://openaero.net/?s=hFByaW1hcnkgh3Bvd2VyZWSIS25vd26JMjAyMi8yMyBOWkFDijOMTlpBQyBQcmltYXJ5IEtub3dujTUlIGQg_ml2LnMuJ6t-IC0xJSCuri6nY66uLDKuritgIDYlIG_-IH6rK64uJ2iurqsrfiCuLicxq_6PTlpBQ5AyMDIyLjEuN5FC',
+    '2023 NZAC Recreational Known':'https://openaero.net/?s=hFJlY3JlYXRpb25hbIdwb3dlcmVkiEtub3duIIkyMDIyLzIzIE5aQUOKNo0nbTIgKC0xOCwwKSA4JSD-Mmr-IP4raXanc6f-IH4rJ2iuJyt-IP5gYi4nICgtNiwwKSAtMiUgYGOuricyK-AgLTElIOArbytgICcxYH6PTlpBQ5AyMDIyLjEuN5FC',
+    '2023 NZAC Sports Known':'https://openaero.net/?s=hFNwb3J0c4dwb3dlcmVkiEtub3duIIkyMDIyLzIzIE5aQUOKMTCNYi6nIGQgaXY2c66nqyt-IP6rq2syNK6uLicgbTKrK_4gNz4gOSUgMmogp2lyYzJ-IDEzJSBgMjRhK2AgbyBop_4gMY9OWkFDkDIwMjIuMS44kUI',
+    '2023 NZAC Intermediate Known':'https://openaero.net/?s=hEludGVybWVkaWF0ZYdwb3dlcmVkiEtub3duIIkyMDIyLzIzIE5aQUOKMTWNbTGtLf-gsSUgLTJqLSAtMmlyYzI0_iAoLTgsMjEpIDI0aWFvK2AgMmZpcDT-XiB-KzVzrq4uaXJwMis-IDEwJSAuMmGrfiBkaK6uq6srfiCrLDhiLDSuLicr4GAgYWMoMjQpMo9OWkFDkDIwMjIuMS44kUI',
+    '2023 NZAC Advanced Known':'https://openaero.net/?s=hEFkdmFuY2VkhU5aQUMgTmF0aW9uYWxzhjIwMjIvMjOHcG93ZXJlZIhLbm93bolOWkFDijI1jE5PVEUgWS1CT1ggRU5UUlmNZWogL6suNHBuKGYuKSw4Lq1eIDclIOBgLeDgNWlzridpYuBgMjRgK-BgPiAyPiCurmlycGatra2tLX4gMTIlIC3g4ODg4GBpY-A0LDPg4OBgLeAg4C0zajMtfiCtcGKuLDMuK-BgPiCnLDMuaDNmpyv-IP4rb7QrfiAyPiAubTOnLDM0Jy0gKDAsMTQpIC0xaWFjKCw0OCm4j05aQUOQMjAyMi4xLjiRQg',
+    '2023 NZAC Unlimited Known':'https://openaero.net/?s=hFVubGltaXRlZIVOWkFDIE5hdGlvbmFsc4YyMDIyLzIzh3Bvd2VyZWSIS25vd26JTlpBQ4o0MI1-Ky4nMiwyZnpipzQ4rietrf4gLSwzZmKuri41rq4gMSUgNj4gOWFjKDZpZmApsi1gIC2uLqdwbignM2anOzWuKSwyNK0t_iDgYC3g4DVpcycsMmaurq6uLmliMy0gMyUgLS4xLmlycDJmOzQ4LX4gMTMlIODgLTJqbzEtID4g_q0nLDh0YWAsM6cr4D4gJzUnaC4zaWYuK34g_itvuCv-j05aQUOQMjAyMi4xLjiRQg',
 
     '2022 CIVA Unl Free Known':
         'https://openaero.net/?s=hFVubGltaXRlZIVDSVZBhjIwMjKHcG93ZXJlZIhQcm9ncmFtbWUxiUNJVkGKNDCLMIxDSVZBIDIwMjIgVW5saW1pdGVkIEZyZWUgS25vd24gZmlndXJlc40iQEEiIDIsMmZ6YjQ4LSAoMTMsMCkgIkBCIiAifCI0OzNpZmRoKDQppzVmICgwLLEpICJAQyIgsmFjKDJmKTMsMzQtICgwLDcpICJARCIgLDV0YeAzICgwLDEzKSAiQEUiIC4sMjQucG4oInwiNWY7MykyLi2PQ0lWQZAyMDIyLjEuMZFncmlkOjU',

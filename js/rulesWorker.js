@@ -353,17 +353,15 @@ function loadRules (ruleName, catName, programName) {
       } else if (/^Group-/.test(rules[i])) {
         // Apply 'Group' rules => full figure (multiple catalog id) match
           var newGroup = rules[i].replace(/^Group-/, '').split('=');
-          /* Code below was simplified late 2022. Not sure why catch all was needed
+
           checkFigGroup[newGroup[0]] = [];
-        // when regex ends with $, assume it's fully formatted.
-        // Otherwise, add catch all
+        // When regex ends with $, assume it's fully formatted.
+        // Otherwise, add catch all to assure that the complete string is matched
         if (newGroup[1].slice(-1) === '$') {
           checkFigGroup[newGroup[0]].regex = RegExp(newGroup[1], 'g');
         } else {
           checkFigGroup[newGroup[0]].regex = RegExp(newGroup[1] + '[0-9\. ]*', 'g');
         }
-        */
-          checkFigGroup[newGroup[0]] = { regex: RegExp(newGroup[1], 'g') };
       }
     }
   }

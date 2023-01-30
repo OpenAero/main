@@ -2,7 +2,7 @@
 * Fixed illegal flick roll options showing in figure editor (Issue #255)
 * Cleaned up CIVA rules
 * Changed update warning to not appear within 48 hours of update, to prevent nuisance warnings
-* Added German language for interface
+* Added German language for interface (Issue #250)
 * Made some changes to the manual to improve printing
 * Corrected 2023 IAC Glider Primary Known presentation to 10K
 * Fixed conv-qtrs in rules23.js to correctly match opposite-load flick rolls
@@ -10,6 +10,7 @@
 * Added IMAC forms
 * Added IMAC rules and sequences for 2023
 * Added 2023 AAC sequences and updated AAC Sportsman Free max K
+* Fixed issue in rulesWorker.js that caused Group-combined to present incorrect Alerts
 
 2023.2.1
 * Updated JSZip to 3.10.1

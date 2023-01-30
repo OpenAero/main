@@ -29,14 +29,16 @@
  * - Updated Sportsman Free K
  * 2023.3.1
  * - Updated Sportsman Free K
+ * - Addec fixed positioning K factors for Graduate and Sportsman
  */
 
 rules.push (
 
 // AAC Graduate and Sportsman Known. Empty rulesets just to prevent rule warning
 "[AAC Graduate Known]",
+"posnl=10",                          // Positioning score = 10
 "[AAC Sportsman Known]",
-
+"posnl=15",                          // Positioning score = 15
 
 //###############################################################################
 //##### AAC Sportsman ###########################################################
@@ -62,7 +64,7 @@ rules.push (
 // Score, max number of figures and max K of figures
 "posnl=15",                          // Positioning score = 15
 "basefig-max=12",                   // Maximum of 12 figures
-"k-max=113",                        // Maximum K is the same as the Known for that year, in 2022 K = 113
+"k-max=137",                        // Maximum K is the same as the Known for that year, in 2023 K = 137
 
 // Mandatory figures (at least one)
 "fam1-min=1",                       // Family 1

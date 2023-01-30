@@ -18,7 +18,11 @@
 //  You should have received a copy of the GNU General Public License
 //  along with OpenAero.  If not, see <http://www.gnu.org/licenses/>.
 
-// This file defines NZAC rules for 2019/2020
+// This file defines NZAC rules for 2022/2023
+/*
+2023.3.1
+- Corrected Sports Free maximum K to 127
+*/
 
 rules.push (
 
@@ -67,7 +71,7 @@ rules.push (
 "fam7-min=1",
 "fam8-min=1",
 "spin-min=1",
-"k-max=140",
+"k-max=127",
 "allow=^[1-9]", //all figures are allowed for the Free program
 "group-frollsport=^9\\.[1234]",
 "frollsport-name=family 9.1-9.4 (roll)",
