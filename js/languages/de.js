@@ -1,4 +1,4 @@
-// de.js
+﻿// de.js
 // This file is part of OpenAero and edited by Dirk Maslonka, 2023-01-15.
 
 //  OpenAero was originally designed by Ringo Massa and built upon ideas

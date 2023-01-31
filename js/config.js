@@ -49,7 +49,7 @@ const version = '2023.3.1';
 */
 const versionNew = {
   '2023.3.1': [
-    ['Added IMAC forms, rules and sequences for 2023', 4],
+    ['Added IMAC forms', 4],
     ['Added German language for interface', 3]
   ],
   '2023.2.1': [
