@@ -501,8 +501,8 @@ rules.push (
 	"rule-climbmax540 = climbqtrs:+<7",
 	"why-climbmax540 = maximum of 540 degrees total rotation on all up lines vertical and diagonal for Family 5.3",
 	
-//	"conv-downqtrs=^9.([1-9]|10).[123678].([1-8]) = z ; ^9\\.([1-9]|10)\\.[459|10]\\.([1-8]) = $2",
-	"conv-downqtrs=^9\\.([1-9]|10)\\.([459]|10)\\.([1-8]) = $3; ^9\\.([1-9]|10)\\.[123678]\\.([1-8]) = z ",
+	"conv-downqtrs=^9.([1-9]|10).[123678].([1-8]) = z ; ^9\\.([1-9]|10)\\.[459|10]\\.([1-8]) = $2",
+//New Spin Rule	"conv-downqtrs=^9\\.([1-9]|10)\\.([459]|10)\\.([1-8]) = $3; ^9\\.([1-9]|10)\\.[123678]\\.([1-8]) = z ",
 
 	"rule-downmax360 = downqtrs:+<5",
 	"why-downmax360 = maximum of 360 degrees rotation total on all down lines vertical and diagonal for Family 5.2 and 5.3", 
@@ -583,22 +583,22 @@ rules.push (
 	"1.3.16.3",
 	
 	//Family 2.1-2.4 Turns
-	"2.1.1.1",
-	"2.1.1.2",
-	"2.2.1.1",
-	"2.2.1.2",
-	"2.3.1.1",
-	"2.3.1.2",
-	"2.4.1.1",
-	"2.4.1.2",
+	"2.1.1.1 ^MAX540",
+	"2.1.1.2 ^MAX540",
+	"2.2.1.1 ^MAX540",
+	"2.2.1.2 ^MAX540",
+	"2.3.1.1 ^MAX540",
+	"2.3.1.2 ^MAX540",
+	"2.4.1.1 ^MAX540",
+	"2.4.1.2 ^MAX540",
 	
 	
 	//Family 3 combinations of lines
-	"3.3.1.1-4",
-	"3.4.1.1-2",
-	"3.4.1.4",
-	"3.4.2.1-3",
-	"3.8.1.2-3",
+	"3.3.1.1-4 ^MAX540",
+	"3.4.1.1-2 ^MAX540",
+	"3.4.1.4 ^MAX540",
+	"3.4.2.1-3 ^MAX540",
+	"3.8.1.2-3 ^MAX540",
 	
 	//Family 5 Stall Turns
 	"5.2.1.1-4 MAX540:1; MAX360:2",
@@ -653,7 +653,7 @@ rules.push (
 	"7.4.3.1-2",
 	"7.4.4.1-2",
 	"7.4.5.1-2",
-	"7.4.6.1",
+	"7.4.6.1 ^MAX540",
 	"7.4.7.1 MAX360:2; NOU:2; noposflick:3",
 	"7.4.7.2 MAX360:2; NOU:2; noposflick:1",
 	"7.4.8.1 MAX360:2; NOU:2",
@@ -995,8 +995,9 @@ rules.push (
 	"why-only1pntrolldn = point roll only allowed on one of the down lines",
 	
 	"conv-vertqtrs=^9\\.([1-9]|10)\\.([14569]|10)\\.([1-8]) = $3; ^9\\.1[12]\\.1\\.([456]) = $1; ^9\\.1[12]\\.1\\.([78]) = 6;^9\\.([1-9]|10)\\.[2378]\\.[1-8] = z",
+//New Spin rule	"conv-vertqtrs=^9\\.([1-9]|10)\\.([14569]|10)\\.([1-8]) = $3; ^9\\.1[12]\\.1.4 = 2 ; ^9\\.1[12]\\.1.5 = 3 ;^9\\.1[12]\\.1.6 = 4 ;^9\\.1[12]\\.1.7 = 5 ;^9\\.1[12]\\.1.8 = 6 ;^9\\.([1-9]|10)\\.[2378]\\.[1-8] = z",
 	"rule-maxvert540=vertqtrs:<7",
-	"why-maxvert540 = Combination or total roll elements on vertical lines, diagonal down lines or looping maneuvers may not exceed 540º degrees (1-1/2 rolls), except for spins",
+	"why-maxvert540 = Combination or total roll elements on vertical lines or looping maneuvers may not exceed 540º degrees (1-1/2 rolls). For lines with a spin, total rotation, including the spin, shall not exceed 720 degrees (2 rotations)",
 	
 	"conv-climbqtrs=^9\\.([1-9]|10)\\.[1267]\\.([1-8]) = $2; ^9.([1-9]|10).([459]|10)\\.[1-8] = z; ^9\\.([1-9]|10)\\.3\\.([1-8]) = 0",
 	"rule-climbmax720 = climbqtrs:+<9",
@@ -1079,21 +1080,21 @@ rules.push (
 	"1.3.16.1-4",
 	
 	//Family 2.1-2.4 Turns
-	"2.1.1.1",
-	"2.1.1.2",
+	"2.1.1.1 ^maxdiahor720; ^maxvert540",
+	"2.1.1.2 ^maxdiahor720; ^maxvert540",
 	
-	"2.2.1.1",
-	"2.2.1.2",
+	"2.2.1.1 ^maxdiahor720; ^maxvert540",
+	"2.2.1.2 ^maxdiahor720; ^maxvert540",
 	
-	"2.3.1.1-2",
-	"2.4.1.1-2",
+	"2.3.1.1-2 ^maxdiahor720; ^maxvert540",
+	"2.4.1.1-2 ^maxdiahor720; ^maxvert540",
 	
 	
 	//Family 3 combinations of lines
-	"3.3.1.1-4",
-	"3.4.1.1-4",
-	"3.4.2.1-4",
-	"3.8.1.1-4",
+	"3.3.1.1-4 ^maxdiahor720; ^maxvert540",
+	"3.4.1.1-4 ^maxdiahor720; ^maxvert540",
+	"3.4.2.1-4 ^maxdiahor720; ^maxvert540",
+	"3.8.1.1-4 ^maxdiahor720; ^maxvert540",
 	
 	//Family 5 Stall Turns
 	/*
@@ -1128,7 +1129,7 @@ rules.push (
 	"7.4.3.1-4",
 	"7.4.4.1-4",
 	"7.4.5.1-2",
-	"7.4.6.1-4",
+	"7.4.6.1-4 ^maxdiahor720; ^maxvert540",
 	"7.4.7.1-4 MAX540:2",
 	"7.4.8.1-4 MAX540:2",
 	"7.4.9.1-4 MAX540:2",
@@ -1600,20 +1601,20 @@ rules.push (
 	"1.3.16.1-4",
 	
 	//Family 2.1-2.4 Turns
-	"2.1.1.1-2",
+	"2.1.1.1-2 ^climbmax1080; ^downmax900",
 	
-	"2.2.1.1-2",
+	"2.2.1.1-2 ^climbmax1080; ^downmax900",
 	
-	"2.3.1.1-2",
+	"2.3.1.1-2 ^climbmax1080; ^downmax900",
 	
-	"2.4.1.1-2",
+	"2.4.1.1-2 ^climbmax1080; ^downmax900",
 	
 	
 	//Family 3 combinations of lines
-	"3.3.1.1-4",
-	"3.4.1.1-4",
-	"3.4.2.1-4",
-	"3.8.1.1-4",
+	"3.3.1.1-4 ^climbmax1080; ^downmax900",
+	"3.4.1.1-4 ^climbmax1080; ^downmax900",
+	"3.4.2.1-4 ^climbmax1080; ^downmax900",
+	"3.8.1.1-4 ^climbmax1080; ^downmax900",
 	
 	//Family 5 Stall Turns
 	
@@ -1640,7 +1641,7 @@ rules.push (
 	"7.4.3.1-4",
 	"7.4.4.1-4",
 	"7.4.5.1-4",
-	"7.4.6.1-4",
+	"7.4.6.1-4 ^climbmax1080; ^downmax900",
 	"7.4.7.1-4",
 	"7.4.8.1-4",
 	"7.4.9.1-4",
@@ -1948,18 +1949,18 @@ rules.push (
 	//##############################  Intermediate Unknown (adds rollers)  ############################
 	//#################################################################################################
 	"[IMAC Intermediate Unknown]",
-	"2.1.3.1",
-	"2.1.3.2",
+	"2.1.3.1 ^MAX540",
+	"2.1.3.2 ^MAX540",
 	"more=IMAC Intermediate Alt-Unknown",
 	
 	//#################################################################################################
 	//##############################  Advanced Unknown (adds rollers)  ################################
 	//#################################################################################################
 	"[IMAC Advanced Unknown]",
-	"2.1.3.1",
-	"2.1.3.2",
-	"2.2.5.1-2",
-	"2.3.4.1-2",
+	"2.1.3.1 ^maxdiahor720; ^maxvert540",
+	"2.1.3.2 ^maxdiahor720; ^maxvert540",
+	"2.2.5.1-2 ^maxdiahor720; ^maxvert540",
+	"2.3.4.1-2 ^maxdiahor720; ^maxvert540",
 	
 	"more=IMAC Advanced Alt-Unknown",
 	
@@ -1967,29 +1968,29 @@ rules.push (
 	//##############################  Unlimited Unknown (adds rollers)     ############################
 	//#################################################################################################
 	"[IMAC Unlimited Unknown]",
-	"2.1.2.1-4",
-	"2.1.3.1-4",
+	"2.1.2.1-4 ^climbmax1080; ^downmax900",
+	"2.1.3.1-4 ^climbmax1080; ^downmax900",
 	
-	"2.2.2.1-4",
-	"2.2.3.1-4",
-	"2.2.4.1-4",
-	"2.2.5.1-4",
-	"2.2.6.1-4",
-	"2.2.7.1-4",
+	"2.2.2.1-4 ^climbmax1080; ^downmax900",
+	"2.2.3.1-4 ^climbmax1080; ^downmax900",
+	"2.2.4.1-4 ^climbmax1080; ^downmax900",
+	"2.2.5.1-4 ^climbmax1080; ^downmax900",
+	"2.2.6.1-4 ^climbmax1080; ^downmax900",
+	"2.2.7.1-4 ^climbmax1080; ^downmax900",
 	
-	"2.3.2.1-4",
-	"2.3.3.1-4",
-	"2.3.4.1-4",
-	"2.3.5.1-4",
-	"2.3.6.1-4",
+	"2.3.2.1-4 ^climbmax1080; ^downmax900",
+	"2.3.3.1-4 ^climbmax1080; ^downmax900",
+	"2.3.4.1-4 ^climbmax1080; ^downmax900",
+	"2.3.5.1-4 ^climbmax1080; ^downmax900",
+	"2.3.6.1-4 ^climbmax1080; ^downmax900",
 	
-	"2.4.2.1-4",
-	"2.4.3.1-4",
-	"2.4.4.1-4",
-	"2.4.5.1-4",
-	"2.4.6.1-4",
-	"2.4.7.1-4",
-	"2.4.8.1-4",
+	"2.4.2.1-4 ^climbmax1080; ^downmax900",
+	"2.4.3.1-4 ^climbmax1080; ^downmax900",
+	"2.4.4.1-4 ^climbmax1080; ^downmax900",
+	"2.4.5.1-4 ^climbmax1080; ^downmax900",
+	"2.4.6.1-4 ^climbmax1080; ^downmax900",
+	"2.4.7.1-4 ^climbmax1080; ^downmax900",
+	"2.4.8.1-4 ^climbmax1080; ^downmax900",
 	"more=IMAC Unlimited Alt-Unknown"
 	
 	);
