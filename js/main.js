@@ -2337,8 +2337,7 @@ function updateUserTexts() {
     }
 
     // Merge the active language over English into userText
-    //userText = {...lang.en, ...language};
-    [lang.en, language].forEach(e=>Object.assign(userText,e));
+    userText = {...lang.en, ...language};
 
     // update userText in rulesWorker
     rulesWorker.postMessage({

@@ -85,7 +85,7 @@ const precacheFiles = [
     'js/rules/rules19-vink.js',
 'js/rules/rules22-aeci.js',
 'js/rulesWorker.js',
-'js/vkbeautify.min.js',
+'js/vkbeautify.js',
 'manifest.json',
 'manifest.webmanifest',
 'pwabuilder-sw.js'
