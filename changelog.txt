@@ -1,3 +1,7 @@
+2023.3.2
+* Added IMAC sequences for 2023
+* Fixed issue in rule checking algorithm for figures that can not have rolls
+
 2023.3.1
 * Fixed illegal flick roll options showing in figure editor (Issue #255)
 * Cleaned up CIVA rules

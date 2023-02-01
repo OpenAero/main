@@ -779,16 +779,17 @@ function checkRules (callbackId, activeSequenceText, figures, nonArestiRolls, mu
 	  
       for (var i = 0; i < figures.length; i++) {
 	    var aresti = figures[i].aresti;
-          if (aresti) {
-            var
-                k = figures[i].k,
-                // fullCheckLine contains all aresti numbers, including base figure
-                fullCheckLine = figures[i].checkLine,
-                // Define checkline WITHOUT base figure (only rolls). Content can change during rule checking
-                checkLine = figures[i].checkLine.replace(/^[0-9.]* /, ''),
-                // Build checkArray from rolls, with # as placeholder for splitting
-                checkArray = checkLine.replace(/([ ,;])/g, "#$1#").split('#');
-            figNr++;
+      if (aresti) {
+        var
+            k = figures[i].k,
+            // fullCheckLine contains all aresti numbers, including base figure
+            fullCheckLine = figures[i].checkLine,
+            // Define checkline WITHOUT base figure (only rolls). Content can change during rule checking
+            checkLine = figures[i].checkLine.replace(/^[0-9.]* ?/, ''),
+            // Build checkArray from rolls, with # as placeholder for splitting
+            checkArray = checkLine.replace(/([ ,;])/g, "#$1#").split('#');
+
+        figNr++;
 	      // format thisFig for logging
 	      var thisFig = fullCheckLine.replace(/;/g, ',');
 	      for (var j = 0; j < aresti.length; j++) {
@@ -1005,7 +1006,7 @@ function checkRules (callbackId, activeSequenceText, figures, nonArestiRolls, mu
                           } else {
                               // Check for individual roll Aresti number conversions
                               var check = checkArray.slice();
-                              logLine = 'Converted: ' + check.join('') + ' => ';
+                              logLine = 'Converted: ' + fullCheckLine + ' => ';
                               for (var l = 0; l < checkConv[conversion].length; l++) {
                                   for (var m = 0; m < check.length; m++) {
                                       if (!check[m].match(/[ ,;]/)) {
