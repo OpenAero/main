@@ -1,4 +1,4 @@
-﻿// rules22.js
+﻿// rules23.js
 
 // This file is part of OpenAero.
 
@@ -262,6 +262,16 @@ var rules = [
 "osnap-name_fr=déclenché(s) negatif(s)",
 "spin-name_fr=vrille(s)",
 "uspin-name_fr=vrille(s) positive(s)",
+ 
+"k-name_de=K-Faktor",//special, counts actual K instead of figures count
+"basefig-name_de=Basisfiguren",
+"basefigex11-name_de=Basisfiguren außer 1.1.1.x",
+"roll-name_de=Rollen",
+"snap-name_de=Strömungsabriss-Rolle",
+"isnap-name_de=Gerissene Rolle",
+"osnap-name_de=Gestoßene Rolle",
+"spin-name_de=Bauchtrudler",
+"uspin-name_de=Rückentrudler",  
 
 "group-fam1=^1\\..*",
 "group-fam2=^2\\..*",
@@ -326,6 +336,14 @@ var rules = [
 "eroll-name_fr=Famille 9.8 (tonneaux à 8 facettes)",
 "sroll-name_fr=tonneaux super lents",
 "hesroll-name_fr=tonneaux à facettes",
+  
+"froll-name_de=Familie 9.1 (Kontinuierliche Rollen)",
+"hroll-name_de=Familie 9.2 (Zwei-Zeiten-Rollen)",
+"troll-name_de=Familie 9.3 (Drei-Zeiten-Rollen)",
+"qroll-name_de=Familie 9.4 (Vier-Zeiten-Rollen)",
+"eroll-name_de=Familie 9.8 (Acht-Zeiten-Rollen)",
+"sroll-name_de=Superlangsame Rollen",
+"hesroll-name_de=Zeiten-Rollen",
 
 // super groups ("G") are matched the full catalog info. this one
 // indicates real opposite rolls (spin-roll is not!)
@@ -335,12 +353,14 @@ var rules = [
 "Group-opposite=(^| )9\\.([1-9]|10)\\.[\\d()\\.]+,",
 "opposite-name=opposite rolls",
 "opposite-name_fr=rotation(s) alternée(s)",
+"opposite-name_de=Gegenläufige Rollen",
 
 // used to allow k2 and k24 but not k2 twice, etc for glider int.
 // indicate repetitions of complete figures
 "Group-combined=^",
 "combined-name=combination figures (base and rolls)",
 "combined-name_fr=figures complétes (base et rotations)",
+"combined-name_de=Figurkombination (Grundfigur und Rollenelement)",
 
 //#####################################################################
 //##### UNKNOWNS ALLOWED FIGURES RULES ################################
@@ -370,26 +390,32 @@ var rules = [
 "rule-NF=roll:[fF]",
 "why-NF=no flick allowed",
 "why_fr-NF=déclenché interdit",
+"why_de-NF=Keine Gerissene/Gestoßene erlaubt",
 
 "rule-NOU=roll:[,;]",
 "why-NOU=no opposite or unlinked rolls allowed",
 "why_fr-NOU=rotations combinées interdites",
+"why_de-NOU=Keine gegenläufigen oder unverbundenen Rollen erlaubt",
 
 "rule-NR=roll:[^z]",
 "why-NR=no roll allowed",
 "why_fr-NR=rotation interdite",
+"why_de-NR=Keine Rolle erlaubt",
 
 "rule-OS=roll:[1248fF]",
 "why-OS=only spin allowed",
 "why_fr-OS=seule vrille autorisée",
+"why_de-OS=nur Trudler erlaubt",
 
 "rule-MAX360=qtrs:<5",
 "why-MAX360=maximum of 360 degrees rotation allowed",
 "why_fr-MAX360=maximum de 360° de rotation permis",
+"why_de-MAX360=maximal 360° Rotation erlaubt",
 
 "rule-FAM91=roll:[^1z]",
 "why-FAM91=only family 1 roll allowed",
 "why_fr-FAM91=uniquement tonneau sans facette permis"
+"why_de-FAM91=nur Rollen der Familie 9.1 erlaubt",
 
 // close the initial rules array definition
 ];
