@@ -475,9 +475,11 @@ rules.push (
 	*/
 	
 	"[IMAC Intermediate Alt-Unknown]",
-	"conv-qtrs=^9\\.([1-9]|10)\\.([123456789]|10)\\.([1-8]) = $3; ^9\\.1[12]\\.1\\.([456]) = $1; ^9\\.1[12]\\.1\\.([78]) = 6",
+	"conv-qtrs=^9\\.([1-9]|10)\\.([123456789]|10)\\.([1-8]) = $3; ^9\\.1[12]\\.1\\.([45678]) = z",
+	 /*Do not include spins in rotational limits*/
+
 	"rule-MAX540=qtrs:<7",
-	"why-MAX540=maximum of 540 degrees rotation allowed, except spins",
+	"why-MAX540=maximum of 540 degrees rotation allowed, excluding spin rotation.",
 	"rule-MAX360=qtrs:<5",
 	"why-MAX360=maximum of 360 degrees rotation allowed",
 	"rule-NOPOINT=roll:[248]",
@@ -501,9 +503,7 @@ rules.push (
 	"rule-climbmax540 = climbqtrs:+<7",
 	"why-climbmax540 = maximum of 540 degrees total rotation on all up lines vertical and diagonal for Family 5.3",
 	
-	"conv-downqtrs=^9.([1-9]|10).[123678].([1-8]) = z ; ^9\\.([1-9]|10)\\.[459|10]\\.([1-8]) = $2",
-//New Spin Rule	"conv-downqtrs=^9\\.([1-9]|10)\\.([459]|10)\\.([1-8]) = $3; ^9\\.([1-9]|10)\\.[123678]\\.([1-8]) = z ",
-
+	"conv-downqtrs=^9\\.([1-9]|10)\\.([459]|10)\\.([1-8]) = $3; ^9\\.([1-9]|10)\\.[123678]\\.([1-8]) = z ",
 	"rule-downmax360 = downqtrs:+<5",
 	"why-downmax360 = maximum of 360 degrees rotation total on all down lines vertical and diagonal for Family 5.2 and 5.3", 
 	
@@ -583,22 +583,22 @@ rules.push (
 	"1.3.16.3",
 	
 	//Family 2.1-2.4 Turns
-	"2.1.1.1 ^MAX540",
-	"2.1.1.2 ^MAX540",
-	"2.2.1.1 ^MAX540",
-	"2.2.1.2 ^MAX540",
-	"2.3.1.1 ^MAX540",
-	"2.3.1.2 ^MAX540",
-	"2.4.1.1 ^MAX540",
-	"2.4.1.2 ^MAX540",
+	"2.1.1.1 ",
+	"2.1.1.2 ",
+	"2.2.1.1 ",
+	"2.2.1.2 ",
+	"2.3.1.1 ",
+	"2.3.1.2 ",
+	"2.4.1.1 ",
+	"2.4.1.2 ",
 	
 	
 	//Family 3 combinations of lines
-	"3.3.1.1-4 ^MAX540",
-	"3.4.1.1-2 ^MAX540",
-	"3.4.1.4 ^MAX540",
-	"3.4.2.1-3 ^MAX540",
-	"3.8.1.2-3 ^MAX540",
+	"3.3.1.1-4 ",
+	"3.4.1.1-2 ",
+	"3.4.1.4 ",
+	"3.4.2.1-3 ",
+	"3.8.1.2-3 ",
 	
 	//Family 5 Stall Turns
 	"5.2.1.1-4 MAX540:1; MAX360:2",
@@ -653,7 +653,7 @@ rules.push (
 	"7.4.3.1-2",
 	"7.4.4.1-2",
 	"7.4.5.1-2",
-	"7.4.6.1 ^MAX540",
+	"7.4.6.1 ",
 	"7.4.7.1 MAX360:2; NOU:2; noposflick:3",
 	"7.4.7.2 MAX360:2; NOU:2; noposflick:1",
 	"7.4.8.1 MAX360:2; NOU:2",
@@ -952,20 +952,20 @@ rules.push (
 	//##### IMAC Advanced Alt-Unknown ###############################################
 	//###############################################################################
 	/*Construction rules
-	Done On 45º down-lines that require a 135º push or pull to figure exit, roll elements cannot be in 
-	excess of 360º (1 roll), no combination rolls allowed. - MAX360 NOU  Done Needs double check
-	Done 1. Combination or total roll elements on horizontal and 45º may not exceed 720º (2 rolls). Except for special limitations for figures covered by rule above. MAX720
-	Done 2. Combination or total roll elements on vertical lines or looping maneuvers may not exceed 540º degrees (1-1/2 rolls), except for spins.
-	Done 3. Total roll limitation or combination roll elements means the total sum of all rolls on that line; linked, unlinked and combination.
+	On 45º down-lines that require a 135º push or pull to figure exit, roll elements cannot be in 
+	excess of 360º (1 roll), no combination rolls allowed. - MAX360 NOU  
+	1. Combination or total roll elements on horizontal and 45º may not exceed 720º (2 rolls). Except for special limitations for figures covered by rule above. MAX720
+	2. Combination or total roll elements on vertical lines or looping maneuvers may not exceed 540º degrees (1-1/2 rolls), except for spins.
+	3. Total roll limitation or combination roll elements means the total sum of all rolls on that line; linked, unlinked and combination.
 	Family Five with vertical entry and exit lines: Family 5.2.x.x
 		1. Combination or total roll elements on a vertical line may not exceed 540º (1 ½ rolls).
 	Family Five with 45º entry or exit special rules: Family 5.3.x.x - 5.4.x.x.
 	Class Specific:
-	Done	1. Combination, or total roll elements, on all up-lines (both 450 and vertical) may not exceed 720 degrees of rotation (2 rolls).
-	Done		- Point rolls, if used, may not exceed 180 of rotation; may only be on one of the two ascending lines.
-	Done	2. Combination, or total roll elements, on all down-lines (both 450 and vertical) may not exceed 540 degree of rotation (1 1/2 rolls).
-	Done		- Point rolls, if used, may not exceed 1800 of rotation; may only be on one of the two descending lines.
-	Done	3. Total roll limitation, or combination roll elements, means the sum of all roll elements on the both 450 and vertical: Linked, unlinked, and combination.
+	1. Combination, or total roll elements, on all up-lines (both 450 and vertical) may not exceed 720 degrees of rotation (2 rolls).
+		- Point rolls, if used, may not exceed 180 of rotation; may only be on one of the two ascending lines.
+	2. Combination, or total roll elements, on all down-lines (both 450 and vertical) may not exceed 540 degree of rotation (1 1/2 rolls).
+		- Point rolls, if used, may not exceed 1800 of rotation; may only be on one of the two descending lines.
+	3. Total roll limitation, or combination roll elements, means the sum of all roll elements on the both 450 and vertical: Linked, unlinked, and combination.
 		.
 	*/
 	
@@ -974,14 +974,15 @@ rules.push (
 	"rule-MAX180=qtrs:<3",
 	"why-MAX180 = maximum roll is 180 degrees",
 	"rule-MAX540=qtrs:<7",
-	"why-MAX540=maximum of 540 degrees rotation allowed, except spins",
+	"why-MAX540=maximum of 540 degrees rotation allowed",
 	"rule-MAX360=qtrs:<5",
 	"why-MAX360=maximum of 360 degrees rotation allowed",
 	"rule-MAX720=qtrs:<9",
 	"why-MAX720= 1. Combination or total roll elements on horizontal and 45º uplines may not exceed 720º (2 rolls).", 
 	"rule-NOPOINT=roll:[248]",
 	"why-NOPOINT=no point roll allowed",
-	
+/*separate conversions needed for horizontal and diagonal vs. vertical to establish default rules for Advanced
+rather than assigning rules to separate lines in the figures*/	
 	"conv-hordiagqtrs=^9\\.([1-9]|10)\\.[234789]\\.([1-8]) = $2; ^9\\.([1-9]|10|11|12)\\.([1569]|10)\\.[1-8] = z",
 	"rule-maxdiahor720= hordiagqtrs:<9",
 	"why-maxdiahor720 = Combination or total roll elements on horizontal and 45º uplines may not exceed 720º (2 rolls).",
@@ -994,11 +995,10 @@ rules.push (
 	"rule-only1pntrolldn=dnpoconv: (p,o p,o)|(o,p p,o)|(o,p o,p)|(p,o o,p)|(p p)|(p o,p)]|(p,o p)|(p,p)",
 	"why-only1pntrolldn = point roll only allowed on one of the down lines",
 	
-	"conv-vertqtrs=^9\\.([1-9]|10)\\.([14569]|10)\\.([1-8]) = $3; ^9\\.1[12]\\.1\\.([456]) = $1; ^9\\.1[12]\\.1\\.([78]) = 6;^9\\.([1-9]|10)\\.[2378]\\.[1-8] = z",
-//New Spin rule	"conv-vertqtrs=^9\\.([1-9]|10)\\.([14569]|10)\\.([1-8]) = $3; ^9\\.1[12]\\.1.4 = 2 ; ^9\\.1[12]\\.1.5 = 3 ;^9\\.1[12]\\.1.6 = 4 ;^9\\.1[12]\\.1.7 = 5 ;^9\\.1[12]\\.1.8 = 6 ;^9\\.([1-9]|10)\\.[2378]\\.[1-8] = z",
+	"conv-vertqtrs=^9\\.([1-9]|10)\\.([156]|10)\\.([1-8]) = $3; ^9\\.1[12]\\.1\\.[4-8] = z;^9\\.([1-9]|10)\\.[234789]\\.[1-8] = z",
 	"rule-maxvert540=vertqtrs:<7",
-	"why-maxvert540 = Combination or total roll elements on vertical lines or looping maneuvers may not exceed 540º degrees (1-1/2 rolls). For lines with a spin, total rotation, including the spin, shall not exceed 720 degrees (2 rotations)",
-	
+	"why-maxvert540 = Combination or total roll elements on vertical lines or looping maneuvers may not exceed 540º degrees (1-1/2 rolls) excluding any spins.",
+/*climbqtrs and downqtrs use separate conversions to total up and down for the entire figure, used for 5.3 and 5.4 diagonal entry and exit hammerheads*/	
 	"conv-climbqtrs=^9\\.([1-9]|10)\\.[1267]\\.([1-8]) = $2; ^9.([1-9]|10).([459]|10)\\.[1-8] = z; ^9\\.([1-9]|10)\\.3\\.([1-8]) = 0",
 	"rule-climbmax720 = climbqtrs:+<9",
 	"why-climbmax720 = maximum of 720 degrees total rotation on all up lines vertical and diagonal for Family 5.3 and 5.4",
@@ -1006,7 +1006,7 @@ rules.push (
 	"conv-downqtrs=^9\\.([1-9]|10)\\.([459]|10)\\.([1-8]) = $3; ^9\\.([1-9]|10)\\.[123678]\\.([1-8]) = z ",
 	"rule-downmax540 = downqtrs:+<7",
 	"why-downmax540 = maximum of 540 degrees rotation total on all down lines vertical and diagonal for Family 5.2 and 5.3", 
-	
+/*ptsqtr used to limit points per line in 5.3 and 5.4*/	
 	"conv-ptsqtr=^9\\.([248])\\.[1-5]\\.([1-8]) = $2; ^9.([1|9|10])=z",
 	"rule-maxptsqtr2= ptsqtr:<3",
 	"why-maxptsqtr2= Point rolls, if used, may not exceed 180 degrees of rotation.",  
@@ -1080,21 +1080,21 @@ rules.push (
 	"1.3.16.1-4",
 	
 	//Family 2.1-2.4 Turns
-	"2.1.1.1 ^maxdiahor720; ^maxvert540",
-	"2.1.1.2 ^maxdiahor720; ^maxvert540",
+	"2.1.1.1 ",
+	"2.1.1.2 ",
 	
-	"2.2.1.1 ^maxdiahor720; ^maxvert540",
-	"2.2.1.2 ^maxdiahor720; ^maxvert540",
+	"2.2.1.1 ",
+	"2.2.1.2 ",
 	
-	"2.3.1.1-2 ^maxdiahor720; ^maxvert540",
-	"2.4.1.1-2 ^maxdiahor720; ^maxvert540",
+	"2.3.1.1-2 ",
+	"2.4.1.1-2 ",
 	
 	
 	//Family 3 combinations of lines
-	"3.3.1.1-4 ^maxdiahor720; ^maxvert540",
-	"3.4.1.1-4 ^maxdiahor720; ^maxvert540",
-	"3.4.2.1-4 ^maxdiahor720; ^maxvert540",
-	"3.8.1.1-4 ^maxdiahor720; ^maxvert540",
+	"3.3.1.1-4 ",
+	"3.4.1.1-4 ",
+	"3.4.2.1-4 ",
+	"3.8.1.1-4 ",
 	
 	//Family 5 Stall Turns
 	/*
@@ -1129,7 +1129,7 @@ rules.push (
 	"7.4.3.1-4",
 	"7.4.4.1-4",
 	"7.4.5.1-2",
-	"7.4.6.1-4 ^maxdiahor720; ^maxvert540",
+	"7.4.6.1-4 ",
 	"7.4.7.1-4 MAX540:2",
 	"7.4.8.1-4 MAX540:2",
 	"7.4.9.1-4 MAX540:2",
@@ -1500,9 +1500,9 @@ rules.push (
 	"rule-MAX720dn45=qtrs:<9",
 	"why-MAX720dn45= On 45º down-lines that require a 135º push or pull to figure exit, roll elements may not exceed 720º (2 rolls)", 
 
-	"conv-downqtrs=^9\\.([1-9]|10)\\.([459]|10)\\.([1-8]) = $3; ^9\\.(1[12])\\.1\\.([4-8]) = $2; ^9\\.([1-9]|10)\\.[123678]\\.([1-8]) = z ",
+	"conv-downqtrs=^9\\.([1-9]|10)\\.([459]|10)\\.([1-8]) = $3; ^9\\.(1[12])\\.1\\.([4-8]) = z; ^9\\.([1-9]|10)\\.[123678]\\.([1-8]) = z ",
 	"rule-downmax900 = downqtrs:<11",
-	"why-downmax900 = Combination or total roll elements on down-lines of 45º and vertical may not exceed 900º (2-1/2 rolls).",
+	"why-downmax900 = Combination or total roll elements on down-lines of 45º and vertical may not exceed 900º (2-1/2 rolls) excluding spins.",
 	
 	"conv-climbqtrs=^9\\.([1-9]|10)\\.[1267]\\.([1-8]) = $2; ^9.([1-9]|10).([459]|10)\\.[1-8] = z; ^9\\.([1-9]|10)\\.3\\.([1-8]) = 0; ^9\\.1[12]\\.1\\.[4-8] = 0",
 	"rule-climbmax1080 = climbqtrs:<13",
@@ -1949,18 +1949,18 @@ rules.push (
 	//##############################  Intermediate Unknown (adds rollers)  ############################
 	//#################################################################################################
 	"[IMAC Intermediate Unknown]",
-	"2.1.3.1 ^MAX540",
-	"2.1.3.2 ^MAX540",
+	"2.1.3.1 ",
+	"2.1.3.2 ",
 	"more=IMAC Intermediate Alt-Unknown",
 	
 	//#################################################################################################
 	//##############################  Advanced Unknown (adds rollers)  ################################
 	//#################################################################################################
 	"[IMAC Advanced Unknown]",
-	"2.1.3.1 ^maxdiahor720; ^maxvert540",
-	"2.1.3.2 ^maxdiahor720; ^maxvert540",
-	"2.2.5.1-2 ^maxdiahor720; ^maxvert540",
-	"2.3.4.1-2 ^maxdiahor720; ^maxvert540",
+	"2.1.3.1 ",
+	"2.1.3.2 ",
+	"2.2.5.1-2 ",
+	"2.3.4.1-2 ",
 	
 	"more=IMAC Advanced Alt-Unknown",
 	
