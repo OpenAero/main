@@ -153,6 +153,7 @@ rules.push(
     "group-roller=^2\\.(2\\.[3-7]|3\\.[2-6]|4\\.[2-8])",
     "roller-name=Rolling turn, family 2.2.3 to 2.2.7, 2.3.2 to 2.3.6, 2.4.2 to 2.4.8",
     "roller-name_fr=Tonneaux en virage, famille 2.2.3 à 2.2.7 ou 2.3.2 à 2.3.6 ou 2.4.2 à 2.4.8",
+    "roller-name_de=Rollenkreis, Familie 2.2.3 bis 2.2.7, 2.3.2 bis 2.3.6, 2.4.2 bis 2.4.8",
 
     "fam1-min=1",
     "roller-min=1",
@@ -206,6 +207,7 @@ rules.push(
     "group-roller=^2\\.(2\\.[3-7]|3\\.[2-6]|4\\.[2-8])",
     "roller-name=Rolling turn, family 2.2.3 to 2.2.7, 2.3.2 to 2.3.6, 2.4.2 to 2.4.8",
     "roller-name_fr=Tonneaux en virage, famille 2.2.3 à 2.2.7 ou 2.3.2 à 2.3.6 ou 2.4.2 à 2.4.8",
+    "roller-name_de=Rollenkreis, Familie 2.2.3 bis 2.2.7, 2.3.2 bis 2.3.6, 2.4.2 bis 2.4.8",
 
     "fam1-min=1",
     "roller-min=1",
@@ -227,7 +229,7 @@ rules.push(
 
     // what info should be filled out
     "infocheck=pilot;actype;acreg;positioning",
-
+ 
     //#######################################################################################
     //##### CIVA UNLIMITED UNKNOWNS #########################################################
     //#######################################################################################
@@ -257,12 +259,15 @@ rules.push(
     "group-one=^1\\.(1\\.[6-9]|1\\.1[01])\\.[34]",
     "one-name=family 1.1.6-11 columns 3&4",
     "one-name_fr=famille 1.1.6 à 1.1.11 colonnes 3 et 4",
+    "one-name_de=Familie 1.1.6-11 Spalten 3&4",
     "group-two=^8\\.(4\\.[1-4]|4\\.[7-9]|4\\.10|5\\.[1-2]|6\\.[1-2])\\.[34]",
     "two-name=family 8.4.1-4,8.4.7-10,8.5.1-2,8.6.1-2 columns 3&4",
     "two-name_fr=famille 8.4.1-4,8.4.7-10,8.5.1-2,8.6.1-2 colonnes 3 et 4",
+    "two-name_de=Familie 8.4.1-4,8.4.7-10,8.5.1-2,8.6.1-2 Spalten 3&4",
     "group-vsnap=^9\\.(9|10)\\.[16]\\.",
     "vsnap-name=vertically climbing flick(s)",
     "vsnap-name_fr=déclenché(s) ascendant vertical",
+    "vsnap-name_de=vertikal aufwärts Gerissene/Gestoßene",
     //"vsnap-rule=Sporting Code Section 6 Part 1 2.3.1.4",
     "one-max=2",
     "two-max=2",
@@ -302,7 +307,7 @@ rules.push(
     "rule-Hor10stop = horstop:<11",
     "why-Hor10stop  = a maximum of 10 stops are allowed on straight horizontal lines rolls",
     "why_fr-Hor10stop  = un maximum de 10 arrets est autorisé dans les rotations des lignes droites horizontales",
-
+    "why_de-Hor10stop  = maximal 10 Stops in horizontalen Rollen erlaubt",
     // added  "^9\\.(9|10)\\. = f" to next 8 for flick checking
     "conv-climbqtrs=^9\\.([1-9]|10)\\.[1267]\\.([1-8]) = $2 ; ^9\\.(9|10)\\. = f ; ^9\\. = r ; ^0\\.=z",
     "conv-climbstop=^9\\.(1|9|10)\\.[1267]=1 ; ^9\\.2\\.[12]\\.4 = 2 ;^9\\.2\\.[12]\\.6 = 3 ;^9\\.2\\.[12]\\.8 = 4 ;^9\\.4\\.[12]\\.([1-8]) = $1;^9\\.8\\.[12]\\.1 = 2;^9\\.8\\.[12]\\.2 = 4;^9\\.8\\.[12]\\.3 = 6;^9\\.8\\.[12]\\.4 = 8 ; ^9\\.(9|10)\\. = f; ^9\\.=r ; ^0\\.=z",
@@ -329,53 +334,63 @@ rules.push(
     "rule-VUP450 = upqtrs:<6",
     "why-VUP450  = a maximum of 450 degrees are allowed on vertical up opposite rolls",
     "why_fr-VUP450  = un maximum de 450° est permis sur les rotations alternées verticales montantes",
+    "why_de-VUP450  = maximal 450° für gegenläufige Rollen auf vertikalen Aufwärtslinien",
     "VUP450-rule = Sporting Code Section 6 Part I, A.2.2.2",
 
     "rule-VUP4S = upstop:<5",
     "why-VUP4S  = a maximum of 4 stops are allowed on vertical up opposite rolls",
     "why_fr-VUP4S  = un maximum de 4 arrets est permis sur les rotations alternées verticales montantes",
+    "why_de-VUP4S  = maximal 4 Stops in gegenläufigen Rollen auf vertikalen Aufwärtslinien erlaubt",
     "VUP4S-rule = Sporting Code Section 6 Part I, A.2.2.2",
 
     "rule-DIAGUP540 = diagupqtrs:<7",
     "why-DIAGUP540  = a maximum of 540 degrees are allowed on diagonal up opposite rolls",
     "why_fr-DIAGUP540  = un maximum de 540° est permis sur les rotations alternées à 45° montant",
+    "why_de-DIAGUP540  = maximal 540° in gegenläufigen Rollen auf diagonalen Aufwärtslinien erlaubt",
     "DIAGUP540-rule = Sporting Code Section 6 Part I, A.2.2.2",
 
     // changed in 2022 (NP2022-17)
     "rule-DIAGUP4S = diagupstop:<5",
     "why-DIAGUP4S  = a maximum of 4 stops are allowed on diagonal up opposite rolls",
     "why_fr-DIAGUP4S  = un maximum de 4 arrets est permis sur les rotations combinées à 45° montant",
+    "why_de-DIAGUP4S  = maximal 4 Stops in gegenläufigen Rollen auf diagonalen Aufwärtslinien erlaubt",
     "DIAGUP4S-rule = Sporting Code Section 6 Part I, A.2.2.2 and A.2.2.3",
 
     "rule-VDOWN360 = downqtrs:<5",
     "why-VDOWN360  = a maximum of 360 degrees are allowed on vertical down opposite rolls",
     "why_fr-VDOWN360  = un maximum de 360° est permis sur les rotations alternées verticales descendantes",
+    "why_de-VDOWN360  = maximal 360° in gegenläufigen Rollen auf vertikalen Abwärtslinien erlaubt",
     "VDOWN360-rule = Sporting Code Section 6 Part I, A.2.2.2",
 
     "rule-VDOWN3S = downstop:<4",
     "why-VDOWN3S  = a maximum of 3 stops are allowed on vertical down opposite rolls",
     "why_fr-VDOWN3S  = un maximum de 3 arrets est permis sur les rotations alternées verticales descendantes",
+    "why_de-VDOWN3S  = maximal 3 Stops in gegenläufigen Rollen auf vertikalen Abwärtslinien erlaubt",
     "VDOWN3S-rule = Sporting Code Section 6 Part I, A.2.2.2",
 
     "rule-DIAGDOWN540 = diagdownqtrs:<7",
     "why-DIAGDOWN540  = a maximum of 540° are allowed on diagonal down opposite rolls",
     "why_fr-DIAGDOWN540  = un maximum de 540° est permis sur les rotations alternées à 45° descendantes",
+    "why_de-DIAGDOWN540  = maximal 540° in gegenläufigen Rollen auf diagonalen Abwärtslinien erlaubt",
     "DIAGDOWN540-rule = Sporting Code Section 6 Part I, A.2.2.2",
 
     "rule-DIAGDOWN3S = diagdownstop:<4",
     "why-DIAGDOWN3S  = a maximum of 3 stops are allowed on diagonal down opposite rolls",
     "why_fr-DIAGDOWN3S  = un maximum de 3 arrets est permis sur les rotations alternées à 45° descendantes",
+    "why_de-DIAGDOWN3S  = maximal 3 Stops in gegenläufigen Rollen auf diagonalen Abwärtslinien erlaubt",
     "DIAGDOWN3S-rule = Sporting Code Section 6 Part I, A.2.2.2",
 
     //note +<6 indicates the total count is less than 6 ... all climbing rolls combined
     "rule-CLIMB450 = climbqtrs:+<6",
     "why-CLIMB450  = a maximum of 450 degrees are allowed on climbing rolls",
     "why_fr-CLIMB450  = un maximum de 450° est permis sur l\'ensemble des rotations montantes",
+    "why_de-CLIMB450  = maximal 450° in steigenden Rollen erlaubt",
     "CLIMB450-rule = Sporting Code Section 6 Part I, A.8.1.3",
 
     "rule-CLIMB4S = climbstop:+<5",
     "why-CLIMB4S  = a maximum of 4 stops are allowed on climbing rolls",
     "why_fr-CLIMB4S  =un maximum de 4 arrets est permis sur l\'ensemble des rotations montantes",
+    "why_de-CLIMB4S  = maximal 4 Stops in steigenden Rollen erlaubt",
     "CLIMB4S-rule = Sporting Code Section 6 Part I, A.8.1.3",
 
     "conv-vdDhfsz=^9\\.[1248]\\.[15]=v;^9\\.[1248]\\.2=d;^9\\.[1248]\\.4=D; ^9\\.[1248]\\.=h; ^9\\.(9|10)\\.[1-5]=f;^9\\.(9|10)\\.=F; ^9\\.1[12]=s ; ^0\\.=z",
@@ -383,6 +398,7 @@ rules.push(
     "rule-UnlimitedNOU   = vdDhfsz:D[,;][Ff]|v[,;][fF]|[Ff][,;]v|[Ff][,;]d|[Ff][,;][Ff]",
     "why-UnlimitedNOU    = this type of opposite or unlinked roll/roll (or flick) combination is not allowed",
     "why_fr-UnlimitedNOU = type de rotations combinées interdites",
+    "why_de-UnlimitedNOU    = Diese gegenläufige oder unverbundene Rollenkombination ist nicht erlaubt",
     "UnlimitedNOU-rule   = Sporting Code Section 6 Part I, A.2.2",
 
     // new in 2022 (NP2022-15)
@@ -392,41 +408,50 @@ rules.push(
     // 45° up | 45° down | Horizontal roll first then flick | Horizontal flick first under g load -> final rotation | Horizontal flick first standard load (+- 1g) -> first or only rotation
     "why-UnlimitedNO3f    = 3/4 flick starting or ending with down rudder is not allowed",
     "why_fr-UnlimitedNO3f = 3/4 déclenché positif départ ou arret pied bas interdit",
+    "why_de-UnlimitedNO3f = 3/4 Gerissene/Gestoßene beginnend oder endend mit Seitenruder unten ist nicht erlaubt",
 
     "rule-In_loop_3f   = 3f_vdDhfFsz:h[,;]3F$|3F[,;]h$",
     "why-In_loop_3f    = 3/4 flick in a loop starting or ending with down rudder is not allowed",
     "why_fr-In_loop_3f = 3/4 déclenché positif dans une boucle départ ou arret pied bas interdit",
+    "why_de-In_loop_3f = 3/4 Gerissene/Gestoßene im Loop beginnend oder endend mit Seitenruder unter is nicht erlaubt",
 
     // New in 2023 (NP2023-9)
     "Group-two_snaps_figure=[ ,;]9\\.(9|10)\\..*[ ,;]9\\.(9|10)\\.",
     "two_snaps_figure-name=figure(s) with 2 flicks",
     "two_snaps_figure-name_fr=figure(s) avec 2 déclenchés",
+    "two_snaps_figure-name_de=Figur(en) mit 2 Gerissenen/Gestoßenen",
     "two_snaps_figure-max=2",
     "snap-maxperfig=2",
 
     "rule-NF3TOPH   = roll: (.[,;].|[248]) [fF]$",
     "why-NF3TOPH    = no flick roll on vertical down line after hesitation in the loop",
     "why_fr-NF3TOPH = pas de déclenché sur la verticale descendante aprés des facettes dans la boucle",
+    "why_de-NF3TOPH = keine Gerissene/Gestoßene auf vertikaler Abwärtslinie nach einer Zeitenrolle im Loopbogen erlaubt",
 
     "rule-NF2UP360   = upqtrs: ^([5-8]|[1-8][,;]4|4[,;][1-8]|2[,;]3|3[,;][23]) f",
     "why-NF2UP360    = no flick roll on loop top after more than 360 roll going up",
     "why_fr-NF2UP360 = pas de déclenché en haut de boucle si plus de 360° de rotation verticale montante",
+    "why_de-NF2UP360 = keine Gerissene/Gestoßene im Loopbogen nach mehr als 360° rollen auf Aufwärtslinie",
 
     "rule-NF2UP2STOP   = upstop: ^([3-9]|[,;]2|2[,;]) f",
     "why-NF2UP2STOP    = no flick roll on loop top after more than 2 stops going up",
     "why_fr-NF2UP2STOP = pas de déclenché en haut de boucle si plus de 2 arrets en verticale montante",
-
+    "why_de-NF2UP2STOP = keine Gerissene/Gestoßene im Loopbogen nach mehr als 2 Stopps auf der Aufwärtslinie erlaubt",
+ 
     "rule-N88   = roll: 8",
     "why-N88    = 8 point roll is not allowed",
     "why_fr-N88 = 8 facettes interdit",
+    "why_de-N88    = 8-Zeiten-Rolle nicht erlaubt",
 
     "rule-NORF   = roll: [1248][,;][Ff]",
     "why-NORF    = roll,flick combination not allowed",
     "why_fr-NORF = combinaison tonneau,déclenché interdite",
+    "why_de-NORF    = Rollenkombination Gesteuert + Gerissene/Gestoßene nicht erlaubt",
 
     "rule-NORDIAGDOWN   = vdDhfsz: D[,;]|[,;]D",
     "why-NORDIAGDOWN    = opposite or unlinked rotation combination on diagonal down line is not allowed",
     "why_fr-NORDIAGDOWN = rotations combinées interdites à lignes 45° descendantes",
+    "why_de-NORDIAGDOWN = gegenläufige oder unverbundene Rollenkombination auf diagonaler Abwärtslinie nicht erlaubt",
     "NORDIAGDOWN-rule   = Sporting Code Section 6 Part I, A.4-A.15",
 
 "allow-defrules=UnlimitedNOU ; VUP450 ; VUP4S ; VDOWN360 ; VDOWN3S ; DIAGUP540 ; DIAGUP4S ; DIAGDOWN540 ; DIAGDOWN3S ; Hor10stop ; UnlimitedNO3f",
@@ -731,6 +756,7 @@ rules.push(
 "group-roller=^2\\.(1\\.[23]|2\\.[2-7]|3\\.[2-5]|4\\.[2-8])",
 "roller-name=Rolling turn, family 2.1.2 to 2.1.3, 2.2.2 to 2.2.7, 2.3.2 to 2.3.5, 2.4.2 to 2.4.8",
 "roller-name_fr=Tonneaux en virage, famille 2.1.2, 2.1.3, 2.2.2 à 2.2.7, 2.3.2 à 2.3.5, 2.4.2 à 2.4.8",
+"roller-name_de=Rollenkreis, Familie 2.1.2 bis 2.1.3, 2.2.2 bis 2.2.7, 2.3.2 bis 2.3.5, 2.4.2 bis 2.4.8",
  
 "roller-min=1",
 "fam1-min=1",
@@ -773,6 +799,7 @@ rules.push(
 "group-roller=^2\\.(1\\.[23]|2\\.[2-7]|3\\.[2-5]|4\\.[2-8])",
 "roller-name=Rolling turn, family 2.1.2 to 2.1.3, 2.2.2 to 2.2.7, 2.3.2 to 2.3.6, 2.4.2 to 2.4.8",
 "roller-name_fr=Tonneaux en virage, famille 2.1.2, 2.1.3, 2.2.2 à 2.2.7, 2.3.2 à 2.3.6, 2.4.2 à 2.4.8",
+"roller-name_de=Rollenkreis, Familie 2.1.2 bis 2.1.3, 2.2.2 bis 2.2.7, 2.3.2 bis 2.3.6, 2.4.2 bis 2.4.8",
 
 "roller-min=1",
 "fam1-min=1",
@@ -849,10 +876,12 @@ rules.push(
 
 "one-name=family 1.2.3-4 columns 3&4 (inv tooth)",
 "one-name_fr=famille 1.2.3-4 colonnes 3 et 4 (triangle inversé)",
+"one-name_de=Familie 1.2.3-4 Spalten 3 & 4 (Inv. Käseeck)",
 "one-max=1",
 
 "two-name=family 7.8.1-8 (full cubans)",
 "two-name_fr=famille 7.8.1-8 (noeuds de savoie)",
+"two-name=Familie 7.8.1-8 (Ganze Kubanische Achten)",
 "two-max=1",
 
 "basefig-min=10",
@@ -880,38 +909,44 @@ rules.push(
 "rule-Hor10stop = horstop:<11",
 "why-Hor10stop  = a maximum of 10 stops are allowed on straight horizontal lines rolls",
 "why_fr-Hor10stop  = un maximum de 10 arrets est autorisé dans les rotations sur les lignes droites horizontales",
-
+"why_de-Hor10stop  = maximal 10 Stops in horizontalen Rollen erlaubt",
+ 
 "conv-adv=^9\\.(1\\.1\\.3|4\\.1\\.2)=v ; ^9\\.(1\\.5\\.3|4\\.5\\.2)=n; ^9\\.[1248]\\.=r; ^9\\.(9|10)=f; ^9\\.1[12]=s ; ^0\\.=z",
 
 "rule-NRLevFly   =adv:v$",
 "rule-NRPushout  =adv:n$",
 "why-NRLevFly    = level fly off is not allowed after this roll",
 "why_fr-NRLevFly    = rotation interdite avant une mise en palier",
+"why_de-NRLevFly    = Pos. Abfangen nach dieser Rolle nicht erlaubt",
 "why-NRPushout   = negative recovery is not allowed after this roll",
 "why_fr-NRPushout   = sortie dos interdite après cette rotation",
-
+"why_de-NRPushout   = Neg. Abfangen nach dieser Rolle nicht erlaubt",
 
 //For Adv rp figures, we convert 3/4 up to 'x' which isnt allowed
 "conv-upqtrs=^9\\.([1-9]|10)\\.[16]\\.([1-8]) = $2 ; ^9\\.(9|10)\\. = f ; ^9\\. = r ; ^0\\.=z",
 "rule-Max180up =upqtrs:<3",
 "why-Max180up  =no more than 1/2 roll is allowed",
 "why_fr-Max180up  =1/2 rotation maximum autorisée",
+"why_de-Max180up  =nicht mehr als eine halbe Rolle erlaubt",
 
 "rule-NH2F3 =roll:^[\\w,;]+ [1248] (f|\\w[,;]f)",
 "why-NH2F3 = no flick allowed in third position when 2nd position has a roll",
 "why_fr-NH2F3 = déclenché interdit en 3eme rotation si la 2eme rotation est présente",
+"why_de-NH2F3 = Keine Gerissene/Gestoßene an Position 3 erlaubt, wenn Position 2 eine Rolle enthält",
 
 //for Adv dh figures, we check for 9.4.2.2 or 9.2.1.2 on 45 and 9.1.1.1 on vert
 "conv-advdh45=^9\\.(4\\.2\\.2)=v ;  ^9\\.(1\\.2\\.2)=v ; ^9\\.=x; ^0\\.=z",
 "rule-DH45M = advdh45: ^x",
 "why-DH45M = max of 9.4.2.2 or 9.1.2.2 allowed on 45° up",
 "why_fr-DH45M = maximun 9.4.2.2 ou 9.1.2.2 autorisé en 45° montant",
+"why_de-DH45M = höchstens 9.4.2.2 oder 9.1.2.2 auf diagonaler Aufwärtslinie erlaubt",
 "DH45M-rule=Sporting Code Section 6 Part I, A.8.1.2",
 
 "conv-advdhv= ^9\\.(1\\.1\\.1)=v ; ^9\\.=x; ^0\\.=z",
 "rule-DHVM = advdhv: ^. x",
 "why-DHVM = max of 9.1.1.1 allowed on vertical up",
 "why_fr-DHVM = maximun 9.1.1.1 autorisé en verticale montante",
+"why_de-DHVM = höchstens 9.1.1.1 auf vertikaler Aufwärtslinie erlaubt",
 
 "allow-defrules= Hor10stop",
 
@@ -1161,6 +1196,7 @@ rules.push(
 "group-roller=^2\\.(1\\.[23]|2\\.[2-7]|3\\.[2-6]|4\\.[2-8])",
 "roller-name=Rolling turn, family 2.1.2 to 2.1.3, 2.2.2 to 2.2.7, 2.3.2 to 2.3.6, 2.4.2 to 2.4.8",
 "roller-name_fr=Tonneaux en virage, famille 2.1.2, 2.1.3, 2.2.2 à 2.2.7, 2.3.2 à 2.3.6, 2.4.2 à 2.4.8",
+"roller-name_de=Rollenkreis, Familie 2.1.2 bis 2.1.3, 2.2.2 bis 2.2.7, 2.3.2 bis 2.3.6, 2.4.2 bis 2.4.8",
 "roller-min=1",
 
 "emptyline-max=0",
@@ -1226,10 +1262,12 @@ rules.push(
 
 "one-name=family 1.2.3-4 columns 3&4 (inv tooth)",
 "one-name_fr=famille 1.2.3-4 colonnes 3 et 4 (triangle inversé)",
+"one-name_de=Familie 1.2.3-4 Spalten 3&4 (Inv. Käseeck)",
 "one-max=1",
 
 "two-name=family 7.8.1-8 (full cubans)",
 "two-name_fr=famille 7.8.1-8 (noeuds de savoie)",
+"two-name_de=Familie 7.8.1-8 (Ganze Kubanische Achten)",
 "two-max=1",
 
 "basefig-min=10",
@@ -1255,6 +1293,7 @@ rules.push(
 "rule-Hor10stop = horstop:<11",
 "why-Hor10stop  = a maximum of 10 stops are allowed on straight horizontal lines rolls",
 "why_fr-Hor10stop  = un maximum de 10 arrets est autorisé dans les rotations sur les lignes droites horizontales",
+"why_de-Hor10stop  = maximal 10 Stops in horizontalen Rollen erlaubt",
 
 "conv-adv=^9\\.(1\\.1\\.3|4\\.1\\.2)=v ; ^9\\.(1\\.5\\.3|4\\.5\\.2)=n; ^9\\.[1248]\\.=r; ^9\\.(9|10)=f; ^9\\.1[12]=s ; ^0\\.=z",
 
@@ -1262,29 +1301,35 @@ rules.push(
 "rule-NRPushout  =adv:n$",
 "why-NRLevFly    = level fly off is not allowed after this roll",
 "why_fr-NRLevFly    = rotation interdite avant une mise en palier",
+"why_de-NRLevFly    = Pos. Abfangen nach dieser Rolle nicht erlaubt",
 "why-NRPushout   = negative recovery is not allowed after this roll",
 "why_fr-NRPushout   = sortie dos interdite après cette rotation",
+"why_de-NRPushout   = Neg. Abfangen nach dieser Rolle nicht erlaubt",
 
 //For Adv rp figures, we convert 3/4 up to 'x' which isnt allowed
 "conv-upqtrs=^9\\.([1-9]|10)\\.[16]\\.([1-8]) = $2 ; ^9\\.(9|10)\\. = f ; ^9\\. = r ; ^0\\.=z",
 "rule-Max180up =upqtrs:<3",
 "why-Max180up  =no more than 1/2 roll is allowed",
 "why_fr-Max180up  =1/2 rotation maximum autorisée",
+"why_de-Max180up  =nicht mehr als eine halbe Rolle erlaubt",
 
 "rule-NH2F3 =roll:^[\\w,;]+ [1248] (f|\\w[,;]f)",
 "why-NH2F3 = no flick allowed in third position when 2nd position has a roll",
 "why_fr-NH2F3 = déclenché interdit en 3eme rotation si la 2eme rotation est présente",
+"why_de-NH2F3 = Keine Gerissene/Gestoßene an Position 3 erlaubt, wenn Position 2 eine Rolle enthält",
 
 //for Adv dh figures, we check for 9.4.2.2 or 9.2.1.2 on 45 and 9.1.1.1 on vert
 "conv-advdh45=^9\\.(4\\.2\\.2)=v ;  ^9\\.(1\\.2\\.2)=v ; ^9\\.=x; ^0\\.=z",
 "rule-DH45M = advdh45: ^x",
 "why-DH45M = max of 9.4.2.2 or 9.1.2.2 allowed on 45 up",
 "why_fr-DH45M = maximun 9.4.2.2 ou 9.1.2.2 autorisé en 45° montant",
+"why_de-DH45M = höchstens 9.4.2.2 oder 9.1.2.2 auf diagonaler Aufwärtslinie erlaubt",
 
 "conv-advdhv= ^9\\.(1\\.1\\.1)=v ; ^9\\.=x; ^0\\.=z",
 "rule-DHVM = advdhv: ^. x",
 "why-DHVM = max of 9.1.1.1 allowed on vertical up",
 "why_fr-DHVM = maximun 9.1.1.1 autorisé en verticale montante",
+"why-DHVM = höchstens 9.1.1.1 auf vertikaler Aufwärtslinie erlaubt",
 
 "allow-defrules= Hor10stop",
 
