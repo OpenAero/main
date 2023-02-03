@@ -414,8 +414,8 @@ var rules = [
 
 "rule-FAM91=roll:[^1z]",
 "why-FAM91=only family 1 roll allowed",
-"why_fr-FAM91=uniquement tonneau sans facette permis"
-"why_de-FAM91=nur Rollen der Familie 9.1 erlaubt",
+"why_fr-FAM91=uniquement tonneau sans facette permis",
+"why_de-FAM91=nur Rollen der Familie 9.1 erlaubt"
 
 // close the initial rules array definition
 ];
