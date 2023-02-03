@@ -1,3 +1,8 @@
+2023.3.3
+* Added German translations in CIVA rule files and help documents
+* Added IMAC rules for 2023
+* Limited Sequence Info Notes field height to 8em (~4 lines)
+
 2023.3.2
 * Added IMAC sequences for 2023
 * Fixed issue in rule checking algorithm for figures that can not have rolls

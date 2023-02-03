@@ -2027,6 +2027,11 @@ function helpWindow(url, title) {
     // set a small delay to make sure the menu is not again activated
     setTimeout(menuInactiveAll, 100);
 
+    // Temporary fix (HACK!) to load appropriate German help windows
+    if (document.getElementById('language').value == 'de') {
+       url = url.replace(/aresti_system.html/, 'aresti_system_de.html');
+    }
+
     if (platform.cordova) {
         if (platform.android && /\.pdf$/.test(url)) {
             /* cordovaPdf(url, title); */
@@ -5306,7 +5311,7 @@ function addEventListeners() {
         helpWindow('doc/language.html', 'OpenAero language');
     }, false);
     document.getElementById('t_arestiSystem').parentNode.addEventListener('mousedown', function () {
-        helpWindow('doc/arestisystem.html', 'The Aresti system');
+        helpWindow('doc/aresti_system.html', 'The Aresti system');
     }, false);
 
     document.getElementById('t_freeKnownGuidancePower').parentNode.addEventListener('mousedown', function () {
@@ -7167,7 +7172,7 @@ function updateFigureOptions(figureId) {
             }
             // set exit attitude button
             document.getElementById('figExitButton').classList.remove('inverted');
-            if (pattern[pattern.length - 1] === '-') {
+            if (pattern.slice(-1) === '-') {
                 document.getElementById('figExitButton').classList.add('inverted');
             }
         }
@@ -7368,7 +7373,7 @@ function updateFigure(noRedraw) {
             } else {
                 entry.classList.remove('inverted');
             }
-            if (base[base.length - 1] === '-') {
+            if (base.slice(-1) === '-') {
                 exit.classList.add('inverted');
             } else {
                 exit.classList.remove('inverted');
@@ -7611,7 +7616,7 @@ function updateFigure(noRedraw) {
     // set exit extension
     val = document.getElementById('exitExt-value').value;
     if (val < 0) {
-        if (pattern[pattern.length - 1] == '-') {
+        if (pattern.slice(-1) == '-') {
             // don't prepend + for negative exit
             pattern += new Array(1 - val).join(userpat.lineshorten);
         } else {
@@ -8610,9 +8615,9 @@ function parseFiguresFile() {
                     }
 
                     fig[i].entryExitGlider = getCode(theBase[0], 'glider', 'entry') +
-                        getCode(theBase[theBase.length - 1], 'glider', 'exit');
+                        getCode(theBase.slice(-1), 'glider', 'exit');
                     fig[i].entryExitPower = getCode(theBase[0], 'power', 'entry') +
-                        getCode(theBase[theBase.length - 1], 'power', 'exit');
+                        getCode(theBase.slice(-1), 'power', 'exit');
                     fig[i].entryExit = fig[i].entryExitPower;
                 } else {
                     // Handle rolls
@@ -9553,7 +9558,7 @@ function markMatchingFigures() {
         }
     }
     if (previousPattern) {
-        var regexString = '^[\\' + previousPattern[previousPattern.length - 1] + '].*';
+        var regexString = '^[\\' + previousPattern.slice(-1) + '].*';
     } else var regexString = '';
     if (nextPattern) regexString += '[\\' + nextPattern[0] + ']$';
     var regex = new RegExp(regexString);
@@ -10788,7 +10793,7 @@ function changeEntryDirection() {
                 var dxdy = figures[i].string.replace(/[^0-9\,\-]/g, '').split(',');
                 updateSequence(i,
                     figures[i].string[0] + -parseInt(dxdy[0]) + ',' + dxdy[1] +
-                    figures[i].string[figures[i].string.length - 1],
+                    figures[i].string.slice(-1),
                     true);
             }
             // flip Y axis when we have a crossbox inside the sequence
@@ -11098,7 +11103,7 @@ function setQueueMenuOptions() {
     document.getElementById('t_addAllToQueue').parentNode.removeEventListener('mousedown', addAllToQueue);
     document.getElementById('t_clearQueue').parentNode.removeEventListener('mousedown', clearQueue);
     document.getElementById('t_saveQueueFile').parentNode.removeEventListener('mousedown', saveQueue);
-    if (fig[fig.length - 1] && fig[fig.length - 1].group == 0) {
+    if (fig.slice(-1) && fig.slice(-1).group == 0) {
         document.getElementById('t_clearQueue').parentNode.classList.remove('disabled');
         document.getElementById('t_saveQueueFile').parentNode.classList.remove('disabled');
         document.getElementById('t_clearQueue').parentNode.addEventListener('mousedown', clearQueue);
@@ -12485,9 +12490,9 @@ function getFigureSets(sets, maxSize) {
                         if (sets[i] && (sets[i].length >= maxSize)) break;
                         // match at the beginning of set i
                         while ((j < sets.length) && (sets[i].length < maxSize) &&
-                            ((sets[j][sets[j].length - 1] === sets[i][0]) ||
+                            ((sets[j].slice(-1) === sets[i][0]) ||
                                 (matchNeutral &&
-                                    (sets[j][sets[j].length - 1] + sets[i][0]).match(/^(n[hl]|N[HL]|[hl]n|[HL]N)$/)))) {
+                                    (sets[j].slice(-1) + sets[i][0]).match(/^(n[hl]|N[HL]|[hl]n|[HL]N)$/)))) {
                             sets[i] = sets[j] + sets[i];
                             sets.splice(j, 1);
                             setFigs[i].unshift(setFigs[j][0]);
@@ -12497,9 +12502,9 @@ function getFigureSets(sets, maxSize) {
                         }
                         // match at the end of set i
                         while ((j < sets.length) && (sets[i].length < maxSize) &&
-                            ((sets[j][0] === sets[i][sets[i].length - 1]) ||
+                            ((sets[j][0] === sets[i].slice(-1)) ||
                                 (matchNeutral &&
-                                    (sets[j][0] + sets[i][sets[i].length - 1]).match(/^(n[hl]|N[HL]|[hl]n|[HL]N)$/)))) {
+                                    (sets[j][0] + sets[i].slice(-1)).match(/^(n[hl]|N[HL]|[hl]n|[HL]N)$/)))) {
                             sets[i] += sets[j];
                             sets.splice(j, 1);
                             setFigs[i].push(setFigs[j][0]);
@@ -12589,9 +12594,9 @@ function createFigureProposals() {
                         match = true;
                     } else
                         // match at the end of proposal
-                        if ((fig[f.figNr].entryExit[0] === fig[realFigs[p.figures[p.figures.length - 1]].figNr].entryExit[1]) ||
+                        if ((fig[f.figNr].entryExit[0] === fig[realFigs[p.figures.slice(-1)].figNr].entryExit[1]) ||
                             ((matchType == 2) &&
-                                (fig[f.figNr].entryExit[0] + fig[realFigs[p.figures[[p.figures.length - 1]]].figNr].entryExit[1]).match(/^(n[hl]|N[HL]|[hl]n|[HL]N)$/))) {
+                                (fig[f.figNr].entryExit[0] + fig[realFigs[p.figures.slice(-1)].figNr].entryExit[1]).match(/^(n[hl]|N[HL]|[hl]n|[HL]N)$/))) {
                             proposals[prop].figures.push(i);
                             // add superFamily
                             proposals[prop].sf[f.superFamily]++;
@@ -12846,7 +12851,7 @@ function makeFree() {
     }
 
     // make sure the sequence ends with 'eu'. If not, add it
-    if (figures[figures.length - 1] && figures[figures.length - 1].string !== 'eu') {
+    if (figures.slice(-1) && figures.slice(-1).string !== 'eu') {
         figures.push({ 'string': 'eu', 'subSequence': true });
     }
 
@@ -15935,7 +15940,7 @@ function addSequenceString(svg, textBox, print) {
             var lines = [''];
             var maxChar = parseInt(txt.length * (textBox.width / box.width));
             for (var i = 0; i < words.length; i++) {
-                if ((lines[lines.length - 1].length + words[i].length) < maxChar) {
+                if ((lines.slice(-1).length + words[i].length) < maxChar) {
                     lines[lines.length - 1] += words[i] + ' ';
                 } else {
                     lines.push(words[i] + ' ');

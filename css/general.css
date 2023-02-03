@@ -1171,6 +1171,9 @@ option.used {
 #notesItem .form-group {
 	margin-top: 0 !important;
 }
+#notes {
+  max-height: 8em;
+}
 #sequenceInfo {
 	z-index: 1;
   padding: 4px;
