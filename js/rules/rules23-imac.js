@@ -532,6 +532,9 @@ rules.push (
 	"1.2.3.1",
 	"1.2.3.2",
 	"1.2.3.4",
+	"1.2.4.1",
+	"1.2.4.2",
+	"1.2.4.4",
 	"1.2.5.1",
 	"1.2.5.2",
 	"1.2.5.4",
@@ -816,7 +819,7 @@ rules.push (
 	"8.6.4.1-3 MAX360:2; NOU:2",
 	"8.6.5.1-2 MAX360:2; NOU:2",
 	"8.6.5.4 MAX360:2; NOU:2",
-	"8.6.6.1-24 MAX360:2; NOU:2",
+	"8.6.6.1-2 MAX360:2; NOU:2",
 	"8.6.6.4 MAX360:2; NOU:2",
 	"8.6.7.1-3 MAX360:2; NOU:2",
 	"8.6.8.1-3 MAX360:2; NOU:2",
@@ -1184,6 +1187,8 @@ rather than assigning rules to separate lines in the figures*/
 	"7.8.18.1-2 MAX180; NOPOINT; NF",
 	"7.8.19.1-2 MAX180; NOPOINT; NF",
 	"7.8.20.1-2 MAX180; NOPOINT; NF",
+	"7.8.21.1-4 MAX180; NOPOINT; NF",
+	"7.8.22.1-4 MAX180; NOPOINT; NF",
 	
 	
 	//Family 8 Combinations of lines, angles, and loops
@@ -1298,7 +1303,7 @@ rather than assigning rules to separate lines in the figures*/
 	"8.6.4.1-2 MAX540:2",
 	"8.6.4.3-4",
 	"8.6.5.1-2 MAX540:2",
-	"8.6.5.34",
+	"8.6.5.3-4",
 	"8.6.6.1-2 MAX540:2",
 	"8.6.6.3-4",
 	"8.6.7.1-2 MAX540:2",
