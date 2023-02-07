@@ -158,6 +158,8 @@ rules.push (
 //-----------
 "group-roller=^(2\\.1\\.3|2\\.2\\.[2-6]|2\\.3\\.[2-5]|2\\.4\\.[3-8])",// new definition acc. new catIDs
 "roller-name=Rolling Turn with at least one full roll",
+"roller_name_fr=Virage roulé avec au moins un tonneau complet",
+"roller_name_de=Rollenkreis mit mindestens einer ganzen Rolle",
 "roller-min=1",
 
 // 2.2.1.6 b)
@@ -165,6 +167,8 @@ rules.push (
 // i)
 "group-froll2=^9\\.1\\.\\d\\.[^1]",
 "froll2-name=no-hesitation roll (9.1.x.x) of at least 1/2",
+"froll2-name_fr=au moins un demi-rouleau continu",
+"froll2-name_de=mindestens eine halbe kontinuierliche Rolle (9.1.x.x)",
 "froll2-min=1",
 
 // ii)
@@ -180,6 +184,8 @@ rules.push (
 //======================================================
 "seqcheck-upend=[\\da-z][~+`'()\"\.>^]*\\s*$",// Sequence exit must be in positive attitude
 "upend-name=Sequence must be finished in upright flight",
+"upend-name_fr=La séquence doit être terminée en vol debout",
+"upend-name_de=Sequenz muss bauchlagig beendet werden",
 "upend-rule=Sporting Code Section 6 Part 2 2.2.1.8",
 
 // Positioning k-factors acc. to Ch. 2.6
@@ -226,6 +232,8 @@ rules.push (
 //-----------
 "group-roller=^(2\\.1\\.3|2\\.2\\.[2-6]|2\\.3\\.[2-5]|2\\.4\\.[3-8])",// new definition acc. new catIDs
 "roller-name=Rolling Turn with at least one full roll",
+"roller_name_fr=Virage roulé avec au moins un tonneau complet",
+"roller_name_de=Rollenkreis mit mindestens einer ganzen Rolle",
 "roller-min=1",
 
 // 2.2.1.6 b)
@@ -233,6 +241,8 @@ rules.push (
 // i)
 "group-froll2=^9\\.1\\.\\d\\.[^1]",
 "froll2-name=no-hesitation roll (9.1.x.x) of at least 1/2",
+"froll2-name_fr=au moins un demi-rouleau continu",
+"froll2-name_de=mindestens eine halbe kontinuierliche Rolle (9.1.x.x)",
 "froll2-min=1",
 
 // ii)
@@ -248,6 +258,8 @@ rules.push (
 //======================================================
 "seqcheck-upend=[\\da-z][~+`'()\"\.>^]*\\s*$",// Sequence exit must be in positive attitude
 "upend-name=Sequence must be finished in upright flight",
+"upend-name_fr=La séquence doit être terminée en vol debout",
+"upend-name_de=Sequenz muss bauchlagig beendet werden",
 "upend-rule=Sporting Code Section 6 Part 2 2.2.1.8",
 
 // Positioning k-factors acc. to Ch. 2.6
@@ -590,10 +602,14 @@ rules.push (
 //>>> implemented by rule-NOU
 "rule-NOAH=roll:[1248],[1248]",
 "why-NOAH=no opposite aileron or hesitation rolls allowed",
+"why_fr-NOAH=pas d'aileron opposé ou de roulis d'hésitation autorisés",
+"why_de-NOAH=keine gegenläufig-gesteuerten oder Zeiten-Rollen erlaubt",
 "NOAH-rule=Sporting Code Section 6 Part 2 A.2.1.1",
 
 "rule-NHR=roll:[248]",
 "why-NHR=no hesitation roll allowed",
+"why_fr-NHR=aucun jet d'hésitation autorisé",
+"why_de-NHR=Keine Zeiten-Rolle erlaubt",
 
 // acc. to A.21.1.1
 // Full horizontal positive flick rolls only at the apex of upward looping figures
@@ -601,6 +617,8 @@ rules.push (
 "conv-hpflick=^9\\.9\\.3\\.4=o ; ^9\\.=r ; ^0\\.=z",//## new converions added ### works perfect
 "rule-nfpf=hpflick:o",
 "why-nfpf=Full horizontal positive flick 9.9.3.4 only at the apex of upward looping figures",
+"why_fr-nfpf=Tonneau déclenché positif complet 9.9.3.4 uniquement au sommet des figures en boucle vers le haut",
+"why_de-nfpf=Ganze Gerissene 9.9.3.4 nur in oberen Loopbögen",
 "nfpf-rule=Sporting Code Section 6 Part 2 A.21.1.1",
 
 // acc. to A.21.1.2 and acc. to A.22.1.2:
@@ -610,28 +628,36 @@ rules.push (
 "conv-fignhf=^9\\.9\\.8\\.2=p ;^9\\.10\\.8\\.2=n ; ^9\\.=r ; ^0\\.=z",
 "rule-nhfonl=fignhf: [pn]",
 "why-nhfonl=Positive/Negative half flick on line 9.9.8.2/9.10.8.2 only with 7.2.2.2 and 7.2.4.1",
+"why_fr-nhfonl=Demi Tonneau déclenché sur la ligne 9.9.8.2/9.10.8.2 seulement avec 7.2.2.2 et 7.2.4.1",
+"why_de-nhfonl=Halbe Gerissene/Gestoßene auf Linie 9.9.8.2/9.10.8.2 nur mit 7.2.2.2 und 7.2.4.1",
 "nhfonl-rule=Sporting Code Section 6 Part 2 A.21.1.2/A.22.1.2",
 
 "conv-hnfvd=^9\\.10\\.(5\\.[34]|10\\.[34])=o ; ^9\\.=r ; ^0\\.=z",
 "rule-nopushout=hnfvd:o$",
 "why-nopushout=No inverted exit after more than 1/2 negative flick vertically down",
+"why_fr-nopushout=Pas de sortie inversée après plus de 1/2 tonneau déclenché négatif verticalement vers le bas",
+"why_de-nopushout=Kein negatives Abfangen nach mehr als einer halben Gestoßenen in der vertikalen Abwärtslinie",
 "nopushout-rule=Sporting Code Section 6 Part 2 A.22.1.1",
 
 // Sporting code 2.3.1.4
 "group-roller=^2\\.(1\\.[23]|2\\.[2-6])",
 "roller-name=Rolling turn",
 "roller-name_fr=Tonneaux en virage",
+"roller-name_de=Rollenkreis",
 "roller-rule=Sporting Code Section 6 Part 2, 2.3.1.4",
 "roller-min=1",
 
 "group-fam5or6=^[56]\\.",
 "fam5or6-name=Family 5 or 6",
 "fam5or6-name_fr=Famille 5 ou 6",
+"fam5or6-name_de=Familie 5 oder 6",
 "roller-rule=Sporting Code Section 6 Part 2, 2.3.1.4",
 "fam5or6-min=1",
 
 "seqcheck-1fullor2halfflick=([^23i]|^)i?f|2i?f.*2i?f",
 "1fullor2halfflick-name=At least one full or two half flicks required",
+"1fullor2halfflick-name_fr=Au moins un rouleau complet ou deux demi-rouleaux requis",
+"1fullor2halfflick-name_de=Mindestens 1 ganze oder 2 halbe Gerissene/Gestoßene erforderlich",
 "1fullor2halfflick-rule=Sporting Code Section 6 Part 2, 2.3.1.4",
 
 // very complicated rule, split in multiple lines for (some) clarity
@@ -640,10 +666,15 @@ rules.push (
     "3i?f.*(2i?f.*([^23i]|^)i?f|3i?f.*([^2i]|^)i?f|([^23i]|^)i?f.*f)|" +
     "([^23i]|^)i?f.*(2i?f.*([^2i]|^)i?f|([^2i]|^)i?f.*f)",
 "!max3flick720-name=Not more than 3 flicks with 720 degrees total rotation allowed",
+"!max3flick720-name_fr=Pas plus de 3 tonneau déclenché avec une rotation totale de 720 degrés autorisés",
+"!max3flick720-name_de=Nicht mehr als 3 Gerissene/Gestoßene mit insgesamt 720° erlaubt",
 "!max3flick720-rule=Sporting Code Section 6 Part 2, 2.3.1.4",
 
 "seqcheck-first3max110k=\@A.*\@B.*\@C.*\@D",
-"first3max110k-name=Manually check that first 3 figures have no more than 110 K total",
+"first3max110k-name=Manually check that first 3 figures of a NAC have no more than 110 K total",
+"first3max110k-name_fr=Vérifier manuellement que les 3 proposition de chiffre d'un NAC n'ont pas plus de 110 K au total"
+"first3max110k-name_de=Überprüfen Sie manuell, dass die ersten 3 Figurenvorschläge eines NAC's nicht insgesamt 110 K überschreiten"
+	
 "first3max110k-rule=Sporting Code Section 6 Part 2, 2.3.1.4",
 
 "k-minperfig=17",
@@ -659,6 +690,7 @@ rules.push (
 "group-basefigex1119=^(1\\.1\\.[2-8]\\.|[2-8])\\.",
 "basefigex1119-name=base figures except 1.1.1.x and 9.x",
 "basefigex1119-name_fr=figures de base sauf 1.1.1.x et 9.x",
+"basefigex1119-name_de=Basisfiguren außer 1.1.1.x und 9.x",
 "basefigex1119-repeat=1",   // base figures except of 1.1.1. and 9
                             // may not be repeated in sequence
 
@@ -744,8 +776,12 @@ rules.push (
 
 "rule-NNF=roll:S",
 "why-NNF=no negative flick roll on 7.2.2.2 or 7.2.4.1",
+"why_fr-NNF=Aucun tonneau déclenché negatif dans 7.2.2.2 ou 7.2.4.1",
+"why_de-NNF=Keine Gestoßene in 7.2.2.2 oder 7.2.4.1",
 "rule-NPF=roll:S",
 "why-NPF=no positive flick roll on 7.2.2.1 or 7.2.4.2",
+"why_fr-NPF=Aucun tonneau déclenché positif dans 7.2.2.1 ou 7.2.4.2",
+"why_de-NPF=Keine Gerissene in 7.2.2.1 oder 7.2.4.2",
 
 "7.2.1.1-2 NF:1 ; nfpf",
 "7.2.1.3-4 NF:2 ; nfpf",
@@ -876,11 +912,15 @@ rules.push (
 // no flicks on vert. down lines in 8.6.5-8.1-2 after hesitation in loop ### acc. to A.14.1.2
 
 "rule-NLRAULR=roll: [12348fFSt] ([12348fFSt])",
-"why-NLRAULR=no rolls on top of loop after roll on up line",
+"why-NLRAULR=No rolls on top of loop after roll on up line allowed",
+"why_fr-NLRAULR=Pas de roulades au de la boucle après roulades sur la ligne ascendante autorisées",
+"why_de-NLRAULR=Keine Rolle im Loopbogen nach Rolle auf Aufwärtslinie erlaubt",
 "NLRAULR-rule=Sporting Code Section 6 Part 2 A.14.1.1",
 
 "rule-NFALHR=roll: (.[,;].|[248]) [fFS]$",
-"why-NFALHR=no flick roll on vertical down line after hesitation roll in loop segment",
+"why-NFALHR=No flick roll on vertical down line after hesitation roll in loop segment allowed",
+"why_fr-NFALHR=Pas de tonneau déclenché sur la ligne verticale descendante après tonneau avec hésitation dans le segment de boucle autorisées",
+"why_de-NFALHR=Keine Gerissene/Gestoßene auf Abwärtslinie nach Zeiten-Rolle im Loopbogen erlaubt",
 "NFALHR-rule=Sporting Code Section 6 Part 2 A.14.1.2",
 
 "8.6.1.1  NLRAULR ; NOAH:1 ; NOAH:2 ; NF:3",
@@ -1042,7 +1082,9 @@ rules.push (
 //-----------
 // i)
 "group-froll2=^9\\.1\\.\\d\\.[^1]",
-"froll2-name=no-hesitation roll at least 1/2",
+"froll2-name=No-hesitation roll at least 1/2",
+"froll2-name_fr=Au moins un demi-rouleau continu",
+"froll2-name_de=Mindestens eine halbe kontinuierliche Rolle",
 "froll2-min=1",
 
 // ii)
@@ -1052,6 +1094,8 @@ rules.push (
 //======================================================
 "seqcheck-upend=([0-9a-tv-z]+|[^e]u)[~+`'()\\\"\\.>^]*\\s*(eu)?$",// Sequence exit must be in positive attitude
 "upend-name=Sequence must be finished in upright flight",
+"upend-name_fr=La séquence doit être terminée en vol debout",
+"upend-name_de=Sequenz muss bauchlagig beendet werden",
 "upend-rule=Sporting Code Section 6 Part 2 2.2.1.8",
 
 // Positioning k-factors acc. to Ch. 2.7
@@ -1106,6 +1150,8 @@ rules.push (
 // i)
 "group-froll2=^9\\.1\\.\\d\\.[^1]",
 "froll2-name=no-hesitation roll at least 1/2",
+"froll2-name_fr=Au moins un demi-rouleau continu",
+"froll2-name_de=Mindestens eine halbe kontinuierliche Rolle",
 "froll2-min=1",
 
 // ii)
@@ -1115,6 +1161,8 @@ rules.push (
 //======================================================
 "seqcheck-upend=[\\da-z][~+`'()\"\.>^]*\\s*$",// Sequence exit must be in positive attitude
 "upend-name=Sequence must be finished in upright flight",
+"upend-name_fr=La séquence doit être terminée en vol debout",
+"upend-name_de=Sequenz muss bauchlagig beendet werden",
 "upend-rule=Sporting Code Section 6 Part 2 2.2.1.8",
 
 // Positioning k-factors acc. to Ch. 2.7
@@ -1427,6 +1475,8 @@ rules.push (
 //======================================================
 "seqcheck-upend=[\\da-z][~+`'()\"\.>^]*\\s*$",// Sequence exit must be in positive attitude
 "upend-name=Sequence must be finished in upright flight",
+"upend-name_fr=La séquence doit être terminée en vol debout",
+"upend-name_de=Sequenz muss bauchlagig beendet werden",
 "upend-rule=Sporting Code Section 6 Part 2 2.3.2.1",
 
 "more=glider-CIVA Advanced Unknownbase",
@@ -1441,6 +1491,8 @@ rules.push (
 
 "rule-NOAH=roll:[1248],[1248]",
 "why-NOAH=no opposite aileron or hesitation rolls allowed",
+"why_fr-NOAH=pas d'aileron opposé ou de roulis d'hésitation autorisés",
+"why_de-NOAH=keine gegenläufig-gesteuerten oder Zeiten-Rollen erlaubt",
 "NOAH-rule=Sporting Code Section 6 Part 2 A.2.1.1",
 
 //## Opposite slow or hesitation rolls are allowed on horizontal lines
@@ -1448,11 +1500,14 @@ rules.push (
 
 "rule-NHR=roll:[248]",
 "why-NHR=no hesitation roll allowed",
+"why_fr-NHR=aucun jet d'hésitation autorisé",
+"why_de-NHR=Keine Zeiten-Rolle erlaubt",
 
 // Sporting code 2.3.1.4
 "group-fam5or6=^[56]\\.",
 "fam5or6-name=Family 5 or 6",
 "fam5or6-name_fr=Famille 5 ou 6",
+"fam5or6-name_de=Familie 5 oder 6",
 "roller-rule=Sporting Code Section 6 Part 2, 2.3.1.4",
 "fam5or6-min=1",
 
@@ -1466,6 +1521,7 @@ rules.push (
     "group-basefigex1119=^(1\\.1\\.[2-8]\\.|[2-8])\\.",
     "basefigex1119-name=base figures except 1.1.1.x and 9.x",
     "basefigex1119-name_fr=figures de base sauf 1.1.1.x et 9.x",
+    "basefigex1119-name_de=Basisfiguren außer 1.1.1.x und 9.x",
     "basefigex1119-repeat=1",   // base figures except of 1.1.1. and 9
                             // may not be repeated in sequence
 
