@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<!--
+  language.html
+  This file is part of OpenAero.
+  OpenAero was originally designed by Ringo Massa and built upon ideas
+  of Jose Luis Aresti, Michael Golan, Alan Cassidy and many others.
+  OpenAero is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+  OpenAero is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+  You should have received a copy of the GNU General Public License
+  along with OpenAero.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<html>
+  <head>
+	<meta name="viewport" content="width=device-width">
+	<script src="../js/docs.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="../css/general.css">
+		<!-- web manifest for progressive web apps -->
+		<link rel="manifest" href="/manifest.webmanifest">
+    <TITLE>OpenAero language</TITLE>
+    <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8" />
+    <style>
+      ul {
+        margin-top: 0px;
+        margin-bottom: 0px;
+        padding-top: 0;
+      }
+    </style>
+  </HEAD>
+  <BODY class="docs">
+      <div class="section documentation">
+          <H1>OpenAero Sequenz-Codes</H1>
+          <p>
+              Dies ist eine detailierte Anleitung zu den Sequenzcodes, die von OpenAero zum Erstellen von Kunstflug-Sequenzen verwendet werden. Die Buchstabennotation ("One Letter Aerobatic Notation") wurde ursprünglich von Michael Golan für seine OLAN-Software erstellt. Diese Art der Notation bildet den Kern von OpenAero, Kunstflugsequenzen als eine Aneinandereihung von Zeichenketten auszudrücken, was einerseits schnelles und unwidersprüchliches Erstellen der Sequenzen, wie auch das Prüfen der Sequenzen mit Hilfe von Listenvergleichen und -routinen erlaubt.
+              <br><br>Das Erlernen dieser Sprache ist nicht notwendig um OpenAero anzuwenden, es empfiehlt sich allerdings die Sprache zu verstehen, um einerseits Sequenzen rapide zu erstellen, Figurenvorschläge "just in time" zu verarbeiten (z.B. dann im Figurengitter) und eine Sequenz infolge einer Fehleingabe zu debuggen. Um eigene Freestyle-Figuren (Nicht-Aresti) ins OpenAero zu bringen, ist die Kenntnis dieser Sprache jedoch Grundvorraussetzung.
+              <br>Zum rasanten Erlernen dieser Sprache ist es empfehlenswert, zunächst Abschnitt für Abschnitt hier durchzulesen und die jeweils darin aufgebotenen Beispiele (fett hervorgehoben) parallel selbst in OpenAero einzugeben.
+              <br><br><b>Ein einführendes Beispiel</b>
+              <br>Die untere Zeichenkette zeigt die Bekannte Pflicht der CIVA-Unlimited Kategorie von 2013 im Motorkunstflug:
+              <br><br>
+              <b>+,2,2f'zt,2f;2+~ 2> ~~7,3m,5if,3 [0,19] 24ip1 3> 2% ~```,s,3if...ibpb(```3)..,3f,4'> ifh5f.. 3> .8'rp(44)9> [0,8] ~++3joi15-----~ [-3,2] -.,4taf.> 34pb3^.</b>
+              <br><br>Sie können die komplette Zeichenfolge kopieren und in der OpenAero-Sequenzzeile einfügen, um die Sequenz in OpenAero anzuzeigen.
+              <br><br>
+              Wer nun meint, dass diese Zeichenfolge nach kryptischen Chiffren aussieht, liegt, streng genommen, falsch. Zwar ist das auf den ersten Blick natürlich ohne Hintergrundkenntnisse unverständlich, so wie es auch die Figurensymbole für ungeschulte Augen sind, aber trotzdem handelt es sich hier in der Tat (wie bei den Figursymbolen auch) um OpenAero-Klartext. Der Unterschied zwischen kryptischen Chiffren und Klartext ist nämlich der, dass bei kryptischen Chiffren jedes Zeichen im Grunde keine <i>bijektive</i> Abbildung zu <i>einer</i> Bedeutung hat, sondern kontext(schlüssel)-abhängig verstanden werden muss. Hier jedoch hat der ein und derselbe Basisfigur-Buchstabe, das Rollenelement-Zeichen, sowie jedes der Sonderanweisungszeichen immer die selbe Bedeutung - kontextunabhängig.
+              <br> Zerlegt man nun diese Zeichenfolge immer bei den in ihr enthaltenen Leerzeichen, dann lässt sich bereits vorläufig grob entschlüsseln (durch einzelnes Ausprobieren in OpenAero), um was es sich dabei handelt:
+              <br>
+              <table>
+                  <tr><td><b>+,2,2f'zt,2f;2+~</b></td> <td>die erste Figurdefinition - genaueres dazu wird in den folgenden Abschnitten erklärt</td></tr>
+                  <tr><td><b>2></b></td> <td>eine Formatanweisung zum Zeichnen der nächsten Figur 2 Feldeinheiten weiter entfernt</td></tr>
+                  <tr><td><b>~~7,3m,5if,3</b></td> <td>die zweite Figurdefinition</td></tr>
+                  <tr><td><b>[0,19]</b></td> <td>eine gerade Verbindungslinie (gestrichelt, 19 Feldeinheiten hinab, 0 lateral) zur nächsten Figur</td></tr>
+                  <tr><td><b>24ip1</b></td> <td>die dritte Figurdefinition</td></tr>
+                  <tr><td><b>3></b></td> <td>eine Formatanweisung zum Zeichnen der nächsten Figur 3 Feldeinheiten weiter entfernt</td></tr>
+                  <tr><td><b>2%</b></td> <td>eine Formatanweisung zum Zeichnen der nächsten Figur 2% größer skaliert</td></tr>
+                  <tr><td><b>~```,s,3if...ibpb(```3)..,3f,4'></b></td> <td>die vierte Figurdefinition</td></tr>
+                  <tr><td>usw.</td><td>usf.</td></tr>
+              </table>
+              <br>
+              Hieran lässt sich bereits auch erkennen, dass die Abfolge der durch Leerzeichen getrennten Zeichenketten streng der Abfolge der Figuren folgt. Dies gilt ebenso innerhalb einer Figurdefinition. Die Abfolge der Zeichen folgt der Abfolge der Figurbestandteile.
+          </p>
+          <H2>Basisfiguren (Familie 1-8)</H2>
+          <p>
+              Die Zeichenketten für jede einzelne Figur (bestehend aus mindestens einem Buchstaben zur Identifikation der Basisfigur) werden durch mindestens ein Leerzeichen voneinander getrennt. Der allseits bekannte Loop wird beispielsweise mit einem "<b>o</b>" ausgedrückt; zwei aufeinander folgende Loops mit "<b>o o</b>". Beachten Sie hier das Leerzeichen zur Figurentrennung! Wird stattdessen "<b>oo</b>" ohne Leerzeichen eingegeben, erkennt OpenAero in diesem Fall eine einzige andere Basisfigur; in anderen Fällen erscheint aber eine Fehlermeldung. Die Buchstabenvergabe für jede Basisfigur orientiert sich an pragmatischen Wiedererkennungswerten, also z.B. das runde "o" für einen runden Loop, oder auch den Anfangsbuchstaben der englischsprachigen Figurennamen, z. B. "h" für hammerhead (=Stall Turn). Leider erscheint eine völlig logische Abkürzungssystematik in Anbetracht der Vielzahl von Basisfiguren unmöglich. Eine einfache, aber nicht unbedingt komplette Referenzliste ist im unteren Abschnitt bereitgestellt. Sämtliche Basisfigurbuchstaben (auch für Nicht-Aresti-Figuren) können mit dem Figurenauswahlmenu von jedem Anwender in Erfahrung gebracht werden.
+          </p>
+          <p>
+              Jede Figur beginnt und endet entweder in Normalfluglage (bauchlagig) oder in Rückenfluglage (rückenlagig). OpenAero versteht ohne weitere Symbolanweisung standardmässig, dass eine Figur bauchlagig beginnt und endet. Bei Figuren, für die dies nicht zutrifft, die also z.B. bauchlagig beginnen und rückenlagig enden (oder andersrum), gibt OpenAero eine Fehlermeldung zurück solange nicht der rückenlagige Ausgang bzw. Eingang deklariert wurde. Um dies zu tun, wird ein Minuszeichen "-" als <i>immer erster</i> Präfix (Eingang) oder <i>immmer letzter</i> Suffix (Ausgang) in der Zeichenfolge der Figur verwendet. Hier darf es kein Leerzeichen zwischen dem Minuszeichen und dem Figurbuchstaben geben. Für eine halbe kubanische Acht ohne Rollenelement schreibt man also z.B. "<b>-c</b>" für rückenlagigen Eingang oder "<b>c-</b>" für rückenlagigen Ausgang.
+          </p>
+          <p>
+              Für einige Basisfiguren existieren "umgekehrte Varianten", z. B. dem Käseeck. Hiermit ist beim Käseeck gemeint, dass es einerseits jene gibt, bei denen eine vertikale auf eine diagonale Linie folgt, und dann andererseits die umgekehrten Varianten also jene sind, bei denen eine diagonale Linie auf die vertikale Linie folgt. Viele, aber nicht alle, anderen Basisfiguren kann man ebenso als Kombinationen von verschiedenen Linien und Bögen begreifen, auf die dieses Prinzip ebenso anwendbar ist. Weiterhin gibt es "invertierte Varianten", welche mit zuvor genannten nicht zu verwechseln sind, da sie nicht die Abfolge der Linien- oder Bogenart (vertikal/diagonal/horizontal, gedrückt/gezogen), sondern deren Richtung alternieren (aufwärts/abwärts). Ein Käseeck mit diagonaler Aufwärtslinie gefolgt von vertikaler Abwärtslinie ist invertiert, wenn es statddessen eine diagonale Abwärtslinie gefolgt von einer vertikalen Aufwärtslinie enthält. Da diese beiden Prinzipien sich schlicht aus der Kombinatorik ableiten und sich durch den gesamten Aresti-Katalog hindurch wiederholen, ist es sinnvoll, die umgekehrten und invertierten Baisfiguren mit dem selben Basisbuchstaben zu addressieren, allerdings um den jeweiligen Präfix "r" für Umkehrung (reverse) und/oder "i" für Invertierung, ergänzt. Für eine halbe kubanische Acht (Basisbuchstabe "c"), bei der nun aber zuerst die diagonale Linie geflogen wird - also eine Rollenkehre, verwendet man dann z. B. "<b>-rc</b>". Soll nun die Diagonale abwärts statt aufwärts geflogen werden, verwendet man z.B. "<b>-irc</b>" oder "<b>irc-</b>". Hierbei ist stets in alphabetischer Reihenfolge das "i" vor dem "r" zu setzen. Alle Codes die also "ri" als Präfix enthalten, resultieren in einer Fehlermeldung. Andere oft verwendete Basisfiguren, bei denen diese zwei Prinzipien andwendbar sind, sind die P-, Q- und Y-loops (Tropfen) sowie die Donauwellen und schrägen Humpty/Push-Bumps. Während für fast alle Basisfiguren invertierte Varianten existieren, gibt es nicht zwangsläufig genauso viele umgekehrte Varianten.
+          </p>
+          <p>
+              Die einzigen zwei Ausnahmen zu den Präfixen "r" und "i" stellen in OpenAero dann aber die Käseecke, die entweder mit "<b>k</b>" (vertikale Linie zuerst) oder "<b>t</b>" aufgerufen wird, nicht aber mit "rt" oder "rk", sowie die Auf- und Abschwünge (halbe Loops) dar, die mit "<b>m</b>" und "<b>a</b>" aufgerufen werden. Dies ist historisch bedingt und wurde aus Gründen der Versionenkompatibilität bislang nicht verändert. Es sei hier erwähnt, dass es in den Anfängen von OLAN und dann etwas später OpenAero vorgesehen war, jede Basisfigur mit genau einem Buchstaben aufzurufen. Jedoch zeigte sich schnell, dass man dieses Idiom unmöglich durchhalten konnte.
+          </p>
+          <p>
+              Es gibt auch darum dann noch weitere Präfixe geringerer Verwendung. Diese sind "p", verwendet in z.B. "pb" für Push Bumps zur Abgrenzung von gezogenen Humpty Bumps, "d", verwendet in z.B. "db" für diagonale Humpty-Bumps oder "dpb" für diagonale Push-Bumps und schliesslich "z" für alle Figuren die mit einem Drei-Achtel-Loopbogen beginnen oder enden. In letzterem Fall wird "z" als Suffix statt als Präfix zum Basisfigurbuchstaben verwendet. Diese Präfixe hingegen werden nicht mit den anderen in alphabetische Reihenfolge gebracht, sondern wie folgt: "d" oder "p" sind immer <i>unmittelbarer</i> Präfix zum Grundbuchstaben. "z" wird als Präfix oder Suffix - je nach Vorkommen - verwendet. An dieser Stelle sei dann weiter auf die Referenzlisten verwiesen.
+          </p>
+          <p>
+              Da sich die Figuren Männchen und Weibchen ähnlich sind, aber im oben beschriebenen, streng kombinatorischen Sinn eben nicht voneinander umkehrbar oder invertierbar sind, wird das Weibchen "<b>ita</b>" mit Präfix "i" vom Männchen "<b>ta</b>" durch bloße Konvention unterschieden, wobei "ta" für ""<b>ta</b>ilslide" steht.
+          </p>
+          <p>
+              Kreise und Rollenkreise werden mit dem Basisbuchstaben "j" generiert. Die Präfixzahl beschreibt dann die Vielfachen eines Viertel-Kreises, also z.B. "<b>3j</b>" für eine 270°-Kurve, und die Suffixzahl beschreibt das oder die Rollenelement(e) im Fall von Rollenkreisen. "<b>2j2</b>" bedeutet dann einen Rollenkreis mit 180° Richtungsänderungen und 2 Innenrollen mit positiven Ein- und Ausgang. "<b>-2jo15</b>" bedeutet einen Rollenkreis mit 180° Richtungsänderung und eineinhalb Außen-Rollen aus Rückenlage. Hier steht der Suffix "o" für "outside roll". Wird in einem Rollenkreis die Rollrichtung geändert, wird dies mit "jio", respektive "joi" dargestellt, z. B. "<b>2jio15-</b>", wobei darin das "i" für "inside roll" steht.
+          </p>
+          <p>
+              <u>Experten-Tipp:</u>
+              <br>Alle Figurdefinitionen finden sich in der "figuresXX.js"-Datei wo auch die Nicht-Aresti-Figuren definiert sind und weitere definiert werden können, was jedoch Kenntnisse bzgl. "Regular Expressions" erfordert.
+          </p>
+          <H2>Rollenelemente (Familie 9)</H2>
+          <p>
+              Die OpenAero-Sprache bildet die Rollenelemente einer jeden Figur mit Zahlen (einstellig für kontinuierliche Rollen, zweistellig für Zeitenrollen) und reservierten Buchstaben für Trudler ("s"-spins), Rückentrudler ("is"-inverted spins), Gerissene ("f"-flicks) und Gestoßene ("if"-inverted flicks) ab. Die im Segelkunstflug vorkommenen superlangsamen Rollen, die immer kontinuierlich sind, werden mit zwei Zahlen ausgedrückt, wobei erstere immer eine 0 ist, also z.B. "<b>01</b>". Eine vollständige Referenzliste für Familie 9 ist im unteren Abschnitt bereitgestellt.
+          </p>
+          <p>
+              Sie werden dem Buchstaben für die Basisfigur (inklusive seinen Prä- und Suffixen) voran oder nachgestellt, je nach dem an welcher Position innerhalb der Figur sich das Rollenelement befindet. Einige Basisfiguren mit nur einem Rollenelement-Platzhalter, z. B. eine diagonale Linie (auch Treppe genannt), werden nur mit einem Suffix für das Rollement versehen, hier also z.B. "<b>d1</b>" für eine Treppe aufwärts mit einer ganzen gesteuerten Rolle. Während die allermeisten Basisfiguren 2 Positionen für Rollenelemente bieten und diese entsprechend als Präfix und Suffix zur Grundfigur hinzugefügt werden, gibt es auch noch andere mit 3 solchen Platzhaltern je Basisfigur. Bei diesen wird das Rollenelement auf Position 2 mit <i>runden</i> Klammern unmittelbar nach dem Basisfigurbuchstaben eingefügt. Wird für eine halbe kubanische Acht nun nur "c" eingegeben, gibt OpenAero eine Fehlermeldung aus, da weder das korrekte Symbol für einen rückenlagigen Figurein- oder -ausgang bzw. keine ungeraden Vielfache einer halben Rolle auf einen der Platzhalter mit eingegeben wurde. "<b>c2</b>", "<b>c-</b>", "<b>2c</b>" und "<b>-c</b>" sind hingegen gültige Eingaben. Eine ganze kubanische Acht wird mit "<b>cc</b>" eingegeben. "<b>1cc(22)44</b>" ergibt eine ganze kubanische Acht mit einer (1) gesteuerten Rolle auf dem ersten Platzhalter, einer ganzen Zwei-Zeiten-Rolle (22) auf dem zweiten Platzhalter und eine ganze Vier-Zeiten-Rolle (44) auf dem dritten Platzhalter. Wird kein Figurbuchstabe eingegeben und nur ein Rollensymbol, z.B. "<b>9</b>" für zwei kontinuierliche, gesteuerte Rollen, nimmt OpenAero als Grundfigur automatisch eine horizontale Linie (Fam. 1.1.1.x) an. Es gibt sogar Basisfiguren mit 4 Rollenelement-Platzhaltern. Die zweite und dritte Position wird dann jeweils mit <i>runden</i> Klammern aufgegriffen, wobei dann leere Klammern verwendet werden um auf der entsprechend Position kein Rollenelement zu setzen, so dies gewünscht ist. Weitere Beispiele sind die Drei- und Vier-Linien Stall-Turns:"<b>1dhd(2)(1)1</b>" oder "<b>dhd(2)()</b>".
+          </p>
+          <H2>Sonderanweisungen</H2>
+          <p>
+              Neben den Buchstaben und Zahlen für Basisfiguren und Rollenelemente kann die gesamte Zeichenkette für eine Kunstflugsequenz noch weitere Symbole enthalten, um die Sequenz eindeutig zu beschreiben oder um detailiertere Formatanweisungen zu geben. So startet beispielsweise standardmässig jede Sequenz gegen den Wind, was mit "<b>ed</b>" zu einem Rückenwindeingang oder mit "<b>ej</b>" oder "<b>eja</b>" zu einem Querwindeingang geändert werden kann, wenn diese Zeichen an den Anfang der Zeichenkette gesetzt und mit Leerzeichen von der ersten Figur getrennt werden. Die Gesamtzeichenkette ist jedenfalls erst mit all diesen Sonderanweisungen eine <i>eindeutige</i> und <i>bijektive</i> Abbildung einer Kunstflugsequenz. Eine komplette Referenzliste zu den Sonderanweisungen ist weiter unten bereitgestellt.
+          </p>
+          <H2>Referenzlisten</H2>
+          <H3>Familie 1 - Linien und Winkel</H3>
+              <H4>Eine-Linien-Figuren</H4>
+          <p>
+              <b>d</b> Diagonale Aufwärtslinie (Treppe rauf) z. B. "<b>d2-</b>"
+              <br><b>id</b> Diagonale Abwärtslinie (Treppe runter)
+              <br><b>v</b> Vertikale Aufwärtslinie z.B. "<b>v44</b>"
+              <br><b>iv</b> Vertikale Abwärtslinie
+              <br><b>z</b> Aufwärtsdiagonale nach 3/8-Loop-Eingang, resp. vor 3/8-Loop-Ausgang
+              <br><b>iz</b> Abwärtsdiagonale nach 3/8-Loop-Eingang, resp. vor 3/8-Loop-Ausgang
+              <br><br>
+              Eine horizontale Linie hat keinen Basisfigurbuchstaben. Sie wird automatisch angenommen, sobald nur ein Rollenelementsymbol angegeben wird.
+          </p>
+              <H4>Zwei-Linien-Figuren (Käseecken)</H4>
+          <p>
+              <b>t</b>  "Tooth" - Aufwärtsdiagonale zuerst, dann vertikale Abwärtslinie
+              <br><b>it</b> "Inverted Tooth" - Abwärtsdiagonale zuerst, dann vertikale Aufwärtslinie
+              <br><b>k</b>  "sharK tooth" - Zuerst vertikale Aufwärtslinie, dann Abwärtsdiagonale
+              <br><b>ik</b> "inverted sharK tooth" - Zuerst vertikale Abwärtslinie, dann Aufwärtsdiagonale
+              <br><b>zt</b> "Z-Tooth" - Aufwärtsdiagonale nach 3/8 Loop, dann vertikale Abwärtslinie
+              <br><b>izt</b> "inverted Z-Tooth" - Abwärtsdiagonale nach 3/8 Loop, dann vertikale Aufwärtslinie
+              <br><b>kz</b> "sharK-Z" - Vertikale Aufwärtslinie gefolgt von Abwärtsdiagonale und 3/8 Loop.
+              <br><b>ikz</b> "inverted sharK-Z" - Vertikale Abwärtslinie gefolgt von Aufwärtsdiagonale und 3/8 Loop.
+          </p>
+              <H4>Drei-Lininen-Figuren</H4>
+          <p>
+              <b>n</b> gezogenes* "N" (zwei Aufwärtsvertikale und eine Abwärtsdiagonale)
+              <br><b>pn</b> gedrücktes* "N"
+              <br><b>in</b> invertiertes, gezogenes* "N" (zwei Abwärtsvertikale und eine Aufwärtsdiagonale)
+              <br><b>ipn</b> invertiertes, gedrücktes* "N"
+              <br>
+              * "gezogen" / "gedrückt" bezieht sich hier auf den Bogen in die Diagonale
+              <br>
+              <br><b>w</b> eckiger Fisch (Zwei Aufwärtsdiagonale und eine Abwärtsvertikale)
+              <br><b>iw</b> invertierter, eckiger Fisch (Zwei Abwärtsdiagonale und eine Aufwärtsvertikale)
+              <br>
+          </p>
+          <H3>Familie 2 - Kreise und Rollenkreise</H3>
+          <p>
+              <b>j</b> oder <b>1j</b> Ein-Viertel-Kreis (90° Kurve)
+              <br><b>2j</b> Zwei-Viertel-Kreis (180° Kurve)
+              <br><b>3j</b> Drei-Viertel-Kreis (270° Kurve)
+              <br><b>4j</b> Vier-Viertel-Kreis (360° Kurve)
+          </p>
+              <H4>90° Kurven mit ...</H4>
+          <p>
+              <b>1j5-</b> ... halber Innen-Rolle in den Rücken
+              <br><b>-1j5</b> ... halber Innen-Rolle aus dem Rücken
+              <br><b>1jo5-</b> ... halber Außen-Rolle in den Rücken
+              <br><b>-1jo5</b> ... halber Außen-Rolle aus dem Rücken
+              <br><b>1j1</b> ... ganzer Innen-Rolle
+              <br><b>1jo1</b> ... ganzer Außen-Rolle
+          </p>
+              <H4>180° Kurven mit ...</H4>
+          <p>
+              <b>2j1</b> ... einer ganzen Innen-Rolle
+              <br><b>2jo1</b> ... einer ganzen Außen-Rolle
+              <br><b>2j2</b> ... zwei ganzen Innen-Rollen
+              <br><b>2jo2</b> ... zwei ganzen Außen-Rollen
+              <br><b>2j15-</b> ... ein einhalb Innen-Rollen in den Rücken
+              <br><b>-2j15</b> ... ein einhalb Innen-Rollen aus dem Rücken
+              <br><b>2jio15-</b> ... einer ganzen Innen-Rolle und einer halben Außen-Rrolle in den Rücken
+              <br><b>-2joi15</b> ... einer ganzen Außen-Rolle und einer halben Innen-Rolle aus dem Rücken
+          </p>
+              <H4>270° Kurven mit ...</H4>
+          <p>
+              <b>3j15-</b> ... ein einhalb Innen-Rollen in den Rücken
+              <br><b>3jo15-</b> ... ein einhalb Außen-Rollen in den Rücken
+              <br><b>3jio15-</b> ... einer ganzen Innen-Rolle gefolgt von einer halben Außen-Rolle in den Rücken
+              <br><b>3joi15-</b> ... einer ganzen Außen-Rolle gefolgt von einer halben Innen-Rolle in den Rücken
+              <br><b>3j3</b> ... drei Innen-Rollen
+              <br><b>3jo3</b> ... drei Außen-Rollen
+              <br><b>3jio3</b> ... Innen-, Außen-, Innen-Rolle
+              <br><b>3joi3</b> ... Außen-, Innen-, Außen-Rolle
+          </p>
+              <H4>360° Kurven mit ...</H4>
+          <p>
+              <b>4j1</b> ... einer Innen-Rolle
+              <br><b>4jo1</b> ... einer Außen-Rolle
+              <br><b>4j2</b> ... zwei Innen-Rollen
+              <br><b>4jo2</b> ... zwei Außen-Rollen
+              <br><b>4jio2</b> ... einer Innen- gefolgt von einer Außen-Rolle
+              <br><b>4joi2</b> ... einer Außen- gefolgt von einer Innen-Rolle
+              <br><b>4j3</b> ... drei Innen-Rollen
+              <br><b>4jo3</b> ... drei Außen-Rollen
+              <br><b>4jio3</b> ... drei alternierenden Rollen, beginnend mit einer Innen-Rolle
+              <br><b>4joi3</b> ... drei alternierenden Rollen, beginnend mit einer Außen-Rolle
+              <br><b>4j4</b> ... vier Innen-Rollen
+              <br><b>4jo4</b> ... vier Außen-Rollen
+              <br><b>4jio4</b> ... vier alternierenden Rollen, beginnend mit einer Innen-Rolle
+              <br><b>4joi4</b> ... vier alternierenden Rollen, beginnend mit einer Außen-Rolle
+          </p>
+          <H3>Familie 3 - Linienkombinationen</H3>
+          <p>
+              <b>dz-</b> gezogener Zwei-Diagonalen-Aufschwung
+              <br><b>-dz</b> gedrückter Zwei-Diagonalen-Aufschwung
+              <br><b>idz-</b> gedrückter Zwei-Diagonalen-Abschwung
+              <br><b>-idz</b> gezogener Zwei-Diagonalen-Abschwung
+              <br>
+              <br><b>dvz-</b> gezogener Drei-Linien-Aufschwung
+              <br><b>-dvz</b> gedrückter Drei-Linien-Aufschwung
+              <br><b>idvz-</b> gedrückter Drei-Linien-Abschwung
+              <br><b>-idvz</b> gezogener Drei-Linien-Abschwung
+              <br>
+              <br><b>dvd</b> pos. Drei-Linien-Aufwärtstreppe
+              <br><b>-dvd-</b> neg. Drei-Linien-Aufwärtstreppe
+              <br><b>idvd</b> pos. Drei-Linien-Abwärtstreppe
+              <br><b>-idvd-</b> neg. Drei-Linien-Abwärtstreppe
+              <br>
+              <br><b>rqq-</b> Umkehrender Achteck-Loop nach oben in die Rückenlage
+              <br><b>-rqq</b> Umkehrender Achteck-Loop nach oben aus der Rückenlage
+              <br><b>irqq-</b> Umkehrender Achteck-Loop nach unten in die Rückenlage
+              <br><b>-irqq</b> Umkehrender Achteck-Loop nach unten aus der Rückenlage
+          </p>
+          <H3>Familie 5 - Stall Turns</H3>
+          <p>
+              <b>h</b> Zwei-Linien-Stall-Turn
+              <br><b>dh</b> Drei-Linien-Stall-Turn mit Eingangsdiagonale
+              <br><b>hd</b> Drei-Linien-Stall-Turn mit Ausgangsdiagonale
+              <br><b>dhd</b> Vier-Linien-Stall-Turn
+          </p>
+          <H3>Familie 6 - Weibchen und Männchen</H3>
+          <p>
+              <b>ta</b> Männchen (bauchlagig fallend)
+              <br><b>ita</b> Weibchen (rückenlagig fallend)
+          </p>
+          <H3>Familie 7 - Loopvariationen</H3>
+              <H4>Auf- und Abschwünge</H4>
+          <p>
+              <b>a</b> Abschwung (halber Loop nach unten)
+              <br><b>m</b> Aufschwung (halber Loop nach oben; Immelmann)
+          </p>
+              <H4>Goldfische - Drei-Viertel-Bögen mit zwei Diagonalen</H4>
+          <p>
+              <b>g</b> Goldfisch mit zwei Aufwärtsdiagonalen und Bogen nach unten
+              <br><b>ig</b> Goldfisch mit zwei Abwärtsdiagonalen und Bogen nach oben
+          </p>
+              <H4>Ganze Loops</H4>
+          <p>
+              <b>o</b> ganzer Kreis-Loop nach oben
+              <br><b>io</b> ganzer Kreis-Loop nach unten
+              <br><b>qo</b> Quadrat-Loop nach oben
+              <br><b>iqo</b> Quadrat-Loop nach unten
+              <br><b>dq</b> Raute-Loop nach oben
+              <br><b>dq</b> Raute-Loop nach unten
+              <br><b>qq</b> Achteck-Loop nach oben
+              <br><b>qq</b> Achteck-Loop nach unten
+              <br><b>ao</b> Schnecken-Loop nach oben (3/4-Bogen & 1/4-Bogen entgegen)
+              <br><b>iao</b> Schnecken-Loop nach unten (3/4-Bogen & 1/4-Bogen entgegen)
+              <br><b>rao</b> Schnecken-Loop nach oben (1/4-Bogen & 3/4-Bogen entgegen)
+              <br><b>irao</b> Schnecken-Loop nach unten (1/4-Bogen & 3/4-Bogen entgegen)
+              <br>
+              <br>Schnecken-Loops werden im Aresti-Katalog und dem CIVA Sporting Code als "Reversing Whole Loops" bezeichnet, also umkehrende ganze Loops. Das OpenAero-Team findet den Begriff "Schnecken-Loop" einprägsamer.
+          </p>
+              <H4>Horizontales "S" (Zwei 5/8-Loops mit Diagonale) und Vertikales "S" (Zwei Auf- bzw. Abschwünge)</H4>
+          <p>
+              <b>ac</b> horizontales / liegendes "S" nach oben
+              <br><b>iac</b> horizontales / liegendes "S" nach unten
+              <br><b>mm</b> vertikales / stehendes "S" nach oben
+              <br><b>imm</b> vertikales / stehendes "S" nach unten
+          </p>
+              <H4>Ganze Kubanische Achten</H4>
+          <p>
+              <b>cc</b> Ganze Kubanische Acht nach oben (Bogen zuerst)
+              <br><b>icc</b> Ganze Kubanische Acht nach unten (Bogen zuerst)
+              <br><b>rcc</b> Ganze Kubanische Acht nach oben (Diagonale zuerst)
+              <br><b>ircc</b> Ganze Kubanische Acht nach unten (Diagonale zuerst)
+          </p>
+          <H3>Familie 8 - Linien-Bogen-Kombinationen</H3>
+              <H4>Einfache Humpty/Push-Bumps</H4>
+          <p>
+              <b>b</b> Humpty-Bump (gezogener Halbloop)
+              <br><b>pb</b> Push-Bump (gedrückter Halbloop)
+          </p>
+              <H4>Doppelte Humpty/Push-Bumps (Büroklammern)</H4>
+          <p>
+              <b>bb</b> 2x Humpty-Bump, nach oben beginnend
+              <br><b>ibb</b> 2x Humpty-Bump, nach unten beginnend
+              <br><b>bpb</b> Humpty- dann Push-Bump, nach oben beginnend
+              <br><b>ibpb</b> Humpty- dann Push-Bump, nach unten beginnend
+              <br><b>pbb</b> Push- dann Humpty-Bump, nach oben beginnend
+              <br><b>ipbb</b> Push- dann Humpty-Bump, nach unten beginnend
+              <br><b>pbpb</b> 2x Push-Bump, nach oben beginnend
+              <br><b>ipbpb</b> 2x Push-Bump, nach unten beginnend
+          </p>
+              <H4>Schräge Humpty/Push-Bumps</H4>
+          <p>
+              <u>ohne 3/8-Loopbogen</u>
+              <br><b>db</b> aufwärts mit Halbloop nach oben
+              <br><b>idb</b> abwärts mit Halbloop nach unten
+              <br><b>rdb</b> aufwärts mit Halbloop nach unten
+              <br><b>irdb</b> abwärts mit Halbloop nach oben
+              <br>
+              <br><u>mit 3/8-Loopbogen nach Eingang</u>
+              <br><b>zb</b> aufwärts mit Halbloop nach unten
+              <br><b>izb</b> abwärts mit Halbloop nach oben
+              <br><b>rzb</b> aufwärts mit Halbloop nach oben
+              <br><b>irzb</b> abwärts mit Halbloop nach unten
+              <br>
+              <br><u>mit 3/8-Loopbogen vor Ausgang</u>
+              <br><b>bz</b> aufwärts mit Halbloop nach oben
+              <br><b>ibz</b> abwärts mit Halbloop nach unten
+              <br><b>rbz</b> aufwärts mit Halbloop nach unten
+              <br><b>irbz</b> abwärts mit Halbloop nach oben
+          </p>
+              <H4>Halbe Kubanische Achten und Rollenkehren (5/8-Loops ohne Vertikale)</H4>
+          <p>
+              <b>c</b> Halbe Kubanische Acht nach oben (5/8-Loop und Abwärtsdiagonale)
+              <br><b>ic</b> Halbe Kubanische Acht nach unten (5/8-Loop und Aufwärtsdiagonale)
+              <br><b>rc</b> Rollenkehre nach oben (Aufwärtstdiagonale und 5/8-Loop)
+              <br><b>irc</b> Rollenkehre nach unten (Abwärtsdiagonale und 5/8-Loop)
+          </p>
+              <H4>Tropfen / Y-Loops (5/8-Loops mit Vertikale)</H4>
+          <p>
+              <b>y</b> Aufwärtsdiagonale mit 5/8-Loop in die Abwärtsvertikale
+              <br><b>iy</b> Abwärtsvertikale mit 5/8-Loop in die Aufwärtsvertikale
+              <br><b>ry</b> Aufwärtsvertikale mit 5/8-Loop in die Abwärtsdiagonale
+              <br><b>iry</b> Abwärtsvertikale mit 5/8-Loop in die Aufwärtsdiagonale
+              <br><b>zy</b> 3/8-Loop in Aufwärtsdiagonale, dann 5/8-Loop in Abwärtsvertikale
+              <br><b>izy</b> 3/8-Loop in Abwärtsdiagonale, dann 5/8-Loop in Aufwärtsvertikale
+              <br><b>ryz</b> Aufwärtsvertikale mit 5/8-Loop in die Abwärtsdiagonale und 3/8-Loop in den Ausgang
+              <br><b>iryz</b> Abwärtsvertikale mit 5/8-Loop in die Aufwärtsdiagonale und 3/8-Loop in den Ausgang
+          </p>
+              <H4>P-Loops (3/4-Loops mit Vertikale)</H4>
+          <p>
+              <b>p</b> 3/4-Bogen nach oben in die Abwärtsvertikale
+              <br><b>ip</b> 3/4-Bogen nach unten in die Aufwärtsvertikale
+              <br><b>rp</b> Aufwärtsvertikale mit 3/4-Bogen
+              <br><b>irp</b> Abwärtsvertikale mit 3/4-Bogen
+          </p>
+              <H4>Donauwellen</H4>
+          <p>
+              <b>pp</b> Bogen nach oben in die Abwärtslinie
+              <br><b>ipp</b> Bogen nach unten in die Aufwärtslinie
+              <br><b>rpp</b> Bogen nach oben aus Aufwärtslinie
+              <br><b>irpp</b> Bogen nach unten aus Abwärtslinie
+          </p>
+              <H4>Q-Loops (Diagonale mit 7/8-Loop)</H4>
+          <p>
+              <b>q</b> 7/8-Loop in die Abwärtsdiagonale
+              <br><b>iq</b> 7/8-Loop in die Aufwärtsdiagonale
+              <br><b>rq</b> 7/8-Loop aus der Aufwärtsdiagonale
+              <br><b>irq</b> 7/8-Loop aus der Abwärtsdiagonale
+          </p>
+              <H4>Umkehrende 5/4-Loops</H4>
+          <p>
+              <b>co</b> nach oben
+              <br><b>ico</b> nach unten
+          </p>
+          <!--
+              <br><b>Oddball figures</b>
+              <br><b>f</b> Gerissene Rolle auf horizontanler Linie (see <a href="#rolls">rolls</a>)
+          -->
+          <H3>Nicht-Aresti-Figuren</H3>
+          <p>
+              <b>oj</b> Kleeblatt (mit Viertel-Rolle im Aufwärtsbogen)<br>
+              <b>ioj</b> Kleeblatt (mit Viertel-Rolle im Abwärtsbogen)<br><br>
+              <b>mj</b> Halbe Fassrolle, steigend mit 90° Richtungsänderung<br>
+              <b>aj</b> Halbe Fassrolle, sinkend mit 90° Richtungsänderung<br><br>
+              <b>jw</b> Chandelle (frz. für "Kerze") / hochgezogene Fahrtkurve / Lazy Eight ... man ist sich in der Benennung nicht so ganz einig ...<br><br>
+              Weitere Basisfigurbuchstaben können über das Figurauswahlmenu in Erfahrung gebracht werden.<br>
+              Gestatten Sie dazu die Anzeige von Nicht-Aresti-Figuren.
+          </p>
+      </div>
+      <div class="section documentation">
+          <a name="rolls"></a>
+          <H3>Rollenelemente</H3>
+          <p>
+              Die OpenAero-Sprache benutzt grundsätzlich Ziffern, um Rollenelemente darzustellen. Damit wird lediglich die Art und Anzahl der Rotation definiert, nicht aber, ob eine Rolle vertikal nach oben oder unten, diagonal oder horizontal geflogen werden soll, denn dies ist bereits über die Basisfigur vorgegeben.
+              Kontinuierliche Rollen werden grundsätzlich durch einstellige Zahlen ausgedrückt.
+              <br>
+          <H4>Kontinuierliche Rollen</H4>
+              <b>1</b> Ganze gesteuerte Rolle<br>
+              <b>2</b> Halbe gesteuerte Rolle<br>
+              <b>3</b> 3/4 gesteuerte Rolle<br>
+              <b>4</b> 1/4 gesteuerte Rolle<br>
+              <b>5</b> 5/4 gesteuerte Rolle (ohne Unterbrechung)<br>
+              <b>6</b> 6/4 = 3/2 gesteuerte Rolle (ohne Unterbrechung)<br>
+              <b>7</b> 7/4 gesteuerte Rolle (ohne Unterbrechung)<br>
+              <b>9</b> zwei ganze gesteuerte Rollen (ohne Unterbrechung)<br>
+          </p>
+      <div>
+              <img src="../img/fullrolls.png" />
+          <p>
+              In oberer Logik stellt die <b>9</b> eine Ausnahme zur Regel dar. Dies ist so gewollt um Konflikte mit den Achtel-Rollen zu vermeiden.<br>
+          <H4>Superlangsame Rollen</H4>
+              Die nur im Segelkunstflug vorzufindenden superlangsamen Rollen werden nach gleichem, obigen Schema erzeugt, allerdings wird ihnen eine <b>0</b> voran geschrieben, also z.B. <b>01</b> für eine ganze gesteuerte, superlangsame Rolle.<br>
+          </p>
+          <H4>Trudler, gerissene und gestoßene Rollen</H4>
+          <img src="../img/snaprolls.png" />
+          <p>
+              Werden die Ziffern für kontinuierliche Rollen um den Suffix "<b>f</b>" (für "flick roll") erweitert, werden statt gesteuerten Rollen nun gerissene Rollen definiert. Benutzt man hingegen den Suffix "<b>if</b>" für "inverted flick roll" werden gestoßene Rollen definiert. Das gleiche Prinzip gilt für den Suffix "<b>s</b>" für "spins", also (Bauch)-Trudler, und den Suffix "<b>is</b>" für "inverted spin" - also Rückentrudler.
+              <br><br>
+              Wann immer einer dieser Buchstaben völlig alleinstehend eingegeben wird - also ohne vorgängige Ziffern, interpretiert OpenAero wie folgt:<br>
+              <b>f</b> eine ganze gerissene Rolle auf horizontaler Linie<br>
+              <b>if</b> eine ganze gestoßene Rolle auf horizontaler Linie<br>
+              <b>s</b> eine ganze Trudelumdrehung auf vertikaler Abwärtslinie<br>
+              <b>is</b> eine ganze gestoßene Rolle auf vertikaler Abwärtslinie<br>
+              Entsprechend Aresti-Katalog sind Trudler und Rückentrudler ausschließlich auf vertikalen Abwärtslinien zulässig. Für einfache Trudler und Rückentrudler brauch also nicht die Basisfigur "<b>iv</b>" geschrieben werden - sie wird automatisch angenommen, solang keine andere, wie bspw. "<b>irp</b>" definiert ist.
+              <img src="../img/spinrolls.png" />
+          </p>
+      </div>
+      <div>
+          <H4>Zeiten-Rollen</H4>
+              In OpenAero werden Zeiten-Rollen grundsätzlich durch zweistellige Zahlen dargestellt und zwar genau derart, wie man Sie auch auf dem Programmzettel lesen möchte nur ohne das Multiplikationszeichen "x", also z.B. "<b>32</b>" für drei Halbrollen (3x2) oder "<b>28</b>" für eine Zwei-Achtel-Rolle (2x8). Eine Vier-Zeiten-Rolle wird also dann mit <b>44</b> definiert. Zwei Vier-Zeiten-Rollen sind dann "<b>84</b>".<br> Theoretisch erkennt OpenAero sogar, wenn dieses Prinzip auf dreistellige Zahlen angewendet wird, bspw. 16x8. Der dargestellte Roll-Text gibt diese Definition sogar wieder, allerdings werden dann nur maximal zwei zusammenhängende Rollpfeile gezeichnet. Generell zeigt OpenAero bis zu 2 1/4 Rotationen an, egal welcher Roll- oder Trudelart.
+              <!--You can also, theoretically, use "68" as well as "108" "128" and even "<b>168</b>" - a full two rolls with 16 points, but they are never seen in actual sequences. -->
+              <p><img src="../img/hesrolls.png" /></p>
+          <H4>Mehrere Rollenelemente auf gleicher Linie</H4>
+              <p>
+                  Für den nicht selten vorkommenden Fall, dass auf einer Linie zwei verschiedene Rollenelemente definiert werden sollen, wird das Komma "<b>,</b>" als Trennzeichen verwendet, um beide Rollenelemente voneinander abzugrenzen. Grundsätzlich interpretiert OpenAero, dass 2 aufeinander folgende, verschiedene Rollenelemente gegenläufige Drehrichtungen haben. Ist dies jedoch nicht der Fall, wird ein zusätzliches Komma, also "<b>,,</b>" benutzt.<br>
+                  Zwei ganze, gesteuerte, gegenläufige Rollen auf horizontaler Linie werden also mit "<b>1,1</b>" geschrieben.<br>
+                  Sind eineinhalb Rollen nach einer Umdrehung unterbrochen, haben aber eine gleich Drehrichtung, schreibt man dies bspw. mit "<b>1,,2-</b>"<br>
+                  Anstelle zweier Kommata kann auch ein einzelnes Semikolon "<b>;</b>" für den gleichen Zweck verwendet werden.<br>
+                  Beachten Sie auch hier, dass hier nach dem Komma kein Leerzeichen (aus Tippgewohnheit) folgen darf, da ansonsten OpenAero eine Figurentrennung erkennt.<br>
+              </p>
+              <p><img src="../img/multirolls.png" /></p>
+          <H4>Ändern der Rolldrehrichtung</H4>
+              <p>
+                  In OpenAero drehen standardmässig alle Rollen links herum.
+                  Um die Drehrichtung eines einzelnen Rollenelementes und damit das angezeigte Rollelementsymbol zu alternieren, wird ein Komma "<b>,</b>" als Präfix zur Rollelementzahl verwendet, also bspw. "<b>,1</b>"<br>
+                  Dies kann nützlich sein, wenn es innerhalb einer Figur, die mehrere Rollenelemente auf mehreren Linien enthält, zu unleserlichen Überlagerungen der Roll-Texte kommt.
+              </p>
+      </div>
+      <H3>Sonderanweisungen</H3>
+      <div class="section documentation">
+          <a name="drawing"></a>
+          <p>
+              In diesem Abschnitt sind alle Sonderanweisungen zum Formatieren und Ausrichten der Figuren und der Sequenz zusammengefasst.
+          </p>
+          <H4>Verlängern und Verkürzen von Linien (einer Figur)</H4>
+          <p>
+              Mit dem Punkt "<b>.</b>" wird ein Stück der Linie vor oder nach einem Rollenelment verlängert, auch selbst dann, wenn die Basisfigur dann einen unmittelnaren Bogen vorsieht.<br><br>
+              Probieren Sie es z. B. mit "<b>1c2</b>" aus und fügen Sie an beliebiger Stelle in dieser Zeichenkette einen Punkt ein. Beobachten Sie, welcher Teil, welcher Linie sich verlängert! <br><br>
+              Sie sollten feststellen, dass die Abfolge der Zeichenkette der Figurabfolge entspricht, was auch für die eingefügten Punkte zur Linienverlängerung gilt. Somit verlängert "<b>1..c2</b>" die Linie nach der ganzen Rolle vor dem 5/8 Loopbogen, während "<b>1c..2</b>" das Linienstück nach dem Bogen vor der halben Rolle um jeweils zwei Inkremente verlängert.<br><br>
+              An selber Stelle können also beliebig viele Verlängerungen mit entsprechender Anzahl von Punkten eingegeben werden, je nachdem wie es die Darstellung auf dem Programmzettel erfordert. Natürlich ist auch beides und noch mehr möglich, z.B. "<b>.1..c..2...</b>"<br><br>
+              Das Plus-Zeichen "<b>+</b>" erfüllt die gleiche Aufgabe, jedoch wird dann die Linie um das 3-fache Inkrement (statt dem einfachen Inkrement beim Punkt) verlängert.<br><br>
+              Freunde der Millimeterarbeit können sogar auch den Apostrophen "<b> ' </b>", verwenden, um eine Linie nur um ein Drittel-Inkrement zu verlängern.<br><br>
+              Mit dem Symbol "<b> ` </b>" werden Linien um ein Drittel-Inkrement verkürzt, was theoretisch bis zur völligen Unleserlichkeit wiederholt werden kann.
+          </p>
+      </div>
+          <H4>Weitere Sonderanweisungen</H4>
+          <table>
+              <tr>
+                  <td><b>ed</b></td>
+                  <td>Rückenwind-Eingang (Sequenzbeginn mit Rückenwind, also entgegen der Box-Hauptrichtung)</td>
+              </tr>
+              <tr>
+                  <td><b>ej</b></td>
+                  <td>Querwind-Eingang (heran kommend gezeichnet)</td>
+              </tr>
+              <tr>
+                  <td><b>eja</b></td>
+                  <td>alternativer Querwind-Eingang (hinweg fliegend gezeichnet)</td>
+              </tr>
+              <tr>
+                  <td><b>eu</b></td>
+                  <td>Gegenwind-Eingang (Standardbeginn, brauch normalerweise nicht deklariert zu werden)</td>
+              </tr>
+              <tr>
+                  <td><b>//</b></td>
+                  <td>neue Untersequenz mit Fortsetzung der Flugrichtung ... forciert einen neuen Startkreis um den Anfangskreis des nächsten Figursymbols</td>
+              </tr>
+              <tr>
+                  <td><b>[x,y]</b></td>
+                  <td>
+                      Eine gerade, gestrichelte Verbindungslinie ausgehend vom Endsymbol der zuletzt defnierten Figur mit den Ausmaßen um x Einheiten nach rechts und y Einheiten nach unten. x und y müssen ganze Zahlen sein. Dezimalpunkte werden ignoriert.
+                  </td>
+              </tr>
+              <tr>
+                  <td><b>(x,y)</b></td>
+                  <td>Eine geschwungene, gestrichelte Verbindungslinie.</td>
+              </tr>
+              <tr>
+                  <td><b>></b></td>
+                  <td>
+                      Hat als einzige Ausnahme zwei verschiedene Funktionen:
+                      <ul>
+                          <li>
+                              Wenn es am Ende einer Figurzeichenfolge steht, alterniert es, wenn opportun, die gezeichnete Ausflugrichtung.<br>
+                              Bspw. kann ein "<b>ej h4</b>", also ein "Turn, viertel ab", der auf der Querrichtung begonnen wurde, und dann mit oder gegen Wind, respektive in oder entgegen der Hauotrichtung beendet werden.
+                          </li>
+                          <li>
+                              Wenn es separat, also außerhalb eine Figurzeichenfolge eingegeben wird, verschiebt es den Beginn der folgenden Figur um 1 Inkrement in Flugrichtung. Wird ">" eine Zahl vorangestellt, z.B. "3>" bedeutet dies die Verschiebung um 3 Inkremente.
+                          </li>
+                      </ul>
+                  </td>
+              </tr>
+              <tr>
+                  <td><b>^</b></td>
+                  <td>
+                      Alterniert den gezeichneten Querrichtungsausgang einer Figur. Standardmäßig zeichnet OpenAero einen Querrichtungsausgang nach unten; um Platz zu sparen kann aber manchmal Gegenteiliges nützlich sein.
+                  </td>
+              </tr>
+              <tr>
+                  <td><b>x%</b></td>
+                  <td>
+                      Skaliert die Darstellung der nächsten Figur um x %. x muss eine ganze Zahl sein. Wenn kleiner 0, wird die Darstellung geschrumpft.
+                  </td>
+              </tr>
+              <tr>
+                  <td><b>/</b></td>
+                  <td>
+                      Schwenkt die gezeichnete Querrichtungsachse.
+                  </td>
+              </tr>
+              <tr>
+                  <td><b>~</b></td>
+                  <td>
+                      Verlängert das unmittelbare Linienstück nach dem Eingangs- bzw. vor dem Ausgangssymbol einer Figur.
+                  </td>
+              </tr>
+              <tr>
+                  <td><b>"text"</b></td>
+                  <td>Ein beliebiger Kommentar wird in Anführungsstrichen vor einer Figur eingefügt. Dies ist insebesondere wichtig, wenn OpenAero in Figurenvorschlagssitzungen verwendet wird, um eine vorgeschlagen Figur mit zusätzlichen Informationen zu versehen.</td>
+              </tr>
+              <tr>
+                  <td><b>"@A"</b></td>
+                  <td>
+                      Zuweisung einer Figuridentifikation, hier Buchstabe "A" für Figur A. Dies hat Bedeutung für die freien Unbekannten (unbekannte Küren). Im Motorkunstflug wird "@A" bis "@J" verwendet.
+                  </td>
+              </tr>
+              <tr>
+                  <td><b>"@L"</b></td>
+                  <td>
+                      Wird für "Linking Figures", also Verbindungsfiguren in unbekannten Programmen verwendet, um diese entsprechend Wettkampfsregeln in Form A auf ein festegelgtes Figuren-K zu begrenzen.
+                  </td>
+              </tr>
+          </table>
+      </div>
+      <div>
+          <H3>Ein abschließendes Beispiel zur Überprüfung Ihrer erlangten Kenntnisse</H3>
+          Es soll nun die erste Figur des Eingangsbeispiels vollends und ausschließlich gedanklich entschlüsselt werden. Hier nochmal die erste Zeichenkette:<br><br>
+          <b>+,2,2f'zt,2f;2+~</b><br><br>
+          Probieren Sie es nun zunächst selbstständig aus. <br><br>
+          Lesen Sie dann die Lösung:<br><br>
+          1) Zuerst sollte immer die Basisfigur identifiziert werden. Dies ist relativ leicht, da dies nur Buchstaben sein können, außer wenn in der Zeichenkette lediglich Zahlen und/oder die reservierten "f", "if", "s" oder "is" vorhanden sind, was dann noch leichter wäre.<br>
+          Hier sind die Basisfigurbuchstaben jedenfalls "<b>zt</b>", damit ist bekannt, dass nach dem Eingang unmittelbar ein 3/8 Loopbogen folgt und dann ein "tooth", also eine Diagonale gefolgt von einer Vertikalen. Da kein "i" vorhanden ist, geht der tooth nach oben, also eine Aufwärtsdiagonale mit anschliessender Abwärtsvertikalen.<br><br>
+          2) Im zweiten Schritt kann die Ein- und Ausgangslage in Erfahrung gebracht werden, indem man nach Minus-Zeichen in der Figuzeichenfolge fahndet.<br>
+          Hier sind beide also bauchlagig.<br><br>
+          3) Als nächstes werden die einzelnen Rollenelemente identifiziert und gedanklich der Lage in der Basisfigur zugeordnet. Dazu emfpiehlt es sich die Zeichenkette vor und nach den Basisfigurbuchstaben gedanklich zu trennen, hier also:<br>
+          <table>
+            <tr><td><b>+2,2f' </b></td><td>Filtert man weiter gedanklich die Sonderanweisungen heraus, erkennt man das einer halben gesteuerten Rolle linksherum eine halbe gegenläufige Gerissene folgt. Vor den Rollenelementen ist die Linie um 3 Inkremente verlängert; danach um ein Drittel-Inkrement verlängert.</td></tr>
+            <tr><td><b>,2f;2+~ </b></td><td>Hier folgt einer halben Gerissenen rechtsherum eine halbe Gesteuerte in gleicher Drehrichtung. Das vertikale Linienstück nach dem Rollsymbol ist um 3 Inkremente verlängert; das Linienstück vor dem Endsymbol ist um ein Inkrement verlängert.</td></tr>
+          </table>
+      </div>
+  </BODY>
+</HTML>
