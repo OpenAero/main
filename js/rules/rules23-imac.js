@@ -330,7 +330,7 @@ rules.push (
 	"7.5.7.1",
 	"7.5.7.4 NF:1",
 	"7.5.8.2-3",
-	"7.5.10.1 MAX180; NOPOINT", /*2018 IMAC Catalog only 1/2 roll permitted*/
+	"7.5.10.1 MAX180; NOPOINT; NF; NOU", /*2018 IMAC Catalog only 1/2 roll permitted*/
 	"7.8.3.4 NF:1",
 	"7.8.4.1",
 	"7.8.4.4 NF:1",
@@ -701,7 +701,7 @@ rules.push (
 	
 	//Vertical S
 	"7.5.9.1-2",
-	"7.5.10.1-2",
+	"7.5.10.1-2 MAX180; NOPOINT; NF; NOU",
 	
 	//Horizontal 8
 	"7.8.1.1",
@@ -733,8 +733,8 @@ rules.push (
 	"7.8.16.1-4",
 	
 	//Vertical 8
-	"7.8.17.1-2 ^MAX540",	
-	"7.8.20.1 ^MAX540; MAX180; NOPOINT; NF",
+	"7.8.17.1-2 MAX180; NOPOINT; NF; NOU",	
+	"7.8.20.1 MAX180; NOPOINT; NF; NOU",
 	
 	
 	//Family 8 Combinations of lines, angles, and loops
@@ -1155,7 +1155,7 @@ rather than assigning rules to separate lines in the figures*/
 	
 	//Vertical S
 	"7.5.9.1-2",
-	"7.5.10.1-2",
+	"7.5.10.1-2 MAX180; NOPOINT; NF; NOU",
 	
 	//Horizontal 8
 	"7.8.1.1-4",
@@ -1183,12 +1183,12 @@ rather than assigning rules to separate lines in the figures*/
 	"7.8.16.1-4",
 	
 	//Vertical 8
-	"7.8.17.1-2 ^maxvert540",
-	"7.8.18.1-2 MAX180; NOPOINT; NF",
-	"7.8.19.1-2 MAX180; NOPOINT; NF",
-	"7.8.20.1-2 MAX180; NOPOINT; NF",
-	"7.8.21.1-4 MAX180; NOPOINT; NF",
-	"7.8.22.1-4 MAX180; NOPOINT; NF",
+	"7.8.17.1-2 MAX180; NOPOINT; NF; NOU",
+	"7.8.18.1-2 MAX180; NOPOINT; NF; NOU",
+	"7.8.19.1-2 MAX180; NOPOINT; NF; NOU",
+	"7.8.20.1-2 MAX180; NOPOINT; NF; NOU",
+	"7.8.21.1-4 MAX180; NOPOINT; NF; NOU",
+	"7.8.22.1-4 MAX180; NOPOINT; NF; NOU",
 	
 	
 	//Family 8 Combinations of lines, angles, and loops
@@ -1669,7 +1669,7 @@ rather than assigning rules to separate lines in the figures*/
 	
 	//Vertical S
 	"7.5.9.1-4",
-	"7.5.10.1-4",
+	"7.5.10.1-4 MAX180; NOPOINT; NF; NOU",
 	
 	//Horizontal 8
 	"7.8.1.1-4",
@@ -1698,11 +1698,11 @@ rather than assigning rules to separate lines in the figures*/
 	
 	//Vertical 8
 	"7.8.17.1-4",
-	"7.8.18.1-4 MAX180; NOPOINT; NF",
-	"7.8.19.1-4 MAX180; NOPOINT; NF",
-	"7.8.20.1-4 MAX180; NOPOINT; NF",
-	"7.8.21.1-4",
-	"7.8.22.1-4 MAX180; NOPOINT; NF",
+	"7.8.18.1-4 MAX180; NOPOINT; NF; NOU",
+	"7.8.19.1-4 MAX180; NOPOINT; NF; NOU",
+	"7.8.20.1-4 MAX180; NOPOINT; NF; NOU",
+	"7.8.21.1-4 MAX180; NOPOINT; NF; NOU",
+	"7.8.22.1-4 MAX180; NOPOINT; NF; NOU",
 	
 	
 	//Family 8 Combinations of lines, angles, and loops
