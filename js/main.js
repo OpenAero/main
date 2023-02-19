@@ -2030,6 +2030,7 @@ function helpWindow(url, title) {
     // Temporary fix (HACK!) to load appropriate German help windows
     if (document.getElementById('language').value == 'de') {
        url = url.replace(/aresti_system.html/, 'aresti_system_de.html');
+       url = url.replace(/language.html/, 'language_de.html');
     }
 
     if (platform.cordova) {
@@ -6503,6 +6504,9 @@ function loadPrintDialogStorage() {
 
 // changeLanguage will change the interface language
 function changeLanguage() {
+    // Make sure no figure is selected because otherwise the "Edit figure"
+    // header is in the previous language
+    selectFigure(false);
     updateUserTexts();
     updateFigureSelectorOptions();
     if (platform.mobile) mobileMenuHeader();
