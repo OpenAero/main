@@ -22,6 +22,17 @@ along with OpenAero.  If not, see <http://www.gnu.org/licenses/>.
 document.addEventListener("DOMContentLoaded", load, false);
 
 function load () {
+	
+    // Temporary fix (HACK!) to load appropriate German help windows
+	var settings = JSON.parse(localStorage.getItem('settings'));
+	if (settings && settings.language == 'de') {
+		var page = location.href.split("/").slice(-1)[0].split('#');
+		if (['aresti_system.html','language.html'].indexOf(page[0]) >= 0) {
+			window.location = page[0].replace(/\.html$/, '_de.html') +
+				(page[1] ? `#${page[1]}` : '');
+		}
+	}
+
 	// append class to HTML element when in a frame
 	document.documentElement.classList.add (window.self == window.top ? "top" : "framed");
 	// do not display nodes with class noUWP on UWP
@@ -80,5 +91,4 @@ function fixAnchors () {
 			});
 		}
 	}
-} 
-
+}

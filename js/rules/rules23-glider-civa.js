@@ -671,9 +671,9 @@ rules.push (
 "!max3flick720-rule=Sporting Code Section 6 Part 2, 2.3.1.4",
 
 "seqcheck-first3max110k=\@A.*\@B.*\@C.*\@D",
-"first3max110k-name=Manually check that first 3 figures of a NAC have no more than 110 K total",
-"first3max110k-name_fr=Vérifier manuellement que les 3 proposition de chiffre d'un NAC n'ont pas plus de 110 K au total"
-"first3max110k-name_de=Überprüfen Sie manuell, dass die ersten 3 Figurenvorschläge eines NAC's nicht insgesamt 110 K überschreiten"
+"first3max110k-name=Manually check that first 3 figures have no more than 110 K total",
+"first3max110k-name_fr=Vérifier manuellement que les 3 propositions de chiffre n'ont pas plus de 110 K au total",
+"first3max110k-name_de=Überprüfen Sie manuell, dass die ersten 3 Figurenvorschläge nicht insgesamt 110 K überschreiten",
 	
 "first3max110k-rule=Sporting Code Section 6 Part 2, 2.3.1.4",
 

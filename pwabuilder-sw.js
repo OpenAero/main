@@ -23,6 +23,7 @@ const precacheFiles = [
 'doc/gpl_files/print.css',
 'doc/gpl.htm',
 'doc/language.html',
+'doc/language_de.html',
 'doc/manual.html',
 'doc/privacy.html',
 'img/blue_handles.png',

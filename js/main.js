@@ -2027,12 +2027,6 @@ function helpWindow(url, title) {
     // set a small delay to make sure the menu is not again activated
     setTimeout(menuInactiveAll, 100);
 
-    // Temporary fix (HACK!) to load appropriate German help windows
-    if (document.getElementById('language').value == 'de') {
-       url = url.replace(/aresti_system.html/, 'aresti_system_de.html');
-       url = url.replace(/language.html/, 'language_de.html');
-    }
-
     if (platform.cordova) {
         if (platform.android && /\.pdf$/.test(url)) {
             /* cordovaPdf(url, title); */

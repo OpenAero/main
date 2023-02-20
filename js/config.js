@@ -48,6 +48,9 @@ const version = '2023.3.3';
    n   = importance (higher = more important)
 */
 const versionNew = {
+  '2023.3.3': [
+    ['Added IMAC rules and sequences for 2023', 4]
+  ],
   '2023.3.1': [
     ['Added IMAC forms', 4],
     ['Added German language for interface', 3]
