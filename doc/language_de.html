@@ -100,6 +100,8 @@
           <p>
               Neben den Buchstaben und Zahlen für Basisfiguren und Rollenelemente kann die gesamte Zeichenkette für eine Kunstflugsequenz noch weitere Symbole enthalten, um die Sequenz eindeutig zu beschreiben oder um detailiertere Formatanweisungen zu geben. So startet beispielsweise standardmässig jede Sequenz gegen den Wind, was mit "<b>ed</b>" zu einem Rückenwindeingang oder mit "<b>ej</b>" oder "<b>eja</b>" zu einem Querwindeingang geändert werden kann, wenn diese Zeichen an den Anfang der Zeichenkette gesetzt und mit Leerzeichen von der ersten Figur getrennt werden. Die Gesamtzeichenkette ist jedenfalls erst mit all diesen Sonderanweisungen eine <i>eindeutige</i> und <i>bijektive</i> Abbildung einer Kunstflugsequenz. Eine komplette Referenzliste zu den Sonderanweisungen ist weiter unten bereitgestellt.
           </p>
+     </div>
+     <div>
           <H2>Referenzlisten</H2>
           <H3>Familie 1 - Linien und Winkel</H3>
               <H4>Eine-Linien-Figuren</H4>
@@ -381,7 +383,6 @@
               <b>7</b> 7/4 gesteuerte Rolle (ohne Unterbrechung)<br>
               <b>9</b> zwei ganze gesteuerte Rollen (ohne Unterbrechung)<br>
           </p>
-      <div>
               <img src="../img/fullrolls.png" />
           <p>
               In oberer Logik stellt die <b>9</b> eine Ausnahme zur Regel dar. Dies ist so gewollt um Konflikte mit den Achtel-Rollen zu vermeiden.<br>
@@ -401,8 +402,6 @@
               Entsprechend Aresti-Katalog sind Trudler und Rückentrudler ausschließlich auf vertikalen Abwärtslinien zulässig. Für einfache Trudler und Rückentrudler brauch also nicht die Basisfigur "<b>iv</b>" geschrieben werden - sie wird automatisch angenommen, solang keine andere, wie bspw. "<b>irp</b>" definiert ist.
               <img src="../img/spinrolls.png" />
           </p>
-      </div>
-      <div>
           <H4>Zeiten-Rollen</H4>
               In OpenAero werden Zeiten-Rollen grundsätzlich durch zweistellige Zahlen dargestellt und zwar genau derart, wie man Sie auch auf dem Programmzettel lesen möchte nur ohne das Multiplikationszeichen "x", also z.B. "<b>32</b>" für drei Halbrollen (3x2) oder "<b>28</b>" für eine Zwei-Achtel-Rolle (2x8). Eine Vier-Zeiten-Rolle wird also dann mit <b>44</b> definiert. Zwei Vier-Zeiten-Rollen sind dann "<b>84</b>".<br> Theoretisch erkennt OpenAero sogar, wenn dieses Prinzip auf dreistellige Zahlen angewendet wird, bspw. 16x8. Der dargestellte Roll-Text gibt diese Definition sogar wieder, allerdings werden dann nur maximal zwei zusammenhängende Rollpfeile gezeichnet. Generell zeigt OpenAero bis zu 2 1/4 Rotationen an, egal welcher Roll- oder Trudelart.
               <!--You can also, theoretically, use "68" as well as "108" "128" and even "<b>168</b>" - a full two rolls with 16 points, but they are never seen in actual sequences. -->
@@ -423,8 +422,8 @@
                   Dies kann nützlich sein, wenn es innerhalb einer Figur, die mehrere Rollenelemente auf mehreren Linien enthält, zu unleserlichen Überlagerungen der Roll-Texte kommt.
               </p>
       </div>
-      <H3>Sonderanweisungen</H3>
       <div class="section documentation">
+	  <H3>Sonderanweisungen</H3>
           <a name="drawing"></a>
           <p>
               In diesem Abschnitt sind alle Sonderanweisungen zum Formatieren und Ausrichten der Figuren und der Sequenz zusammengefasst.
@@ -439,7 +438,6 @@
               Freunde der Millimeterarbeit können sogar auch den Apostrophen "<b> ' </b>", verwenden, um eine Linie nur um ein Drittel-Inkrement zu verlängern.<br><br>
               Mit dem Symbol "<b> ` </b>" werden Linien um ein Drittel-Inkrement verkürzt, was theoretisch bis zur völligen Unleserlichkeit wiederholt werden kann.
           </p>
-      </div>
           <H4>Weitere Sonderanweisungen</H4>
           <table>
               <tr>
