@@ -411,7 +411,7 @@ lang.fr = {
 'nonArestiRolls' : 'Autoriser les rotations et combinaisons ' +
   'non-Aresti ou règles-illegaux (essayer <i>41h4,f,4 66</i>)',
 'none' : 'Aucune',
-'noRollAllowed' : 'Rotation interdite par l\'Aresti',
+'noRollAllowed' : 'Les combinaisons de rotations sont limitées (Aresti)',
 'noRules' : 'Pas de règle de vérification disponible.',
 'notes' : 'Annotations (haut de page)',
 'notOnFormBC' : 'Cette fonction est seulement disponible lorsque ' +

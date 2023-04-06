@@ -40,7 +40,7 @@ This file is part of OpenAero.
  A new x should be used for versions that create sequences not
  fully backward compatible with the previous version
 */
-const version = '2023.3.3';
+const version = '2023.3.4';
 /* versionNew is an object that contains version update information
    The structure is {vvv : [[ttt, n], ...], ...} , where
    vvv = version number
@@ -468,8 +468,8 @@ const separateMargin = 4;
 const presentFileError = false;
 // show mini Form A on Form B and C
 var miniFormA = true;
-// define default form style (CIVA, IAC or IMAC)
-var formStyle = 'CIVA';
+// define default form style (civa, iac or imac)
+var formStyle = 'civa';
 // define default pattern for figure images saved in ZIP
 var zipImageFilenamePattern = '%location %category %program %pilot Form %form_fig_%figure';
 // define which settings will be saved in localStorage and sequence XML

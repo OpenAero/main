@@ -439,7 +439,7 @@ lang.de = {
   'nonArestiRolls' : 'Erlaube Nicht-Aresti-Figuren und nicht regulierte Rollen und Kombinationen. ' +
     'Probieren Sie den Sequenz-String <i>41h4,f,4 66</i> aus.)',
   'none' : 'Keine',
-  'noRollAllowed' : 'Keine Rolle erlaubt nach Aresti Catalog',
+  'noRollAllowed' : 'Erlaubte Rollenkombinationen sind begrenzt (Aresti Catalog)',
   'noRules' : 'Keine Regeln zur Sequenzprüfung aktiv.',
   'notes' : 'Notizen (am Seitenanfang)',
   'notOnFormBC' : 'Diese Funktion ist nur verfügbar, wenn Formular ' +

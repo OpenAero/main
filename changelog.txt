@@ -1,3 +1,9 @@
+2023.3.4
+* Fixed issue causing difficulty to select inverse P loops with unlinked rolls in the bottom (e.g. 8.6.24.4)
+* Fixed issue causing incorrect crosswind exit after autocorrect roll-in-top
+* Fixed issue where form R&L layout would switch from CIVA to IAC after printing form A, B or C
+* Updated IMAC rule checking
+
 2023.3.3
 * Added German translations in CIVA rule files and help documents
 * Added IMAC rules for 2023

@@ -439,7 +439,7 @@ lang.en = {
 'nonArestiRolls' : 'Allow non-Aresti and rule-illegal rolls and combinations (try ' + 
   'sequence text <i>41h4,f,4 66</i>)',
 'none' : 'None',
-'noRollAllowed' : 'No roll allowed according Aresti Catalog',
+'noRollAllowed' : 'Limited roll combinations allowed (Aresti Catalog)',
 'noRules' : 'No sequence validity checking rules active.',
 'notes' : 'Notes (top of pages)',
 'notOnFormBC' : 'This function is only available when Form ' +

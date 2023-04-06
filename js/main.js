@@ -7255,30 +7255,29 @@ function addRollSelectors(figureId) {
                     divdiv.innerHTML = userText.rollPos[rollNr];
                     div.appendChild(divdiv);
                     // roll positions of type 9 only allow changing line length
-                    if (rolls[i] != 9) {
-                        // loop until max rolls per element + 1
-                        for (var j = 0; j < rollsPerRollElement + 1; j++) {
-                            var pattern = figures[figureId].rollInfo[i].pattern[j - 1];
-                            pattern = pattern ? pattern.replace('-', '') : '';
-                            // show the element when:
-                            // it's the first one OR the previous one is not empty
-                            // AND it's number is not higher than rollsPerRollElement
-                            if ((j == 0) || (pattern != '')) {
-                                if (j < rollsPerRollElement) {
-                                    addRollSelectElement(figureId, i, j, div);
-                                    var divdiv = document.createElement('div');
-                                    divdiv.classList.add('clearBoth');
-                                    div.appendChild(divdiv);
-                                }
-                            } else break;
-                        }
-                    } else {
+                    if (rolls[i] == 9) {
                         var divdiv = document.createElement('div');
                         divdiv.classList.add('clearBoth');
-                        divdiv.innerHTML = userText.noRollAllowed;
+                        divdiv.innerHTML = '<font color="red">' + userText.noRollAllowed + '</font>';
                         div.appendChild(divdiv);
-                        var j = 1;
                     }
+                    // loop until max rolls per element + 1
+                    for (var j = 0; j < rollsPerRollElement + 1; j++) {
+                        var pattern = figures[figureId].rollInfo[i].pattern[j - 1];
+                        pattern = pattern ? pattern.replace('-', '') : '';
+                        // show the element when:
+                        // it's the first one OR the previous one is not empty
+                        // AND it's number is not higher than rollsPerRollElement
+                        if ((j == 0) || (pattern != '')) {
+                            if (j < rollsPerRollElement) {
+                                addRollSelectElement(figureId, i, j, div);
+                                var divdiv = document.createElement('div');
+                                divdiv.classList.add('clearBoth');
+                                div.appendChild(divdiv);
+                            }
+                        } else break;
+                    }
+
                     // j indicates how many active subrolls there are
                     var subRolls = j;
                     // build the gaps element for subRolls rolls, but not for
@@ -16842,7 +16841,7 @@ function buildCornertab(svg) {
         newText.setAttribute('x', 755);
         newText.setAttribute('y', 1085);
         newText.setAttribute('transform', 'rotate(-45 755 1085)');
-        if (formStyle = 'iac') {
+        if (formStyle == 'iac') {
             var textNode = document.createTextNode(document.getElementById('acreg').value);
         } else {
             var textNode = document.createTextNode(aircraft());
@@ -17599,6 +17598,11 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figure_chooser) {
                         // or only line without roll allowed as in some P-loops
                         // (rolls[j] = 9)
                         rollCorr += Math.abs(rollSums[j] % 360);
+                        // The (rare) figures with a "no roll allowed" element are complementary
+                        // to similar figures with a roll allowed. Whenever a roll is chosen in
+                        // this element, make the "no roll allowed" figure less likely to be chosen
+                        // by adding 360 to the rollCorr.
+                        if (roll[j].length && fig[figNrs[i]].rolls[j] == 9) rollCorr += 360;
                     }
                 }
                 if (rollCorr < rollCorrMin) {
@@ -18254,20 +18258,22 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figure_chooser) {
                     }
                 }
 
-                // See if the direction should be changed from default
-                // This is only possible when there was a 1/4, 3/4 etc roll and
-                // the attitude is vertical.
+                // See if the direction should be changed from default.
+                // This is only possible when there was a 1/4, 3/4 etc roll, the
+                // attitude is vertical and we did not just come from roll in the top.
                 // Only run one X and one Y switch per figure
-                figString = checkQRollSwitch(
-                    figString,
-                    figStringIndex,
-                    fig[figNr].pattern,
-                    seqNr,
-                    rollSum,
-                    figureDraw,
-                    i,
-                    roll,
-                    rollnr);
+                if (!rollTop) {
+                    figString = checkQRollSwitch(
+                        figString,
+                        figStringIndex,
+                        fig[figNr].pattern,
+                        seqNr,
+                        rollSum,
+                        figureDraw,
+                        i,
+                        roll,
+                        rollnr);
+                }
 
                 // The roll drawing has past, so make sure the rollTop variable
                 // is set to false
