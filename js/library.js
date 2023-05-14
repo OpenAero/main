@@ -25,6 +25,13 @@
 // The Value is an OpenAero sequence link (use "File->Save as link" in OpenAero to generate)
 
 var library = {
+    '2024 NZAC Primary Known':'https://openaero.net/?s=hFByaW1hcnmHcG93ZXJlZIhLbm93biAyMDIzLzIwMjSJTlpBQ4ozjE5aQUMgUHJpbWFyeSBLbm93bo01JSBkIP5pdi5zLierfiAtMSUgrq4up2Ouriwyrq4rYCA2JSBv_iB-qyuuLidorq6rK34gri4nMav-j05aQUOQMjAyMy4zLjORQg',
+    '2024 NZAC Recreational Known':'https://openaero.net/?s=hFJlY3JlYXRpb25hbIdwb3dlcmVkiEtub3duIIkyMDIyLzIzIE5aQUOKNo0nbTIgKC0xOCwwKSA4JSD-Mmr-IP4raXanc6f-IH4rJ2iuJyt-IP5gYi4nICgtNiwwKSAtMiUgYGOuricyK-AgLTElIOArbytgICcxYH6PTlpBQ5AyMDIyLjEuN5FC',
+    '2024 NZAC Sports Known':'https://openaero.net/?s=hFNwb3J0c4dwb3dlcmVkiEtub3duICAyMDIzLzIwMjSJTlpBQ4oxMIswjW8gZGgo4Cmup6urq_4gKC0yLDApICtrrq6nMjSupyBgbTIgYDF-ICgtNCwwKSA1JSD-MmogKC0yLDEwKSBkIP4raXY1cycgYi4nNCCuYy4yLiePTlpBQ5AyMDIzLjMuM5FC',
+    '2024 NZAC Intermediate Known':'https://openaero.net/?s=hEludGVybWVkaWF0ZYdwb3dlcmVkiEtub3duIDIwMjMvMjAyNIlOWkFDijIwizCMSW50ZXJtZWRpYXRlIEtub3dujXFvIOArdi40XiBpduA2c66uLicgYi4nNCAxJSB-pzJyYytgICgtNCyyKSBgK29mIDQlIOBtsi0gKC04LDApILIlIC0yai3g4CAtMjQgMiUg4ODg4ODgYDJpYWMo4DIpK-DgYCBkaK4uJyAoLTI2LDApIH6na64yNC6PTlpBQ5AyMDIzLjMuM5FC',
+    '2024 NZAC Advanced Known':'https://openaero.net/?s=hEFkdmFuY2Vkh3Bvd2VyZWSIS25vd24gMjAyMy8yMDI0iU5aQUOKMzCNMjRkaCgnKS4nMmYuK34gL_6rq66ubigsNDguKacsMjSnrSAoMTMsMCkgLTVpc66urq6uJ2liLDgtICgtMiwwKSAtaWRxLSAxNSUgLeBhLDYtICg3LDApIC0zLmKurjMupyvgYCA0JSBvsiAoLTYsMCkg_mAyp2uuri6nsq6nICg1LDApIOBtpzMyJzs2Zi1-ICgtMTIsMCkgLTNqMy0-j05aQUOQMjAyMy4zLjORQg',
+    '2024 NZAC Unlimited Known':'https://openaero.net/?s=hFVubGltaXRlZIdwb3dlcmVkiEtub3duIDIwMjMvMjAyNCCJTlpBQ4o0MIswjTJpZnJwKLQpJzMupyw4_iAuLDh0YTNmri6nICgyLDApIC8zLnDiKC4sNWauKS4sNKcsMqd-IOBgNXM7Mmlmri5pcnAnMjQupywxK-DgIC_gKzNqMTUtIK1wYi6nNa4gq6urM2lmJ2guJzMupyDg4LJhYyg2aWbgKSc4pyw1LeDg4CA4JSAt4GBpZmExLDn-j05aQUOQMjAyMy4zLjORQg',
+
     '2023 CIVA Unl Free Known':'https://openaero.net/?s=hFVubGltaXRlZIdwb3dlcmVkiEZyZWUgS25vd26JQ0lWQYo0MIswjSJAQSIgLDNpZmgzNKd-ICJAQiIgMjQnLDZtNmYsuCAiQEMiIC0sZiwyp2lyZGIsNDguJytgICJARCIgJyyyLmssM2lmLDX_oCJARSIgLeBgaXMsNC4naWJwYigsMzIupyksOCs-j0NJVkGQMjAyMy4xkWdyaWQ6NQ',
     '2023 CIVA Adv Free Known':'https://openaero.net/?s=hEFkdmFuY2Vkh3Bvd2VyZWSIRnJlZSBLbm93bolDSVZBijMwizCNIkBBIiAtM2gzZiAiQEIiIDI0YTMsMzQgIkBDIiA2Y2YgIkBEIiAxbWY7InwiNDggIkBFIiAyNOIoMyk4LY9DSVZBkDIwMjMuMZFncmlkOjU',
     '2023 CIVA Int Free Known':'https://openaero.net/?s=hEludGVybWVkaWF0ZYdwb3dlcmVkiEZyZWUgS25vd26JQ0lWQYozMIswjSJAQSIg4OA2cy5pazI0LSAiQEIiIGRoOCAiQEMiIP4sNHBiICJARCIgfjMsNGljLjEr_6AiQEUiIHFvj0NJVkGQMjAyMy4xkWdyaWQ6NQ',

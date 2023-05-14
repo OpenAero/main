@@ -141,7 +141,7 @@
     <script src="js/rules/rules23-iac.js" type="text/javascript"></script>
     <script src="js/rules/rules23-imac.js" type="text/javascript"></script>
     <script src="js/rules/rules21-glider-iac.js" type="text/javascript"></script>
-    <script src="js/rules/rules22-nzac.js" type="text/javascript"></script>
+    <script src="js/rules/rules24-nzac.js" type="text/javascript"></script>
     <script src="js/rules/rules20-saa.js" type="text/javascript"></script>
     <script src="js/rules/rules21-sac.js" type="text/javascript"></script>
     <script src="js/rules/rules19-vink.js" type="text/javascript"></script>
@@ -1411,10 +1411,18 @@
                     <div class="clearBoth"></div>
                     <span>
                         <span class="userText" id="t_imageFormat"></span>
-                        <input type="radio" name="saveFigsSeparateImageFormat" value="png" id="imageFormatPNG" checked>
-                        <span class="userText" id="t_png"></span>
-                        <input type="radio" name="saveFigsSeparateImageFormat" value="svg" id="imageFormatSVG">
-                        <span class="userText" id="t_svg"></span>
+                        <span class="form-radio" style="display:flex;flex-direction:row;">
+                            <label class="radio" style="width:100px;">
+                                <span class="userText" id="t_png"></span>
+                                <input type="radio" name="saveFigsSeparateImageFormat" value="png" id="imageFormatPNG" checked>
+                                <span class="helper"></span>
+                            </label>
+                            <label class="radio" style="margin-top:0;">
+                                <span class="userText" id="t_svg"></span>
+                                <input type="radio" name="saveFigsSeparateImageFormat" value="svg" id="imageFormatSVG">
+                                <span class="helper"></span>
+                            </label>
+                        </span>
                     </span>
                     <div class="clearBoth"></div>
                     <span>

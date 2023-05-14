@@ -82,7 +82,7 @@ const precacheFiles = [
 'js/rules/rules21-glider-iac.js',
 'js/rules/rules23-civa.js',
 'js/rules/rules23-glider-civa.js',
-'js/rules/rules22-nzac.js',
+'js/rules/rules24-nzac.js',
 'js/rules/rules20-saa.js',
     'js/rules/rules19-vink.js',
 'js/rules/rules22-aeci.js',

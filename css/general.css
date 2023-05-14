@@ -1599,7 +1599,7 @@ option.used {
 }
 #maxScaling, #formStyle {
   margin-top: -4px;
-  width: 4em;
+  width: 5em;
   text-align: right;
 }
 #saveImageVariables .form-group {

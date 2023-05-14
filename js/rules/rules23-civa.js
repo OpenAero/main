@@ -393,7 +393,7 @@ rules.push(
     "why_de-CLIMB4S  = maximal 4 Stops in steigenden Rollen erlaubt",
     "CLIMB4S-rule = Sporting Code Section 6 Part I, A.8.1.3",
 
-    "conv-vdDhfsz=^9\\.[1248]\\.[15]=v;^9\\.[1248]\\.2=d;^9\\.[1248]\\.4=D; ^9\\.[1248]\\.=h; ^9\\.(9|10)\\.[1-5]=f;^9\\.(9|10)\\.=F; ^9\\.1[12]=s ; ^0\\.=z",
+    "conv-vdDhfsz=^9\\.[1248]\\.[15]=v; ^9\\.[1248]\\.2=d; ^9\\.[1248]\\.4=D; ^9\\.[1248]\\.=h; ^9\\.(9|10)\\.[38]=h; ^9\\.(9|10)\\.[1-5]=f;^9\\.(9|10)\\.=F; ^9\\.1[12]=s; ^0\\.=z",
 
     "rule-UnlimitedNOU   = vdDhfsz:D[,;][Ff]|v[,;][fF]|[Ff][,;]v|[Ff][,;]d|[Ff][,;][Ff]",
     "why-UnlimitedNOU    = this type of opposite or unlinked roll/roll (or flick) combination is not allowed",

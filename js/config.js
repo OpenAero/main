@@ -40,7 +40,7 @@ This file is part of OpenAero.
  A new x should be used for versions that create sequences not
  fully backward compatible with the previous version
 */
-const version = '2023.3.4';
+const version = '2023.3.5';
 /* versionNew is an object that contains version update information
    The structure is {vvv : [[ttt, n], ...], ...} , where
    vvv = version number
@@ -48,6 +48,9 @@ const version = '2023.3.4';
    n   = importance (higher = more important)
 */
 const versionNew = {
+  '2023.3.5': [
+    ['Updated NZAC rules and sequences for 2023/2024', 3]
+  ],
   '2023.3.3': [
     ['Added IMAC rules and sequences for 2023', 4]
   ],
