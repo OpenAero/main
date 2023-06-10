@@ -5483,6 +5483,10 @@ function addEventListeners() {
         setFigureSelected(selectedFigure.id);
         saveSettingsStorage()
     }, false);
+    document.getElementById('showOptiSeqArea').addEventListener('change', function () {
+        draw();
+        saveSettingsStorage()
+    }, false);
     document.getElementById('imageFormatPNG').addEventListener('change', function () { saveSettingsStorage() }, false);
     document.getElementById('imageFormatSVG').addEventListener('change', function () { saveSettingsStorage() }, false);
     document.getElementById('saveFigsSeparateWidth').addEventListener('change', function () { saveSettingsStorage() }, false);
@@ -13066,7 +13070,7 @@ function addFormElements(form) {
 
     // Set optimal sequence area size and check if the sequence is not exceeding it
     // SmallMobile code is not working correctly yet in 2023.1.1. Keep for later update.
-    if (/^[BC]/.test(form) && !platform.smallMobile) {
+    if (document.getElementById('showOptiSeqArea').checked && /^[BC]/.test(form) && !platform.smallMobile) {
         var
             optArea = document.getElementById('optimalSequenceArea'),
             optWidth = (formStyle == 'civa') ? 561 : 605,
@@ -15661,22 +15665,25 @@ function buildForm(print) {
                         formWidth = activeForm === 'A' ? 540 : 800,
                         // maximum scale from print dialog
                         maxScale = document.getElementById('maxScaling').value / 100,
-                        scale = Math.min(formWidth / w, maxScale),
+                        scale = Math.min((formWidth) / w, maxScale),
                         marginTop = activeForm === 'A' ? 90 : 100,
                         miniFormAGroup = mySVG.getElementById('miniFormA');
                     
-                    if (miniFormAGroup) var miniFormAbBox = miniFormAGroup.getBBox();
+                    if (miniFormAGroup) {
+                        var miniFormAbBox = miniFormAGroup.getBBox();
+                        scale = Math.min((formWidth - miniFormAbBox.width - moveRight) / (w - miniFormAbBox.width), maxScale)
+                    }
 
                     // check for max height
                     if ((maxHeight / h) < scale) {
                         scale = Math.min(maxHeight / h, maxScale);
                         // height limited, so we can move the sequence right for centering
                         moveRight = Math.max((formWidth - (w * scale)) / 2, 0) + 15;
-                        // Move form C to the right when miniFormA was used
-                        // (in original drawing, miniFormA is always on the right)
-                        if (miniFormAGroup && /^C/.test(activeForm)) {
-                            moveRight += miniFormAbBox.width;
-                        }
+                    }
+                    // Move form C to the right when miniFormA was used
+                    // (in original drawing, miniFormA is always on the right)
+                    if (miniFormAGroup && /^C/.test(activeForm)) {
+                        moveRight += miniFormAbBox.width;
                     }
 
                     // Check if roll font size should be enlarged because of downscaling.

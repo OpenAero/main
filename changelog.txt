@@ -1,3 +1,9 @@
+2023.3.6
+* Fixed roll rule checking for figures without rolls (error introduced in 2023.1.3)
+* Added manual in German language
+* Added option to remove optimal sequence area (e.g. for screenshots)
+* Fixed IMAC form scaling issues (Issue #276)
+
 2023.3.5
 * Update NZAC rules and sequences for 2023/2024
 * Fixed CIVA rules for two flicks on horizontal line in Unlimited Unknown

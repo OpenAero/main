@@ -663,6 +663,7 @@ lang.en = {
 'showFullLog' : 'Show full log',
 'showHandles' : 'Show figure editing handles (blue circles) when ' +
   'figure is selected',
+'showOptiSeqArea' : 'Show optimal sequence area',
 'showQueue' : 'Show Queue',
 'signature' : 'Signature',
 'smallMobile' : 'Phone layout',

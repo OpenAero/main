@@ -921,7 +921,11 @@ function checkRules (callbackId, activeSequenceText, figures, nonArestiRolls, mu
 		              if (checkRule[rule].conv) {
 		                var conversion = checkRule[rule].conv;
 		                log.push ('Apply: ' + checkRule[rule].conv);
-		                logLine = 'Converted: ' + check.join('') + ' => ';
+		                logLine = 'Converted: ' + check.join('') + ' => ';            
+                    // If there are no rolls at all, checkLine is empty
+                    if (/^[0. ]*$/.test(check.join(''))) {
+                      checkLine = '';
+                    } else {
                           for (var l = 0; l < checkConv[conversion].length; l++) {                            
                               if (checkConv[conversion][l].fullFigure) {
                                   log.push ('Full figure conversions are only supported in "allow-defrules"')
@@ -934,11 +938,12 @@ function checkRules (callbackId, activeSequenceText, figures, nonArestiRolls, mu
                                       }
                                   }
                               }
-		                }
-		                checkLine = check.join('');
+		                      }
+		                      checkLine = check.join('');
+                    } 
 		
 		                log.push (logLine + checkLine);
-                      }
+                  }
 
 		              if (checkRule[rule].regex) {
 		                if (checkLine.match(checkRule[rule].regex)) {

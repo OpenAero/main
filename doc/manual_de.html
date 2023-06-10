@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<!--
+  manual.html
+  This file is part of OpenAero.
+  OpenAero was originally designed by Ringo Massa and built upon ideas
+  of Jose Luis Aresti, Michael Golan, Alan Cassidy and many others.
+  OpenAero is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+  OpenAero is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+  You should have received a copy of the GNU General Public License
+  along with OpenAero.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+
+<html>
+<HEAD>
+	<meta name="viewport" content="width=device-width">
+	<script src="../js/docs.js" type="text/javascript"></script>
+	<link rel="stylesheet" href="../css/general.css">
+	<!-- web manifest for progressive web apps -->
+	<link rel="manifest" href="/manifest.webmanifest">
+ 	<TITLE>OpenAero Manual</TITLE>
+	<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8" />
+</HEAD>
+
+<BODY class="docs">
+
+    <div class="documentation">
+        <span>
+            <h1>Das OpenAero-Benutzerhandbuch</h1>
+						übersetzt, ergänzt und neu gegliedert von Dirk Maslonka, 2023
+            <ol>
+                <li><a href="#general">Allgemein</a></li>
+                <li><a href="#creating_sequences">Sequenzerstellung und -prüfung</a></li>
+							  <li><a href="#opening_saving">Umgang mit Sequenzdateien und Sequenz-Code</a></li>
+								<li><a href="#view_mode">Ansichtsmodi zum Erstellen, Fliegen und Auswerten</a></li>
+								<li><a href="#queue">Die Warteschlange</a></li>
+                <li><a href="#free_unknown_designer">Der Sequenz-Designer</a></li>
+                <li><a href="#settings">Einstellungen</a></li>
+            </ol>
+        </span>
+    </div>
+<!--
+chapter 1: general
+-->
+    <div class="documentation newPage">
+        <span id="general">
+            <h2>1. Allgemein</h2>
+            <span class="noCordova noUWP">
+                <p>
+									  OpenAero ist eine webbasierte Software zum Erstellen und Prüfen
+										von Kunstflugsequenzen. Es ist unter
+										<a href="https://openaero.net/" target="_blank">OpenAero.net</a>
+										auffindbar und läuft in Ihrem Web-Browser. Dies erlaubt den
+										Zugriff von praktisch jedem Computer, Tablet oder Smartphone.
+										Für das beste Nutzungserlebnis wird der
+										<a href="http://www.google.com/intl/en_uk/chrome/browser/" target="_blank">Google Chrome</a>
+										-Browser empfohlen, wobei alle neueren Browser (seit 2016) korrekt
+										funktionieren sollten. Es ist generell nützlich, OpenAero im
+										Vollbildschirm-Modus (durch Drücken von F11) zu verwenden.
+                </p>
+                <p>
+									  Sobald Sie online auf OpenAero zugreifen, erscheint die neueste,
+										stabile Version von OpenAero automatisch. Haben Sie dann einmal
+                    <a href="https://openaero.net/" target="_blank">openaero.net</a>
+										besucht, steht Ihnen die zuletzt aufgerufene Version auch offline zur
+										Verfügung.<br><br>
+										Wenn Sie OpenAero auf einem Tablett oder Smartphone benutzen,
+										wählen Sie <i>Smartphone-Layout</i> in den <i>Einstellungen</i> aus,
+										um die Benutzeroberfläche an das kleinere Display anzupassen.
+                </p>
+                <p>
+									  Wann immer Sie online OpenAero erneut aufrufen, sollte es
+										automatisch auf die neueste, stabile Version updaten. Falls Sie
+										vermuten, dass dies einmal nicht der Fall ist, können Sie dies
+										in <i>Hilfe</i>, <i>Über</i> überprüfen. Falls dort zu sehen ist,
+										dass sie eine veraltete Version benutzen, könnte es helfen, Ihren
+										appCache zu leeren: <br>
+										Geben Sie dazu <strong>chrome://appcache-internals</strong> in
+										der Addresszeile Ihres Web-Browsers ein und <strong>entfernen</strong>
+										Sie alle Einträge die OpenAero enthalten.
+                </p>
+                <h3>iOS, Android und Windows 10 App</h3>
+                <p>
+									  Eine OpenAero-App ist für die verschiedenen Platformen verfügbar.
+										Neben dem normalen Funktionsumfang, bietet die App:
+                    <ul>
+                        <li>verbesserten Umgang mit .seq Sequenz-Dateien</li>
+                        <li>garantierte Offline-Verfügbarkeit</li>
+                        <li>Unterstützung der OpenAero-Entwicklung mit Ihrem finanziellen Beitrag</li>
+                        <li>einige nur in der App erhätliche Features</li>
+                    </ul>
+                </p>
+                <p class="badges">
+                    <a href="https://itunes.apple.com/us/app/openaero/id1343773321" target="_blank">
+                        <img src="../img/ios-appstore-badge.svg">
+                    </a>
+                    <a href="https://play.google.com/store/apps/details?id=net.openaero" target="_blank">
+                        <img src="../img/google-play-badge.png">
+                    </a>
+                    <a href="https://www.microsoft.com/store/apps/58124MassAppz.OpenAero" target="_blank">
+                        <img src="../img/microsoft-badge.svg">
+                    </a>
+                </p>
+            </span>
+            <p>
+								Auch wenn es neben OpenAero keinerlei andere Software bedarf, um
+								regelkonforme Kunstflugprogramme zu erstellen, wird empfohlen, stets
+								eine offizielle und aktuelle Ausgabe des
+								<a href="http://www.arestisystem.com/" target="_blank">Aresti-Katalogs</a>
+								zum Prüfen der Programme zur Verfügung zu haben.
+            </p>
+            <p>
+							  Dieses Handbuch richtet sich an Benutzer von OpenAero. Falls Sie sich
+								für die Entwicklung von Ergänzungen zu OpenAero interessieren,
+								inklusive nationaler Regeln, dann besuchen Sie bitte die
+								<a href="https://github.com/OpenAero/main/wiki/Developers" target="_blank">
+									Entwickler-Wiki-Seite</a>.
+            </p>
+        </span>
+    </div>
+<!--
+chapter 2: Sequence-Creation
+-->
+	  <div class="documentation newPage">
+        <span>
+            <h2 id="creating_sequences">2. Sequenzerstellung und -prüfung</h2>
+            <p>
+							  Kunstflugsequenzen können in OpenAero auf verschiedene Weisen
+								erstellt werden:
+            </p>
+            <ul>
+								<li>durch Auswählen und Bearbeiten von Figuren mit dem
+							  <i>Figurgestalter</i>, was in diesem Kapitel erklärt ist;
+									und/oder</li>
+								<li>mit Hilfe des
+									<a href="#free_unknown_designer">Sequenz-Designer</a>s;
+									und/oder</li>
+                <li>durch Eingabe von
+									<a href="language_de.html" target="_blank">Sequenz-Code</a>
+									in der Eingabezeile.
+            </ul>
+        </span>
+    </div>
+		<div class="documentation">
+        <span>
+            <h3>2.1. Zu Beginn der Sequenzerstellung</h3>
+            <img src="../img/sequence_info.png">
+            <p>
+							  Wenn Sie eine Figuren-Datei der Bekannten oder Unbekannten Kür
+								öffnen, werden Sie gefragt, ob sie den
+								<a href="#free_unknown_designer">Sequenz-Designer</a> starten möchten.
+								Falls Sie dies bestätigen, füllen Sie die Sequenz-Information später aus.
+								<br>
+							  In jedem anderen Fall, beginnen Sie immer mit dem Ausfüllen der
+								Sequenz-Information im zugehörigen Panel auf der linken Bildschirmseite.
+								Die Informationen zu <i>Regeln</i>, <i>Kategorie</i> und <i>Programm</i>
+								werden verarbeitet, um die Gültigkeit der Sequenz zu bestimmen.<br>
+								Falls gerade die Regelprüfung für die gewählte Kombination aktiv ist,
+								wird dies mit <i class="material-icons status good"></i> im oberen Teil
+								der Regelkarte angezeigt. Andernfalls erscheint
+                <i class="material-icons status bad"></i> und die Sequenz wird nur
+								auf Übereinstimmung mit dem Aresti-System überprüft.
+            </p>
+            <h4 id="contest_information">Wettbewerbsinformation</h4>
+            <p>
+							  Der Info-Kasten für die Wettbewerbsinformation kann benutzt werden,
+								um Ort, Datum, Logo und Notizen des Wettbewerbs auf den Formularen
+								festzuhalten. Es ist möglich, diese Information zu kopieren,
+								einzufügen und zu sperren. Falls gesperrt, kann die Information
+								nicht geändert werden, auch dann nicht,	wenn eine neue Sequenz
+								geöffnet wird.<br>
+								Sie können eines der vorhandenen Logos auswählen, oder Ihr eigenes
+								hinzufügen. Maximal 3 Logos können hinzugefügt werden. Falls Sie ein
+								weiteres hinzufügen wollen, müssen Sie eines der anderen löschen.
+            </p>
+            <h4>Sequenz-Eingangsrichtung</h4>
+            <p>
+							  Sie können im <i>Sequenz-Menü</i> auswählen, ob anstatt in Hauptrichtung
+								(gegen den Wind) die Sequenz mit Rückenwind oder quer zur
+								Hauptrichtung gestartet werden soll. Dies kann später jederzeit
+								wieder geändert werden.
+            </p>
+        </span>
+    </div>
+    <div class="documentation">
+        <span>
+            <div>
+                <h3 id="adding_a_figure">2.2. Hinzufügen einer Figur</h3>
+                <p>
+                    <img src="../img/OA_FigureAddPanel.png">
+                    Öffnen Sie den <i>Figurgestalter</i>-Tab und klicken Sie auf
+										<i>Figur hinzufügen</i>.<br>
+										Eine Figurauswahl erscheint, in der Sie zunächst die Figurengruppe
+										(zum Beispiel "1.2 Zwei-Linien-Figuren") und dann die Basisfigur
+										auswählen. Oberhalb und links der Figurauswahl werden die
+										Aresti-Zeilen und -Spalten-Nummern angezeigt.<br>
+										An jedem Punkt innerhalb der Figur, an dem sich die Fluglage ändert,
+										wird das Platzhaltersymbol einer halben Rolle angezeigt und
+										standardmäßig mit der Basisfigur miteingefügt, was wiederum leicht
+										zur Rolle der Wahl im Figurgestalter geändert werden kann.<br>
+										Falls bereits Figuren in der Sequenz vorhanden sind, kann im Figurgestalter
+										gewählt werden, an welcher Stelle die nächste Figur eingefügt werden
+										soll. Figuren, die für die aktuelle Stelle passen, also die passende
+										Ein- und Ausgangsfluglage haben, sind in der Figurauswahl dann grün hinterlegt.
+                </p>
+            </div>
+            <div>
+                <img src="../img/OA_FigureSelection.png" style="float:left;">
+                <p>
+									  Wenn die Regeln zur <a href="#sequence_checking">Sequenzprüfung</a> aktiv sind, die die Verwendung von
+										bestimmten Figuren verbieten, werden diese Figuren in der Figurauswahl
+										nicht gezeigt. Um sie dennoch zu zeigen, muss dies mit dem Schalter
+										<i>Regel-illegale Figuren ausblenden</i> deaktiviert werden.
+                </p>
+                <p>
+									  Wenn eine Figur hinzugefügt oder
+										<a href="#selecting_moving">ausgewählt</a> wird, wird sie in
+										magenta auf der Zeichnugnsfläche dargestellt. Ihre zugehörigere
+										Zeichenkette in der Sequenzzeile ist dann ebenfalls in magenta
+										gehalten.<br>
+										Die Miniform A wird immer automatisch aktualisiert, um die
+										Aresti-Katalognummern sowie zugehörige K-Faktoren der Basisfiguren
+										und der Rollen- bzw. Trudelelemente anzuzeigen.<br>
+										Basisfiguren und Rollen- bzw. Trudelelemente, die gemäß den gewählten
+										Sequenzregeln nicht &#39;legal&#39; sind, werden mit <b>0 K</b> in
+										Miniform A angezeigt.
+                </p>
+            </div>
+            <div class="clearBoth"></div>
+            <img src="../img/OA_FigureInfoPanel.png">
+            <p>
+							  Die aktuelle Figur wird außerdem im Figurgestalter angezeigt, wo
+								sie wie folgt bearbeitet werden kann:
+						</p>
+            <ul>
+                <li>Setzen der Figur als Beginn einer neuen Untersequenz</li>
+                <li>Schwenken der gezeichneten Querrichtung</li>
+                <li>Löschen der Figur</li>
+                <li>Alternieren der Haupt- und Querrichtungen für Figurein- und -ausgang</li>
+                <li>Größer und kleiner Skalieren der Figur</li>
+                <li>
+									  Verschieben der Figur zu einer anderen Position - ohne oder mit
+										gerader oder geschwungener, gestrichelter Verbindungslinie
+                </li>
+                <li>
+									  Verlängern oder Verkürzen der Linienstücke direkt nach/vor den
+										Ein-/Asugangssymbolen, sowie vor oder nach den Roll-/Trudelsymbolen.
+                </li>
+                <li>
+                    Ändern der Ein- und Ausgangsfluglage (bauch- oder rückenlagig)
+                </li>
+                <li>
+									  Zuweisung eines Figuridentifikationsbuchstaben A bis J oder
+										Markierung als Verbindungsfigur mit Buchstaben L
+                </li>
+                <li>
+                    Hinzufügen/ Entfernen / Ändern von Rollen- / Trudelelementen, und:
+                    <ul>
+                        <li>
+													  Alternieren Ihrer gezeichneten Drehrichtung und des
+														Rollen-Texts zum Vermeiden von überlappenden Rollen-Text
+														mit anderen Elementen
+                        </li>
+                        <li>Alternieren der Rollen-Text-Anzeige</li>
+                        <li>
+													  Zuweisung eines Kommentars, der nachfolgend zum Rollentext
+														angezeigt wird, z.B. "rechts"
+                        </li>
+                    </ul>
+										Wenn die Sequenzregeln aktiv sind, werden nur regel-konforme
+										Rollenelemente im Dropdown-Menu angezeigt. Trotzdem kann es sein,
+										dass darüberhinaus bestimmte Kombinationen von Rollen-/Trudelabfolgen
+										nicht erlaubt sind. In diesem Fall wird dann eine Alarmmeldung
+										unterhalb dem Figurgestalter ausgegeben.
+                </li>
+                <li>Hinzufügen / Entfernen / Ändern von Figurkommentaren</li>
+            </ul>
+            <p>
+                <strong>
+									  Manche dieser Optionen sind nicht für Figuren verfügbar, die
+										einen Identifikationsbuchstaben erhalten haben, um zu vermeiden,
+										dass diese Figuren dann abgeändert werden können.
+                </strong>
+            </p>
+            <img src="../img/blue_handles.png" style="float:left;">
+            <p>
+							  Eine andere Möglichkeit, die Erscheinung der Figur zu ändern besteht
+								im Benutzen der "Figuranfasser". Diese sind die blauen, halb transparenten
+								Kreise, die auf jedem Linienstück der Figur erscheinen, wenn sie ausgewählt,
+								also in magenta dargestellt, ist. Durch Anklicken und Ziehen kann
+								so ein Linienstück komfortabel verlängert oder verkürzt werden.<br>
+								Wenn eine Figur ausgewählt ist, erscheint ebenfalls ein Lupen-Symbol
+								in der rechten oberen Ecke der Figur. Wird dies angeklickt und gezogen,
+								wird die Figur größer oder kleiner skaliert.<br>
+								Diese Art der Bearbeitung kann in den
+								<a href="#settings">Einstellungen</a> deaktiviert	werden.
+								<br><br>
+							  Wenn eine Figur fertig gestaltet ist, wird sie durch Klick auf die weiße
+								Zeichnugnsfläche abgewählt. Danach kann eine neue Figur an beliebiger
+								Stelle eingefügt werden; standardmäßig am Ende der Sequenz.
+            </p>
+        </span>
+    </div>
+		<div id="selecting_moving" class="documentation">
+        <span>
+            <h3>2.3. Auswählen und Verschieben von Figuren</h3>
+            <p>
+								Zum Auswählen einer Figur, klicken Sie auf sie oder markieren Sie
+								den zugehörigen Teil des Sequenz-Codes in der Eingabezeile. Die
+								Figur wird nun in magenta dargestellt und kann im Figurgestalter
+								bearbeitet werden.<br><br>
+								Um die Figur zu verschieben, kann sie per "drag & drop" an jede
+								beliebige Stelle gezogen werden. Dies gilt jedoch nicht für die
+								erste Figur der Sequenz.<br>
+								Nach dem Verschieben ist es möglich den Linienstil der
+								Verbindungslinie von "geschwungen" zu "gerade" oder umgekehrt zu
+								ändern, in dem der zugehörige Button im Figurgestalter angeklickt
+								wird.<br>
+								Es ist ebenso möglich, die Verbingungslinie zu entfernen; der
+								Leserlichkeit halber gilt dies jedoch nur für horizontale
+								Verbindungslinien. Dies wird durch Klicken des Buttons für
+								horizontales Verschieben erreicht. Einmal geklickt, erscheint
+								dann im Figureditor ein weiteres Feld zum Festlegen des
+								horizontalen Abstands.<br><br>
+                <b><i>Wichtiger Tipp:</i></b><br>Ein schlechtes Sequenz-Layout, das
+								schwer nachverfolgt werden kann, kann im Wettkampfskunstflug die
+								Punktrichterr vor ein Problem stellen und damit nachteilig für
+								den Wettkampfspiloten sein. In diesem Sinn ist ein wenig mehr
+								aufgebrachte Zeit zur Sequenzerstellung immer gut investierte Zeit.
+								Verwenden Sie dazu insbesondere die Verbindungslinien um den
+								Sequenzablauf besser nachvollziehbar darzustellen.
+            </p>
+            <h4>Die automatische Figurentrennung</h4>
+            <p>
+							 Sollten einmal die Figuren völlig überlappt erscheinen, sodass es
+							 mühselig wäre jede einzelne auseinander zu ziehen, empfiehlt sich
+							 dafür die Anweisung <i>Figuren trennen</i>, die im <i>Sequenz-Menü</i>
+							 zu finden ist. Es werden dann alle Figuren voneinander isoliert
+							 dargestellt.<br>
+							 OpenAero kann diese Darstellungsweise immer automatisch anzeigen.
+							 Setzen Sie dafür in den <a href="#settings">Einstellungen</a> den
+							 zugehörigen Schalter <i>Positioniere automatisch neue oder geänderte
+							 Figuren frei von anderen</i>.<br><br>
+							 Um die Sequenzformatierung gänzlich zu entfernen, wählen Sie
+							 <i>Positinierung aufheben</i> im <i>Sequenz-Menü</i> aus.
+            </p>
+        </span>
+    </div>
+		<div class="documentation">
+        <span>
+            <h3 id="optimal_sequence_area">2.4. Optimaler Sequenzbereich</h3>
+            <p>
+							  Es ist wichtig, eine Sequenz derart zu gestalten, dass sie auf den
+								Punktrichterformularen einfach lesbar ist. Um dies zu unterstützen,
+								wird im Sequenzbereich eine Rahmenlinie angezeigt, die lediglich
+								informativen Charakter hat, also die Orientierung bieten soll, bis zu
+								welcher Größe der Platz auf Formular R oder L ausgenutzt ist. Sie
+								erscheint nur im Desktop- nicht aber im Smartphone-Layout.
+								<br><br>
+							  So lange die Sequenz auf das Formular passt, erscheint die Rahmenlinie
+								in grün, andernfalls orange. Dann skaliert OpenAero die Sequenz soweit hinunter,
+								wie es für das Drucken auf das Formular erforderlich ist.
+								Um die Leserlichkeit zu erhalten wird dabei allerdings der
+								Rollen-Text weniger stark skaliert, was unter Umständen zu
+								Überlappungen führen kann.
+            </p>
+        </span>
+    </div>
+    <div class="documentation">
+        <span>
+            <h3 id="figure_comments">2.5. Figurenkommentare</h3>
+            <p>
+							  Das Kommentarfeld ist angedacht, um zusätzliche Informationen zu
+								einer Figur festzuhalten. Hier kann beliebiger Text verwendet werden,
+								wobei es folgende spezielle Anweisungen gibt:
+            </p>
+            <ul>
+                <li>
+                    <strong>[</strong> : fette Kommentarrahmenlinie auf Formular B, C, R &amp; L
+                </li>
+                <li>
+                    <strong>[[</strong> : rote Kommentarrahmenlinie auf Formular B, C, R &amp; L
+                </li>
+                <li>
+                    <strong>\</strong> : Zeilenumbruch
+                </li>
+                <li>
+                    <strong>^</strong> : Drehen des Kommentars um 90°
+                </li>
+                <li>
+                    <strong>GER</strong> : Dreistelliger
+                    <a href="http://en.wikipedia.org/wiki/List_of_IOC_country_codes#Current_NOCs"
+										target="_blank">IOC-Länder-Code</a>
+										in Großbuchstaben zum Hinzufügen der Landesflagge in der Gitteransicht
+                </li>
+            </ul>
+        </span>
+    </div>
+
+
+    <div id="free_unknown" class="documentation newPage">
+        <span>
+            <h3>
+							  2.6. Die automatische Verarbeitung von vorgegebenen Figuren
+            </h3>
+            <p>
+							  Wenn im Sequenz-Infokasten eine bestimmte Kombination der Klasse,
+								Regeln, Kategorie und Programmart festgelegt wurden, die einen
+								besonderen Umgang entsprechend CIVA-Regularien gebieten, wird OpenAero
+								in Ergänzung zur Sequenzprüfung automatisch folgendes ausführen:<br><br>
+                <strong>Segelkunstflug - Advanced und Unlimited</strong>
+                <ul>
+                    <li>
+                        <b>Bekannte und Unbekannte Küren:</b><br>
+												Ein überschüssiger Total K von bis zu 3K wird entsprechend
+												Sporting Code Section 6 Part II Abschnitt 4.3.3.1.b) behandelt,
+												also auf den maximal zulässigen Total K reduziert, indem
+												die (eigens hinzugefügten) höchstwertigen Figuren um je 1K
+												reduziert werden. Der überschüssige Total K wird dann in
+												Klammern zur Information hinter dem reduzierten
+												(maximal zulässigen) Total K angezeigt. Ist der Überschuss
+												größer als 3K, quotiert OpenAero dies mit einer Fehlermeldung.
+                    </li>
+                    <li>
+                        <b>Unbekannte Pflichten:</b><br>
+												OpenAero verwertet die bis zu 2 Verbindungsfiguren mit
+												insgesamt 10K, anstatt ihre(n) tatsächlichen K-Faktor(en)
+												zu verwenden.
+                    </li>
+                </ul>
+                <strong>Motor- und Segelkunstflug - Advanced und Unlimited</strong>
+                <ul>
+                    <li>
+                        <b>Unbekannte Küren:</b> <br>
+												Jede zuvor vorgeschlagene Figur der Unbekannten Kür muss
+												mit einem <a href="#figure_comments">Identifikationsbuchstaben
+												A-G (im Motorkunstflug)	bzw. A-J (Segelkunstflug), versehen sein. </a>
+												Verbindungsfiguren müssen mit dem Buchstaben L versehen sein
+												und werden dann regelkonform zu insgesamt 24K (Motorkunstflug)
+												bzw. 10K (Segelkunstflug) abgeändert.
+                    </li>
+                </ul>
+            </p>
+        </span>
+			</div>
+			<div class="documentation">
+        <span>
+            <h3 id="figure_start_colors">2.7. Farben der Figureingangskreise</h3>
+            <p>
+							Sobald in einer Sequenz die Identifikationsbuchstaben hinzugefügt
+							wurden, erscheinen (zwecks leserlicher Zuordnung) die
+							Figureingangskreise farblich kodiert, um sie wiefolgt zu
+							unterscheiden:
+                <ul>
+                    <li>
+                        <strong style="color: #6060ff;">blau</strong>
+												eine Verbindungsfigur in einer Unbekannten Kür
+                    </li>
+                    <li>
+                        <strong style="color: #7cb342;">grün</strong>
+												eine Figur, die erfolgreich gegen die Referenzsequenz
+												geprüft wurde, welche die Pflichtfiguren enthält
+                    </li>
+                    <li>
+                        <strong style="color: #ff6040;">orange</strong>
+												eine Figur, die nicht erfolgreich gegen die Referenzsequenz
+												geprüft wurde, da sie einen Fehler enthält oder gänzlich
+												nicht einer der Pflichtfiguren entspricht und auch nicht als
+												Verbindungsfigur identifiziert wurde
+                    </li>
+                </ul>
+            </p>
+        </span>
+    </div>
+    <div class="documentation">
+        <span id="sequence_checking">
+            <h3>2.8. Sequenzprüfung</h3>
+            <p>
+                Wählen Sie im <i>Sequence-Menü</i> die <i>Sequenzprüfung</i> aus,
+								um Ihre Kunstflugsequenz gegen die von Ihnen im
+								<i>Sequenz-Infokasten</i> festgelegten Regeln zu überprüfen.
+								Jeder etwaiger Regelverstoß ihrer bis hier hin erstellten Sequenz
+								wird im Feld <i>Alarmmeldungen</i> unterhalb des
+								<i>Sequenz-Infokastens</i> bzw. des <i>Figurgestalters</i> auf
+								der linken Bildschirmseite angezeigt.<br>
+								Beim <a href="#save_print">Ausdrucken</a> den Sequenz können Sie
+								auswählen, ob das Resultat der Sequenzprüfung auf
+								Form B, C, L & R mitgedruckt werden soll.<br>
+								Dies kann durch die Wettbewerbsleitung so von Ihnen verlangt sein.
+            </p>
+            <p class="noCordova">
+							  Mit OpenAero können auch mehrere Sequenzen aufeinmal einer Prüfung
+								unterzogen werden, was insbesondere hilfreich für die Wettbewerbsleitung
+								ist. Klicken Sie dazu im <i>Werkzeuge-Menü</i> auf die Funktion
+								<i>Prüfung mehrerer Sequenzen</i> und ziehen Sie per "drag & drop"
+								alle Sequenzdateien in das Feld, das sie in dem nun geöffneten
+								Dateidialog sehen.
+            </p>
+            <p>
+							  Beim Erstellen einer Unbekannten Kür ist es möglich, die Ihnen
+								übersandten Originalfiguren zu verwenden, um Ihre Kür auf
+								Übereinstimmung mit diesen Figuren zu prüfen. Klicken Sie dazu
+								auf <i>Referenzsequenz</i> im <i>Sequenz-Infokasten</i>. Dann
+								erscheint ein Dialogfenster, dass sie auffordert, den
+								<a href="language_de.html" target="_blank">Sequenz-Code</a> der <i>Referenzsequenz</i> einzufügen. Sie
+								finden diesen in der Eingabezeile, wenn Sie die Sequenz-Datei der
+								<i>Referenzsequenz</i> geöffnet haben. <br><br>
+								Im Fall der Bekannten Kür wird die Referenzsequenz automatisch
+								geladen, sobald die zugehörigen Regeln im <i>Sequenz-Infokasten</i>
+								festgelegt wurden.
+            </p>
+        </span>
+    </div>
+<!--
+chapter 3: file operations
+-->
+		<div class="documentation newPage">
+				<span id="opening_saving">
+						<h2>3. Umgang mit Sequenzdateien und Sequenz-Code</h3>
+						<p> Die wohl schnellste und einfachste Art und Weise erstellte
+							Kunstflugsequenzen mit anderen auszutauschen besteht im Kopieren
+							und Einfügen des
+							<a href="language_de.html" target="_blank">Sequenz-Codes</a>
+							in der Eingabezeile, der auf irgend	eine beliebige Art und Weise
+							übermittelt wurde (z.B. Email, Textnachricht, mündlich).<br>
+							Wie es seine Bezeichnung erwarten lässt, enthält der Sequenz-Code
+							lediglich Informationen über die Gestalt der Kunstflugsequenz
+							(inklusive Figurkommentaren), jedoch bspw. keine weiteren Aussagen
+							über:
+							<ul>
+								<li>Pilot, Programm und Wettbewerb</li>
+								<li>und damit das Sequenzprüfresultat;</li>
+								<li>nichteinmal den ableitbaren Total-K, da der Sequenz-Code
+									keine Aussage darüber enthält, ob die Kunstflugsequenz
+									für den Motor- oder Segelkunstflug vorgesehen ist, in denen
+									gewisse Basisfiguren (z.B. Männchen / Weibchen) ja mit
+									unterschiedlichen K-Faktoren bewertet werden; sowie</li>
+								<li>gewisse Voreinstellungen zur Darstellung und zum Drucken
+								und ebenso keinerlei andere Meta-Daten</li>
+							</ul>
+							Dies stellt für den Datenaustausch während eines Wettbewerbs eine
+							Unzulänglichkeit dar,	die nur mit Sequenz-Dateien überwunden werden
+							kann, in welcher neben dem
+							<a href="language_de.html" target="_blank">Sequenz-Code</a>
+							eben alle weiteren, zuvor
+							genannten	Informationen mit abgespeichert werden können.
+						</p>
+				</span>
+		</div>
+		<div class="documentation newPage">
+				<span>
+						<h3>3.1. Öffnen einer Sequenzdatei</h3>
+						<p>
+								Um eine bestehende Sequenz-Datei zu öffnen, wählen Sie im
+								<i>Datei</i>-Menü die Funktion <i>Datei öffnen</i> aus und
+								navigieren Sie dann in dem geöffneten Dateidialogfenster zur
+								Sequenz-Datei Ihrer Wahl. Diese Dateien haben immer die
+								Dateiendung <i>*.seq</i>.<br><br>
+								<span class="noCordova">
+									  Alternativ dazu können Sie auch eine Sequenz-Datei aus einem
+										beliebigen Ordner in das dafür vorgesehene Feld im
+										Dateidialogfenster per "drag & drop" ziehen.
+								</span><br><br>
+								Eine dritte Möglichkeit besteht darin, einen <i>Sequenz-Link</i>
+								zu öffnen, der Ihnen beispielsweise per Email oder Messenger
+								gesendet oder auf der Website	des Wettbewerbsveranstalters zur
+								Verfügung gestellt wurde.<br><br>
+								Falls Sie die OpenAero-App verwenden, besteht eine weitere
+								Möglichkeit darin, durch Scannen von QR-Code einen solchen
+								Sequenz-Link zu öffnen.
+						</p>
+				</span>
+		</div>
+		<div class="documentation newPage">
+				<span>
+						<h3>3.2. Speichern einer Sequenzdatei</h3>
+						<p class="noCordova">
+							  Um eine Sequenz-Datei als <i>Dateiname.seq</i> zu speichern,
+								wählen Sie im <i>Datei</i>-Menü die Funktion <i>Sequenz speichern</i>.
+								<span class="noUWP">
+									  Abhängig von Ihren Browser-Einstellungen, werden Sie dann
+										gefragt, welchen Dateinamen Sie festlegen möchten.<br>
+										In Chrome können Sie in
+										<i><b>≡</b> /Einstellungen/Erweiterte Einstellungen</i>
+										die Checkbox "Nachfragen, wo gespeichert werden soll"
+										aktivieren.<br><br>
+										<b>Überprüfen Sie bitte immer die korrekte Dateiendung
+										<i>*.seq</i>.</b>
+								</span>
+						</p>
+				</span>
+		</div>
+		<div class="documentation newPage">
+				<span>
+						<h3 id="sharing">3.3. Teilen einer Sequenz</h3>
+						<p>
+							  Unabhängig davon ob eine Kunstflugsequenz in einer Sequenz-Datei
+								bereits gespeichert wurde oder nicht, kann die Sequenz als Link,
+								also als Web-Addresse gespeichert werden, welcher verschickt werden
+								kann, um diese Sequenz an einem anderen Ort oder auf einem anderen
+								Gerät wieder zu öffnen. Wählen Sie dazu <i>Als Link speichern</i>
+								im <i>Datei</i>-Menü aus.<br><br>
+								Entscheiden Sie sich jedoch für <i>Sequenz per Email verschicken</i>,
+								wird automatisch eine Email generiert, die den <i>Sequenz-Link</i>
+								und einen Standardtext enthält. Sie brauchen dann nur noch die
+								Emailempfänger und den Betreff eingeben und können dann die Email
+								versenden.<br><br>
+								Falls Sie einen QR-Code von ihrer Kunstflugsequenz erstellen
+								möchten, wählen Sie dazu im <i>Datei</i>-Menü die Funktion
+								<i>QR-Code</i>. Er kann ausgedruckt oder auf eine Website
+								veröffentlicht werden, sodass andere ihn mit handelsüblichen
+								Mobilgeräten scannen können, um die Kunstflugsequenz zu öffnen.
+						</p>
+				</span>
+		</div>
+		<div class="documentation newPage">
+				<span>
+						<h3 id="save_print">3.4. Speichern und Drucken von Sequenz-Formularen</h3>
+						<p>
+								Um eine Kunstflugsequenz in einem oder mehreren der
+								Wettbewerbsformulare zu speichern, wählen Sie <i>Drucken /
+								Speichern von Formularen</i> im <i>Datei</i>-Menü aus.<br>
+								<span class="noCordova noUWP">
+										Um die Formulare als PDF-Datei zu speichern, wählen Sie
+										zunächst <i>Drucken / Speichern von Formularen</i> und dann
+										anschließend <i>Drucken / Speichern als PDF</i> im
+										Dialogfester zu den Druckoptionen.
+								</span>
+
+								<h4>Schnelleingabe der Druckoptionen</h4>
+
+								Beachten Sie, dass Sie in dem Dialogfenster zu den
+								Druckoptionen die Eingabemöglichkeit für <b>Seiten-Code</b>
+								haben, um eine komplexe Seiten- / Formularauswahl festzulegen,
+								die gedruckt werden soll.<br>
+								Der <b>Seiten-Code</b> ist damit eine eindeutige, schnell
+								wiederverwendbare Festlegung aller Druckoptionen in diesem
+								Dialogfenster. Die einzelnen Druckoptionen sind:
+								<table style="border-collapse: collapse;">
+										<tr><td>A</td><td>Form A</td><td rowspan="6"></td></tr>
+										<tr><td>B</td><td>Form B</td></tr>
+										<tr><td>B+</td><td>Form B mit Mini-Form A</td></tr>
+										<tr><td>C</td><td>Form C</td></tr>
+										<tr><td>C+</td><td>Form C mit Mini-Form A</td></tr>
+										<tr><td>R</td><td>Form R</td></tr>
+										<tr><td>L</td><td>Form L</td></tr>
+										<tr><td>G</td><td>Gitteransicht</td></tr>
+										<tr><td>G+</td><td>Gitteransicht mit Sequenzinformation</td></tr>
+										<tr>
+												<td>0</td>
+												<td style="border-top: dotted 2px; border-right:solid 2px;">einzelner, ganzseitiger Cockpitzettel</td>
+												<td rowspan="5" width="40%" style="padding-left:1em; padding-top: 1.0em;">
+														Nach einem dieser Cockpitzettel-Zeichen, fügen Sie
+														<strong>></strong> hinzu,	um das Windsymbol für
+														Wind von links zu zeichnen, bzw. <strong><</strong>
+														für Wind von rechts oder <strong>=</strong>
+														für beide.
+												</td>
+										</tr>
+										<tr><td>1 - 9</td><td style="border-right:solid 2px;">Cockpitzettel mit 10-90% Skalierung in 10%-Schritten</td></tr>
+										<tr><td>T</td><td style="border-right:solid 2px;">Zwei gleiche Cockpitzettel</td></tr>
+										<tr><td>F</td><td style="border-right:solid 2px;">Vier gleiche Cockpitzettel</td></tr>
+										<tr><td>Q</td><td style="border-bottom: dotted 2px; border-right:solid 2px;">Zwei Cockpitzettel mit QR-Code</td></tr>
+										<tr><td>_ oder Leerzeichen</td><td>Leere Seite</td><td></td></tr>
+								</table>
+						</p>
+						<p>
+								Beispielsweise beschreibt der Seiten-Code <strong>LLLLR_F=_C+</strong>
+								die Erstellung von:
+								<ul>
+										<li>4 Seiten mit Form L,</li>
+										<li>1 Seite mit Form R,</li>
+										<li>1 leere Seite,</li>
+										<li>1 Seite mir 4 Cockpitzettel, davon 2 mit Wind von links und 2 mit Wind von rechts,</li>
+										<li>1 leere Seite und</li>
+										<li>1 Seite mit Form C, auf der auch die Miniform A abgebildet ist.</li>
+								</ul>
+						</p>
+						<h4>Speichern als Bild oder Vektorgrafik</h4>
+						<p>
+							Um ein oder mehrerere Formulare als Bild (PNG) oder
+							Vektorgrafik (SVG) zu speichern, gehen Sie wiefolgt vor:
+						</p>
+						<ul>
+								<li>
+										<strong>PNG</strong> : Dieses Dateiformat ist generell von allen
+										handelsüblichen Geräten (Laptop, Tablet, Smartphone) lesbar.
+										Geben Sie zunächst die gewünschte Bildauflösung in
+										<i>Werkzeuge, Einstellungen - allgemein</i> ein.
+										Klicken Sie dann auf <i>PNG Bild speichern</i> im
+										Druckoptionendialogfenster.
+								</li>
+								<li class="noIOS">
+										<strong>SVG</strong> : Vektorgrafiken bieten den Vorteil bei
+										selbst grosser Vergrösserung immer ihre Schärfe bei zu behalten.
+										Sie können mit alle heute gängigen Internetbrowsern geöffnet werden,
+										erfordern jedoch eine Vektorgrafiksoftware, um sie nach zu bearbeiten.
+										Für weitere Information zu diesem Dateityp, besuchen Sie bitte
+										<a href="http://www.fileinfo.com" target="_blank">www.fileinfo.com</a>.
+										Klicken Sie auf <i>SVG Vektorgrafik speichern</i> im
+										Druckoptionendialogfenster.
+								</li>
+						</ul>
+						<p class="noUWP">
+								<span class="noCordova">
+										Sofern Sie ein Apple-Gerät vwerwenden, können Sie im
+										Safari-Browser den <span class="iOSsaveIcon"></span>
+										Button anklicken, um das Bild zu speichern oder zu drucken.
+								</span>
+						</p>
+						<h4 class="noCordova">Drucken mehrerer Sequenzen</h4>
+						<p class="noCordova">
+								Mit der Intension, eine Wettbewerbsleitung bestmöglich zu unterstützen,
+								erlaubt OpenAero das Drucken mehrerer Sequenzen aufeinmal ohne
+								dafür jede einzelne Sequenz öffnen zu müssen.
+								Diese Funktion findet sich im <i>Werkzeuge-Menü</i>. Benutzen Sie
+								dann wieder "drag & drop" und ziehen Sie alle zu druckenden
+								Sequenz-Dateien in das aufgepoppte Dialogfenster.
+						</p>
+						<h4>Figuren einer Sequenz separat in Bild-Dateien speichern</h4>
+						<p>
+								Um alle Figuren einer Sequenz einzeln in je eine Bild-Datei zu
+								speichern, klicken Sie im <i>Datei</i>-Menü auf <i>Figuren einzeln
+								speichern</i>. Um das Dateiformat (PNG oder SVG) festzulegen, müssen
+								Sie jedoch zuvor dies im <i>Werkzeuge</i>-Menü unter <i>Einstellungen</i> tun.
+								Alle Dateien werden dann in einer ZIP zusammengefasst, die in
+								Ihren Dowload-Ordner Ihres Browsers heruntergeladen wird.<br>
+								In den Einzelbildern sind die Figuren dann so orientiert, wie sie
+								in der aktuellen Ansicht (Form B oder C) dargestellt sind.<br>
+								Das Muster für die Dateinamen kann ebenso in den <i>Einstellungen</i>
+								festgelegt werden.
+						</p>
+				</span>
+		</div>
+		<div class="documentation newPage">
+				<span id="importing_into_acro">
+						<h3>3.5. Importieren von Sequenzdateien in ACRO</h3>
+						<p>
+								OpenAero-Sequenzdateien, die im Format <i>&quot;filename.seq&quot;</i>
+								gespeichert wurden, können direkt in die ACRO-Auswertungssoftware
+								importiert werden. Dies bietet eine schnelle und akurate Methode, um
+								alle Sequenz- und Figuren-Informationen ins ACRO zu übertragen.<br>
+								Beachten Sie bitte das für diese Aufgabe der Übertrag von
+								Sequenz-Code allein nicht genügt!
+						</p>
+				</span>
+		</div>
+<!--
+chapter 4: viewing modes
+-->
+		<div class="documentation newPage">
+				<span id="view_mode">
+						<h2>4. Ansichtsmodi zum Erstellen, Fliegen und Auswerten</h2>
+						<p>
+							  In OpenAero gibt es grundsätzlich 5 verschiedene Ansichtsmodi,
+								die im <i>Ansicht</i>-Menü aufgerufen werden können -
+								<i>Form A</i>, <i>Form B</i>, <i>Form C</i>, <i>Gitteransicht</i>
+								und <i>Flugmodus</i>.<br><br>
+
+								Zusätzlich gibt es noch eine weitere, spezielle Ansicht im
+								<a href="#free_unknown_designer">Sequenz-Designer</a> die erst und
+								nur	erscheint, wenn dieser aufgerufen wird.
+						</p>
+				</span>
+		</div>
+		<div class="documentation newPage">
+				<span>
+								<h3>4.1 Die Form-A-Ansicht</h3>
+								<p>
+										Die Sequenz wird in tabellarischer Form (entsprechend
+										Form A gemäß CIVA Sporting Code) dargestellt, die für die
+										Erfassung der Punktrichterbewertung ausgelegt wurde. Die
+										Tabelle enthält neben den Arestifiguren auch die zugehörigen
+										Aresti-Katalognummern und K-Faktoren, sowie Felder für
+										etwaige Punktabzüge infolge Verletzung gewisser Flug- und
+										Wettkampfsregeln.
+								</p>
+				</span>
+		</div>
+		<div class="documentation newPage">
+				<span>
+								<h3>4.2 Die Ansichten Form B & C</h3>
+								<p>
+										Ganzheitliche Ansichtsformate mit Wind von rechts (Form B)
+										bzw. Wind von links (Form C) in Bezug auf die Blickrichtung
+										der Punktrichter. Es ist gängige Praxis, dass zumeist auf
+										Form B eine Miniform A mit abgebildet wird, während auf Form C
+										diese nicht getan wird, wobei es hierfür jedoch keine
+										echte Regel gibt. Der Vielseitigkeit halber erlaubt OpenAero
+										die Miniform A auf beiden Formularen B und C wahlweise
+										darzustellen.<br>
+										Diese beiden Ansichtsmodi werden hauptsächlich zum
+										<a href="#creating_sequences">Erstellen</a>
+										und <a href="#selectin_moving">Abändern</a> der Sequenz
+										benutzt, in der die Figuren angeordnet und nach Bedarf
+										verschoben werden.
+								</p>
+				</span>
+		</div>
+		<div class="documentation newPage">
+				<span>
+								<h3 id="grid_system">4.3 Die Gitteransicht</h3>
+			          <p>
+										<img src="../img/OA_FigureGrid.gif"
+										style="min-width:25%; max-width: 50%;">
+										In der Gitteransicht sind, wie die Bezeichnung vermuten lässt,
+										alle Figuren in einem Gitter strukturiert dargestellt,
+										wobei die Figurenabfolge zeilenweise von links nach rechts
+										gegenüber den anderen Ansichtsmodi gewahrt bleibt.<br>
+										Zu jeder Figur werden, wie auch in Form A, die zugehörigen
+										Aresti-Katalognummern und K-Faktoren der Basisfiguren sowie
+										der Roll- bzw. Trudelelemente zusammengefasst, wobei die
+										K-Faktoren einer Figur zum Figuren-K-Faktor aufsummiert werden.<br>
+										Darüberhinaus bietet die Gittersicht nun aber noch die
+										Möglichkeit die Figur mit einem Kommentar, insbesondere einem
+										<a href="http://en.wikipedia.org/wiki/List_of_IOC_country_codes#Current_NOCs"
+										target="_blank">IOC-Länder-Code</a> und/oder einem Pilotennamen
+										zu assozieren und	dies zweckmäßig und übersichtlich darzustellen.<br>
+										Der prominenteste Anwendungsfall dieses Ansichtsmodus' ist damit
+										sicherlich die <i>Sitzung zum Figurenvorschlag für die
+										unbekannten Programme</i> während eines laufenden Wettbewerbs.<br>
+										Die Wettbewerbsleitung verwendet dann anschliessend eben diesen
+										Ansichtsmodus, um für die unbekannte Kür die von ihr ausgewählten,
+										für die Wettbewerbsteilnehmer verbindlichen Figuren zu
+										kommunizieren.<br>
+										Um den Piloten- oder Mannschaftsnamen, bzw. den
+										<a href="http://en.wikipedia.org/wiki/List_of_IOC_country_codes#Current_NOCs"
+										target="_blank">IOC-Länder-Code</a> als Figurenkommentar
+										einzugeben, kann entweder der Figurgestalter oder die Eingabe
+										in der Sequenzzeile erolgen. Dabei wird der Figurkommentar in
+										Anführungsstrichen vor dem Sequenz-Code der Figur geschrieben,
+										z.B. fügt resultiert die Zeichenkette <i>"GER" o </i> in einem
+										Loop, vorgeschlagen von deutschen Mannschaft. Sobald der
+										<a href="http://en.wikipedia.org/wiki/List_of_IOC_country_codes#Current_NOCs"
+										target="_blank">IOC-Länder-Code</a> korrekt eingegeben ist
+										und es auch im Sequnez-Code keinen Fehler gibt, erscheint die
+										zugehörige Flagge (nur in der Gitteransicht). Soll einer
+										Figur weiterhin noch ein Identifikationsbuchstabe zugewiesen
+										werden lautet die Syntax dann z.B. <i>"@A GER" o</i>. Dies
+										wird dann ebenso wie die Flagge unter der Figur angezeigt.
+										In allen anderen Ansichtsmodi erscheint dann lediglich "GER"
+										ohne Flagge (freundlicherweise zur Verfügung gestellt von
+										<a href="http://www.icondrawer.com" target="_blank">www.icondrawer.com</a>)
+										als Figurkommentar, während der Identifikationsbuchstabe
+										nicht zu sehen ist.<br>
+							  </p>
+								<p>
+										<img src="../img/OA_GridInfo.png"
+										style="float:right; min-width:25%; max-width:50%">
+										Einzig die Gitteransicht enthält eine <b>Gitter-Infobox</b>, die dazu
+										gedacht ist, bei eben diesem Figurenvorschlag unterstützende
+										Informationen bereit zu stellen. <br> Diese Infobox kann an jede
+										beliebige Stelle verschoben werden, um nicht die bislang
+										dargestellten Figuren zu verdecken. <br>
+										Innerhalb dieser Infobox kann ausgewählt werden, in
+										wie vielen Spalten die Figuren in der Gitteransicht dargestellt
+										werden sollen. Ebenfalls kann ausgewählt werden, wie die
+										Figuren sortiert werden sollen - entweder in der Reihenfolge
+										der eigegebenen Sequenz (siehe auch Sequenz-Code), gruppiert
+										nach Land (alphabetisch nach
+										<a href="http://en.wikipedia.org/wiki/List_of_IOC_country_codes#Current_NOCs"
+										target="_blank">IOC-Länder-Code</a>) oder nach dem zugewiesenen
+										Figuridentifikationsbuchstaben in alphabetischer Reihenfolge.<br>
+										Da diese Infobox nur im Desktop-Layout vorhanden ist, erscheinen
+										diese Optionen im Smartphone-Layout dann unter den Einstellungen.<br><br>
+										Die Infobox enthält weiterhin eine Tabelle mit "Zählern", die
+										entsprechend den	bislang eingegebenen Figuren also zählen,
+										wie viele dieser Figuren bauch- oder rückenlagige Ein-
+										und Ausgänge haben und unterscheidet diese dann noch nach der
+										typischen Ein- und Ausgangsgeschwindigkeit
+										als "<b>L</b>ow", "<b>N</b>eutral" oder "<b>H</b>igh Speed".<br><br>
+										<b>Wozu das ganze?</b><br><br>
+										Mit diesen Werten kann OpenAero ziemlich genau abschätzen,
+										wieviel Verbindungsfiguren nötig werden, um dann alle
+										diese Figuren in einer beliebigen Abfolge ohne Unterbrechung
+										(zur Fluglage- oder Geschwindigkeitsanpassung) fliegen zu können.
+										Übersteigt die von OpenAero ermittelte Zahl der nötigen Verbindungsfiguren
+										jene, die	maximal durch die Wettbewerbsordnung vorgesehen sind,
+										ist es sehr wahrscheinlich, dass es im letzten Programm des Wettbewerbs
+										zu mindestens einem von zwei "Konstruktionsproblemen" kommt: <br>
+										<ul>
+											<li>
+												Alle Ein- und Ausgangsfluglagen können erfolgreich verknüpft
+												werden, erfordern aber an mindestens einer Stelle, dass die
+												Geschwindigkeit wahrnehmbar unharmonisch angepasst werden muss,
+												was je nach Flugzeugtyp unterschiedlich bewertet wird
+												und daher der Fairness nicht zuträglich ist.
+											</li>
+											<li>
+												Alle Ein- und Ausgansgeschwindigkeiten passen zueinander,
+												jedoch stimmt an mindestens einer Stelle nicht die Fluglage
+												überein, sodass die Sequenz mit regelkonformer, maximaler Zahl an
+												Verbindungsfiguren nicht geflogen werden kann, ohne eine weitere
+												Fluglageänderung. Im Motorkunstflug ist dies wohl belanglos, da
+												es alle gleichermaßen trifft; im Segelkunstflug kann jedoch eine
+												weitere Extrafigur hinsichtlich Höhenverbrauch ursächlich
+												für die Benachteiligung gewisser Flugzeugmuster sein.
+											</li>
+									</ul>
+										In jedem Fall ist es der sportlichen Fairness zuträglich,
+										bereits beim Figurenvorschlag sicherzustellen, dass die nötige
+										Anzahl an	Verbindungsfiguren unterhalb der möglichen Anzahl
+										durch eben sachdienliche Figurenvorschläge gehalten wird.<br>
+										Grundlegend gilt dabei, dass sich die Anzahl schneller Ein- und
+										Austritte gleicher Fluglage in etwa die Waage halten sollte. Gleiches
+										gilt für langsame Ein- und Austritte gleicher Fluglage. Werden
+										viele	Figuren mit "neutralen" Geschwindigkeiten vorgeschlagen,
+										werden eher weniger Verbindungsfiguren nötig, so sich dann die
+										Anzahlen der Ein- und Ausgangsfluglagen etwa die Waage halten.<br><br>
+										<span class="docsExtraInfo">
+                        Klicken Sie hier für die Erklärung, wie OpenAero
+												die Fluglagen und Geschwindigkeiten in den Figurein- und
+												-ausgängen erkennt.
+                        <span><br>
+                            Die Fluglage am Figurein- und -ausgang kann
+														direkt aus dem
+														<a href="language_de.html" target="_blank">Sequenz-Code</a>
+														gelesen werden.
+														Entsprechend diesem ist außerdem bekannt,	ob nach
+														einem Figureingang (bzw. vor einem Figurausgang)
+														es eine(n) steigende(n) oder fallende(n) Linie oder Bogen
+														gibt. Die Information reicht aus, um dann die Eingangs- bzw.
+														Ausgangsgeschwindigkeit logisch zu kategorisieren: Steigt die
+														Linie oder der Bogen nach dem Eingang, erkennt
+														OpenAero einen "High-Speed"-Eingang;
+														steigt es vor dem Ausgang, ist es ein "Low-Speed"-Ausgang usw.<br>
+														Alle Figuren, die keine solchen steigenden oder fallenden
+														Figurabschnitte haben - also horizontale Linien und
+														(Rollen-)Kreise - werden als geschwindigkeitsneutral
+														gezählt.<br>
+														Diese einfache Logik hat sich als weitestgehend treffsicher
+														herausgestellt; ihre Schwäche liegt jedoch bei Figuren
+														mit gerissenen oder gestoßenen Rollenelementen unmittelbar
+														nach dem Eingang oder vor dem Ausgang (auf horizontalen
+														Linien), denn je nach Flugzeugtyp	können hier erhebliche
+														Abweichungen zur Kategorisierung entstehen. Bspw.
+														hat ein Abschwung mit halber gesteuerte Rolle nach Eingang
+														eben einen "Low-Speed"-Entry, was sich wohl dann ändert,
+														wäre es statt einer halben gesteuerten Rolle,
+														eineinhalb gerissene Rollen, die bei zu mindest bei
+														Segelkunstflugzeugen deutlich mehr
+														Eingangsgeschwindigkeit erfordern. Gleiches gilt für
+														solche Rollen vor dem Figurausgang - auch im Motorkunstflug.
+                        </span>
+                    </span>
+                    <br><br>
+										Wie auch immer, diese Logik des Zählens und die Berechnung der
+										Anzahl nötiger Verbindungsfiguren muss als Schätzung verstanden
+										werden!
+                </p>
+                <p>
+										Am unteren Rand der Infobox gibt es dann noch die Schaltfläche
+										<i>Gruppenerstellung</i>, die Sie zu einem Dialogfenster führt,
+										mit dem automatisch und halbzufällig zu einander passende
+										Figurengruppen aus allen vorgschlagenen Figuren generiert werden.<br>
+										Diese Funktion soll der Wettbewerbsleitung die Zuordnung der
+										vorgeschlagenen Figuren zu den verschiedenen Programmen
+										erleichtern.<br>
+										Falls diese Gruppenerstellung in einem - aus welchen Gründen
+										auch immer - unerwünschten Ergebnis mündet, kann der Generator
+										beliebig oft neu ausgeführt werden durch Klick auf
+										<i>Erstellung neuer Vorschläge</i>. Ist man einmal mit dem
+										Ergebnis zufrieden, können die Figuren wieder ins Gitter in nun
+										eben dieser Reihenfolge geladen werden.<br>
+                </p>
+				</span>
+		</div>
+		<div class="documentation newPage">
+				<span>
+								<h3>4.4 Die Flugansicht / der Flugmodus</h3>
+								<p>
+										<img src="../img/OA_FlyingMode.png"
+										style="min-width:25%">
+										Ein Ansichtsmodus zum Gebrauch im Flugzeug, wenn die Sequenz
+										auf einem großen Smartphone oder einem Tablet angezeigt
+										wird, das fest im Cockpit (zum Beispiel auf dem
+										Instrumentenbrett) installiert ist. In diesem Ansichtsmodus,
+										ist die Sequenzdarstellung gesperrt. Keine der Figuren kann
+										verschoben oder anderweitig bearbeitet werden. Einzig die
+										<b>dargestellte Sequenzrichtung</b> kann durch Antippen
+										des Windpfeils alterniert werden. Dabei bleibt die
+										Sequenzabfolge relativ zur Wind- und damit
+										Boxhauptrichtung unverändert!<br>
+										Um diesen Ansichtsmodus wieder zu verlassen, muss das Feld
+										<i>Verlassen</i> angetippt werden.<br>
+										Falls die OpenAero-App verwendet wird, hält dieser
+										Ansichtsmodus den Bildschirm des Geräts "wach", der
+										sonst nach einer gewissen Inaktivitätszeitspanne
+										automatisch abdunkeln oder abschalten würde.
+								</p>
+				</span>
+		</div>
+		<div class="documentation newPage">
+				<span id="#queue">
+						<h2>5. Die Warteschlange</h2>
+						<p>
+								Die Warteschlange bietet die Möglichkeit ausgewählte Figuren in
+								einer temporären Liste abzulegen - sie ist quasi eine
+								Zwischenablage für Figuren, die benutzt werden kann, um von ihr
+								die Fiugren je nach gewünschter Reiehenfolge in eine Sequenz zu
+								kopieren. Damit stellt sie eine Hilfe zum Umordnen von Sequenzen,
+								also zur manuellen Sequenzoptimierung dar.<br>
+								Die Figuren in der Warteschlange können ebenfalls für eine spätere
+								Wiederverwendung abgespeichert werden. Im <i>Warteschlange</i>-Menü
+								stehen alle sich selbst erklärenden Funktionen zur Verfügung.<br>
+						</p>
+						<p>
+							  Wird die Warteschlange auf der rechten Bildschirmseite angezeigt,
+								erscheint in ihr eine Figur:
+								<ul>
+									<li>grün hinterlegt, wenn sie bereits in der
+										Sequenz vorhanden sind </li>
+									<li>rot hinterlegt, wenn sie bereits mehrmals in der
+										Sequenz vorhanden ist</li>
+								</ul>
+								Alle Fiugren in einer Sequenz können der Warteschlange aufeinmal
+								hinzugefügt werden mit <i>Alle zur Warteschlange hinzufügen</i> und
+								alle Figuren in der Warteschlange können aufeinmal auch wieder
+								entfernt werden mit <i>Warteschlange leeren</i>.
+						</p>
+				</span>
+		</div>
+    <div class="documentation newPage">
+        <span id="free_unknown_designer">
+            <h2>6. Der Sequenz-Designer</h2>
+						Der Sequenz-Designer bietet den zweckmäßigsten und effizientesten
+						Weg eine Bekannte oder Unbekannte Kür anhand vorgegebener Figuren
+						zu gestalten. Im Desktop-Layout findet er sich im
+						<i>Werkzeuge</i>-Menü; im Smartphone-Layout ist er dann im direkt im
+						Hauptmenü zu finden.
+
+            <h3>6.1 Zum Einstieg</h3>
+						Öffnen Sie eine Sequenzdatei, die die vorgegebenen Figuren der Bekannten
+						oder Unbekannten Kür enthält. Wenn die Sequenzinformation bereits korrekt
+						definiert ist, alle Identifikationsbuchstaben zugewiesen sind und darin
+						keine weiteren Figuren vorkommen, sollte sie beispielsweise
+						so dargestellt sein, wie im unteren Bild exemplarisch gezeigt:<br>
+						<img src="../img/OA_FigureGroup.png"
+						style="min-width:100%">
+						Dann sollte OpenAero automatisch ein Dialogfenster öffnen in dem Sie
+						gefragt werden, ob Sie den Sequenz-Designer starten möchten.<br>
+						Andernfalls kann er manuell aus	dem <i>Werkzeuge</i>-Menü gestartet
+						werden.<br>
+
+            <h3>6.2 Sequenzgestaltung</h3>
+            <p>
+								Sinn und Zweck des Sequenz-Designers ist es, das Anordnen von
+								vorgegebenen und zusätzlichen Figuren zu erleichtern und
+								zu beschleunigen, also sie zueinander in womöglich verschiedenen
+								Varianten der Abfolge anzuordnen.<br>
+								Aus diesem Grund werden die Figuren in diesem speziellen
+								Ansichtsmodus auf schematischen Kacheln dargestellt, die man sich
+								auch wie Post-its / Klebezettel vorstellen kann. Der Vorteil gegenüber
+								diesen ist dann das OpenAero eben automatisch die Figuren richtig
+								herum (im Sinn der Abfolge) zeichnet. Ebenso automatisch werden
+								wieder die Figuren-K und der Total-K angezeigt und immer
+								sofort aktualisiert sobald es eine Änderung bzgl. einer Figur im
+								Hauptfeld (erster blauer Rahmen um alle Figurkacheln) gibt.
+								Um Alternativabfolgen parallel zur Erstvariante darzustellen, können
+								dann die Nebenfelder (weitere blaue Rahmen) benutzt werden.
+								Alle Figurkacheln können innerhalb eines Haupt- oder Nebenfeldes,
+								sowie zwischen eben diesen hin un her per Drag&Drop verschoben
+								werden. <br>
+								Die vorgegebenen Figuren-Kacheln werden innerhalb des Haupftelds
+								grün umrandet und innerhalb der Figurauswahl grün hinterlegt
+								dargestellt. Freie und Verbindungsfiguren werden blau umrandet oder
+								hinterlegt dargestellt.
+            </p>
+						<p><img src="../img/OA_FreeUnknownDesignerMain.png"
+							style="max-width: 50%; min-width:25%;"></p>
+            <ul>
+                <li>
+                    Hinzufügen einer Hauptfigur in das Hauptfeld:
+                    <ul>
+                        <li>
+														Als erste Figur: Per Drag&Drop in das leere Feld ziehen,
+														das lediglich den Total K: 0 und den Max K anzeigt.
+                        </li>
+                        <li>
+                            Jede weitere Figur kann überall per Drag&Drop
+														eingefügt werden - vor oder nach der ersten, am Anfang
+														oder am Ende aller, sowie an jeder beliebeigen Stelle
+														dazwischen.
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    Hinzufügen eine freien Figur:
+                    <ul>
+                        <li>
+														Ziehen Sie per Drag&Drop die orange-farbene Kachel aus
+														der Figurenauswahl an die gewünschte Stelle im Haupt-
+														oder Nebenfeld, klicken Sie sich anschliessend durch
+														das Dropdown-Menü, um die frei Figur wie gewohnt auszuwählen,
+														oder geben Sie alternativ für die Figur den Sequenz-Code
+														im Feld "Figuren-String" ein.
+                        </li>
+                    </ul>
+            </ul>
+
+            <h3>6.3 Hinzufügen und Ändern von Figuren in einer Untersequenz</h3>
+            <p>
+								Alle Figuren der Bekannten oder Unbekannten Kür erscheinen links
+								in der Figurenauswahl (<i>Figuren</i>-Tab). Sie können per Drag&Drop in
+								das Nebenfeld an beliebige Stelle gezogen werden. Sie werden dann
+								vor der Figur platziert über welcher sie abgelegt wurden.<br><br>
+								Um eine neue Untersequenz zu eröffnen, ziehen Sie einfach eine
+								Figur aus der Figurenauswahl in das letzte Nebenfeld (letzter
+								blauer Rahmen mit dem Textinhalt "Neue / kopiere Untersequenz").<br><br>
+								Figuren, die genau einmal in eine der Untersequenzen verwendet sind,
+								sind grün umrandet dargestellt und Figuren, die wiederholt in den
+								Untersequenzen auftreten, sind orange markiert. Ebenso sind alle
+								freien bzw. Verbindungsfiguren orange markiert, die die zulässige
+								Zahl des Programms (festgelegt in der Sequenzinformation),
+								überschreiten.<br><br>
+                Um eine Figur zu entfernen, klicken Sie auf das rote Kreuz
+								in der rechten, oberen Ecke der Figurkachel.<br><br>
+								Freie und Verbindungsfiguren können wie zuvor beim Hauptfeld auch
+								per Drag&Drop in das Nebenfeld der Untersequenz gezogen werden, um
+								diese hinzu zu fügen. Nachdem dies erfolgt ist, können sie einzeln
+								angeklickt werden, um die Figur abzuändern. Auch die Hauptfiguren
+								können in gewissen Darstellungsoptionen geändert werden, jedoch nur
+								insofern, dass sich die Bestandteile der Figur (einzelne
+								Katalognummern) nicht ändern.
+            </p>
+            <h3>6.4 Ändern von Untersequenzen</h3>
+						<p>
+								Um die Eingangsrichtung der Untersequenz zu ändern, klicken Sie auf
+								die erste Figurenkachel im Nebenfeld. Auf der linken Seite im
+								<i>Figurgestalter</i> findet sich dann das Dropdown-Menü zur
+								<i>Untersequenzeingangsrichtung</i>, mit dem Sie die gewünschte
+								Eingangsrichtung festlegen können.<br>
+								Untersequenzen können als Ganzes in andere Untersequenzen
+								verschoben werden. Sie wird dann vor der Figur platziert über
+								welcher Sie abgelegt wurde. Wird eine Untersequenz in das letzte
+								Nebenfeld mit Textinhalt "Neue / kopiere Untersequenz" gezogen,
+								wird eine Kopie der Untersequenz erzeugt.
+						</p>
+            <h3>6.5 Fertigstellung der Sequenz</h3>
+            <p>
+							  Sobald die Sequenz komplettiert ist, also:
+								<ul>
+									<li>alle Hauptfiguren und die zusätzlichen freien bzw.
+										Verbindungsfiguren in der gewünschten Reihenfolge stehen</li>
+									<li>der Total K die Zielvorgabe erfüllt</li>
+									<li>alle Warnmeldungen ausbleiben</li>
+								</ul>
+								ist es an der Zeit die Sequenz fertig zu stellen. Klicken Sie
+								dazu auf die blaue Schaltfläche <i>Sequenz finalisieren</i>.<br>
+								Damit verlassen Sie die Sequenz-Designer und kehren zur
+								Standardansicht (Form B) zurück, wo sie letzte Layoutanpassungen,
+								z.B. Verlängern/Verkürzen von Linien, Skalieren der Figuren etc.
+								vornehmen können. Beim Verlassen des Sequenz-Designers werden
+								noch vorhandene Sequenzfehler berichtet.
+            </p>
+            <h3 class="newPage">6.6 Smartphone-Layout</h3>
+            <p>
+                <img src="../img/fudesignerPhone.png" style="min-width: 25%;" />
+								Im Smartphone-Layout wird im Gegensatz zum Desktop-Layout nur eine
+								statt zwei Spalten in der Figurauswahl angezeigt, schlicht um
+								Platz zu sparen für die Ansicht der Haupt- und Nebenfelder.<br><br>
+								Wann immer der <i>Figurgestalter</i>-Tab ausgewählt ist, wird die
+								Sequenz ausgeblendet, um die Optionen für die Änderung der Figur
+								anzeigen zu können. Wird dann der <i>Figuren</i>-Tab ausgewählt,
+								erscheint die Sequenz wieder.<br><br>
+								Ansonsten sind die Bedienungsverfahren gleich.
+            </p>
+        </span>
+    </div>
+<!--
+chapter 7 settings
+-->
+    <div class="documentation newPage">
+        <span>
+            <h3 id="settings">7. Einstellungen</h3>
+            <p>
+                Das <i>Einstellungen</i>-Dialogfenster bieter verschiedene
+								Möglichkeiten um die Darstellung in OpenAero zu beeinflussen.<br>
+								Es hat 3 Tabs:
+            <ul>
+                <li>
+                    Allgmein
+                    <ul>
+                        <li>Ändern der Sprache der Bedienoberfläche</li>
+                        <li>Festlegen des Desktop- oder Smartphone-Layouts (nur bei Mobilgeräten)</li>
+                        <li>Ändern der Spaltenanzahl in der Figurenauswahl der Warteschlange</li>
+                        <li>Ändern der Spaltenanzahl in der Gitteransicht (Smartphone-Layout)</li>
+                        <li>Wahl ob neue oder geänderte Figuren frei von der
+														vorherigen Figur automatisch positioniert werden sollen
+														oder nicht. Dies geschieht nur wenn die neue Figur in
+														der Figurauswahl ausgewählt wurde, aber nicht bei Eingabe
+														von Sequenz-Code.</li>
+                        <li>Wahl, ob die blau-transparenten Figuranfasser angezeigt
+														werden sollen, oder nicht, wenn eine Figur ausgewählt ist.</li>
+                        <li>Ändern des Bildformats (PNG oder SVG) und der Bildgröße
+														zum Speichern aller Figuren als Einzelbilder in einer
+														ZIP-Datei.</li>
+                        <li>Ändern des Dateinamenmusters für das Speichern aller
+														Figuren als Einzelbilder in einer ZIP-Datei. Die folgenden
+														Muster sind möglich:<br>
+														%pilot %aircraft %location %date %class %rules
+														%category %program %form %figure
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    Darstellung
+                    <ul>
+                        <li>Wahl ob Figurnummern im oder über dem Eingangskreissymbol
+													erscheinen sollen</li>
+                        <li>Ändern der Rollen-Textgröße</li>
+                        <li>Ändern der Rollen-Symbolgröße</li>
+                    </ul>
+                </li>
+                <li>
+                    Experte
+                    <ul>
+                        <li>Erlauben von Nicht-Aresti Rollen. Dies kann für
+													Freestyle oder Flugshows nützlich sein.
+                        </li>
+                        <li>Ändern jeglicher Zeichnungsstile, z.B.:
+                            <ul>
+                                <li><strong>pos</strong> : positive Linie</li>
+                                <li><strong>neg</strong> : negative Linie</li>
+                                <li><strong>rollText</strong> : roll font (e.g. 2x8, 3/4 etc)</li>
+                            </ul>
+                        </li>
+                        <li>Wahl, ob Kurven in realistischerer Perspektive dargestellt werden sollen</li>
+                        <li>Wiederherstellen aller Standardeinstellungen und -werte</li>
+                    </ul>
+                </li>
+            </ul>
+								Bitte beachten Sie, dass jegliche Einstellungen nur für Ihre Ansicht
+								in Ihrem Browser vorgenommen und ein Grossteil dessen in Ihrem
+								Cache abgespeichert wird. Wenn Sie eine Sequenzdatei oder einen
+								Sequenzlink verschicken, werden diese Darstellungseinstellungen und
+								personalisierte Werte nicht mit übermittelt. Somit wird Ihre Sequenz
+								auf einem anderen Gerät entsprechend dessen Einstellungen dargestellt.
+            </p>
+        </span>
+    </div>
+</BODY>
+</html>

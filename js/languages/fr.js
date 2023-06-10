@@ -640,6 +640,7 @@ lang.fr = {
 'showFullLog' : 'Voir le rapport de vérification complet',
 'showHandles' : 'Montre les points d\'édition (cercles bleu) quand ' +
   'une figure est sélectionnée',
+'showOptiSeqArea' : 'Afficher la zone de séquence optimale',
 'showQueue' : 'Voir la file',
 'signature' : 'Signature',
 // new 2017.2.4
