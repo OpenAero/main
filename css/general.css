@@ -1219,7 +1219,7 @@ option.used {
 .openFile {
   position: relative;
 }
-#file, #queue, #rulesFile {
+#file, #queue, #rulesFile, #stylingFile {
   position: absolute;
   left: 0px;
   top: 0px;

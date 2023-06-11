@@ -5493,9 +5493,13 @@ function addEventListeners() {
 
     document.getElementById('nonArestiRolls').addEventListener('change', updateNonArestiRolls, false);
     document.getElementById('styles').addEventListener('change', getStyle, false);
-    document.getElementById('styleString').addEventListener('change', updateStyle, false);
+    document.getElementById('styleString').addEventListener('input', updateStyle, false);
     document.getElementById('t_resetStyle').addEventListener('mousedown', function () { resetStyle() }, false);
     document.getElementById('t_resetStyleAll').addEventListener('mousedown', function () { resetStyle(true) }, false);
+    document.getElementById('t_stylingSave').addEventListener('mousedown', stylingSave, false);
+    document.getElementById('stylingFile').addEventListener('change', function () {
+        openFile(this.files[0], 'Styling');
+    }, false);
     document.getElementById('newTurnPerspective').addEventListener('change', draw, false);
     document.getElementById('t_restoreDefaultSettings').addEventListener('mousedown', restoreDefaultSettings, false);
 
@@ -6536,6 +6540,50 @@ function resetStyle(all) {
     }
     getStyle();
     draw();
+}
+
+// stylingSave saves all styling values to an XML file
+function stylingSave() {
+    var xml = document.implementation.createDocument(null, 'styling');
+    for (var key in style) {
+        var node = xml.createElement(key);
+        node.appendChild (xml.createTextNode(style[key]));
+        xml.firstChild.appendChild(node);
+    }
+    xml = vkbeautify.xml(new XMLSerializer().serializeToString(xml));
+    saveFile(
+        xml,
+        'styling',
+        '.xml',
+        { 'name': 'OpenAero styling', 'filter': '.xml' },
+        'text/xhtml+xml;utf8'
+    );
+}
+
+// loadedStyling loads all styling values from an XML file
+function loadedStyling(evt) {
+    // XML.get extracts xml values from tags
+    var XML = {
+        get: function (xml, tag) {
+            if  (xml.getElementsByTagName(tag)[0]) {
+                return xml.getElementsByTagName(tag)[0].firstChild.data;
+            } else return false;
+        }
+    }
+    var fileString = evt.target.result;
+    // convert from base64 if needed
+    if (/^data:/.test(fileString)) {
+        fileString = decodeURIComponent(escape(atob(
+            fileString.replace(/^data:.*;base64,/, ''))));
+    }
+    // xml will hold every entry as a node
+    var xml = new DOMParser().parseFromString(fileString, 'text/xml');
+    for (var key in style) {
+        if (XML.get (xml, key)) style[key] = XML.get (xml, key);
+    }
+    // redraw to apply changed styling
+    draw();
+    document.getElementById('stylingFileForm').reset();
 }
 
 // restoreDefaultSettings restores all settings to their default values
@@ -13670,6 +13718,9 @@ function openFile(file, handler, params) {
                     rulesWorker.postMessage(
                         { action: 'loadedRulesFile', lines: e.target.result })
                 };
+                break;
+            case 'Styling':
+                reader.onload = loadedStyling;
                 break;
         }
         reader.onerror = errorHandler;

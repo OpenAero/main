@@ -130,7 +130,6 @@ lang.fr = {
   'selon le réglement %s',
 'changedFigureKMulti' : 'Les K Aresti normaux des figures %s ont été ' +
   'changés selon le réglement %s',
-'changeStyle' : 'Changer',
 // checkAlert forms a sub-array
 'checkAlert' : {
   'exactlyperfig' : 'Exactement %s %s par figure',
@@ -651,6 +650,8 @@ lang.fr = {
   '<strong>votre<strong> version d\'OpenAero, mais pas ' +
   'celle obtenue sur d\'autres versions d\'OpenAero.',
 'styling' : 'Style',
+'stylingLoad' : 'Charger',
+'stylingSave' : 'Enregistrer',
 'subSequenceDirection' : 'Débuter la sous partie :',
 'svg' : 'SVG',
 'switchFigures' : 'Figures',

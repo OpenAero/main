@@ -924,40 +924,6 @@
             on how to enable JavaScript in your browser.
         </noscript>
     </div>
-    <!-- save dialog -->
-    <div id="saveDialog" class="boxbg noPrint fullscreen noDisplay">
-        <div class="box">
-            <span class="boxTitle userText" id="t_saveFileTitle"></span>
-            <div class="content" id="saveFileMessage"></div>
-            <div class="content noDisplay" id="saveFileAddSequenceLink">
-                <label>
-                    <span class="userText" id="t_addSequenceLink"></span>
-                    <input type="checkbox" id="addSequenceLink" class="material-switch-input" tabIndex="-1">
-                    <span class="material-switch"></span>
-                </label>
-            </div>
-            <div class="content">
-                <span class="form-group">
-                    <input type="text" value="" id="dlTextField">
-                    <i class="bar"></i>
-                    <span id="fileExt"></span>
-                </span>
-            </div>
-            <span class="textButton userText" id="t_saveFile"></span>
-            <span class="textButton userText close" id="t_cancelSave"></span>
-        </div>
-    </div>
-    <!-- iOS save dialog -->
-    <div id="iOSsaveDialog" class="boxbg noPrint fullscreen noDisplay">
-        <div class="box">
-            <span class="boxTitle userText" id="t_iOSsaveFileTitle"></span>
-            <div class="content">
-                <div class="userText" id="iOSsaveFileMessage"></div>
-                <a class="textButton userText" id="t_iOSsaveFile"></a>
-            </div>
-            <span class="textButton userText close" id="t_iOScancelSave"></span>
-        </div>
-    </div>
     <!-- openSequenceLink dialog -->
     <div id="openSequenceLink" class="boxbg noPrint fullscreen noDisplay">
         <div class="box">
@@ -1513,9 +1479,15 @@
                             </div>
                         </span>
                         <span style="display:inline-block;">
-                            <span class="textButton userText" id="t_changeStyle"></span>
                             <span class="textButton userText" id="t_resetStyle"></span>
                             <span class="textButton userText" id="t_resetStyleAll"></span>
+                            <span class="textButton userText" id="t_stylingSave"></span>
+                            <span class="textButton openFile">
+                                <span class="userText" id="t_stylingLoad"></span>
+                                <form id="stylingFileForm">
+                                    <input type="file" id="stylingFile" size=1>
+                                </form>
+                            </span>
                         </span>
                     </span>
                 </div>
@@ -1569,6 +1541,41 @@
             <div class="textButton userText" id="t_proposalsCreate"></div>
             <div class="textButton userText" id="t_proposalsToGrid"></div>
             <div class="textButton close userText" id="t_proposalsDialogClose"></div>
+        </div>
+    </div>
+    
+    <!-- save dialog -->
+    <div id="saveDialog" class="boxbg noPrint fullscreen noDisplay">
+        <div class="box">
+            <span class="boxTitle userText" id="t_saveFileTitle"></span>
+            <div class="content" id="saveFileMessage"></div>
+            <div class="content noDisplay" id="saveFileAddSequenceLink">
+                <label>
+                    <span class="userText" id="t_addSequenceLink"></span>
+                    <input type="checkbox" id="addSequenceLink" class="material-switch-input" tabIndex="-1">
+                    <span class="material-switch"></span>
+                </label>
+            </div>
+            <div class="content">
+                <span class="form-group">
+                    <input type="text" value="" id="dlTextField">
+                    <i class="bar"></i>
+                    <span id="fileExt"></span>
+                </span>
+            </div>
+            <span class="textButton userText" id="t_saveFile"></span>
+            <span class="textButton userText close" id="t_cancelSave"></span>
+        </div>
+    </div>
+    <!-- iOS save dialog -->
+    <div id="iOSsaveDialog" class="boxbg noPrint fullscreen noDisplay">
+        <div class="box">
+            <span class="boxTitle userText" id="t_iOSsaveFileTitle"></span>
+            <div class="content">
+                <div class="userText" id="iOSsaveFileMessage"></div>
+                <a class="textButton userText" id="t_iOSsaveFile"></a>
+            </div>
+            <span class="textButton userText close" id="t_iOScancelSave"></span>
         </div>
     </div>
     <!-- various message boxes. Put them after the dialogs so they are

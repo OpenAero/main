@@ -129,7 +129,6 @@ lang.de = {
     'gemäß der Regel %s',
   'changedFigureKMulti' : 'Standard Aresti K von Figuren %s geändert ' +
     'gemäß den Regeln %s',
-  'changeStyle' : 'Ändern',
   // checkAlert forms a sub-array
   'checkAlert' : {
     'exactlyperfig' : 'Genau %s %s je Figur',
@@ -672,6 +671,8 @@ lang.de = {
     '<strong>Ihrer</strong> Version von OpenAero ändern, aber nicht die Erscheinung ' +
     'Ihrer Sequenz bei einem anderen Anwender von OpenAero!',
   'styling' : 'Stil',
+  'stylingLoad' : 'Lade',
+'stylingSave' : 'Speichern',
   'subSequenceDirection' : 'Untersequenzeingangsrichtung',
   'svg' : 'SVG',
   'switchFigures' : 'Figuren',

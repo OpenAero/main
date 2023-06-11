@@ -5,6 +5,8 @@
 * Fixed IMAC form scaling issues (Issue #276)
 * Fixed Harmony grade showing on CIVA form A
 * Improved "Save figures separately" settings layout and saving, added optional figure numbers (Issue #275)
+* Moved Save dialog down index.html to assure it shows over other dialogs
+* Added options to save and load drawing styles on Expert Settings (Issue #262)
 
 2023.3.5
 * Update NZAC rules and sequences for 2023/2024

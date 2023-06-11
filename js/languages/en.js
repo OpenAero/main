@@ -128,7 +128,6 @@ lang.en = {
   'according rules %s',
 'changedFigureKMulti' : 'Standard Aresti K of figures %s changed ' +
   'according rules %s',
-'changeStyle' : 'Change',
 // checkAlert forms a sub-array
 'checkAlert' : {
 	'exactlyperfig' : 'Exactly %s of %s per figure',
@@ -673,6 +672,8 @@ lang.en = {
   '<strong>your</strong> version of OpenAero but not how your sequence ' +
   'will look to another user of OpenAero!',
 'styling' : 'Styling',
+'stylingLoad' : 'Load',
+'stylingSave' : 'Save',
 'subSequenceDirection' : 'Sub sequence entry direction',
 'svg' : 'SVG',
 'switchFigures' : 'Figures',
