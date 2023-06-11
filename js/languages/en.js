@@ -626,6 +626,7 @@ lang.en = {
 'saveDeviceFirst' : 'Unable to open sequence directly. Please save it ' +
 	'to your device first, then open from your device',
 'saveFigsSeparate' : 'Save figs separate',
+'saveFigsSeparateFigureNumbers' : 'Figure numbers',
 'saveFigsSeparateTitle' : 'Save figures separately',
 'saveFile' : 'Save File',
 'saveFileAsAlert' : 'To download your file, right-click on this ' +
@@ -764,7 +765,7 @@ lang.en = {
 'xBoxAway' : 'Cross-Box away',
 'xBoxEntry' : 'Cross-box entry',
 'xBoxEntryAway' : 'Cross-box entry away',
-'zipImageFilenamePattern' : 'Separate fig images filename pattern',
+'zipImageFilenamePattern' : 'Filename pattern',
 'zoom' : 'Zoom'
 // end of key-value pairs. No comma after last
 };

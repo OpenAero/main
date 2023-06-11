@@ -1411,45 +1411,48 @@
                         <span class="material-switch"></span>
                     </label>
                 </div>
-                <div class="content">
-                    <span class="contentLabel userText" id="t_saveFigsSeparateTitle"></span>
-                    <div class="clearBoth"></div>
-                    <span>
-                        <span class="userText" id="t_imageFormat"></span>
-                        <span class="form-radio" style="display:flex;flex-direction:row;">
-                            <label class="radio" style="width:100px;">
-                                <span class="userText" id="t_png"></span>
-                                <input type="radio" name="saveFigsSeparateImageFormat" value="png" id="imageFormatPNG" checked>
-                                <span class="helper"></span>
-                            </label>
-                            <label class="radio" style="margin-top:0;">
-                                <span class="userText" id="t_svg"></span>
-                                <input type="radio" name="saveFigsSeparateImageFormat" value="svg" id="imageFormatSVG">
-                                <span class="helper"></span>
-                            </label>
-                        </span>
-                    </span>
-                    <div class="clearBoth"></div>
-                    <span>
-                        <span class="userText" id="t_imageSize"></span>
-                        <div class="form-group">
-                            <input type="number" id="saveFigsSeparateWidth" value="600">
-                            <i class="bar"></i>
+                <div class="content" style="display:flex;flex-direction:column;">
+                    <div class="contentLabel userText" id="t_saveFigsSeparateTitle"></div>
+                    <div>
+                        <div class="userText form-group" id="t_imageFormat"></div>
+                        <div class="form-group right">
+                            <select id="saveFigsSeparateImageFormat">
+                                <option class="userText" id="t_png" value="png"></option>
+                                <option class="userText" id="t_svg" value="svg"></option>
+                            </select><i class="bar"></i>
                         </div>
-                        X
-                        <div class="form-group">
-                            <input type="number" id="saveFigsSeparateHeight" value="600">
-                            <i class="bar"></i>
+                    </div>
+                    <div>
+                        <div class="userText form-group" id="t_imageSize"></div>
+                        <div class="form-group" style="float:right;">
+                            <div class="form-group">
+                                <input type="number" id="saveFigsSeparateWidth" value="600">
+                                <i class="bar"></i>
+                            </div>
+                            X
+                            <div class="form-group">
+                                <input type="number" id="saveFigsSeparateHeight" value="600">
+                                <i class="bar"></i>
+                            </div>
                         </div>
-                    </span>
-                    <div class="clearBoth"></div>
-                    <span>
-                        <span class="userText" id="t_zipImageFilenamePattern"></span>
-                        <div class="form-group">
+                    </div>
+                    <div>
+                        <div class="userText form-group" id="t_zipImageFilenamePattern"></div>
+                        <div class="form-group" style="float:right;">
                             <input type="text" id="zipImageFilenamePattern" autocapitalize="off">
                             <i class="bar"></i>
                         </div>
-                    </span>
+                    </div>
+                    <div>
+                        
+                    <label>
+                        <div class="userText form-group" id="t_saveFigsSeparateFigureNumbers"></div>
+                        <div class="form-group right">
+                            <input type="checkbox" id="saveFigsSeparateFigureNumbers" class="material-switch-input" checked>
+                            <span class="material-switch"></span>
+                        </div>
+                    </label>
+                    </div>
                 </div>
             </div>
             <!-- Styling settings -->

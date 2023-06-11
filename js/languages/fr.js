@@ -603,6 +603,7 @@ lang.fr = {
 	'Veuillez d\'abord l\'enregistrer sur votre appareil, puis ' +
 	'l\'ouvrir à partir de votre appareil',
 'saveFigsSeparate' : 'Enregistrer chaque figure',
+'saveFigsSeparateFigureNumbers' : 'Numéros de figure',
 'saveFigsSeparateTitle' : 'Enregistrement individuel des figures',
 'saveFile' : 'Enregistrer',
 'saveFileAsAlert' : 'Pour enregistrer votre fichier, faire un clic droit sur ' +
@@ -640,7 +641,7 @@ lang.fr = {
 'showFullLog' : 'Voir le rapport de vérification complet',
 'showHandles' : 'Montre les points d\'édition (cercles bleu) quand ' +
   'une figure est sélectionnée',
-'showOptiSeqArea' : 'Afficher la zone de séquence optimale',
+'showOptiSeqArea' : 'Afficher la zone optimale de dessin',
 'showQueue' : 'Voir la file',
 'signature' : 'Signature',
 // new 2017.2.4

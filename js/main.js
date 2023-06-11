@@ -2603,25 +2603,15 @@ function makeFigStart(params) {
             'path': 'm ' + (-radius) + ',0 a' + radius + ',' + radius + ' 0 1 1 0,0.01',
             'style': 'openFigureStartMarker'
         });
-        if (seqNr < 10) {
-            // Add the figure number
-            if (seqNr) pathsArray.push({
-                'text': seqNr,
-                'style': 'figNbr_09',
-                'x': 0,
-                'y': 5,
-                'text-anchor': 'middle'
-            });
-        } else {
-            // Add the figure number
-            pathsArray.push({
-                'text': seqNr,
-                'style': 'figNbr_10',
-                'x': 0,
-                'y': 5,
-                'text-anchor': 'middle'
-            });
-        }
+        // Add the figure number
+        if (seqNr) pathsArray.push({
+            'text': seqNr,
+            'style': seqNr < 10 ? 'figNbr_09' : 'figNbr_10',
+            'x': 0,
+            'y': 5,
+            'text-anchor': 'middle',
+            'params': {class: 'figNr'}
+        });
         // move the drawing position
         pathsArray.push({
             'dx': Math.cos(angle) * ref_radius,
@@ -2638,7 +2628,8 @@ function makeFigStart(params) {
                 'style': 'figNbr_09',
                 'x': 0,
                 'y': -8,
-                'text-anchor': 'middle'
+                'text-anchor': 'middle',
+                'params': {class: 'figNr'}
             });
         }
         // Make the marker
@@ -4459,7 +4450,8 @@ function drawShape(pathArray, svgElement, prev) {
             pathArray.style,
             pathArray['text-anchor'],
             false,
-            svgElement
+            svgElement,
+            pathArray.params
         );
 
         // Following is used to check subsequent rolls for overlap and
@@ -4584,7 +4576,7 @@ function drawRectangle(x, y, width, height, styleId, svg) {
 
 // drawText draws any text at position x, y in style styleId with
 // optional anchor, id, svg
-function drawText(text, x, y, styleId, anchor, id, svg) {
+function drawText(text, x, y, styleId, anchor, id, svg, params={}) {
     svg = svg || SVGRoot.getElementById('sequence');
     var newText = document.createElementNS(svgNS, "text");
     if (id) newText.setAttribute('id', id);
@@ -4592,6 +4584,8 @@ function drawText(text, x, y, styleId, anchor, id, svg) {
     if (anchor) newText.setAttribute('text-anchor', anchor);
     newText.setAttribute('x', roundTwo(x));
     newText.setAttribute('y', roundTwo(y));
+    // Add additional parameters
+    for (var key in params) newText.setAttribute (key, params[key]);
     var textNode = document.createTextNode(text);
     newText.appendChild(textNode);
     svg.appendChild(newText);
@@ -5487,11 +5481,11 @@ function addEventListeners() {
         draw();
         saveSettingsStorage()
     }, false);
-    document.getElementById('imageFormatPNG').addEventListener('change', function () { saveSettingsStorage() }, false);
-    document.getElementById('imageFormatSVG').addEventListener('change', function () { saveSettingsStorage() }, false);
+    document.getElementById('saveFigsSeparateImageFormat').addEventListener('change', function () { saveSettingsStorage() }, false);
     document.getElementById('saveFigsSeparateWidth').addEventListener('change', function () { saveSettingsStorage() }, false);
     document.getElementById('saveFigsSeparateHeight').addEventListener('change', function () { saveSettingsStorage() }, false);
     document.getElementById('zipImageFilenamePattern').addEventListener('change', function () { saveSettingsStorage() }, false);
+    document.getElementById('saveFigsSeparateFigureNumbers').addEventListener('change', function () { saveSettingsStorage() }, false);
 
     document.getElementById('numberInCircle').addEventListener('change', updateNumberInCircle, false);
     document.getElementById('rollFontSize').addEventListener('change', updateRollFontSize, false);
@@ -15665,25 +15659,22 @@ function buildForm(print) {
                         formWidth = activeForm === 'A' ? 540 : 800,
                         // maximum scale from print dialog
                         maxScale = document.getElementById('maxScaling').value / 100,
-                        scale = Math.min((formWidth) / w, maxScale),
+                        scale = Math.min(formWidth / w, maxScale),
                         marginTop = activeForm === 'A' ? 90 : 100,
                         miniFormAGroup = mySVG.getElementById('miniFormA');
                     
-                    if (miniFormAGroup) {
-                        var miniFormAbBox = miniFormAGroup.getBBox();
-                        scale = Math.min((formWidth - miniFormAbBox.width - moveRight) / (w - miniFormAbBox.width), maxScale)
-                    }
+                    if (miniFormAGroup) var miniFormAbBox = miniFormAGroup.getBBox();
 
                     // check for max height
                     if ((maxHeight / h) < scale) {
                         scale = Math.min(maxHeight / h, maxScale);
                         // height limited, so we can move the sequence right for centering
                         moveRight = Math.max((formWidth - (w * scale)) / 2, 0) + 15;
-                    }
-                    // Move form C to the right when miniFormA was used
-                    // (in original drawing, miniFormA is always on the right)
-                    if (miniFormAGroup && /^C/.test(activeForm)) {
-                        moveRight += miniFormAbBox.width;
+                        // Move form C to the right when miniFormA was used
+                        // (in original drawing, miniFormA is always on the right)
+                        if (miniFormAGroup && /^C/.test(activeForm)) {
+                            moveRight += miniFormAbBox.width;
+                        }
                     }
 
                     // Check if roll font size should be enlarged because of downscaling.
@@ -17013,6 +17004,9 @@ function saveFigs() {
             selectedFigure.id = i;
             displaySelectedFigure();
             var svg = document.getElementById('selectedFigureSvg');
+            if (!document.getElementById('saveFigsSeparateFigureNumbers').checked) {
+                svg.getElementsByClassName('figNr')[0].remove();
+            }
             svg.setAttribute('width', width);
             svg.setAttribute('height', height);
             // convert svg object to string
@@ -17029,7 +17023,7 @@ function saveFigs() {
             fName = fName.replace(/%program/g, document.getElementById('program').value);
             fName = fName.replace(/%form/g, activeForm[0]);
             fName = fName.replace(/%figure/g, figures[i].seqNr);
-            if (document.getElementById('imageFormatPNG').checked) {
+            if (document.getElementById('saveFigsSeparateImageFormat').value == 'png') {
                 // rasterize canvas to png data URL (without data URL info) and
                 // put in ZIP file
                 svgToPng(svg, function (png) {

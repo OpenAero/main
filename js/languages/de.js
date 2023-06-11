@@ -625,6 +625,7 @@ lang.de = {
   'saveDeviceFirst' : 'Unfähig die Sequenz direkt zu öffnen. Bitte speichern Sie ' +
     'sie zunächst auf Ihrem Gerät, dann öffnen Sie sie vom Gerät.',
   'saveFigsSeparate' : 'Figuren einzeln speichern',
+  'saveFigsSeparateFigureNumbers' : 'Figurnummern',
   'saveFigsSeparateTitle' : 'Figuren einzeln speichern',
   'saveFile' : 'Datei speichern',
   'saveFileAsAlert' : 'Zum Dowloaden Ihrer Datei, rechtsklicken Sie auf diesen ' +
@@ -662,6 +663,7 @@ lang.de = {
   'showFullLog' : 'Zeige das ganze Log',
   'showHandles' : 'Zeige Figuranfasser (blaue Kreise) wenn ' +
     'Figur ausgewählt ist',
+  'showOptiSeqArea' : 'Optimale Sequenz Größe anzeigen',
   'showQueue' : 'Zeige Warteschlange',
   'signature' : 'Unterschrift',
   'smallMobile' : 'Smartphone-Layout',
