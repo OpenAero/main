@@ -168,7 +168,8 @@ select {
 }
 
 #fileDropLogo {
-	margin: 16px 16px 0 0;
+	margin: 16px 2% 0 0;
+  width: 29%;
 }
 
 #alerts {
@@ -299,6 +300,10 @@ select {
 .plusButton {
 	line-height: 30px;
 }
+.plusButton:before {
+  left: 5px;
+  top: -2px;
+}
 .plusMinText {
   font-size: 16px;
   height: 32px;
@@ -372,8 +377,14 @@ select {
 #activeLogo {
   float: right;
 }
+#chooseLogo {
+  display: flex;
+  flex-wrap: wrap;
+}
 #chooseLogo div {
-  padding: 6px;
+  display: flex;
+  flex: 2 1 auto;
+  justify-content: center;
 }
 
 /* figure chooser */

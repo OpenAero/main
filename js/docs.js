@@ -27,7 +27,7 @@ function load () {
 	var settings = JSON.parse(localStorage.getItem('settings'));
 	if (settings && settings.language == 'de') {
 		var page = location.href.split("/").slice(-1)[0].split('#');
-		if (['aresti_system.html','language.html'].indexOf(page[0]) >= 0) {
+		if (['aresti_system.html','language.html','manual.html'].indexOf(page[0]) >= 0) {
 			window.location = page[0].replace(/\.html$/, '_de.html') +
 				(page[1] ? `#${page[1]}` : '');
 		}

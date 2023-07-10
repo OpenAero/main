@@ -1,0 +1,29 @@
+<html>
+    <head>
+        <script>
+            // Determine platform
+            const platform = {
+                // set platform for Android, iOS, Windows
+                android:   /Android/i.test(navigator.userAgent),
+                ios:       /i(Pad|Phone|Pod)/i.test(navigator.userAgent) ||
+                            /^Mac/.test(navigator.platform) && navigator.maxTouchPoints > 4,
+                windows10: /Windows\ NT\ 1/.test(navigator.userAgent)
+            };
+            // Redirect to appropriate appstore
+            if (platform.android) {
+                window.location = 'https://play.google.com/store/apps/details?id=net.openaero';
+            } else if (platform.ios) {
+                window.location = 'https://itunes.apple.com/us/app/openaero/id1343773321';
+            } else if (platform.windows10) {
+                window.location = 'ms-windows-store://pdp/?productid=9PDSX9ZDRB9B';
+            } else {
+                // Redirect to manual if there is no app for this platform
+                window.location = 'https://openaero.net/doc/manual.html#general';
+            }
+        </script>
+    </head>
+    <body>
+        It appears that you did not open this page on a system for which an OpenAero app is available.
+        You can use OpenAero online at <a href="https://openaero.net">openaero.net</a>. 
+    </body>
+</html>

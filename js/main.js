@@ -153,8 +153,11 @@ var confirmFunction;
 
 // platform.mobile is true when running on a mobile device (e.g. tablet)
 /** SET TO true FOR TESTING MOBILE */
-platform.mobile = ((typeof window.orientation !== 'undefined') ||
-    (navigator.userAgent.indexOf('IEMobile') !== -1) || false); // here
+platform.mobile = (window.matchMedia("(max-width: 767px)").matches ||
+    ("ontouchstart" in document.documentElement) ||
+    (navigator.userAgent.indexOf('IEMobile') !== -1) || 
+    platform.cordova ||
+    false); // here
 
 // platform.touch is true on touch enabled devices
 platform.touch = (('ontouchstart' in window)
@@ -1894,7 +1897,7 @@ function addLanguageChooser(boxName, message, title) {
 
 // saveDialog shows or hides the save dialog
 // when message is false, the dialog is closed
-function saveDialog(message, name, ext) {
+function saveDialog(message, name, ext, param = {}) {
     // hide all menus
     menuInactiveAll();
 
@@ -1905,6 +1908,12 @@ function saveDialog(message, name, ext) {
         document.getElementById('fileExt').innerHTML = ext;
         if (platform.cordova) {
             document.getElementById('t_saveFile').innerText = userText.saveShareFile;
+        }
+        // Don't show sequence link option if param.noSequenceLink is true
+        if (param.noSequenceLink) {
+            document.getElementById('saveFileAddSequenceLink').classList.add('hidden');
+        } else {
+            document.getElementById('saveFileAddSequenceLink').classList.remove('hidden');
         }
     } else {
         document.getElementById('saveDialog').classList.add('noDisplay');
@@ -4227,6 +4236,14 @@ function makeTextBlock(text) {
         var header = true;
         var styleId = 'textBlockBorder';
 
+        // First check for text block reposition {xx,yy}
+        var moveXY = text.match(/\{(-?\d+),(-?\d+)\}/) || false;
+        if (moveXY) {
+            text = text.replace (/\{(-?\d+),(-?\d+)\}/, '');
+            moveXY[1] = parseInt(moveXY[1]) * lineElement * (/^[CL]/.test(activeForm) ? -1 : 1);
+            moveXY[2] = parseInt(moveXY[2]) * lineElement;
+        }
+        // Now go through the rest of the text
         for (var i = 0; i < text.length; i++) {
             switch (text[i]) {
                 // anywhere tags
@@ -4300,12 +4317,12 @@ function makeTextBlock(text) {
         }
 
         // set top-left x and y of the text box
-        var x = roundTwo((c * d) - (w / 2));
-        var y = - roundTwo((s * d) + (h / 2));
+        var x = roundTwo((c * d) - (w / 2)) + (moveXY ? parseInt(moveXY[1]) : 0);
+        var y = - roundTwo((s * d) + (h / 2)) + (moveXY ? parseInt(moveXY[2]) : 0);
 
         // set dx and dy for starting the figure after the text box
-        var dx = roundTwo(2 * c * d);
-        var dy = - roundTwo(2 * s * d);
+        var dx = moveXY ? 0 : roundTwo(2 * c * d);
+        var dy = moveXY ? 0 : - roundTwo(2 * s * d);
 
         // draw rectangle around text
         pathsArray.push({
@@ -4316,13 +4333,13 @@ function makeTextBlock(text) {
         // when the text will be rotated, re-adjust x and y so the
         // un-rotated text will be in the right position before rotation
         if (rotate) {
-            var x = roundTwo((c * d) - (h / 2));
-            var y = - roundTwo((s * d) + (w / 2));
+            var x = roundTwo((c * d) - (h / 2)) + (moveXY ? parseInt(moveXY[1]) : 0);
+            var y = - roundTwo((s * d) + (w / 2)) + (moveXY ? parseInt(moveXY[2]) : 0);
         }
         pathsArray.push({ 'textBlock': t, 'x': x, 'y': y, 'dx': dx, 'dy': dy, 'r': rotate });
 
         // put space after block
-        pathsArray.push(makeFigSpace(2)[0]);
+        if (!moveXY) pathsArray.push(makeFigSpace(2)[0]);
     } else {
         pathsArray.push({ 'dx': 0, 'dy': 0 });
     }
@@ -4711,8 +4728,12 @@ function doOnLoad() {
     fileName = document.getElementById('fileName');
     newTurnPerspective = document.getElementById('newTurnPerspective');
 
+    if ('cordova' in window) {
+        platform.cordova = true; // should already have been set
+        platform.mobile = true;
+    }
+    
     document.addEventListener("deviceready", function () {
-        if (typeof cordova !== 'undefined') platform.cordova = true; // should already have been set
         if (platform.cordova) { // make sure we only do this for Cordova app
             // immediately remove loading as this is handled by the app itself
             if (loading && loading.parentNode) {
@@ -5002,6 +5023,19 @@ function doOnLoad() {
             }
         }
         );
+    }
+
+    // Similarly, enable hiding the top dialog by using the Android back button
+    if (platform.android) {
+        document.addEventListener("backbutton", function() {
+            var els = document.getElementsByClassName('boxbg');
+            for (var i = els.length - 1; i >= 0; i--) {
+                if (!els[i].classList.contains('noDisplay')) {
+                    els[i].classList.add('noDisplay');
+                    return;
+                }
+            }
+        });
     }
 
     // enable expansion panel toggles
@@ -6556,7 +6590,8 @@ function stylingSave() {
         'styling',
         '.xml',
         { 'name': 'OpenAero styling', 'filter': '.xml' },
-        'text/xhtml+xml;utf8'
+        'text/xhtml+xml;utf8',
+        {noSequenceLink: true}
     );
 }
 
@@ -8574,7 +8609,7 @@ function parseFiguresFile() {
                     'pattern': splitLine[0]
                 };
                 (arestiToFig[arestiK[0]] || (arestiToFig[arestiK[0]] = [])).push(i);
-                // We will extract roll elements for everything but roll figures
+                // Extract roll elements for everything but roll figures
                 // and (rolling) turns
                 if (regexTurn.test(splitLine[0])) {
                     // handle (rolling) turns
@@ -9289,9 +9324,9 @@ function changeFigureGroup() {
     var
         e = document.getElementById('figureGroup'),
         arestiDraw = [],
+        arestiRow = 0,
         figureGroup = e.value,
         table = document.getElementById('figureChooserTable'),
-        container = document.getElementById('figureSvgContainer'),
         svg = document.getElementById('figureChooserSvg'),
         colCount = 0,
         fragment = document.createDocumentFragment();
@@ -9380,7 +9415,14 @@ function changeFigureGroup() {
                     td.classList.add('arestiRow');
                     // add Aresti row number if not in queue or non-Aresti figures
                     if ((fig[i].group != 0) && !/^0/.test(fig[i].aresti)) {
-                        td.innerHTML = fig[i].aresti.match(/^\d+\.\d+\.(\d+)/)[1];
+                        // Add additional empty row when going to a lower arestiRow.
+                        // This happens, for example, for the various double bump
+                        // drawing styles
+                        if (arestiRow > parseInt(fig[i].aresti.match(/^\d+\.\d+\.(\d+)/)[1])) {
+                            tr.classList.add ('newDrawingGroup');
+                        }
+                        arestiRow = parseInt(fig[i].aresti.match(/^\d+\.\d+\.(\d+)/)[1]);
+                        td.innerHTML = arestiRow;
                     }
                     fragment.appendChild(tr);
                 }
@@ -9611,6 +9653,11 @@ function markMatchingFigures() {
         var td = tr[i].childNodes;
         // start with 2nd <td>, as first holds Aresti row nr
         for (var j = 1; j < td.length; j++) {
+            if (/^G/.test(activeForm)) {
+                td[j].classList.add('grid');
+            } else {
+                td[j].classList.remove('grid');
+            }
             if (fig[td[j].id].pattern.match(regex)) {
                 td[j].classList.add('matchingFigure');
             } else {
@@ -10061,7 +10108,12 @@ function makeMiniFormA(x, y, tiny) {
                 if (aresti[j] in rulesKFigures) modifiedK.push(figNr);
                 figK += parseInt(k[j]);
                 if (!tiny) {
-                    drawText(aresti[j], blockX + widths[0] + 4, blockY + 16, 'miniFormA', 'start', '', svg);
+                    if (/^non-Aresti /.test(aresti[j])) {
+                        // User-built figures have red "Aresti" numbers
+                        drawText(aresti[j].replace(/^non-Aresti /, ''), blockX + widths[0] + 4, blockY + 16, 'miniFormAModifiedK', 'start', '', svg);
+                    } else {
+                        drawText(aresti[j], blockX + widths[0] + 4, blockY + 16, 'miniFormA', 'start', '', svg);
+                    }
                     drawText(k[j], blockX + widths[0] + widths[1] + widths[2] - 4,
                         blockY + 16, 'miniFormA', 'end', '', svg);
                     blockY += 12;
@@ -10507,7 +10559,7 @@ function setFigureSelected(figNr) {
     } else {
         var el = document.getElementsByClassName('fuFig' + figNr)[0];
         if (el) el.classList.add('active');
-        header.innerHTML = userText.editingFigure;
+        header.innerHTML = sprintf(userText.editingFigure, '');
     }
 
     // set selectedFigure.id
@@ -11146,7 +11198,7 @@ function setQueueMenuOptions() {
     document.getElementById('t_addAllToQueue').parentNode.removeEventListener('mousedown', addAllToQueue);
     document.getElementById('t_clearQueue').parentNode.removeEventListener('mousedown', clearQueue);
     document.getElementById('t_saveQueueFile').parentNode.removeEventListener('mousedown', saveQueue);
-    if (fig.slice(-1) && fig.slice(-1).group == 0) {
+    if (fig.slice(-1) && fig.slice(-1)[0] && fig.slice(-1)[0].group == 0) {
         document.getElementById('t_clearQueue').parentNode.classList.remove('disabled');
         document.getElementById('t_saveQueueFile').parentNode.classList.remove('disabled');
         document.getElementById('t_clearQueue').parentNode.addEventListener('mousedown', clearQueue);
@@ -11709,7 +11761,7 @@ function handleFreeDrop(e) {
         updateSequence(figures.length - 1, string + ' eu');
         // when dropping Additional, select and open figure editor
         if (string.match(/\@L/) || (string === 'X')) {
-            selectFigureFu(figures.length - 2);
+            selectFigureFu(figures.length - 3);
         }
     } else {
         // drop figure or subsequence on figure (or end)
@@ -12104,11 +12156,20 @@ function makeFormA() {
                             8);
                         for (var j = 0; j < aresti.length; j++) {
                             if (aresti[j] in rulesKFigures) modifiedK.push(row + 1);
-                            drawText(aresti[j],
-                                x + 10,
-                                y + (j + 1.5) * fontsize,
-                                'formAText' + fontsize + 'px',
-                                'start');
+                            if (/^non-Aresti /.test(aresti[j])) {
+                                // User-built figures have red "Aresti" numbers
+                                drawText(aresti[j].replace(/^non-Aresti /, ''),
+                                    x + 10,
+                                    y + (j + 1.5) * fontsize,
+                                    'miniFormAModifiedK',
+                                    'start');
+                            } else {
+                                drawText(aresti[j],
+                                    x + 10,
+                                    y + (j + 1.5) * fontsize,
+                                    'formAText' + fontsize + 'px',
+                                    'start');
+                            }
                         }
                         if (figures[i].floatingPoint && /^(iac|imac)$/.test(formStyle)) {
                             // add 'F.P.' to IAC form A when applicable
@@ -12984,7 +13045,7 @@ function makeFree() {
             }
 
             prevSub = sub;
-        } else if (f.subSequence && (i > 0)) {
+        } else if (f.subSequence && (i > 0) && (figures[i-1].aresti || figures[i-1].string == 'X')) {
             // new subsequence, end previous
             var table = endSubseq(i, '"' + sub + '" ' + subseqString);
             div.appendChild(table);
@@ -14681,7 +14742,7 @@ function waitForIO(writer, callback) {
 
 // saveFile saves a file
 // The function returns true if the file was saved
-function saveFile(data, name, ext, filter, format) {
+function saveFile(data, name, ext, filter, format, param={}) {
     // Set saving result to true always as we currently have no method of
     // knowing whether the file was saved or not
     var result = true;
@@ -14758,13 +14819,13 @@ function saveFile(data, name, ext, filter, format) {
         });
         return result;
     } else if (platform.cordova) {
-        saveDialog(' ', name, ext);
+        saveDialog(' ', name, ext, param);
     } else if (platform.ios) {
-        saveDialog(userText.iOSsaveFileMessage, name, ext);
+        saveDialog(userText.iOSsaveFileMessage, name, ext, param);
     } else if (typeof document.createElement('a').download !== "undefined") {
-        saveDialog(userText.downloadHTML5, name, ext);
+        saveDialog(userText.downloadHTML5, name, ext, param);
     } else {
-        saveDialog(userText.downloadLegacy, name, ext);
+        saveDialog(userText.downloadLegacy, name, ext, param);
     }
 
     return result;
@@ -17043,7 +17104,8 @@ function saveFigs() {
                         fname + ' Form ' + activeForm[0],
                         '.zip',
                         { 'name': 'ZIP file', 'filter': '.zip' },
-                        'application/zip'
+                        'application/zip',
+                        {noSequenceLink: true}
                     );
                 });
 
@@ -17265,9 +17327,10 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figure_chooser) {
     } else {
         goFront = true;
     }
-    // In the first part we handle everything except (rolling) turns
-    var bareFigBase = fig[figNr].base.replace(/[\+\-]+/g, '');
 
+    var bareFigBase = fig[figNr].base.replace(/[+-]+/g, '');
+
+    // In the first part we handle everything except (rolling) turns
     if (!regexTurn.test(fig[figNr].base)) {
         // First we split the figstring in it's elements, the bareFigBase
         // is empty for rolls on horizontal.
@@ -18930,7 +18993,8 @@ function parseSequence() {
         comments = false,
         figure = '',
         formBDirection = 0,
-        match = false;
+        match = false,
+        userBuiltRegex = /^\$(\d+\.\d+\.[\d\.]+)?(\(.+\))?([+-].+)$/;
 
     // Clear the figureStart array
     figureStart = [];
@@ -18949,6 +19013,13 @@ function parseSequence() {
     // Find out where the sequence changed
     var changePoints = comparePreviousSequence();
 
+    // Remove user-built figures from end of fig object, if applicable
+    for (var i = fig.length - 1; i > 0; i--) {
+        if (/^non-Aresti /.test((fig[i] || {}).aresti)) {
+            fig.splice(i,1);
+        } else if (/^\d/.test((fig[i] || {}).aresti)) break;
+    }
+
     for (var i = 0; i < figures.length; i++) {
         // make sure all paths are empty
         figures[i].paths = [];
@@ -18964,7 +19035,7 @@ function parseSequence() {
             if (formBDirection >= 360) formBDirection -= 360;
             if ((formBDirection === 90) || (formBDirection === 270)) {
                 // switch > and ^. Use temporary placeholder #
-                figure = figures[i].string.replace(regexSwitchDirY, '#').
+                figure = figure.replace(regexSwitchDirY, '#').
                     replace(regexSwitchDirX, userpat.switchDirY).
                     replace(/#/g, userpat.switchDirX);
                 figures[i].entryAxisFormB = 'Y';
@@ -18987,59 +19058,78 @@ function parseSequence() {
             setYAxisOffset(180 - yAxisOffset);
         }
 
-        // simplify the string
+        // If this is a user-built figure, append it to fig object
+        var match = figure.match(userBuiltRegex);
+        if (match && false) { // under development, temporarily disabled
+            var rolls = match[3].match(/\([^)]*\)/g) || [];
+            fig.push({
+                // Don't allow official Aresti numbers
+                aresti: 'non-Aresti ' + ((arestiToFig[match[1]] || rollArestiToFig[match[1]]) ? '' : (match[1] || '')),
+                base: match[3][0] + 'x+',
+                draw: match[3].replace(/[+-]/g, '').replace(/\([^)]*\)/g, '_'),
+                kPwrd: parseInt(((match[2] || '').match(/\((\d+)[:)]/) || [])[1] || 0),
+                kGlider: parseInt(((match[2] || '').match(/:(\d+)\)/) || [])[1] || 0),
+                pattern: match[3][0] +
+                    (rolls.length > 0 ? '$x' : 'x') +
+                    (rolls.length > 2 ? Array(rolls.length - 2).fill('($)').join('') : '') +
+                    (rolls.length > 1 ? '$+' : '+'),
+                rolls: Array(rolls.length).fill(3)
+            });
+        } else {
+            // simplify the string
 
-        // replace `+ by forwardshorten for entry
-        var shorten = figure.match(regexEntryShorten);
-        if (shorten) {
-            figure = figure.replace(regexEntryShorten,
-                new Array(shorten[0].length - shorten[1].length).join(userpat.forwardshorten) +
-                shorten[1]);
+            // replace `+ by forwardshorten for entry
+            var shorten = figure.match(regexEntryShorten);
+            if (shorten) {
+                figure = figure.replace(regexEntryShorten,
+                    new Array(shorten[0].length - shorten[1].length).join(userpat.forwardshorten) +
+                    shorten[1]);
+            }
+
+            // replace +` by forwardshorten for exit
+            var shorten = figure.match(regexExitShorten);
+            if (shorten) {
+                figure = figure.replace(regexExitShorten, shorten[1] +
+                    new Array(shorten[0].length - shorten[1].length).join(userpat.forwardshorten));
+            }
+
+            // replace `- by forwardshorten for negative entry
+            var shorten = figure.match(regexEntryShortenNeg);
+            if (shorten) {
+                figure = figure.replace(regexEntryShortenNeg,
+                    new Array(shorten[0].length - shorten[1].length + 1).join(userpat.forwardshorten) +
+                    shorten[1]);
+            }
+
+            // replace -` by forwardshorten for negative exit
+            var shorten = figure.match(regexExitShortenNeg);
+            if (shorten) {
+                figure = figure.replace(regexExitShortenNeg, shorten[1] +
+                    new Array(shorten[0].length - shorten[1].length + 1).join(userpat.forwardshorten));
+            }
+
+            // replace the second '-' and up (in row) by longforward (reverse for speed)
+            // e.g. ---h- will be ++-h-
+            // don't know a way to do this with regex...
+            var multipleMinus = false;
+            // if the figure is only - and extensions, e.g. --, disregard last minus
+            var skipMinus = RegExp('^[-\\' + userpat.forward + '\\' +
+                userpat.lineshorten + ']*$').test(figure) ? true : false;
+            for (var j = figure.length - 1; j >= 0; j--) {
+                if (figure[j] == '-') {
+                    if (multipleMinus) {
+                        figure = figure.substring(0, j) + userpat.longforward +
+                            figure.substring(j + 1);
+                    } else if (skipMinus) {
+                        skipMinus = false;
+                    } else multipleMinus = true;
+                } else multipleMinus = false;
+            }
+
+            // replace longforward by 3x forward
+            // e.g. -++h- will be -~~~~~~h-
+            figure = figure.replace(regexLongForward, userpat.forward + userpat.forward + userpat.forward);
         }
-
-        // replace +` by forwardshorten for exit
-        var shorten = figure.match(regexExitShorten);
-        if (shorten) {
-            figure = figure.replace(regexExitShorten, shorten[1] +
-                new Array(shorten[0].length - shorten[1].length).join(userpat.forwardshorten));
-        }
-
-        // replace `- by forwardshorten for negative entry
-        var shorten = figure.match(regexEntryShortenNeg);
-        if (shorten) {
-            figure = figure.replace(regexEntryShortenNeg,
-                new Array(shorten[0].length - shorten[1].length + 1).join(userpat.forwardshorten) +
-                shorten[1]);
-        }
-
-        // replace -` by forwardshorten for negative exit
-        var shorten = figure.match(regexExitShortenNeg);
-        if (shorten) {
-            figure = figure.replace(regexExitShortenNeg, shorten[1] +
-                new Array(shorten[0].length - shorten[1].length + 1).join(userpat.forwardshorten));
-        }
-
-        // replace the second '-' and up (in row) by longforward (reverse for speed)
-        // e.g. ---h- will be ++-h-
-        // don't know a way to do this with regex...
-        var multipleMinus = false;
-        // if the figure is only - and extensions, e.g. --, disregard last minus
-        var skipMinus = RegExp('^[-\\' + userpat.forward + '\\' +
-            userpat.lineshorten + ']*$').test(figure) ? true : false;
-        for (var j = figure.length - 1; j >= 0; j--) {
-            if (figure[j] == '-') {
-                if (multipleMinus) {
-                    figure = figure.substring(0, j) + userpat.longforward +
-                        figure.substring(j + 1);
-                } else if (skipMinus) {
-                    skipMinus = false;
-                } else multipleMinus = true;
-            } else multipleMinus = false;
-        }
-
-        // replace longforward by 3x forward
-        // e.g. -++h- will be -~~~~~~h-
-        figure = figure.replace(regexLongForward, userpat.forward + userpat.forward + userpat.forward);
 
         // Parse out the instructions that are for drawing B and C forms only
         if (figure.match(regexDrawInstr) ||
@@ -19145,48 +19235,73 @@ function parseSequence() {
             }
             figures[i].subSequence = match;
         } else {
-            // Determination of the base
-            // Remove any comments inside the figure and all non-alphabet characters (except -)
-            var base = figure.replace(regexComments, '').replace(/[^a-zA-Z\-]+/g, '');
-            // Replace any x> format to move forward by x times >
-            if (regexMoveForward.test(figure)) {
-                var moveFwd = fig.match(regexMoveForward)[0];
-                if (parseInt(moveFwd)) {
-                    figure = figure.replace(regexMoveForward, parseInt(moveFwd) + moveFwd.length - moveFwd.match(/[0-9]*/).length - 1);
-                } else {
-                    figure = figure.replace(regexMoveForward, moveFwd.length);
+            if (userBuiltRegex.test(figure)) {
+                // Draw user-built figure
+                // Update figure string to the correct format
+                match = figure.match(userBuiltRegex);
+                figure = (rolls.pop() || '').replace(/[()]/g, '') + '+';
+                figure = (
+                    match[3][0] +
+                    (rolls.shift() || '').replace(/[()]/g, '') +
+                    'x' +
+                    figure
+                ).replace ('x', 'x' + rolls.join(''));
+                var base = fig[fig.length-1].base;
+                figNrs = [fig.length-1];
+            } else {
+                // Determination of the base
+                // Remove any comments inside the figure and all non-alphabet characters (except -)
+                var base = figure.replace(regexComments, '').replace(/[^a-zA-Z\-]+/g, '');
+                // Replace any x> format to move forward by x times >
+                if (regexMoveForward.test(figure)) {
+                    var moveFwd = fig.match(regexMoveForward)[0];
+                    if (parseInt(moveFwd)) {
+                        figure = figure.replace(regexMoveForward, parseInt(moveFwd) + moveFwd.length - moveFwd.match(/[0-9]*/).length - 1);
+                    } else {
+                        figure = figure.replace(regexMoveForward, moveFwd.length);
+                    }
                 }
-            }
-            // Handle the very special case where there's only an upright
-            // or inverted spin
-            if (/^-?i?s-?$/.test(base)) {
-                figure = figure.replace(/(\d*i?s)/, "iv$1");
-                base = base.replace(/i?s/, 'iv');
-            }
-            // To continue determining the base we remove all snap, spin and
-            // tumble characters. Handle special case of non-Aresti tri figure
-            // Line immediately below is more elegant but causes Safari on iOS to crash
-            // base = base.replace(/(?<!tr)i?[fseul]/g, '');
-            base = base.replace('tri', '#').replace(/i?[fseul]/g, '').replace('#', 'tri');
-            // Handle simple horizontal rolls that change from upright to
-            // inverted or vv
-            if (base == '-') {
-                if (/^[^a-zA-Z0-9\-\+]*-/.test(figure)) {
-                    base += '+';
-                } else {
-                    base = '+' + base;
+                // Handle the very special case where there's only an upright
+                // or inverted spin
+                if (/^-?i?s-?$/.test(base)) {
+                    figure = figure.replace(/(\d*i?s)/, "iv$1");
+                    base = base.replace(/i?s/, 'iv');
                 }
-                // Handle everything else
-            } else if ((base != '') || figure.match(/^[^\[\(]*[0-9fseul]/)) {
-                // begin the base with a '+' if there is no '-'
-                if (base.charAt(0) != '-') base = '+' + base;
-                // end the base with a '+' if there is no '-'
-                if (base.charAt(base.length - 1) != '-') base += '+';
+                // To continue determining the base we remove all snap, spin and
+                // tumble characters. Handle special case of non-Aresti tri figure
+                // Line immediately below is more elegant but causes Safari on iOS to crash
+                // base = base.replace(/(?<!tr)i?[fseul]/g, '');
+                base = base.replace('tri', '#').replace(/i?[fseul]/g, '').replace('#', 'tri');
+                // Handle simple horizontal rolls that change from upright to
+                // inverted or vv
+                if (base == '-') {
+                    if (/^[^a-zA-Z0-9\-\+]*-/.test(figure)) {
+                        base += '+';
+                    } else {
+                        base = '+' + base;
+                    }
+                    // Handle everything else
+                } else if ((base != '') || figure.match(/^[^\[\(]*[0-9fseul]/)) {
+                    // begin the base with a '+' if there is no '-'
+                    if (base.charAt(0) != '-') base = '+' + base;
+                    // end the base with a '+' if there is no '-'
+                    if (base.charAt(base.length - 1) != '-') base += '+';
+                }
+                // set subSequence to true for subsequence 'figures'
+                if (/^\+e(ja?|d|u)\+$/.test(base) && !firstFigure) {
+                    subSequence = true;
+                }
+
+                // Handle turns and rolling turns. They do have numbers in the base
+                if (/^.j[^w]/.test(base)) {
+                    base = figure.replace(/[^a-zA-Z0-9\-\+]+/g, '');
+                    if (base.charAt(0) != '-') base = '+' + base;
+                    if (base.charAt(base.length - 1) != '-') base += '+';
+                }
+                // Retrieve the figNrs (if any) from array figBaseLookup
+                figNrs = figBaseLookup[base];
             }
-            // set subSequence to true for subsequence 'figures'
-            if (/^\+e(ja?|d|u)\+$/.test(base) && !firstFigure) {
-                subSequence = true;
-            }
+
             // Autocorrect the entry attitude for figures after the first
             // (sub)figure where necessary
             if (!(firstFigure || subSequence)) {
@@ -19207,14 +19322,7 @@ function parseSequence() {
                     changeDir(180);
                 }
             }
-            // Handle turns and rolling turns. They do have numbers in the base
-            if (/^.j[^w]/.test(base)) {
-                base = figure.replace(/[^a-zA-Z0-9\-\+]+/g, '');
-                if (base.charAt(0) != '-') base = '+' + base;
-                if (base.charAt(base.length - 1) != '-') base += '+';
-            }
-            // Retrieve the figNrs (if any) from array figBaseLookup
-            figNrs = figBaseLookup[base];
+
             if (figNrs) {
                 // When the first figure starts negative we make sure the
                 // Attitude is inverted and the DRAWING direction stays the same
@@ -19306,6 +19414,7 @@ function parseSequence() {
                 updateXYFlip(changePoints[0] + 1, i + 1);
             }
         }
+
     }
     // check for floating point correction
     checkFloatingPoint();

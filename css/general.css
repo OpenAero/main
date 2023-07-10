@@ -2132,6 +2132,7 @@ t_addFigureText {
 .rollComment {
   width: 48px;
   transition: all 0.3s ease-in-out;
+  border: 1px solid lightgrey;
 }
 .rollComment:focus {
   width: 50%;
@@ -2237,6 +2238,9 @@ t_addFigureText {
 }
 .plusButton:before {
 	content: "+";
+  position: absolute;
+  left: 3px;
+  top: -1px;
 }
 .plusMinText {
   float: left;
@@ -2298,7 +2302,17 @@ t_addFigureText {
   min-width: 40px;
   margin: 0;
 }
+table#figureChooserTable tr {
+  position: relative;
+  display: block;
+}
+table#figureChooserTable tr.newDrawingGroup {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid black;
+}
 table#figureChooserTable td {
+  opacity: 0.4;
   padding: 1px;
   border: 2px solid #eee;
   border-radius: 5px;
@@ -2319,12 +2333,17 @@ table#figureChooserTable td.arestiRow {
   border: 0;
   padding: 0 4px;
   color: navy;
+  opacity: initial;
 }
 table#figureChooserTable td.selected {
   border: 2px solid magenta;
 }
 table#figureChooserTable td.matchingFigure {
   box-shadow:inset 4px 4px #a0ff60;
+  opacity: initial;
+}
+table#figureChooserTable td.grid {
+  opacity: initial;
 }
 table#figureChooserTable td.figureNotAllowed {
   outline: #ff8040 solid 2px;
