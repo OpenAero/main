@@ -298,13 +298,13 @@ rules.push (
 	//Family 6 Tail Slides (not allowed in Sportsman-Advanced)
 	
 	//Family 7 Loops and Eights /*1 positive flick may be used at the top of  1/2 or full inside loops, and 9.9.8.4 may ONLY be used at the top of a 1/2 outside loop  
-	"7.2.1.1 NF:2",
-	"7.2.1.2 NF:1",
-	"7.2.1.4 NF:1",
+	"7.2.1.1",
+	"7.2.1.2",
+	"7.2.1.4",
 	"7.2.2.1",
 	"7.2.2.2 NF",
 	"7.2.3.1",
-	"7.2.3.2 NF:2",
+	"7.2.3.2",
 	"7.2.3.3",
 	"7.2.4.1-2",
 	"7.3.2.1",
@@ -315,7 +315,7 @@ rules.push (
 	"7.4.2.2 NOPOINT",
 	"7.4.3.1 NOPOINT; NF",
 	"7.4.5.1 NOPOINT; NF",
-	"7.4.6.1 NF",
+	"7.4.6.1",
 	/*IMAC 2018 Catalog Figures 7.4.9.3 to 7.4.12.3: Roll elements not
 	permitted in the 3/4 loop portion of the figure.*/
 	"7.4.9.3 NR:2", 
@@ -333,7 +333,7 @@ rules.push (
 	"7.5.10.1 MAX180; NOPOINT; NF; NOU", /*2018 IMAC Catalog only 1/2 roll permitted*/
 	"7.8.3.4 NF:1",
 	"7.8.4.1",
-	"7.8.4.4 NF:1",
+	"7.8.4.4",
 	"7.8.6.2-3",
 	"7.8.8.1",
 	"7.8.8.4",
