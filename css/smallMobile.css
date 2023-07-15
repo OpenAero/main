@@ -178,6 +178,7 @@ select {
 }
 /* virtual keyboard */
 #virtualKeyboard {
+  display: none;
   top: 4px;
   left: 0;
 }

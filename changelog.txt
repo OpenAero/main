@@ -1,4 +1,7 @@
-2023.3.9
+2023.3.12
+* (Finally?) fixed issue with platform.mobile, caused by new screen.orientation in iOS 16
+
+2023.3.11
 * Removed option to "Add sequence link" when saving style or separate figures on Cordova app
 * Fixed queue menu option updating
 * Fixed Android app status bar text color
@@ -9,6 +12,7 @@
 * Added separators between different drawing groups in figure chooser (e.g. for double humpties)
 * Fixed bug in Free Unknown designer causing empty subsequence boxes to be shown
 * Again fixed issue with platform.mobile setting on Cordova for some modern iOS devices
+* Fixed iOS pdf print font sizes
 
 2023.3.7
 * Fixed roll rule checking for figures without rolls (error introduced in 2023.1.3)

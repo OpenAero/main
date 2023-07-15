@@ -256,8 +256,6 @@ function parseRules (start) {
     console.log(log);
 
   postMessage ({runFunction: 'updateRulesList', arguments: [seqCheckAvail]});
-  // add submenu showing/hiding
-  postMessage ({runFunction: 'addMenuEventListeners'});
 }
 
 // loadRules loads the rules for the active sequence and stores it in

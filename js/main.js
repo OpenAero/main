@@ -1460,12 +1460,16 @@ function switchSmallMobile() {
             miniFormA = 'tiny';
         }
         // lock orientation in portrait on Cordova
-        if (platform.cordova && screen.orientation) {
-            screen.orientation.lock('portrait');
+        if (window.screen.orientation.lock) {
+            window.screen.orientation.lock('portrait');
+        } else if (window['cordova'] && window['cordova'].plugins && window['cordova'].plugins.screenorientation) {
+            window['cordova'].plugins.screenorientation.setOrientation('portrait');
         }
     } else {
-        if (platform.cordova && screen.orientation) {
-            screen.orientation.unlock();
+        if (window.screen.orientation.unlock) {
+            window.screen.orientation.unlock();
+        } else if (window['cordova'] && window['cordova'].plugins && window['cordova'].plugins.screenorientation) {
+            window['cordova'].plugins.screenorientation.setOrientation('any');
         }
 
         // restore viewport
@@ -4728,11 +4732,6 @@ function doOnLoad() {
     fileName = document.getElementById('fileName');
     newTurnPerspective = document.getElementById('newTurnPerspective');
 
-    if ('cordova' in window) {
-        platform.cordova = true; // should already have been set
-        platform.mobile = true;
-    }
-    
     document.addEventListener("deviceready", function () {
         if (platform.cordova) { // make sure we only do this for Cordova app
             // immediately remove loading as this is handled by the app itself
@@ -4852,22 +4851,6 @@ function doOnLoad() {
             storeLocal('logoSelectionCount', JSON.stringify({ CIVA: 3 }));
         }
     });
-
-    // when smallMobile is checked (loaded from settings), or when screen
-    // width is small and no setting is found, switch to smallMobile.
-    // Use window.screen.width to get CSS pixels
-    if (platform.mobile && document.getElementById('smallMobile').checked) {
-        switchSmallMobile();
-    } else if (window.screen.width < 640) {
-        function f(settings) {
-            if (!/\bsmallMobile\b/.test(settings)) {
-                document.getElementById('smallMobile').checked = 'checked';
-                switchSmallMobile();
-            }
-        }
-
-        if (storage) getLocal('settings', f); else f();
-    }
 
     var
         scripts = document.getElementsByTagName('script');
@@ -5079,6 +5062,9 @@ function doOnLoad() {
 
     // check for latest version in a second
     setTimeout(getLatestVersion, 1000);
+
+    // add submenu showing/hiding
+    addMenuEventListeners();
 
     loadComplete = true;
 
@@ -5628,36 +5614,56 @@ function addEventListeners() {
 }
 
 // addMenuEventListeners adds event listeners for showing and hiding
-// submenus to all menus
+// submenus to all menus. Make sure we do this after rules are loaded by passing
+// through rulesWorker
 function addMenuEventListeners() {
-    // make sure loading is complete
-    if (!loadComplete) setTimeout(addMenuEventListeners, 100);
-    // menu showing and hiding. Add listeners to all <li> menu items
-    function addListeners(e) {
-        var li = e.getElementsByTagName('li');
-        for (var i = 0; i < li.length; i++) {
-            if (platform.mobile) {
-                li[i].addEventListener('mousedown', menuActive);
-            } else {
-                li[i].addEventListener('mouseover', menuActive);
-                li[i].addEventListener('mouseout', menuInactive);
-            }
-            if (!/^zoom.+/.test(li[i].id)) {
-                checkUL: {
-                    var els = li[i].childNodes;
-                    for (var j in els) {
-                        if (els[j].tagName && (els[j].tagName === 'UL')) break checkUL;
+    var id = uniqueId();
+    workerCallback[id] = function () {
+        // menu showing and hiding. Add listeners to all <li> menu items
+        function addListeners(e) {
+            var li = e.getElementsByTagName('li');
+            for (var i = 0; i < li.length; i++) {
+                if (platform.mobile) {
+                    li[i].addEventListener('mousedown', menuActive);
+                } else {
+                    li[i].addEventListener('mouseover', menuActive);
+                    li[i].addEventListener('mouseout', menuInactive);
+                }
+                if (!/^zoom.+/.test(li[i].id)) {
+                    checkUL: {
+                        var els = li[i].childNodes;
+                        for (var j in els) {
+                            if (els[j].tagName && (els[j].tagName === 'UL')) break checkUL;
+                        }
+                        li[i].addEventListener('mouseup', menuTouch);
                     }
-                    li[i].addEventListener('mouseup', menuTouch);
                 }
             }
         }
+
+        var menu = document.getElementById('menu');
+        addListeners(menu);
+
+        if (platform.mobile || platform.smallMobile) mobileInterface();
+
+        // when smallMobile is checked (loaded from settings), or when screen
+        // width is small and no setting is found, switch to smallMobile.
+        // Use window.screen.width to get CSS pixels
+        if (platform.mobile && document.getElementById('smallMobile').checked) {
+            switchSmallMobile();
+        } else if (window.screen.width < 640) {
+            function f(settings) {
+                if (!/\bsmallMobile\b/.test(settings)) {
+                    document.getElementById('smallMobile').checked = 'checked';
+                    switchSmallMobile();
+                }
+            }
+
+            if (storage) getLocal('settings', f); else f();
+        }
+
     }
-
-    var menu = document.getElementById('menu');
-    addListeners(menu);
-
-    if (platform.mobile || platform.smallMobile) mobileInterface();
+    rulesWorker.postMessage({ action: false, callbackId: id });
 }
 
 // checkForApp will check the platform and present appropriate
@@ -15268,6 +15274,13 @@ function beforePrint(evt) {
                 '</body>' +
                 '</html>';
             if (evt && evt.target && evt.target.id === 't_savePdf') {
+                // Font size of directly generated pdf in iOS is too large (cordova bug?).
+                // Reduce font sizes. HACK!
+                printHtml = printHtml.replace(/font-size[ ]*:[ ]*(\d+)/g, match =>
+                    {
+                        return `font-size:${Math.round(parseInt(match.match(/\d+/))*0.7)}`
+                    }
+                );
                 pdf.fromData(printHtml, {
                     documentSize: 'A4',
                     type: 'share',
