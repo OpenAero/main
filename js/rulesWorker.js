@@ -919,26 +919,21 @@ function checkRules (callbackId, activeSequenceText, figures, nonArestiRolls, mu
 		              if (checkRule[rule].conv) {
 		                var conversion = checkRule[rule].conv;
 		                log.push ('Apply: ' + checkRule[rule].conv);
-		                logLine = 'Converted: ' + check.join('') + ' => ';            
-                    // If there are no rolls at all, checkLine is empty
-                    if (/^[0. ]*$/.test(check.join(''))) {
-                      checkLine = '';
-                    } else {
-                          for (var l = 0; l < checkConv[conversion].length; l++) {                            
-                              if (checkConv[conversion][l].fullFigure) {
-                                  log.push ('Full figure conversions are only supported in "allow-defrules"')
-                              } else {
-                                  // Check for individual roll Aresti number conversions
-                                  for (var m = 0; m < check.length; m++) {
-                                      if (!check[m].match(/[ ,;]/)) {
-                                          check[m] = check[m].replace(checkConv[conversion][l].regex,
-                                              checkConv[conversion][l].replace);
-                                      }
-                                  }
-                              }
-		                      }
-		                      checkLine = check.join('');
-                    } 
+		                logLine = 'Converted: ' + check.join('') + ' => ';
+                    for (var l = 0; l < checkConv[conversion].length; l++) {                            
+                        if (checkConv[conversion][l].fullFigure) {
+                            log.push ('Full figure coknversions are only supported in "allow-defrules"')
+                        } else {
+                            // Check for individual roll Aresti number conversions
+                            for (var m = 0; m < check.length; m++) {
+                                if (!check[m].match(/[ ,;]/)) {
+                                    check[m] = check[m].replace(checkConv[conversion][l].regex,
+                                        checkConv[conversion][l].replace);
+                                }
+                            }
+                        }
+                    }
+                    checkLine = check.join('');
 		
 		                log.push (logLine + checkLine);
                   }

@@ -1,3 +1,14 @@
+2023.3.15
+* Fixed missing alerts for figures without rolls, that should contain a specific roll (e.g. figure "ivs" allowed but not "iv")
+* Improved VINK rules
+* Fixed issue with Free Unknown designer subsequence direction
+
+2023.3.14
+* Removed incorrect figures 7.4.1.2, 7.4.1.3, 7.8.4.4, 7.8.8.1 from CIVA Glider Advanced Unknown
+* Updated IMAC Basic Known to include the Split S
+* Updated Cordova android-targetSdkVersion to 33
+* Updated Cordova Android statusbar settings for SDK 33
+
 2023.3.12
 * (Finally?) fixed issue with platform.mobile, caused by new screen.orientation in iOS 16
 

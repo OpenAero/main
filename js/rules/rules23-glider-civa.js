@@ -93,6 +93,8 @@ OpenAero 2016.1
  * - Added 2023 reference sequences
  * - No flicks on 45 down lines after a looping segment that passed through
  *   vertical down. E.g. 8.7.5.1 (NP2023-16)
+ * 2023.3.13
+ * - Removed incorrect figures 7.4.1.2, 7.4.1.3, 7.8.4.4, 7.8.8.1 from Advanced Unknown
 */
 
 rules.push (
@@ -1592,12 +1594,10 @@ rules.push (
 
 // Loops
 //------
-// no roll on 7.4.1.3-4      ### acc. to A.9.1.1
-// no hesitation roll in 7.4.1.2     ### acc. to A.9.1.2
+// no roll on 7.4.1.4      ### acc. to A.9.1.1
 
 "7.4.1.1",
-"7.4.1.3-4 NR",
-"7.4.1.2 NHR",
+"7.4.1.4 NR",
 
 // horizontal Eights = Full Cuban Eights
 //--------------------------------------
@@ -1605,10 +1605,8 @@ rules.push (
 "7.8.3.1  NR:3 ; NOAH",
 "7.8.3.4  NR:3 : NOAH",
 "7.8.4.1  NOAH",
-"7.8.4.4  NOAH",
 "7.8.6.2  NR:1 ; NOAH",
 "7.8.6.3  NR:1 ; NR:3 ; NOAH",
-"7.8.8.1  NOAH",
 "7.8.8.4  NOAH",
 
 // Super-Eights

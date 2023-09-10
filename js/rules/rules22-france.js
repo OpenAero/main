@@ -76,7 +76,7 @@ rules.push (
 "group-turnpos=^2\.[1-4]\.1\.1",
 "turnpos-name= virages ventre",
 "turnpos-max=1",
-"rule-SPIN=roll:^[^s]",
+"rule-SPIN=roll:[^s]|^$",
 "why-SPIN=Figure avec vrille uniquement",
 "conv-rot_alt = ^9\.\d+\.3\.([1-8]) = $1;^9\.\d+\.[1245]\.[1-8] = x;^9\. = y;^0\.=z",
 "rule-No_alt_45 = rot_alt: x[,;]",

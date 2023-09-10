@@ -4805,8 +4805,10 @@ function doOnLoad() {
                 function () {
                     navigator.splashscreen.hide();
                     if (device.platform.toLowerCase() == 'android') {
-                        StatusBar.show();
-                        StatusBar.styleDefault();
+                        setTimeout(function(){
+                            StatusBar.overlaysWebView(false);
+                            StatusBar.backgroundColorByHexString("#512da8");
+                        },1000);
                     }
                 }, 1000);
         }
@@ -11489,7 +11491,7 @@ function startFuDesigner(dontConfirm) {
                 var text = 'eu';
             } else {
                 // rebuild the sequence according Free (Un)known designer format
-                // remove / symbols and entry/exit extension from
+                // remove / symbols and entry/exit extension from string
                 var text = '';
                 for (var i = 0; i < figures.length; i++) {
                     // only add figures with aresti Nr. For Unknown, only add
@@ -11761,13 +11763,12 @@ function handleFreeDrop(e) {
     var regexSub = /^"(\d+)" /;
 
     if (this.classList.contains('fuNewSub')) {
-        // drop figure or subsequence to new subsequence. Make sure the
-        // sequence always ends with 'eu'
+        // drop figure or subsequence to new subsequence. Make sure it ends with 'eu'
         string = string.replace(regexSub, '');
         updateSequence(figures.length - 1, string + ' eu');
         // when dropping Additional, select and open figure editor
         if (string.match(/\@L/) || (string === 'X')) {
-            selectFigureFu(figures.length - 3);
+            selectFigureFu(figures.length - 2);
         }
     } else {
         // drop figure or subsequence on figure (or end)
@@ -12960,10 +12961,12 @@ function makeFree() {
         return K;
     }
 
-    // make sure the sequence ends with 'eu'. If not, add it
-    if (figures.slice(-1) && figures.slice(-1).string !== 'eu') {
-        figures.push({ 'string': 'eu', 'subSequence': true });
+    // make sure the sequence ends with 'eu' marked as subSequence
+    console.log(figures);
+    if (figures.slice(-1) && figures[figures.length-1].string == 'eu') {
+        figures.pop();
     }
+    figures.push({ 'string': 'eu', 'subSequence': true });
 
     // check for multiple use of same letter
     var usedLetters = [];

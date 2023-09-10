@@ -40,7 +40,7 @@ This file is part of OpenAero.
  A new x should be used for versions that create sequences not
  fully backward compatible with the previous version
 */
-const version = '2023.3.11';
+const version = '2023.3.15';
 /* versionNew is an object that contains version update information
    The structure is {vvv : [[ttt, n], ...], ...} , where
    vvv = version number

@@ -397,7 +397,7 @@ var rules = [
 "why_fr-NOU=rotations combinées interdites",
 "why_de-NOU=Keine gegenläufigen oder unverbundenen Rollen erlaubt",
 
-"rule-NR=roll:[^z]",
+"rule-NR=roll:[^z ]",
 "why-NR=no roll allowed",
 "why_fr-NR=rotation interdite",
 "why_de-NR=Keine Rolle erlaubt",
@@ -412,7 +412,7 @@ var rules = [
 "why_fr-MAX360=maximum de 360° de rotation permis",
 "why_de-MAX360=maximal 360° Rotation erlaubt",
 
-"rule-FAM91=roll:[^1z]",
+"rule-FAM91=roll:[^1z,]",
 "why-FAM91=only family 1 roll allowed",
 "why_fr-FAM91=uniquement tonneau sans facette permis",
 "why_de-FAM91=nur Rollen der Familie 9.1 erlaubt"
