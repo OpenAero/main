@@ -797,9 +797,6 @@ textarea {
 #exitDesigner {
 	display: none !important;
 }
-.fuDesigner #exitDesigner {
-	display: flex !important;
-}
 /* virtual keyboard */
 #virtualKeyboard {
   position: absolute;
@@ -1006,7 +1003,6 @@ html.framed ol {
   background: transparent;
 }
 .documentation {
-    width: auto;
     margin: 1em;
     padding: 2em;
     background: #f8f8f8;
@@ -1993,7 +1989,7 @@ option.used {
   text-align: center;
   vertical-align: middle;
 }
-t_addFigureText {
+#t_addFigureText {
 	opacity: 0.7;
 }
 #addFigureText .material-icons {
@@ -2283,13 +2279,40 @@ t_addFigureText {
 }
 
 /* figure chooser */
+#figureSelector {
+  display: flex;
+  flex-flow: column;
+  position: absolute;
+  -moz-transition: all 0.2s ease-in-out;
+  -o-transition: all 0.2s ease-in-out;
+  -webkit-transition: all 0.2s ease-in-out;
+  transition: all 0.2s ease-in-out;
+  height: 100%;
+}
 #figureSelector .form-group {
 	margin: 0 0 4px 0;
 }
+#figureSelectorOptions {
+  display: flex;
+}
+.figureSelectorOptionsButton {
+  flex: 1 1 0;
+  width: 0;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  margin: 2px;
+  text-align: center;
+  font-size: 12px;
+}
+.figureSelectorOptionsButton.selected {
+  border-color: #512da8;
+}
 #figureChooser {
-  position: absolute;
-  width: 300px;
-  top: 180px;
+  position: relative;
+  width: 284px;
+  top: 0;
+  padding-right: 16px; /* padding for scroll bar */
+  padding-bottom: 12px;
   overflow-x: hidden;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
@@ -2339,15 +2362,18 @@ table#figureChooserTable td.selected {
   border: 2px solid magenta;
 }
 table#figureChooserTable td.matchingFigure {
-  box-shadow:inset 4px 4px #a0ff60;
+  box-shadow: inset 0 0 0 2px #a0ff60;
+
   opacity: initial;
 }
 table#figureChooserTable td.grid {
   opacity: initial;
 }
 table#figureChooserTable td.figureNotAllowed {
-  outline: #ff8040 solid 2px;
-  outline-offset: -3px;
+  background-color: rgba(255, 0, 0, 0.05);
+}
+table#figureChooserTable td.queue {
+  max-width: initial;
 }
 .figureNotAllowedHidden {
   display: none;
@@ -2628,7 +2654,7 @@ table#figureChooserTable div {
         background: #ecffec;
     }
 
-    #fuFiguresTable td.figUsedMulti {
+    #fuFiguresTable td.figUsed.figUsedMulti {
         transition: background 0.4s, border-color 0.4s;
         border-color: #ff6040;
         background: #ffe8e0;
@@ -2792,10 +2818,6 @@ table#figureChooserTable div {
     margin-top: 16px;
 }
 
-.fuDesigner #figureChooser {
-    top: 116px;
-}
-
 #fuFigures {
     position: relative;
     /*z-index: 4;*/ /* Removed because it hides dragging figures, not sure why it was needed? */
@@ -2835,16 +2857,81 @@ table#figureChooserTable div {
     padding: 4px;
     text-align: center;
 }
-#t_flyingModeWind {
+#t_windArrow {
     position: absolute;
     width: 80px;
     left: calc(100% - 108px);
     transition: all 0.3s ease-in-out;
 }
-#t_flyingModeWind.left {
+#sequenceArea.A #t_windArrow, #sequenceArea.G #t_windArrow, #sequenceArea.A #miniFormAContainer, #sequenceArea.G #miniFormAContainer {
+  display: none;
+}
+#miniFormAContainer table {
+  font-size: 0.8em;
+  border-collapse: collapse;
+}
+#miniFormAHeader {
+  position: sticky;
+  top: 0;
+}
+#miniFormAFooter td {
+  padding-top: 4px;
+}
+#miniFormA tr {
+  position: relative;
+  cursor: move;
+  cursor: ns-resize;
+  line-height: 1.5em;
+  z-index: 0;
+}
+#miniFormA td {
+  padding: 3px;
+  border-bottom: 1px solid #ddd;
+  border-right: 1px solid #888;
+  background-color: white;
+}
+#miniFormA td:first-child {
+  text-align: right;
+  border-left: 2px solid transparent;
+  font-weight: bold;
+}
+#miniFormAContainer td:last-child {
+  text-align: right;
+  border-right: 2px solid transparent;
+  font-weight: bold;
+}
+#miniFormAHeader tr td {
+  background-color: #ffcc80;
+  font-weight: bold;
+  text-align: left;
+}
+#miniFormAContainer tr.selected td {
+  color: #ff00a0;
+}
+#miniFormAContainer tr.dragging {
+  color: white;
+}
+tr.insertAfter td {
+  height: 3em;
+  vertical-align: top;
+}
+#modifiedK {
+  padding: 3px;
+  font-size: 0.7em;
+  word-wrap: break-word;
+  color: red;
+}
+#placeFigure {
+  font-size: 40px;
+  position: fixed;
+  margin-left: -20px;
+  margin-top: -24px;
+  color: green;
+}
+#flyingMode.windLeft #t_windArrow {
     left: 4px;
 }
-#t_flyingModeWind:before {
+#t_windArrow:before {
     content: "";
     position: absolute;
     left: -24px;
@@ -2855,14 +2942,28 @@ table#figureChooserTable div {
     border-top: 21px solid transparent;
     border-bottom: 21px solid transparent;
 }
-#t_flyingModeWind:active, #t_flyingModeWind:hover {
+#t_windArrow:active, #t_windArrow:hover {
     background-color: #2979ff;
 }
-#t_flyingModeWind.left:before {
+#sequenceArea.C #t_windArrow:before, #flyingMode.windLeft #t_windArrow:before {
     left: initial;
     right: -24px;
     border-right: initial;
     border-left: 26px solid #2979ff;
+}
+#sequenceArea #t_windArrow {
+  position: fixed;
+  z-index: 1;
+  padding: 2px;
+}
+#sequenceArea #t_windArrow:before {
+  border-top: 17px solid transparent;
+  border-bottom: 17px solid transparent;
+}
+#sequenceArea.C #t_windArrow:before, #flyingMode.windLeft #t_windArrow:before  {
+  left: initial;
+  right: -24px;
+  border-right: initial;
 }
 #flyingModeSequence {
     position: absolute;
@@ -2872,7 +2973,7 @@ table#figureChooserTable div {
     left: 0;
     right: 0;
     padding: 8px;
-    transition: all 0.15s linear;
+    transition: all 0.15s ease-in-out;
 }
 #flyingModeSequenceFormB {
     object-fit: contain;
@@ -2885,10 +2986,10 @@ table#figureChooserTable div {
     max-height: 100%;
     display: none;
 }
-#flyingModeSequence.windLeft #flyingModeSequenceFormB {
+#flyingMode.windLeft #flyingModeSequenceFormB {
     display: none;
 }
-#flyingModeSequence.windLeft #flyingModeSequenceFormC {
+#flyingMode.windLeft #flyingModeSequenceFormC {
     display: initial;
 }
 

@@ -117,47 +117,48 @@
         }
     </script>
     <!-- configuration, must be first OpenAero js -->
-    <script src="js/config.js" type="text/javascript"></script>
-    <script src="cordova.js" type="text/javascript"></script>
+    <script src="js/config.js"></script>
+    <!-- cordova.js is only loaded when NOT running Cordova and sets platform.cordova = false -->
+    <script src="cordova.js"></script>
     <!-- interface languages -->
-    <script src="js/languages/en.js" type="text/javascript"></script>
-    <script src="js/languages/de.js" type="text/javascript"></script>
-    <script src="js/languages/fr.js" type="text/javascript"></script>
+    <script src="js/languages/en.js"></script>
+    <script src="js/languages/de.js"></script>
+    <script src="js/languages/fr.js"></script>
     <!-- logos -->
-    <script src="js/logo.js" type="text/javascript"></script>
+    <script src="js/logo.js"></script>
     <!-- figure definitions -->
-    <script src="js/figures23.js" type="text/javascript"></script>
+    <script src="js/figures23.js"></script>
     <!-- rules Worker -->
-    <script src="js/rulesWorker.js" type="text/javascript"></script>
+    <script src="js/rulesWorker.js"></script>
     <!-- sequence rules. Start with general and CIVA, then alphabetical -->
-    <script src="js/rules/rules23.js" type="text/javascript"></script>
-    <script src="js/rules/rules23-civa.js" type="text/javascript"></script>
-    <script src="js/rules/rules23-glider-civa.js" type="text/javascript"></script>
-    <script src="js/rules/rules23-aac.js" type="text/javascript"></script>
-    <script src="js/rules/rules22-aeci.js" type="text/javascript"></script>
-    <script src="js/rules/rules22-baea.js" type="text/javascript"></script>
-    <script src="js/rules/rules22-france.js" type="text/javascript"></script>
-    <script src="js/rules/rules15-ga.js" type="text/javascript"></script>
-    <script src="js/rules/rules23-iac.js" type="text/javascript"></script>
-    <script src="js/rules/rules23-imac.js" type="text/javascript"></script>
-    <script src="js/rules/rules21-glider-iac.js" type="text/javascript"></script>
-    <script src="js/rules/rules24-nzac.js" type="text/javascript"></script>
-    <script src="js/rules/rules20-saa.js" type="text/javascript"></script>
-    <script src="js/rules/rules21-sac.js" type="text/javascript"></script>
-    <script src="js/rules/rules23-vink.js" type="text/javascript"></script>
-    <!-- library -->
-    <script src="js/library.js" type="text/javascript"></script>
+    <script src="js/rules/rules23.js"></script>
+    <script src="js/rules/rules23-civa.js"></script>
+    <script src="js/rules/rules23-glider-civa.js"></script>
+    <script src="js/rules/rules23-aac.js"></script>
+    <script src="js/rules/rules22-aeci.js"></script>
+    <script src="js/rules/rules22-baea.js"></script>
+    <script src="js/rules/rules22-france.js"></script>
+    <script src="js/rules/rules15-ga.js"></script>
+    <script src="js/rules/rules21-glider-iac.js"></script>
+    <script src="js/rules/rules23-iac.js"></script>
+    <script src="js/rules/rules23-imac.js"></script>
+    <script src="js/rules/rules24-nzac.js"></script>
+    <script src="js/rules/rules20-saa.js"></script>
+    <script src="js/rules/rules21-sac.js"></script>
+    <script src="js/rules/rules23-vink.js"></script>
+    <!-- library of sequences -->
+    <script src="js/library.js"></script>
     <!-- improve look of XML output -->
-    <!-- https://github.com/vkiryukhin/vkBeautify 0.99.00 beta-->
-    <script src="js/vkbeautify.min.js" type="text/javascript"></script>
+    <!-- https://github.com/vkiryukhin/vkBeautify 0.99.00 beta inactive since 2018 -->
+    <script src="js/vkbeautify.min.js"></script>
     <!-- create zip files. Used for individual figure image output -->
-    <!-- https://github.com/Stuk/jszip 3.2.2 3 jul 2019 -->
-    <script src="js/jszip.min.js" type="text/javascript"></script>
-    <!-- create QR codes https://github.com/davidshimjs/qrcodejs -->
-    <script src="js/qrcode.min.js" type="text/javascript"></script>
+    <!-- https://github.com/Stuk/jszip 3.10.1 27 sep 2023 -->
+    <script src="js/jszip.min.js"></script>
+    <!-- create QR codes https://github.com/davidshimjs/qrcodejs inactive since 2015 -->
+    <script src="js/qrcode.min.js"></script>
 
     <!-- The main script. Put it at the end when everything else is loaded -->
-    <script src="js/main.js" type="text/javascript"></script>
+    <script src="js/main.js"></script>
 </head>
 <body>
     <div id="cordovaStatusBar" class="noDisplay"></div>
@@ -172,7 +173,6 @@
         <div id="flyingMode" class="flyingModeHidden">
             <div id="flyingModeTop">
                 <span id="t_exitFlyingMode" class="textButton userText"></span>
-                <span id="t_flyingModeWind" class="textButton userText"></span>
             </div>
             <div id="flyingModeSequence"></div>
         </div>
@@ -450,7 +450,7 @@
             <div class="clearBoth"></div>
             <!-- Sequence text -->
             <div id="sequenceTextContainer" class="disableFUdesigner">
-                <div id="sequence_text" contenteditable="true" spellcheck="false" autocapitalize="off" class="lock" tabIndex="-1"></div>
+                <div id="sequence_text" contenteditable spellcheck="false" autocapitalize="off" class="lock" tabIndex="-1"></div>
             </div>
             <!-- fu_figures is used when saving from Free Unknown designer -->
             <input type="hidden" id="fu_figures" value="" tabIndex="-1">
@@ -467,7 +467,6 @@
                 <div class="info" id="manual.html_the_figure_chooser">
                     <i class="material-icons info">info</i>
                 </div>
-                <div class="clearBoth"></div>
                 <div>
                     <div id="figureSelectorClose">
                         <i class="material-icons navbutton" id="hideFigureSelector"></i>
@@ -505,7 +504,7 @@
                     <li id="tab-figureInfo" class="inactiveTab lock">
                         <span class="userText" id="t_figureEditor"></span>
                     </li>
-                    <li id="tab-svgContainer" class="inactiveTab noDisplay">
+                    <li id="tab-sequenceArea" class="inactiveTab noDisplay">
                         <span class="userText" id="t_sequenceTab"></span>
                     </li>
                     <li id="tab-fuFigures" class="inactiveTab noDisplay">
@@ -519,7 +518,7 @@
                 <div id="leftBlock">
                     <div id="figureString" class="noDisplay form-group">
                         <input type="text" id="figureStringInput" autocapitalize="off">
-                        <label class="userText control-label" id="t_figureString" for="input"></label><i class="bar"></i>
+                        <label class="userText control-label" id="t_figureString" for="figureStringInput"></label><i class="bar"></i>
                     </div>
                     <div class="clearBoth"></div>
                     <!-- Sequence info -->
@@ -528,22 +527,22 @@
                             <div class="item narrowRight">
                                 <div class="form-group">
                                     <input type="text" id="pilot" maxlength="30" class="lock">
-                                    <label class="control-label userText" id="t_pilot" for="input"></label><i class="bar"></i>
+                                    <label class="control-label userText" id="t_pilot" for="pilot"></label><i class="bar"></i>
                                 </div>
                                 <div class="form-group">
                                     <select id="team" class="lock"></select>
-                                    <label class="control-label userText" id="t_team" for="select"></label><i class="bar"></i>
+                                    <label class="control-label userText" id="t_team" for="team"></label><i class="bar"></i>
                                 </div>
                             </div>
                             <div class="item narrowRight">
                                 <input type="hidden" id="aircraft">
                                 <div class="form-group">
                                     <input type="text" id="actype" maxlength="30" class="lock">
-                                    <label class="control-label userText" id="t_actype" for="input"></label><i class="bar"></i>
+                                    <label class="control-label userText" id="t_actype" for="actype"></label><i class="bar"></i>
                                 </div>
                                 <div class="form-group">
                                     <input type="text" id="acreg" maxlength="30" class="lock">
-                                    <label class="control-label userText" id="t_registration" for="input"></label><i class="bar"></i>
+                                    <label class="control-label userText" id="t_registration" for="acreg"></label><i class="bar"></i>
                                 </div>
                             </div>
                         </div>
@@ -559,24 +558,24 @@
                                         <option value="powered" class="userText" id="t_powered" selected></option>
                                         <option value="glider" class="userText" id="t_glider"></option>
                                     </select>
-                                    <label class="control-label userText" id="t_class" for="select"></label><i class="bar"></i>
+                                    <label class="control-label userText" id="t_class" for="class"></label><i class="bar"></i>
                                 </div>
                                 <div class="form-group combo">
                                     <input type="text" id="rules" maxlength="30" autocomplete="off" autocorrect="off" spellcheck="false" class="lock panelHeader">
-                                    <label class="control-label userText" id="t_rules" for="input"></label><i class="bar"></i>
+                                    <label class="control-label userText" id="t_rules" for="rules"></label><i class="bar"></i>
                                     <ul id="rulesList"></ul>
                                 </div>
                             </div>
                             <div class="item">
                                 <div class="form-group combo">
                                     <input type="text" id="category" maxlength="30" autocomplete="off" autocorrect="off" spellcheck="false" class="lock panelHeader">
-                                    <label class="control-label userText" id="t_category" for="input"></label>
+                                    <label class="control-label userText" id="t_category" for="category"></label>
                                     <i class="bar"></i>
                                     <ul id="categoryList"></ul>
                                 </div>
                                 <div class="form-group combo">
                                     <input type="text" id="program" maxlength="30" autocomplete="off" autocorrect="off" spellcheck="false" class="lock panelHeader">
-                                    <label class="control-label userText" id="t_programme" for="input"></label>
+                                    <label class="control-label userText" id="t_programme" for="program"></label>
                                     <i class="bar"></i>
                                     <ul id="programList"></ul>
                                 </div>
@@ -588,13 +587,13 @@
                                 <div class="form-group combo">
                                     <input type="number" name="positioning" id="positioning" maxlength="4" autocomplete="off" class="lock">
                                     <select id="positioningText" class="hidden"></select>
-                                    <label class="control-label userText" id="t_positioning" for="input"></label><i class="bar"></i>
+                                    <label class="control-label userText" id="t_positioning" for="positioning"></label><i class="bar"></i>
                                 </div>
                             </div>
                             <div id="harmonyField" class="hidden item">
                                 <div class="form-group combo">
                                     <input type="number" name="harmony" id="harmony" maxlength="4" autocomplete="off" class="lock">
-                                    <label class="control-label userText" id="t_harmony" for="input"></label><i class="bar"></i>
+                                    <label class="control-label userText" id="t_harmony" for="harmony"></label><i class="bar"></i>
                                 </div>
                                 <div></div>
                             </div>
@@ -610,11 +609,11 @@
                             <div class="item narrowRight">
                                 <div class="form-group">
                                     <input type="text" id="location" maxlength="30" class="lock panelHeader">
-                                    <label class="control-label userText" id="t_location" for="input"></label><i class="bar"></i>
+                                    <label class="control-label userText" id="t_location" for="location"></label><i class="bar"></i>
                                 </div>
                                 <div class="form-group">
                                     <input type="text" id="date" maxlength="30" class="lock panelHeader">
-                                    <label class="control-label userText" id="t_date" for="input"></label><i class="bar"></i>
+                                    <label class="control-label userText" id="t_date" for="date"></label><i class="bar"></i>
                                 </div>
                             </div>
                             <div class="item">
@@ -875,7 +874,7 @@
             </div>
             <!-- end grid info -->
             <!-- Container for the sequence svg -->
-            <div id="svgContainer" class="disableFUdesigner">
+            <div id="sequenceArea" class="disableFUdesigner screen">
                 <div id="optimalSequenceArea" class="noDisplay">
                     <span>
                         <span id="t_optimalSequenceAreaExceeded" class="userText"></span>
@@ -884,8 +883,20 @@
                         </span>
                     </span>
                 </div>
+                <span id="t_windArrow" class="textButton userText"></span>
+                <div id="miniFormAContainer">
+                    <table>
+                        <thead id="miniFormAHeader"></thead>
+                        <tbody id="miniFormA"></tbody>
+                        <tfoot id="miniFormAFooter"></tfoot>
+                    </table>
+                    <div id="modifiedK"></div>
+                </div>
+                <span id="placeFigure" class="material-icons noDisplay">
+                    add_location
+                </span>
             </div>
-            <div id="svgContainerPlacing" class="noDisplay"></div>
+            <div id="sequenceAreaPlacing" class="noDisplay"></div>
             <!-- Div containing Free Unknown subsequences in FU Designer -->
             <div id="fuSequence" class="fuSequence">
             </div>
@@ -905,7 +916,7 @@
                 <span onmousedown="var el = document.getElementById ('loading');
 					el.parentNode.removeChild (el);">Continue</span>
             </p>
-            <script type="text/javascript">
+            <script>
                 setTimeout(function () {
                     var el = document.getElementById('continueAfterLoading');
                     if (el) el.removeAttribute('style');

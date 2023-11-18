@@ -208,11 +208,6 @@ lang.fr = {
   'dans paramétrage <b>avancé</b>  (accessible via le bouton Chrome ' +
   '<i class="material-icons md-18 inText">more_vert</i>) ' +
   'et cochez la case "Demander où sauvegarder ..."</p>',
-'downloadLegacy' : 'Vous pouvez enregistrer en choisissant un nom ' +
-  'et/ou faire un clic droit sur <i>Enregistrer</i> ci-dessous ' +
-  'et choisir "Enregistrer la cible du lien sous... " ou "Copier ' +
-  'l\'adresse du lien".<br>Une fenêtre ou vous pourrez ' +
-  'choisir le répertoire apparaîtra.',
 'downwind' : 'vent arrière',
 'downwindEntry' : 'Débuter vent arrière',
 'drawingStyles' : 'Paramètres de dessin',
@@ -254,7 +249,6 @@ lang.fr = {
 'flightNr' : 'Vol N°',
     'flipYAxis': 'Changer d\'axe Y',
     'flyingMode': 'Mode vol',
-    'flyingModeWind': 'Vent',
 'forElement' : ' pour élément ',
 'formA' : 'Forme A',
 'formB' : 'Forme B',
@@ -738,6 +732,7 @@ lang.fr = {
         'séquence pour vous assurer que leurs directions et attitudes de sortie ' +
         'sont correctes.</p>',
 'wind' : 'V E N T  ',
+'windArrow': 'Vent',
 'windIAC' : 'sens du vent',
 'wingRocks' : 'Battem. d\'Ailes',
 'xBox' : 'de face',

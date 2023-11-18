@@ -204,10 +204,6 @@ lang.en = {
   'to the <b>advanced</b> Settings (access via the Chrome ' +
   '<i class="material-icons md-18 inText">more_vert</i> button) ' +
   'and tick checkbox "Ask where to save ..."</p>',
-'downloadLegacy' : 'You can save your file by choosing a ' +
-  'name, right-clicking on <i>Save File</i> below '+
-  'and choosing "Save File As..." or "Save Link As...".<br>A dialog ' +
-  'where you can choose the folder will then pop up.',
 'downwind' : 'Downwind',
 'downwindEntry' : 'Downwind entry',
 'drawingStyles' : 'Drawing styles',
@@ -227,11 +223,11 @@ lang.en = {
 'exitFlyingMode': 'Exit',
 'expert' : 'Expert',
 'feedback' : 'Feedback',
-'figSelectorAddAfter' : 'Add new figure after active',
-'figSelectorAddBefore' : 'Add new figure before active',
-'figSelectorAddEnd' : 'Add new figure at end',
-'figSelectorAddStart' : 'Add new figure at start',
-'figSelectorReplace' : 'Replace active figure',
+'figSelectorAddAfter' : 'Add new figure after active',//'Add new figure after active',
+'figSelectorAddBefore' : 'Add new figure before active',//'Add new figure before active',
+'figSelectorAddEnd' : 'Add new figure at end',//'Add new figure at end',
+'figSelectorAddStart' : 'Add new figure at start',//'Add new figure at start',
+'figSelectorReplace' : 'Replace active figure',//'Replace active figure',
 'figsInGrid' : 'Figs in grid',
 'figureAlreadyInQueue' : 'This figure is already in the queue',
 'figureEditor' : 'Figure editor',
@@ -284,7 +280,6 @@ lang.en = {
 'flightNr' : 'Flight #',
     'flipYAxis': 'Flip Y-axis',
     'flyingMode': 'Flying mode',
-'flyingModeWind': 'Wind',
 'forElement' : ' for element ',
 'formA' : 'Form A',
 'formB' : 'Form B / Wind Right',
@@ -343,7 +338,7 @@ lang.en = {
 'gridView' : 'The Grid view column setting can be found on the Grid view',
 'harmony' : 'Harmony',
 'help' : 'Help',
-'hideIllegalFigures' : 'Hide illegal figs (Sequence info Rules)',
+'hideIllegalFigures' : 'Hide illegal figures',
  //   'iacForms': 'Forms in IAC style',
     'iacNoteDownwindEntry' : 'Note Downwind Entry',
 'iacNoteYAxisEntry' : 'Note Y Axis Entry',
@@ -760,6 +755,7 @@ lang.en = {
   'check the sequence to make sure their exit directions and ' +
   'attitudes are correct.</p>',
 'wind' : 'wind/vent',
+'windArrow': 'Wind',
 'windIAC' : 'wind direction',
 'wingRocks' : 'Wing Rocks',
 'xBox' : 'Cross-Box',

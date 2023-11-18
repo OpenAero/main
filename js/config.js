@@ -37,10 +37,10 @@ This file is part of OpenAero.
  **************
  Define active version number of OpenAero
  It is of format yyyy.x.z
- A new x should be used for versions that create sequences not
+ A new x must be used for versions that create sequences not
  fully backward compatible with the previous version
 */
-const version = '2023.3.15';
+const version = '2023.3.17';
 /* versionNew is an object that contains version update information
    The structure is {vvv : [[ttt, n], ...], ...} , where
    vvv = version number
@@ -179,169 +179,7 @@ const versionNew = {
 	],
 	'2019.1' : [
 		['CIVA rules and Free Known sequences for 2019', 4]
-	],
-	'2018.4' : [
-		['Added saving of sequences to PDF on iOS app', 3]
-	],
-	'2018.3.11' : [
-		['Corrected tailslide in IAC 2018 and NZAC 2019 Unlimited Known', 3]
-	],
-	'2018.3.9' : [
-		['Fixed issue where print window would immediately close on Chrome app', 4]
-	],
-	'2018.3.6' : [
-		['Updated NZAC Power rules and sequences for 2018/2019', 3]
-	],
-	'2018.3.3' : [
-		['Improved Grid display options and figure group creation for ' +
-		'glider competition', 4],
-		['Fixed bug which caused switching the first roll of 3-roll ' +
-		'figures to behave erratically', 3]
-	],
-	'2018.3.2' : [
-		['Updated CIVA Glider rules for 2018, including Sporting Code ' +
-		'references', 3]
-	],
-	'2018.3' : [
-		['<font style="color:red;">2018 Advanced Free Known figure A was ' +
-		'changed by CIVA in early may (snap roll direction now the same ' +
-		'as 1 1/2 roll). Make sure to check sequences that have already ' +
-		'been made</font>', 5]
-	], 
-	'2018.2.1' : [
-		['Improved printing and printing options of several forms', 2]
-	],
-	'2018.2' : [
-		['Changed figure chooser to show all possible roll positions', 3]
-	],
-	'2018.1.9' : [
-		['Enabled blue figure editing handles option for phone layout (can be disabled in Settings)', 1],
-		['Improved saving and sharing sequences from mobile app', 3]
-	],
-	'2018.1.7' : [
-		['Added French rules and sequences for 2018', 3]
-	],
-	'2018.1.6' : [
-		['Fixed bug that made it impossible to choose a free figure in the Designer', 4]
-	],
-	'2018.1.5' : [
-		['Corrected roll position in several figures of 8.6.17-8.6.24', 4],
-		['iOS app now available in the App Store', 4]
-	],
-	'2018.1.4' : [
-		['Corrected CIVA 2018 rules regarding required rolling turn in the Free Known', 4],
-		['Added IAC and BAeA Known sequences for 2018', 3]
-	],
-	'2018.1' : [
-		['CIVA rules and Free Known sequences for 2018', 4],
-		['Aresti Catalogue updates for 2018', 4],
-		['Overhauled interface completely, including addition of special mobile device menus', 4],
-    ['Expanded Free Unknown Designer to also support Free Known sequences', 5]
-	],
-  '2017.2.3' : [
-    ['Switched figure rows 8.6.18 and 8.6.19 as they were not according latest Aresti catalog', 3]
-  ],
-  '2017.2.2' : [
-    ['Fixed several issues with Free Unknown designer', 3]
-  ],
-  '2017.2.1' : [
-    ['Fixed incorrect handling of some P-loops with half roll in top', 4],
-    ['Added French rules and sequences for 2017', 3],
-    ['Improved look and layout of figure chooser', 2]
-  ],
-  '2017.2' : [
-    ['Updated BAeA logo for 2017', 1],
-    ['Only show "Additional" when rules allow the use of Additional figures', 3],
-    ['Added dragging of sequence from system file manager to OpenAero to open it', 3]
-  ],
-  '2017.1.2' : [
-    ['Disabled Chrome App installation for other than ChromeOS as ' +
-      'support <a href="https://blog.chromium.org/2016/08/from-chrome-apps-to-web.html" target="_blank">' +
-      'will be ended by Google</a>', 4],
-    ['IAC Glider sequences for 2017', 3],
-    ['NZAC Power sequences for 2017/2018', 3]
-  ],
-  '2017.1.1' : [
-    ['BAeA Power and glider rules and sequences for 2017', 3]
-  ],
-  '2017.1' : [
-    ['CIVA rules and Free Known sequences for 2017', 4],
-    ['IAC Power rules and sequences for 2017', 3],
-    ['Added Grid info panel with figure group generator to improve ' +
-    'figure selection for Free Unknowns', 4]
-  ],
-  '2016.3.5' : [
-    ['Updated NZAC rules for 2016/2017', 3]
-  ],
-  '2016.3.2' : [
-    ['Improved printing for iOS and Microsoft Edge', 2]
-  ],
-  '2016.3' : [
-    ['Made many changes to the interface to conform to ' +
-    '<a href="https://material.google.com/" target="_blank">Material ' +
-    'Design</a> philosophy. This will be the new look and feel of ' +
-    'OpenAero to improve user interaction.', 3]
-  ],
-  '2016.2' : [
-    ['Added option to flip the Y axis direction for individual ' +
-    'figures. Except when the figure starts on Y axis.', 4],
-    ['Added "Open Sequence" for iOS. As of iOS 9, opening files from ' +
-    'Dropbox and Google Drive is supported.', 2]
-  ],
-  '2016.1.5' : [
-    ['Added French rules for 2016, including reduced K factors for ' +
-    'rolling turns in certain categories', 3]
-  ],
-  '2016.1.3' : [
-    ['Added option to lock the sequence to prevent changing it', 2],
-    ['Improved drag & drop of figures', 2]
-  ],
-  '2016.1.1' : [
-    ['IAC Power rules for 2016', 3]
-  ],
-  '2016.1' : [
-    ['Corrected handling of direction in double bumps with different ' +
-    'radii and having a roll of uneven quarters on the first line ' +
-    'and a roll on the second line', 3],
-    ['Added drag & drop figure editing. When a figure is selected, ' +
-    'handles appear that allow you to change all line lengths ' +
-    'directly.', 4],
-    ['CIVA rules and Free Known sequences for 2016', 4]
-  ],
-  '1.5.2.1' : [
-    ['Added AAC Sportsman Free rules', 2]
-  ],
-  '1.5.2' : [
-    ['Updated German Aerobatics and CIVA Glider rules', 2],
-    ['Added figure string input field for Free Unknown Designer linking figures', 1]
-  ],
-  '1.5.1.4' : [
-    ['Fixed printing failing on some systems', 3]
-  ],
-  '1.5.1.2' : [
-    ['Fixed some bugs in form L & R handling of K factors', 3]
-  ],
-  '1.5.1' : [
-    ['New form L & R concepts added', 4],
-    ['Reference sequence checking for detecting errors in Free Unknown', 4]
-  ],
-  '1.5.0.4' : [
-    ['Sequence data is embedded in PNG image', 3],
-    ['Fixed bug causing printing to be disabled', 3],
-    ['Added "Open Sequence link". Especially useful for iOS', 3]
-  ],
-  '1.5.0'   : [
-    ['<b>Free Unknown designer!</b> Create Free Unknown sequences ' +
-      'efficiently', 5],
-    ['CIVA rules and sequences for 2015', 4],
-    ['IAC rules for Free sequences and limited checking for Unknown ' +
-      'sequences', 3],
-    ['Printing and image saving of multiple sequences at once; ' +
-      'Tools -> Print multiple seq', 2],
-    ['Added alerts for illegal spins', 2],
-    ['Added French translations for sequence alerts', 2],
-    ['Many national sequences for 2015', 2]
-  ]
+	]
 }
 // versionNewMax defines the maximum updates to show when upgrading
 const versionNewMax = 10;

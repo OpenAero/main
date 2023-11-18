@@ -14,42 +14,39 @@ function(){
 
 // define worker globals
 var
-	activeForm,
-	alertMsgs = [],
-	alertMsgRules = {},
-	language,
-	fig,
-	arestiToFig,
-	referenceSequence = {},
-	rollFig,
-	rules,
-	activeRules = false,
-	rulesKFigures = {},
-	regexRulesAdditionals = /^(connectors|additionals)=([0-9]+)\/([0-9]+)/,
-	regexUnlinkedRolls = /[,; ](9\.[1-8]\.[0-9.]*;9\.[1-8]\.)|(9\.(9|10)\.[0-9.]*;9\.(9|10))|(9\.1[12]\.[0-9.]*;9\.1[12])/,
-	superFamilies,
-	scriptSrc,
-	userText;
-
-// seqCheckAvail indicates if sequence checking is available for a
-// rule/cat/seq combination
-var
-    seqCheckAvail = {},
-    // variables used for checking sequence validity
-    checkConv = [],        // conversions
-    checkAllowRegex = [],  // regexes for allowed figures
-    checkAllowCatId = [],  // Catalogue Numbers for allowed figures
-    checkCatGroup = [],
-    checkFigGroup = [],
-    checkRule = [],
-    defRules = [],      // default rules in for rule/cat/seq to be applied to a figure check
-    excludeRules = [],     // default rules excluded for this figure check
-    activeRules = false,   // Are rules active?  If so, is object {description: xxx, logo: xxx}
-    figureLetters = '',    // Letters that can be assigned to individual figures
-    additionalFig = {'max': 0, 'totalK': 0},    // Additional figures, max and K
-    ruleSuperFamily = [],  // Array of rules for determining figure SF
-    ruleSeqCheck = [];     // rules for checking complete OpenAero seq string
-
+  activeForm,
+  alertMsgs = [],
+  alertMsgRules = {},
+  language,
+  fig,
+  arestiToFig,
+  referenceSequence = {},
+  rollFig,
+  rules,
+  activeRules = false,
+  rulesKFigures = {},
+  regexRulesAdditionals = /^(connectors|additionals)=([0-9]+)\/([0-9]+)/,
+  regexUnlinkedRolls = /[,; ](9\.[1-8]\.[0-9.]*;9\.[1-8]\.)|(9\.(9|10)\.[0-9.]*;9\.(9|10))|(9\.1[12]\.[0-9.]*;9\.1[12])/,
+  superFamilies,
+  scriptSrc,
+  userText,
+  // seqCheckAvail indicates if sequence checking is available for a
+  // rule/cat/seq combination
+  seqCheckAvail = {},
+  // variables used for checking sequence validity
+  checkConv = [],        // conversions
+  checkAllowRegex = [],  // regexes for allowed figures
+  checkAllowCatId = [],  // Catalogue Numbers for allowed figures
+  checkCatGroup = [],
+  checkFigGroup = [],
+  checkRule = [],
+  defRules = [],      // default rules in for rule/cat/seq to be applied to a figure check
+  excludeRules = [],     // default rules excluded for this figure check
+  activeRules = false,   // Are rules active?  If so, is object {description: xxx, logo: xxx}
+  figureLetters = '',    // Letters that can be assigned to individual figures
+  additionalFig = {'max': 0, 'totalK': 0},    // Additional figures, max and K
+  ruleSuperFamily = [],  // Array of rules for determining figure SF
+  ruleSeqCheck = [];     // rules for checking complete OpenAero seq string
 
 // handle message events
 self.onmessage = function (e) {
@@ -304,7 +301,7 @@ function loadRules (ruleName, catName, programName) {
   additionalFig = {'max': 0, 'totalK': 0};
   figureLetters = '';
   ruleSuperFamily = [];
-  ruleSeqCheck = [];
+  ruleSeqCheck = {};
   
   // Find the sections
   for (var i = 0; i < rules.length; i++) {
@@ -1254,7 +1251,7 @@ function checkRules (callbackId, activeSequenceText, figures, nonArestiRolls, mu
 	  // By default, when there is NO match for any of the directives, an alert is created
       // When the name starts with !, this logic is reversed
 
-      if (ruleSeqCheck !== []) {
+      if (ruleSeqCheck != {}) {
           for (var name in ruleSeqCheck) {
             if ((name[0] != '!' && !ruleSeqCheck[name].regex.test(activeSequenceText)) ||
                 name[0] == '!' && ruleSeqCheck[name].regex.test(activeSequenceText)) {

@@ -205,10 +205,6 @@ lang.de = {
     'zu den <b>erweiterten</b> Einstellungen (zugänlich über den Chrome ' +
     '<i class="material-icons md-18 inText">more_vert</i> button) ' +
     'und klicken Sie das Kontrollkästchen "Fragen, wo gespeichert wird ..."</p>',
-  'downloadLegacy' : 'Sie können Ihre Datei speichern mit ' +
-    'Name, Rechtsklick auf <i>Datei speichern</i>'+
-    'und Auswahl von "Datei speichern als..." oder "Link speichern als...".<br>' +
-    'Ein Dialogfeld zur Ordnerauswahl erscheint dann.',
   'downwind' : 'Rückenwind',
   'downwindEntry' : 'Rückenwindeingang',
   'drawingStyles' : 'Zeichnungsstile',
@@ -285,7 +281,6 @@ lang.de = {
   'flightNr' : 'Flug #',
       'flipYAxis': 'Y-Achse schwenken',
       'flyingMode': 'Flugmodus',
-  'flyingModeWind': 'Wind',
   'forElement' : ' für Element ',
   'formA' : 'Form A',
   'formB' : 'Form B / Wind von rechts',
@@ -757,6 +752,7 @@ lang.de = {
     'wurden nun automatisch korrigiert. Prüfen Sie bitte trotzdem die Sequenz, um ' +
     'die Korrektheit der Ausgangsrichtungen und -fluglagen sicher zu stellen.</p>',
   'wind' : 'Wind/Vent',
+  'windArrow': 'Wind',
   'windIAC' : 'Wind Richtung',
   'wingRocks' : 'Flügel wackeln',
   'xBox' : 'Box Querrichtung heran',

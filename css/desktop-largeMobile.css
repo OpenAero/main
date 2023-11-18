@@ -174,24 +174,24 @@
   max-width: 116px;
 }
 
-#svgContainer {
+#sequenceArea {
   position: absolute;
   right: 0;
   top: 0;
   bottom: -1px;
-  left: 286px;
+  left: 277px;
   padding: 20px 10px 20px 10px;
   background-color: rgba(255, 255, 255, 0.1);
   overflow: auto;
   -webkit-overflow-scrolling: touch;
 }
-#svgContainer.grid {
+#sequenceArea.G {
   padding-right: 280px; /* create margin for gridInfo block */
 }
 #optimalSequenceArea {
     position: absolute;
-    top: 15px;
-    left: 6px;
+    top: 20px;
+    left: 15px;
     width: 560px;
     height: 1080px;
     border: 1px solid rgba(0,128,0,0.5);
@@ -199,7 +199,7 @@
 #optimalSequenceArea.exceeded {
     border: 1px solid #fb8c00;
 }
-#optimalSequenceArea.windL {
+#sequenceArea.C #optimalSequenceArea {
     text-align: right;
 }
 #manual_html_optimal_sequence_area {
@@ -216,21 +216,50 @@
     color: white;
 }
 #optimalSequenceArea.exceeded span {
-    display: inline-block;
+  margin: -21px -1px 0 -1px;
+  padding: 3px;
+  display: inline-block;
+}
+#optimalSequenceArea.exceeded span span {
+  margin: initial;
 }
 #optimalSequenceArea .info {
     display: inline-block;
 }
-#svgContainer svg {
-    position: absolute;
+#sequenceArea #t_windArrow {
+  left: calc(100% - 90px);
 }
-
+#sequenceArea.C #t_windArrow {
+  left: 296px;
+}
+#sequenceArea svg {
+    position: relative;
+    left: 15px;
+    top: 0;
+    padding-top: 18px;
+    padding-right: 140px;
+}
 .sequenceOverlay {
-    left: -10px !important;
+    left: -25px !important;
     top: -20px !important;
     z-index: 1000;
     background-color: rgba(255, 255, 255, 0.8) !important;
     transition: background-color 2000ms ease;
+}
+#miniFormAContainer {
+  position: fixed;
+  z-index: 1;
+  background-color: white;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.5);
+  overflow-y: scroll;
+  width: min-content;
+  right: 16px;
+}
+#miniFormAContainer table {
+  min-width: 108px;
+}
+#miniFormAFooter {
+  font-size: 1.3em;
 }
 #gridInfo {
 	position: absolute;
@@ -341,17 +370,11 @@
   float: left;
 }
 #figureSelector {
-  position: absolute;
   overflow: hidden;
   background-color: white;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
   right: -328px;
-  -moz-transition: all 0.2s ease-in-out;
-  -o-transition: all 0.2s ease-in-out;
-  -webkit-transition: all 0.2s ease-in-out;
-  transition: all 0.2s ease-in-out;
   width: 300px;
-  height: 100%;
   padding: 12px;
   z-index: 6;
 }
@@ -404,6 +427,9 @@
 }
 #figureChooser {
   bottom: 32px;
+}
+#figureChooserTable td {
+  max-width: 58px;
 }
 #figureChooserColumns {
   position: relative;

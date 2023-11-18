@@ -203,7 +203,7 @@ select {
 #leftBlockTop {
 	margin-top: 40px;
 }
-#svgContainer {
+#sequenceArea {
   position: relative;
   overflow: hidden;
   float: left;
@@ -213,14 +213,40 @@ select {
   background-color:#ffffff;
   padding: 4px;
   margin: 0 0 4px 0;
-	text-align: center;
 	transition: all 0.3s ease-in-out;
 }
-#svgContainer.hidden {
+#sequenceArea.hidden {
 	transform: translateX(100vw);
 }
 #optimalSequenceArea {
     display: none;
+}
+#sequenceArea #t_windArrow {
+  top: 102px;
+  left: calc(100% - 85px);
+}
+#sequenceArea.C #t_windArrow {
+  left: 14px;
+}
+#miniFormAContainer {
+  position: absolute;
+  background-color: white;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.5);
+  top: 40px;
+  bottom: 0;
+  right: 8px;
+  max-width: 60px;
+  overflow-y: scroll;
+}
+#miniFormAContainer table {
+  min-width: 56px;
+}
+#miniFormAFooter td {
+  text-align: center !important;
+  font-size: 1.3em;
+}
+#sequenceArea svg {
+  padding-top: 40px;
 }
 #gridInfo {
   display: none;
@@ -232,23 +258,20 @@ select {
 	clear: both;
 }
 #figureSelector {
-  position: absolute;
   overflow-x: hidden;
-  /*overflow-y: scroll;*/
-  -moz-transition: all 0.2s ease-in-out;
-  -o-transition: all 0.2s ease-in-out;
-  -webkit-transition: all 0.2s ease-in-out;
-  transition: all 0.2s ease-in-out;
   width: 100vw;
-  height: 100%;
   font-size: 16px;
   padding: 0;
   background-color: white;
   z-index: 12;
   right: auto;
-  /* left: -340px; */
   left: -110vw;
 	-webkit-overflow-scrolling: touch;
+}
+#figureSelector .info {
+	position: absolute;
+  right: 0;
+  z-index: 999;
 }
 #figureSelector.active {
   left: 0;
@@ -392,19 +415,19 @@ select {
 
 #figureChooser {
   width: 100vw;
+  padding-right: 0;
   margin: 0! important;
   bottom: 0;
 }
 table#figureChooserColumns {
-  position: absolute;
-  top: 164px;
+  position: relative;
   left: 4vw;
   width: 96vw;
 }
 table#figureChooserTable td {
   width: 23vw;
   padding: 1px;
-  border: 1px solid #eee;
+  border: 1px solid #bbb;
   border-radius: 5px;
 }
 table#figureChooserTable td.selected {
@@ -420,8 +443,8 @@ table#figureChooserTable td.selected {
   font-size: 14px;
 }
 #figureSelectorClose {
-	position: absolute;
-	top: 8px;
+	position: relative;
+	top: 0;
 	left: 4px;
 }
 

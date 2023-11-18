@@ -27,6 +27,9 @@
 .fuDesigner #topBlock {
 	height: 30px;
 }
+.fuDesigner #exitDesigner {
+	display: inherit !important;
+}
 #undoRedo {
 	top: 28px;
 }
@@ -67,8 +70,15 @@
 .fuDesigner #main {
 	top: 32px;
 }
-#svgContainer {
+#sequenceArea {
   top: 20px;
+}
+#sequenceArea #t_windArrow {
+  top: 81px;
+}
+#miniFormAContainer {
+  top: 120px;
+  max-height: calc(100% - 130px);
 }
 #printDialog {
 	overflow: scroll; /* prevents width changing when toggling panels */
@@ -184,6 +194,7 @@ i.leftArrow:after, i.rightArrow:after {
   transition: transform 0.2s ease-in-out;
   position:absolute;
   z-index:10;
+  transform-style: preserve-3d;
   -webkit-transform-style: preserve-3d;
   margin-top: -1px; /* prevents menu disappearing on FF */
   box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.3);
@@ -208,6 +219,7 @@ i.leftArrow:after, i.rightArrow:after {
   left:-200px;
   width:200px;
   z-index:10;
+  transform-style: preserve-3d;
   -webkit-transform-style: preserve-3d;
   margin-top: -30px;
 }
@@ -235,6 +247,7 @@ i.leftArrow:after, i.rightArrow:after {
   white-space: nowrap;
   width: initial;
   z-index:10;
+  transform-style: preserve-3d;
   -webkit-transform-style: preserve-3d;
   margin-top: -30px;
 }

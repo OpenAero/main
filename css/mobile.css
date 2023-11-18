@@ -60,7 +60,13 @@ body.menuOpen {
 	top: 56px;
   padding: 0;
 }
-
+#sequenceArea #t_windArrow {
+  top: 61px;
+}
+#miniFormAContainer {
+  top: 100px;
+  max-height: calc(100% - 110px);
+}
 /* menu */
 #hamburgerMenu {
   padding: 16px 16px 12px 16px;
@@ -239,4 +245,7 @@ i.rightArrow:after {
 /* Free Unknown Designer */
 #fuFiguresTable td {
 	padding: 4px;
+}
+.fuDesigner #exitDesigner {
+	display: flex !important;
 }
