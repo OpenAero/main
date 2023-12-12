@@ -206,11 +206,12 @@
                     in a figure where the attitude must change from erect to inverted
                     (or the reverse) a half-roll is shown and will be incorporated when
                     the figure is inserted; this is easily changed for an alternate roll
-                    using the controls. If there are existing figures select the option
+                    using the controls.
+                    <!-- Changed 2024.1.1 -->
+                    If there are existing figures, select the option
                     to tell OpenAero where the new figure should be placed. Figures that are eligible
                     to be placed in the current position (i.e. with the correct entry and/or exit
-                    attitude) are marked by a green line around the top and left sides of
-                    their images.
+                    attitude) are marked by a green outline. Other figures are shown with low contrast.
                 </p>
             </div>
             <div>
@@ -218,9 +219,15 @@
                 <p>
                     When there are Sequence rules active that prohibit the use of
                     certain base figures, those figures will not be shown. It is
-                    possible to show these figures (with a red border) by unselecting
-                    <i>Hide illegal figs</i>.
+                    possible to show these figures (with a light red background) by unselecting
+                    <i>Hide illegal figures</i>.
                 </p>
+                <p>
+                    By default, rarely used figures and their families, are not shown. For example,
+                    all of Family 3 "Combinations of Lines". it is possible to show these figures
+                    by unselecting <i>Hide rarely used figures</i>.
+                </p>
+                <!-- End of changes 2024.1.1 -->
                 <p>
                     When a figure is added or selected it becomes active and is drawn in
                     magenta in the sequence area. The Aresti/K table is always updated to display
@@ -416,9 +423,12 @@
     <div id="selecting_moving" class="documentation">
         <span>
             <h3>Selecting and moving a figure</h3>
+            <!-- Changed 2024.1.1 -->
+            <img src="../img/OA_ReorderFigures.png">
             <p>
-                To select a figure, click on it or select it in the sequence
-                text line. The figure is now magenta and can be edited with the
+                To select a figure, click on it, select it on the figure number/K factor
+                list, or select it in the sequence text line.
+                The figure is now magenta and can be edited with the
                 figure editor. For repositioning it can be dragged anywhere by holding
                 down the mouse button after clicking the figure. Note: this can
                 not be done for figure 1.
@@ -430,6 +440,11 @@
                 clarity only for horizontal moves. This can be done by clicking the
                 <i>Move figure forward</i> button.
             </p>
+            <p>
+                The order of figures in the sequence can be changed by dragging them
+                up or down on the figure number/K factor list.
+            </p>
+            <!-- End of changes 2024.1.1 -->
             <p>
                 <i>TIP</i> : A poorly laid-out sequence that is difficult to
                 follow can be a real problem for judges - time spent creating an

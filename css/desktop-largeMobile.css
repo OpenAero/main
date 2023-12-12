@@ -57,6 +57,7 @@
 }
 #leftBlockContainer {
   position: absolute;
+  z-index: 1;
   overflow-x: hidden;
   overflow-y: auto;
   width: 292px;
@@ -156,11 +157,6 @@
 	margin: 8px 16px 0 0;
 }
 
-/* virtual keyboard */
-#virtualKeyboard {
-  top: 4px;
-  left: 282px;
-}
 #leftBlockTabSelector {
 	position: absolute;
 	z-index: 5;
@@ -185,7 +181,7 @@
   overflow: auto;
   -webkit-overflow-scrolling: touch;
 }
-#sequenceArea.G {
+#mainOverlay.G #sequenceArea {
   padding-right: 280px; /* create margin for gridInfo block */
 }
 #optimalSequenceArea {
@@ -199,7 +195,7 @@
 #optimalSequenceArea.exceeded {
     border: 1px solid #fb8c00;
 }
-#sequenceArea.C #optimalSequenceArea {
+#mainOverlay.C #optimalSequenceArea {
     text-align: right;
 }
 #manual_html_optimal_sequence_area {
@@ -227,9 +223,11 @@
     display: inline-block;
 }
 #sequenceArea #t_windArrow {
+  position: fixed;
+  z-index: 1;
   left: calc(100% - 90px);
 }
-#sequenceArea.C #t_windArrow {
+#mainOverlay.C #t_windArrow {
   left: 296px;
 }
 #sequenceArea svg {
@@ -237,7 +235,7 @@
     left: 15px;
     top: 0;
     padding-top: 18px;
-    padding-right: 140px;
+    padding-right: 200px;
 }
 .sequenceOverlay {
     left: -25px !important;
@@ -417,13 +415,10 @@
 #figureSelector.left .info {
 	float: right;
 }
-#hideIllegalFigures span {
+#hideIllegalFigures span, #hideRarelyUsedFigures span {
   display: inline-block;
   max-width: 246px;
   margin: 8px 4px;
-}
-#hideIllegalFigures .material-switch {
-	float: right;
 }
 #figureChooser {
   bottom: 32px;

@@ -339,7 +339,7 @@ lang.en = {
 'harmony' : 'Harmony',
 'help' : 'Help',
 'hideIllegalFigures' : 'Hide illegal figures',
- //   'iacForms': 'Forms in IAC style',
+'hideRarelyUsedFigures' : 'Hide rarely used figures',
     'iacNoteDownwindEntry' : 'Note Downwind Entry',
 'iacNoteYAxisEntry' : 'Note Y Axis Entry',
 'illegalAtEnd' : 'Illegal figure at the end',

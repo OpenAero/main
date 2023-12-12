@@ -399,7 +399,9 @@ fieldset {
 .input:invalid ~ .bar::before {
   color: red;
 }
-.form-group input:disabled ~ .bar {
+.form-group input:disabled ~ .bar,
+.form-group select:disabled ~ .bar,
+.form-group textarea:disabled ~ .bar {
 	border-bottom: 1px dashed #999;
 }
 
@@ -796,32 +798,6 @@ textarea {
 }
 #exitDesigner {
 	display: none !important;
-}
-/* virtual keyboard */
-#virtualKeyboard {
-  position: absolute;
-  font-size: 24px;
-  text-shadow:-1px -1px white, 1px 1px #ccc;
-  z-index: 5;
-}
-#virtualKeyboard td {
-  border-left: 1px solid #fff;
-  border-top: 1px solid #fff;
-  border-right: 1px solid #bbb;
-  border-bottom: 1px solid #888;
-  border-radius: 4px;
-  width: 32px;
-  height: 32px;
-  text-align: center;
-  background-color: #f4f4f4;
-  opacity: 0.9;
-}
-#virtualKeyboard td.clicked {
-  border-left: 1px solid #bbb;
-  border-top: 1px solid #888;
-  border-right: 1px solid #fff;
-  border-bottom: 1px solid #fff;
-  background-color: #ddd;
 }
 
 #figureSvgContainer {
@@ -2307,6 +2283,9 @@ option.used {
 .figureSelectorOptionsButton.selected {
   border-color: #512da8;
 }
+#hideIllegalFigures .material-switch, #hideRarelyUsedFigures .material-switch {
+	float: right;
+}
 #figureChooser {
   position: relative;
   width: 284px;
@@ -2814,8 +2793,13 @@ table#figureChooserTable div {
     display: inline-block;
 }
 
+.fuDesigner #hideRarelyUsedFigures {
+  position: relative;
+  top: 16px;
+}
+
 .fuDesigner #figureSelectorGroupDiv {
-    margin-top: 16px;
+    margin-top: 12px;
 }
 
 #fuFigures {
@@ -2863,7 +2847,10 @@ table#figureChooserTable div {
     left: calc(100% - 108px);
     transition: all 0.3s ease-in-out;
 }
-#sequenceArea.A #t_windArrow, #sequenceArea.G #t_windArrow, #sequenceArea.A #miniFormAContainer, #sequenceArea.G #miniFormAContainer {
+#mainOverlay.C #flyingModeTop #t_windArrow {
+  left: 4px;
+}
+#mainOverlay.A #t_windArrow, #mainOverlay.G #t_windArrow, #mainOverlay.A #miniFormAContainer, #mainOverlay.G #miniFormAContainer {
   display: none;
 }
 #miniFormAContainer table {
@@ -2872,10 +2859,11 @@ table#figureChooserTable div {
 }
 #miniFormAHeader {
   position: sticky;
+  z-index: 1;
   top: 0;
 }
 #miniFormAFooter td {
-  padding-top: 4px;
+  padding: 3px 3px 0 3px;
 }
 #miniFormA tr {
   position: relative;
@@ -2901,6 +2889,7 @@ table#figureChooserTable div {
   font-weight: bold;
 }
 #miniFormAHeader tr td {
+  padding: 3px;
   background-color: #ffcc80;
   font-weight: bold;
   text-align: left;
@@ -2928,9 +2917,6 @@ tr.insertAfter td {
   margin-top: -24px;
   color: green;
 }
-#flyingMode.windLeft #t_windArrow {
-    left: 4px;
-}
 #t_windArrow:before {
     content: "";
     position: absolute;
@@ -2945,22 +2931,20 @@ tr.insertAfter td {
 #t_windArrow:active, #t_windArrow:hover {
     background-color: #2979ff;
 }
-#sequenceArea.C #t_windArrow:before, #flyingMode.windLeft #t_windArrow:before {
+#mainOverlay.C #t_windArrow:before {
     left: initial;
     right: -24px;
     border-right: initial;
     border-left: 26px solid #2979ff;
 }
 #sequenceArea #t_windArrow {
-  position: fixed;
-  z-index: 1;
   padding: 2px;
 }
 #sequenceArea #t_windArrow:before {
   border-top: 17px solid transparent;
   border-bottom: 17px solid transparent;
 }
-#sequenceArea.C #t_windArrow:before, #flyingMode.windLeft #t_windArrow:before  {
+#mainOverlay.C #t_windArrow:before  {
   left: initial;
   right: -24px;
   border-right: initial;
@@ -2986,10 +2970,10 @@ tr.insertAfter td {
     max-height: 100%;
     display: none;
 }
-#flyingMode.windLeft #flyingModeSequenceFormB {
+#mainOverlay.C #flyingModeSequenceFormB {
     display: none;
 }
-#flyingMode.windLeft #flyingModeSequenceFormC {
+#mainOverlay.C #flyingModeSequenceFormC {
     display: initial;
 }
 

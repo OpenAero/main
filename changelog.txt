@@ -1,12 +1,15 @@
 2024.1.1
-* Improved figure selector
-* Improved mini form A and added drag & drop figure rearranging (Issue #232)
+* Improved figure chooser (Issue #281)
+* Improved mini form A and added drag & drop figure ordering (Issue #232)
 * Disabled interface fading when selecting figure 1, as figure 1 can't be dragged
 * Updated all <script> tags to HTML5 specifications
 * Removed all Chrome app functionality (except deprecation warning) as Chrome app was discontinued in June 2020
 * Refactored much of the code, including removal of pre-HTML5 code
 * Removed version information from before 2019 from config.js
 * Fixed issue where queue would disappear when switching rules with custom K factors
+* Fixed issue with png saving image height
+* Updated CIVA rules and sequences for 2024
+* Moved tablet special keyboard to bottom center
 
 2023.3.16
 * Updated IMAC rules

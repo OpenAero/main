@@ -132,8 +132,8 @@
     <script src="js/rulesWorker.js"></script>
     <!-- sequence rules. Start with general and CIVA, then alphabetical -->
     <script src="js/rules/rules23.js"></script>
-    <script src="js/rules/rules23-civa.js"></script>
-    <script src="js/rules/rules23-glider-civa.js"></script>
+    <script src="js/rules/rules24-civa.js"></script>
+    <script src="js/rules/rules24-glider-civa.js"></script>
     <script src="js/rules/rules23-aac.js"></script>
     <script src="js/rules/rules22-aeci.js"></script>
     <script src="js/rules/rules22-baea.js"></script>
@@ -476,6 +476,11 @@
                         <input type="checkbox" id="hideIllegal" class="material-switch-input" checked tabIndex="-1">
                         <span class="material-switch"></span>
                     </label>
+                    <label id="hideRarelyUsedFigures">
+                        <span class="userText" id="t_hideRarelyUsedFigures"></span>
+                        <input type="checkbox" id="hideRarelyUsed" class="material-switch-input" checked tabIndex="-1">
+                        <span class="material-switch"></span>
+                    </label>
                     <div id="figureSelectorOptionsDiv" class="form-group disableFUdesigner"></div>
                     <div id="figureSelectorGroupDiv" class="form-group">
                         <select id="figureGroup" tabIndex="-1"></select><i class="bar"></i>
@@ -483,6 +488,7 @@
                         <div id="t_switchQueue" class="flatTextButton userText disableFUdesigner"></div>
                         -->
                     </div>
+                    <select id="figureGroupClone" tabIndex="-1" class="noDisplay"></select>
                 </div>
                 <table id="figureChooserColumns">
                     <tr>
@@ -769,24 +775,6 @@
                     <div id="design"><span>Software & design by Ringo Massa</span></div>
                 </div>
             </div>
-            <!-- Virtual keyboard for special characters -->
-            <div id="virtualKeyboard" class="noDisplay">
-                <table>
-                    <tr>
-                        <td>`</td>
-                        <td>'</td>
-                        <td>.</td>
-                        <td>~</td>
-                        <td>+</td>
-                        <td>-</td>
-                        <td>[</td>
-                        <td>]</td>
-                        <td>&lt;</td>
-                        <td>&gt;</td>
-                        <td>^</td>
-                    </tr>
-                </table>
-            </div>
             <!-- Grid info -->
             <div id="gridInfo" class="expansion-panel draggablePanel disableFUdesigner">
                 <span class="contentLabel">
@@ -905,6 +893,24 @@
         <div id="figureSvgContainer">
             <svg xmlns="http://www.w3.org/2000/svg" version="1.2" baseProfile="tiny" id="figureChooserSvg"></svg>
         </div>
+    </div>
+    <!-- Virtual keyboard for special characters -->
+    <div id="virtualKeyboard" class="noDisplay noPrint">
+        <table>
+            <tr>
+                <td>`</td>
+                <td>'</td>
+                <td>.</td>
+                <td>~</td>
+                <td>+</td>
+                <td>-</td>
+                <td>[</td>
+                <td>]</td>
+                <td>&lt;</td>
+                <td>&gt;</td>
+                <td>^</td>
+            </tr>
+        </table>
     </div>
     <!-- overlay div for loading -->
     <div id="loading">

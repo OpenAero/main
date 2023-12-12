@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", load, false);
 function load () {
 	
     // Temporary fix (HACK!) to load appropriate German help windows
-	var settings = JSON.parse(localStorage.getItem('settings'));
+	const settings = JSON.parse(localStorage.getItem('settings'));
 	if (settings && settings.language == 'de') {
 		var page = location.href.split("/").slice(-1)[0].split('#');
 		if (['aresti_system.html','language.html','manual.html'].indexOf(page[0]) >= 0) {
@@ -37,13 +37,11 @@ function load () {
 	document.documentElement.classList.add (window.self == window.top ? "top" : "framed");
 	// do not display nodes with class noUWP on UWP
 	if (window.Windows) {
-		var els = document.getElementsByClassName ('noUWP');
-		for (var i = 0; i < els.length; i++) els[i].classList.add ('noDisplay');
+		document.getElementsByClassName ('noUWP').forEach(el => { el.classList.add ('noDisplay') });
     }
     // do not display nodes with class noIOS on IOS
     if (/i(Pad|Phone|Pod)/i.test(navigator.userAgent)) {
-        var els = document.getElementsByClassName('noIOS');
-        for (var i = 0; i < els.length; i++) els[i].classList.add('noDisplay');
+        document.getElementsByClassName('noIOS').forEach(el => { el.classList.add('noDisplay')});
     }
     //fixAnchors();
 }

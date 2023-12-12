@@ -149,7 +149,6 @@ select {
   position: relative;
   float: left;
   left: 0;
-  /* width: 312px; */
   width: 98%;
   transform: translateX(0);
   transition: all 0.3s ease-in-out;
@@ -173,14 +172,12 @@ select {
 }
 
 #alerts {
-	/* width: 312px; */
-	width: 99%;
+	margin-left: 1%;
+	width: 98%;
 }
 /* virtual keyboard */
 #virtualKeyboard {
   display: none;
-  top: 4px;
-  left: 0;
 }
 
 .tabSelector ul {
@@ -204,11 +201,8 @@ select {
 	margin-top: 40px;
 }
 #sequenceArea {
-  position: relative;
-  overflow: hidden;
-  float: left;
-  left: 0;
-  /* width: 312px; */
+  display: flex;
+  flex-direction: row-reverse;
   width: 98%;
   background-color:#ffffff;
   padding: 4px;
@@ -222,28 +216,28 @@ select {
     display: none;
 }
 #sequenceArea #t_windArrow {
-  top: 102px;
+  top: 48px;
   left: calc(100% - 85px);
 }
-#sequenceArea.C #t_windArrow {
+#sequenceArea.hidden #t_windArrow {
+  opacity: 0;
+}
+#mainOverlay.C #t_windArrow {
   left: 14px;
 }
 #miniFormAContainer {
-  position: absolute;
   background-color: white;
   box-shadow: 0 3px 6px rgba(0,0,0,0.5);
-  top: 40px;
-  bottom: 0;
-  right: 8px;
+  margin: 40px 6px 0 4px;
   max-width: 60px;
-  overflow-y: scroll;
+  height:fit-content;
 }
 #miniFormAContainer table {
   min-width: 56px;
 }
 #miniFormAFooter td {
   text-align: center !important;
-  font-size: 1.3em;
+  font-size: 1.2em;
 }
 #sequenceArea svg {
   padding-top: 40px;
@@ -282,13 +276,10 @@ select {
 #hideIllegalFigures {
 	display: flex;
 }
-#hideIllegalFigures span {
+#hideIllegalFigures span, #hideRarelyUsedFigures span {
   display: inline-block;
   flex: 1;
   margin: 8px 4px;
-}
-#hideIllegalFigures span.material-switch {
-	float: right;
 }
 /* columns */
 .content3cols {
@@ -562,10 +553,6 @@ table#figureChooserTable td.selected {
 .fuDesigner #figureString {
     left: 172px;
     top: 232px;
-}
-
-.fuDesigner #figureChooserColumns {
-    top: 94px;
 }
 
 .fuDesigner .button.small {

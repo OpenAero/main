@@ -1475,12 +1475,12 @@ function checkAlert (value, type, figNr, rule) {
 }.toString(), ')()'], {type: 'application/javascript'}));
 
 // activate Worker
-var rulesWorker = new Worker (blobURL);
+const rulesWorker = new Worker (blobURL);
 delete blobURL; // clean up
 
 // workerCallback is a global used for callback functions of form
 // workerCallback [id] = function
-var workerCallback = [];
+const workerCallback = [];
 
 // set up message receiving from main code
 rulesWorker.onmessage = function (e) {

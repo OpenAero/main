@@ -310,6 +310,7 @@ lang.fr = {
 'harmony' : 'Harmonie',
 'help' : 'Aide',
 'hideIllegalFigures' : 'Masquer les figures non autorisées',
+'hideRarelyUsedFigures' : 'Masquer les figures rarement utilisés',
 'iacForms' : 'Formes au style IAC',
 'illegalAtEnd' : 'Figure illégale à la fin',
 'illegalBefore' : 'Figure illégale avant la figure',

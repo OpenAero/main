@@ -40,14 +40,17 @@ This file is part of OpenAero.
  A new x must be used for versions that create sequences not
  fully backward compatible with the previous version
 */
-const version = '2023.3.17';
-/* versionNew is an object that contains version update information
-   The structure is {vvv : [[ttt, n], ...], ...} , where
-   vvv = version number
-   ttt = update text
-   n   = importance (higher = more important)
-*/
+const version = '2024.1.1';
+// versionNew is an object that contains version update information
+// The structure is {vvv : [[ttt, n], ...], ...} , where
+// vvv = version number
+// ttt = update text
+// n   = importance (higher = more important)
 const versionNew = {
+  '2024.1.1': [
+    ['Added 2024 CIVA Power and Glider rules and sequences', 4],
+    ['Many interface improvements', 4]
+  ],
   '2023.3.11': [
     ['Improved several parts of the interface', 3]
   ],
@@ -230,20 +233,20 @@ const sequenceXMLlabels = [
   'lock_sequence',
   'pilot_id',
   'flight_nb'
-  ];
+];
 
-/**********************************************************************
- * 
- * Sequence drawing configuration
- * 
- * Define lengths, radii etc
- * 
- **********************************************************************/
+// **********************************************************************
+// * 
+// * Sequence drawing configuration
+// * 
+// * Define lengths, radii etc
+// * 
+// **********************************************************************
 
 // basic line element size
-var lineElement = 10;
+let lineElement = 10; // Can be changed by scaling
 // basic curve size
-var curveRadius = 40;
+let curveRadius = 40; // Can be changed by scaling
 const rollSymbolSizes = {'medium': 8, 'large': 12};
 function setRollSymbolSizes (sizeDescription) {
 	window.rollSymbolSize = rollSymbolSizes[sizeDescription];
@@ -294,11 +297,9 @@ const flattenTurn = 0.7;
 // set scaleLine object to prevent calculations in makeLine
 const scaleLine = {'x':1, 'y':1};
 // define whether to show numbers in circles
-var numberInCircle = false;
+let numberInCircle = false;
 // define whether to show curves in perspective on Y axis
-var curvePerspective = true;
-// newTurnPerspective is a checkbox in settings
-var newTurnPerspective;
+const curvePerspective = true;
 // how far apart the starts of figures should at least be
 const minFigStartDist = lineElement * 3;
 const minFigStartDistSq = minFigStartDist * minFigStartDist;
@@ -311,16 +312,12 @@ const separateMargin = 4;
  * 
  **********************************************************************/
 
-// define if we show an error when running from file://
-const presentFileError = false;
-// show mini Form A on Form B and C
-var miniFormA = true;
-// define default form style (civa, iac or imac)
-var formStyle = 'civa';
-// define default pattern for figure images saved in ZIP
-var zipImageFilenamePattern = '%location %category %program %pilot Form %form_fig_%figure';
-// define which settings will be saved in localStorage and sequence XML
-const saveSettings = [
+const
+  // define if we show an error when running from file://
+  presentFileError = false,
+  // define which settings will be saved in localStorage and sequence XML
+  saveSettings = [
+  'hideRarelyUsed',
   'language',
   'marginBottom',
   'marginLeft',
@@ -340,33 +337,68 @@ const saveSettings = [
   'smallMobile',
   'rollFontSize',
   'rollSymbolSize',
-  'nonArestiRolls'];
-// define which settings will be loaded from sequence
-const loadSettings = [
+  'nonArestiRolls'],
+  // define which settings will be loaded from sequence
+  loadSettings = [
   'numberInCircle',
   'rollFontSize',
-  'nonArestiRolls'];
-// define default language
-const defaultLanguage = 'en';
-// define language object
-const lang = {};
-// entryOptions are in reverse order of displayed
-// They are also hardcoded in several locations in main.js!
-const entryOptions = {
-  'eja': 'xBoxEntryAway',
-  'ej': 'xBoxEntry',
-  'ed': 'downwindEntry',
-  '': 'upwindEntry'
-};
-// how many rolls per roll position
-var rollsPerRollElement = 2;
+  'nonArestiRolls'],
+  // define default language
+  defaultLanguage = 'en';
+  // define language object
+  lang = {},
+  // entryOptions are in reverse order of displayed
+  // They are also hardcoded in several locations in main.js!
+  entryOptions = {
+    'eja': 'xBoxEntryAway',
+    'ej': 'xBoxEntry',
+    'ed': 'downwindEntry',
+    '': 'upwindEntry'
+  },
+  // how many rolls per roll position
+  rollsPerRollElement = 2,
+  // Define rarely used figures for filtering in figure chooser
+  rarelyUsed = [
+    // Single Lines: rows 8 and 9
+    /^1\.1\.[89]/,
+    // Two Lines: rows 9 through 16
+    /^1\.2\.(9|1[0-9])/,
+    // Three Lines: rows 5 through 8
+    /^1\.3\.[5-8]/,
+    // Combinations of lines
+    /^3/,
+    // Four Line Stall Turns
+    /^5\.4/,
+    // Reversing Whole Loops
+    /^7\.4\.([7-9]|1[0-4])/,
+    // Vertical Ses
+    /^7\.5\.(9|10)/,
+    // Vertical 8s
+    /^7\.8\.(1[7-9]|2)/,
+    // Diagonal Humpty Bumps: rows 5 through 12, rows 21 through 28
+    /^8\.4\.([5-9]|1[0-2]|2[1-8])/,
+    // Reversing P Loops
+    /^8\.6\.(9|1[0-6])/,
+    // Reversing 1 1/4 Loops
+    /^8\.10/,
+    // Non-Aresti catalog
+    /^0\.[0-9]+\./
+  ];
+
+let
+  // show mini Form A on Form B and C
+  miniFormA = true,
+  // define default form style (civa, iac or imac)
+  formStyle = 'civa',
+  // define default pattern for figure images saved in ZIP
+  zipImageFilenamePattern = '%location %category %program %pilot Form %form_fig_%figure';
 
 // *************
 // Define styles and font sizes
 // *************
 
 // Default roll font size
-var rollFontSize = 20;
+let rollFontSize = 20;
 // Roll sizes. User displayed names are set through index.html and
 // language files
 const rollFont = {'small': 15, 'medium': 20, 'large': 25};
@@ -530,13 +562,14 @@ const rollTypes = [
   '9:2',
   '22:2x2',
   '32:3x2',
-  '42:4x2'];
-for (var i = 2; i < 9; i++) {
-  rollTypes.push(i + '4:' + i + 'x4');
+  '42:4x2'
+];
+for (let i = 2; i < 9; i++) {
+  rollTypes.push(`${i}4:${i}x4`);
 }
 rollTypes.push('8:2x8');
-for (var i = 2; i < 9; i++) {
-  rollTypes.push((i*2) + '8:' + (i*2) + 'x8');
+for (let i = 2; i < 9; i++) {
+  rollTypes.push(`${i*2}8:${i*2}x8`);
 }
 const posFlickTypes = [
   '2f:1/2 pos flick',
@@ -573,11 +606,11 @@ const gliderRollTypes = [
   '01:1 Slow Roll',
   '06:1 1/2 Slow Roll'];
 
-/**********************************************************************
- * 
- * Sequence string configuration
- * 
- **********************************************************************/
+// **********************************************************************
+// * 
+// * Sequence string configuration
+// * 
+// **********************************************************************
  
 // ***************
 // Define patterns for the user's OpenAero drawing string
@@ -710,11 +743,10 @@ const
 	regexTextBlock = /^"[^"]*"$/,
 	regexUnlinkedRolls = /[,; ](9\.[1-8]\.[0-9.]*;9\.[1-8]\.)|(9\.(9|10)\.[0-9.]*;9\.(9|10))|(9\.1[12]\.[0-9.]*;9\.1[12])/,
 	
-	/* Define entry/exit speeds of figures as follows:
-	* L for all descending entries and climbing exits
-	* H for all climbing entries and all descending exits
-	* N for all others
-	*/
+	// Define entry/exit speeds of figures as follows:
+	// L for all descending entries and climbing exits
+	// H for all climbing entries and all descending exits
+	// N for all others
 	regexSpeedConv = {
 	  'v' : /d?[vzmcpro]|dd|d\^[DVZMCPRO]/g,
 	  'V' : /D?[VZMCPRO]|DD|D\^[dvzmcpro]/g
@@ -741,32 +773,8 @@ const
 	    }
 	  }
 	};
-	
-/* optionally, count 45 only as N. However, as this is decided on base
- * figure level, there is no way to differentiate e.g. 45 up with 4x4
- * which is clearly a H
-
-  power: {
-    entry: {
-      L : /^(\+([DV]|\^[dv])|-([dv]|\^[DV]))/,
-      H : /^(\+(v|\^V)|-(V|\^v))/
-    },
-    exit: {
-      L : /(([V]|[v]\^)\+)|(([v]|[V]\^)-)$/,
-      H : /(([dv]|[DV]\^)\+)|(([DV]|[dv]\^)-)$/
-    }
-  }
-
- */
+// end regex definitions
   
-  /** end regex definitions */
-  
-/**********************************************************************
- * 
- * Flag configuration
- * 
- **********************************************************************/
-
 // The flags global will hold all country flags as base64 PNG images
 // Flags are courtesy of www.icondrawer.com
 
@@ -1041,7 +1049,7 @@ const iocCountries = {"AD":"AND","AE":"UAE","AF":"AFG","AG":"ANT",
   "ZM":"ZAM","ZW":"ZIM"};
 // also for key and value reversed
 const iocCountriesReverse = {}; 
-for (key in iocCountries) iocCountriesReverse[iocCountries[key]] = key;
+for (let key in iocCountries) iocCountriesReverse[iocCountries[key]] = key;
 
 // define iso countries for flags
 const isoCountries = {"AD":"AND","AE":"ARE","AF":"AFG","AG":"ATG",
@@ -1088,4 +1096,4 @@ const isoCountries = {"AD":"AND","AE":"ARE","AF":"AFG","AG":"ATG",
   "ZM":"ZMB","ZW":"ZWE"};
 // also for key and value reversed
 const isoCountriesReverse = {}; 
-for (key in isoCountries) isoCountriesReverse[isoCountries[key]] = key;
+for (let key in isoCountries) isoCountriesReverse[isoCountries[key]] = key;

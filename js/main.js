@@ -30,6 +30,7 @@ if (!window.BlobBuilder && window.WebKitBlobBuilder) {
 if (!window.requestFileSystem && window.webkitRequestFileSystem) {
     window.requestFileSystem = window.webkitRequestFileSystem;
 }
+
 // interval id
 var intervalID = [];
 
@@ -733,8 +734,11 @@ if (typeof module !== "undefined" && module.exports) {
     });
 }
 
-/* HTMLCanvasElement.toBlob() polyfill
- * Needed for Microsoft Edge 2020 */
+// Nodelist.forEach polyfill
+window.NodeList && !NodeList.prototype.forEach && (NodeList.prototype.forEach = Array.prototype.forEach);
+
+// HTMLCanvasElement.toBlob() polyfill
+// Needed for Microsoft Edge 2020
 if (!HTMLCanvasElement.prototype.toBlob) {
     Object.defineProperty(HTMLCanvasElement.prototype, 'toBlob', {
         value: function (callback, type, quality) {
@@ -933,7 +937,6 @@ var iosDragDropShim = {
         this.dragData = {};
         this.dragDataTypes = [];
         this.el = el || event.target;
-        console.log(this.el);
         if (iosDragDropShim.copy) {
             var origPos = this.el.getBoundingClientRect();
             var newNode = this.el.cloneNode(true);
@@ -1687,14 +1690,22 @@ function newSvg() {
 // rebuildSequenceSvg deletes and recreates the svg that holds the sequence
 // SVGRoot is a global SVG object
 function rebuildSequenceSvg() {
-    var container = $("sequenceArea");
-    container.childNodes.forEach(c => {
+    // Save the current width and height to prevent "blinking"
+    // while building the new sequence svg
+    let width, height;
+    if (SVGRoot) {
+        width = SVGRoot.getAttribute('width');
+        height = SVGRoot.getAttribute('height');
+    }
+    $("sequenceArea").childNodes.forEach(c => {
         if (/svg/i.test(c.tagName)) c.remove();
     });
     SVGRoot = newSvg();
     SVGRoot.setAttribute("xmlns:xlink", xlinkNS);
     SVGRoot.setAttribute("id", "sequenceSvg");
     SVGRoot.setAttribute("viewBox", "0 0 800 600");
+    if (width) SVGRoot.setAttribute('width', width);
+    if (height) SVGRoot.setAttribute('height', height);
     SVGRoot.setAttribute("viewport-fill", "white");
     // enable figure selection and drag&drop on all forms except A
     if (activeForm != 'A') {
@@ -1711,7 +1722,7 @@ function rebuildSequenceSvg() {
         SVGRoot.addEventListener('mouseup', Drop, false);
     }
 
-    container.appendChild(SVGRoot);
+    $("sequenceArea").appendChild(SVGRoot);
 
     // these svg points hold x and y values...
     // very handy, but they do not display on the screen
@@ -2217,34 +2228,35 @@ if (!(false && 'options' in document.createElement('datalist'))) {
 // selectTab allows us to select different tabbed pages
 // 'e' is either the tab object or a tab id
 function selectTab(e) {
-    var li = e.target ? this : $(e);
+    const li = e.target ? this : $(e);
     // make sure we only select tabs
     if (!li.id.match(/^tab-/)) return;
     // check if tabbing in leftBlock, for alertBox slide
-    var leftBlock = li.id.match(/^tab-(sequenceInfo|figureInfo|sequenceArea)$/);
-    var tab = $(li.id.replace('tab-', ''));
-    var ul = li.parentNode;
-    var list = ul.getElementsByTagName('li');
+    const leftBlock = li.id.match(/^tab-(sequenceInfo|figureInfo|sequenceArea)$/);
+    const tab = $(li.id.replace('tab-', ''));
+    var rect;
     // unselect all tabs
-    for (let i = list.length - 1; i >= 0; i--) {
+    li.parentNode.querySelectorAll('li').forEach (l => {
         // only do something when the tab is displayed
-        if (!list[i].classList.contains('noDisplay')) {
-            if (leftBlock && list[i].classList.contains('activeTab')) {
-                var rect = $(list[i].id.replace('tab-', '')).getBoundingClientRect();
+        if (!l.classList.contains('noDisplay')) {
+            if (leftBlock && l.classList.contains('activeTab')) {
+                rect = $(l.id.replace('tab-', '')).getBoundingClientRect();
             }
-            list[i].classList.remove('activeTab');
-            list[i].classList.add('inactiveTab');
+            l.classList.remove('activeTab');
+            l.classList.add('inactiveTab');
             // hide the tab by using display:hidden
             // so any data is still accessible
-            var hideTab = $(list[i].id.replace('tab-', ''));
+            var hideTab = $(l.id.replace('tab-', ''));
             if (hideTab) {
                 hideTab.classList.add('hidden');
                 if (tab.id === 'sequenceArea') {
                     hideTab.classList.add('left');
-                } else hideTab.classList.remove('left');
+                } else {
+                    hideTab.classList.remove('left');
+                }
             }
         }
-    }
+    });
 
     // some special changes when in smallMobile fuDesigner
     if (platform.smallMobile && activeForm == 'FU') {
@@ -2926,7 +2938,7 @@ function makeTurnArc(rad, startRad, stopRad, paths) {
 
     var sign = (rad >= 0) ? 1 : -1;
 
-    if (!newTurnPerspective.checked) {
+    if (!$('newTurnPerspective').checked) {
         // calculate where we are in the ellipse
         var radEllipse = Math.atan(-1 / (Math.tan(startRad) / flattenTurn));
         // as the atan function only produces angles between -PI/2 and PI/2 we
@@ -2994,7 +3006,7 @@ function makeTurnDots(rad, startRad, stopRad, paths) {
     stopRad = ((stopRad % Math.Tau) + Math.Tau) % Math.Tau;
 
     var sign = (rad >= 0) ? 1 : -1;
-    if (!newTurnPerspective.checked) {
+    if (!$('newTurnPerspective').checked) {
         // calculate where we are in the ellipse
         var radEllipse = Math.atan(-1 / (Math.tan(startRad) / flattenTurn));
         // as the atan function only produces angles between -PI/2 and PI/2
@@ -3044,7 +3056,7 @@ function makeTurnDots(rad, startRad, stopRad, paths) {
 // makeTurnRoll creates rolls in rolling turns. Basically a minimal version of makeRoll
 // param is the amount of roll degrees
 function makeTurnRoll(param, rad) {
-    if (!!newTurnPerspective.checked) {
+    if ($('newTurnPerspective').checked) {
         // Define the size of the arrow and its tip
         var arrowTipWidth = 5;
         var arrowTipLength = Math.PI / 4.5;
@@ -3058,7 +3070,7 @@ function makeTurnRoll(param, rad) {
     // calculate sin and cos for rad once to save calculation time
     var radSin = Math.sin(rad);
     var radCos = Math.cos(rad);
-    if (!newTurnPerspective.checked) {
+    if (!$('newTurnPerspective').checked) {
         // Make the tip shape
         var
             radPoint = rad + sign * (Math.PI / 3.5),
@@ -3190,7 +3202,7 @@ function makeTurn(draw) {
         var stopRad = dirAttToXYAngle(Direction + (sign * extent), newAttitude);
         var startRad = dirAttToXYAngle(Direction, Attitude);
     } else {
-        if (!newTurnPerspective.checked) {
+        if (!$('newTurnPerspective').checked) {
             var stopRad = dirAttToAngle(Direction + (sign * extent), newAttitude);
             var startRad = dirAttToAngle(Direction, Attitude);
         } else {
@@ -3248,7 +3260,7 @@ function makeTurn(draw) {
             paths = makeTurnDots(sign * (Math.Tau - rad), stopRad, startRad, paths);
             // build turn extent text with degree sign in unicode
             // not always exactly centered: fixme: improve code
-            if (!newTurnPerspective.checked) {
+            if (!$('newTurnPerspective').checked) {
                 var dx = -sign * (Math.sin(stopRad)) * curveRadius;
                 var dy = -sign * (Math.cos(stopRad)) * curveRadius * flattenTurn;
             } else {
@@ -4397,15 +4409,15 @@ function drawLine(x, y, dx, dy, styleId, svg) {
 // drawRectangle draws a rectangle at position x, y in style styleId
 // When an svg object is provided, it will be used i.s.o. the standard
 // sequenceSvg
+// If style[styleId] does not exist, use styleId as style directly
 // The function returns the drawn rectangle
-function drawRectangle(x, y, width, height, styleId, svg) {
-    svg = svg || SVGRoot.getElementById('sequence');
-    var path = document.createElementNS(svgNS, "rect");
+function drawRectangle(x, y, width, height, styleId = '', svg = SVGRoot.getElementById('sequence')) {
+    const path = document.createElementNS(svgNS, "rect");
     path.setAttribute('x', x);
     path.setAttribute('y', y);
     path.setAttribute('width', width);
     path.setAttribute('height', height);
-    path.setAttribute('style', style[styleId]);
+    path.setAttribute('style', style[styleId] || styleId);
     svg.appendChild(path);
     return path;
 }
@@ -4542,7 +4554,6 @@ function doOnLoad() {
     sportingClass = $('class');
     rulesWorker.postMessage({ action: 'sportingClass', class: sportingClass.value });
     fileName = $('fileName');
-    newTurnPerspective = $('newTurnPerspective');
 
     // Cordova app settings
     if (platform.cordova) {
@@ -5124,6 +5135,12 @@ function addEventListeners() {
     sequenceText.addEventListener('blur', virtualKeyboard, false);
 
     // virtual keyboard
+    if (window.visualViewport) {
+        window.visualViewport.addEventListener("resize", () => {
+            $('virtualKeyboard').style.top = window.visualViewport.height - 42 + 'px';
+            $('virtualKeyboard').style.bottom = 'auto';
+        });
+    }
     $('virtualKeyboard').addEventListener('mousedown', clickVirtualKeyboard, false);
     $('virtualKeyboard').addEventListener('mouseup', releaseVirtualKeyboard, false);
 
@@ -5219,7 +5236,8 @@ function addEventListeners() {
         helpWindow('doc/manual.html#adding_a_figure', 'Adding a figure');
     }, false);
     $('figureStringInput').addEventListener('input', changeFigureString, false);
-    $('hideIllegal').addEventListener('change', changeHideIllegal, false);
+    $('hideIllegal').addEventListener('change', changeHideFigs, false);
+    $('hideRarelyUsed').addEventListener('change', changeHideFigs, false);
     $('hideFigureSelector').addEventListener('mousedown', hideFigureSelector, false);
     $('figureGroup').addEventListener('change', changeFigureGroup, false);
 
@@ -5294,7 +5312,7 @@ function addEventListeners() {
     $('stylingFile').addEventListener('change', () => {
         openFile(this.files[0], 'Styling');
     }, false);
-    newTurnPerspective.addEventListener('change', draw, false);
+    $('newTurnPerspective').addEventListener('change', draw, false);
     $('t_restoreDefaultSettings').addEventListener('mousedown', restoreDefaultSettings, false);
 
     $('t_settingsClose').addEventListener('mousedown', () => { settingsDialog() }, false);
@@ -5799,9 +5817,9 @@ function addRollSelectElement(figNr, rollEl, elNr, parent) {
     // assign pattern, handle special case where (non-standard) 28 is used i.s.o. 8
     if (thisRoll.pattern[elNr]) pattern = thisRoll.pattern[elNr].replace(/^28$/, '8');
 
-    // build the slow roll options
-    for (let i = 0; i < rollTypes.length; i++) {
-        var roll = rollTypes[i].split(':');
+    // build the aileron roll options
+    rollTypes.forEach ((r, i) => {
+        let roll = r.split(':');
         // only show no roll, active roll and valid rolls
         if (i == 0 || roll[0] == pattern || !ruleCheckRolls ||
             $('nonArestiRolls').checked ||
@@ -5810,7 +5828,7 @@ function addRollSelectElement(figNr, rollEl, elNr, parent) {
             if (roll[0] == pattern) html += ' selected="selected"';
             html += `>${roll[1]}</option>`;
         }
-    }
+    });
 
     // Build the positive flick options. Also allow opposite attitude as
     // flick may have been proceeded by half roll, except on vertical
@@ -5819,9 +5837,9 @@ function addRollSelectElement(figNr, rollEl, elNr, parent) {
     var oppAttitude = (thisRoll.negLoad ? '+' : '-') +
         rollAttitudes[(thisRoll.attitude + 180) % 360];
 
-    for (let i = 0; i < posFlickTypes.length; i++) {
-        var
-            roll = posFlickTypes[i].split(':'),
+    posFlickTypes.forEach(r => {
+        let
+            roll = r.split(':'),
             rollPattern = roll[0].replace(/^1/, '');
 
         if (rollPattern == pattern || !ruleCheckRolls ||
@@ -5833,13 +5851,13 @@ function addRollSelectElement(figNr, rollEl, elNr, parent) {
             if (rollPattern == pattern) html += ' selected="selected"';
             html += `>${roll[1]}</option>`;
         }
-    }
+    });
 
     // Build the negative flick options. Also allow opposite attitude as
     // flick may have been proceeded by half roll, except on vertical
-    for (let i = 0; i < negFlickTypes.length; i++) {
-        var
-            roll = negFlickTypes[i].split(':'),
+    negFlickTypes.forEach (r => {
+        let
+            roll = r.split(':'),
             rollPattern = roll[0].replace(/^1/, '');
         if (rollPattern == pattern || !ruleCheckRolls ||
             $('nonArestiRolls').checked ||
@@ -5850,16 +5868,17 @@ function addRollSelectElement(figNr, rollEl, elNr, parent) {
             if (rollPattern == pattern) html += ' selected="selected"';
             html += `>${roll[1]}</option>`;
         }
-    }
+    });
+
     // add spins when rollcode = 4 AND in first element, OR nonArestiRolls
     // is enabled
     thisAttitude = rollAttitudes[thisRoll.attitude];
     if ((fig[figures[figNr].figNr].rolls[rollEl] === 4 && (elNr === 0)) ||
         $('nonArestiRolls').checked) {
         // build the positive spin options
-        for (let i = 0; i < posSpinTypes.length; i++) {
-            var
-                roll = posSpinTypes[i].split(':'),
+        posSpinTypes.forEach (s => {
+            let
+                roll = s.split(':'),
                 rollPattern = roll[0].replace(/^1/, '');
             if (rollPattern == pattern ||
                 $('nonArestiRolls').checked ||
@@ -5869,11 +5888,11 @@ function addRollSelectElement(figNr, rollEl, elNr, parent) {
                 if (rollPattern == pattern) html += ' selected="selected"';
                 html += `>${roll[1]}</option>`;
             }
-        }
+        });
         // build the negative spin options
-        for (let i = 0; i < negSpinTypes.length; i++) {
-            var
-                roll = negSpinTypes[i].split(':'),
+        negSpinTypes.forEach (s => {
+            let
+                roll = s.split(':'),
                 rollPattern = roll[0].replace(/^1/, '');
             if (rollPattern == pattern ||
                 $('nonArestiRolls').checked ||
@@ -5883,12 +5902,12 @@ function addRollSelectElement(figNr, rollEl, elNr, parent) {
                 if (rollPattern == pattern) html += ' selected="selected"';
                 html += `>${roll[1]}</option>`;
             }
-        }
+        });
     }
     // build the glider slow roll options
     if (sportingClass.value === 'glider') {
-        for (let i = 0; i < gliderRollTypes.length; i++) {
-            var roll = gliderRollTypes[i].split(':');
+        gliderRollTypes.forEach (r => {
+            var roll = r.split(':');
             if (roll[0] == pattern || !ruleCheckRolls ||
                 $('nonArestiRolls').checked ||
                 (rollFig[thisAttitude + roll[0]] &&
@@ -5897,7 +5916,7 @@ function addRollSelectElement(figNr, rollEl, elNr, parent) {
                 if (roll[0] == pattern) html += ' selected="selected"';
                 html += `>${roll[1]}</option>`;
             }
-        }
+        });
     }
 
     html += '</select><i class="bar"></i></div>';
@@ -6257,7 +6276,11 @@ function loadPrintDialogStorage() {
         setPilotCardForm();
     }
 
-    if (storage) getLocal('printDialog', f);
+    if (storage) {
+        getLocal('printDialog', f);
+    } else {
+        setPilotCardForm();      
+    }
 }
 
 // changeLanguage will change the interface language
@@ -6447,19 +6470,19 @@ function changePilotCardPercent() {
 }
 
 // setPrintPageSet is activated when changing printPageSet
-function setPrintPageSet() {
+function setPrintPageSet() { 
     updatePrintPageSetValue();
     updatePrintPageSetLayout();
-    var checked = $('printPageSet').checked;
+    saveImageSizeAdjust();
 
     $('printForms').childNodes.forEach(function (el) {
         if (el.classList && el.id !== 'sectionPrintPageSet') {
-            if (checked) {
+            if ($('printPageSet').checked) {
                 el.classList.add('hidden');
             } else el.classList.remove('hidden');
         }
     });
-    if (checked) {
+    if ($('printPageSet').checked) {
         $('printPageSetLayout').classList.remove('noDisplay');
         $('t_printPageSetHidesFormSelectors').classList.remove('noDisplay');
         $('printPageSetString').removeAttribute('disabled')
@@ -6785,13 +6808,7 @@ function updateFigureOptions(figureId) {
             $('switchFirstRoll').classList.add('disable');
         }
         // set switchX
-        /** Need to improve this
-        if (f.entryAxisFormB) {
-                var el = $('switchY');
-            } else var el = $('switchX');
-            */
         var el = $('switchX');
-        //el.classList.remove ('disable');
         if (f.switchX) {
             el.classList.add('on');
         } else if (f.switchX === false) {
@@ -6806,13 +6823,7 @@ function updateFigureOptions(figureId) {
             el.classList.add('disableFUfig');
         }
         // set switchY
-        /** Need to improve this
-        if (f.entryAxisFormB) {
-                var el = $('switchX');
-            } else var el = $('switchY');
-            */
         var el = $('switchY');
-        //el.classList.remove ('disable');
         if (f.switchY) {
             el.classList.add('on');
         } else if (f.switchY === false) {
@@ -8413,8 +8424,11 @@ function parseFiguresFile() {
             }
         }
     }
-    // select first figure group
-    if (figGroupSelector) figGroupSelector.value = 1;
+    // select first figure group and create a clone of HTML content
+    if (figGroupSelector) {
+        figGroupSelector.value = 1;
+        $('figureGroupClone').innerHTML = figGroupSelector.innerHTML;
+    }
 }
 
 // getRuleName will create the correct, active, ruleName
@@ -8989,18 +9003,35 @@ function changeFigureString(e) {
     this.focus();
 }
 
-// changeHideIllegal is executed when the hideIllegal checkbox is toggled
-function changeHideIllegal() {
+// changeHideFigs is executed when the hideIllegal or hideRarelyUsed
+// checkbox is toggled
+function changeHideFigs() {
     availableFigureGroups();
     changeFigureGroup();
+    saveSettingsStorage();
+}
+
+// Function to check if the figure is in rarelyUsed
+function checkRarelyUsed (fig) {
+    if ($('hideRarelyUsed').checked == true) {
+        for (let regex of rarelyUsed) {
+            if (regex.test(fig.aresti)) return true;
+        }
+    }
+    return false;
 }
 
 // availableFigureGroups selects the available figure groups. May be
 // limited by active rules.
 function availableFigureGroups() {
     const
-        options = $('figureGroup').childNodes,
-        firstGroup = (activeForm === 'FU') ? 0 : 1;
+        options = $('figureGroupClone').childNodes,
+        firstGroup = (activeForm === 'FU') ? 0 : 1,
+        value = $('figureGroup').value;
+
+    // Clear figureGroup <select>
+    removeChildNodes($('figureGroup'));
+
     // hide all options, except rolls and spins
     for (let i = firstGroup; i < options.length; i++) {
         if (figGroup[i].family != 9) {
@@ -9008,17 +9039,20 @@ function availableFigureGroups() {
             options[i].disabled = 'disabled';
         }
     }
-    if ((Object.keys(checkAllowCatId).length > 0) &&
+    if ($('hideRarelyUsed').checked == true || (
+        (Object.keys(checkAllowCatId).length > 0) &&
         activeRules &&
         ($('hideIllegal').checked == true) &&
-        (activeForm !== 'FU')) {
-        // now show all options that are applicable
-        for (let i in fig) {
-            if (fig[i].aresti in checkAllowCatId) {
-                options[fig[i].group].classList.remove('noDisplay');
-                options[fig[i].group].disabled = false;
+        (activeForm !== 'FU'))) {
+        // show all options that are applicable
+        fig.forEach (f => {
+            if (Object.keys(checkAllowCatId).length === 0 || f.aresti in checkAllowCatId) {
+                if (!checkRarelyUsed(f)) {
+                    options[f.group].classList.remove('noDisplay');
+                    options[f.group].disabled = false;
+                }
             }
-        }
+        });
     } else if (activeForm !== 'FU') {
         // show all options
         for (let i = 1; i < options.length; i++) {
@@ -9032,11 +9066,19 @@ function availableFigureGroups() {
             options[i].disabled = false;
         }
     }
+
+    // Copy all visible nodes from the clone to the original.
+    // We need this step because Safari still shows options with
+    // 'display: none' in <select> lists
+    options.forEach (o => {
+        if (!o.disabled) $('figureGroup').appendChild(o.cloneNode(true));
+    });
+    $('figureGroup').value = value;
 }
 
 // changeFigureGroup updates the figure group in the figure chooser
 function changeFigureGroup() {
-    var
+    let
         e = $('figureGroup'),
         arestiDraw = [],
         arestiRow = 0,
@@ -9249,9 +9291,7 @@ function changeFigureGroup() {
 function markFigures() {
     markUsedFigures();
     markMatchingFigures();
-    // for Free (Un)known designer we only choose Additional figures. All
-    // Aresti figures are allowed
-    if (activeForm !== 'FU') markNotAllowedFigures();
+    markNotAllowedFigures(); // Includes marking of rarelyUsed
 }
 
 // markUsedFigures marks figures that are already in the sequence
@@ -9385,31 +9425,37 @@ function markMatchingFigures() {
 }
 
 // markNotAllowedFigures updates figure chooser elements to show if they
-// are not allowed for the specified rules
+// are not allowed for the specified rules, or if they are disabled
+// through "Hide rarely used figures"
 function markNotAllowedFigures() {
-    var
-        table = $('figureChooserTable'),
-        tr = table.childNodes;
+
+    let showRow;
 
     function legalFigure(td) {
         td.classList.remove('figureNotAllowed');
-        td.classList.remove('hidden');
-        anyLegal = true;
+        if (!$('hideRarelyUsed').checked || !checkRarelyUsed(fig[td.id])) {
+            td.classList.remove('hidden');
+            showRow = true;
+        }
     }
+
     function illegalFigure(td) {
         if (($('hideIllegal').checked == true) &&
             ($('figureGroup').value != 0)) {
             td.classList.add('hidden');
             td.classList.remove('matchingFigure');
         } else {
-            td.classList.add('figureNotAllowed');
+            if (!$('hideRarelyUsed').checked || !checkRarelyUsed(fig[td.id])) {
+                td.classList.add('figureNotAllowed');
+                showRow = true;
+            }
         }
     }
 
-    for (let i = 0; i < tr.length; i++) {
-        var
-            td = tr[i].childNodes,
-            anyLegal = false;
+    $('figureChooserTable').childNodes.forEach (tr => {
+        let td = tr.childNodes;
+        
+        showRow = false;
 
         for (let j = 1; j < td.length; j++) {
             if ((sportingClass.value === 'powered') && (fig[td[j].id].kPwrd == 0)) {
@@ -9443,19 +9489,20 @@ function markNotAllowedFigures() {
             }
         }
         // hide row when no legal figures present
-        if (($('hideIllegal').checked == true) &&
+        if (($('hideIllegal').checked == true || $('hideRarelyUsed').checked == true) &&
             ($('figureGroup').value != 0) &&
             (figGroup[$('figureGroup').value].family != 9) &&
-            !anyLegal) {
-            tr[i].classList.add('noDisplay');
+            !showRow) {
+            tr.classList.add('noDisplay');
         }
-    }
+    });
 }
 
 // selectFigure is executed when clicking a figure in the figureChooser
 // (e = object) or from grabFigure (e = figNr) or from certain functions
 // or false
 function selectFigure(e) {
+    
     // disable when sequence locked
     if ($('lock_sequence').value) return;
 
@@ -9788,7 +9835,9 @@ function makeMiniFormAScreen() {
                             fig.unknownFigureLetter.replace('L', 'Add') : '';
                         break;
                     case 'K':
-                        td.innerHTML = fig.k.join('+');
+                        // join with +, and a zero-width space after every 3rd
+                        td.innerHTML = fig.k.join('+')
+                            .replace(/((?:[^+]*\+){2}[^+]*)\+/g, '$1+\u200b');
                         break;
                     case '&Sigma;':
                         var figK = 0;
@@ -9877,7 +9926,7 @@ function makeMiniFormAScreen() {
         draggedRow.style.transform = `translateY(${deltaY()}px)`;
 
         // Check if the row is dragged up
-        if (previousRow && draggedRow.offsetTop + deltaY() <= previousRow.offsetTop + previousRow.offsetHeight * 0.4) {
+        if (previousRow && draggedRow.offsetTop + deltaY() <= previousRow.offsetTop + draggedRow.offsetHeight * 0.4) {
             const offsetTop = previousRow.offsetTop;
             startY -= previousRow.offsetHeight * zoom;
             draggedRow.style.transform = `translateY(${deltaY()}px)`;
@@ -9893,7 +9942,7 @@ function makeMiniFormAScreen() {
             // Check if the row is dragged down
         } else if (nextRow && draggedRow.offsetTop + deltaY() >= nextRow.offsetTop - draggedRow.offsetHeight * 0.4) {
             const offsetTop = nextRow.offsetTop;
-            startY += draggedRow.offsetHeight * zoom;
+            startY += nextRow.offsetHeight * zoom;
             draggedRow.style.transform = `translateY(${deltaY()}px)`;
             $('miniFormA').insertBefore(nextRow, draggedRow);
             // Place nextRow at original position
@@ -10231,6 +10280,7 @@ function makeMiniFormA(x, y, tiny) {
 
 // grabFigure will select a figure and allow dragging
 function grabFigure(evt) {
+    
     // disable when sequence locked
     if ($('lock_sequence').value) return;
 
@@ -10329,41 +10379,35 @@ function grabFigure(evt) {
         }
     } else if (evt.target.parentNode.id === 'sequenceArea') {
         // clicked somewhere in the SVG container, maybe within figure bBox?
-        var svgRect = svg.getBoundingClientRect();
         // svg may be rescaled on smallMobile browser
-        var scale = platform.smallMobile ? svg.getAttribute('width') / viewBox[2] : 1;
-        var margin = 5 * scale;
-        var zoom = parseInt($('zoom').textContent.match(/\d+/)[0]) / 100;
+        const margin = platform.smallMobile ? svg.getAttribute('width') / viewBox[2] * 5 : 5;
+        const zoom = parseInt($('zoom').textContent.match(/\d+/)[0]) / 100;
         GrabPoint.x = TrueCoords.x / zoom;
         GrabPoint.y = TrueCoords.y / zoom;
         var x = TrueCoords.x / zoom;
         var y = TrueCoords.y / zoom;
 
-        var closest = false;
-        var minDistSq = Infinity;
-
-        for (let i = figures.length - 1; i >= 0; i--) {
-            if (figures[i].draggable) {
-                if (svg.getElementById(`figure${i}`)) {
-                    var bBox = svg.getElementById(`figure${i}`).getBoundingClientRect();
+        // Find the figure that is closest and set it to be the dragTarget
+        let minDistSq = Infinity;
+        figures.forEach ((f, i) => {
+            if (f.draggable) {
+                let figure = svg.getElementById(`figure${i}`);
+                if (figure) {
+                    var bBox = figure.getBoundingClientRect();
                     // clicked well within bBox (>margin units within border)?
                     if ((x > (bBox.left + margin)) && (x < (bBox.right - margin)) &&
                         (y > (bBox.top + margin)) && (y < (bBox.bottom - margin))) {
                         // calculate distance squared to bBox centre
-                        var distSq = Math.pow(x - (bBox.left + (bBox.width / 2)), 2) +
+                        let distSq = Math.pow(x - (bBox.left + (bBox.width / 2)), 2) +
                             Math.pow(y - (bBox.top + (bBox.height / 2)), 2);
                         if (distSq < minDistSq) {
                             minDistSq = distSq;
-                            closest = i;
+                            dragTarget = figure;
                         }
                     }
                 }
             }
-        }
-        // select figure if the closest centre, within bBox, was found
-        if (closest !== false) {
-            dragTarget = SVGRoot.getElementById(`figure${closest}`);
-        }
+        });
     }
 
     if (dragTarget) {
@@ -10391,10 +10435,8 @@ function grabFigure(evt) {
         if (!platform.smallMobile && !(/^G/.test(activeForm)) &&
             !((/^figure\d+$/.test(dragTarget.id) && figures[dragTarget.id.replace(/^figure/, '')].seqNr == '1'))) {
             var svgRect = svg.getBoundingClientRect();
-            var w = parseInt(viewBox[2]) + parseInt(svgRect.left) +
-                parseInt(dragTarget.scrollLeftSave);
-            var h = parseInt(viewBox[3]) + parseInt(svgRect.top) +
-                parseInt(dragTarget.scrollTopSave);
+            var w = window.innerWidth + dragTarget.scrollLeftSave;
+            var h = window.innerHeight + dragTarget.scrollTopSave;
             svg.setAttribute('viewBox',
                 roundTwo(viewBox[0] - svgRect.left - dragTarget.scrollLeftSave) + ' ' +
                 roundTwo(viewBox[1] - svgRect.top - dragTarget.scrollTopSave) + ' ' + w + ' ' + h
@@ -10471,9 +10513,6 @@ function setFigureSelected(figNr) {
         while (figures[figNr] && !figures[figNr].aresti) figNr++;
     }
 
-    // define header element for info
-    var header = $('figureHeader');
-
     if (activeForm != 'FU') {
         // if any figure was previously selected, remove that filter
         var selFig = SVGRoot.getElementById('figure' + selectedFigure.id);
@@ -10500,13 +10539,15 @@ function setFigureSelected(figNr) {
             // fill selectedFigure with BBox values
             var el = SVGRoot.getElementById('figure' + figNr);
 
-            header.innerHTML = sprintf(userText.editingFigure, figures[figNr].seqNr) +
+            $('figureHeader').innerHTML = sprintf(userText.editingFigure, figures[figNr].seqNr) +
                 ' (' + figures[figNr].k.reduce((a, v) => a + v) + 'K)';
 
             if (el) {
                 var
-                    svgScale = roundTwo(SVGRoot.viewBox.baseVal.width /
-                        (SVGRoot.width.baseVal.value || 1)) || 1,
+                    svgScale = platform.smallMobile ?
+                        roundTwo(SVGRoot.viewBox.baseVal.width /
+                        (SVGRoot.width.baseVal.value || 1)) || 1
+                        : 1,
                     showHandles = $('showHandles').checked &&
                         !(/^G/.test(activeForm)),
                     nodes = el.childNodes,
@@ -10539,9 +10580,9 @@ function setFigureSelected(figNr) {
                 if (showHandles) {
                     drawImage({
                         x: selectedFigure.x + selectedFigure.width - 10,
-                        y: selectedFigure.y,
-                        width: 28 * svgScale,
-                        height: 28 * svgScale,
+                        y: selectedFigure.y - 20,
+                        width: platform.touch ? 32 * svgScale : 24,
+                        height: platform.touch ? 32 * svgScale : 24,
                         'id': 'magnifier',
                         cursor: 'move',
                         href: 'img/magnifier.svg'
@@ -10555,11 +10596,30 @@ function setFigureSelected(figNr) {
     } else {
         var el = document.getElementsByClassName('fuFig' + figNr)[0];
         if (el) el.classList.add('active');
-        header.innerHTML = sprintf(userText.editingFigure, '');
+        $('figureHeader').innerHTML = sprintf(userText.editingFigure, '');
     }
 
     // set selectedFigure.id
     selectedFigure.id = figNr;
+}
+
+// setSeqViewBox correctly sets the sequence svg viewbox 
+function setSeqViewBox() {
+    const
+        bBox = SVGRoot.getElementById('sequence').getBBox(),
+        x = parseInt(bBox.x),
+        y = parseInt(bBox.y),
+        w = parseInt(bBox.width),
+        h = parseInt(bBox.height);
+
+    // Change the viewBox to make the sequence fit
+    SVGRoot.setAttribute('viewBox', `${x - 3} ${y - 3} ${w + 5} ${h + 5}`);
+
+    // Restore width and height when not on smallMobile
+    if (!platform.smallMobile) {
+        SVGRoot.setAttribute('width', w + 5);
+        SVGRoot.setAttribute('height', h + 5);
+    }
 }
 
 // Drag allows to drag the selected figure or handle to a new position
@@ -10637,7 +10697,7 @@ function Drag(evt) {
                         // break if no longer vertical up
                         if ((elClass === 'line') &&
                             !el.getAttribute('d').match(/l 0,-/)) break;
-                        if (/^(hammer|point)Tip$/.test(elClass.match)) {
+                        if (/^(hammer|point)Tip$/.test(elClass)) {
                             // found a hammerhead or point tip!
                             elStop = el;
                             break;
@@ -10685,14 +10745,16 @@ function Drag(evt) {
                 dragTarget.parentNode.lastChild.remove();
                 var
                     bBox = dragTarget.parentNode.getBBox(),
-                    svgScale = roundTwo(SVGRoot.viewBox.baseVal.width /
-                        SVGRoot.width.baseVal.value) || 1;
+                    svgScale = platform.smallMobile ?
+                        roundTwo(SVGRoot.viewBox.baseVal.width /
+                        SVGRoot.width.baseVal.value) || 1
+                        : 1;
                 // add scale handle
                 drawImage({
                     x: bBox.x + bBox.width - 10,
-                    y: bBox.y - 10,
-                    width: 28 * svgScale,
-                    height: 28 * svgScale,
+                    y: bBox.y - 20,
+                    width: platform.touch ? 32 * svgScale : 24,
+                    height: platform.touch ? 32 * svgScale : 24,
                     'id': 'magnifier',
                     cursor: 'move',
                     href: 'img/magnifier.svg'
@@ -10758,23 +10820,7 @@ function Drag(evt) {
             return;
         }
 
-        // Adjust sequence SVG size
-        var
-            bBox = SVGRoot.getElementById('sequence').getBBox(),
-            viewBox = SVGRoot.getAttribute('viewBox').split(' '),
-            w = roundTwo((bBox.x - viewBox[0]) + bBox.width + 5),
-            h = roundTwo((bBox.y - viewBox[1]) + bBox.height + 5);
-        SVGRoot.setAttribute('viewBox',
-            viewBox[0] + ' ' +
-            viewBox[1] + ' ' +
-            w + ' ' +
-            h
-        );
-        // Restore width when not on smallMobile
-        if (!platform.smallMobile) {
-            SVGRoot.setAttribute('width', w);
-            SVGRoot.setAttribute('height', h);
-        }
+        if (platform.smallMobile) setSeqViewBox();
     }
 }
 
@@ -10782,17 +10828,6 @@ function Drag(evt) {
 function Drop() {
     // if we aren't currently dragging an element, don't do anything
     if (!dragTarget) return;
-
-    function restoreViewBox() {
-        var bBox = SVGRoot.getBBox();
-        SVGRoot.setAttribute('viewBox', roundTwo(bBox.x - 3) + ' ' +
-            roundTwo(bBox.y - 3) + ' ' + (parseInt(bBox.width) + 5) + ' ' +
-            (parseInt(bBox.height) + 5));
-        if (!platform.smallMobile) {
-            SVGRoot.setAttribute('width', parseInt(bBox.width) + 5);
-            SVGRoot.setAttribute('height', parseInt(bBox.height) + 5);
-        }
-    }
 
     $('main').style.top = '';
 
@@ -10812,18 +10847,17 @@ function Drop() {
     // restore optimalSequenceArea position
     $('optimalSequenceArea').style.removeProperty('transform');
 
-    var transform = dragTarget.getAttribute('transform');
+    const transform = dragTarget.getAttribute('transform');
 
     if (dragTarget.id.match(/^(.*-handle|magnifier)$/)) {
         // Dropping a handle or magnifier
-
         updateFigure();
-        restoreViewBox();
-    } else {
+        setSeqViewBox();
+    } else if (!/^G/.test(activeForm)) {
         // Dropping a complete figure
 
         // create curveTo for dragged elements when not in grid view
-        if (transform && !(/^G/.test(activeForm))) {
+        if (transform) {
             // make sure a comma is used for x y separation in transform
             var dxdy = transform.match(/[0-9\-\.]+[, ][0-9\-\.]+/) ?
                 transform.replace(/ /, ',').match(/[0-9\-\.]+,[0-9\-\.]+/)[0].split(',') :
@@ -10838,12 +10872,9 @@ function Drop() {
                     false,
                     false,
                     true);
-            } else {
-                restoreViewBox();
             }
-        } else {
-            restoreViewBox();
         }
+        setSeqViewBox();
     }
 
     $('sequenceArea').scrollTop = dragTarget.scrollTopSave;
@@ -11174,22 +11205,18 @@ function drawFullFigure(i, draggable, svg) {
     // Mark the starting position of the figure
     figures[i].startPos = { 'x': X, 'y': Y };
     figures[i].draggable = draggable;
-    var svgElement = svg.getElementById('sequence');
     // return for no-draw figures
     if (!figures[i].paths) return;
     // Create a group for the figure, draw it and apply to the SVG
-    var group = document.createElementNS(svgNS, "g");
+    let group = document.createElementNS(svgNS, "g");
     group.setAttribute('id', 'figure' + i);
     // put the group in the DOM
-    svgElement.appendChild(group);
+    svg.getElementById('sequence').appendChild(group);
     var bBox = false;
     figures[i].paths.forEach ((p) => {
         bBox = drawShape(p, group, bBox) || bBox;
     });
-
     figures[i].bBox = myGetBBox(group);
-
-    if ((selectedFigure.id === i) && draggable) setFigureSelected(i);
 }
 
 // setQueueMenuOptions enables/disables queue menu options as applicable
@@ -13090,6 +13117,20 @@ function addFormElements(form) {
     // miniFormA and windArrow are handled differently on screen than on print/save
     if ($('sequenceArea').classList.contains('screen')) {
         makeMiniFormAScreen();
+        // Add a transparent rectangle around the figure on screen to
+        // prevent rescaling when handles are shown on a selected figure
+        if ($('showHandles').checked && (/^[BC]/.test(activeForm))) {
+            SVGRoot.getElementById('sequence').childNodes.forEach (group => {
+                let bBox = group.getBBox();
+                drawRectangle (
+                    bBox.x - (platform.touch ? 16 : 8),
+                    bBox.y - 20,
+                    bBox.width + (platform.touch ? 48 : 24),
+                    bBox.height + (platform.touch ? 32 : 32),
+                    'stroke: none; fill: none'
+                );
+            });
+        }
     } else {
         // Add mini Form A, but only to Form B or C when miniFormA is set
         if (/^[BC]/.test(form) && miniFormA) {
@@ -13121,24 +13162,19 @@ function addFormElements(form) {
         } else optArea.classList.remove('exceeded');
     }
 
-    var
-        bBox = SVGRoot.getElementById('sequence').getBBox(),
-        x = parseInt(bBox.x),
-        y = parseInt(bBox.y),
-        w = parseInt(bBox.width),
-        h = parseInt(bBox.height);
-    // Change the viewBox to make the sequence fit
-    SVGRoot.setAttribute("viewBox",
-        (x - 3) + ' ' + (y - 3) + ' ' + (w + 5) + ' ' + (h + 5));
+    setSeqViewBox();
+        
     // Resize svg if we are smallMobile, to a max factor 2
     // Do this with a tiny delay to allow miniFormA to draw and size
     // to be determined
-    setTimeout(e => {
-        const scaleSvg = platform.smallMobile ?
-            Math.min((window.innerWidth - $('miniFormAContainer').getBoundingClientRect().width - 16) / (w + 5), 2) : 1;
-        SVGRoot.setAttribute("width", scaleSvg * (w + 5));
-        SVGRoot.setAttribute("height", scaleSvg * (h + 5));
-    }, 1);
+    if (platform.smallMobile) {
+        setTimeout(e => {
+            const scaleSvg = platform.smallMobile ?
+                Math.min((window.innerWidth - $('miniFormAContainer').getBoundingClientRect().width - 16) / (w + 5), 2) : 1;
+            SVGRoot.setAttribute("width", scaleSvg * (w + 5));
+            SVGRoot.setAttribute("height", scaleSvg * (h + 5));
+        }, 1);
+    }
 }
 
 // addAlertsToAlertMsgs adds an object provided by checkRules Worker
@@ -13434,7 +13470,7 @@ function checkSequenceChanged(force) {
         // scale sequence if zoom is set on mobile
         if (platform.mobile && (activeForm !== 'FU')) {
             if (SVGRoot.getAttribute('width') && SVGRoot.getAttribute('height')) {
-                var zoom = parseInt($('zoom').textContent.match(/\d+/)[0]) / 100;
+                const zoom = parseInt($('zoom').textContent.match(/\d+/)[0]) / 100;
                 SVGRoot.setAttribute('width', parseInt(SVGRoot.getAttribute('width')) * zoom);
                 SVGRoot.setAttribute('height', parseInt(SVGRoot.getAttribute('height')) * zoom);
             }
@@ -13484,12 +13520,13 @@ function selectForm(form) {
     if (selectedFigure.id) updateFigureEditor();
     if (platform.smallMobile) selectTab('tab-sequenceArea');
     setFormLayout(form);
+    selectFigure(false);
 }
 
 // setFormLayout sets the correct layout for each Form view
 function setFormLayout(form) {
-    ['A', 'B', 'C', 'G'].forEach(f => {
-        if (f != form) $('sequenceArea').classList.remove(f); else $('sequenceArea').classList.add(f);
+    ['A', 'B', 'C', 'FU', 'G'].forEach(f => {
+        if (f != form) $('mainOverlay').classList.remove(f); else $('mainOverlay').classList.add(f);
     });
     if (/^G/.test(form)) {
         $('moveControls').classList.add('hidden');
@@ -13510,19 +13547,17 @@ function setFormLayout(form) {
 
 // flyingMode switches the view to Flying mode
 function flyingMode() {
+    const drawForms = $('mainOverlay').classList.contains ('C') ? ['B', 'C'] : ['C', 'B'];
     $('flyingModeTop').appendChild($('t_windArrow'));
     $('flyingMode').classList.remove('flyingModeHidden');
-    if (activeForm == 'C') {
-        $('flyingMode').classList.add('windLeft');
-    } else $('flyingMode').classList.remove('windLeft');
-    for (let form in { B: true, C: true }) {
+    drawForms.forEach (form => {
         selectForm(form);
         // Clear sequence svg
         rebuildSequenceSvg();
         // Add only the figures
         figures.forEach ((f, i) => { if (f.paths.length) drawFullFigure(i); });
         // Change the viewBox to make the sequence fit
-        var
+        let
             bBox = SVGRoot.getElementById('sequence').getBBox(),
             x = parseInt(bBox.x),
             y = parseInt(bBox.y),
@@ -13532,17 +13567,19 @@ function flyingMode() {
             (x - 3) + ' ' + (y - 3) + ' ' + (w + 5) + ' ' + (h + 5));
         $('flyingModeSequence').appendChild(SVGRoot.cloneNode(true));
         $('flyingModeSequence').lastChild.id = 'flyingModeSequenceForm' + form;
-    }
+    });
     activeForm = 'F';
     // start keep awaking (Cordova only)
     if (window.plugins && window.plugins.insomnia) window.plugins.insomnia.keepAwake();
 }
+
 // switchwindArrow switches the wind direction
 function switchwindArrow() {
     if (activeForm == 'F') {
         $('flyingModeSequence').style = 'transform: rotateY(90deg)';
         setTimeout(() => {
-            $('flyingMode').classList.toggle('windLeft');
+            $('mainOverlay').classList.toggle('B');
+            $('mainOverlay').classList.toggle('C');
             $('flyingModeSequence').style = ''
         }, 150);
     } else {
@@ -13555,7 +13592,7 @@ function exitFlyingMode() {
     // stop keep awaking (Cordova only)
     if (window.plugins && window.plugins.insomnia) window.plugins.insomnia.allowSleepAgain();
     // switch to normal view
-    selectForm($('flyingMode').classList.contains('windLeft') ? 'C' : 'B');
+    selectForm($('mainOverlay').classList.contains('C') ? 'C' : 'B');
     $('optimalSequenceArea').after($('t_windArrow'));
     $('flyingMode').classList.add('flyingModeHidden');
     // clear sequences after timeout
@@ -14792,13 +14829,9 @@ function errorHandler(e) {
     console.log('Error: ' + msg);
 }
 
-// uriEncode expands encodeURI by also replace single ticks (') and + as
-// they may break links in email
-
 // encodeBase64Url encodes string t to URL safe base64
 function encodeBase64Url(t) {
-    t = btoa(t);
-    return t.replace(/\+/g, '-').replace(/\//g, '_').replace(/\=+$/, '');
+    return btoa(t).replace(/\+/g, '-').replace(/\//g, '_').replace(/\=+$/, '');
 }
 
 // decodeBase64Url decodes URL safe base64 to string
@@ -14824,7 +14857,7 @@ function compressSequence(xml) {
         throw new Error('Compression will not work when there are more than 31 labels.');
     }
 
-    sequenceXMLlabels.forEach ((l) => {
+    sequenceXMLlabels.forEach ((l, i) => {
         var label = xmlDoc.getElementsByTagName(l);
         // Add label code and value to result if label value exists
         if (label && label[0]) {
@@ -15252,6 +15285,7 @@ function buildForms(win, callback) {
             infoBox();
 
             if (!win) {
+                console.log($('imageHeight').value);
                 svg += '</svg>';
                 var height = translateY -
                     parseInt($('pageSpacing').value) + 10;
@@ -16820,12 +16854,14 @@ function activeFileName(append) {
     fname += append;
     return fname;
 }
-function dead(){
-    
-}
+
 // saveImageSizeAdjust will adjust the "Saving PNG or SVG" width or
 // height, whichever is relevant
 function saveImageSizeAdjust() {
+
+    // Update the page set first
+    updatePrintPageSetValue();
+
     var
         string = $('printPageSetString').value.toUpperCase(),
         count = 0;
@@ -16846,17 +16882,11 @@ function saveImageSizeAdjust() {
     var ratio = ((count * 1130) +
         ((count - 1) * $('pageSpacing').value)) / 800;
 
-    if (this) {
-        if (this.id === 'imageHeight') {
-            $('imageWidth').value = parseInt(
-                this.value / ratio);
-        } else {
-            $('imageHeight').value = parseInt(
-                $('imageWidth').value * ratio);
-        }
+    if (this && this.id === 'imageHeight') {
+        $('imageWidth').value = parseInt(this.value / ratio);
     }
+    $('imageHeight').value = parseInt($('imageWidth').value * ratio);
 
-    updatePrintPageSetValue();
 }
 
 // saveSVG will save an SVG image as selected in print/save dialog
@@ -18899,7 +18929,7 @@ function parseSequence() {
 
         // If this is a user-built figure, append it to fig object
         var match = figure.match(userBuiltRegex);
-        if (match && false) { // under development, temporarily disabled
+        if (match) { // under development, DISABLE FOR PRODUCTION!
             var rolls = match[3].match(/\([^)]*\)/g) || [];
             fig.push({
                 // Don't allow official Aresti numbers
