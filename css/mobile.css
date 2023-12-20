@@ -63,9 +63,16 @@ body.menuOpen {
 #sequenceArea #t_windArrow {
   top: 61px;
 }
+.iosCordova #sequenceArea #t_windArrow {
+  top: 93px;
+}
 #miniFormAContainer {
   top: 100px;
   max-height: calc(100% - 110px);
+}
+.iosCordova #sequenceArea #miniFormAContainer {
+  top: 132px;
+  max-height: calc(100% - 142px);
 }
 /* menu */
 #hamburgerMenu {

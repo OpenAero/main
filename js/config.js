@@ -40,14 +40,14 @@ This file is part of OpenAero.
  A new x must be used for versions that create sequences not
  fully backward compatible with the previous version
 */
-const version = '2024.1.1';
+const version = '2024.1.3';
 // versionNew is an object that contains version update information
 // The structure is {vvv : [[ttt, n], ...], ...} , where
 // vvv = version number
 // ttt = update text
 // n   = importance (higher = more important)
 const versionNew = {
-  '2024.1.1': [
+  '2024.1.3': [
     ['Added 2024 CIVA Power and Glider rules and sequences', 4],
     ['Many interface improvements', 4]
   ],

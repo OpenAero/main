@@ -229,7 +229,6 @@ select {
   background-color: white;
   box-shadow: 0 3px 6px rgba(0,0,0,0.5);
   margin: 40px 6px 0 4px;
-  max-width: 60px;
   height:fit-content;
 }
 #miniFormAContainer table {
@@ -344,22 +343,6 @@ select {
   margin-left: 2px !important;
   margin-right: 0 !important;
 }
-/*
-.rollComment {
-  font-size: 20px;
-  float:right;
-  margin-left: 5px;
-  margin-right: 5px;
-  height: 32px;
-  width: 40px;
-  transition: all 0.3s ease-in-out;
-}
-.rollComment:focus {
-  margin-left: -260px;
-  width:290px;
-  opacity: 0.999; /* prevents rollFlip shining through */
-/*}
-*/
 .rollComment {
   font-size: 20px;
   height: 32px;
@@ -380,7 +363,6 @@ select {
 #figureInfo select {
 	height: 32px !important;
 	line-height: 32px;
-	/*max-width: 160px;*/
   font-size: 20px;
 }
 #comments {

@@ -104,7 +104,6 @@
 #figureInfo {
     position: relative;
     float: left;
-    /*left: -268px;*/
     width: 268px;
     -moz-transform: translateX(0);
     -o-transform: translateX(0);
@@ -115,7 +114,6 @@
 }
 #figureInfo.hidden {
   transform: translateX(280px);
-  /*margin: 7px 5px 7px 5px !important;*/
   visibility: visible;
 }
 
@@ -175,7 +173,7 @@
   right: 0;
   top: 0;
   bottom: -1px;
-  left: 277px;
+  left: 270px;
   padding: 20px 10px 20px 10px;
   background-color: rgba(255, 255, 255, 0.1);
   overflow: auto;
@@ -187,8 +185,8 @@
 #optimalSequenceArea {
     position: absolute;
     top: 20px;
-    left: 15px;
-    width: 560px;
+    left: 32px;
+    width: 580px;
     height: 1080px;
     border: 1px solid rgba(0,128,0,0.5);
 }
@@ -225,10 +223,10 @@
 #sequenceArea #t_windArrow {
   position: fixed;
   z-index: 1;
-  left: calc(100% - 90px);
+  left: calc(100% - 98px);
 }
 #mainOverlay.C #t_windArrow {
-  left: 296px;
+  left: 304px;
 }
 #sequenceArea svg {
     position: relative;
@@ -251,7 +249,7 @@
   box-shadow: 0 3px 6px rgba(0,0,0,0.5);
   overflow-y: scroll;
   width: min-content;
-  right: 16px;
+  right: 24px;
 }
 #miniFormAContainer table {
   min-width: 108px;

@@ -646,31 +646,6 @@ hr {
   margin: 1px;
   padding: 0px;
 }
-/*input {
-  border-left: 1px solid #222;
-  border-top: 1px solid #222;
-  border-right: 1px solid #aaa;
-  border-bottom: 1px solid #aaa;
-  border-radius: 3px;
-  margin-bottom: 1px;
-  padding: 2px;
-  -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
-/*	-moz-box-sizing: border-box;    /* Firefox, other Gecko */
-/*	box-sizing: border-box;
-	user-select: initial;
-}
-select {
-  border-left: 1px solid #222;
-  border-top: 1px solid #222;
-  border-right: 1px solid #aaa;
-  border-bottom: 1px solid #aaa;
-  border-radius: 3px;
-  margin-bottom: 1px;
-  background: #ffffff;
-  -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
-/*	-moz-box-sizing: border-box;    /* Firefox, other Gecko */
-/*	box-sizing: border-box;
-}*/
 textarea {
   border-left: 1px solid #222;
   border-top: 1px solid #222;
@@ -1201,7 +1176,6 @@ option.used {
 }
 #sequenceTextContainer {
   position: absolute;
-  /*font-family: monospace;*/
   font-size: 16px;
 }
 #sequence_text {
@@ -1795,23 +1769,6 @@ option.used {
 #zipImageFilenamePattern, #styleString {
 	max-width: 100%;
 }
-/*
-#general, #styling, #expert {
-  position: relative;
-  top: 0;
-  left: 0;
-  transition: all 0.5s ease-in-out;
-}
-#general.hidden, #styling.hidden {
-  transform: translateX(-100%);
-  height: auto !important;
-  visibility: visible;
-}
-#expert.hidden {
-  transform: translateX(100%);
-  height: auto !important;
-  visibility: visible;
-}*/
 
 #latestVersion {
   margin:-2px 1em 0 0;
@@ -1878,14 +1835,7 @@ option.used {
   opacity: 0.7;
 }
 .tabSelector .activeTab {
-/*  background: #f4f4f4;
-  background: -webkit-linear-gradient(top, #d0d0e8, #f4f4f4);
-  background: linear-gradient(top, #d0d0e8, #f4f4f4);
-  margin-left: -1px;
-  border-left: 1px solid white;*/
   border-bottom: 2px solid #512da8;
-/*  font-weight: bold;
-  text-shadow: 1px 1px white;*/
 }
 
 /****************************
@@ -2058,14 +2008,6 @@ option.used {
   width: 32px;
   margin: 2px;
 }
-/*#moveX,#moveY {
-  float: left;
-  font-size: 16px;
-  text-align: center;
-  height: 24px;
-  width: 46px;
-  margin: 2px;
-}*/
 #moveXCont, #moveYCont {
   font-size: 20px;
   font-weight: bold;
@@ -2804,10 +2746,8 @@ table#figureChooserTable div {
 
 #fuFigures {
     position: relative;
-    /*z-index: 4;*/ /* Removed because it hides dragging figures, not sure why it was needed? */
     top: 0;
     margin: 6px 4px 8px 4px;
-    /*left: -546px;*/
     width: 268px;
     -webkit-transform: translateX(0);
     transform: translateX(0);
@@ -2844,11 +2784,11 @@ table#figureChooserTable div {
 #t_windArrow {
     position: absolute;
     width: 80px;
-    left: calc(100% - 108px);
+    left: calc(100% - 116px);
     transition: all 0.3s ease-in-out;
 }
 #mainOverlay.C #flyingModeTop #t_windArrow {
-  left: 4px;
+  left: 12px;
 }
 #mainOverlay.A #t_windArrow, #mainOverlay.G #t_windArrow, #mainOverlay.A #miniFormAContainer, #mainOverlay.G #miniFormAContainer {
   display: none;
@@ -2880,12 +2820,13 @@ table#figureChooserTable div {
 }
 #miniFormA td:first-child {
   text-align: right;
-  border-left: 2px solid transparent;
   font-weight: bold;
+}
+#miniFormA td:last-child {
+  border-right: none;
 }
 #miniFormAContainer td:last-child {
   text-align: right;
-  border-right: 2px solid transparent;
   font-weight: bold;
 }
 #miniFormAHeader tr td {
@@ -2915,7 +2856,7 @@ tr.insertAfter td {
   position: fixed;
   margin-left: -20px;
   margin-top: -24px;
-  color: green;
+  color: #7cb342;
 }
 #t_windArrow:before {
     content: "";
@@ -3000,9 +2941,6 @@ tr.insertAfter td {
     height: 70%;
     top: 15%;
     overflow: visible;
-    /*
-        <svg viewBox="0 0 88 88" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg"><defs><clipPath id="clipPath"><rect x="0" y="0" width="16" height="16" /><rect x="72" y="0" width="16" height="16" /><rect x="0" y="72" width="16" height="16" /><rect x="72" y="72" width="16" height="16" /></clipPath></defs><path style="fill:none;stroke:#fb8c00;stroke-width:2" d="m 12,4 h 64 c 4,0 8,4 8,8 v 64 c 0,4 -4,8 -8,8 h -64 c -4,0 -8,-4 -8,-8 v -64 c 0,-4 4,-8 8,-8 z" clip-path="url(#clipPath)" /></svg>
-    */
 }
 #t_cancelQRscan {
     position: absolute;

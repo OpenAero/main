@@ -735,7 +735,14 @@ if (typeof module !== "undefined" && module.exports) {
 }
 
 // Nodelist.forEach polyfill
-window.NodeList && !NodeList.prototype.forEach && (NodeList.prototype.forEach = Array.prototype.forEach);
+if (window.NodeList && !NodeList.prototype.forEach) {
+    NodeList.prototype.forEach = function (callback, thisArg) {
+        thisArg = thisArg || window;
+        for (var i = 0; i < this.length; i++) {
+            callback.call(thisArg, this[i], i, this);
+        }
+    };
+}
 
 // HTMLCanvasElement.toBlob() polyfill
 // Needed for Microsoft Edge 2020
@@ -1574,22 +1581,20 @@ function mobileInterface() {
 
 // menuMobileHeader updates mobile menu header items
 function mobileMenuHeader() {
-    addHeader($('menu'));
 
     function addHeader(menu) {
-        var nodes = menu.childNodes;
-        for (let i = 0; i < nodes.length; i++) {
-            if (nodes[i].tagName === 'LI') {
+        menu.childNodes.forEach (node => {
+            if (/^li$/i.test(node.tagName)) {
                 // copy menu title from previous menu
-                var ul = nodes[i].getElementsByTagName('UL')[0];
+                const ul = node.getElementsByTagName('UL')[0];
                 if (ul) {
                     if (ul.getElementsByClassName('menuHeader')[0]) {
                         ul.removeChild(ul.getElementsByClassName('menuHeader')[0]);
                     }
-                    var li = document.createElement('li');
+                    const li = document.createElement('li');
                     li.classList.add('menuHeader');
                     li.innerHTML = `<span class="previousMenu"><i class="material-icons leftArrow"></i>${(menu === $('menu')) ? 'Menu' :
-                        nodes[i].parentNode.parentNode.getElementsByTagName('SPAN')[0].innerHTML}</span><span class="currentMenu">${ul.parentNode.getElementsByTagName('SPAN')[0].innerHTML}</span>`;
+                        node.parentNode.parentNode.getElementsByTagName('SPAN')[0].innerHTML}</span><span class="currentMenu">${ul.parentNode.getElementsByTagName('SPAN')[0].innerHTML}</span>`;
                     ul.insertBefore(li, ul.firstChild);
                     li.firstChild.addEventListener('mousedown', function (e) {
                         this.parentNode.parentNode.parentNode.classList.remove('active');
@@ -1598,8 +1603,10 @@ function mobileMenuHeader() {
                     addHeader(ul);
                 }
             }
-        }
+        });
     }
+
+    addHeader($('menu'));
 }
 
 // panelHeader sets correct panel header for expanded or collapsed panel
@@ -1740,13 +1747,13 @@ function prepareSvg(svg) {
 
 // centerFigure scrolls sequence to approximately center figure given by id
 function centerFigure(id) {
-    $('sequenceArea').scrollLeft += $('figure'+id).getBoundingClientRect().x +
+    $('sequenceArea').scrollLeft += $('figure'+id).getBoundingClientRect().left +
         $('figure'+id).getBoundingClientRect().width / 2 -
-        ($('sequenceArea').getBoundingClientRect().x +
+        ($('sequenceArea').getBoundingClientRect().left +
         ($('sequenceArea').getBoundingClientRect().width - 140) / 2);
-    $('sequenceArea').scrollTop += $('figure'+id).getBoundingClientRect().y +
+    $('sequenceArea').scrollTop += $('figure'+id).getBoundingClientRect().top +
         $('figure'+id).getBoundingClientRect().height / 2  -
-        ($('sequenceArea').getBoundingClientRect().y +
+        ($('sequenceArea').getBoundingClientRect().top +
         $('sequenceArea').getBoundingClientRect().height / 2);
 }
 
@@ -6000,7 +6007,7 @@ function createProgramme(year, rnLower, rules, cat, seq, string) {
 function addProgrammeToMenu(key) {
     const year = key.match(/^\d+/)[0];
     if (year) {
-        var li = $(`year${year}`);
+        let li = $(`year${year}`);
         if (!li) {
             li = document.createElement('li');
             li.setAttribute('id', `year${year}`);
@@ -6011,7 +6018,7 @@ function addProgrammeToMenu(key) {
         } else {
             var ul = li.lastChild;
         }
-        var subli = document.createElement('li');
+        const subli = document.createElement('li');
         // don't put the current year CIVA sequences under CIVA submenu
         if (key.match(/^[\d]+ CIVA(-Glider|)/) &&
             (year === (version.match(/[\d]+/)[0]))) {
@@ -6019,8 +6026,8 @@ function addProgrammeToMenu(key) {
             subli.setAttribute('id', `programme-${key}`);
             subli.addEventListener('click', programme, false);
         } else {
-            var group = key.match(/^[\d]+ ([^ ]+)/)[1];
-            var subul = $(`${year} ${group}`);
+            const group = key.match(/^[\d]+ ([^ ]+)/)[1];
+            let subul = $(`${year} ${group}`);
             // create new group if the group does not exist yet
             if (!subul) {
                 subli.innerHTML = `<span>${group}</span><i class="material-icons rightArrow"></i>`;
@@ -6028,7 +6035,7 @@ function addProgrammeToMenu(key) {
                 subul.id = `${year} ${group}`;
                 subli.appendChild(subul);
             }
-            var subsubli = document.createElement('li');
+            const subsubli = document.createElement('li');
             subsubli.innerHTML = `<span>${key.replace(/^[\d]+ [^ ]+[ ]*/, '')}</span>`;
             subsubli.setAttribute('id', `programme-${key}`);
             subsubli.addEventListener('click', programme, false);
@@ -6036,7 +6043,7 @@ function addProgrammeToMenu(key) {
             // Sort the sub-sub menues on size.
             // If previous ul has less children, swap ul. This keeps the
             // largest program lists in top
-            var pNode = subul.parentNode;
+            const pNode = subul.parentNode;
             while (pNode.previousSibling &&
                 pNode.previousSibling.lastChild &&
                 (pNode.previousSibling.lastChild.tagName === 'UL') &&
@@ -6047,7 +6054,7 @@ function addProgrammeToMenu(key) {
         }
         if (subli.innerHTML) ul.appendChild(subli);
     } else {
-        var li = document.createElement('li');
+        let li = document.createElement('li');
         li.innerHTML = `<span>${key}</span>`;
         li.setAttribute('id', `programme-${key}`);
         li.addEventListener('click', programme, false);
@@ -6061,6 +6068,8 @@ function addProgrammeToMenu(key) {
 function setOptions() {
     // add programme entries
     for (let key in library) addProgrammeToMenu(key);
+    // Update menu headers for mobile
+    if (platform.mobile) mobileMenuHeader();
 
     // set settings dialog options
 
@@ -9965,14 +9974,14 @@ function makeMiniFormAScreen() {
                 // Drop location before first figure
                 var id = draggedRow.nextSibling.id.match(/^miniFormA-figure(\d+)$/)[1];
                 centerFigure(id);
-                $('placeFigure').style.left = $('figure'+id).firstChild.getBoundingClientRect().x + 'px';
-                $('placeFigure').style.top = $('figure'+id).firstChild.getBoundingClientRect().y + 'px';
+                $('placeFigure').style.left = $('figure'+id).firstChild.getBoundingClientRect().left + 'px';
+                $('placeFigure').style.top = $('figure'+id).firstChild.getBoundingClientRect().top + 'px';
             } else {
                 // Drop location after figure
                 var id = draggedRow.previousSibling.id.match(/^miniFormA-figure(\d+)$/)[1];
                 centerFigure(id);
-                $('placeFigure').style.left = $('figure'+id).lastChild.getBoundingClientRect().x + 'px';
-                $('placeFigure').style.top = $('figure'+id).lastChild.getBoundingClientRect().y + 'px';
+                $('placeFigure').style.left = $('figure'+id).lastChild.getBoundingClientRect().left + 'px';
+                $('placeFigure').style.top = $('figure'+id).lastChild.getBoundingClientRect().top + 'px';
             }            
         }
     }
@@ -10091,6 +10100,8 @@ function makeMiniFormAScreen() {
             </td>
         </tr>`;
     }
+    // Set fixed width of modifiedK (required by Windows app, no CSS solution found)
+    if (platform.uwp) $('modifiedK').style.width = `${$('miniFormAHeader').getBoundingClientRect().width}px`;
     // Add text when K has been modified by rules
     $('modifiedK').innerHTML = modifiedK.length ?
         changedFigureKText(modifiedK, activeRules.description) : '';
@@ -14521,7 +14532,7 @@ function checkOpenAeroVersion() {
             // basic check passed, now check thoroughly and correct
             checkSequenceChanged();
             var s = false;
-            figures.forEach ((f) => {
+            figures.forEach ((f, i) => {
                 if (f.aresti && f.aresti[0].match(/1\.2\.1[12]/)) {
                     s = f.string;
                     var m = s.match(/(zt[^-]*)(-+)/);

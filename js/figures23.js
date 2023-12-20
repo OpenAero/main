@@ -1792,7 +1792,7 @@ var figs = [
 'F0 nonArestiCatalog',
 
 // wingover
-"+_jw_+ 0.0(8) ~d''_''j2~_~d~",
+"+_jw_+ 0.0(8) ~d=''_''j2~_~d=~",
 
 //Clover leaf (with optional roll in top)
 // we use 0.x based

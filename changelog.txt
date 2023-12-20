@@ -1,4 +1,8 @@
-2024.1.1
+2024.1.4
+* Added IMAC sequences for 2024 (Issue #282)
+* Changed wingover shape to show 1/8 loop entry and exit curve (Issue #63)
+
+2024.1.3
 * Improved figure chooser (Issue #281)
 * Improved mini form A and added drag & drop figure ordering (Issue #232)
 * Disabled interface fading when selecting figure 1, as figure 1 can't be dragged

@@ -37,11 +37,11 @@ function load () {
 	document.documentElement.classList.add (window.self == window.top ? "top" : "framed");
 	// do not display nodes with class noUWP on UWP
 	if (window.Windows) {
-		document.getElementsByClassName ('noUWP').forEach(el => { el.classList.add ('noDisplay') });
+		[...document.getElementsByClassName ('noUWP')].forEach(el => { el.classList.add ('noDisplay') });
     }
     // do not display nodes with class noIOS on IOS
     if (/i(Pad|Phone|Pod)/i.test(navigator.userAgent)) {
-        document.getElementsByClassName('noIOS').forEach(el => { el.classList.add('noDisplay')});
+        [...document.getElementsByClassName('noIOS')].forEach(el => { el.classList.add('noDisplay')});
     }
     //fixAnchors();
 }
