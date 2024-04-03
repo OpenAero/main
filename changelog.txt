@@ -1,6 +1,15 @@
 2024.1.4
 * Added IMAC sequences for 2024 (Issue #282)
 * Changed wingover shape to show 1/8 loop entry and exit curve (Issue #63)
+* Fixed crash of figure chooser when switching "Hide rarely used figures" on with a rarely used family shown
+* Added SAC "Bald Eagles" Free rules
+* Added CIVA Excellence rules (DISABLED for now)
+* Updated France Excellence rules
+* Changed positioning of mini form A and windarrow to adjust when figure selector shows
+* Updated SAC Sportsman and RV rules
+* Added total K to grid info
+* Fixed bug when saving svg sequence with sequence string 
+* Added IAC sequences for 2024
 
 2024.1.3
 * Improved figure chooser (Issue #281)

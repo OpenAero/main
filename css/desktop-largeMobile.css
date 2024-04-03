@@ -250,6 +250,7 @@
   overflow-y: scroll;
   width: min-content;
   right: 24px;
+  transition: all 0.2s ease-in-out;
 }
 #miniFormAContainer table {
   min-width: 108px;
@@ -304,10 +305,13 @@
 	margin: -10px 0 0 0;
 	float: right;
 }
-#gridAdditionals {
+#gridTotalK {
+  float: right;
+}
+#gridTotalK, #gridAdditionals {
   text-align: right;
   font-weight: bold;
-  font-size: 24px;
+  font-size: 20px;
 }
 #gridAdditionals.remaining4 {
   color: #006800;

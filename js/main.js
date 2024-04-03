@@ -4900,10 +4900,10 @@ function doOnLoad() {
     addMenuEventListeners();
 
     // Load completed, except possibly for asynchronous rule loading.
-    // Fade out and remove splash screen in 1/2 second
+    // Fade out and remove splash screen in a second
     if (!(platform.cordova || platform.uwp)) {
-        setTimeout(function () { $('loading').style = 'opacity: 0.01;'; }, 100);
-        setTimeout(function () { $('loading').remove(); }, 500);
+        setTimeout(function () { $('loading').style = 'opacity: 0.01;'; }, 600);
+        setTimeout(function () { $('loading').remove(); }, 1000);
     }
 }
 
@@ -5130,7 +5130,7 @@ function addEventListeners() {
 
     // Flying mode
     $('t_exitFlyingMode').addEventListener('mousedown', exitFlyingMode, false);
-    $('t_windArrow').addEventListener('mousedown', switchwindArrow, false)
+    $('t_windArrow').addEventListener('mousedown', switchWindArrow, false)
 
     // sequence string
     $('undo').addEventListener('mousedown', clickButton, false);
@@ -5247,6 +5247,7 @@ function addEventListeners() {
     $('hideRarelyUsed').addEventListener('change', changeHideFigs, false);
     $('hideFigureSelector').addEventListener('mousedown', hideFigureSelector, false);
     $('figureGroup').addEventListener('change', changeFigureGroup, false);
+    window.addEventListener('resize', adjustMiniFormAPosition, false);
 
     // Sequence area
     $('manual_html_optimal_sequence_area').addEventListener('mousedown', () => {
@@ -6690,6 +6691,7 @@ function showFigureSelector() {
             $('figureString'),
             figureSelector.firstChild);
     }
+    adjustMiniFormAPosition();
 }
 
 // hideFigureSelector hides the base figure selector
@@ -6700,6 +6702,8 @@ function hideFigureSelector() {
     $('leftBlock').insertBefore(
         $('figureString'),
         $('figureInfo').nextSibling);
+    // Reset position of mini form A and windarrow
+        adjustMiniFormAPosition();
 }
 
 // hideLogoChooser hides the logo chooser
@@ -9055,7 +9059,8 @@ function availableFigureGroups() {
         (activeForm !== 'FU'))) {
         // show all options that are applicable
         fig.forEach (f => {
-            if (Object.keys(checkAllowCatId).length === 0 || f.aresti in checkAllowCatId) {
+            if (Object.keys(checkAllowCatId).length === 0 || f.aresti in checkAllowCatId ||
+            (activeRules && ($('hideIllegal').checked == false))) {
                 if (!checkRarelyUsed(f)) {
                     options[f.group].classList.remove('noDisplay');
                     options[f.group].disabled = false;
@@ -9097,6 +9102,9 @@ function changeFigureGroup() {
         colCount = 0,
         fragment = document.createDocumentFragment();
 
+    // If the requested figureGroup does not exist, set to singleLines by default
+    if (!figGroup[figureGroup]) figureGroup = e.value = 1;
+    
     // set the correct size and row count for the figure thumbnails
     if (figGroup[figureGroup].family == 9) { // rolls and spins group
         $('figureChooserColumns').classList.add('noDisplay');
@@ -10105,6 +10113,21 @@ function makeMiniFormAScreen() {
     // Add text when K has been modified by rules
     $('modifiedK').innerHTML = modifiedK.length ?
         changedFigureKText(modifiedK, activeRules.description) : '';
+}
+
+// adjustMiniFormAPosition adjusts the  position of mini form A and wind arrow, when
+// in Form B or C, not on smallMobile and the figureSelector is active
+function adjustMiniFormAPosition() {
+    $('miniFormAContainer').style.transform = $('t_windArrow').style.transform = '';
+    if (/[BC]/.test(activeForm) && !platform.smallMobile && $('figureSelector').classList.contains('active')) {
+        const translateX = `translateX(${- Math.min(
+            $('sequenceArea').clientWidth-$('sequenceSvg').getAttribute('width')-$('miniFormAContainer').offsetWidth - 24,
+            $('figureSelector').offsetWidth - 12
+        )}px)`;
+        $('miniFormAContainer').style.transform = translateX;
+        // Only adjust wind arrow on Form B
+        if (activeForm == 'B') $('t_windArrow').style.transform = translateX;
+    }
 }
 
 // makeMiniFormA creates a mini form A for printing and saving
@@ -12328,7 +12351,7 @@ function makeFormC() {
 function makeFormGrid(cols, width, svg = SVGRoot) {
     width = width || 800; // capture negative widths
 
-    var
+    let
         cw = parseInt(width / cols),
         ch = parseInt(cw * Math.GR),
         x = 0,
@@ -12337,13 +12360,16 @@ function makeFormGrid(cols, width, svg = SVGRoot) {
         scaleMin = Infinity, // will hold the smallest Fig scale
         modifiedK = [],
         sortFigures = [],
+        totalK = 0,
+        tw = 0,
+        flag = false,
         entryExit = {
             Entry: { l: 0, n: 0, h: 0, L: 0, N: 0, H: 0 },
             Exit: { l: 0, n: 0, h: 0, L: 0, N: 0, H: 0 }
         };
 
     // draw all real figures, ordered as selected
-    var orderBy = $('gridOrderBy').value;
+    const orderBy = $('gridOrderBy').value;
     figures.forEach ((f, i) => {
         if (f.aresti) {
             sortFigures.push({ id: i, orderBy: f[orderBy] });
@@ -12361,16 +12387,17 @@ function makeFormGrid(cols, width, svg = SVGRoot) {
     }
 
     for (let i = 0; i < sortFigures.length; i++) {
-        var f = figures[sortFigures[i].id];
+        const f = figures[sortFigures[i].id];
 
         // draw rectangle
         drawRectangle(x, y, cw, ch, 'formLine', svg);
         // draw figure Ks, Arestis and Figure Letter
-        var textWidth = 0;
+        let textWidth = 0;
         // yy is used to determine the top of all Aresti nrs, comments etc
-        var yy = y + ch - 10;
+        let yy = y + ch - 10;
         drawText('K: ' + f.k.reduce ((a,b) => a + b),
             x + 5, yy, 'formATextBold', 'start', '', svg);
+        totalK += f.k.reduce ((a,b) => a + b);
         for (let j = f.k.length - 1; j >= 0; j--) {
             if (f.aresti[j] in rulesKFigures) modifiedK.push(f.seqNr);
             yy -= 15;
@@ -12381,8 +12408,7 @@ function makeFormGrid(cols, width, svg = SVGRoot) {
                 'start',
                 'Fig' + i + 'Aresti' + j,
                 svg);
-            var bBox = svg.lastChild.getBBox();
-            var tw = bBox.width;
+            tw = svg.lastChild.getBBox().width;
             if (tw > textWidth) textWidth = tw;
         }
         if (f.unknownFigureLetter) {
@@ -12398,12 +12424,14 @@ function makeFormGrid(cols, width, svg = SVGRoot) {
 
         // draw comments
         if (f.comments) {
-            var flagWidth = 0;
+            let
+                flagWidth = 0,
+                scale = 1;
 
             if (f.country) {
                 // set scale for flag
-                var scale = Math.min(roundTwo((cw - tw - 10) / 56), 1);
-                var flag = drawImage({
+                const scale = Math.min(roundTwo((cw - tw - 10) / 56), 1);
+                flag = drawImage({
                     width: 48 * scale,
                     height: 48 * scale,
                     x: x + cw - (52 * scale),
@@ -12414,19 +12442,19 @@ function makeFormGrid(cols, width, svg = SVGRoot) {
                 flagWidth = 56 * scale;
             }
 
-            var paths = makeTextBlock(f.comments);
+            const paths = makeTextBlock(f.comments);
             // create group for comments
-            var g = svg.appendChild(document.createElementNS(svgNS, 'g'));
+            const g = svg.appendChild(document.createElementNS(svgNS, 'g'));
             for (let j = 0; j < paths.length; j++) {
                 // don't draw box, only text
                 if (!paths[j].path) drawShape(paths[j], g);
             }
-            var bBox = g.getBBox();
+            const bBox = g.getBBox();
             // check if comments fit right of Aresti nrs, scale if necessary
             if (flag && (((y + ch) - yy) > bBox.height)) {
-                var scale = Math.min((cw - tw - 40) / bBox.width, 1);
+                scale = Math.min((cw - tw - 40) / bBox.width, 1);
             } else {
-                var scale = Math.min((cw - tw - flagWidth - 40) / bBox.width, 1);
+                scale = Math.min((cw - tw - flagWidth - 40) / bBox.width, 1);
             }
             if (scale < 0.67) {
                 // would get too small, put above Aresti nrs and scale to
@@ -12456,22 +12484,21 @@ function makeFormGrid(cols, width, svg = SVGRoot) {
         }
 
         // draw figure
-        var fh = yy - y - 10;
+        const fh = yy - y - 10;
         // set X and Y to 0 to prevent roundoff errors in figure drawing
         // and scaling
         X = Y = 0;
         drawFullFigure(sortFigures[i].id, f.paths[0].figureStart, svg);
-        var bBox = f.bBox;
-        var thisFig = svg.getElementById('figure' + sortFigures[i].id);
+        const bBox = f.bBox;
         // set figure size to column width - 20
-        var scale = Math.min((cw - 20) / bBox.width, (fh - 20) / bBox.height);
+        const scale = Math.min((cw - 20) / bBox.width, (fh - 20) / bBox.height);
         if (scale < scaleMin) scaleMin = scale;
         // move each figure to grid element center and scale appropriately
         f.tx = roundTwo(x - (bBox.x * scale) + ((cw - bBox.width * scale) / 2));
         f.ty = roundTwo(y - (bBox.y * scale) + ((fh - bBox.height * scale) / 2));
         f.fh = roundTwo(fh);
         f.viewScale = roundTwo(scale);
-        thisFig.setAttribute('transform', 'translate(' +
+        svg.getElementById('figure' + sortFigures[i].id).setAttribute('transform', 'translate(' +
             f.tx + ',' + f.ty + ') scale(' + f.viewScale + ')');
         if (i < (sortFigures.length - 1)) {
             x += cw;
@@ -12485,6 +12512,8 @@ function makeFormGrid(cols, width, svg = SVGRoot) {
         entryExit.Entry[fig[f.figNr].entryExitPower[0]]++;
         entryExit.Exit[fig[f.figNr].entryExitPower[1]]++;
     }
+
+    $('gridTotalK').innerText = totalK;
 
     // update viewbox and svg height
     var height = y + ch + 2;
@@ -13288,6 +13317,9 @@ function draw() {
 
     // check if selectedFigure.id is still valid
     if (!figures[selectedFigure.id]) selectFigure(false);
+
+    // Adjust position of mini Form A    
+    adjustMiniFormAPosition();
 }
 
 // virtualKeyboard shows or hides the virtual keyboard for
@@ -13532,6 +13564,7 @@ function selectForm(form) {
     if (platform.smallMobile) selectTab('tab-sequenceArea');
     setFormLayout(form);
     selectFigure(false);
+    adjustMiniFormAPosition();
 }
 
 // setFormLayout sets the correct layout for each Form view
@@ -13584,8 +13617,8 @@ function flyingMode() {
     if (window.plugins && window.plugins.insomnia) window.plugins.insomnia.keepAwake();
 }
 
-// switchwindArrow switches the wind direction
-function switchwindArrow() {
+// switchWindArrow switches the wind direction
+function switchWindArrow() {
     if (activeForm == 'F') {
         $('flyingModeSequence').style = 'transform: rotateY(90deg)';
         setTimeout(() => {
@@ -15296,7 +15329,6 @@ function buildForms(win, callback) {
             infoBox();
 
             if (!win) {
-                console.log($('imageHeight').value);
                 svg += '</svg>';
                 var height = translateY -
                     parseInt($('pageSpacing').value) + 10;
@@ -15945,7 +15977,7 @@ function addSequenceString(svg, textBox, print) {
                 drawText(txt.substring(parseInt((txt.length / 3) * 2)),
                     0, 26, $('blackWhite').checked ? 'sequenceStringBW' : 'sequenceString', '', 'start', g);
             } else {
-                lines.forEach ((l) => {
+                lines.forEach ((l, i) => {
                     drawText(l, 0, i * 13, $('blackWhite').checked ? 'sequenceStringBW' : 'sequenceString', '', 'start', g);
                 });
             }

@@ -30,6 +30,7 @@
     purple-light    #ede7f6
     green           #7cb342
     red             #ff0000
+    red-light       #ffe8e0
     blue            #2979ff
     blue-light      #ccddff
     blue-addfig     #6060ff
@@ -2364,7 +2365,7 @@ table#figureChooserTable div {
 }
 .queueUsedMulti {
   transition: background 0.4s, border-color 0.4s;
-  border-color: #ff6040;
+  border-color: red;
   background: #ffe8e0;
 }
 
@@ -2577,7 +2578,7 @@ table#figureChooserTable div {
 
     #fuFiguresTable td.figUsed.figUsedMulti {
         transition: background 0.4s, border-color 0.4s;
-        border-color: #ff6040;
+        border-color: red;
         background: #ffe8e0;
     }
 
@@ -2785,7 +2786,7 @@ table#figureChooserTable div {
     position: absolute;
     width: 80px;
     left: calc(100% - 116px);
-    transition: all 0.3s ease-in-out;
+    transition: all 0.2s ease-in-out;
 }
 #mainOverlay.C #flyingModeTop #t_windArrow {
   left: 12px;
