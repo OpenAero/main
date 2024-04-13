@@ -10,6 +10,8 @@
 * Added total K to grid info
 * Fixed bug when saving svg sequence with sequence string 
 * Added IAC sequences for 2024
+* Updated IAC Glider K positioning K factors for 2024
+* Fixed indication of multiple use of the same figure in Free Unknown designer
 
 2024.1.3
 * Improved figure chooser (Issue #281)

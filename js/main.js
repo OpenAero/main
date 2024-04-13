@@ -10121,7 +10121,7 @@ function adjustMiniFormAPosition() {
     $('miniFormAContainer').style.transform = $('t_windArrow').style.transform = '';
     if (/[BC]/.test(activeForm) && !platform.smallMobile && $('figureSelector').classList.contains('active')) {
         const translateX = `translateX(${- Math.min(
-            $('sequenceArea').clientWidth-$('sequenceSvg').getAttribute('width')-$('miniFormAContainer').offsetWidth - 24,
+            $('sequenceArea').clientWidth-$('sequenceSvg').getAttribute('width')-$('miniFormAContainer').offsetWidth - 36,
             $('figureSelector').offsetWidth - 12
         )}px)`;
         $('miniFormAContainer').style.transform = translateX;
@@ -12987,7 +12987,7 @@ function makeFree() {
     const usedLetters = figures.reduce((acc, f) => {
         const l = f.unknownFigureLetter;
         if (!acc[l]) acc[l] = 0;
-        acc[l]++;
+        if (f.aresti) acc[l]++;
         return acc;
     }, {});
     // draw all real figures

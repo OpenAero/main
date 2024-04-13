@@ -50,7 +50,8 @@ const versionNew = {
   '2024.1.4': [
     ['Added 2024 IAC sequences', 3],
     ['Added 2024 IMAC sequences', 3],
-    ['Added SAC "Bald Eagles" Free rules', 3]
+    ['Added SAC "Bald Eagles" Free rules', 3],
+    ['Added 2025 NZAC sequences', 3]
   ],
   '2024.1.3': [
     ['Added 2024 CIVA Power and Glider rules and sequences', 4],
