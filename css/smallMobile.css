@@ -215,7 +215,7 @@ select {
 #optimalSequenceArea {
     display: none;
 }
-#sequenceArea #t_windArrow {
+#sequenceArea #t_windArrow, .iosCordova #sequenceArea #t_windArrow {
   top: 48px;
   left: calc(100% - 85px);
 }

@@ -12204,7 +12204,7 @@ function makeFormA() {
                             // add 'F.P.' to IAC form A when applicable
                             drawText('F.P.',
                                 x + columnWidths[column] / 2,
-                                y + (j + 1) * fontsize,
+                                y + (aresti.length + 2) * fontsize,
                                 'formATextBold' + fontsize + 'px',
                                 'middle');
                         }

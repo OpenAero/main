@@ -1,3 +1,11 @@
+2024.1.9
+* Fixed error breaking IAC Form A on sequence with floating point
+
+2024.1.8
+* Fixed wind arrow position on iOS Cordova phone layout
+* Added several required privacy-manifest items for iOS to Cordova config.xml
+* Added comments to Cordova config.xml
+
 2024.1.4
 * Added IMAC sequences for 2024 (Issue #282)
 * Changed wingover shape to show 1/8 loop entry and exit curve (Issue #63)
