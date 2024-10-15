@@ -1,4 +1,4 @@
-﻿/* OpenAero rules23-civa.js file
+﻿/* OpenAero rules24-civa.js file
 
 This file is part of OpenAero.
 

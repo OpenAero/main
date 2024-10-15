@@ -100,7 +100,8 @@ OpenAero 2016.1
  *   9.1.3.1, 9.1.3.3, 9.4.3.3, 9.8.3.1 to programmes 2 to 6 (CIVA NP2024-1)
  * - Renamed "Free Known" to "Known" and "Free Unknown" to "Free" (CIVA NP2024-2)
  * - Added 2024 reference sequences
- * 
+ * 2024.1.10
+ * - Fixed 2024 Unlimited reference sequence
 */
 
 rules.push (
@@ -119,7 +120,7 @@ rules.push (
 
 "figure-letters=ABCDE",
 
-'reference="@A" 4,3if- "@B" o24- "@C" -h4- "@D" -,4ita "@E" -,2y-',
+'reference="@A" ,4.b,4. "@B" o,2f,2 "@C" -2ift4 "@D" 6s- "@E" 24c.',
 
 // what info should be filled out
 "infocheck=pilot;actype;acreg;positioning",

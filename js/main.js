@@ -4691,13 +4691,11 @@ function doOnLoad() {
 
     // Send the sources of all rule scripts to rulesWorker, which can use
     // them to determine rule year.
-    var
-        scripts = document.getElementsByTagName('script'),
-        scriptSrc = [];
-    for (let i = 0; i < scripts.length; i++) {
-        if (/rules\/rules[0-9][0-9]+.*.js$/.test(scripts[i].src)) scriptSrc.push(scripts[i].src);
+    let scriptSrc = [];
+    for (const script of document.getElementsByTagName('script')) {
+        if (/rules\/rules[0-9][0-9]+.*.js$/.test(script.src)) scriptSrc.push(script.src);
     }
-    // Parse the rules
+    // Parse the rules asynchronously
     rulesWorker.postMessage({
         action: 'initialize',
         arestiToFig, arestiToFig,
@@ -4714,7 +4712,7 @@ function doOnLoad() {
     if (!(platform.android || platform.ios || platform.uwp || platform.windows10)) {
         // setup PWA handler. Must be done early to ensure triggering of
         // beforeinstallprompt
-        var installPWA = $(platform.mobile ?
+        let installPWA = $(platform.mobile ?
             'mobileInstallPWA' : 't_installApp');
         window.addEventListener('beforeinstallprompt', (e) => {
             platform.supportsPWA = true;
@@ -4724,6 +4722,19 @@ function doOnLoad() {
             });
         });
     }
+
+    // Setup file opening on PWA
+    if ("launchQueue" in window) {
+        launchQueue.setConsumer(async (launchParams) => {
+            if (launchParams.files) {
+                loadedSequenceWindows (
+                    URL.createObjectURL(await launchParams.files[0].getFile()),
+                    launchParams.files[0].name
+                )
+            }
+        });
+    }
+    
     // Give Cordova or PWA three seconds to start, then...
     setTimeout(function () {
         if (!platform.cordova) checkForApp();
@@ -4786,11 +4797,12 @@ function doOnLoad() {
     $('oa_version').value = version;
 
     // add Team select list
-    var fragment = document.createDocumentFragment();
-    var sortKeys = Object.keys(iocCountriesReverse).sort();
+    const
+        fragment = document.createDocumentFragment(),
+        sortKeys = Object.keys(iocCountriesReverse).sort();
     sortKeys[-1] = '';
     for (let i = -1; i < sortKeys.length; i++) {
-        var option = document.createElement('option');
+        const option = document.createElement('option');
         option.value = option.text = sortKeys[i];
         fragment.appendChild(option);
     }
@@ -5306,6 +5318,7 @@ function addEventListeners() {
     $('saveFigsSeparateHeight').addEventListener('change', () => { saveSettingsStorage() }, false);
     $('zipImageFilenamePattern').addEventListener('change', () => { saveSettingsStorage() }, false);
     $('saveFigsSeparateFigureNumbers').addEventListener('change', () => { saveSettingsStorage() }, false);
+    $('saveFigsSeparateForms').addEventListener('change', () => { saveSettingsStorage() }, false);
 
     $('numberInCircle').addEventListener('change', updateNumberInCircle, false);
     $('rollFontSize').addEventListener('change', updateRollFontSize, false);
@@ -7567,7 +7580,7 @@ function getLatestVersion() {
 // openaero.net or the iOS app store. Function f is
 // executed when version is loaded
 function getStableVersion(f) {
-    var xhr = new XMLHttpRequest();
+    const xhr = new XMLHttpRequest();
     xhr.timeout = 5000;
     xhr.onload = function () { f(xhr.response) };
     xhr.onerror = xhr.ontimeout = function () { f(false) };
@@ -7641,6 +7654,10 @@ function checkUpdateDone() {
             for (let i = 0; i < Math.min(list.length, versionNewMax); i++) {
                 li += `<li>${list[i][0]}</li>\n`;
             }
+            rulesWorker.postMessage({
+                action: 'versionUpdate',
+                rules: rules
+            });
             alertBox(sprintf(userText.versionNew, oldVersion, version, li));
             // create link for changelog
             $('changelog').addEventListener(
@@ -7718,48 +7735,48 @@ function changeSequenceInfo() {
 // buildFigureXML creates a well-formatted XML string that holds all
 // sequence details. It is later appended at the end of the .seq file
 function buildFigureXML() {
-    var
-        ff = document.createElement('figures'),
+    const
+        ff = document.createElement('figures');
+    let
         figNr = 0,
-        aresti,
-        k;
-    figureK = 0;
-    for (let i = 0; i < figures.length; i++) {
-        aresti = figures[i].aresti;
-        k = figures[i].k;
-        if (aresti) {
+        totalK = 0;
+    for (const fig of figures) {
+        if (fig.aresti) {
             figNr++;
-            var figK = 0;
-            var f = ff.appendChild(document.createElement('figure'));
-            var nr = f.appendChild(document.createElement('nr'));
-            nr.appendChild(document.createTextNode(figNr));
-            // add figure letter if applicable
-            if (figures[i].unknownFigureLetter) {
+            let figK = 0;
+            const f = ff.appendChild(document.createElement('figure'));
+            // Append figure number
+            f.appendChild(document.createElement('nr'))
+                .appendChild(document.createTextNode(figNr));
+            // Append figure letter if applicable
+            if (fig.unknownFigureLetter) {
                 // if rules are loaded, check if letter is allowed accordingly
-                if ((figureLetters.indexOf(figures[i].unknownFigureLetter) > -1) ||
-                    (additionalFig.max && (figures[i].unknownFigureLetter === 'L')) ||
+                if ((figureLetters.indexOf(fig.unknownFigureLetter) > -1) ||
+                    (additionalFig.max && (fig.unknownFigureLetter === 'L')) ||
                     !activeRules) {
-                    var letter = f.appendChild(document.createElement('letter'));
-                    letter.appendChild(document.createTextNode(figures[i].unknownFigureLetter));
+                    f.appendChild(document.createElement('letter'))
+                        .appendChild(document.createTextNode(fig.unknownFigureLetter));
                 }
             }
 
-            if (figures[i].superFamily) {
-                var sf = f.appendChild(document.createElement('sf'));
-                sf.appendChild(document.createTextNode(figures[i].superFamily));
+            // Append superFamily if applicable
+            if (fig.superFamily) {
+                f.appendChild(document.createElement('sf'))
+                    .appendChild(document.createTextNode(fig.superFamily));
             }
 
-            for (let j = 0; j < aresti.length; j++) {
-                var el = f.appendChild(document.createElement('element'));
-                var aj = el.appendChild(document.createElement('aresti'));
-                aj.appendChild(document.createTextNode(aresti[j]));
-                var kj = el.appendChild(document.createElement('k'));
-                kj.appendChild(document.createTextNode(k[j]));
-                figK += parseInt(k[j]);
+            // Append element Aresti numbers and K factors
+            for (let j = 0; j < fig.aresti.length; j++) {
+                const el = f.appendChild(document.createElement('element'));
+                el.appendChild(document.createElement('aresti'))
+                    .appendChild(document.createTextNode(fig.aresti[j]));
+                el.appendChild(document.createElement('k'))
+                    .appendChild(document.createTextNode(fig.k[j]));
+                figK += parseInt(fig.k[j]);
             }
             // Adjust figure K for additionals
-            if (figures[i].unknownFigureLetter) {
-                if (figures[i].unknownFigureLetter == 'L') {
+            if (fig.unknownFigureLetter) {
+                if (fig.unknownFigureLetter == 'L') {
                     if (additionals <= additionalFig.max) {
                         figK = additionalFig.totalK / additionals;
                     } else if (additionalFig.max > 0) {
@@ -7768,44 +7785,53 @@ function buildFigureXML() {
                 }
             }
             // Adjust figure K for floatingPoint
-            if (figures[i].floatingPoint) {
-                figK -= 1;
-            }
-            var fK = f.appendChild(document.createElement('figk'));
-            fK.appendChild(document.createTextNode(figK));
-            figureK += figK;
+            if (fig.floatingPoint) figK -= 1;
+            // Append figure K
+            f.appendChild(document.createElement('figk'))
+                .appendChild(document.createTextNode(figK));
+            totalK += figK;
+            // Append figure string
+            f.appendChild(document.createElement('string'))
+                .appendChild(document.createTextNode(fig.string));
+            // Append base figure
+            f.appendChild(document.createElement('base'))
+                .appendChild(document.createTextNode(fig.base));
+            // Append figure family
+            f.appendChild(document.createElement('family'))
+                .appendChild(document.createTextNode(fig.family));
+            // Append figure description
+            f.appendChild(document.createElement('description'))
+                .appendChild(document.createTextNode(fig.description));
         }
     }
-    var ffK = ff.appendChild(document.createElement('figurek'));
-    ffK.appendChild(document.createTextNode(figureK));
-    if (parseInt($('positioning').value)) {
-        var totalK = figureK +
-            parseInt($('positioning').value);
-    } else var totalK = figureK;
-    var tK = ff.appendChild(document.createElement('totalk'));
-    tK.appendChild(document.createTextNode(totalK));
-    var xml = new XMLSerializer().serializeToString(ff);
+    // Append total figure K for sequence
+    ff.appendChild(document.createElement('figurek'))
+        .appendChild(document.createTextNode(totalK));
+    // Append total K including positioning
+    if (parseInt($('positioning').value)) totalK += parseInt($('positioning').value);
+    ff.appendChild(document.createElement('totalk'))
+        .appendChild(document.createTextNode(totalK));
+    let xml = new XMLSerializer().serializeToString(ff);
     return (xml.replace(/^<figures[^>]*/, '<figures'));
 }
 
 // buildSettingsXML creates a well-formatted XML string that holds all
 // settings details. It is later appended at the end of the .seq file
 function buildSettingsXML() {
-    var key, val, s, node;
-    var settings = document.createElement('settings');
-    for (let i = 0; i < saveSettings.length; i++) {
-        key = saveSettings[i];
+    let val;
+    const settings = document.createElement('settings');
+    for (const key of saveSettings) {
         // get the value or, if checkbox, if checked or not
         if ($(key).type == 'checkbox') {
             val = $(key).checked ? true : false;
         } else {
             val = $(key).value;
         }
-        s = settings.appendChild(document.createElement('setting'));
-        node = s.appendChild(document.createElement('key'));
-        node.appendChild(document.createTextNode(key));
-        node = s.appendChild(document.createElement('value'));
-        node.appendChild(document.createTextNode(val));
+        const s = settings.appendChild(document.createElement('setting'));
+        s.appendChild(document.createElement('key'))
+            .appendChild(document.createTextNode(key));
+        s.appendChild(document.createElement('value'))
+            .appendChild(document.createTextNode(val));
     }
     return (new XMLSerializer().serializeToString(settings));
 }
@@ -7834,25 +7860,23 @@ function changeCombo(id, callback) {
         e.nextElementSibling.innerHTML = userText[e.id];
     }
 
-    var rules = $('rules'),
+    let
         ruleName = getRuleName(),
-        category = $('category'),
-        categoryName = category.value.toLowerCase(),
-        program = $('program'),
-        programName = program.value.toLowerCase();
+        categoryName = $('category').value.toLowerCase(),
+        programName = $('program').value.toLowerCase();
 
     if (id === 'rules') {
         // set default logo for rules
         if (rulesLogo[ruleName]) selectLogo(rulesLogo[ruleName]);
 
         // set CIVA, IAC or IMAC forms default
-        formStyle = /^(iac|imac)$/i.test(rules.value) ?
-            rules.value.match(/(iac|imac)/i)[1].toLowerCase() : 'civa';
+        formStyle = /^(iac|imac)$/i.test($('rules').value) ?
+            $('rules').value.match(/(iac|imac)/i)[1].toLowerCase() : 'civa';
         $('formStyle').value = formStyle;
 
         // clear category if these rules exist but do not contain the category
         if (seqCheckAvail[ruleName] && !seqCheckAvail[ruleName].cats[categoryName]) {
-            category.value = program.value = '';
+            $('category').value = $('program').value = '';
         }
     }
 
@@ -7861,16 +7885,16 @@ function changeCombo(id, callback) {
         if (seqCheckAvail[ruleName] &&
             seqCheckAvail[ruleName].cats[categoryName] &&
             !seqCheckAvail[ruleName].cats[categoryName].seqs[programName]) {
-            program.value = '';
+            $('program').value = '';
         }
     }
 
-    if (rules.value == '') {
-        disable(category);
-    } else enable(category);
-    if (category.value == '') {
-        disable(program);
-    } else enable(program);
+    if ($('rules').value == '') {
+        disable($('category'));
+    } else enable($('category'));
+    if ($('category').value == '') {
+        disable($('program'));
+    } else enable($('program'));
 
     function completeActions() { // called after rule checking
         changeSequenceInfo();
@@ -7882,16 +7906,15 @@ function changeCombo(id, callback) {
 
     // Load rules and check against the sequence. Display any alerts.
     // Activate callback if required.
-    var
-        ruleName = getRuleName(),
-        catName = $('category').value.toLowerCase(),
-        programName = $('program').value.toLowerCase();
+    ruleName = getRuleName();
+    categoryName = $('category').value.toLowerCase(),
+    programName = $('program').value.toLowerCase();
 
     // load the rules. Worker will decide if it's possible and necessary
     rulesWorker.postMessage({
         action: 'loadRules',
         ruleName: ruleName,
-        catName: catName,
+        catName: categoryName,
         programName: programName
     });
 
@@ -7908,35 +7931,36 @@ function changeCombo(id, callback) {
 
 // highlight marks part of a text
 function highlight(el, start, end) {
-    var
+    const
         text = el.innerText,
         range = saveSelection(el);
 
     if (end) {
-        var newHTML = (text.substr(0, start) +
+        const newHTML = (text.substr(0, start) +
             '<span class="highlight">' + text.substr(start, (end - start)) +
             '</span>' + text.substr(end)).replace(/(\r\n|\n|\r)/gm, '');
         if (el.innerHTML !== newHTML) el.innerHTML = newHTML;
-        var span = el.getElementsByClassName('highlight')[0];
-        el.scrollTop = parseInt(span.getBoundingClientRect().top -
-            el.getBoundingClientRect().top);
+        el.scrollTop = parseInt(
+            el.getElementsByClassName('highlight')[0].getBoundingClientRect().top -
+            el.getBoundingClientRect().top
+        );
     } else if (el.innerHTML != text) el.innerHTML = text;
     if (document.activeElement === el) restoreSelection(el, range);
 }
 
 // saveSelection returns the current selection in containerEl
 function saveSelection(containerEl) {
-    var
+    const
         doc = containerEl.ownerDocument,
         win = doc.defaultView;
 
     if (!win.getSelection().anchorNode) return { start: 0, end: 0 };
 
-    var range = win.getSelection().getRangeAt(0);
-    var preSelectionRange = range.cloneRange();
+    const range = win.getSelection().getRangeAt(0);
+    let preSelectionRange = range.cloneRange();
     preSelectionRange.selectNodeContents(containerEl);
     preSelectionRange.setEnd(range.startContainer, range.startOffset);
-    var start = preSelectionRange.toString().length;
+    const start = preSelectionRange.toString().length;
 
     return {
         start: start,
@@ -8001,7 +8025,7 @@ function pasteContest(e) {
     if ($('lockContest').classList.contains('locked')) return;
     getLocal('contestInfo', function (string) {
         if (string) {
-            var info = JSON.parse(string);
+            const info = JSON.parse(string);
             $('location').value = info.location;
             $('date').value = info.date;
             if (info.logo) selectLogo(info.logo); else removeLogo();
@@ -8221,13 +8245,14 @@ function selectLogo(logo) {
 // using OpenAero API
 function drawActiveLogo() {
     if ($('logoImage')) {
-        var width = 120; // maximum width
-        var height = 60; // maximum height
+        const
+            width = 120, // maximum width
+            height = 60; // maximum height
         $('logoImage').classList.remove('noDisplay');
         $('activeLogo').classList.remove('empty');
         $('t_chooseLogo').classList.add('noDisplay');
         // Create logo svg
-        var link = $('logoImage');
+        let link = $('logoImage');
         if (link.firstChild) link.firstChild.remove();
         link.appendChild(buildLogoSvg(logoImg, 0, 0, width, height));
 
@@ -8257,7 +8282,7 @@ function removeLogo() {
 // deleteLogo deletes the private logo from the chooser and localStorage
 function deleteLogo(evt) {
     noPropagation(evt);
-    var logoName = this.id.replace(/^deleteLogo-/, '');
+    const logoName = this.id.replace(/^deleteLogo-/, '');
     this.parentNode.remove();
     $('fileDropLogo').classList.remove('noDisplay');
     delete logoImages[logoName];
@@ -8541,7 +8566,7 @@ function updateProgramList() {
 
 // checkRules calls the checkRules worker with a callbackId
 function checkRules(callback) {
-    var id = uniqueId();
+    const id = uniqueId();
     workerCallback[id] = callback;
 
     multi.useReference = $('multiUseReference').checked;
@@ -8728,17 +8753,17 @@ function checkSequence(show) {
 // When lock is not true, it toggles. When lock is true it locks the
 // sequence
 function lockSequence(lock) {
-    var els = document.getElementsByClassName('lock');
+    const els = document.getElementsByClassName('lock');
     if ($('lock_sequence').value && (lock !== true)) {
         // was locked, so unlock
         $('lock_sequence').value = '';
         $('lockSequence').classList.remove('noDisplay');
         $('unlockSequence').classList.add('noDisplay');
-        for (let i = 0; i < els.length; i++) {
-            if (els[i].tagName === 'LI') {
-                els[i].classList.remove('noDisplay');
-            } else if (els[i].getAttribute('disabledByLock')) {
-                els[i].removeAttribute('disabled');
+        for (const el of els) {
+            if (el.tagName === 'LI') {
+                el.classList.remove('noDisplay');
+            } else if (el.getAttribute('disabledByLock')) {
+                el.removeAttribute('disabled');
             }
         }
         $('t_locked').classList.add('hidden');
@@ -8749,12 +8774,12 @@ function lockSequence(lock) {
         $('lock_sequence').value = '1';
         $('lockSequence').classList.add('noDisplay');
         $('unlockSequence').classList.remove('noDisplay');
-        for (let i = 0; i < els.length; i++) {
-            if (els[i].tagName === 'LI') {
-                els[i].classList.add('noDisplay');
-            } else if (!els[i].disabled) {
-                els[i].setAttribute('disabledByLock', true);
-                els[i].setAttribute('disabled', true);
+        for (const el of els) {
+            if (el.tagName === 'LI') {
+                el.classList.add('noDisplay');
+            } else if (!el.disabled) {
+                el.setAttribute('disabledByLock', true);
+                el.setAttribute('disabled', true);
             }
         }
         $('t_locked').classList.remove('hidden');
@@ -9458,12 +9483,13 @@ function markNotAllowedFigures() {
 
     function illegalFigure(td) {
         if (($('hideIllegal').checked == true) &&
+            (activeForm !== 'FU') &&
             ($('figureGroup').value != 0)) {
             td.classList.add('hidden');
             td.classList.remove('matchingFigure');
         } else {
             if (!$('hideRarelyUsed').checked || !checkRarelyUsed(fig[td.id])) {
-                td.classList.add('figureNotAllowed');
+                if (activeForm !== 'FU') td.classList.add('figureNotAllowed');
                 showRow = true;
             }
         }
@@ -9506,7 +9532,8 @@ function markNotAllowedFigures() {
             }
         }
         // hide row when no legal figures present
-        if (($('hideIllegal').checked == true || $('hideRarelyUsed').checked == true) &&
+        if ((($('hideIllegal').checked == true && activeForm !== 'FU')
+            || $('hideRarelyUsed').checked == true) &&
             ($('figureGroup').value != 0) &&
             (figGroup[$('figureGroup').value].family != 9) &&
             !showRow) {
@@ -11572,6 +11599,7 @@ function startFuDesigner(dontConfirm) {
 
             selectForm('FU');
             availableFigureGroups();
+            changeHideFigs();
 
             // select the Free (Un)known figures tab
             $('fuFigures').classList.remove('noDisplay');
@@ -11661,6 +11689,7 @@ function exitFuDesigner(newSequence) {
             $('fuSequence').innerHTML = '';
 
             availableFigureGroups();
+            changeHideFigs();
 
             // Layout is now restored to desktop/largeMobile.
             // If we were in smallMobile layout, reactivate required elements
@@ -12390,7 +12419,9 @@ function makeFormGrid(cols, width, svg = SVGRoot) {
         const f = figures[sortFigures[i].id];
 
         // draw rectangle
-        drawRectangle(x, y, cw, ch, 'formLine', svg);
+        let rect = drawRectangle(x, y, cw, ch, 'formLine', svg);
+        rect.id = `figure${f.seqNr}-box`;
+ 
         // draw figure Ks, Arestis and Figure Letter
         let textWidth = 0;
         // yy is used to determine the top of all Aresti nrs, comments etc
@@ -13228,7 +13259,7 @@ function addAlertsToAlertMsgs(data) {
 
 // displayAlerts displays alert messages in the Alerts box
 function displayAlerts() {
-    var container = $('alerts');
+    const container = $('alerts');
     if (container) {
         // Clear any previous messages but make sure we don't remove the label (1 node)
         while (container.childNodes.length > 1) {
@@ -13247,10 +13278,10 @@ function displayAlerts() {
         if (!activeRules) alertMsgs.unshift(userText.noRules);
         // Display messages
         alertMsgs.forEach ((a) => {
-            var span = document.createElement('span');
+            const span = document.createElement('span');
             span.innerHTML = a;
             if (alertMsgRules[a]) {
-                var div = document.createElement('div');
+                const div = document.createElement('div');
                 div.innerHTML = alertMsgRules[a];
                 span.appendChild(div);
                 span.classList.add('alertMsgRule');
@@ -13258,6 +13289,11 @@ function displayAlerts() {
             container.appendChild(span);
             // use <br> because sequence check log uses simple formatting
             container.appendChild(document.createElement('br'));
+            // mark figures with alerts with a red box in Grid mode
+            if (/^G/.test (activeForm) && /^\(\d+\)/.test(a)) {
+                const box = SVGRoot.getElementById (`figure${a.match(/\d+/)[0]}-box`);
+                if (box) box.style = style['corr'];
+            }
         });
         // Clear all alerts
         alertMsgs = [];
@@ -13341,7 +13377,7 @@ function clickVirtualKeyboard(e) {
     // remove blur handler until clicking complete
     sequenceText.removeEventListener('blur', virtualKeyboard);
 
-    var key = e.target.textContent;
+    const key = e.target.textContent;
     if (key.length === 1) {
         e.target.classList.add('clicked');
         // always remove highlight after a second
@@ -13349,7 +13385,7 @@ function clickVirtualKeyboard(e) {
             e.target.classList.remove('clicked');
         }, 1000);
 
-        var range = saveSelection(sequenceText);
+        const range = saveSelection(sequenceText);
 
         sequenceText.innerText = sequenceText.innerText.substring(0, range.start) +
             key + sequenceText.innerText.substring(range.end);
@@ -13377,7 +13413,7 @@ function releaseVirtualKeyboard(e) {
 function updateSequenceText(string) {
     if (document.activeElement === sequenceText) {
         // focussed, maintain caret position
-        var
+        let
             range = saveSelection(sequenceText),
             selStart = range.start,
             selEnd = range.end;
@@ -13386,9 +13422,8 @@ function updateSequenceText(string) {
         sequenceText.innerHTML = string;
 
         // put caret back in correct place
-        var
-            range = document.createRange(),
-            sel = window.getSelection();
+        range = document.createRange();
+        let sel = window.getSelection();
 
         range.setStart(sequenceText.firstChild, selStart);
         range.setEnd(sequenceText.firstChild, selEnd);
@@ -13706,7 +13741,7 @@ function openLogoFile(evt) {
 
 // programme will load a programme
 function programme() {
-    var key = this.id.replace(/^programme-/, '');
+    const key = this.id.replace(/^programme-/, '');
     OLAN.bumpBugCheck = false;
     updateSaveFilename();
     if (/^<sequence>/.test(library[key])) {
@@ -13730,19 +13765,13 @@ function dropSequence(evt) {
 
 // openSequence will load a sequence from a .seq file
 function openSequence(evt) {
-    function open(e) {
-        openFile(e, 'Sequence');
-    }
-
-    var e = evt && evt.dataTransfer && evt.dataTransfer.files &&
-        evt.dataTransfer.files[0] ?
-        evt.dataTransfer.files[0] :
-        $('file').files[0];
+    const e = evt && evt.dataTransfer && evt.dataTransfer.files && evt.dataTransfer.files[0] ?
+        evt.dataTransfer.files[0] : $('file').files[0];
     // Check if the current sequence was saved. If not, present a dialog
     if (!sequenceSaved) {
         confirmBox(userText.sequenceNotSavedWarning,
-            userText.openSequence, () => { open(e) });
-    } else open(e);
+            userText.openSequence, () => { openFile(e, 'Sequence') });
+    } else openFile(e, 'Sequence');
 }
 
 // openSequence will load a sequence from a .seq file
@@ -13802,9 +13831,8 @@ function openFile(file, handler, params) {
 
 // removeFileListFile removes a file from fileList
 function removeFileListFile(el, callback) {
-    var id = el.id.replace(/^removeFileListFile/, '');
-    var container = el.parentNode.parentNode;
-    fileList.splice(id, 1);
+    const container = el.parentNode.parentNode;
+    fileList.splice(el.id.replace(/^removeFileListFile/, ''), 1);
     // we need to rebuild because splice changes the indexes
     clearFileListContainer(container);
     fileList.forEach ((f, i) => { addToFileList(i, container, callback); });
@@ -13900,18 +13928,18 @@ function loadedFileList(e, params) {
 function addToFileList(id, container, callback) {
     if (!callback) callback = function () { };
     // build and add div
-    var div = document.createElement('div');
-    var i = document.createElement('i');
+    const
+        div = document.createElement('div'),
+        i = document.createElement('i');
     i.classList.add('fileListFileRemove', 'material-icons');
     i.id = 'removeFileListFile' + id;
     i.innerHTML = 'close';
     i.addEventListener('mousedown', () => {
-        removeFileListFile(this, callback);
+        removeFileListFile(i, callback);
         callback();
     }, false);
     div.appendChild(i);
-    var name = document.createTextNode(fileList[id].name);
-    div.appendChild(name);
+    div.appendChild(document.createTextNode(fileList[id].name));
     container.appendChild(div);
     callback();
     // adjust image size for saving
@@ -14092,7 +14120,7 @@ function loadedQueue(evt) {
         if (fileString === false) return;
 
         // save current sequence
-        var sequence = activeSequence.xml;
+        const sequence = activeSequence.xml;
 
         // clear queue
         for (let i = fig.length - 1; i >= 0; i--) {
@@ -14160,10 +14188,10 @@ function loadSequence(fileString, callback) {
     // In all other cases throw an error.
     try {
         if (/^data:image\/png/.test(fileString)) {
-            var image = new Image();
+            const image = new Image();
             image.src = fileString;
             image.onload = function () {
-                var string = steg.decode(image);
+                const string = steg.decode(image);
                 if (string.match(/^<sequence/)) {
                     // this is an OpenAero sequence, no need to do OLAN checks
                     OLAN.bumpBugCheck = false;
@@ -14244,7 +14272,7 @@ function OLANtoXML(string) {
 // activateXMLsequence will make a sequence provided as XML active
 // it returns true on succes and false on failure
 function activateXMLsequence(xml, noLoadRules) {
-    var freeUnknownSequence = '';
+    let freeUnknownSequence = '';
 
     // make sure no figure is selected
     if (selectedFigure.id !== null) selectFigure(false);
@@ -14258,8 +14286,7 @@ function activateXMLsequence(xml, noLoadRules) {
             ['location', 'date', 'logo', 'notes'].includes(l)) {
             // do nothing for contest elements when contest is locked
         } else {
-            var el = $(l);
-            if (el && ('value' in el)) el.value = ''; else if (el.innerText) el.innerText = '';
+            if ($(l) && ('value' in $(l))) $(l).value = ''; else if ($(l).innerText) $(l).innerText = '';
         }
     });
     if (!$('lockContest').classList.contains('locked')) {
@@ -14271,18 +14298,18 @@ function activateXMLsequence(xml, noLoadRules) {
 
     if (xml) {
         // myElement will hold every entry as a node
-        var myElement = document.createElement('div');
-        // myTextArea will translate HTML escape characters to regular ones
-        var myTextArea = document.createElement('textarea');
-        myElement.innerHTML = xml;
-        var rootNode = myElement.getElementsByTagName("sequence")[0];
+        const div = document.createElement('div');
+        // textArea will translate HTML escape characters to regular ones
+        const textArea = document.createElement('textarea');
+        div.innerHTML = xml;
+        const rootNode = div.getElementsByTagName("sequence")[0];
 
         // return false (=faillure) if no sequence root element present
         if (!rootNode) return false;
 
-        var nodes = rootNode.childNodes;
+        const nodes = rootNode.childNodes;
 
-        var pre1516Sequence = true;
+        let pre1516Sequence = true;
         // Put every element in the correct field
         for (let ele in nodes) {
             if (nodes[ele].innerHTML) {
@@ -14290,16 +14317,16 @@ function activateXMLsequence(xml, noLoadRules) {
                     ['location', 'date', 'logo', 'notes'].includes(nodes[ele].nodeName.toLowerCase())) {
                     // do nothing for contest elements when contest is locked
                 } else {
-                    // translate escape characters by browser through myTextArea
-                    myTextArea.innerHTML = nodes[ele].innerHTML;
+                    // translate escape characters by browser through textArea
+                    textArea.innerHTML = nodes[ele].innerHTML;
                     // e will be the field, only put a value when it exists
-                    var e = $(nodes[ele].nodeName.toLowerCase());
+                    const e = $(nodes[ele].nodeName.toLowerCase());
                     if (e) {
                         if ('value' in e) {
                             if (typeof e.value === 'number') {
-                                e.value = parseFloat(myTextArea.value || 0);
-                            } else e.value = myTextArea.value || "";
-                        } else if ('innerText' in e) e.innerText = myTextArea.value;
+                                e.value = parseFloat(textArea.value || 0);
+                            } else e.value = textArea.value || "";
+                        } else if ('innerText' in e) e.innerText = textArea.value;
                     }
                     if (nodes[ele].nodeName.toLowerCase() === 'actype') {
                         pre1516Sequence = false;
@@ -14349,7 +14376,7 @@ function activateXMLsequence(xml, noLoadRules) {
     }
 
     // hide Harmony field for powered
-    var el = $('harmonyField');
+    const el = $('harmonyField');
     if (el) {
         if (sportingClass.value === 'powered') {
             el.classList.add('hidden');
@@ -14369,9 +14396,8 @@ function activateXMLsequence(xml, noLoadRules) {
 
     if (!noLoadRules) {
         // restore Reference sequence to previous value
-        var refSeqEl = $('referenceSequenceString');
-        refSeqEl.value = savedReference;
-        refSeqEl.removeAttribute('disabled');
+        $('referenceSequenceString').value = savedReference;
+        $('referenceSequenceString').removeAttribute('disabled');
         $('t_referenceSequenceFixed').classList.add('noDisplay');
         rulesWorker.postMessage({
             action: 'loadRules',
@@ -14384,7 +14410,7 @@ function activateXMLsequence(xml, noLoadRules) {
     // check if we are switching from a regular sequence to Free (Un)known
     // or vv. Make sure we do this after rules are loaded by passing
     // through rulesWorker
-    var id = uniqueId();
+    const id = uniqueId();
     workerCallback[id] = function () {
         if ((activeForm === 'FU') && (prevForm !== 'FU')) {
             if (!startFuDesigner(true)) activeForm = prevForm;
@@ -14423,9 +14449,8 @@ function activateXMLsequence(xml, noLoadRules) {
 // asked if he wants to open it in the Free (Un)known Designer
 function checkFuFiguresFile() {
 
-    var l = figureLetters;
-    if (
-        l &&
+    let l = figureLetters;
+    if (l &&
         !$('lock_sequence').value &&
         !multi.processing) {
         for (let i = 0; i < figures.length; i++) {
@@ -14441,7 +14466,7 @@ function checkFuFiguresFile() {
         if (l === '') {
             // all letters used once, fill referenceSequence and ask question
             $('referenceSequenceDialog').classList.remove('noDisplay');
-            var ref = $('referenceSequenceString');
+            const ref = $('referenceSequenceString');
             ref.value = '';
             // add figures including letter AND any sequence options (to make
             // sure direction changers work correctly)
@@ -14458,8 +14483,8 @@ function checkFuFiguresFile() {
 
             confirmBox(
                 userText[(additionalFig.max ? 'FUstartOnLoad' : 'FKstartOnLoad')],
-                userText.openSequence + ' <span class="info" ' +
-                'id="manual.html_free_unknown_designer">' +
+                userText.openSequence +
+                ' <span class="info" id="manual.html_free_unknown_designer">' +
                 '<i class="material-icons info">info</i></span>',
                 function () { startFuDesigner(true) }
             );
@@ -14495,9 +14520,8 @@ function handleDragOver(evt) {
 // checkOpenAeroVersion checks for the version number of the loaded
 // sequence and provides a warning if necessary
 function checkOpenAeroVersion() {
-    var
-        oa_version = $('oa_version'),
-        alerts = '';
+    const oa_version = $('oa_version');
+    let alerts = '';
 
     // before 1.2.3
     if (oa_version.value == '') {
@@ -14614,9 +14638,10 @@ function checkOpenAeroVersion() {
 function compVersion(v1, v2, parts) {
     if (!v1) return -1;
     if (!v2) return 1;
-    var subV1 = v1.split('.');
-    var subV2 = v2.split('.');
-    var count = (subV1.length > subV2.length) ? subV1.length : subV2.length;
+    const
+        subV1 = v1.split('.'),
+        subV2 = v2.split('.');
+    let count = (subV1.length > subV2.length) ? subV1.length : subV2.length;
     if (parts && (parts < count)) count = parts;
     // pad zeroes
     while (subV1.length < count) subV1.push(0);
@@ -14648,7 +14673,7 @@ function loadedLogo(evt) {
             }
         }
         // logo did not exist yet, create new
-        var t = (new Date()).getTime();
+        const t = (new Date()).getTime();
         privateLogoImages[t] = logoImages[t] = evt.target.result;
         storeLocal('logoImages', JSON.stringify(privateLogoImages));
         selectLogo(t);
@@ -14658,18 +14683,19 @@ function loadedLogo(evt) {
 // sanitizeFileName assures fileName does not contain illegal
 // characters
 function sanitizeFileName(fname) {
-    var
-        illegalRe = /[\/\?<>\\:\*\|":]/g,
-        controlRe = /[\x00-\x1f\x80-\x9f]/g,
-        reservedRe = /^\.+$/,
-        windowsReservedRe = /^(con|prn|aux|nul|com\d|lpt\d)(\..*)?$/i;
+    const
+        illegal = /[\/\?<>\\:\*\|":]/g,
+        control = /[\x00-\x1f\x80-\x9f]/g,
+        reserved = /^\.+$/,
+        windowsReserved = /^(con|prn|aux|nul|com\d|lpt\d)(\..*)?$/i;
 
-    var sanitized = fname
-        .replace(illegalRe, '')
-        .replace(controlRe, '')
-        .replace(reservedRe, '')
-        .replace(windowsReservedRe, '');
-    return (sanitized.substring(0, 255));
+    return (fname
+        .replace(illegal, '')
+        .replace(control, '')
+        .replace(reserved, '')
+        .replace(windowsReserved, '')
+        .substring(0, 255)
+    );
 }
 
 // updateSaveFilename gets called when the "Save as" filename is changed
@@ -14680,39 +14706,17 @@ function updateSaveFilename(fname) {
     storeLocal('fileName', fname);
 }
 
-// waitForIO waits for file IO
-function waitForIO(writer, callback) {
-    // set a watchdog to avoid eventual locking:
-    var start = Date.now();
-    // wait for a few seconds
-    var reentrant = function () {
-        if (writer.readyState === writer.WRITING && Date.now() - start < 4000) {
-            setTimeout(reentrant, 100);
-            return;
-        }
-        if (writer.readyState === writer.WRITING) {
-            console.error("Write operation taking too long, aborting!" +
-                " (current writer readyState is " + writer.readyState + ")");
-            writer.abort();
-        }
-        else {
-            callback();
-        }
-    };
-    setTimeout(reentrant, 100);
-}
-
 // saveFile saves a file
 // The function returns true if the file was saved
 function saveFile(data, name, ext, filter, format, param={}) {
     // Set saving result to true always as we currently have no method of
     // knowing whether the file was saved or not
-    var result = true;
+    let result = true;
 
     // convert base64 to binary
     if (format.match(/;base64$/)) {
-        var byteC = atob(data);
-        var byteN = new Array(byteC.length);
+        const byteC = atob(data);
+        let byteN = new Array(byteC.length);
         for (let i = 0; i < byteC.length; i++) {
             byteN[i] = byteC.charCodeAt(i);
         }
@@ -14769,7 +14773,35 @@ function saveFile(data, name, ext, filter, format, param={}) {
         saveDialog(' ', name, ext, param);
     } else if (platform.ios) {
         saveDialog(userText.iOSsaveFileMessage, name, ext, param);
+    } else if ("showSaveFilePicker" in window) {
+        // Use showSaveFilePicker when available (Chrome/Edge/Opera since late 2020)
+        async function getNewFileHandle(name, ext) {
+            const opts = {
+                types: [
+                {
+                    accept: { "text/plain": [ext] }
+                }
+                ],
+                suggestedName: name
+            };
+            // Create file handle
+            const fileHandle = await window.showSaveFilePicker(opts);
+            // Only continue when a fileHandle is obtained (no save abort)
+            if (fileHandle) {
+                // update filename, except for zipped figure files
+                if (ext != '.zip') updateSaveFilename(fileHandle.name.replace(/\.[^.]*$/, ''));
+                if (ext === '.seq') setSequenceSaved(true);
+                // Create writable file stream
+                const writable = await fileHandle.createWritable();
+                // Write the contents of the file to the stream.
+                await writable.write(saveData.blob);
+                // Close the file and write the contents to disk.
+                await writable.close();
+            } else result = false;
+        }
+        getNewFileHandle(name, ext).catch (err => {result = false});
     } else {
+        // Fall back to legacy file picking
         saveDialog(userText.downloadHTML5, name, ext, param);
     }
 
@@ -14780,12 +14812,11 @@ function saveFile(data, name, ext, filter, format, param={}) {
 // the .seq file is standard xml
 function saveSequence() {
     function save() {
-        var fname = activeFileName() || 'sequence';
 
         // take the original sequence XML,
         // remove the end tag, add figure XML and add the end tag again.
         // Then beautify the output.
-        var xml = activeSequence.xml.replace('</sequence>', '');
+        let xml = activeSequence.xml.replace('</sequence>', '');
         // check if the alerts box contains no alerts. If so, add verified
         // tag
         if (activeRules &&
@@ -14798,7 +14829,7 @@ function saveSequence() {
         xml = vkbeautify.xml(xml);
         saveFile(
             xml,
-            fname,
+            activeFileName() || 'sequence',
             '.seq',
             { 'name': 'OpenAero Sequence', 'filter': '.seq' },
             'text/xhtml+xml;utf8'
@@ -14811,8 +14842,9 @@ function saveSequence() {
 // saveQueue will save the current queue to a .seq file
 // the .seq file is standard xml
 function saveQueue() {
-    var sequenceString = sequenceText.innerText;
-    var queueFigs = [];
+    const
+        sequenceString = sequenceText.innerText,
+        queueFigs = [];
     for (let i = fig.length - 1; i >= 0; i--) {
         if (fig[i]) {
             if (fig[i].group == 0) {
@@ -14828,12 +14860,10 @@ function saveQueue() {
     sequenceText.innerText = queueFigs.join(' // ');
     updateDefaultView(true);
     checkSequenceChanged();
-    var fname = activeFileName('QUEUE');
-    // Beautify the output.
-    var xml = vkbeautify.xml(activeSequence.xml);
     saveFile(
-        xml,
-        fname,
+        // Beautify the output
+        vkbeautify.xml(activeSequence.xml),
+        activeFileName('QUEUE'),
         '.seq',
         { 'name': 'OpenAero Queue', 'filter': '.seq' },
         'text/xhtml+xml;utf8'
@@ -14847,7 +14877,7 @@ function saveQueue() {
 
 // errorHandler will be called when there is a file error
 function errorHandler(e) {
-    var msg = '';
+    let msg = '';
 
     switch (e.code) {
         case FileError.QUOTA_EXCEEDED_ERR:
@@ -14892,20 +14922,21 @@ function decodeBase64Url(t) {
 //   by a single character with code 128-159.
 // - compress sequence_text (see explanation in code)
 function compressSequence(xml) {
-    var
+    const
         parser = new DOMParser(),
-        xmlDoc = parser.parseFromString(xml, "text/xml"),
-        result = "";
+        xmlDoc = parser.parseFromString(xml, "text/xml");
+
+    let result = "";
 
     if (sequenceXMLlabels.length > 31) {
         throw new Error('Compression will not work when there are more than 31 labels.');
     }
 
     sequenceXMLlabels.forEach ((l, i) => {
-        var label = xmlDoc.getElementsByTagName(l);
+        const label = xmlDoc.getElementsByTagName(l);
         // Add label code and value to result if label value exists
         if (label && label[0]) {
-            var labelValue = label[0].childNodes[0].nodeValue;
+            const labelValue = label[0].childNodes[0].nodeValue;
             result += String.fromCharCode(i + 128);
             if (l == 'sequence_text') {
                 // Compress sequence_text by using the property that it hardly ever
@@ -14939,7 +14970,7 @@ function saveAsURL() {
     
     function save() {
 
-        var url = 'https://openaero.net/?s=' + encodeBase64Url(compressSequence(activeSequence.xml));
+        const url = 'https://openaero.net/?s=' + encodeBase64Url(compressSequence(activeSequence.xml));
 
         alertBox('<p>' + userText.saveAsURLFromApp +
             '</p><textarea id="saveAsURLArea" readonly></textarea>',
@@ -14951,7 +14982,7 @@ function saveAsURL() {
                     alertBox();
                 }
             }]);
-        var copyFrom = $('saveAsURLArea');
+        const copyFrom = $('saveAsURLArea');
         copyFrom.innerHTML = url;
         copyFrom.focus();
         if (!copyFrom.select()) copyFrom.setSelectionRange(0, 9999);
@@ -15039,9 +15070,9 @@ function emailSequence() {
     function email() {
         // create body with descriptive text, newlines and sequence URL
         // also replace single ticks (') and + as they may break the link
-        var body = userText.emailHeader + '\r\n\r\n' +
+        const body = userText.emailHeader + '\r\n\r\n' +
             'https://openaero.net/?s=' + encodeBase64Url(compressSequence(activeSequence.xml));
-        var subject = activeFileName() || 'Sequence';
+        const subject = activeFileName() || 'Sequence';
         el.setAttribute('href', 'mailto:%20?subject=' + encodeURI(subject) +
             '&body=' + encodeURI(body));
         // click again to make sure this also gets triggerred after
@@ -15055,8 +15086,9 @@ function emailSequence() {
 
 // openSequenceLink handles opening a sequence from link in dialog
 function openSequenceLink(e) {
-    var dialog = $('openSequenceLink');
-    var link = $('openSequenceLinkUrl');
+    const
+        dialog = $('openSequenceLink'),
+        link = $('openSequenceLinkUrl');
 
     if (e === false) {
         dialog.classList.add('noDisplay');
@@ -16985,45 +17017,62 @@ function savePNG() {
 // saveFigs will save all the figures in the sequence separately in a
 // single zip file
 function saveFigs() {
-    var
-        fname = activeFileName(),
-        // create new zip object
-        zip = new JSZip(),
+    const
         // get image filename pattern
         fPattern = $('zipImageFilenamePattern').value,
         // get image width and height
         width = $('saveFigsSeparateWidth').value.replace(/[^0-9]/g, '') + 'px',
         height = $('saveFigsSeparateHeight').value.replace(/[^0-9]/g, '') + 'px',
+        // Which forms?
+        saveForms = $('saveFigsSeparateForms').value || activeForm[0],
+        activeFormSave = activeForm;
+    let
+        // create new zip object
+        zip = new JSZip(),
+        forms = saveForms.split(''),
         i = 0;
 
-    // generate output for saving, not editing
+    // Generate output for saving, not editing
     sequenceEditing = false;
-    draw();
 
-    // go through the active form and get each figure from the edit figure
-    // box
+    // Activate first form
+    selectForm(forms.shift());
+
+    // zipFigure is called recursively to add figures to the zip file,
+    // switch forms and finally save the zip file
     function zipFigure() {
         if (i === figures.length) {
-            zip.generateAsync({ type: "blob" })
-                .then(function (content) {
-                    saveFile(
-                        content,
-                        fname + ' Form ' + activeForm[0],
-                        '.zip',
-                        { 'name': 'ZIP file', 'filter': '.zip' },
-                        'application/zip',
-                        {noSequenceLink: true}
-                    );
-                });
+            if (forms.length) {
+                // Activate the next form
+                selectForm(forms.shift());
+                draw();
+                i = 0;
+                zipFigure();
+            } else {
+                // Generate the file when all figures have been added
+                zip.generateAsync({ type: "blob" })
+                    .then(function (content) {
+                        saveFile(
+                            content,
+                            activeFileName() + ' Form ' + saveForms,
+                            '.zip',
+                            { 'name': 'ZIP file', 'filter': '.zip' },
+                            'application/zip',
+                            {noSequenceLink: true}
+                        );
+                    });
 
-            // restore svg to editing mode
-            sequenceEditing = true;
-            selectFigure(false);
-            draw();
+                // restore svg to editing mode
+                sequenceEditing = true;
+                selectForm (activeFormSave);
+                selectFigure(false);
+                draw();
+            }
         } else if (figures[i].figNr) {
+            // go through the active form and get each figure from the edit figure box
             selectedFigure.id = i;
             displaySelectedFigure();
-            var svg = $('selectedFigureSvg');
+            let svg = $('selectedFigureSvg');
             if (!$('saveFigsSeparateFigureNumbers').checked) {
                 svg.getElementsByClassName('figNr')[0].remove();
             }
@@ -18462,14 +18511,10 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
     // The figure is complete. Create the final figure object for later
     // processing such as drawing Forms and point & click figure editing
     Object.assign(figures[figStringIndex], {
-        description: description,
-        paths: paths,
         aresti: arestiNrs,
-        k: kFactors,
-        seqNr: seqNr,
-        rolls: roll,
-        rollInfo: rollInfo,
-        scale: Math.round((scale - 1) * 10),
+        base: fig[figNr].base,
+        checkLine: figCheckLine,
+        description: description,
         entryExt: entryExt,
         exitExt: exitExt,
         entryAxis: entryAxis,
@@ -18477,11 +18522,17 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
         entryDir: entryDir,
         exitAtt: Attitude,
         exitDir: Direction,
-        unknownFigureLetter: unknownFigureLetter,
-        checkLine: figCheckLine,
+        family: lang.en.figureGroups[figGroup[fig[figNr].group].name],
+        k: kFactors,
+        paths: paths,
+        rolls: roll,
+        rollInfo: rollInfo,
+        scale: Math.round((scale - 1) * 10),
+        seqNr: seqNr,
         superFamily: getSuperFamily(arestiNrs,
             sportingClass.value == 'glider' ? 'glider' : $('category').value
-        )
+        ),
+        unknownFigureLetter: unknownFigureLetter,
     });
     unknownFigureLetter = false;
 
@@ -18834,7 +18885,7 @@ function updateSequence(figNr, figure, replace, fromFigSel, force) {
 
     // If there is now a move figure before the first real
     // figure, remove that
-    for (var i = 0; i < figures.length; i++) {
+    for (let i = 0; i < figures.length; i++) {
         if (figures[i].aresti) break;
         if (regexMoveForward.test(figures[i].string) ||
             regexMoveDown.test(figures[i].string) ||
@@ -18852,8 +18903,9 @@ function updateSequence(figNr, figure, replace, fromFigSel, force) {
 // with no change, the return is [false, false]
 function comparePreviousSequence() {
     if (activeSequence.previousFigures) {
-        var m = activeSequence.previousFigures.length - 1;
-        var n = activeSequence.figures.length - 1;
+        let
+            m = activeSequence.previousFigures.length - 1,
+            n = activeSequence.figures.length - 1;
         while ((m >= 0) && (n >= 0)) {
             if (activeSequence.previousFigures[m].string === activeSequence.figures[n].string) {
                 m--;

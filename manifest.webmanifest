@@ -20,5 +20,13 @@
 		{
 			"src": "https://openaero.net/img/favicons/favicon195.png",
 			"sizes": "195x195"
-		}]
+		}],
+	"file_handlers": [
+		{
+		"action": "/",
+		"accept": {
+			"text/plain": [".seq"]
+		}
+		}
+  	]
 }

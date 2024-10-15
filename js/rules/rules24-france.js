@@ -745,6 +745,27 @@ rules.push (
 "why-NORF = combinaison tonneau,déclenché interdite",
 "why_en-NORF = roll,flick combination not allowed",
 
+"conv-diagdownqtrs=^9\\.([1-9]|10)\\.[49]\\.([1-8]) = $2 ; ^9\\.(9|10)\\. = f ; ^9\\. = r ; ^0\\.=z",
+"rule-DIAGDOWN540 = diagdownqtrs:<7",
+"why-DIAGDOWN540  = a maximum of 540° are allowed on diagonal down opposite rolls",
+"why_fr-DIAGDOWN540  = un maximum de 540° est permis sur les rotations alternées à 45° descendantes",
+"why_de-DIAGDOWN540  = maximal 540° in gegenläufigen Rollen auf diagonalen Abwärtslinien erlaubt",
+"DIAGDOWN540-rule = Sporting Code Section 6 Part I, A.2.2.2",
+
+"conv-diagdownstop=^9\\.(1|9|10)\\.[49]=1 ; ^9\\.2\\.4\\.4 = 2 ;^9\\.2\\.4\\.6 = 3 ;^9\\.2\\.4\\.8 = 4 ;^9\\.4\\.4\\.([1-3]) = $1; ^9\\.4\\.4\\.4 = 3; ^9\\.4\\.4\\.([5-8]) = $1; ^9\\.8\\.4\\.1 = 2;^9\\.8\\.4\\.2 = 3;^9\\.8\\.4\\.3 = 6;^9\\.8\\.4\\.4 = 8 ; ^9\\.(9|10)\\. = f; ^9\\.=r ; ^0\\.=z",
+"rule-DIAGDOWN3S = diagdownstop:<4",
+"why-DIAGDOWN3S  = a maximum of 3 stops are allowed on diagonal down opposite rolls",
+"why_fr-DIAGDOWN3S  = un maximum de 3 arrets est permis sur les rotations alternées à 45° descendantes",
+"why_de-DIAGDOWN3S  = maximal 3 Stops in gegenläufigen Rollen auf diagonalen Abwärtslinien erlaubt",
+"DIAGDOWN3S-rule = Sporting Code Section 6 Part I, A.2.2.2",
+
+"conv-3f_vdDhfFsz=^9\\.[1248]\\.[15]=v;^9\\.[1248]\\.2=d;^9\\.[1248]\\.4=D; ^9\\.[1248]\\.=h; ^9\\.9\\.[2-4]\\.3=3f; ^9\\.(9|10)\\.[1-5]=f;^9\\.9\\.[7-9]\\.3=3F;^9\\.(9|10)\\.=F; ^9\\.1[12]=s ; ^0\\.=z",
+"rule-UnlimitedNO3f   = 3f_vdDhfFsz:d[,;]3F|3f[,;]D|h[,;]3F$|[vdDhsz,. ]+ 3F[,;]h$|^3f[,;]h",
+// 45° up | 45° down | Horizontal roll first then flick | Horizontal flick first under g load -> final rotation | Horizontal flick first standard load (+- 1g) -> first or only rotation
+"why-UnlimitedNO3f    = 3/4 flick starting or ending with down rudder is not allowed",
+"why_fr-UnlimitedNO3f = 3/4 déclenché positif départ ou arret pied bas interdit",
+"why_de-UnlimitedNO3f = 3/4 Gerissene/Gestoßene beginnend oder endend mit Seitenruder unten ist nicht erlaubt",
+
 "allow-defrules=UnlimitedNOU ; VUP450 ; VUP4S ; VDOWN360 ; VDOWN3S ; DIAGUP540 ; DIAGUP4S ; DIAGDOWN540 ; DIAGDOWN3S ; Hor10stop ; UnlimitedNO3f",
 
 //"allow=^[1-9]",

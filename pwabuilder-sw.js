@@ -73,9 +73,9 @@ const precacheFiles = [
 'js/logo.js',
     'js/main.js',
 'js/qrcode.min.js',
+'js/rules/rules23.js', // This must be at the top!
 'js/rules/rules15-ga.js',
 'js/rules/rules24-sac.js',
-'js/rules/rules23.js',
 'js/rules/rules22-baea.js',
 'js/rules/rules24-france.js',
 'js/rules/rules23-aac.js',
@@ -92,7 +92,7 @@ const precacheFiles = [
 'js/vkbeautify.min.js',
 'manifest.json',
 'manifest.webmanifest',
-'pwabuilder-sw.js'
+'pwabuilder-sw.js',
 ];
 
 self.addEventListener("install", function (event) {

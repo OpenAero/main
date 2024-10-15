@@ -118,6 +118,7 @@ lang.en = {
 'arestiSystem' : 'Aresti system',
 'autocorrectRoll' : 'Added autocorrect roll',
 'blackWhite' : 'Black & white',
+'both': 'Both',
 'boxOuts' : 'Box Outs',
 'cancel' : 'Cancel',
     'cancelPrint': 'Cancel',
@@ -188,6 +189,7 @@ lang.en = {
   'some time. Please wait...',
 'convertingTitle' : 'Converting...',
 'copyClipboard' : 'Copy to clipboard',
+'current': 'Current',
 'date' : 'Date',
 'demo' : 'Demo',
 'disqualified' : 'Disqual Fig',
@@ -621,6 +623,7 @@ lang.en = {
 	'to your device first, then open from your device',
 'saveFigsSeparate' : 'Save figs separate',
 'saveFigsSeparateFigureNumbers' : 'Figure numbers',
+'saveFigsSeparateForms' : 'Form(s)',
 'saveFigsSeparateTitle' : 'Save figures separately',
 'saveFile' : 'Save File',
 'saveFileAsAlert' : 'To download your file, right-click on this ' +

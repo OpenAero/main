@@ -1,3 +1,18 @@
+2024.1.11
+* Added .seq file association support for PWA
+* Added improved browser file saving through File System API (compatible with Chrome/Edge/Opera)
+* Fixed issue causing "Illegal" figures not to show in Free Unknown Designer (where all figures are legal)
+* Refactored rulesWorker.js
+* Fixed "overspill" of rules from one ruleset to the other
+* Fixed bug preventing the removal of files from check or print multiple sequences
+* Removed unused function waitForIO
+* Added fields to sequence file to aid in figure identification (Issue #286)
+* Added four NZAC sequences for 2025
+* Added options for (multiple) form selection when saving figures separately (Issue #286)
+
+2024.1.10
+* Fixed CIVA glider Free Known reference sequence
+
 2024.1.9
 * Fixed error breaking IAC Form A on sequence with floating point
 

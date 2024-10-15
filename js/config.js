@@ -40,7 +40,7 @@ This file is part of OpenAero.
  A new x must be used for versions that create sequences not
  fully backward compatible with the previous version
 */
-const version = '2024.1.9';
+const version = '2024.1.11';
 // versionNew is an object that contains version update information
 // The structure is {vvv : [[ttt, n], ...], ...} , where
 // vvv = version number
@@ -336,6 +336,7 @@ const
   'saveFigsSeparateHeight',
   'zipImageFilenamePattern',
   'saveFigsSeparateFigureNumbers',
+  'saveFigsSeparateForms',
   'numberInCircle',
   'positionClearAuto',
   'showHandles',
@@ -551,9 +552,7 @@ const superFamilies = {
 	  [/^0\./,    '7']
   ]
 };
-superFamilies.yak52 = superFamilies.advanced;
-superFamilies.intermediate = superFamilies.advanced;
-superFamilies.glider = superFamilies.advanced;
+superFamilies.yak52 = superFamilies.intermediate = superFamilies.glider = superFamilies.advanced;
 
 // available rolls
 const rollTypes = [
