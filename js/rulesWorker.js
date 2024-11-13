@@ -9,7 +9,7 @@
 var blobURL = URL.createObjectURL(new Blob(['(',
 
   function () {
-
+    "use strict";
     /** Worker code starts here */
 
     // define worker globals
@@ -17,18 +17,19 @@ var blobURL = URL.createObjectURL(new Blob(['(',
       activeForm,
       alertMsgs = [],
       alertMsgRules = {},
+      initializeComplete, // Used to resolve initComplete Promise
+      initComplete = new Promise(function(resolve, reject) {initializeComplete = resolve}),
       language,
       fig,
       arestiToFig,
       referenceSequence = {},
-      rollFig,
+      rollFig = [],
       rules,
       activeRules = false,
       rulesKFigures = {},
       regexRulesAdditionals = /^(connectors|additionals)=([0-9]+)\/([0-9]+)/,
       regexUnlinkedRolls = /[,; ](9\.[1-8]\.[0-9.]*;9\.[1-8]\.)|(9\.(9|10)\.[0-9.]*;9\.(9|10))|(9\.1[12]\.[0-9.]*;9\.1[12])/,
       superFamilies,
-      scriptSrc,
       userText,
       // seqCheckAvail indicates if sequence checking is available for a
       // rule/cat/seq combination
@@ -46,165 +47,209 @@ var blobURL = URL.createObjectURL(new Blob(['(',
       figureLetters = '',    // Letters that can be assigned to individual figures
       additionalFig = { 'max': 0, 'totalK': 0 },    // Additional figures, max and K
       ruleSuperFamily = [],  // Array of rules for determining figure SF
-      ruleSeqCheck = [];     // rules for checking complete OpenAero seq string
+      ruleSeqCheck = [],     // rules for checking complete OpenAero seq string
+      sportingClass;
 
     // handle message events
     self.onmessage = function (e) {
-      switch (e.data.action) {
-        case 'activeForm':
-          activeForm = e.data.form;
-          break;
-        case 'checkAlert':
-          checkAlert(
-            e.data.value,
-            e.data.type,
-            e.data.figNr,
-            e.data.rule
-          );
-          // send alertMessages to main script for processing
-          var a = alertMsgs.pop();
-          postMessage({
-            runFunction: 'addAlertsToAlertMsgs',
-            arguments: [{
-              alertMsgs: [a],
-              alertMsgRules: alertMsgRules
-            }]
-          });
-          break;
-        case 'versionUpdate':
-          // When a version update has been done, update the rules in the database
-          // with the new version rules, until an update from the rules at openaero.net
-          // has been completed.
-          initializeDB().then ((db) => {
-            readWriteDB(db, 'rules', 0).then((result) => {
-              if (!result) return;
-              readWriteDB (db, 'rules', 0, {'id': 0, 'time': result.time, 'rules': e.data.rules});
-            });
-          });
-          break;
-        case 'initialize':
-          arestiToFig = e.data.arestiToFig;
-          fig = e.data.fig;
-          rollFig = e.data.rollFig;
-          rules = e.data.rules;
-          scriptSrc = e.data.scriptSrc;
-          superFamilies = e.data.superFamilies;
+      if (e.data.action == 'initialize') {
+        // The 'initialize' action is the first action to be performed
+        // and must be complete before other actions. Completeness state
+        // is set by calling initializeComplete()
+        arestiToFig = e.data.arestiToFig;
+        fig = e.data.fig;
+        rollFig = e.data.rollFig;
+        rules = e.data.rules;
+        superFamilies = e.data.superFamilies;
 
-          function loadRulesFromDB (db) {
-            readWriteDB (db, 'rules', 0).then(result => {
-              if (result) {
-                console.log('Loading rules from DB')
-                rules = result.rules;
-              } else console.log ('No rules in DB');
-              parseRules();
-              // Force reloading of the rules in the main thread
-              postMessage({
-                runFunction: 'changeCombo',
-                arguments: [
-                  'program'
-                ]
-              });
+        // loadRulesFromDB loads the rules from indexedDB, when present
+        function loadRulesFromDB (db) {
+          readWriteDB (db, 'rules', 0).then(result => {
+            if (result) {
+              console.log('Loading rules from DB')
+              rules = result.rules;
+            } else console.log ('No rules in DB');
+            parseRules();
+            // Force reloading of the active rules in the main thread
+            postMessage({
+              runFunction: 'changeCombo',
+              arguments: [
+                'program'
+              ]
             });
-          }
+            initializeComplete();
+          });
+        }
 
-          // Initialize indexedDB and check if there are rule updates
-          initializeDB().then ((db) => {
-            // Check openaero.net for the timestamp of the newest rulefile
-            const req = new XMLHttpRequest();
-            req.onload = () => {
-              const timestamp = req.response;
-              // If the timestamp is more recent than the stored timestamp,
-              // or if no timestamp is in the database yet, load updated rules
-              // from openaero.net. The rules object is replaced by the new rules
-              // when ALL rules are loaded succesfully
-              readWriteDB(db, 'rules', 0).then((data) => {
-                if (!data || timestamp > data.time) {
-                  let newRules = [];
-                  console.log('Loading rules from openaero.net...');
-                  const req = new XMLHttpRequest();
-                  req.onload = () => {
-                    // Load pwabuilder-sw.js to obtain rule filenames
-                    const ruleFiles = req.response.match(/js\/rules\/.*\.js/g);
-                    let ruleFilesUnprocessed = [...ruleFiles];
-                    for (const ruleFile of ruleFiles) {
-                      const req = new XMLHttpRequest();
-                      req.onload = () => {
-                        // Load rulefile
-                        // use function to interpret rule file but make sure to limit scope
-                        function addRules() {
-                          "use strict";
-                          return (
-                            new Function(
-                              '"use strict"; var rules=[];' + req.response + '; return rules;')()
-                          )
-                        }
-                        newRules.push(...addRules());
-                        // Processed file
-                        ruleFilesUnprocessed = ruleFilesUnprocessed.filter(e => e !== ruleFile);
-                        if (ruleFilesUnprocessed.length === 0) {
-                          // All files processed, replace rules object and update timestamp and
-                          // rules in database
-                          rules = newRules;
-                          console.log('Processed all');
-                          readWriteDB (db, 'rules', 0, {'id': 0, 'time': timestamp, 'rules': rules})
-                              // Parse rules again
-                             .then(parseRules());
-                        }
-                      };
-                      req.open("GET", `https://openaero.net/${ruleFile}`);
-                      req.send();
-                    }
-                  }
-                  // Open pwabuilder-sw.js
-                  req.open("GET", 'https://openaero.net/pwabuilder-sw.js');
-                  req.send();
+        // Initialize indexedDB and check if there are rule updates
+        initializeDB().then ((db) => {
+          readWriteDB(db, 'rules', 0).then((data) => {
+            // If the timestamp is more recent than the stored timestamp,
+            // or if no timestamp is in the database yet, load updated rules
+            // from openaero.net. The rules object is replaced by the new rules
+            // when ALL rules are loaded succesfully
+            const
+              timeStamp = data ? data.time : 0,
+              xhr = new XMLHttpRequest();
+            xhr.onload = () => {
+              if (xhr.responseText != timeStamp) {
+                console.log('Loading rules from openaero.net...');
+                // Load rulefiles
+                // Use function to interpret rule files, making sure to limit scope
+                // to prevent (accidental) code injection
+                function newRules() {
+                  return (
+                    new Function(
+                      `"use strict";
+                      const rules=[];
+                      ${xhr.responseText};
+                      return rules;`
+                    )()
+                  )
                 }
-                // Load rules from database when present and most recent
+                // Processed file, replace rules object and update timestamp and
+                // rules in database. openaero.php outputs the rules starting with
+                // the timestamp preceded by // to assure correct parsing of the rules,
+                // then the rule files themselves
+                rules = newRules();
+                readWriteDB (
+                  db,
+                  'rules',
+                  0,
+                  {'id': 0, 'time': xhr.responseText.match(/^\/\/(\d+)/)[1], 'rules': rules}
+                )
+                // Parse rules
+                .then(() => {
+                  parseRules();
+                  initializeComplete();
+                });
+              } else {
+                loadRulesFromDB (db);             
+              }
+            }
+            xhr.onerror = xhr.ontimeout = () => {
+              if (data) {
                 loadRulesFromDB (db);
-              });
+              } else {
+                parseRules();
+                initializeComplete();
+              }
             };
-            req.onerror = () => {loadRulesFromDB(db)}; // We're probably offline
-            req.open("GET", 'https://openaero.net/openaero.php?t');
-            req.send();
-          })
-
-          break;
-        case 'userText':
-          language = e.data.language;
-          userText = e.data.userText;
-          break;
-        case 'referenceSequence':
-          referenceSequence = e.data.referenceSequence;
-          break;
-        case 'sportingClass':
-          sportingClass = e.data.class;
-          break;
-        case 'loadRules':
-          loadRules(e.data.ruleName, e.data.catName, e.data.programName);
-          break;
-        case 'loadedRulesFile':
-          loadedRulesFile(e.data.lines);
-          break;
-        case 'unloadRules':
-          unloadRules();
-          break;
-        case 'checkRules':
-          checkRules(
-            e.data.callbackId,
-            e.data.activeSequenceText,
-            e.data.figures,
-            e.data.nonArestiRolls,
-            e.data.multi);
-          break;
-        case false:
-          postMessage({ callbackId: e.data.callbackId });
-          break;
+            // Get collated rulefiles from openaero.php
+            xhr.open("GET", `https://openaero.net/openaero.php?collateRuleFiles=${timeStamp}`);
+            xhr.send();
+          });
+        });
+      } else {
+        // Any other action is only performed after initialization is complete
+        initComplete.then(() => {
+          switch (e.data.action) {
+            case 'activeForm':
+              activeForm = e.data.form;
+              break;
+            case 'checkAlert':
+              checkAlert(
+                e.data.value,
+                e.data.type,
+                e.data.figNr,
+                e.data.rule
+              );
+              // send alertMessages to main script for processing
+              postMessage({
+                runFunction: 'addAlertsToAlertMsgs',
+                arguments: [{
+                  alertMsgs: [alertMsgs.pop()],
+                  alertMsgRules: alertMsgRules
+                }]
+              });
+              break;
+            case 'versionUpdate':
+              // When a version update has been done, update the rules in the database
+              // with the new version rules, until an update from the rules at openaero.net
+              // has been completed.
+              initializeDB().then ((db) => {
+                readWriteDB(db, 'rules', 0).then((result) => {
+                  if (!result) return;
+                  readWriteDB (db, 'rules', 0, {'id': 0, 'time': result.time, 'rules': e.data.rules});
+                });
+              });
+              break;
+            case 'rulesUpdateDateTime':
+              rulesUpdateDateTime(e.data.callbackId);
+              break;
+            case 'userText':
+              language = e.data.language;
+              userText = e.data.userText;
+              break;
+            case 'referenceSequence':
+              referenceSequence = e.data.referenceSequence;
+              break;
+            case 'sportingClass':
+              sportingClass = e.data.class;
+              break;
+            case 'loadRules':
+              initComplete.then (() => 
+                loadRules(e.data.ruleName, e.data.catName, e.data.programName));
+              break;
+            case 'loadedRulesFile':
+              loadedRulesFile(e.data.lines);
+              break;
+            case 'unloadRules':
+              unloadRules();
+              break;
+            case 'checkRules':
+              checkRules(
+                e.data.callbackId,
+                e.data.activeSequenceText,
+                e.data.figures,
+                e.data.nonArestiRolls,
+                e.data.multi);
+              break;
+            case false:
+              // Wait with any of these callbacks until initialization is complete
+              initComplete.then (() => 
+                postMessage({ callbackId: e.data.callbackId }));
+              break;
+          }
+        });
       }
     }
 
-    /*! sprintf-js | Alexandru Marasteanu <hello@alexei.ro> (http://alexei.ro/) | BSD-3-Clause */
-
-    !function (a) { function b() { var a = arguments[0], c = b.cache; return c[a] && c.hasOwnProperty(a) || (c[a] = b.parse(a)), b.format.call(null, c[a], arguments) } function c(a) { return Object.prototype.toString.call(a).slice(8, -1).toLowerCase() } function d(a, b) { return Array(b + 1).join(a) } var e = { not_string: /[^s]/, number: /[dief]/, text: /^[^\x25]+/, modulo: /^\x25{2}/, placeholder: /^\x25(?:([1-9]\d*)\$|\(([^\)]+)\))?(\+)?(0|'[^$])?(-)?(\d+)?(?:\.(\d+))?([b-fiosuxX])/, key: /^([a-z_][a-z_\d]*)/i, key_access: /^\.([a-z_][a-z_\d]*)/i, index_access: /^\[(\d+)\]/, sign: /^[\+\-]/ }; b.format = function (a, f) { var g, h, i, j, k, l, m, n = 1, o = a.length, p = "", q = [], r = !0, s = ""; for (h = 0; o > h; h++)if (p = c(a[h]), "string" === p) q[q.length] = a[h]; else if ("array" === p) { if (j = a[h], j[2]) for (g = f[n], i = 0; i < j[2].length; i++) { if (!g.hasOwnProperty(j[2][i])) throw new Error(b("[sprintf] property '%s' does not exist", j[2][i])); g = g[j[2][i]] } else g = j[1] ? f[j[1]] : f[n++]; if ("function" == c(g) && (g = g()), e.not_string.test(j[8]) && "number" != c(g) && isNaN(g)) throw new TypeError(b("[sprintf] expecting number but found %s", c(g))); switch (e.number.test(j[8]) && (r = g >= 0), j[8]) { case "b": g = g.toString(2); break; case "c": g = String.fromCharCode(g); break; case "d": case "i": g = parseInt(g, 10); break; case "e": g = j[7] ? g.toExponential(j[7]) : g.toExponential(); break; case "f": g = j[7] ? parseFloat(g).toFixed(j[7]) : parseFloat(g); break; case "o": g = g.toString(8); break; case "s": g = (g = String(g)) && j[7] ? g.substring(0, j[7]) : g; break; case "u": g >>>= 0; break; case "x": g = g.toString(16); break; case "X": g = g.toString(16).toUpperCase() }!e.number.test(j[8]) || r && !j[3] ? s = "" : (s = r ? "+" : "-", g = g.toString().replace(e.sign, "")), l = j[4] ? "0" === j[4] ? "0" : j[4].charAt(1) : " ", m = j[6] - (s + g).length, k = j[6] && m > 0 ? d(l, m) : "", q[q.length] = j[5] ? s + g + k : "0" === l ? s + k + g : k + s + g } return q.join("") }, b.cache = {}, b.parse = function (a) { for (var b = a, c = [], d = [], f = 0; b;) { if (null !== (c = e.text.exec(b))) d[d.length] = c[0]; else if (null !== (c = e.modulo.exec(b))) d[d.length] = "%"; else { if (null === (c = e.placeholder.exec(b))) throw new SyntaxError("[sprintf] unexpected placeholder"); if (c[2]) { f |= 1; var g = [], h = c[2], i = []; if (null === (i = e.key.exec(h))) throw new SyntaxError("[sprintf] failed to parse named argument key"); for (g[g.length] = i[1]; "" !== (h = h.substring(i[0].length));)if (null !== (i = e.key_access.exec(h))) g[g.length] = i[1]; else { if (null === (i = e.index_access.exec(h))) throw new SyntaxError("[sprintf] failed to parse named argument key"); g[g.length] = i[1] } c[2] = g } else f |= 2; if (3 === f) throw new Error("[sprintf] mixing positional and named placeholders is not (yet) supported"); d[d.length] = c } b = b.substring(c[0].length) } return d }; var f = function (a, c, d) { return d = (c || []).slice(0), d.splice(0, 0, a), b.apply(null, d) }; "undefined" != typeof exports ? (exports.sprintf = b, exports.vsprintf = f) : (a.sprintf = b, a.vsprintf = f, "function" == typeof define && define.amd && define(function () { return { sprintf: b, vsprintf: f } })) }("undefined" == typeof window ? this : window);
+    // sprintf function using template literal
+    function sprintf(format, ...args) {
+      const regex = /%([%sdfbxoX])/g;
+      const flags = {
+        '%': '%',
+        'd': 'number',
+        's': 'string',
+        'f': 'number',
+        'b': 'binary',
+        'x': 'hexadecimal',
+        'X': 'hexadecimal uppercase',
+      };
+    
+      return format.replace(regex, (match, type) => {
+        const arg = args.shift();
+        if (arg === undefined) {
+          throw new Error('Not enough arguments for format string');
+        }
+    
+        switch (flags[type]) {
+          case 'number':
+            return arg.toString();
+          case 'string':
+            return arg;
+          case 'binary':
+            return arg.toString(2);
+          case 'hexadecimal':
+            return arg.toString(16);
+          case 'hexadecimal uppercase':
+            return arg.toString(16).toUpperCase();
+          default:
+            return match; // For other types (e.g., '%')
+        }
+      });
+    }
 
     // initializeDB initializes indexedDB
     async function initializeDB () {
@@ -214,7 +259,7 @@ var blobURL = URL.createObjectURL(new Blob(['(',
         request.onupgradeneeded = (e) => {
           const db = e.target.result;
           db.createObjectStore ('rules', {keyPath: 'id'});
-          resolve (db);
+          e.target.transaction.oncomplete = () => {resolve (db)};
         }
 
         request.onsuccess = (e) => {
@@ -235,9 +280,7 @@ var blobURL = URL.createObjectURL(new Blob(['(',
           .transaction(objStore, 'readwrite')
           .objectStore (objStore);
         const req = value ? store.put (value) : store.get (key);
-        req.onsuccess = (e) => {
-          resolve (req.result);
-        }
+        req.onsuccess = (e) => resolve (req.result);
       });
     }
 
@@ -246,37 +289,47 @@ var blobURL = URL.createObjectURL(new Blob(['(',
     // remove leading and trailing spaces (when noLT is false)
     function sanitizeSpaces(line, noLT) {
       line = line.replace(/[\t]/g, ' ').replace(/\s\s+/g, ' ');
-      if (!noLT) line = line.trim();
-      return line;
-    }
+      return (noLT ? line : line.trim());
+  }
 
     // rulesYear retrieves the year of the rules provided in ruleName.
-    // with no ruleName provided, the year of rulesYY.js is used
+    // with no ruleName provided, the year of rules.js is used.
+    // A space is added at the end
     function rulesYear(ruleName) {
-      ruleName = ruleName ? '-' + ruleName : '';
-      var year = '';
-      // find the year of the rules from the file name in index.html
-      var regex = new RegExp('rules/rules([0-9][0-9]+)' + ruleName + '\\.js$', 'i');
-      for (var i = scriptSrc.length - 1; i >= 0; i--) {
-        var match = scriptSrc[i].match(regex);
-        if (match) {
-          year = (match[1].length == 2 ? '20' + match[1] : match[1]) + ' ';
-          break;
-        }
+      if (ruleName && seqCheckAvail[ruleName]) return `${seqCheckAvail[ruleName].year} `;
+      // Look for the first year directive
+      for (const rule of rules) {
+        if (/^year\s*=\s*\d{4}/.test (rule)) return `${rule.match(/^year\s*=\s*(\d{4})/)[1]} `;
       }
-      return year;
+      // No directive found. Return empty (this should never happen)
+      return '';
+    }
+
+    // rulesUpdateDateTime returns the timestamp of the latest rules update
+    function rulesUpdateDateTime (callbackId) {
+      if (!callbackId) throw new Error('Callback is required for rulesUpdateDateTime');
+      initializeDB().then ((db) => {
+        readWriteDB(db, 'rules', 0).then((result) => {
+          postMessage({
+            callbackId: callbackId,
+            arguments: [{time: result ? result.time : 0}]
+          });
+        });
+      });
     }
 
     // loadedRulesFile will be called when a rules file has been loaded
     function loadedRulesFile(lines) {
-      var start = rules.length;
+      const start = rules.length;
 
       // use function to interpret rule file but make sure to limit scope
       function addRules() {
-        "use strict";
         return (
           new Function(
-            '"use strict"; var rules=[];' + lines + '; return rules;')()
+            `"use strict";
+            const rules=[];
+            ${lines};
+            return rules;`)()
         )
       }
 
@@ -304,8 +357,9 @@ var blobURL = URL.createObjectURL(new Blob(['(',
       let year = rulesYear();
 
       for (let i = start; i < rules.length; i++) {
-        // Check for [section]
-        if (rules[i][0].match(/[\[\(]/)) {
+        if (/^year\s*=\s*\d{4}/.test (rules[i])) { // check for year directive
+          year = rules[i].match(/^year\s*=\s*(\d{4})/)[1];
+        } else if (/[\[\(]/.test (rules[i][0])) { // Check for [section]
           sections.push(rules[i].toLowerCase().replace(/[\[\(\]\)]/g, ''));
           let
             parts = rules[i].match(/^[\[\(]([^ ]+) ([^ ]+) (.+)[\]\)]$/),
@@ -317,7 +371,7 @@ var blobURL = URL.createObjectURL(new Blob(['(',
             seqName = parts[parts.length - 1];
             catName = parts.splice(2, parts.length - 3).join(' ');
 
-            log.push('Parsing ' + rules[i]);
+            log.push(rules[i]);
             // only add square-bracket names to rules
             if (!seqCheckAvail[rnLower]) {
               // remove 'glider-' in display name, if present
@@ -325,7 +379,8 @@ var blobURL = URL.createObjectURL(new Blob(['(',
               seqCheckAvail[rnLower] = {
                 'show': false,
                 'name': ruleName,
-                'cats': []
+                'cats': [],
+                year: year,
               };
             }
             if (!seqCheckAvail[rnLower].cats[catName.toLowerCase()]) {
@@ -342,40 +397,23 @@ var blobURL = URL.createObjectURL(new Blob(['(',
             } else {
               seqCheckAvail[rnLower].cats[catName.toLowerCase()].seqs[seqName.toLowerCase()] = '*' + seqName;
             }
-
-            // set correct year
-            year = rulesYear(ruleName);
-          }
-        } else if (rules[i].match(/^(demo|programme)[\s]*=/)) {
-          // add to library
-          if (seqName && year) {
-            postMessage({
-              runFunction: 'createProgramme', arguments: [
-                year,
-                rnLower,
-                ruleName,
-                catName,
-                seqName,
-                rules[i].match(/^(demo|programme)[\s]*=[\s]*(.*)$/)[2]]
-            }
-            );
           }
         }
       }
 
-      // verify all "more=" statements refer to existing sections
+      // Verify that all "more=" statements refer to existing sections
       for (let i = start; i < rules.length; i++) {
-        if (rules[i][0].match(/[\[\(]/)) var currentSection = rules[i];
+        let currentSection = 'Top level';
+        if (rules[i][0].match(/[\[\(]/)) currentSection = rules[i];
         const match = rules[i].toLowerCase().match(/^more[\s]*=[\s]*(.*)$/);
         if (match) {
           if (sections.indexOf(match[1]) === -1) {
-            log.push('*** Error: section ' + currentSection +
-              ' references non-existing section "' + match[1] + '"');
+            log.push(`*** Error: section ${currentSection} references non-existing section "${match[1]}"`);
           }
         }
       }
 
-      console.log('*** Parsing rules ***');
+      console.log('Parsing rules');
       console.log(log);
 
       postMessage({ runFunction: 'updateRulesList', arguments: [seqCheckAvail] });
@@ -393,12 +431,11 @@ var blobURL = URL.createObjectURL(new Blob(['(',
         return false;
       }
 
-      var
-        updatedFig = false,
-        year = rulesYear(ruleName);
+      let updatedFig = false;
+      const year = rulesYear(ruleName);
 
       // return true if rules were already loaded
-      if (activeRules && activeRules.description === (year + ruleName + ' ' + catName + ' ' + programName)) {
+      if (activeRules && activeRules.description === `${year}${ruleName} ${catName} ${programName}`) {
         return true;
       }
 
@@ -406,16 +443,16 @@ var blobURL = URL.createObjectURL(new Blob(['(',
       unloadRules();
 
       // set rules active
-      activeRules = { 'description': year + ruleName + ' ' + catName + ' ' + programName };
+      activeRules = {'description': `${year}${ruleName} ${catName} ${programName}`};
 
+      const section = [];
       // Set parseSection to true to match the global rules
-      var parseSection = true;
-      var ruleSection = ruleName + ' ' + catName + ' ' + programName;
-      ruleSection = ruleSection.toLowerCase();
+      let
+        parseSection = true,
+        ruleSection = (`${ruleName} ${catName} ${programName}`).toLowerCase(),
+        infoCheck = []; // Seq info fields to be filled out when saving or printing
       console.log('Loading rules ' + ruleSection);
-      var section = [];
-      var sectionRegex = /[\[\]\(\)]/g;
-      var infoCheck = []; // Seq info fields to be filled out when saving or printing
+      
       // First clear or preset the variables
       checkAllowRegex = [];
       checkAllowCatId = [];
@@ -432,7 +469,7 @@ var blobURL = URL.createObjectURL(new Blob(['(',
       // Find the sections
       for (let i = 0; i < rules.length; i++) {
         if ((rules[i][0] == '[') || (rules[i][0] == '(')) {
-          const name = rules[i].toLowerCase().replace(sectionRegex, '');
+          const name = rules[i].toLowerCase().replace(/[\[\]\(\)]/g, '');
           if (section[name]) {
             // log duplicate sections. Use the last one as this will allow
             // rules import by the user
@@ -474,7 +511,6 @@ var blobURL = URL.createObjectURL(new Blob(['(',
           } else if (/^Group-/.test(rules[i])) {
             // Apply 'Group' rules => full figure (multiple catalog id) match
             const newGroup = rules[i].replace(/^Group-/, '').split('=');
-
             checkFigGroup[newGroup[0]] = [];
             // When regex ends with $, assume it's fully formatted.
             // Otherwise, add catch all to assure that the complete string is matched
@@ -488,7 +524,7 @@ var blobURL = URL.createObjectURL(new Blob(['(',
       }
 
       parseSection = true;
-      ruleSection = (ruleName + ' ' + catName + ' ' + programName).toLowerCase();
+      ruleSection = (`${ruleName} ${catName} ${programName}`).toLowerCase();
 
       // Second run, add all other rules
       for (let i = 0; i < rules.length; i++) {
@@ -502,8 +538,7 @@ var blobURL = URL.createObjectURL(new Blob(['(',
             const convName = rules[i].match(/^[Cc]onv-([^=]+)/)[1];
             // log duplicate conversions, use latest
             if (checkConv[convName]) {
-              console.log('* Error: duplicate conversion "' + convName +
-                '" at rulenr ' + i);
+              console.log(`* Error: duplicate conversion "${convName}" at rulenr ${i}`);
             }
             checkConv[convName] = [];
             const convRules = rules[i].match(/^[Cc]onv-[^=]+=(.*)$/)[1].split(';');
@@ -523,8 +558,7 @@ var blobURL = URL.createObjectURL(new Blob(['(',
               i = section[name];
               ruleSection = false; // don't go over this section again!
             } else {
-              console.log('*** Error: rule section "' + name +
-                '" does not exist');
+              console.log(`*** Error: rule section "${name}" does not exist`);
             }
           } else if (rules[i].match(/^allow=/)) {
             // Apply 'allow' rules
@@ -585,7 +619,7 @@ var blobURL = URL.createObjectURL(new Blob(['(',
                   fig[figIds[l]].kRules = newK[0];
                 }
                 rulesKFigures[newCat] = true;
-                console.log('Changed K for ' + newCat + ' to ' + newK[0]);
+                console.log(`Changed K for ${newCat} to ${newK[0]}`);
                 updatedFig = true;
               }
             }
@@ -639,7 +673,7 @@ var blobURL = URL.createObjectURL(new Blob(['(',
             }
           } else if (rules[i].match(/-[^-]+-rule=.+$/)) {
             // apply rulebook references
-            var part = rules[i].match(/^([^-]+)-([^-]+)-rule=(.*)$/, '');
+            const part = rules[i].match(/^([^-]+)-([^-]+)-rule=(.*)$/, '');
             if (checkCatGroup[part[1]] && checkCatGroup[part[1]][part[2]]) {
               if (!checkCatGroup[part[1]].rule) checkCatGroup[part[1]].rule = [];
               checkCatGroup[part[1]].rule[part[2]] = part[3];
@@ -683,13 +717,13 @@ var blobURL = URL.createObjectURL(new Blob(['(',
             }
           } else if (rules[i].match(/^why-[^=]+=.+/)) {
             // Apply why-x rules
-            var newRuleName = rules[i].match(/[^=]+/)[0].replace(/^why-/, '');
+            const newRuleName = rules[i].match(/[^=]+/)[0].replace(/^why-/, '');
             if (checkRule[newRuleName]) {
               checkRule[newRuleName].why = rules[i].replace(/^[^=]+=/, '');
             }
           } else if (rules[i].match(/^why_[a-z]{2}-[^=]+=.+/)) {
             // Apply why_cc-x rules where cc = country code
-            var newRuleName = rules[i].match(/[^=]+/)[0].replace(/^why_[a-z]{2}-/, '');
+            const newRuleName = rules[i].match(/[^=]+/)[0].replace(/^why_[a-z]{2}-/, '');
             if (checkRule[newRuleName]) {
               checkRule[newRuleName][rules[i].match(/^why_[a-z]{2}/)[0]] = rules[i].replace(/^[^=]+=/, '');
             }
@@ -698,18 +732,19 @@ var blobURL = URL.createObjectURL(new Blob(['(',
             checkCatGroup.floatingPoint = rules[i].match(/[0-9]+/)[0];
           } else if (rules[i].match(regexRulesAdditionals)) {
             // apply Additionals rules
-            var match = rules[i].match(regexRulesAdditionals);
+            const match = rules[i].match(regexRulesAdditionals);
             additionalFig.max = parseInt(match[2]);
             additionalFig.totalK = parseInt(match[3]);
           } else if (/^pos(nl)?=/.test(rules[i])) {
             // Split positioning options on ;
-            var posOptions = rules[i].replace(/^pos[^=]*=/, '').split(';');
-            var pos = [];
+            const
+              posOptions = rules[i].replace(/^pos[^=]*=/, '').split(';'),
+              pos = [];
             // Go through positioning options. When there are multiple, each
             // should have a description. Format 'p+h:d; p+h:d; ...'
             // First match is description, second positioning and harmony K.
-            for (var j = 0; j < posOptions.length; j++) {
-              var matches = posOptions[j].trim().match(/^([0-9]+\+?[0-9]*):?(.+)?$/);
+            for (const posOpt of posOptions) {
+              const matches = posOpt.trim().match(/^([0-9]+\+?[0-9]*):?(.+)?$/);
               pos.push({ posHarm: matches[1], description: matches[2] });
             }
             postMessage({
@@ -725,21 +760,20 @@ var blobURL = URL.createObjectURL(new Blob(['(',
             figureLetters = rules[i].replace(/ /g, '').match(/=(.*)/)[1];
           } else if (rules[i].match(/^sf[ ]*=/)) {
             // define Super Families
-            var val = rules[i].replace(/ /g, '').match(/=(.*)/)[1];
+            const val = rules[i].replace(/ /g, '').match(/=(.*)/)[1];
             if (superFamilies[val.toLowerCase()]) {
               ruleSuperFamily = superFamilies[val.toLowerCase()];
             } else {
-              var families = val.split(';');
-              for (var j = 0; j < families.length; j++) {
-                var regex = new RegExp(families[j].split(':')[0]);
-                var fam = families[j].split(':')[1];
-                ruleSuperFamily.push([regex, fam]);
+              for (const family of val.split(';')) {
+                ruleSuperFamily.push([
+                  new RegExp(family.split(':')[0]),
+                  family.split(':')[1],
+                ]);
               }
             }
           } else if (rules[i].match(/^seqcheck-/)) {
-            var newRuleName = rules[i].split('=')[0].replace(/^seqcheck-/, '');
-            var regex = new RegExp(rules[i].split('=')[1]);
-            ruleSeqCheck[newRuleName] = { 'regex': regex };
+            const newRuleName = rules[i].split('=')[0].replace(/^seqcheck-/, '');
+            ruleSeqCheck[newRuleName] = { 'regex': new RegExp(rules[i].split('=')[1]) };
           } else if (rules[i].match(/^reference[\s]*=/)) {
             // load reference sequence
             postMessage({
@@ -754,19 +788,16 @@ var blobURL = URL.createObjectURL(new Blob(['(',
 
 
       if (checkAllowRegex) {
-        for (var i = 0; i < checkAllowRegex.length; i++) {
-          for (var j in fig) {
-            if (fig[j].aresti &&
-              checkAllowRegex[i].regex.test(fig[j].aresti) &&
-              !(fig[j].aresti in checkAllowCatId)) {
-              checkAllowCatId[fig[j].aresti] =
-                (checkAllowRegex[i].rules.length == 0) ? [] : checkAllowRegex[i].rules;
+        for (const car of checkAllowRegex) {
+          for (const f of fig) {
+            if (f.aresti && car.regex.test(f.aresti) && !(f.aresti in checkAllowCatId)) {
+              checkAllowCatId[f.aresti] = (car.rules.length == 0) ? [] : car.rules;
             }
           }
-          for (var j in rollFig) {
-            if (checkAllowRegex[i].regex.test(rollFig[j].aresti) &&
-              !(rollFig[j].aresti in checkAllowCatId)) {
-              checkAllowCatId[rollFig[j].aresti] = [];
+
+          for (const f of rollFig) {
+            if (car.regex.test(f.aresti) && !(f.aresti in checkAllowCatId)) {
+              checkAllowCatId[f.aresti] = [];
             }
           }
         }
@@ -795,14 +826,15 @@ var blobURL = URL.createObjectURL(new Blob(['(',
     function unloadRules() {
       console.log('Clearing rules');
 
-      var updatedFig = false;
-      for (var i = fig.length - 1; i >= 0; i--) {
-        if (fig[i] && fig[i].kRules) {
+      let updatedFig = false;
+      for (const f of fig) {
+        if (f && f.kRules) {
           updatedFig = true;
-          delete (fig[i].kRules);
+          delete (f.kRules);
         }
       }
-      for (var key in rollFig) {
+
+      for (const key in rollFig) {
         if (rollFig[key].kRules) {
           updatedFig = true;
           delete (rollFig[key].kRules);
@@ -850,7 +882,7 @@ var blobURL = URL.createObjectURL(new Blob(['(',
         logLine = '',
         errFigs;
 
-      log.push('Testing sequence:' + activeSequenceText);
+      log.push(`Testing sequence:${activeSequenceText}`);
       alertMsgs = [];
 
       // first we check for rules that are ALWAYS valid, i.e. Aresti
@@ -900,26 +932,30 @@ var blobURL = URL.createObjectURL(new Blob(['(',
       if (!activeRules) {
         log.push('Rules: no');
       } else {
-        log.push('Rules: ' + activeRules.description);
+        log.push(`Rules: ${activeRules.description}`);
 
         for (let i = 0; i < figures.length; i++) {
           const aresti = figures[i].aresti;
           if (aresti) {
-            var
+            const
               k = figures[i].k,
               // fullCheckLine contains all aresti numbers, including base figure
-              fullCheckLine = figures[i].checkLine,
+              fullCheckLine = figures[i].checkLine;
+            let
               // Define checkline WITHOUT base figure (only rolls). Content can change during rule checking
-              checkLine = figures[i].checkLine.replace(/^[0-9.]* ?/, ''),
+              checkLine = figures[i].checkLine.replace(/^[0-9.]* ?/, '');
+            const
               // Build checkArray from rolls, with # as placeholder for splitting
               checkArray = checkLine.replace(/([ ,;])/g, "#$1#").split('#');
 
             figNr++;
             // format thisFig for logging
-            var thisFig = fullCheckLine.replace(/;/g, ',');
+            let thisFig = fullCheckLine.replace(/;/g, ',');
             for (let j = 0; j < aresti.length; j++) {
-              var regex = new RegExp('(' + aresti[j].replace(/\./g, '\\.') + ')( |,|$)');
-              thisFig = thisFig.replace(regex, '$1(' + k[j] + ')$2');
+              thisFig = thisFig.replace(
+                new RegExp('(' + aresti[j].replace(/\./g, '\\.') + ')( |,|$)'),
+                '$1(' + k[j] + ')$2'
+              );
             }
             log.push('========= Figure #' + figNr + ': ' + thisFig);
             // Check if the figure is an additional
@@ -935,8 +971,7 @@ var blobURL = URL.createObjectURL(new Blob(['(',
               if (figCount[aresti[0]]) {
                 figCount[aresti[0]]++;
               } else figCount[aresti[0]] = 1;
-              log.push('Group-combined: Count=' + figNr + ' Fig count=' +
-                figCount[aresti[0]]);
+              log.push(`Group-combined: Count=${figNr} Fig count=${figCount[aresti[0]]}`);
               elemCount = [];
               for (let j = 0; j < aresti.length; j++) {
                 log.push('---- Element: ' + aresti[j]);
@@ -948,7 +983,7 @@ var blobURL = URL.createObjectURL(new Blob(['(',
                 log.push('Group-k: Count=' + figureK + ' Elem count=' +
                   elemCount[aresti[j]]);
                 // Check all group rules on all elements
-                for (group in checkCatGroup) {
+                for (const group in checkCatGroup) {
                   if ((group != 'k') && (group != 'floatingPoint')) {
                     const match = aresti[j].match(checkCatGroup[group].regex);
                     if (match) {
@@ -1030,12 +1065,12 @@ var blobURL = URL.createObjectURL(new Blob(['(',
                     if (ruleSplit[1]) {
                       let rollNr = 1;
                       check = [];
-                      for (let m = 0; m < checkArray.length; m++) {
+                      for (const ca of checkArray) {
                         if (rollNr == ruleSplit[1]) {
-                          if (checkArray[m] == ' ') break;
-                          check.push(checkArray[m]);
+                          if (ca == ' ') break;
+                          check.push(ca);
                         } else {
-                          if (checkArray[m] == ' ') rollNr++;
+                          if (ca == ' ') rollNr++;
                         }
                       }
                       forElement = userText.forElement + ruleSplit[1];
@@ -1049,15 +1084,14 @@ var blobURL = URL.createObjectURL(new Blob(['(',
                         } else {
                           log.push('Apply: ' + checkRule[rule].conv);
                           logLine = 'Converted: ' + check.join('') + ' => ';
-                          for (let l = 0; l < checkConv[conversion].length; l++) {
-                            if (checkConv[conversion][l].fullFigure) {
+                          for (const conv of checkConv[conversion]) {
+                            if (conv.fullFigure) {
                               log.push('Full figure conversions are only supported in "allow-defrules"')
                             } else {
                               // Check for individual roll Aresti number conversions
                               for (let m = 0; m < check.length; m++) {
                                 if (!check[m].match(/[ ,;]/)) {
-                                  check[m] = check[m].replace(checkConv[conversion][l].regex,
-                                    checkConv[conversion][l].replace);
+                                  check[m] = check[m].replace(conv.regex, conv.replace);
                                 }
                               }
                             }
@@ -1074,8 +1108,8 @@ var blobURL = URL.createObjectURL(new Blob(['(',
                           log.push('*** Error: Fig ' + figNr + ': ' + checkRule[rule].why + forElement);
                         }
                       } else if (checkRule[rule].less) {
-                        var sum = 0;
-                        for (var l = check.length - 1; l >= 0; l--) {
+                        let sum = 0;
+                        for (let l = check.length - 1; l >= 0; l--) {
                           if (/^[0-9]/.test(check[l])) sum += parseInt(check[l]);
                           if ((check[l] == ' ') || (l == 0)) {
                             if (sum >= parseInt(checkRule[rule].less)) {
@@ -1086,10 +1120,8 @@ var blobURL = URL.createObjectURL(new Blob(['(',
                           }
                         }
                       } else if (checkRule[rule].totalLess) {
-                        var sum = 0;
-                        for (var l = check.length - 1; l >= 0; l--) {
-                          if (/^[0-9]/.test(check[l])) sum += parseInt(check[l]);
-                        }
+                        let sum = 0;
+                        for (const c of check) if (/^[0-9]/.test(c)) sum += parseInt(c);
                         if (sum >= parseInt(checkRule[rule].totalLess)) {
                           checkAlert(why(rule) + forElement, 'rule', figNr, checkRule[rule].rule);
                           log.push('*** Error: Fig ' + figNr + ': ' + checkRule[rule].why + forElement);
@@ -1103,87 +1135,82 @@ var blobURL = URL.createObjectURL(new Blob(['(',
                     let check = [];
                     for (let k = 0; k < defRules.length; k++) {
                       // copy fullCheckLine to checkLine
-                      rule = defRules[k];
+                      const defRule = defRules[k];
                       // Skip rule if it doesn't exist
-                      if (!checkRule[rule]) {
-                        console.log(`Rule ${rule} from allow-defrules doesn't exist`)
+                      if (!checkRule[defRule]) {
+                        console.log(`Rule ${defRule} from allow-defrules doesn't exist`)
                         continue;
                       }
                       // check if this is a rule of form rule:nr
-                      const ruleSplit = rule.split(':');
-                      if ((ruleSplit[1] === j) || (ruleSplit.length == 1)) {
-                        rule = ruleSplit[0];
-                        // check if the rule is in excludeRules. If so, skip it
-                        if (excludeRules.includes(rule)) {
-                          excludeRules.splice(excludeRules.indexOf(rule), 1);
-                          continue;
-                        }
-                        // apparently not in excludeRules
-                        log.push('-basefig rule: ' + rule);
-                        // Apply conversions to the Aresti number before checking the rule
-                        if (checkRule[rule].conv) {
-                          const conversion = checkRule[rule].conv;
-                          if (!checkConv[conversion]) {
-                            console.log(`* Error: conversion ${conversion}, used in rule ${rule}, is undefined`);
+                      const ruleSplit = defRule.split(':');
+                      const rule = ruleSplit[0];
+                      // check if the rule is in excludeRules. If so, skip it
+                      if (excludeRules.includes(rule)) {
+                        excludeRules.splice(excludeRules.indexOf(rule), 1);
+                        continue;
+                      }
+                      // apparently not in excludeRules
+                      log.push('-basefig rule: ' + rule);
+                      // Apply conversions to the Aresti number before checking the rule
+                      if (checkRule[rule].conv) {
+                        const conversion = checkRule[rule].conv;
+                        if (!checkConv[conversion]) {
+                          console.log(`* Error: conversion ${conversion}, used in rule ${rule}, is undefined`);
+                        } else {
+                          log.push('Apply: ' + checkRule[rule].conv);
+                          let
+                            checkLine,
+                            logLine;
+                          if (checkConv[conversion][0].fullFigure) {
+                            checkLine = fullCheckLine.slice();
+                            logLine = 'Converted: ' + checkLine + ' => ';
+                            // Check for full figure conversions
+                            for (const conv of checkConv[conversion]) {
+                              checkLine = checkLine.replace(conv.regex, conv.replace);
+                            }
                           } else {
-                            log.push('Apply: ' + checkRule[rule].conv);
-                            if (checkConv[conversion][0].fullFigure) {
-                              checkLine = fullCheckLine.slice();
-                              logLine = 'Converted: ' + checkLine + ' => ';
-                              // Check for full figure conversions
-                              for (let l = 0; l < checkConv[conversion].length; l++) {
-                                checkLine = checkLine.replace(checkConv[conversion][l].regex,
-                                  checkConv[conversion][l].replace);
-                              }
-                            } else {
-                              // Check for individual roll Aresti number conversions
-                              check = checkArray.slice();
-                              logLine = 'Converted: ' + fullCheckLine + ' => ';
-                              for (let l = 0; l < checkConv[conversion].length; l++) {
-                                for (let m = 0; m < check.length; m++) {
-                                  if (!check[m].match(/[ ,;]/)) {
-                                    check[m] = check[m].replace(checkConv[conversion][l].regex,
-                                      checkConv[conversion][l].replace);
-                                  }
+                            // Check for individual roll Aresti number conversions
+                            let check = checkArray.slice();
+                            logLine = 'Converted: ' + fullCheckLine + ' => ';
+                            for (const conv of checkConv[conversion]) {
+                              for (let m = 0; m < check.length; m++) {
+                                if (!/[ ,;]/.test(check[m])) {
+                                  check[m] = check[m].replace(conv.regex, conv.replace);
                                 }
                               }
-                              checkLine = check.join('');
                             }
-                            log.push(logLine + checkLine);
+                            checkLine = check.join('');
+                          }
+                          log.push(logLine + checkLine);
+                        }
+                      }
+                      if (checkRule[rule].regex) {
+                        if (checkLine.match(checkRule[rule].regex)) {
+                          checkAlert(why(rule), 'rule', figNr, checkRule[rule].rule);
+                          log.push('*** Error: Fig ' + figNr + ': ' + checkRule[rule].why);
+                        }
+                      } else if (checkRule[rule].less) {
+                        let sum = 0;
+                        for (let l = check.length - 1; l >= 0; l--) {
+                          if (/^[0-9]/.test(check[l])) {
+                            sum += parseInt(check[l]);
+                          }
+                          if ((check[l] == ' ') || (l == 0)) {
+                            if (sum >= parseInt(checkRule[rule].less)) {
+                              checkAlert(why(rule), 'rule', figNr, checkRule[rule].rule);
+                              log.push('*** Error: Fig ' + figNr + ': ' + checkRule[rule].why);
+                            }
+                            sum = 0;
                           }
                         }
-                        if (checkRule[rule].regex) {
-                          if (checkLine.match(checkRule[rule].regex)) {
-                            checkAlert(why(rule), 'rule', figNr, checkRule[rule].rule);
-                            log.push('*** Error: Fig ' + figNr + ': ' + checkRule[rule].why);
-                          }
-                        } else if (checkRule[rule].less) {
-                          let sum = 0;
-                          for (let l = check.length - 1; l >= 0; l--) {
-                            if (check[l].match(/^[0-9]/)) {
-                              sum += parseInt(check[l]);
-                            }
-                            if ((check[l] == ' ') || (l == 0)) {
-                              if (sum >= parseInt(checkRule[rule].less)) {
-                                checkAlert(why(rule), 'rule', figNr, checkRule[rule].rule);
-                                log.push('*** Error: Fig ' + figNr + ': ' + checkRule[rule].why);
-                              }
-                              sum = 0;
-                            }
-                          }
-                        } else if (checkRule[rule].totalLess) {
-                          let sum = 0;
-                          for (let l = check.length - 1; l >= 0; l--) {
-                            if (check[l].match(/^[0-9]/)) {
-                              sum += parseInt(check[l]);
-                            }
-                          }
-                          if (sum >= parseInt(checkRule[rule].totalLess)) {
-                            checkAlert(why(rule), 'rule', figNr, checkRule[rule].rule);
-                            log.push('*** Error: Fig ' + figNr + ': ' + checkRule[rule].why);
-                          }
+                      } else if (checkRule[rule].totalLess) {
+                        let sum = 0;
+                        for (const c of check) if (/^[0-9]/.test(c)) sum += parseInt(c);
+                        if (sum >= parseInt(checkRule[rule].totalLess)) {
+                          checkAlert(why(rule), 'rule', figNr, checkRule[rule].rule);
+                          log.push('*** Error: Fig ' + figNr + ': ' + checkRule[rule].why);
+                        }
 
-                        }
                       }
                     }
                     if (excludeRules.length) {
@@ -1194,12 +1221,12 @@ var blobURL = URL.createObjectURL(new Blob(['(',
                 }
               }
               // Check the Group rules for complete figures
-              for (group in checkFigGroup) {
+              for (const group in checkFigGroup) {
                 const match = fullCheckLine.match(checkFigGroup[group].regex);
                 if (match) {
                   if (!groupMatch[group]) groupMatch[group] = [];
-                  for (let j = 0; j < match.length; j++) {
-                    groupMatch[group].push({ 'match': match[j], 'fig': figNr });
+                  for (const m of match) {
+                    groupMatch[group].push({ 'match': m, 'fig': figNr });
                   }
                 }
               }
@@ -1244,7 +1271,7 @@ var blobURL = URL.createObjectURL(new Blob(['(',
         // Run checks on maximum and minimum occurrence of a group (catalog ID)
         // Go through all groups
         log.push('====== Testing global repeat/min/max ======');
-        for (group in checkCatGroup) {
+        for (const group in checkCatGroup) {
           // Did we have a match on this group?
           if (groupMatch[group]) {
             //console.log('* Match');
@@ -1276,9 +1303,8 @@ var blobURL = URL.createObjectURL(new Blob(['(',
             if (('repeat' in checkCatGroup[group]) ||
               ('totrepeat' in checkCatGroup[group])) {
               //console.log('Check repeat');
-              var matches = [];
-              for (var j = 0; j < groupMatch[group].length; j++) {
-                var thisMatch = groupMatch[group][j];
+              const matches = [];
+              for (const thisMatch of groupMatch[group]) {
                 if (matches[thisMatch.match]) {
                   matches[thisMatch.match].push({ 'match': thisMatch.match, 'fig': thisMatch.fig });
                 } else {
@@ -1287,7 +1313,7 @@ var blobURL = URL.createObjectURL(new Blob(['(',
                 }
               }
               if ('repeat' in checkCatGroup[group]) {
-                for (match in matches) {
+                for (const match in matches) {
                   if (matches[match].length > checkCatGroup[group].repeat) {
                     errFigs = figureNumbers(matches[match]);
                     checkAlert(group, 'repeat', errFigs);
@@ -1297,18 +1323,16 @@ var blobURL = URL.createObjectURL(new Blob(['(',
                 }
               }
               if ('totrepeat' in checkCatGroup[group]) {
-                var count = 0;
-                for (match in matches) {
+                let count = 0;
+                for (const match in matches) {
                   if (matches[match].length > 1) {
                     count++;
                   } else delete matches[match];
                 }
                 if (count > checkCatGroup[group].totrepeat) {
                   errFigs = [];
-                  for (match in matches) {
-                    for (var i = 0; i < matches[match].length; i++) {
-                      errFigs.push(matches[match][i]);
-                    }
+                  for (const match of matches) {
+                    for (const m in match) errFigs.push(m);
                   }
                   errFigs = figureNumbers(errFigs);
                   checkAlert(group, 'totrepeat', errFigs);
@@ -1331,7 +1355,7 @@ var blobURL = URL.createObjectURL(new Blob(['(',
         }
         // Run checks on maximum and minimum occurrence of a Group (complete figure)
         // Go through all groups
-        for (group in checkFigGroup) {
+        for (const group in checkFigGroup) {
           // Did we have a match on this group?
           if (groupMatch[group]) {
             // Check for min and max occurrences of the group
@@ -1353,9 +1377,8 @@ var blobURL = URL.createObjectURL(new Blob(['(',
             }
             // Check for repeats of the exact same figure when necessary
             if ('repeat' in checkFigGroup[group]) {
-              var matches = [];
-              for (var j = 0; j < groupMatch[group].length; j++) {
-                var thisMatch = groupMatch[group][j];
+              const matches = [];
+              for (const thisMatch of groupMatch[group]) {
                 if (matches[thisMatch.match]) {
                   matches[thisMatch.match].push({
                     'match': thisMatch.match,
@@ -1366,10 +1389,9 @@ var blobURL = URL.createObjectURL(new Blob(['(',
                     [{ 'match': thisMatch.match, 'fig': thisMatch.fig }];
                 }
               }
-              for (match in matches) {
-                if (checkFigGroup[group].repeat &&
-                  (matches[match].length > checkFigGroup[group].repeat)) {
-                  errFigs = figureNumbers(matches[match]);
+              for (const match of matches) {
+                if (checkFigGroup[group].repeat && (match.length > checkFigGroup[group].repeat)) {
+                  errFigs = figureNumbers(match);
                   checkAlert(group, 'figrepeat', errFigs);
                   log.push('*** Error: Repeat ' + checkFigGroup[group].repeat +
                     ' of group ' + group + '(' + errFigs + ')');
@@ -1394,7 +1416,7 @@ var blobURL = URL.createObjectURL(new Blob(['(',
         // When the name starts with !, this logic is reversed
 
         if (ruleSeqCheck != {}) {
-          for (let name in ruleSeqCheck) {
+          for (const name in ruleSeqCheck) {
             if ((name[0] != '!' && !ruleSeqCheck[name].regex.test(activeSequenceText)) ||
               name[0] == '!' && ruleSeqCheck[name].regex.test(activeSequenceText)) {
               checkAlert(
@@ -1412,26 +1434,26 @@ var blobURL = URL.createObjectURL(new Blob(['(',
         // or Additional when applicable and if the assigned figure letters
         // are allowed according the rules
 
-        let remaining = figureLetters ? figureLetters : '';
+        let
+          remaining = figureLetters ? figureLetters : '',
+          ufl = [];
 
-        let ufl = [];
-        for (let i = 0; i < figures.length; i++) {
-          let l = figures[i].unknownFigureLetter;
-          if (figures[i].aresti) {
+        for (const f of figures) {
+          const l = f.unknownFigureLetter;
+          if (f.aresti) {
             if (l) {
               if ((figureLetters + 'L').indexOf(l) === -1) {
-                let msg = sprintf(
+                const msg = sprintf(
                   userText.figureLetterNotAllowed,
-                  figures[i].seqNr,
+                  f.seqNr,
                   l);
                 alertMsgs.push(msg);
                 log.push('*** Error: ' + msg);
-                //delete figures[i].unknownFigureLetter;
               } else {
                 if (ufl[l]) {
-                  ufl[l].push(figures[i].seqNr);
+                  ufl[l].push(f.seqNr);
                 } else {
-                  ufl[l] = [figures[i].seqNr];
+                  ufl[l] = [f.seqNr];
                 }
                 remaining = remaining.replace(l, '');
               }
@@ -1439,29 +1461,27 @@ var blobURL = URL.createObjectURL(new Blob(['(',
           }
         }
 
-        for (l in ufl) {
+        for (const l in ufl) {
           if ((ufl[l].length > 1) && (l != 'L')) {
-            let msg = sprintf(userText.FUletterMulti, ufl[l].join(','), l);
+            const msg = sprintf(userText.FUletterMulti, ufl[l].join(','), l);
             alertMsgs.push(msg);
             log.push('*** Error: ' + msg);
           }
         }
         // see if we have remaining (=unused) letters
         if (remaining.length) {
-          let figs = [];
-          for (let i = 0; i < figures.length; i++) {
-            if (!figures[i].unknownFigureLetter && figures[i].aresti) {
-              figs.push(figures[i].seqNr);
-            }
+          const figs = [];
+          for (const f of figures) {
+            if (!f.unknownFigureLetter && f.aresti) figs.push(f.seqNr);
           }
           // nuisance warning in Designer, so hide there
           if (figs.length && (activeForm !== 'FU')) {
-            let msg = sprintf(userText.noFigureLetterAssigned, figs.join(','));
+            const msg = sprintf(userText.noFigureLetterAssigned, figs.join(','));
             alertMsgs.push(msg);
             log.push('*** Error: ' + msg);
           }
 
-          let msg = sprintf(userText.unusedFigureLetters, remaining);
+          const msg = sprintf(userText.unusedFigureLetters, remaining);
           alertMsgs.push(msg);
           log.push('*** Error: ' + msg);
         }
@@ -1472,7 +1492,7 @@ var blobURL = URL.createObjectURL(new Blob(['(',
             userText.additionalFigureRequired,
             false,
             false,
-            (sportingClass.value === 'glider') ?
+            (sportingClass === 'glider') ?
               "Sporting Code Section 6 Part II, 3.3.3.8" :
               "Sporting Code Section 6 Part I, 2.3.1.4&nbsp;c"
           );
@@ -1493,22 +1513,22 @@ var blobURL = URL.createObjectURL(new Blob(['(',
     // checkReferenceSequence checks the active sequence against a reference
     // sequence and provides appropriate warnings
     function checkReferenceSequence(figures) {
-      for (var i = 0; i < figures.length; i++) {
-        var f = figures[i];
+      for (const f of figures) {
         if (f.aresti &&
           f.unknownFigureLetter &&
           (f.unknownFigureLetter !== 'L') &&
           referenceSequence.figures[f.unknownFigureLetter]) {
-          var refFig = referenceSequence.figures[f.unknownFigureLetter];
+          const refFig = referenceSequence.figures[f.unknownFigureLetter];
+          let text;
           if (refFig.checkLine !== f.checkLine) {
             checkAlert(sprintf(userText.referenceFigureDifferent,
               f.unknownFigureLetter), false, f.seqNr);
           } else if (refFig.entryDir === refFig.exitDir) {
             if (f.entryDir !== f.exitDir) {
               if (refFig.entryAtt === refFig.exitAtt) {
-                var text = userText.referenceFigureExitSame;
+                text = userText.referenceFigureExitSame;
               } else {
-                var text = userText.referenceFigureExitOpp;
+                text = userText.referenceFigureExitOpp;
               }
               checkAlert(sprintf(text,
                 f.unknownFigureLetter), false, f.seqNr);
@@ -1516,9 +1536,9 @@ var blobURL = URL.createObjectURL(new Blob(['(',
           } else if (refFig.entryDir !== refFig.exitDir) {
             if (f.entryDir === f.exitDir) {
               if (refFig.entryAtt === refFig.exitAtt) {
-                var text = userText.referenceFigureExitOpp;
+                text = userText.referenceFigureExitOpp;
               } else {
-                var text = userText.referenceFigureExitSame;
+                text = userText.referenceFigureExitSame;
               }
               checkAlert(sprintf(text,
                 f.unknownFigureLetter), false, f.seqNr);
@@ -1566,7 +1586,7 @@ var blobURL = URL.createObjectURL(new Blob(['(',
     // rule  : optional, literal text for the rulebook rule that invoked
     //         this as in xxx-rule
     function checkAlert(value, type, figNr, rule) {
-      var alertFig = figNr ? '(' + figNr + ') ' : '';
+      const alertFig = figNr ? `(${figNr})` : '';
 
       switch (type) {
         case 'maxperfig':

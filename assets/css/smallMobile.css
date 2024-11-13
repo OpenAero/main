@@ -1,0 +1,599 @@
+﻿/*
+ smallMobile.css
+ This file is part of OpenAero.
+
+  OpenAero was originally designed by Ringo Massa and built upon ideas
+  of Jose Luis Aresti, Michael Golan, Alan Cassidy and many others. 
+
+  OpenAero is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  OpenAero is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with OpenAero.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/* This file defines all the css styles for the small mobile version
+ * They will override any equivalent css styles in general.css and
+ * mobile.css */
+
+select {
+  background-color: #fff;
+}
+
+/* save dialog */
+#dlTextField {
+	padding-right: 32px;
+}
+#fileExt {
+	top: -1.55rem;
+}
+
+.notSmallMobile {
+	display: none;
+}
+
+/* top block */
+#topBlock {
+  -moz-box-shadow: 0 1px 2px rgba(0,0,0,0.5);
+  -webkit-box-shadow: 0 1px 2px rgba(0,0,0,0.5);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.5);
+  /* width: 320px; */
+  width: 100%;
+}
+#openAeroLogo {
+  display: none;
+}
+.version {
+  display: none;
+}
+#sequenceTextContainer {
+  position: relative;
+  /* left: 34px; */
+  left: 0;
+  right: 0;
+}
+#sequence_text {
+  /* width: 248px; */
+  left: 40px;
+  right: 40px;
+  height: 50px;
+  padding: 0 2px;
+}
+#t_locked {
+	font-size: 14px;
+	padding: 8px;
+  /* left: 32px; */
+  left: 40px;
+}
+
+#main {
+	position: absolute;
+	overflow: hidden;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  /*
+  width: 320px;
+  max-width: 320px;
+  */
+  width: 100%;
+}
+#leftBlockContainer {
+    position: absolute;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    /*width: 320px;*/
+    width: 100%;
+    height: 100%;
+    -webkit-overflow-scrolling: touch;
+    transition: 0.5s ease-in-out;
+}
+#leftBlock {
+    position: relative;
+    top: 0;
+    left: 0;
+    background: #f4f4f4;
+    /*width: 320px;*/
+    width: 100%;
+    padding: 40px 0 0 0;
+    z-index: 1;
+    overflow: hidden;
+    min-height: 600px;
+    transition: 0.5s ease-in-out;
+}
+
+#sequenceInfo div.form-group {
+	display: inline-block;
+	margin: 16px 4px 16px 0;
+}
+#sequenceInfo div.form-group:first-of-type {
+	width: 47%;
+}
+#sequenceInfo div.form-group:last-of-type {
+  width: 47%;
+  margin-right: 0;
+}
+#positioningText {
+    position: absolute;
+    width: 47%;
+    top: 0;
+    right: 0;
+}
+.narrowRight div.form-group:first-of-type {
+  width: 54% !important;
+}
+.narrowRight div.form-group:last-of-type {
+  width: 40% !important;
+}
+
+#sequenceInfo {
+  position: relative;
+  float: left;
+  /* width: 312px; */
+  width: 98%;
+  transform: translate(0,0,0);
+  transition: all 0.3s ease-in-out;
+}
+#sequenceInfo.hidden {
+  transform: translate(-100vw,4px);
+  visibility: visible;
+}
+#figureInfo {
+  position: relative;
+  float: left;
+  left: 0;
+  width: 98%;
+  transform: translateX(0);
+  transition: all 0.3s ease-in-out;
+}
+#figureInfo.hidden {
+  transform: translateX(100vw);
+  visibility: visible;
+}
+#figureInfo.hidden.left {
+	transform: translate(-100vw,4px);
+}
+
+#referenceSequenceString {
+  width: 99%;
+  height: 48px;
+}
+
+#fileDropLogo {
+	margin: 16px 2% 0 0;
+  width: 29%;
+}
+
+#alerts {
+	margin-left: 1%;
+	width: 98%;
+}
+/* virtual keyboard */
+#virtualKeyboard {
+  display: none;
+}
+
+.tabSelector ul {
+	display: flex;
+}
+.tabSelector li {
+  flex: 1;
+  font-size: 12px;
+}
+#leftBlockTabSelector {
+    position: absolute;
+    z-index: 5;
+    /* width: 320px; */
+    width: 100%;
+    transition: 0.5s ease-in-out;
+}
+#leftBlockTabSelector li {
+  display: inline-block;
+  width: 82px; /* for backward compatibility, ignored using flex */
+}
+#leftBlockTop {
+	margin-top: 40px;
+}
+#sequenceArea {
+  display: flex;
+  flex-direction: row-reverse;
+  width: 98%;
+  background-color:#ffffff;
+  padding: 4px;
+  margin: 0 0 4px 0;
+	transition: all 0.3s ease-in-out;
+}
+#sequenceArea.hidden {
+	transform: translateX(100vw);
+}
+#optimalSequenceArea {
+    display: none;
+}
+#sequenceArea #t_windArrow, .iosCordova #sequenceArea #t_windArrow {
+  top: 48px;
+  left: calc(100% - 85px);
+}
+#sequenceArea.hidden #t_windArrow {
+  opacity: 0;
+}
+#mainOverlay.C #t_windArrow {
+  left: 14px;
+}
+#miniFormAContainer {
+  background-color: white;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.5);
+  margin: 40px 6px 0 4px;
+  height:fit-content;
+}
+#miniFormAContainer table {
+  min-width: 56px;
+}
+#miniFormAFooter td {
+  text-align: center !important;
+  font-size: 1.2em;
+}
+#sequenceArea svg {
+  padding-top: 40px;
+}
+#gridInfo {
+  display: none;
+}
+#t_gridView {
+	display: none;
+}
+#gridColumnsContainer div {
+	clear: both;
+}
+#figureSelector {
+  overflow-x: hidden;
+  width: 100vw;
+  font-size: 16px;
+  padding: 0;
+  background-color: white;
+  z-index: 12;
+  right: auto;
+  left: -110vw;
+	-webkit-overflow-scrolling: touch;
+}
+#figureSelector .info {
+	position: absolute;
+  right: 0;
+  z-index: 999;
+}
+#figureSelector.active {
+  left: 0;
+}
+#hideFigureSelector:after {
+  content: "arrow_back";
+}
+#hideIllegalFigures {
+	display: flex;
+}
+#hideIllegalFigures span, #hideRarelyUsedFigures span {
+  display: inline-block;
+  flex: 1;
+  margin: 8px 4px;
+}
+/* columns */
+.content3cols {
+  width: 97%;
+}
+.content2cols {
+  width: 97%;
+}
+
+/* buttons */
+.button {
+  margin-left: 5px;
+  margin-right: 5px;
+}
+.button.small {
+  margin: 1px;
+}
+.undoRedoButton {
+  margin: 3px 8px -1px 4px;
+  padding: 0;
+}
+#redo {
+	clear: left;
+}
+.minButton, .plusButton {
+	font-size: 34px !important;
+	height: 30px;
+  width: 30px;
+}
+.minButton {
+	line-height: 26px;
+}
+.plusButton {
+	line-height: 30px;
+}
+.plusButton:before {
+  left: 5px;
+  top: -2px;
+}
+.plusMinText {
+  font-size: 16px;
+  height: 32px;
+}
+#selectedFigure.active {
+	/* include border in box size */
+  width: 160px;
+  height: 144px;
+  padding: 0 8px;
+}
+#unknownFigureChooser {
+  width: 160px;
+}
+#entryExit {
+  min-height: 56px;
+  padding-left: 6px !important;
+}
+#figEntryButton.button {
+  margin-left: 0 !important;
+  margin-right: 2px !important;
+}
+#figExitButton.button {
+  margin-left: 2px !important;
+  margin-right: 0 !important;
+}
+.rollComment {
+  font-size: 20px;
+  height: 32px;
+  margin-top: 2px;
+}
+.rollGaps .plusMin {
+	display: inline-block;
+	width: 33%;
+}
+#scale {
+  margin-left: 5px;
+  margin-right: 5px;
+}
+#moveX,#moveY {
+  margin-left: 6px;
+  margin-right: 6px;
+}
+#figureInfo select {
+	height: 32px !important;
+	line-height: 32px;
+  font-size: 20px;
+}
+#comments {
+	flex: 1;
+  margin-right: 16px;
+}
+
+/* logo chooser */
+#activeLogo {
+  float: right;
+}
+#chooseLogo {
+  display: flex;
+  flex-wrap: wrap;
+}
+#chooseLogo div {
+  display: flex;
+  flex: 2 1 auto;
+  justify-content: center;
+}
+
+/* figure chooser */
+
+#figureChooser {
+  width: 100vw;
+  padding-right: 0;
+  margin: 0! important;
+  bottom: 0;
+}
+table#figureChooserColumns {
+  position: relative;
+  left: 4vw;
+  width: 96vw;
+}
+table#figureChooserTable td {
+  width: 23vw;
+  padding: 1px;
+  border: 1px solid #bbb;
+  border-radius: 5px;
+}
+table#figureChooserTable td.selected {
+  border: 1px solid magenta;
+}
+#figureSelector div {
+  margin: 6px;
+}
+#figureSelector div div {
+  margin: 0;
+}
+#figureSelectorOptionsDiv select,#figureSelectorGroupDiv select {
+  font-size: 14px;
+}
+#figureSelectorClose {
+	position: relative;
+	top: 0;
+	left: 4px;
+}
+
+/* message and other boxes */
+.box {
+    top: 1%;
+  top: max(1%, env(safe-area-inset-top));
+  left: 1%;
+  width: 95%;
+}
+.box .tabSelector {
+  width: auto;
+}
+.box .tabSelector li {
+  padding-left: 10px;
+  padding-right: 10px;
+  width: auto;
+}
+
+/* help box */
+#helpContent {
+    scroll-margin-top: 40px;
+}
+#helpBox {
+    position: fixed;
+    overflow: hidden;
+}
+#helpBox .box {
+    position: fixed;
+    overflow: hidden;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	border-radius: 0;
+}
+
+/* menu */
+#hamburgerMenu {
+	padding: 16px 8px 6px 8px;
+}
+
+#zoomMenu {
+  display: none !important;
+}
+
+#installApp {
+	height: 24px;
+	font-size: 20px !important;
+}
+#closeInstallApp {
+	font-size: 24px;
+}
+#installApp img {
+	height: 40px;
+}
+#t_getTheApp {
+	position: relative;
+	top: -14px;
+	font-size: 14px;
+}
+
+/* styling for Free (Un)known Designer */
+
+.fuDesigner #leftBlockTabSelector {
+    width: 124px;
+}
+
+.fuDesigner #leftBlockTabSelector li {
+    min-width: 58px;
+    max-width: 58px;
+    padding: 0 2px 0 2px;
+    font-size: 12px;
+}
+
+.fuDesigner #leftBlockContainer {
+    width: 124px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+
+.fuDesigner #leftBlock {
+    width: 124px;
+    /* add "tactile" dots to Figures block to show where the block can be scrolled */
+    background: linear-gradient(90deg, #fafafa 3px, transparent 1%) center, linear-gradient(#fafafa 3px, transparent 1%) center, #c0c0c0;
+    background-size: 4px 4px;
+}
+
+.fuDesigner #design {
+    background: #fafafa;
+}
+#fuFigures {
+    width: 110px;
+    background-color: #fafafa;
+    box-shadow: none;
+}
+
+.fuDesigner #alerts {
+    padding-right: 4px;
+}
+
+#t_alerts {
+    padding-left: 8px;
+}
+
+#fuSequence {
+    margin-left: 120px;
+}
+
+.fuSequence table td {
+    width: 100px;
+    height: 80px;
+}
+
+.fuDesigner #figureString {
+    left: 172px;
+    top: 232px;
+}
+
+.fuDesigner .button.small {
+    width: 26px;
+    height: 26px;
+    background-size: 24px;
+    margin: 1px;
+}
+
+.fuDesigner #figEntryButton.button.small, .fuDesigner #figExitButton.button.small {
+    margin-right: 6px;
+}
+
+.fuDesigner .minButton, .fuDesigner .plusButton {
+    font-size: 28px !important;
+    height: 24px;
+    width: 24px;
+}
+
+.fuDesigner .minButton {
+    line-height: 21px;
+}
+
+.fuDesigner .plusButton {
+    line-height: 24px;
+}
+
+.fuDesigner .plusMinText {
+    font-size: 20px;
+    box-sizing: border-box;
+    margin-top: 1px;
+    height: 26px;
+}
+
+.fuDesigner #figureInfo select {
+    height: 24px !important;
+    line-height: 24px;
+    font-size: 20px;
+}
+
+.fuDesigner .rollComment {
+    font-size: 20px;
+    height: 26px;
+}
+
+.fuDesigner .button {
+    margin: 1px !important;
+}
+
+#fuSequence .prevRight::before, #fuSequence .prevLeft::before {
+    top: 28px;
+}
+ /* Print dialog */
+.pilotCardLayout {
+    padding: 3px !important;
+    -webkit-transform: scale(0.7,0.7);
+    transform: scale(0.7,0.7);
+}
+#pilotCardLayout.folded {
+    max-height: 1px;
+}

@@ -162,10 +162,6 @@ platform.touch = (('ontouchstart' in window)
     || (navigator.maxTouchPoints > 0)
     || (navigator.msMaxTouchPoints > 0));
 
-// storage is true when localStorage is enabled (checked by doOnLoad)
-// start with true to activate the check
-var storage = true;
-
 // multi is used for keeping track of multiple sequence check globals
 // processing  : false when multiple sequences are not being processed,
 //               otherwise 'check' or 'print'
@@ -738,7 +734,7 @@ if (typeof module !== "undefined" && module.exports) {
 if (window.NodeList && !NodeList.prototype.forEach) {
     NodeList.prototype.forEach = function (callback, thisArg) {
         thisArg = thisArg || window;
-        for (var i = 0; i < this.length; i++) {
+        for (let i = 0; i < this.length; i++) {
             callback.call(thisArg, this[i], i, this);
         }
     };
@@ -829,9 +825,9 @@ function cordovaHandleIntent(intent) {	// intent.action android.intent.action.MA
 // saving/exporting a file
 function cordovaSave(blob, filename) {
     // use socialsharing to save or send file through dataURL.
-    var reader = new FileReader();
+    let reader = new FileReader();
     reader.onload = function (evt) {
-        var options = {
+        const options = {
             subject: filename,
             // Add filename to dataURL with df:
             files: [`df:${filename};${evt.target.result}`]
@@ -1422,9 +1418,7 @@ var iosDragDropShim = {
 
 // removeChildNodes removes all childNodes from a DOM element
 function removeChildNodes(container) {
-    while (container.childNodes.length) {
-        container.lastChild.remove();
-    }
+    while (container.firstChild) container.lastChild.remove();
 }
 
 // switchSmallMobile switches between smallMobile and regular layout
@@ -1435,12 +1429,13 @@ function switchSmallMobile() {
     // select no figure
     if (selectedFigure.id !== null) selectFigure(false);
     // load CSS depending on smallMobile, largeMobile or desktop version
-    var link = $('desktopLargeMobileCSS');
-    var svg = $('sequenceArea');
+    const
+        link = $('desktopLargeMobileCSS'),
+        svg = $('sequenceArea');
     if (platform.smallMobile) {
 
         // set smallMobile css
-        link.setAttribute('href', 'css/smallMobile.css');
+        link.setAttribute('href', 'assets/css/smallMobile.css');
 
         // update folowing parts of interface when not in Free Unknown Designer
         if (activeForm != 'FU') {
@@ -1448,8 +1443,7 @@ function switchSmallMobile() {
             $('tab-sequenceArea').classList.remove('noDisplay');
             // hide sequence svg and move to before fuFigures
             svg.classList.add('hidden');
-            var fuFigures = $('fuFigures');
-            fuFigures.parentNode.insertBefore(svg, fuFigures);
+            $('fuFigures').parentNode.insertBefore(svg, $('fuFigures'));
             // move grid column setting to settings
             $('t_gridView').parentNode.appendChild($('gridColumnsContainer'));
             // move figureSelector to previous sibling of main
@@ -1471,7 +1465,7 @@ function switchSmallMobile() {
         }
 
         $('t_fuDesigner').parentNode.classList.remove('noDisplay');
-        link.setAttribute('href', 'css/desktop-largeMobile.css');
+        link.setAttribute('href', 'assets/css/desktop-largeMobile.css');
 
         // hide sequence tab
         $('tab-sequenceArea').classList.add('noDisplay');
@@ -1511,12 +1505,10 @@ function switchSmallMobile() {
 
 // mobileInterface adjusts interface for mobile devices
 function mobileInterface() {
-    $('desktopCSS').setAttribute('href', 'css/mobile.css');
+    $('desktopCSS').setAttribute('href', 'assets/css/mobile.css');
 
     // update menu
-    var topBlock = $('topBlock');
-    var mainMenu = $('mainMenu');
-    topBlock.parentNode.insertBefore(mainMenu, topBlock);
+    $('topBlock').parentNode.insertBefore($('mainMenu'), $('topBlock'));
 
     // move some Tools menu items to main and hide Tools menu
     $('menu').insertBefore(
@@ -1540,12 +1532,12 @@ function mobileInterface() {
     mobileMenuHeader();
 
     // set rightArrow for all submenus
-    var menuNodes = $('menu').childNodes;
+    const menuNodes = $('menu').childNodes;
     for (let i = 0; i < menuNodes.length; i++) {
         if (menuNodes[i].tagName) {
-            var ul = menuNodes[i].getElementsByTagName('UL');
+            const ul = menuNodes[i].getElementsByTagName('UL');
             if (ul.length > 0) {
-                var iNode = document.createElement('i');
+                const iNode = document.createElement('i');
                 iNode.setAttribute('class', 'material-icons rightArrow');
                 menuNodes[i].insertBefore(iNode, ul[0]);
             }
@@ -1573,9 +1565,10 @@ function mobileInterface() {
         $('printMargins').classList.add('noDisplay');
 
         // fix leftblock scroll bug
-        var leftBlock = $('leftBlockContainer');
-        leftBlock.style.height = '1px';
-        setTimeout(function () { leftBlock.style.removeProperty('height'); }, 200);
+        $('leftBlockContainer').style.height = '1px';
+        setTimeout(function () {
+            $('leftBlockContainer').style.removeProperty('height');
+        }, 200);
     }
 }
 
@@ -1610,12 +1603,12 @@ function mobileMenuHeader() {
 }
 
 // panelHeader sets correct panel header for expanded or collapsed panel
-function panelHeader(el, empty) {
-    var grandPa = el.parentNode.parentNode;
+function panelHeader(el, empty = '') {
+    const grandPa = el.parentNode.parentNode;
     if (grandPa.classList.contains('expanded')) {
         el.innerText = '';
     } else {
-        var
+        let
             inputs = grandPa.getElementsByClassName('panelHeader'),
             values = [];
         for (let i = 0; i < inputs.length; i++) {
@@ -1627,19 +1620,18 @@ function panelHeader(el, empty) {
                 values.push(inputs[i].value.replace(/ /, "\u00A0"));
             }
         }
-        el.innerText = values.join(' ').trim() || empty || '';
+        el.innerText = values.join(' ').trim() || empty;
     }
 }
 
 // menuActive and menuInactive show and remove top menus on mouseover
 function menuActive() {
     if (this.id === 'hamburgerMenu') {
-        var menu = $('mainMenu');
-        if (menu.classList.contains('active')) {
+        if ($('mainMenu').classList.contains('active')) {
             menuInactiveAll();
         } else {
             this.classList.add('active');
-            menu.classList.add('active');
+            $('mainMenu').classList.add('active');
             document.body.classList.add('menuOpen');
             window.scrollTo(0, 0);
         }
@@ -1659,7 +1651,7 @@ function menuInactive(el) {
 
 // menuTouch deactivates menu when called
 function menuTouch() {
-    var node = this;
+    let node = this;
     // add a delay to make sure the menu item gets activated
     setTimeout(function () {
         while (node && node.classList.contains('active')) {
@@ -1672,11 +1664,10 @@ function menuTouch() {
 
 // menuInactiveAll hides all active menus
 function menuInactiveAll() {
-    var menu = $('mainMenu');
-    if (!menu) return;
-    menu.classList.remove('active');
+    if (!$('mainMenu')) return;
+    $('mainMenu').classList.remove('active');
 
-    var el = menu.getElementsByClassName('active');
+    const el = $('mainMenu').getElementsByClassName('active');
     for (let i = el.length - 1; i >= 0; i--) {
         el[i].classList.remove('active');
     }
@@ -1686,7 +1677,7 @@ function menuInactiveAll() {
 
 // newSvg creates a new, minimal svg
 function newSvg() {
-    var svg = document.createElementNS(svgNS, "svg");
+    const svg = document.createElementNS(svgNS, "svg");
     svg.setAttribute("xmlns", svgNS);
     svg.setAttribute("version", "1.2");
     svg.setAttribute("baseProfile", "basic");
@@ -1740,7 +1731,7 @@ function rebuildSequenceSvg() {
 // prepareSvg clears a provided svg and prepares it for figure addition
 function prepareSvg(svg) {
     removeChildNodes(svg);
-    var group = document.createElementNS(svgNS, "g")
+    const group = document.createElementNS(svgNS, "g")
     group.setAttribute('id', 'sequence');
     svg.appendChild(group);
 }
@@ -1800,11 +1791,11 @@ function alertBox(message, title, buttons) {
         // remove old buttons
         $('t_closeAlert').parentNode.querySelectorAll('.addedButton').forEach(el => el.remove());
         // add new buttons
-        if (buttons) for (let i = 0; i < buttons.length; i++) {
-            var button = document.createElement('span');
+        for (const key in buttons) {
+            const button = document.createElement('span');
             button.classList.add('textButton', 'addedButton');
-            button.innerHTML = userText[buttons[i].name];
-            button.addEventListener('mousedown', buttons[i].function);
+            button.innerHTML = userText[buttons[key].name];
+            button.addEventListener('mousedown', buttons[key].function);
             $('t_closeAlert').parentNode.insertBefore(button, $('t_closeAlert'));
         }
         dialogBuildContents('alert', message, title);
@@ -1877,7 +1868,7 @@ function addLanguageChooser(boxName, message, title) {
     for (let code in lang) {
         // show flags for languages other than current
         if ($('language').value !== code) {
-            var img = document.createElement('img');
+            const img = document.createElement('img');
             $(boxName + 'Title').appendChild(img);
             img.classList.add('boxTitleFlag');
             img.setAttribute('src', `data:image/png;base64,${flags[code === 'en' ? 'gb' : code]}`);
@@ -2008,7 +1999,7 @@ function settingsDialog(e) {
 function referenceSequenceDialog(e) {
     if (e === false) {
         $('referenceSequenceDialog').classList.add('noDisplay');
-    } else {
+    } else if (!$('t_referenceSequence').classList.contains ('noDisplay')) {
         $('referenceSequenceDialog').classList.remove('noDisplay');
         changeReferenceSequence(true);
     }
@@ -2040,7 +2031,7 @@ function helpWindow(url, title) {
         if (platform.android && /\.pdf$/.test(url)) {
             /* cordovaPdf(url, title); */
         } else {
-            var win = cordova.InAppBrowser.open(
+            let win = cordova.InAppBrowser.open(
                 url, '_blank', 'location=no,hardwareback=no,closebuttoncolor=#fb8c00');
             win.addEventListener("loadstop", () => {
                 // hide elements with class noCordova
@@ -2057,20 +2048,20 @@ function helpWindow(url, title) {
         $('helpTitle').innerText = title;
         $('helpContent').firstChild.src = url;
     } else if (platform.uwp) {
-        var w = window.open(
+        window.open(
             url,
             title,
             'menubar=no, scrollbars=yes, status=no, toolbar=no, top=30, width=800'
         );
     } else if (window.navigator.standalone) {
         // create and click <a> for standalone
-        var a = document.createElement('a');
+        const a = document.createElement('a');
         a.href = url;
         a.target = '_blank';
         a.click();
     } else {
         // open new window for all others
-        var w = window.open(
+        window.open(
             url,
             title,
             'menubar=no, scrollbars=yes, status=no, toolbar=no, top=30, width=800'
@@ -2082,7 +2073,7 @@ function helpWindow(url, title) {
 // version checking
 function aboutDialog() {
     function show(stableVersion) {
-        var compText = '';
+        let compText = '';
         if (!stableVersion) {
             compText = userText.aboutUnknown;
             stableVersion = '-';
@@ -2109,6 +2100,15 @@ function aboutDialog() {
         alertBox(
             sprintf(userText.aboutText, version, stableVersion.split(' ')[0], compText),
             userText.about);
+        {
+            const id = uniqueId();
+            workerCallback[id] = function (value) {
+                if (value) {
+                    $('t_rulesUpdateDateTime').innerText = new Date(value.time * 1000).toString();
+                }
+            }
+            rulesWorker.postMessage({ action: 'rulesUpdateDateTime', callbackId: id });
+        }
         $('viewChangelog').addEventListener(
             'mousedown',
             function () { helpWindow('changelog.txt', 'changelog.txt'); });
@@ -2126,7 +2126,7 @@ function aboutDialog() {
 // The correct values are put in the select list when the box is
 // activated by user
 function combo(id) {
-    var self = this;
+    let self = this;
     self.inp = $(id);
     /** DISABLED datalist. The autocomplete "feature" causes only rules
      * matching the current value to show. This is not the desired
@@ -2166,7 +2166,7 @@ function combo(id) {
         };
 
         self.inp.onfocus = function () {
-            var ul = self.ul;
+            let ul = self.ul;
             ul.style.display = 'block';
             ul.classList.add('focused');
             self.hasfocus = true;
@@ -2193,14 +2193,13 @@ function combo(id) {
             changeCombo(self.inp.id);
         };
         self.inp.onkeyup = function (e) {
-            var k = e ? e.keyCode : event.keyCode;
-            if (k == 40 || k == 13) {
+            if (e.key == 40 || e.key == 13) {
                 if (self.sel == self.list.length - 1) {
                     self.sel = -1;
                 }
                 self.inp.value = self.list[++self.sel].firstChild.data;
                 changeCombo(self.inp.id);
-            } else if (k == 38 && self.sel > 0) {
+            } else if (e.key == 38 && self.sel > 0) {
                 self.inp.value = self.list[--self.sel].firstChild.data;
                 changeCombo(self.inp.id);
             }
@@ -2216,7 +2215,7 @@ if (!(false && 'options' in document.createElement('datalist'))) {
         return false;
     }
     combo.prototype.addMouseDown = function () {
-        var self = this;
+        let self = this;
         self.list = self.ul.getElementsByTagName('li');
         for (let i = self.list.length - 1; i >= 0; i--) {
             self.list[i].addEventListener(
@@ -2241,7 +2240,7 @@ function selectTab(e) {
     // check if tabbing in leftBlock, for alertBox slide
     const leftBlock = li.id.match(/^tab-(sequenceInfo|figureInfo|sequenceArea)$/);
     const tab = $(li.id.replace('tab-', ''));
-    var rect;
+    let rect;
     // unselect all tabs
     li.parentNode.querySelectorAll('li').forEach (l => {
         // only do something when the tab is displayed
@@ -2253,7 +2252,7 @@ function selectTab(e) {
             l.classList.add('inactiveTab');
             // hide the tab by using display:hidden
             // so any data is still accessible
-            var hideTab = $(l.id.replace('tab-', ''));
+            const hideTab = $(l.id.replace('tab-', ''));
             if (hideTab) {
                 hideTab.classList.add('hidden');
                 if (tab.id === 'sequenceArea') {
@@ -2284,15 +2283,15 @@ function selectTab(e) {
     li.classList.add('activeTab');
     tab.classList.remove('hidden');
     // scroll tab parents to top
-    var t = tab;
+    let t = tab;
     while (t = t.parentNode) t.scrollTop = 0;
     // slide alertBox and design when relevant
     if (leftBlock && rect) {
-        var newRect = tab.getBoundingClientRect();
+        const newRect = tab.getBoundingClientRect();
 
         function slide(el) {
             el.style.transition = '';
-            var dy = (rect.bottom - rect.top) - (newRect.bottom - newRect.top);
+            const dy = (rect.bottom - rect.top) - (newRect.bottom - newRect.top);
             el.style.transform = `translateY(${dy}px)`;
             setTimeout(function () {
                 el.style.transition = 'all 0.3s ease-in-out';
@@ -2310,29 +2309,25 @@ function selectTab(e) {
 // e.g. <a></a> or <div></div>
 // where [key] is the key in userText, e.g. "addingFigure"
 function updateUserTexts() {
-    var
-        language = lang[$('language').value],
-        id,
-        value,
-        els = document.getElementsByClassName('userText');
+    const language = lang[$('language').value];
 
     // Go over all elements with class userText
-    for (let i = 0; i < els.length; i++) {
-        id = els[i].id.replace(/^t_/, '');
+    for (const el of document.getElementsByClassName('userText')) {
+        const id = el.id.replace(/^t_/, '');
         // Find the value for the current language
-        value = id.split('.').reduce((a, b) => a ? a[b] : false, language);
+        let value = id.split('.').reduce((a, b) => a ? a[b] : false, language);
         // If the value does not exist, fall back to English and add a
         // warning to the console. Helps in creating new translations
         if (!value) {
             console.log(`Key "${id}" missing in language "${$('language').value}"`);
             value = id.split('.').reduce((a, b) => a ? a[b] : false, lang.en) || '';
         }
-        els[i].innerHTML = value;
+        el.innerHTML = value;
     }
 
     // Merge the active language over English into userText
     //userText = {...lang.en, ...language};
-    [lang.en, language].forEach(e=>Object.assign(userText,e));
+    [lang.en, language].forEach(e => Object.assign(userText,e));
 
     // update userText in rulesWorker
     rulesWorker.postMessage({
@@ -2349,9 +2344,13 @@ function updateUserTexts() {
  * General functions
  ************************************************/
 
-// uniqueId creates a unique ID by combining millisecond time and random
+// uniqueId creates a unique ID by combining millisecond time and ~15 random digits
 function uniqueId() {
-    return (new Date().getTime() + Math.random().toString().substring(2));
+    const id = new Date().getTime() + Math.random().toString().substring(2);
+    // uniqueId is currently only used for worker callbacks. Make sure it is
+    // unique by checking workerCallback and iterating uniqueId when needed
+    if (workerCallback[id]) return uniqueId();
+    return id;
 }
 
 // roundTwo returns a number rounded to two decimal places.
@@ -2366,8 +2365,7 @@ function roundTwo(nr) {
 // remove leading and trailing spaces (when noLT is false)
 function sanitizeSpaces(line, noLT) {
     line = line.replace(/[\t]/g, ' ').replace(/\s\s+/g, ' ');
-    if (!noLT) line = line.trim();
-    return line;
+    return (noLT ? line : line.trim());
 }
 
 // setSequenceSaved sets the sequenceSaved variable to true or false by
@@ -2375,7 +2373,7 @@ function sanitizeSpaces(line, noLT) {
 // executed first. When setting to true, always wait a while to assure
 // any false settings are executed first
 function setSequenceSaved(value) {
-    var id = uniqueId();
+    const id = uniqueId();
     workerCallback[id] = function () {
         if (value) {
             setTimeout(function () { sequenceSaved = true; }, 200);
@@ -2409,7 +2407,7 @@ function simplifyFigures() {
 // described by an array of Aresti numbers
 function getSuperFamily(aresti, category) {
 
-    var superFamily = (activeRules && ruleSuperFamily.length) ?
+    const superFamily = (activeRules && ruleSuperFamily.length) ?
         // set Super Family from rules when applicable
         ruleSuperFamily :
         // otherwise, check if a matching category is active or default to "advanced"
@@ -2432,11 +2430,12 @@ function getSuperFamily(aresti, category) {
 // 0 or higher angles mean theta was in the right half, negative angles
 // mean theta was in the left half => necessary for correct looping shapes
 function dirAttToAngle(dir, att, nof=false) {
+    let angle;
     dir = (((dir % 360) + 360) % 360) ; // set range [0, 360>
-    var dirSin = Math.sin(dir * Math.degToRad);
+    const dirSin = Math.sin(dir * Math.degToRad);
 
     // Create offset for the Y-axis, determined by yAxisOffset
-    var theta = dir - (nof ? 0 : dirSin * dirSin * (90 - yAxisOffset));
+    let theta = dir - (nof ? 0 : dirSin * dirSin * (90 - yAxisOffset));
 
     // No Y-axis correction for pure verticals. This could be changed to a cos^2(att)
     // correction on yAxisOffset above, but would then also affect diagonal lines
@@ -2448,9 +2447,9 @@ function dirAttToAngle(dir, att, nof=false) {
     // Check for right or left half, calculate angle and make negative for left half.
     // + 0 is required to prevent -0 values
     if ((theta < 90) || (theta > 270)) {
-        var angle = ((theta + att + 360) % 360 + 0) * Math.degToRad;
+        angle = ((theta + att + 360) % 360 + 0) * Math.degToRad;
     } else {
-        var angle = ((theta - att - 360) % 360 + 0) * Math.degToRad || -Math.Tau;
+        angle = ((theta - att - 360) % 360 + 0) * Math.degToRad || -Math.Tau;
     }
     return angle;
 }
@@ -2485,7 +2484,7 @@ function changeAtt(value) {
 
 // changeRollFontSize will update the font size for rolls (e.g. 2x8)
 function changeRollFontSize(s) {
-    var regex = new RegExp(`font-size:[ ]*${rollFontSize}px;`);
+    const regex = new RegExp(`font-size:[ ]*${rollFontSize}px;`);
     rollFontSize = s;
     style.rollText = style.rollText.replace(regex, `font-size: ${rollFontSize}px;`);
 }
@@ -2493,12 +2492,12 @@ function changeRollFontSize(s) {
 // myGetBBox accepts an element and returns the bBox for the element and
 // bBoxes for it's child elements
 function myGetBBox(e) {
-    var bBox = e.getBBox();
+    let bBox = e.getBBox();
     // add right, bottom and nodes
     bBox.right = bBox.x + bBox.width;
     bBox.bottom = bBox.y + bBox.height;
     bBox.nodes = [];
-    var nodes = e.childNodes;
+    let nodes = e.childNodes;
     for (let i = 0; i < nodes.length; i++) {
         bBox.nodes[i] = nodes[i].getBBox();
         // add right and bottom
@@ -2540,7 +2539,7 @@ function drawWind(x, y, signScale, svgEl) {
 
 // makeFigStart creates figure start marker
 function makeFigStart(params) {
-    var
+    const
         seqNr = params.seqNr,
         first = params.first,
         paths = [],
@@ -2550,15 +2549,16 @@ function makeFigStart(params) {
     // start and applying styles after full definition of figure
     paths.push({ 'figureStart': true });
     // Create the first figure mark if applicable
-    var
+    const
         refRadius = 11,
-        open = Math.PI / 6,
+        open = Math.PI / 6;
+    let
         radius = refRadius;
     // draw numbers in circles when numberInCircle set AND seqNr present
     if (numberInCircle && seqNr && (activeForm != 'A')) {
         if (first && !(/^G/.test(activeForm))) {
             radius = refRadius + 4;
-            let
+            const
                 ax = roundTwo(radius * Math.cos(angle - open)),
                 ay = -roundTwo(radius * Math.sin(angle - open)),
                 dX = roundTwo(radius * Math.cos(angle + open) - ax),
@@ -2624,34 +2624,24 @@ function getFigureStartStyle(f) {
         // set "additional" style for figures with letter L
         if (f.unknownFigureLetter == 'L') return 'additional';
         // check all other figures for use of the same letter
-        for (let i = 0; i < figures.length; i++) {
-            if (figures[i].aresti &&
-                figures[i].seqNr != f.seqNr &&
-                figures[i].unknownFigureLetter === f.unknownFigureLetter) {
+        for (const fig of figures) {
+            if (fig.aresti &&
+                fig.seqNr != f.seqNr &&
+                fig.unknownFigureLetter === f.unknownFigureLetter) {
                 return 'error';
             }
         }
         // check figures against reference sequence if active
         if (referenceSequence.figures[f.unknownFigureLetter]) {
-            var refFig = referenceSequence.figures[f.unknownFigureLetter];
+            const refFig = referenceSequence.figures[f.unknownFigureLetter];
             if (refFig.checkLine !== f.checkLine) {
                 return 'error';
             } else if (refFig.entryDir === refFig.exitDir) {
                 if (f.entryDir !== f.exitDir) {
-                    if (refFig.entryAtt === refFig.exitAtt) {
-                        var text = userText.referenceFigureExitSame;
-                    } else {
-                        var text = userText.referenceFigureExitOpp;
-                    }
                     return 'error';
                 }
             } else if (refFig.entryDir !== refFig.exitDir) {
                 if (f.entryDir === f.exitDir) {
-                    if (refFig.entryAtt === refFig.exitAtt) {
-                        var text = userText.referenceFigureExitOpp;
-                    } else {
-                        var text = userText.referenceFigureExitSame;
-                    }
                     return 'error';
                 }
             }
@@ -2793,27 +2783,28 @@ function getEllipseParameters(pAngle, yScale) {
             'hRotAngle': - pAngle / 2
         };
     }
-    var a = yScale * Math.cos(pAngle * Math.degToRad);
-    var b = yScale * Math.sin(pAngle * Math.degToRad);
+    const
+        a = yScale * Math.cos(pAngle * Math.degToRad),
+        b = yScale * Math.sin(pAngle * Math.degToRad);
     // Parameters for perspective of elements in the vertical plane
     // (loops or loop parts)
-    var theta = (Math.PI + Math.atan(-2 * b / (1 - yScale * yScale))) / 2;
-    var vOrient = roundTwo(90 - (180 * Math.atan((Math.sin(theta) +
+    let theta = (Math.PI + Math.atan(-2 * b / (1 - yScale * yScale))) / 2;
+    const vOrient = roundTwo(90 - (180 * Math.atan((Math.sin(theta) +
         b * Math.cos(theta)) / (a * Math.cos(theta))) / Math.PI));
-    var vRMax = roundTwo(Math.sqrt(Math.pow(a * Math.cos(theta), 2) +
+    const vRMax = roundTwo(Math.sqrt(Math.pow(a * Math.cos(theta), 2) +
         Math.pow(Math.sin(theta) + b * Math.cos(theta), 2)));
     theta += Math.PI / 2;
-    var vRMin = roundTwo(Math.sqrt(Math.pow(a * Math.cos(theta), 2) +
+    const vRMin = roundTwo(Math.sqrt(Math.pow(a * Math.cos(theta), 2) +
         Math.pow(Math.sin(theta) + b * Math.cos(theta), 2)));
     // Parameters for perspective of elements in the horizontal plane
     // (turns or rolling turns)
     theta = Math.atan(2 * a / (1 - yScale * yScale)) / 2;
-    var hRMax = roundTwo(Math.sqrt(Math.pow(Math.cos(theta) +
+    const hRMax = roundTwo(Math.sqrt(Math.pow(Math.cos(theta) +
         a * Math.sin(theta), 2) + Math.pow(b * Math.sin(theta), 2)));
     theta += Math.PI / 2;
-    var hRMin = roundTwo(Math.sqrt(Math.pow(Math.cos(theta) +
+    const hRMin = roundTwo(Math.sqrt(Math.pow(Math.cos(theta) +
         a * Math.sin(theta), 2) + Math.pow(b * Math.sin(theta), 2)));
-    var hOrient = roundTwo(-90 - 180 * Math.atan((b * Math.sin(theta)) /
+    const hOrient = roundTwo(-90 - 180 * Math.atan((b * Math.sin(theta)) /
         (Math.cos(theta) + a * Math.sin(theta))) / Math.PI);
     // Returns both vertical and horizontal planes parameters
     return {
@@ -2835,17 +2826,18 @@ function getEllipseParameters(pAngle, yScale) {
 function dirAttToXYAngle(dir, att) {
     dir = ((dir % 360) + 360) % 360;
     // Create offset for the Y-axis, determined by yAxisOffset
-    var theta = (dir < 180) ? 0 : 180;
+    let theta = (dir < 180) ? 0 : 180;
     // No Y-axis correction for pure verticals
     if ((att == 90) || (att == 270)) {
         theta = ((theta < 90) || (theta > 270)) ? 0 : 180;
     }
     // Check for right or left half, calculate angle and make negative for
     // left half
+    let angle;
     if ((theta < 90) || (theta > 270)) {
-        var angle = ((theta + att + 360) % 360 + 0) * Math.degToRad;
+        angle = ((theta + att + 360) % 360 + 0) * Math.degToRad;
     } else {
-        var angle = ((theta - att - 360) % 360 + 0) * Math.degToRad || -Math.Tau;
+        angle = ((theta - att - 360) % 360 + 0) * Math.degToRad || -Math.Tau;
     }
     trueDrawingAngle = angle;
     return angle;
@@ -2855,23 +2847,24 @@ function dirAttToXYAngle(dir, att) {
 // This is used for all looping shapes
 // params is the angle in whole degrees, or an object containing parameters
 function makeCurve(params) {
+    let angle;
     if (params.angle) {
-        var angle = parseInt(params.angle);
+        angle = parseInt(params.angle);
     } else {
-        var angle = parseInt(params); 
+        angle = parseInt(params); 
         params = {};
     }
 
     // Define some variables
     let
         paths = [],
-        PullPush = (angle >= 0) ? 0 : 1,
+        pullPush = (angle >= 0) ? 0 : 1,
         longCurve = (Math.abs(angle) > 180) ? 1 : 0,
         // Calculate at which angle the curve starts
         radStart = dirAttToAngle(Direction, Attitude),
         radStartXY = dirAttToXYAngle(Direction, Attitude);
 
-    NegLoad = PullPush;
+    NegLoad = pullPush;
 
     if (params.style) {
         paths.style = params.style;
@@ -2882,36 +2875,40 @@ function makeCurve(params) {
     changeAtt(angle);
 
     // Calculate at which angle the curve stops
-    var radStop = dirAttToAngle(Direction, Attitude);
-    var radStopXY = dirAttToXYAngle(Direction, Attitude);
+    const
+        radStop = dirAttToAngle(Direction, Attitude),
+        radStopXY = dirAttToXYAngle(Direction, Attitude);
     // See if we are curving left or right, depending on radStart and PullPush
-    var curveRight = (radStart >= 0) ? 0 : 1;
-    if (PullPush == 1) curveRight = 1 - curveRight;
-    if (curveRight == 0) {
-        var dx = (Math.sin(radStop) - Math.sin(radStart)) * curveRadius;
-        var dy = (Math.cos(radStop) - Math.cos(radStart)) * curveRadius;
-    } else {
-        var dx = (Math.sin(radStop + Math.PI) - Math.sin(radStart + Math.PI)) * curveRadius;
-        var dy = (Math.cos(radStop + Math.PI) - Math.cos(radStart + Math.PI)) * curveRadius;
-    }
-    var sweepFlag = curveRight;
+    let curveRight = (radStart >= 0) ? 0 : 1;
+    if (pullPush == 1) curveRight = 1 - curveRight;
+
+    const sweepFlag = curveRight;
+    let dx, dy;
     // Make the path and move the cursor
     if (((Direction % 180) == 90) && curvePerspective) {
-        var curveRight = (radStartXY >= 0) ? 0 : 1;
-        if (PullPush == 1) curveRight = 1 - curveRight;
+        curveRight = (radStartXY >= 0) ? 0 : 1;
+        if (pullPush == 1) curveRight = 1 - curveRight;
         dx = yAxisScaleFactor * ((Math.sin(radStopXY) - Math.sin(radStartXY))) * curveRadius;
         dy = (Math.cos(radStopXY) - Math.cos(radStartXY)) * curveRadius;
         if (curveRight == 1) {
             dx = -dx;
             dy = -dy;
         }
-        var rotAxisEllipse = roundTwo((yAxisOffset < 90) ? perspectiveParam.rotAngle : -perspectiveParam.rotAngle);
-        var xAxisRadius = roundTwo(perspectiveParam.xRadius * curveRadius);
-        var yAxisRadius = roundTwo(perspectiveParam.yRadius * curveRadius);
+        const
+            rotAxisEllipse = roundTwo((yAxisOffset < 90) ? perspectiveParam.rotAngle : -perspectiveParam.rotAngle),
+            xAxisRadius = roundTwo(perspectiveParam.xRadius * curveRadius),
+            yAxisRadius = roundTwo(perspectiveParam.yRadius * curveRadius);
         dy -= dx * Math.sin(yAxisOffset * Math.degToRad);
         dx = dx * Math.cos(yAxisOffset * Math.degToRad);
         paths.path = `a${xAxisRadius},${yAxisRadius} ${rotAxisEllipse} ${longCurve} ${sweepFlag} ${roundTwo(dx)},${roundTwo(dy)}`;
     } else {
+        if (curveRight == 0) {
+            dx = (Math.sin(radStop) - Math.sin(radStart)) * curveRadius;
+            dy = (Math.cos(radStop) - Math.cos(radStart)) * curveRadius;
+        } else {
+            dx = (Math.sin(radStop + Math.PI) - Math.sin(radStart + Math.PI)) * curveRadius;
+            dy = (Math.cos(radStop + Math.PI) - Math.cos(radStart + Math.PI)) * curveRadius;
+        }
         paths.path = `a${curveRadius},${curveRadius} 0 ${longCurve} ${sweepFlag} ${roundTwo(dx)},${roundTwo(dy)}`;
     }
     paths.dx = dx;
@@ -2943,24 +2940,25 @@ function makeTurnArc(rad, startRad, stopRad, paths) {
     startRad = ((startRad % Math.Tau) + Math.Tau) % Math.Tau;
     stopRad = ((stopRad % Math.Tau) + Math.Tau) % Math.Tau;
 
-    var sign = (rad >= 0) ? 1 : -1;
+    const sign = (rad >= 0) ? 1 : -1;
 
     if (!$('newTurnPerspective').checked) {
         // calculate where we are in the ellipse
-        var radEllipse = Math.atan(-1 / (Math.tan(startRad) / flattenTurn));
+        let radEllipse = Math.atan(-1 / (Math.tan(startRad) / flattenTurn));
         // as the atan function only produces angles between -PI/2 and PI/2 we
         // may have to correct for full ellipse range
         if ((startRad > Math.PI) && (startRad < Math.Tau)) {
             radEllipse += Math.PI;
         }
-        var startX = Math.cos(radEllipse) * curveRadius;
-        var startY = - (Math.sin(radEllipse) * curveRadius * flattenTurn);
+        const
+            startX = Math.cos(radEllipse) * curveRadius,
+            startY = - (Math.sin(radEllipse) * curveRadius * flattenTurn);
         // calculate where we go to in the ellipse
         radEllipse = Math.atan(-1 / (Math.tan(stopRad) / flattenTurn));
         if ((stopRad > Math.PI) && (stopRad < Math.Tau)) {
             radEllipse += Math.PI;
         }
-        var
+        const
             stopX = Math.cos(radEllipse) * curveRadius,
             stopY = - (Math.sin(radEllipse) * curveRadius * flattenTurn),
             dx = roundTwo(stopX - startX) * sign,
@@ -2980,11 +2978,13 @@ function makeTurnArc(rad, startRad, stopRad, paths) {
             });
         }
     } else {
-        var
+        const
             rotAxisEllipse = (yAxisOffset < 90) ? perspectiveParam.rRotAngle : -perspectiveParam.hRotAngle,
             xCurveRadius = roundTwo(perspectiveParam.hXRadius * curveRadius),
-            yCurveRadius = roundTwo(perspectiveParam.hYRadius * curveRadius),
-            dy = yAxisScaleFactor * (Math.cos(stopRad) - Math.cos(startRad)),
+            yCurveRadius = roundTwo(perspectiveParam.hYRadius * curveRadius);
+        let
+            dy = yAxisScaleFactor * (Math.cos(stopRad) - Math.cos(startRad));
+        const
             dx = roundTwo((Math.sin(stopRad) - Math.sin(startRad) - dy * Math.cos(yAxisOffset * Math.degToRad)) * curveRadius) * sign,
             sweepFlag = (rad > 0) ? 0 : 1,
             longCurve = (Math.abs(rad) < Math.PI) ? 0 : 1;
@@ -3012,23 +3012,24 @@ function makeTurnDots(rad, startRad, stopRad, paths) {
     startRad = ((startRad % Math.Tau) + Math.Tau) % Math.Tau;
     stopRad = ((stopRad % Math.Tau) + Math.Tau) % Math.Tau;
 
-    var sign = (rad >= 0) ? 1 : -1;
+    const sign = (rad >= 0) ? 1 : -1;
     if (!$('newTurnPerspective').checked) {
         // calculate where we are in the ellipse
-        var radEllipse = Math.atan(-1 / (Math.tan(startRad) / flattenTurn));
+        let radEllipse = Math.atan(-1 / (Math.tan(startRad) / flattenTurn));
         // as the atan function only produces angles between -PI/2 and PI/2
         // we may have to correct for full ellipse range
         if ((startRad > Math.PI) && (startRad < Math.Tau)) {
             radEllipse += Math.PI;
         }
-        var startX = Math.cos(radEllipse) * curveRadius;
-        var startY = - (Math.sin(radEllipse) * curveRadius * flattenTurn);
+        const
+            startX = Math.cos(radEllipse) * curveRadius,
+            startY = - (Math.sin(radEllipse) * curveRadius * flattenTurn);
         // calculate where we go to in the ellipse
         radEllipse = Math.atan(-1 / (Math.tan(stopRad) / flattenTurn));
         if ((stopRad > Math.PI) && (stopRad < Math.Tau)) {
             radEllipse += Math.PI;
         }
-        var
+        const
             stopX = Math.cos(radEllipse) * curveRadius,
             stopY = - (Math.sin(radEllipse) * curveRadius * flattenTurn),
             dx = roundTwo(stopX - startX) * sign,
@@ -3041,11 +3042,13 @@ function makeTurnDots(rad, startRad, stopRad, paths) {
             'style': 'dotted'
         });
     } else {
-        var 
+        const 
             rotAxisEllipse = (yAxisOffset < 90) ? perspectiveParam.hRotAngle : -perspectiveParam.hRotAngle,
             xCurveRadius = roundTwo(perspectiveParam.hXRadius * curveRadius),
-            yCurveRadius = roundTwo(perspectiveParam.hYRadius * curveRadius),
-            dy = yAxisScaleFactor * (Math.cos(stopRad) - Math.cos(startRad)),
+            yCurveRadius = roundTwo(perspectiveParam.hYRadius * curveRadius);
+        let
+            dy = yAxisScaleFactor * (Math.cos(stopRad) - Math.cos(startRad));
+        const
             dx = roundTwo((Math.sin(stopRad) - Math.sin(startRad) - dy * Math.cos(yAxisOffset * Math.degToRad)) * curveRadius) * sign,
             sweepFlag = (rad > 0) ? 0 : 1,
             longCurve = (Math.abs(rad) < Math.PI) ? 0 : 1;
@@ -3983,8 +3986,9 @@ function makeTailslide(param) {
     sweepFlag = (angle > 0) ? 1 : 0;
     paths[0].style = (param == figpat.tailslidecanopy) ? 'pos' : 'neg';
 
-    let dx = (angle > 0) ? -radius : radius;
-    let dy = radius;
+    let
+        dx = (angle > 0) ? -radius : radius,
+        dy = radius;
     // Make the path and move the cursor
     if (((Direction % 180) == 90) && curvePerspective) {
         var
@@ -4407,7 +4411,7 @@ function drawShape(paths, svgElement, prev) {
 // When an svg object is provided, it will be used i.s.o. the standard sequenceSvg
 function drawLine(x, y, dx, dy, styleId, svg) {
     svg = svg || SVGRoot.getElementById('sequence');
-    var path = document.createElementNS(svgNS, "path");
+    const path = document.createElementNS(svgNS, "path");
     path.setAttribute('d', `M ${roundTwo(x)},${roundTwo(y)} l ${roundTwo(dx)},${roundTwo(dy)}`);
     path.setAttribute('style', style[styleId]);
     svg.appendChild(path);
@@ -4433,7 +4437,7 @@ function drawRectangle(x, y, width, height, styleId = '', svg = SVGRoot.getEleme
 // optional anchor, id, svg
 function drawText(text, x, y, styleId, anchor, id, svg, params={}) {
     svg = svg || SVGRoot.getElementById('sequence');
-    var newText = document.createElementNS(svgNS, "text");
+    const newText = document.createElementNS(svgNS, "text");
     if (id) newText.setAttribute('id', id);
     if (style && styleId) newText.setAttribute('style', style[styleId]);
     if (anchor) newText.setAttribute('text-anchor', anchor);
@@ -4441,8 +4445,7 @@ function drawText(text, x, y, styleId, anchor, id, svg, params={}) {
     newText.setAttribute('y', roundTwo(y));
     // Add additional parameters
     for (let key in params) newText.setAttribute (key, params[key]);
-    var textNode = document.createTextNode(text);
-    newText.appendChild(textNode);
+    newText.appendChild(document.createTextNode(text));
     svg.appendChild(newText);
     return newText;
 }
@@ -4456,10 +4459,10 @@ function drawTextArea(text, x, y, w, h, styleId, id, svg) {
 
     // determine current svg width for later checking of correct
     // foreignObject handling
-    var svgWidth = svg.getBBox().width;
+    const svgWidth = svg.getBBox().width;
 
     var newText = document.createElementNS(svgNS, "foreignObject");
-    var div = document.createElement('div');
+    const div = document.createElement('div');
     newText.setAttribute('x', roundTwo(x));
     newText.setAttribute('y', roundTwo(y));
     if (w) {
@@ -4519,7 +4522,7 @@ function drawTextArea(text, x, y, w, h, styleId, id, svg) {
 // drawCircle draws a circle
 function drawCircle(attributes, svg) {
     svg = svg || SVGRoot.getElementById('sequence');
-    let circle = document.createElementNS(svgNS, "circle");
+    const circle = document.createElementNS(svgNS, "circle");
     for (let key in attributes) circle.setAttribute(key, attributes[key]);
     svg.appendChild(circle);
 }
@@ -4527,7 +4530,7 @@ function drawCircle(attributes, svg) {
 // drawImage draws an image
 function drawImage(attributes, svg) {
     svg = svg || SVGRoot.getElementById('sequence');
-    var image = document.createElementNS(svgNS, 'image');
+    const image = document.createElementNS(svgNS, 'image');
     for (let key in attributes) {
         if (key === 'href') {
             image.setAttributeNS(xlinkNS, 'href', attributes.href);
@@ -4552,8 +4555,19 @@ function doOnLoad() {
     // technologies used in OpenAero are older so this should be the most
     // limiting.
     if (!('Promise' in window)) {
-        document.getElementsByTagName('body')[0].innerHTML = `<h2><center>${userText.oldBrowser}${userText.getChrome}</center></h2>`;
+        document.getElementsByTagName('body')[0].innerHTML = `<h2><center>${lang.en.oldBrowser}${lang.en.getChrome}</center></h2>`;
         throw new Error('Browser not capable of running OpenAero');
+    }
+
+    // Check if localStorage is supported. OpenAero will not run without it as of 2025
+    {
+        const f = function() {
+            document.getElementsByTagName('body')[0].innerHTML = `<h2><center>${lang.en.oldBrowser}${lang.en.noCookies}</center></h2>`;
+            throw new Error('Browser not capable of running OpenAero');
+        }
+        try {
+            if (typeof localStorage == 'undefined') f();
+        } catch (err) { f() };
     }
 
     // define DOM variables
@@ -4653,12 +4667,7 @@ function doOnLoad() {
         }
     }
 
-    // Check if localStorage is supported.
-    try {
-        storage = (typeof localStorage != 'undefined') ? true : false;
-    } catch (err) { storage = false };
-
-    getLocal('fileName', function (value) { fileName.innerText = value });
+    fileName.innerText = localStorage.getItem('fileName');
 
     // set correct options and menu items in various places
     setOptions();
@@ -4675,26 +4684,19 @@ function doOnLoad() {
     loadPrintDialogStorage();
 
     // load private logos
-    getLocal('logoImages', function (privateLogoImages) {
-        privateLogoImages = JSON.parse(privateLogoImages);
-        for (let key in privateLogoImages) {
+    {
+        const privateLogoImages = JSON.parse(localStorage.getItem('logoImages') || null);
+        for (const key in privateLogoImages) {
             logoImages[key] = privateLogoImages[key];
         }
-    });
-    // check for existence of logoSelectionCount
-    getLocal('logoSelectionCount', function (count) {
-        if (!count) {
-            // by default, set CIVA logo to 3 selections so it starts in front
-            storeLocal('logoSelectionCount', JSON.stringify({ CIVA: 3 }));
-        }
-    });
-
-    // Send the sources of all rule scripts to rulesWorker, which can use
-    // them to determine rule year.
-    let scriptSrc = [];
-    for (const script of document.getElementsByTagName('script')) {
-        if (/rules\/rules[0-9][0-9]+.*.js$/.test(script.src)) scriptSrc.push(script.src);
     }
+
+    // check for existence of logoSelectionCount
+    if (!localStorage.getItem('logoSelectionCount')) {
+        // by default, set CIVA logo to 3 selections so it starts in front
+        localStorage.setItem('logoSelectionCount', JSON.stringify({ CIVA: 3 }));
+    }
+
     // Parse the rules asynchronously
     rulesWorker.postMessage({
         action: 'initialize',
@@ -4702,7 +4704,6 @@ function doOnLoad() {
         fig: fig,
         rollFig: rollFig,
         rules: rules,
-        scriptSrc: scriptSrc,
         superFamilies: superFamilies
     });
 
@@ -4712,7 +4713,7 @@ function doOnLoad() {
     if (!(platform.android || platform.ios || platform.uwp || platform.windows10)) {
         // setup PWA handler. Must be done early to ensure triggering of
         // beforeinstallprompt
-        let installPWA = $(platform.mobile ?
+        const installPWA = $(platform.mobile ?
             'mobileInstallPWA' : 't_installApp');
         window.addEventListener('beforeinstallprompt', (e) => {
             platform.supportsPWA = true;
@@ -4810,24 +4811,24 @@ function doOnLoad() {
 
     // Load sequence from URL if sequence GET element is set.
     // Reload with clean url if storage is true
-    if (launchURL({ 'url': window.document.URL }) && storage) {
+    if (launchURL({ 'url': window.document.URL })) {
         window.location = window.document.URL.replace(/\?s.+/, '');
-    }
-
-    // When no sequence is active yet, load sequence storage (if any).
-    // Do this after the rules have been loaded to make sure rules stay
-    // in Sequence info
-    if (!activeSequence.xml) {
-        getLocal('sequence', s => {
-            activeSequence.xml = s;
-            activateXMLsequence(activeSequence.xml);
-        });
     }
 
     // Add combo box functions for rules/category/program input fields
     new combo('rules');
     new combo('category');
     new combo('program');
+
+    // When no sequence is active yet, load sequence storage (if any).
+    // Do this after the rules have been loaded to make sure rules stay
+    // in Sequence info
+    if (!activeSequence.xml) {
+        activeSequence.xml = localStorage.getItem ('sequence');
+        activateXMLsequence(activeSequence.xml);
+    }
+    
+    // Activate rules
     changeCombo('program');
 
     // Check if the sequence displayed is the one in the input field
@@ -4892,9 +4893,6 @@ function doOnLoad() {
         if (presentFileError) errors.push(userText.runFromFile);
     }
 
-    // set alert if localStorage is disabled
-    if (!storage) errors.push(userText.noCookies);
-
     // show alert box for any errors
     if (errors.length) alertBox(`<p>${errors.join('</p><p>')}</p>`);
     errors = [];
@@ -4926,16 +4924,17 @@ function launchURL(launchData) {
     // remove newlines if present
     launchData.url = launchData.url.replace(/[\n\r]/g, '');
     // check format
-    var match = launchData.url.toString().match(/\?(sequence|s)=.+/);
+    let match = launchData.url.toString().match(/\?(sequence|s)=.+/);
     if (match) {
         match = match[0].replace(/^\?(sequence|s)=/, '');
+        let string;
         if (match.match(/^%3Csequence%3E/)) {
             // before 1.5.0    : URI encoded link
             // decode %2B to + character
-            var string = decodeURI(match.replace(/%2B/g, '+'));
+            string = decodeURI(match.replace(/%2B/g, '+'));
         } else {
             // 1.5.0 and later : base64url encoded link
-            var string = decodeBase64Url(match);
+            string = decodeBase64Url(match);
             if (string === false) {
                 alertBox(sprintf(userText.openSequenceLinkError, launchData.url),
                     userText.openSequenceLink);
@@ -4944,7 +4943,7 @@ function launchURL(launchData) {
             // test for first character code between 128 and 159
             if (string.charCodeAt(0) >= 128 && string.charCodeAt(0) <= 159) {
                 // 2021.1.10 and later : restore xml tags and decompress sequence_text
-                var
+                let
                     i = 0,
                     label = "",
                     result = '<sequence>';
@@ -4974,8 +4973,9 @@ function launchURL(launchData) {
                 string = result + '</sequence>';
             } else if (/<\/>/.test(string)) { // test for empty end tag
                 // 2016.3.2 up to 2021.1.10 : restore xml end tags and sequence tags
-                var tags = [];
-                var parts = string.split('<');
+                const
+                    tags = [],
+                    parts = string.split('<');
                 for (let i = 1; i < parts.length; i++) {
                     if (/^\/>/.test(parts[i])) {
                         parts[i] = `/${tags.pop()}${parts[i].substring(1)}`;
@@ -5005,19 +5005,18 @@ function keyListener(e) {
 
 // appZoom adds zoom functionality to the app and is called by keydown
 function appZoom(e) {
-    var zoomSteps = ['0.33', '0.5', '0.67', '0.75', '0.9', '1',
+    const zoomSteps = ['0.33', '0.5', '0.67', '0.75', '0.9', '1',
         '1.1', '1.25', '1.5', '1.75', '2', '2.5', '3'];
+    let zoom = false;
     if (platform.mobile) {
-        var zoom = (parseInt(
-            $('zoom').textContent.match(/\d+/)[0]) /
-            100).toString();
+        zoom = (parseInt($('zoom').textContent.match(/\d+/)[0])/100).toString();
     } else {
-        var zoom = document.body.style.zoom ? document.body.style.zoom : '1';
+        zoom = document.body.style.zoom ? document.body.style.zoom : '1';
     }
     if ((e.shiftKey && e.ctrlKey && (e.keyCode == 187)) || (e === 1)) {
-        var zoom = zoomSteps[zoomSteps.indexOf(zoom) + 1];
+        zoom = zoomSteps[zoomSteps.indexOf(zoom) + 1];
     } else if ((!e.shiftKey && e.ctrlKey && (e.keyCode == 189)) || (e === -1)) {
-        var zoom = zoomSteps[zoomSteps.indexOf(zoom) - 1];
+        zoom = zoomSteps[zoomSteps.indexOf(zoom) - 1];
     } else {
         // no special appZoom key or click, return true to bubble key
         return true;
@@ -5430,11 +5429,11 @@ function addEventListeners() {
 // submenus to all menus. Make sure we do this after rules are loaded by passing
 // through rulesWorker
 function addMenuEventListeners() {
-    var id = uniqueId();
+    const id = uniqueId();
     workerCallback[id] = function () {
         // menu showing and hiding. Add listeners to all <li> menu items
         function addListeners(e) {
-            var li = e.getElementsByTagName('li');
+            const li = e.getElementsByTagName('li');
             for (let i = 0; i < li.length; i++) {
                 if (platform.mobile) {
                     li[i].addEventListener('mousedown', menuActive);
@@ -5444,8 +5443,8 @@ function addMenuEventListeners() {
                 }
                 if (!/^zoom.+/.test(li[i].id)) {
                     checkUL: {
-                        var els = li[i].childNodes;
-                        for (let j in els) {
+                        const els = li[i].childNodes;
+                        for (const j in els) {
                             if (els[j].tagName && (els[j].tagName === 'UL')) break checkUL;
                         }
                         li[i].addEventListener('mouseup', menuTouch);
@@ -5466,16 +5465,11 @@ function addMenuEventListeners() {
         if (platform.mobile && $('smallMobile').checked) {
             switchSmallMobile();
         } else if (window.screen.width < 640) {
-            function f(settings) {
-                if (!/\bsmallMobile\b/.test(settings)) {
-                    $('smallMobile').checked = 'checked';
-                    switchSmallMobile();
-                }
+            if (!/\bsmallMobile\b/.test(localStorage.getItem ('settings'))) {
+                $('smallMobile').checked = 'checked';
+                switchSmallMobile();
             }
-
-            if (storage) getLocal('settings', f); else f();
         }
-
     }
     rulesWorker.postMessage({ action: false, callbackId: id });
 }
@@ -5493,26 +5487,26 @@ function checkForApp() {
         (platform.mobile && !(platform.cordova || platform.uwp))) {
         // Show the banner for getting the Android, iOS or PWA app under
         // certain conditions
-        getLocal('installAppAsked', function (timestamp) {
-            var
-                banner = $('installApp'),
-                t = parseInt((new Date()).getTime());
+        const
+            banner = $('installApp'),
+            timeNow = parseInt((new Date()).getTime()),
+            timestamp = localStorage.getItem ('installAppAsked');
 
-            if (timestamp) { // do not ask the first time
-                if (timestamp < (t - 86400 * 7)) { // ask once a week
-                    storeLocal('installAppAsked', t);
-                    banner.classList.remove('noDisplay');
-                    if (platform.android) {
-                        banner.classList.add('android');
-                    } else if (platform.ios) {
-                        banner.classList.add('ios');
-                    } else banner.classList.add('pwa');
-                    // use setTimeout before showing to allow subtle entry
-                    setTimeout(function () { banner.classList.add('show') }, 500);
-                    setTimeout(function () { removeBanner(banner) }, 15000);
-                }
-            } else storeLocal('installAppAsked', 1);
-        });
+        if (timestamp) { // only ask AFTER the first time running OpenAero
+            if (timestamp < (timeNow - 86400 * 7)) { // ask once a week
+                localStorage.setItem('installAppAsked', timeNow);
+                banner.classList.remove('noDisplay');
+                if (platform.android) {
+                    banner.classList.add('android');
+                } else if (platform.ios) {
+                    banner.classList.add('ios');
+                } else banner.classList.add('pwa');
+                // use setTimeout before showing to allow subtle entry
+                setTimeout(function () { banner.classList.add('show') }, 500);
+                setTimeout(function () { removeBanner(banner) }, 15000);
+            }
+        } else localStorage.setItem('installAppAsked', 1);
+
     } else if (platform.uwp) {
         // inside UWP app, do nothing
     } else if (platform.windows10) {
@@ -5761,7 +5755,7 @@ function clickButton() {
 // addPlusMinElements creates plus/min elements on startup and when
 // switching smallMobile
 function addPlusMinElements() {
-    var el = document.getElementsByClassName('plusMin');
+    const el = document.getElementsByClassName('plusMin');
     for (let i = el.length - 1; i >= 0; i--) {
         removeChildNodes(el[i]);
         buildPlusMinElement(el[i].id + '-value', 0, el[i]);
@@ -5771,14 +5765,14 @@ function addPlusMinElements() {
 // buildButtons builds the buttons on startup, or after being called by
 // updateUserTexts
 function buildButtons() {
-    var el = document.getElementsByClassName('button');
+    const el = document.getElementsByClassName('button');
     for (let i = el.length - 1; i >= 0; i--) {
         el[i].classList.remove('on');
     }
     // add tooltips, but not on touchscreen
     if (!platform.mobile && !platform.touch) {
         for (let key in userText.tooltip) {
-            var el = $(key);
+            const el = $(key);
             // add empty div and class on first run
             if (!el.classList.contains('tooltip')) {
                 el.classList.add('tooltip');
@@ -5794,12 +5788,12 @@ function buildButtons() {
 function buildPlusMinElement(id, value, el) {
     el = el || document.createElement('span');
 
-    var span = document.createElement('span');
+    let span = document.createElement('span');
     span.classList.add('minButton');
     span.addEventListener('click', clickButton, false);
     el.appendChild(span);
 
-    var input = document.createElement('input');
+    const input = document.createElement('input');
     input.type = 'number';
     input.step = '1';
     input.setAttribute('id', id);
@@ -5808,14 +5802,14 @@ function buildPlusMinElement(id, value, el) {
     input.addEventListener('update', updateFigure, false);
     el.appendChild(input);
 
-    var span = document.createElement('span');
+    span = document.createElement('span');
     span.classList.add('plusButton');
     span.addEventListener('click', clickButton, false);
     el.appendChild(span);
 
     if (!platform.smallMobile && (userText.tooltip[id])) {
         el.classList.add('tooltip', 'ttRight');
-        var div = document.createElement('div');
+        const div = document.createElement('div');
         div.innerHTML = userText.tooltip[id];
         el.appendChild(div);
     }
@@ -5999,38 +5993,23 @@ function addRollSelectElement(figNr, rollEl, elNr, parent) {
     }
 }
 
-// createProgramme will build a programme and add it to
-// the library menu list. It is called by rulesWorker
-function createProgramme(year, rnLower, rules, cat, seq, string) {
-    var key = `${year + rules} ${cat} ${seq}`;
-    var sequence = '<sequence><class>' +
-        rnLower.match(/^glider-/) ? 'glider' : 'powered' +
-        '</class><rules>' + rules + '</rules>' +
-        '<category>' + cat + '</category>' +
-        '<program>' + seq + '</program>' +
-        '<sequence_text>' + string + '</sequence_text>' +
-        ((activeRules && activeRules.logo) ? '<logo>' + activeRules.logo + '</logo>' :
-            (rulesLogo[rules.toLowerCase()]) ? '<logo>' + rulesLogo[rules.toLowerCase()] + '</logo>' : '') +
-        '<oa_version>' + version + '</oa_version></sequence>';
-    console.log('Adding programme: ' + key);
-    library[key] = sequence;
-    addProgrammeToMenu(key);
-}
-
 // addProgrammeToMenu will add an entry in the library menu list
 function addProgrammeToMenu(key) {
     const year = key.match(/^\d+/)[0];
     if (year) {
-        let li = $(`year${year}`);
-        if (!li) {
+        let
+            li = $(`year${year}`),
+            ul;
+        if (li) {
+            ul = li.lastChild;
+        } else {
             li = document.createElement('li');
             li.setAttribute('id', `year${year}`);
-            li.innerHTML = `<span>${year}</span><i class="material-icons ${platform.mobile ? 'rightArrow' : 'leftArrow'}"></i>`;
-            var ul = document.createElement('ul');
+            li.innerHTML = `<span>${year}</span>
+                <i class="material-icons ${platform.mobile ? 'rightArrow' : 'leftArrow'}"></i>`;
+            ul = document.createElement('ul');
             li.appendChild(ul);
             $('library').appendChild(li);
-        } else {
-            var ul = li.lastChild;
         }
         const subli = document.createElement('li');
         // don't put the current year CIVA sequences under CIVA submenu
@@ -6068,7 +6047,7 @@ function addProgrammeToMenu(key) {
         }
         if (subli.innerHTML) ul.appendChild(subli);
     } else {
-        let li = document.createElement('li');
+        const li = document.createElement('li');
         li.innerHTML = `<span>${key}</span>`;
         li.setAttribute('id', `programme-${key}`);
         li.addEventListener('click', programme, false);
@@ -6081,15 +6060,50 @@ function addProgrammeToMenu(key) {
 // -set correct options in settings dialog
 function setOptions() {
     // add programme entries
-    for (let key in library) addProgrammeToMenu(key);
+    function loadLibrary () {
+        for (const key in library) {
+            if (key !== 'version') addProgrammeToMenu(key);
+        }
+    }
+
+    const storedLibrary = JSON.parse(localStorage.getItem ('library') || null);
+    if (!storedLibrary || storedLibrary.version < library.version) {
+        // storedLibrary was not found OR is older than the loaded
+        // library. In either case, save current library to storage
+        localStorage.setItem ('library', JSON.stringify (library));
+    } else {
+        // Load the latest library from storage
+        library = storedLibrary;
+    }
+    // Check library version on openaero.net
+    const xhr = new XMLHttpRequest ();
+    xhr.timeout = 5000;
+    xhr.onload = () => {
+        if (xhr.responseText) {
+            // newer, load library from openaero.net
+            console.log('Loading library from openaero.net...')
+            library = new Function(
+                `"use strict";
+                ${xhr.responseText};
+                return library;`
+            )();
+            // save loaded library in DB, including version
+            localStorage.setItem ('library', JSON.stringify (library));
+        }
+        loadLibrary();
+    };
+    xhr.onerror = xhr.ontimeout = loadLibrary;
+    xhr.open('GET', `https://openaero.net/openaero.php?library=${library.version}`, true);
+    xhr.send();
+
     // Update menu headers for mobile
     if (platform.mobile) mobileMenuHeader();
 
     // set settings dialog options
 
     // create language chooser, with default language
-    for (let key in lang) {
-        var option = document.createElement('option');
+    for (const key in lang) {
+        const option = document.createElement('option');
         option.setAttribute('value', key);
         option.innerHTML = lang[key][key];
         $('language').appendChild(option);
@@ -6102,8 +6116,8 @@ function setOptions() {
     $('zipImageFilenamePattern').setAttribute('size', zipImageFilenamePattern.length);
 
     // set roll font sizes
-    for (let key in rollFont) {
-        var opt = $(`t_roll${key[0].toUpperCase()}${key.slice(1)}`);
+    for (const key in rollFont) {
+        const opt = $(`t_roll${key[0].toUpperCase()}${key.slice(1)}`);
         opt.setAttribute('value', rollFont[key]);
         if (rollFont[key] == rollFontSize) {
             opt.setAttribute('selected', 'selected');
@@ -6111,11 +6125,9 @@ function setOptions() {
     }
 
     // add styles to settings dialog, sorted alphabetically
-    var sortKeys = Object.keys(style).sort();
-    for (let i = 0; i < sortKeys.length; i++) {
-        var key = sortKeys[i];
+    for (const key of Object.keys(style).sort()) {
         styleSave[key] = style[key];
-        var opt = document.createElement('option');
+        const opt = document.createElement('option');
         opt.setAttribute('value', key);
         opt.innerHTML = key;
         $('styles').appendChild(opt);
@@ -6172,138 +6184,115 @@ function loadSettingsXML(xml) {
 
 // loadSettingsStorage will load the settings from storage
 // When location is not set it will default to 'settings'
-function loadSettingsStorage(location) {
-    location = location || 'settings';
-
-    function f(settings) {
-        // check if settings exist in correct format
-        if (settings && /[\[\{]/.test(settings.charAt(0))) {
-            settings = JSON.parse(settings);
-            for (let settingKey in settings) {
-                var
-                    el = $(settingKey),
-                    value = settings[settingKey];
-                if (el.type === 'checkbox') {
-                    if (value == 1) {
-                        el.setAttribute('checked', 'checked');
-                    } else {
-                        el.removeAttribute('checked');
-                    }
-                } else if (el.type.match(/^select/)) {
-                    // only set values that are in the list in a select
-                    var nodes = el.childNodes;
-                    for (let key in nodes) {
-                        // see if exact value is in there and set and break if so
-                        if (nodes[key].value == value) {
-                            el.value = value;
-                            break;
-                        }
-                        // if the value is numeric, find closest match
-                        if ((parseFloat(nodes[key].value) == nodes[key].value) &&
-                            (parseFloat(value) == value)) {
-                            if (Math.abs(nodes[key].value - value) < Math.abs(el.value - value)) {
-                                el.value = nodes[key].value;
-                            }
-                        }
-                    }
+function loadSettingsStorage (location = 'settings') {
+    let settings = localStorage.getItem (location);
+    // check if settings exist in correct format
+    if (settings && /[\[\{]/.test(settings.charAt(0))) {
+        settings = JSON.parse(settings);
+        for (const settingKey in settings) {
+            const
+                el = $(settingKey),
+                value = settings[settingKey];
+            if (el.type === 'checkbox') {
+                if (value == 1) {
+                    el.setAttribute('checked', 'checked');
                 } else {
-                    // only update non-empty settings
-                    if (value !== '') el.value = value;
+                    el.removeAttribute('checked');
                 }
+            } else if (el.type.match(/^select/)) {
+                // only set values that are in the list in a select
+                const nodes = el.childNodes;
+                for (const key in nodes) {
+                    // see if exact value is in there and set and break if so
+                    if (nodes[key].value == value) {
+                        el.value = value;
+                        break;
+                    }
+                    // if the value is numeric, find closest match
+                    if ((parseFloat(nodes[key].value) == nodes[key].value) &&
+                        (parseFloat(value) == value)) {
+                        if (Math.abs(nodes[key].value - value) < Math.abs(el.value - value)) {
+                            el.value = nodes[key].value;
+                        }
+                    }
+                }
+            } else {
+                // only update non-empty settings
+                if (value !== '') el.value = value;
             }
-            updateUserTexts();
-            numberInCircle = $('numberInCircle').checked ? true : false;
-            changeRollFontSize($('rollFontSize').value);
-            setRollSymbolSizes($('rollSymbolSize').value);
         }
+        updateUserTexts();
+        numberInCircle = $('numberInCircle').checked ? true : false;
+        changeRollFontSize($('rollFontSize').value);
+        setRollSymbolSizes($('rollSymbolSize').value);
     }
-
-    if (storage) getLocal(location, f);
 }
 
 // saveSettingsStorage will save the settings to storage
 // When location is not set it will default to 'settings'
-function saveSettingsStorage(location) {
-    var settings = {};
-
-    location = location || 'settings';
-
-    if (storage) {
-        saveSettings.forEach((settingKey) => {
-            var el = $(settingKey);
-            settings[el.id] = (el.type === 'checkbox') ? (el.checked ? 1 : 0) : el.value;
-        });
-        storeLocal(location, JSON.stringify(settings));
-    }
+function saveSettingsStorage(location = 'settings') {
+    const settings = {};
+    saveSettings.forEach((settingKey) => {
+        const el = $(settingKey);
+        settings[el.id] = (el.type === 'checkbox') ? (el.checked ? 1 : 0) : el.value;
+    });
+    localStorage.setItem(location, JSON.stringify(settings));
 }
 
 // savePrintDialogStorage will save the print dialog settings to
 // storage
 function savePrintDialogStorage() {
-    var settings = {};
-
-    if (storage) {
-        ['input', 'select'].forEach(function (inputType) {
-            var inputs = $('printDialog').getElementsByTagName(inputType);
-            for (let i = 0; i < inputs.length; i++) {
-                var el = inputs[i];
-                if (el.type !== 'file') {
-                    settings[el.id] = (el.type === 'checkbox') ? (el.checked ? 1 : 0) : el.value;
-                }
+    const settings = {};
+    ['input', 'select'].forEach(function (inputType) {
+        for (const el of $('printDialog').getElementsByTagName(inputType)) {
+            if (el.type !== 'file') {
+                settings[el.id] = (el.type === 'checkbox') ? (el.checked ? 1 : 0) : el.value;
             }
-        });
-        storeLocal('printDialog', JSON.stringify(settings));
-    }
+        }
+    });
+    localStorage.setItem('printDialog', JSON.stringify(settings));
 }
 
 // loadPrintDialogStorage will load the the print dialog settings from
 // storage
 function loadPrintDialogStorage() {
-    function f(settings) {
-        if (!settings) return;
-        settings = JSON.parse(settings);
-        for (let settingKey in settings) {
-            var
-                el = $(settingKey),
-                value = settings[settingKey];
-            if (el) {
-                if (el.type === 'checkbox') {
-                    if (value == 1) {
-                        el.setAttribute('checked', 'checked');
-                    } else {
-                        el.removeAttribute('checked');
-                    }
-                } else if (el.type.match(/^select/)) {
-                    // only set values that are in the list in a select
-                    var nodes = el.childNodes;
-                    for (let key in nodes) {
-                        // see if exact value is in there and set and break if so
-                        if (nodes[key].value == value) {
-                            el.value = value;
-                            break;
-                        }
-                        // if the value is numeric, find closest match
-                        if ((parseFloat(nodes[key].value) == nodes[key].value) &&
-                            (parseFloat(value) == value)) {
-                            if (Math.abs(nodes[key].value - value) < Math.abs(el.value - value)) {
-                                el.value = nodes[key].value;
-                            }
-                        }
-                    }
-                } else if (el.type !== 'file') {
-                    // don't try to load file field: not allowed
-                    el.value = value;
+    const settings = JSON.parse (localStorage.getItem ('printDialog') || null);
+    if (!settings) return;
+    for (const settingKey in settings) {
+        const
+            el = $(settingKey),
+            value = settings[settingKey];
+        if (el) {
+            if (el.type === 'checkbox') {
+                if (value == 1) {
+                    el.setAttribute('checked', 'checked');
+                } else {
+                    el.removeAttribute('checked');
                 }
+            } else if (el.type.match(/^select/)) {
+                // only set values that are in the list in a select
+                const nodes = el.childNodes;
+                for (const key in nodes) {
+                    // see if exact value is in there and set and break if so
+                    if (nodes[key].value == value) {
+                        el.value = value;
+                        break;
+                    }
+                    // if the value is numeric, find closest match
+                    if ((parseFloat(nodes[key].value) == nodes[key].value) &&
+                        (parseFloat(value) == value)) {
+                        if (Math.abs(nodes[key].value - value) < Math.abs(el.value - value)) {
+                            el.value = nodes[key].value;
+                        }
+                    }
+                }
+            } else if (el.type !== 'file') {
+                // don't try to load file field: not allowed
+                el.value = value;
             }
         }
-        setPilotCardForm();
     }
-
-    if (storage) {
-        getLocal('printDialog', f);
-    } else {
-        setPilotCardForm();      
-    }
+    setPilotCardForm();
 }
 
 // changeLanguage will change the interface language
@@ -6321,8 +6310,7 @@ function changeLanguage() {
 // getStyle will retrieve a style and put it's value in the Settings
 // styleString field
 function getStyle() {
-    var key = $('styles').value;
-    $('styleString').value = style[key];
+    $('styleString').value = style[$('styles').value];
 }
 
 // updateStyle will change a style after it has been changed in the
@@ -6339,12 +6327,10 @@ function updateStyle() {
 
 // resetStyle resets a style (or all) to the default value
 function resetStyle(all) {
-    var key;
     if (all) {
-        for (let key in style) style[key] = styleSave[key];
+        for (const key in style) style[key] = styleSave[key];
     } else {
-        key = $('styles').value;
-        style[key] = styleSave[key];
+        style[$('styles').value] = styleSave[$('styles').value];
     }
     getStyle();
     draw();
@@ -6352,15 +6338,14 @@ function resetStyle(all) {
 
 // stylingSave saves all styling values to an XML file
 function stylingSave() {
-    var xml = document.implementation.createDocument(null, 'styling');
-    for (let key in style) {
-        var node = xml.createElement(key);
+    const xml = document.implementation.createDocument(null, 'styling');
+    for (const key in style) {
+        const node = xml.createElement(key);
         node.appendChild (xml.createTextNode(style[key]));
         xml.firstChild.appendChild(node);
     }
-    xml = vkbeautify.xml(new XMLSerializer().serializeToString(xml));
     saveFile(
-        xml,
+        vkbeautify.xml(new XMLSerializer().serializeToString(xml)),
         'styling',
         '.xml',
         { 'name': 'OpenAero styling', 'filter': '.xml' },
@@ -6372,22 +6357,22 @@ function stylingSave() {
 // loadedStyling loads all styling values from an XML file
 function loadedStyling(evt) {
     // XML.get extracts xml values from tags
-    var XML = {
+    const XML = {
         get: function (xml, tag) {
             if  (xml.getElementsByTagName(tag)[0]) {
                 return xml.getElementsByTagName(tag)[0].firstChild.data;
             } else return false;
         }
     }
-    var fileString = evt.target.result;
+    let fileString = evt.target.result;
     // convert from base64 if needed
     if (/^data:/.test(fileString)) {
         fileString = decodeURIComponent(escape(atob(
             fileString.replace(/^data:.*;base64,/, ''))));
     }
     // xml will hold every entry as a node
-    var xml = new DOMParser().parseFromString(fileString, 'text/xml');
-    for (let key in style) {
+    const xml = new DOMParser().parseFromString(fileString, 'text/xml');
+    for (const key in style) {
         if (XML.get (xml, key)) style[key] = XML.get (xml, key);
     }
     // redraw to apply changed styling
@@ -6403,7 +6388,7 @@ function restoreDefaultSettings() {
         userText.restoreDefaultSettingsConfirm,
         userText.restoreDefaultSettings,
         function () {
-            storeLocal('settings', '');
+            localStorage.setItem('settings', '');
             // reload the page, sequence will be provided by localStorage
             window.location.reload(true);
         }
@@ -6462,9 +6447,8 @@ function setPilotCardForm() {
 // setPilotCardLayout is activated when clicking a pilot card layout in
 // the print/save dialog
 function setPilotCardLayout(evt) {
-    var els = document.getElementsByClassName('pilotCardLayout');
-    for (let i = els.length - 1; i >= 0; i--) {
-        if (els[i] === this) {
+    for (const el of document.getElementsByClassName('pilotCardLayout')) {
+        if (el === this) {
             if (this.classList.contains('active')) {
                 if (evt.target === $('pilotCardPercentValue')) return;
                 if (this.classList.contains('formRL')) {
@@ -6479,7 +6463,7 @@ function setPilotCardLayout(evt) {
                 } else this.classList.add('formL');
             } else this.classList.add('active');
         } else {
-            els[i].classList.remove('active');
+            el.classList.remove('active');
         }
     }
     updatePrintPageSetValue();
@@ -6522,7 +6506,7 @@ function updatePrintPageSetValue() {
     // don't do anything when printPageSet is checked
     if ($('printPageSet').checked) return;
 
-    var value = '';
+    let value = '';
     if ($('printFormA').checked) value += 'A';
     if ($('printFormB').checked) value += $('printMiniFormAonB').checked ? 'B+' : 'B';
     if ($('printFormC').checked) value += $('printMiniFormAonC').checked ? 'C+' : 'C';
@@ -6558,8 +6542,9 @@ function updatePrintPageSetValue() {
 
 // updatePrintPageSetLayout updates the print page set graphical layout
 function updatePrintPageSetLayout() {
-    var
-        string = $('printPageSetString').value.toUpperCase(),
+    const
+        string = $('printPageSetString').value.toUpperCase();
+    let
         html = '',
         page = 0;
 
@@ -6641,7 +6626,7 @@ function setRulesPosHarmony(pos) {
         }
     }
 
-    var el = $('positioningText');
+    const el = $('positioningText');
     // Check if we have multiple positioning/harmony options. If so,
     // create select list, display it, and if relevant select correct option
     if (pos.length > 1) {
@@ -6694,7 +6679,7 @@ function updateFigureEditor() {
 // showFigureSelector displays the base figure selector
 // for some reason sliding only works from the left for smallMobile !?
 function showFigureSelector() {
-    var figureSelector = $('figureSelector');
+    const figureSelector = $('figureSelector');
     updateFigureSelectorOptions();
     figureSelector.classList.add('active');
     if (activeForm === 'FU') {
@@ -6727,7 +6712,7 @@ function hideLogoChooser() {
 // displaySelectedFigure will display the currently selected figure
 // in the figure editor
 function displaySelectedFigure() {
-    var svg = $('selectedFigureSvg');
+    const svg = $('selectedFigureSvg');
     prepareSvg(svg);
     svg.setAttribute('width', 140);
     svg.setAttribute('height', 140);
@@ -6741,11 +6726,12 @@ function displaySelectedFigure() {
         figureStart = [];
         drawFullFigure(-2, true, svg);
 
-        var bBox = figures[-2].bBox;
+        const bBox = figures[-2].bBox;
         delete figures[-2];
         // Set viewBox from figure bBox
-        var xMargin = bBox.width / 20;
-        var yMargin = bBox.height / 20;
+        const
+            xMargin = bBox.width / 20,
+            yMargin = bBox.height / 20;
         svg.setAttribute('viewBox',
             roundTwo(bBox.x - xMargin) + ' ' +
             roundTwo(bBox.y - yMargin) + ' ' +
@@ -7052,91 +7038,94 @@ function updateFigureOptions(figureId) {
 // editing a figure
 // var figureId is the id of the figures[] object
 function addRollSelectors(figureId) {
-    var myEl = $('rollInfo');
+    const rollEl = $('rollInfo');
     if ((figureId === null) || !fig[figures[figureId].figNr]) {
-        myEl.classList.add('noDisplay');
+        rollEl.classList.add('noDisplay');
     } else {
-        myEl.classList.remove('noDisplay');
-        var rolls = fig[figures[figureId].figNr].rolls;
+        rollEl.classList.remove('noDisplay');
+        const rolls = fig[figures[figureId].figNr].rolls;
         // clear selectors
-        removeChildNodes(myEl);
+        removeChildNodes(rollEl);
         // show the applicable roll selectors
         if (rolls) {
             // check if rule-illegal rolls are allowed in settings and present warning if so
             if (activeRules && $('nonArestiRolls').checked) {
-                var div = document.createElement('div');
+                const div = document.createElement('div');
                 div.classList.add('content');
                 div.id = 't_ruleIllegalRollsEnabled';
                 div.innerHTML = userText.ruleIllegalRollsEnabled;
-                myEl.appendChild(div);
+                rollEl.appendChild(div);
                 div.addEventListener('mousedown', () => { settingsDialog('expert'); });
             }
-            var rollNr = 0;
+            let rollNr = 0;
             for (let i = 0; i < rolls.length; i++) {
                 if ((parseInt(rolls[i]) > 0) &&
                     !((rolls[i] == 4) && figures[figureId].rollInfo[i].rollTop)) {
-                    var rollInfo = figures[figureId].rollInfo[i];
-                    var div = document.createElement('div');
-                    myEl.appendChild(div);
+                    const
+                        rollInfo = figures[figureId].rollInfo[i],
+                        div = document.createElement('div');
+                    rollEl.appendChild(div);
                     div.id = `roll${i}`;
                     div.classList.add('content', 'divider');
-                    var divdiv = document.createElement('div');
-                    divdiv.classList.add('contentLabel');
-                    divdiv.innerHTML = userText.rollPos[rollNr];
-                    div.appendChild(divdiv);
+                    {
+                        const divdiv = document.createElement('div');
+                        divdiv.classList.add('contentLabel');
+                        divdiv.innerHTML = userText.rollPos[rollNr];
+                        div.appendChild(divdiv);
+                    }
                     // roll positions of type 9 only allow changing line length
                     if (rolls[i] == 9) {
-                        var divdiv = document.createElement('div');
+                        const divdiv = document.createElement('div');
                         divdiv.classList.add('clearBoth');
                         divdiv.innerHTML = `<font color="red">${userText.noRollAllowed}</font>`;
                         div.appendChild(divdiv);
                     }
                     // loop until max rolls per element + 1
-                    for (var j = 0; j < rollsPerRollElement + 1; j++) {
-                        var pattern = rollInfo.pattern[j - 1];
+                    let subRolls;
+                    for (subRolls = 0; subRolls < rollsPerRollElement + 1; subRolls++) {
+                        let pattern = rollInfo.pattern[subRolls - 1];
                         pattern = pattern ? pattern.replace('-', '') : '';
                         // show the element when:
                         // it's the first one OR the previous one is not empty
                         // AND it's number is not higher than rollsPerRollElement
-                        if ((j == 0) || (pattern != '')) {
-                            if (j < rollsPerRollElement) {
-                                addRollSelectElement(figureId, i, j, div);
-                                var divdiv = document.createElement('div');
+                        if ((subRolls == 0) || (pattern != '')) {
+                            if (subRolls < rollsPerRollElement) {
+                                addRollSelectElement(figureId, i, subRolls, div);
+                                const divdiv = document.createElement('div');
                                 divdiv.classList.add('clearBoth');
                                 div.appendChild(divdiv);
                             }
                         } else break;
                     }
 
-                    // j indicates how many active subrolls there are
-                    var subRolls = j;
                     // build the gaps element for subRolls rolls, but not for
                     // rolls in the top
                     if (!rollInfo.rollTop) {
-                        var divdiv = document.createElement('div');
+                        const divdiv = document.createElement('div');
                         divdiv.classList.add('rollGaps');
                         // only show 'Gaps' text for non-smallMobile
                         if (!platform.smallMobile) {
-                            var span = document.createElement('span');
+                            const span = document.createElement('span');
                             span.innerHTML = userText.gaps;
                             div.appendChild(span);
                         }
-                        var gap = rollInfo.gap;
                         for (let j = 0; j < subRolls; j++) {
-                            var span = document.createElement('span');
+                            const span = document.createElement('span');
                             span.setAttribute('id', `roll${i}-gap${j}`);
                             span.classList.add('plusMin');
                             span.appendChild(buildPlusMinElement(
                                 `roll${i}-gap${j}-value`,
-                                (typeof gap[j] != 'undefined') ? gap[j] : 0
+                                (typeof rollInfo.gap[j] != 'undefined') ? rollInfo.gap[j] : 0
                             ));
                             divdiv.appendChild(span);
                         }
                         div.appendChild(divdiv);
                     }
-                    var divdiv = document.createElement('div');
-                    divdiv.classList.add('clearBoth');
-                    div.appendChild(divdiv);
+                    {
+                        const divdiv = document.createElement('div');
+                        divdiv.classList.add('clearBoth');
+                        div.appendChild(divdiv);
+                    }
                     rollNr++;
                 }
             }
@@ -7557,9 +7546,9 @@ function getLatestVersion() {
             // Show a warning banner when the version is older than Stable
             // AND Stable is at least 48 hours old
             if (compVersion(version, latestVersion) == -1 &&
-            parseInt(latestVersion.split(' ')[1]) > 172800) {
+                parseInt(latestVersion.split(' ')[1]) > 172800) {
                 if (!/^http/.test(window.location.protocol)) {
-                    var banner = $('installApp');
+                    const banner = $('installApp');
                     banner.classList.remove('noDisplay');
                     $('t_getTheApp').innerHTML =
                         sprintf(userText.updateApp, latestVersion.split(' ')[0]);
@@ -7598,78 +7587,76 @@ function preventUnload(e) {
 // checkUpdateDone checks if an update was just done. If so, it presents
 // a dialog to the user
 function checkUpdateDone() {
-    function f(oldVersion) {
-        if (!oldVersion) {
-            // First install
+    const prevVersion = localStorage.getItem ('version');
+    if (!prevVersion) {
+        // First install
 
-            // Set numberInCircle for French browser
-            if (navigator.language == 'fr') {
-                if (!$('numberInCircle').checked) {
-                    $('numberInCircle').checked = true;
-                    numberInCircle = true;
-                }
+        // Set numberInCircle for French browser
+        if (navigator.language == 'fr') {
+            if (!$('numberInCircle').checked) {
+                $('numberInCircle').checked = true;
+                numberInCircle = true;
             }
-
-            // Adjust language when available
-            if (navigator.language != 'en' && lang[navigator.language]) {
-                // change language next, this will also saveSettingsStorage
-                if ($('language').value != navigator.language) {
-                    $('language').value = navigator.language;
-                    changeLanguage();
-                }
-            }
-
-            // Wait a few seconds to give platform.cordova to be set if applicable
-            setTimeout(function () {
-                if (platform.cordova || platform.uwp) {
-                    alertBox(
-                        { userText: 'installedApp' },
-                        { userText: 'installation' }
-                    );
-                } else if (platform.windows10) {
-                    alertBox(
-                        { userText: 'installedWindows10', params: [window.location.host] },
-                        { userText: 'installation' }
-                    );
-                } else if (window.location.host) {
-                    alertBox(
-                        { userText: 'installed', params: [window.location.host] },
-                        { userText: 'installation' }
-                    );
-                }
-            }, 3000);
-            storeLocal('version', version);
-        } else if (oldVersion !== version) {
-            // create version update text
-            var list = [];
-            for (let v in versionNew) {
-                if (compVersion(oldVersion, v) < 0) {
-                    for (let i = 0; i < versionNew[v].length; i++) {
-                        list.push(versionNew[v][i]);
-                    }
-                }
-            }
-            list.sort(function (a, b) { return b[1] - a[1] });
-            var li = '';
-            for (let i = 0; i < Math.min(list.length, versionNewMax); i++) {
-                li += `<li>${list[i][0]}</li>\n`;
-            }
-            rulesWorker.postMessage({
-                action: 'versionUpdate',
-                rules: rules
-            });
-            alertBox(sprintf(userText.versionNew, oldVersion, version, li));
-            // create link for changelog
-            $('changelog').addEventListener(
-                'mousedown',
-                function () { helpWindow('changelog.txt', 'changelog.txt'); }
-            );
-            storeLocal('version', version);
         }
-    }
 
-    // this only works when storage is enabled
-    if (storage) getLocal('version', f);
+        // Adjust language when available
+        if (navigator.language != 'en' && lang[navigator.language]) {
+            // change language next, this will also saveSettingsStorage
+            if ($('language').value != navigator.language) {
+                $('language').value = navigator.language;
+                changeLanguage();
+            }
+        }
+
+        // Wait a few seconds to give platform.cordova to be set if applicable
+        setTimeout(function () {
+            if (platform.cordova || platform.uwp) {
+                alertBox(
+                    { userText: 'installedApp' },
+                    { userText: 'installation' }
+                );
+            } else if (platform.windows10) {
+                alertBox(
+                    { userText: 'installedWindows10', params: [window.location.host] },
+                    { userText: 'installation' }
+                );
+            } else if (window.location.host) {
+                alertBox(
+                    { userText: 'installed', params: [window.location.host] },
+                    { userText: 'installation' }
+                );
+            }
+        }, 3000);
+        localStorage.setItem('version', version);
+    } else if (prevVersion !== version) {
+        // create version update text
+        const list = [];
+        for (const v in versionNew) {
+            if (compVersion(prevVersion, v) < 0) {
+                for (const versionPart of versionNew[v]) {
+                    list.push(versionPart);
+                }
+            }
+        }
+        list.sort(function (a, b) { return b[1] - a[1] });
+        let li = '';
+        for (let i = 0; i < Math.min(list.length, versionNewMax); i++) {
+            li += `<li>${list[i][0]}</li>\n`;
+        }
+        // Assure that, after an update, rules in the database are
+        // the same as those in the new version files 
+        rulesWorker.postMessage({
+            action: 'versionUpdate',
+            rules: rules
+        });
+        alertBox(sprintf(userText.versionNew, prevVersion, version, li));
+        // create link for changelog
+        $('changelog').addEventListener(
+            'mousedown',
+            function () { helpWindow('changelog.txt', 'changelog.txt'); }
+        );
+        localStorage.setItem('version', version);
+    }
 }
 
 // removeBanner hides and then removes banner
@@ -7691,18 +7678,18 @@ function changeSequenceInfo() {
             ).replace(/- +-/g, '-').replace(/[ -]+$/, '');
 
         // create sequence XML
-        var xml = '<sequence>\n'
-        for (let i = 0; i < sequenceXMLlabels.length; i++) {
-            var el = $(sequenceXMLlabels[i]);
+        let xml = '<sequence>\n'
+        for (const label of sequenceXMLlabels) {
+            const el = $(label);
             if (el) {
-                var value = ('value' in el) ? el.value : el.innerText;
+                const value = ('value' in el) ? el.value : el.innerText;
                 if (value !== '') {
-                    xml += `<${sequenceXMLlabels[i]}>${value
+                    xml += `<${label}>${value
                         .replace(/&/g, "&amp;")
                         .replace(/</g, "&lt;")
                         .replace(/>/g, "&gt;")
                         .replace(/"/g, "&quot;")
-                        .replace(/'/g, "&#039;")}</${sequenceXMLlabels[i]}>\n`;
+                        .replace(/'/g, "&#039;")}</${label}>\n`;
                 }
             }
         }
@@ -7723,12 +7710,12 @@ function changeSequenceInfo() {
             // put everything in activeSequence.xml object
             activeSequence.xml = xml;
             // save activeSequence.xml in storage 'sequence'
-            storeLocal('sequence', activeSequence.xml);
+            localStorage.setItem('sequence', activeSequence.xml);
         }
         checkInfo();
         // update 'Notes' field height
-        $('notes').style.height = "";
-        $('notes').style.height = $('notes').scrollHeight + "px";
+        $('notes').style.height = '';
+        $('notes').style.height = `${$('notes').scrollHeight}px`;
     }
 }
 
@@ -7970,11 +7957,12 @@ function saveSelection(containerEl) {
 
 // restoreSelection restores selection savedSel in containerEl
 function restoreSelection(containerEl, savedSel) {
-    var
+    const
         doc = containerEl.ownerDocument,
-        charIndex = 0,
         range = doc.createRange(),
-        nodeStack = [containerEl],
+        nodeStack = [containerEl];
+    let
+        charIndex = 0,
         node,
         foundStart = false,
         stop = false;
@@ -7984,7 +7972,7 @@ function restoreSelection(containerEl, savedSel) {
 
     while (!stop && (node = nodeStack.pop())) {
         if (node.nodeType == 3) {
-            var nextCharIndex = charIndex + node.length;
+            const nextCharIndex = charIndex + node.length;
             if (!foundStart && savedSel.start >= charIndex && savedSel.start <= nextCharIndex) {
                 range.setStart(node, savedSel.start - charIndex);
                 foundStart = true;
@@ -7995,14 +7983,14 @@ function restoreSelection(containerEl, savedSel) {
             }
             charIndex = nextCharIndex;
         } else {
-            var i = node.childNodes.length;
+            let i = node.childNodes.length;
             while (i--) {
                 nodeStack.push(node.childNodes[i]);
             }
         }
     }
 
-    var sel = doc.defaultView.getSelection();
+    const sel = doc.defaultView.getSelection();
     sel.removeAllRanges();
     sel.addRange(range);
 }
@@ -8010,7 +7998,7 @@ function restoreSelection(containerEl, savedSel) {
 // copyContest will copy the contest info to localStorage
 function copyContest(e) {
     noPropagation(e);
-    storeLocal('contestInfo', JSON.stringify({
+    localStorage.setItem('contestInfo', JSON.stringify({
         location: $('location').value,
         date: $('date').value,
         logo: $('logo').value,
@@ -8023,16 +8011,14 @@ function copyContest(e) {
 function pasteContest(e) {
     noPropagation(e);
     if ($('lockContest').classList.contains('locked')) return;
-    getLocal('contestInfo', function (string) {
-        if (string) {
-            const info = JSON.parse(string);
-            $('location').value = info.location;
-            $('date').value = info.date;
-            if (info.logo) selectLogo(info.logo); else removeLogo();
-            $('notes').value = info.notes;
-            changeSequenceInfo();
-        }
-    });
+    const info = JSON.parse(localStorage.getItem ('contestInfo') || null);
+    if (info) {
+        $('location').value = info.location;
+        $('date').value = info.date;
+        if (info.logo) selectLogo(info.logo); else removeLogo();
+        $('notes').value = info.notes;
+        changeSequenceInfo();
+    }
 }
 
 // lockContest locks and unlocks the contest info when called. Locking
@@ -8066,14 +8052,14 @@ function lockContest(e) {
 // width and height
 function buildLogoSvg(logoImage, x, y, width, height, blackWhite) {
 
-    var svg = document.createElementNS(svgNS, "svg");
+    const svg = document.createElementNS(svgNS, "svg");
     svg.setAttribute("version", "1.2");
     svg.setAttribute("baseProfile", "basic");
     svg.setAttribute("xmlns", svgNS);
     svg.setAttribute("xmlns:xlink", xlinkNS);
     // svg images are included inline and scaled
     if (logoImage.match(/<svg/)) {
-        var
+        const
             parser = new DOMParser(),
             doc = parser.parseFromString(logoImage, "image/svg+xml"),
             svgBase = doc.getElementsByTagName('svg')[0],
@@ -8089,10 +8075,10 @@ function buildLogoSvg(logoImage, x, y, width, height, blackWhite) {
     } else {
         // find image size and use this to set correct width and height of
         // image, using provided as max
-        var img = document.createElement('img');
+        const img = document.createElement('img');
         img.src = logoImage;
         if (img.width) {
-            var scale = Math.min(width / img.width, height / img.height);
+            const scale = Math.min(width / img.width, height / img.height);
             width = parseInt(img.width * scale);
             height = parseInt(img.height * scale);
         }
@@ -8106,7 +8092,7 @@ function buildLogoSvg(logoImage, x, y, width, height, blackWhite) {
     svg.setAttribute("height", y + height);
 
     if (blackWhite) {
-        var defs = document.createElementNS(svgNS, 'defs');
+        const defs = document.createElementNS(svgNS, 'defs');
         defs.innerHTML =
             `<filter id="blackWhiteFilter">
                 <feColorMatrix in="SourceGraphic" type="saturate" values="0"/>
@@ -8140,57 +8126,55 @@ function logoChooser() {
         container.lastChild.remove();
     }
     // add logoImages
-    getLocal('logoSelectionCount', function (count) {
-        // find out which are used most, put them right after private logos
-        count = JSON.parse(count);
-        var keys = Object.keys(count);
-        for (let i = 0; i < keys.length; i++) {
-            // remove private logos. They are added to the beginning later
-            if (/^\d+$/.test(keys[i])) {
-                keys.splice(i, 1);
-                i--;
-            } else keys[i] = `${count[keys[i]]}|${keys[i]}`;
+    const count = JSON.parse(localStorage.getItem ('logoSelectionCount') || null);
+    // find out which are used most, put them right after private logos
+    const keys = Object.keys(count);
+    for (let i = 0; i < keys.length; i++) {
+        // remove private logos. They are added to the beginning later
+        if (/^\d+$/.test(keys[i])) {
+            keys.splice(i, 1);
+            i--;
+        } else keys[i] = `${count[keys[i]]}|${keys[i]}`;
+    }
+    keys.sort(function (a, b) { return parseInt(b) - parseInt(a) });
+    for (let i = 0; i < keys.length; i++) keys[i] = keys[i].split('|')[1];
+    let privateLogos = 0;
+    for (let logoName in logoImages) {
+        if (/^\d+$/.test(logoName)) {
+            // add private logos to the beginning
+            keys.unshift(logoName);
+            privateLogos++;
+        } else if (!keys.includes(logoName)) {
+            // add remaining logos to the end
+            keys.push(logoName);
         }
-        keys.sort(function (a, b) { return parseInt(b) - parseInt(a) });
-        for (let i = 0; i < keys.length; i++) keys[i] = keys[i].split('|')[1];
-        var privateLogos = 0;
-        for (let logoName in logoImages) {
-            if (/^\d+$/.test(logoName)) {
-                // add private logos to the beginning
-                keys.unshift(logoName);
-                privateLogos++;
-            } else if (!keys.includes(logoName)) {
-                // add remaining logos to the end
-                keys.push(logoName);
+    }
+    if (privateLogos > 2) { // max 3 private logos
+        fileDropLogo.classList.add('noDisplay');
+    } else fileDropLogo.classList.remove('noDisplay');
+    // build the logos in correct order
+    for (const logoName of keys) {
+        const div = document.createElement('div');
+        container.appendChild(div);
+        div.setAttribute("alt", logoName);
+        div.addEventListener('mousedown', selectLogo, false);
+        div.appendChild(buildLogoSvg(logoImages[logoName], 0, 0, width, height));
+        if (/^\d+$/.test(logoName)) {
+            // add a 'delete' button
+            const button = document.createElement('div');
+            button.classList.add('deleteLogoButton');
+            button.id = `deleteLogo-${logoName}`;
+            button.innerHTML = '<i class="material-icons">close</i>';
+            // make sure we remove on touch devices by using touchstart
+            // which fires before mousedown
+            if (platform.touch) {
+                button.addEventListener('touchstart', deleteLogo);
             }
+            button.addEventListener('mousedown', deleteLogo);
+            div.appendChild(button);
         }
-        if (privateLogos > 2) { // max 3 private logos
-            fileDropLogo.classList.add('noDisplay');
-        } else fileDropLogo.classList.remove('noDisplay');
-        // build the logos in correct order
-        for (let i = 0; i < keys.length; i++) {
-            var div = document.createElement('div');
-            container.appendChild(div);
-            var logoName = keys[i];
-            div.setAttribute("alt", logoName);
-            div.addEventListener('mousedown', selectLogo, false);
-            div.appendChild(buildLogoSvg(logoImages[logoName], 0, 0, width, height));
-            if (/^\d+$/.test(logoName)) {
-                // add a 'delete' button
-                var button = document.createElement('div');
-                button.classList.add('deleteLogoButton');
-                button.id = `deleteLogo-${logoName}`;
-                button.innerHTML = '<i class="material-icons">close</i>';
-                // make sure we remove on touch devices by using touchstart
-                // which fires before mousedown
-                if (platform.touch) {
-                    button.addEventListener('touchstart', deleteLogo);
-                }
-                button.addEventListener('mousedown', deleteLogo);
-                div.appendChild(button);
-            }
-        }
-    });
+    }
+    
 }
 
 // selectLogo is called when a logo is clicked in the logoChooser and
@@ -8202,21 +8186,19 @@ function selectLogo(logo) {
         // get name from alt attribute
         logo = this.getAttribute('alt');
         // increment selection counter
-        getLocal('logoSelectionCount', function (totals) {
-            totals = JSON.parse(totals);
-            if (logo in totals) totals[logo]++; else totals[logo] = 1;
-            storeLocal('logoSelectionCount', JSON.stringify(totals));
-        });
+        const totals = JSON.parse(localStorage.getItem ('logoSelectionCount') || null);
+        if (logo in totals) totals[logo]++; else totals[logo] = 1;
+        localStorage.setItem('logoSelectionCount', JSON.stringify(totals));
     }
 
     // check if there already was a logo to replace
-    var replace = logoImg ? true : false;
+    const replace = logoImg ? true : false;
     logoImg = logoImages[logo];
     $('logo').value = logo;
     if (!replace) drawActiveLogo();
     // move the logo smoothly into place from logoChooser
     if (this && this.getAttribute) {
-        var
+        const
             el = $('logoImage'),
             elBox = el.getBoundingClientRect(),
             thisBox = this.firstChild.getBoundingClientRect();
@@ -8286,12 +8268,12 @@ function deleteLogo(evt) {
     this.parentNode.remove();
     $('fileDropLogo').classList.remove('noDisplay');
     delete logoImages[logoName];
-    privateLogoImages = {};
+    const privateLogoImages = {};
     // update images in localStorage
     for (let key in logoImages) {
         if (/^\d+$/.test(key)) privateLogoImages[key] = logoImages[key];
     }
-    storeLocal('logoImages', JSON.stringify(privateLogoImages));
+    localStorage.setItem('logoImages', JSON.stringify(privateLogoImages));
 }
 
 // parseFiguresFile parses the figures file and stores it in several
@@ -8479,18 +8461,31 @@ function getRuleName() {
 
 // updateRulesList updates the rules field for power or glider
 function updateRulesList(avail) {
-    var
+    const
         el = $('rules').list ?
             $('datalist-rules') :
             $('rulesList'),
-        fragment = document.createDocumentFragment();
+        fragment = document.createDocumentFragment(),
+        // create list of names and sort by uppercase name, with CIVA always first
+        ruleNames = Object.keys(seqCheckAvail)
+            .filter((ruleName) => {
+                return (sportingClass.value === 'glider' === /^glider-/.test(ruleName)) &&
+                seqCheckAvail[ruleName].show}
+            ).sort((a,b) => {
+                if (seqCheckAvail[a].name.toUpperCase() == 'CIVA' ||
+                    seqCheckAvail[a].name.toUpperCase() < seqCheckAvail[b].name.toUpperCase()
+                ) return -1;
+                if (seqCheckAvail[a].name.toUpperCase() > seqCheckAvail[b].name.toUpperCase()) return 1;
+                return 0;
+            });
 
     function addRuleItem(name) {
+        let listItem;
         if ($('rules').list) {
-            var listItem = document.createElement('option');
+            listItem = document.createElement('option');
             listItem.value = name;
         } else {
-            var listItem = document.createElement('li');
+            listItem = document.createElement('li');
             listItem.innerHTML = name;
         }
         fragment.appendChild(listItem);
@@ -8502,20 +8497,16 @@ function updateRulesList(avail) {
     removeChildNodes(el);
     // Start with empty option
     addRuleItem('');
-    // build list for powered or glider
-    for (let ruleName in seqCheckAvail) {
-        if (sportingClass.value === 'glider' === /^glider-/.test(ruleName)) {
-            if (seqCheckAvail[ruleName].show) {
-                addRuleItem(seqCheckAvail[ruleName].name);
-            }
-        }
+    // build list
+    for (const ruleName of ruleNames) {
+        addRuleItem(seqCheckAvail[ruleName].name);
     }
     el.appendChild(fragment);
 }
 
 // updateCategoryList updates the category list
 function updateCategoryList() {
-    var
+    const
         ruleName = getRuleName(),
         el = $('category').list ?
             $('datalist-category') :
@@ -8525,12 +8516,12 @@ function updateCategoryList() {
     removeChildNodes(el);
     // Populate category list
     if (seqCheckAvail[ruleName]) {
-        for (let n in seqCheckAvail[ruleName].cats) {
+        for (const n in seqCheckAvail[ruleName].cats) {
             if (seqCheckAvail[ruleName].cats[n].show) {
-                var listItem = document.createElement(
-                    $('category').list ? 'option' : 'li');
-                var name = seqCheckAvail[ruleName].cats[n].name;
-                listItem.appendChild(document.createTextNode(name));
+                const listItem = document.createElement($('category').list ? 'option' : 'li');
+                listItem.appendChild(document.createTextNode(
+                    seqCheckAvail[ruleName].cats[n].name
+                ));
                 fragment.appendChild(listItem);
             }
         }
@@ -8540,7 +8531,7 @@ function updateCategoryList() {
 
 // updateProgramList updates the program list
 function updateProgramList() {
-    var
+    const
         ruleName = getRuleName(),
         categoryName = $('category').value.toLowerCase(),
         el = $('program').list ?
@@ -8551,12 +8542,12 @@ function updateProgramList() {
     removeChildNodes(el);
     // Populate program list
     if (seqCheckAvail[ruleName] && seqCheckAvail[ruleName].cats[categoryName]) {
-        for (let n in seqCheckAvail[ruleName].cats[categoryName].seqs) {
+        for (const n in seqCheckAvail[ruleName].cats[categoryName].seqs) {
             if (seqCheckAvail[ruleName].cats[categoryName].seqs[n][0] != '*') {
-                var listItem = document.createElement(
-                    $('program').list ? 'option' : 'li');
-                var name = seqCheckAvail[ruleName].cats[categoryName].seqs[n];
-                listItem.appendChild(document.createTextNode(name));
+                const listItem = document.createElement($('program').list ? 'option' : 'li');
+                listItem.appendChild(document.createTextNode(
+                    seqCheckAvail[ruleName].cats[categoryName].seqs[n]
+                ));
                 fragment.appendChild(listItem);
             }
         }
@@ -8789,7 +8780,7 @@ function lockSequence(lock) {
 }
 
 // setReferenceSequence is used to change several reference sequence
-// parameters
+// parameters from the rulesWorker
 function setReferenceSequence(string, fixed) {
     $('referenceSequenceString').value = string;
     if (fixed) {
@@ -9641,7 +9632,8 @@ function selectFigure(e) {
                     }
                     break;
                 case 'figSelectorAddBefore':
-                    for (var i = selectedFigure.id - 1; i >= 0; i--) {
+                    let i;
+                    for (i = selectedFigure.id - 1; i >= 0; i--) {
                         if (i > -1) {
                             if (figures[i].string.match(regexSequenceOptions) || figures[i].aresti) {
                                 break;
@@ -9934,7 +9926,7 @@ function makeMiniFormAScreen() {
         draggedRow.style = '';
         draggedRow.style.zIndex = 10;
 
-        let match = draggedRow.id.match(/^miniFormA-figure(\d+)$/);
+        const match = draggedRow.id.match(/^miniFormA-figure(\d+)$/);
         if (match) {
             selectFigure(match[1]);
             centerFigure(match[1]);
@@ -10023,6 +10015,7 @@ function makeMiniFormAScreen() {
     
     // Function to handle touch end or mouseup
     function dragEnd() {
+        if (!draggedRow) return;
         draggedRow.style = '';
         startY = null;
 
@@ -10284,7 +10277,7 @@ function makeMiniFormA(x, y, tiny) {
         drawText(figureK, blockX + 32, blockY + 38, 'formATextXL', 'middle', '', svg);
         // add maximum K (corrected for Floating Point) where applicable
         if (activeRules && checkCatGroup.k && checkCatGroup.k.max) {
-            var max = checkCatGroup.k.max;
+            let max = checkCatGroup.k.max;
             if (checkCatGroup.floatingPoint) max -= checkCatGroup.floatingPoint;
             drawText('Max K', blockX + totalWidth / 2, blockY + 54,
                 'formATextMedium', 'middle', '', svg);
@@ -10300,7 +10293,7 @@ function makeMiniFormA(x, y, tiny) {
         drawText(`Total K = ${figureK}`, blockX + 4, blockY + 21, 'miniFormATotal', 'start', '', svg);
         // add maximum K (corrected for Floating Point) where applicable
         if (activeRules && checkCatGroup.k && checkCatGroup.k.max) {
-            var max = checkCatGroup.k.max;
+            let max = checkCatGroup.k.max;
             if (checkCatGroup.floatingPoint) max -= checkCatGroup.floatingPoint;
             drawText(`(max K = ${max})`,
                 blockX + 4, blockY + 36, 'miniFormAMax', 'start', '', svg);
@@ -10540,13 +10533,13 @@ function grabFigure(evt) {
 function setFigChooser(figNr) {
     // check if fig[figNr] is valid
     if (fig[figNr]) {
-        var select = $('figureGroup');
-        var options = select.options;
+        const options = $('figureGroup').options;
+        let selectedGroup;
         for (let i = options.length - 1; i >= 0; i--) {
             if (options[i].value == fig[figNr].group) {
                 options[i].setAttribute('selected', 'true');
-                var selectedGroup = options[i];
-                select.selectedIndex = i;
+                selectedGroup = options[i];
+                $('figureGroup').selectedIndex = i;
             } else {
                 options[i].removeAttribute('selected');
             }
@@ -10555,11 +10548,15 @@ function setFigChooser(figNr) {
         // Select the correct figure and scroll selector there
         // First look for the earliest figure with the correct Aresti code
         // as the same code may be used more than once (e.g. j and 1j)
-        for (var i = 0; i < figNr; i++) if (fig[i] && (fig[i].aresti == fig[figNr].aresti)) break;
-        var td = $(`figureChooser${i}`).parentNode;
-        td.classList.add('selected');
-        // Set the vertical offset of the <tr> in which the element is
-        $('figureChooser').scrollTop = td.parentNode.offsetTop;
+        for (let i = 0; i <= figNr; i++) {
+            if (fig[i] && (fig[i].aresti == fig[figNr].aresti)) {
+                const td = $(`figureChooser${i}`).parentNode;
+                td.classList.add('selected');
+                // Set the vertical offset of the <tr> in which the element is
+                $('figureChooser').scrollTop = td.parentNode.parentNode.offsetTop;
+                break;
+            }
+        }
     }
     updateFigureSelectorOptions();
 }
@@ -10646,7 +10643,7 @@ function setFigureSelected(figNr) {
                         height: platform.touch ? 32 * svgScale : 24,
                         'id': 'magnifier',
                         cursor: 'move',
-                        href: 'img/magnifier.svg'
+                        href: 'assets/images/magnifier.svg'
                     }, el);
                 }
             }
@@ -10818,7 +10815,7 @@ function Drag(evt) {
                     height: platform.touch ? 32 * svgScale : 24,
                     'id': 'magnifier',
                     cursor: 'move',
-                    href: 'img/magnifier.svg'
+                    href: 'assets/images/magnifier.svg'
                 }, dragTarget.parentNode);
             }
         } else if (dragTarget.id === 'magnifier') {
@@ -10954,12 +10951,13 @@ function Drop() {
 
 // changeEntryDirection alters the entry direction of the sequence
 function changeEntryDirection() {
-    var
+    let
         prevEntry = '',
-        doFlipY = false;
+        doFlipY = false,
+        code;
 
     // get code
-    for (var code in entryOptions) {
+    for (code in entryOptions) {
         if (entryOptions[code] === this.id.replace(/^t_/, '')) break;
     }
     updateSequenceOptions('');
@@ -10974,7 +10972,7 @@ function changeEntryDirection() {
     if ((code + prevEntry) === 'ed') { // match 'ed' + '' and '' + 'ed'
         for (let i = 0; i < figures.length; i++) {
             if (regexCurveTo.test(figures[i].string) || regexMoveTo.test(figures[i].string)) {
-                var dxdy = figures[i].string.replace(/[^0-9\,\-]/g, '').split(',');
+                const dxdy = figures[i].string.replace(/[^0-9\,\-]/g, '').split(',');
                 updateSequence(i,
                     figures[i].string[0] + -parseInt(dxdy[0]) + ',' + dxdy[1] +
                     figures[i].string.slice(-1),
@@ -10994,11 +10992,12 @@ function changeEntryDirection() {
 // flipYAxis will flip the drawn direction of the Y axis for the whole
 // sequence
 function flipYAxis() {
-    var v = sequenceText.innerText;
+    const v = sequenceText.innerText;
     if (v.replace(regexComments, '').match(regexFlipYAxis)) {
         // disable flip
-        var t = '';
-        var inComment = false;
+        let
+            t = '',
+            inComment = false;
         for (let i = 0; i < v.length; i++) {
             // disregard / in comments
             if (v[i] === userpat.comment) inComment = !inComment;
@@ -11035,11 +11034,10 @@ function updateSequenceOptions(code) {
     // disable when sequence locked
     if ($('lock_sequence').value) return;
 
-    el = $('sequenceOptions');
-    if (el) {
+    if ($('sequenceOptions')) {
         if (code === 'eu') code = '';
         for (let key in entryOptions) {
-            var el = $('t_' + entryOptions[key]);
+            const el = $('t_' + entryOptions[key]);
             if (code !== key) {
                 el.addEventListener('mousedown', changeEntryDirection);
                 el.parentNode.classList.remove('disabled');
@@ -11065,7 +11063,7 @@ function clearPositioningOption() {
 
 // clearPositioning removes all figure positioning elements
 function clearPositioning() {
-    var changesMade = false;
+    let changesMade = false;
     // make sure no figure is selected
     selectFigure(false);
     // remove all moveTo, curveTo and moveForward figures
@@ -11086,10 +11084,10 @@ function clearPositioning() {
 // - base figure changed
 function separateFigure(id) {
     if (figures[id]) {
-        var selectFig = selectedFigure.id;
+        let selectFig = selectedFigure.id;
 
         // remove any previous move 'figure'
-        var i = id - 1;
+        let i = id - 1;
         if (figures[i]) {
             if (figures[i].moveTo || figures[i].curveTo || figures[i].moveForward) {
                 selectFig--;
@@ -11273,7 +11271,7 @@ function drawFullFigure(i, draggable, svg) {
     group.setAttribute('id', 'figure' + i);
     // put the group in the DOM
     svg.getElementById('sequence').appendChild(group);
-    var bBox = false;
+    let bBox = false;
     figures[i].paths.forEach ((p) => {
         bBox = drawShape(p, group, bBox) || bBox;
     });
@@ -11326,13 +11324,14 @@ function changeQueueColumns() {
 
 // addToQueue adds the selected figure to the figure queue
 function addToQueue(e) {
-    var f = figures[selectedFigure.id];
-    var figNr = f.figNr;
+    const
+        f = figures[selectedFigure.id],
+        figNr = f.figNr;
     // create aresti string
     // queue-[base]-[roll1]-[roll2]-...
-    var aresti = 'queue-' + f.aresti.join('-');
+    const aresti = 'queue-' + f.aresti.join('-');
     // check if the figure is already in the queue
-    var i = fig.length - 1;
+    let i = fig.length - 1;
     while (fig[i]) {
         if (fig[i].group == 0) {
             if (fig[i].aresti == aresti) {
@@ -11343,7 +11342,7 @@ function addToQueue(e) {
         } else break;
     }
 
-    var string = f.string
+    let string = f.string
         // remove extensions/shortenings
         .replace(regexExtendShorten, '').replace(/-+/g, '-')
         // remove comments
@@ -11385,9 +11384,9 @@ function addToQueue(e) {
 // addAllToQueue adds all figures in sequence to queue
 function addAllToQueue() {
     // check if there are any figures to add
-    var noFigures = true;
-    for (let i = 0; i < figures.length; i++) {
-        if (figures[i].aresti) {
+    let noFigures = true;
+    for (const f of figures) {
+        if (f.aresti) {
             noFigures = false;
             break;
         }
@@ -11427,7 +11426,7 @@ function removeFromQueue(e) {
 
 // clearQueue removes all figures from queue
 function clearQueue() {
-    var figLast = fig.length - 1;
+    let figLast = fig.length - 1;
     while (!fig[figLast]) {
         fig.length -= 1;
         figLast -= 1;
@@ -11438,7 +11437,7 @@ function clearQueue() {
         // confirm removing all
         confirmBox(userText.clearQueueConfirm, userText.clearQueue, () => {
             // start removing figures
-            var i = figLast;
+            let i = figLast;
             while (fig[i]) {
                 if (fig[i].group == 0) {
                     fig.pop();
@@ -11448,7 +11447,7 @@ function clearQueue() {
             changeFigureGroup();
             hideFigureSelector();
             setQueueMenuOptions();
-            storeLocal('queue', []);
+            localStorage.setItem('queue', []);
         });
     }
     showQueue();
@@ -11457,29 +11456,24 @@ function clearQueue() {
 // queueToStorage saves the queue to localStorage to keep it through
 // restarts
 function queueToStorage() {
-    var
-        queue = [],
-        figLast = fig.findLastIndex((f) => f);
+    const queue = [];
+    let figLast = fig.findLastIndex((f) => f);
 
     while (fig[figLast] && (fig[figLast].group == 0)) {
         queue.push(fig[figLast]);
         figLast--;
     }
 
-    storeLocal('queue', JSON.stringify(queue));
+    localStorage.setItem('queue', JSON.stringify(queue));
 }
 
 // queueFromStorage retrieves the queue from localStorage
 function queueFromStorage() {
-    getLocal('queue', function (string) {
-        if (string) {
-            var queue = JSON.parse(string);
-            while (queue && queue.length) {
-                fig.push(queue.pop());
-            }
-        }
-        setQueueMenuOptions();
-    });
+    const queue = JSON.parse (localStorage.getItem ('queue') || null);
+    while (queue && queue.length) {
+        fig.push(queue.pop());
+    }
+    setQueueMenuOptions();
 }
 
 /***********************************************************************
@@ -11737,7 +11731,7 @@ function exitFuDesigner(newSequence) {
 
 // freeCell builds a td element for specified subsequence, column and row
 function freeCell(sub, col, row) {
-    var td = document.createElement('td');
+    let td = document.createElement('td');
     td.id = 'sub' + sub + 'col' + col + 'row' + row;
     return td;
 }
@@ -11780,7 +11774,7 @@ function noPropagation(e) {
 // handleFreeDragFigureStart is called when starting to drag a Free (Un)known
 // figure. It will set the figure string in dataTransfer
 function handleFreeDragFigureStart(e) {
-    var l = this.id.replace(/^fu/, '');
+    const l = this.id.replace(/^fu/, '');
     e.dataTransfer.effectAllowed = 'copy';
     if (l === 'L') {
         e.dataTransfer.setData('text', '"@L" L');
@@ -11890,7 +11884,7 @@ function handleFreeRemove(e, el) {
     noPropagation(e); // Stops some browsers from redirecting.
 
     // Save scroll location, to restore later
-    var scrollTop = $('fuSequence').scrollTop;
+    let scrollTop = $('fuSequence').scrollTop;
 
     // Shrink figure to disappear
     el.parentNode.style.transform = 'scale(0.01)';
@@ -11899,7 +11893,7 @@ function handleFreeRemove(e, el) {
     setTimeout(function () {
         handleFreeDeselect(e);
 
-        var figNr = el.parentNode.className.match(regexFuFigNr)[1];
+        const figNr = el.parentNode.className.match(regexFuFigNr)[1];
 
         // Because sequenceText is simply formatted in Designer, and sequence change
         // is checked later, simply update sequenceText. Run check to see if previous
@@ -11939,10 +11933,8 @@ function handleFreeSelect(evt) {
         evt.target.parentNode.classList.contains('removeFigureButton')) {
         return;
     }
-    var match = this.className.match(regexFuFigNr);
-    if (match) {
-        selectFigureFu(this.className.match(regexFuFigNr)[1]);
-    }
+    const match = this.className.match(regexFuFigNr);
+    if (match) selectFigureFu(match[1]);
 }
 
 // buildFuFiguresTab fills the fuFigures tab with the Free (Un)known
@@ -12419,8 +12411,9 @@ function makeFormGrid(cols, width, svg = SVGRoot) {
         const f = figures[sortFigures[i].id];
 
         // draw rectangle
-        let rect = drawRectangle(x, y, cw, ch, 'formLine', svg);
+        const rect = drawRectangle(x, y, cw, ch, 'formLine', svg);
         rect.id = `figure${f.seqNr}-box`;
+        rect.setAttribute('class', 'figureBox');
  
         // draw figure Ks, Arestis and Figure Letter
         let textWidth = 0;
@@ -13276,6 +13269,13 @@ function displayAlerts() {
         });
         // Add a message to the top to warn if no rules are loaded
         if (!activeRules) alertMsgs.unshift(userText.noRules);
+        // Set box color of figures in Grid mode to normal before
+        // checking errors later
+        if (/^G/.test (activeForm)) {
+            for (const box of SVGRoot.getElementsByClassName('figureBox')) {
+                box.style = style['formLine'];
+            }
+        }
         // Display messages
         alertMsgs.forEach ((a) => {
             const span = document.createElement('span');
@@ -13289,7 +13289,7 @@ function displayAlerts() {
             container.appendChild(span);
             // use <br> because sequence check log uses simple formatting
             container.appendChild(document.createElement('br'));
-            // mark figures with alerts with a red box in Grid mode
+            // Mark figures with alerts with a red box in Grid mode
             if (/^G/.test (activeForm) && /^\(\d+\)/.test(a)) {
                 const box = SVGRoot.getElementById (`figure${a.match(/\d+/)[0]}-box`);
                 if (box) box.style = style['corr'];
@@ -13796,7 +13796,7 @@ function openRulesFile() {
 function openFile(file, handler, params) {
     if (file) {
         console.log('Reading file: ' + file.name);
-        var reader = new FileReader();
+        const reader = new FileReader();
         // Handle success, and errors. With onload the correct loading
         // function will be called
         switch (handler) {
@@ -14147,7 +14147,8 @@ function loadedQueue(evt) {
     });
 }
 
-// loadedSequence will be called when a sequence file has been loaded
+// loadedSequenceWindows will be called when a sequence file has been loaded
+// on Windows
 function loadedSequenceWindows(text, name) {
     // Obtain the read file data
     loadSequence(text, function (xml) {
@@ -14658,26 +14659,40 @@ function compVersion(v1, v2, parts) {
 
 // loadedLogo will be called when a logo image has been loaded
 function loadedLogo(evt) {
-    // check file for maximum size due local storage on mobile
-    if (platform.mobile && (evt.loaded > 1048576)) {
+    // check file for maximum size
+    if (evt.loaded > 1048576) {
         alertBox(userText.logoFileTooLarge);
         return;
     }
-    getLocal('logoImages', function (privateLogoImages) {
-        privateLogoImages = JSON.parse(privateLogoImages) || {};
-        // check if this logo already existed
-        for (let key in privateLogoImages) {
-            if (privateLogoImages[key] === evt.target.result) {
-                selectLogo(key);
-                return;
-            }
+    const privateLogoImages = JSON.parse (localStorage.getItem ('logoImages') || null) || {};
+    // check if this logo already existed
+    for (const key in privateLogoImages) {
+        if (privateLogoImages[key] === evt.target.result) {
+            selectLogo(key);
+            return;
         }
-        // logo did not exist yet, create new
-        const t = (new Date()).getTime();
-        privateLogoImages[t] = logoImages[t] = evt.target.result;
-        storeLocal('logoImages', JSON.stringify(privateLogoImages));
-        selectLogo(t);
-    });
+    }
+    // logo did not exist yet, create new
+    const t = (new Date()).getTime();
+    privateLogoImages[t] = logoImages[t] = evt.target.result;
+    try {
+        localStorage.setItem('logoImages', JSON.stringify(privateLogoImages));
+    } catch (err) {
+        if (err instanceof DOMException &&
+            // everything except Firefox
+            (err.code === 22 ||
+            // Firefox
+            err.code === 1014 ||
+            // test name field too, because code might not be present
+            // everything except Firefox
+            err.name === "QuotaExceededError" ||
+            // Firefox
+            err.name === "NS_ERROR_DOM_QUOTA_REACHED")) {
+            alertBox(userText.logoFileTooLarge);
+        }
+        return;
+    }
+    selectLogo(t);
 }
 
 // sanitizeFileName assures fileName does not contain illegal
@@ -14703,7 +14718,7 @@ function updateSaveFilename(fname) {
     // make sure the filename is legal
     fname = fname ? sanitizeFileName(fname) : '';
     $('dlTextField').value = fileName.innerText = fname;
-    storeLocal('fileName', fname);
+    localStorage.setItem('fileName', fname);
 }
 
 // saveFile saves a file
@@ -14729,8 +14744,10 @@ function saveFile(data, name, ext, filter, format, param={}) {
     // depending on platform we choose a method for
     // saving the file with the following preference:
     // 1) Use Windows.Storage for Windows UWP
-    // 2) Use "download" attribute
-    // 3) Ask user to right-click and "Save as"
+    // 2) Use Cordova file saving on Cordova
+    // 3) Use iOS save dialog on iOS
+    // 4) Use showSaveFilePicker when available (Chrome/Edge/Opera since late 2020)
+    // 5) Use "download" attribute
 
     if (platform.uwp) {
         // 1) Windows UWP saving
@@ -14769,10 +14786,6 @@ function saveFile(data, name, ext, filter, format, param={}) {
             }
         });
         return result;
-    } else if (platform.cordova) {
-        saveDialog(' ', name, ext, param);
-    } else if (platform.ios) {
-        saveDialog(userText.iOSsaveFileMessage, name, ext, param);
     } else if ("showSaveFilePicker" in window) {
         // Use showSaveFilePicker when available (Chrome/Edge/Opera since late 2020)
         async function getNewFileHandle(name, ext) {
@@ -14800,6 +14813,10 @@ function saveFile(data, name, ext, filter, format, param={}) {
             } else result = false;
         }
         getNewFileHandle(name, ext).catch (err => {result = false});
+    } else if (platform.cordova) {
+        saveDialog(' ', name, ext, param);
+    } else if (platform.ios) {
+        saveDialog(userText.iOSsaveFileMessage, name, ext, param);
     } else {
         // Fall back to legacy file picking
         saveDialog(userText.downloadHTML5, name, ext, param);
@@ -15070,11 +15087,15 @@ function emailSequence() {
     function email() {
         // create body with descriptive text, newlines and sequence URL
         // also replace single ticks (') and + as they may break the link
-        const body = userText.emailHeader + '\r\n\r\n' +
-            'https://openaero.net/?s=' + encodeBase64Url(compressSequence(activeSequence.xml));
-        const subject = activeFileName() || 'Sequence';
-        el.setAttribute('href', 'mailto:%20?subject=' + encodeURI(subject) +
-            '&body=' + encodeURI(body));
+        // The template literal newlines and text position below are
+        // important for layout!
+        const
+            body = `${userText.emailHeader}
+
+https://openaero.net/?s=${encodeBase64Url(compressSequence(activeSequence.xml))}`,
+            subject = activeFileName() || 'Sequence';
+        el.setAttribute('href',
+            `mailto:%20?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`);
         // click again to make sure this also gets triggerred after
         // missingInfoCheck dialog
         el.click();
@@ -15104,28 +15125,6 @@ function openSequenceLink(e) {
         dialog.classList.remove('noDisplay');
     }
     link.value = '';
-}
-
-/********************************
- * Functions for handling storage
- */
-
-// storeLocal uses localStorage to save data. If this is not supported
-// it returns false
-function storeLocal(name, value) {
-    if (storage) {
-        localStorage.setItem(name, value);
-        return true;
-    } else return false;
-}
-
-// getLocal gets a value from localStorage and returns it. If
-// localStorage is not supported it returns false.
-// Callback will be called when the storage is loaded
-function getLocal(name, callback) {
-    if (storage) {
-        callback(localStorage.getItem(name));
-    } else return false;
 }
 
 /********************************
@@ -18537,9 +18536,9 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
     unknownFigureLetter = false;
 
     // now that the figure is determined, apply marking to figureStart
-    var figureStartStyle = getFigureStartStyle(figures[figStringIndex]);
+    const figureStartStyle = getFigureStartStyle(figures[figStringIndex]);
     if (figureStartStyle) {
-        var i = 0;
+        let i = 0;
         while (i < paths.length && !paths[i].figureStart) i++;
         while (i < (paths.length - 1) && !paths[i + 1].figureStartEnd) {
             i++;
@@ -18926,12 +18925,13 @@ function comparePreviousSequence() {
 // When doing this, the Figure Letters will be identical by definition,
 // as the sequence is checked identical as of 'n'.
 function updateXYFlip(m, n) {
-    var sub = false;
-    var dmn = m - n;
+    const dmn = m - n;
+    let sub = false;
+
     if (activeSequence.figures[n]) {
-        var text = activeSequence.text.substring(0, activeSequence.figures[n].stringStart);
+        let text = activeSequence.text.substring(0, activeSequence.figures[n].stringStart);
         for (let i = n; i < activeSequence.figures.length; i++) {
-            var s = activeSequence.figures[i].string;
+            let s = activeSequence.figures[i].string;
             if (s.match(/^e(u|d|j|ja)$/)) sub = true;
             // Only act on figures that previously had an unknownFigureLetter.
             // This will also prevent matching moves, such as "12>", ">", "^^"
@@ -19378,7 +19378,7 @@ function parseSequence() {
     });
     // check for any OLAN Humpty Bump bug messages
     if (OLAN.bumpBugCheck) {
-        var warning = '';
+        let warning = '';
         if (OLAN.bumpBugFigs.length >= 1) {
             warning = `Fig ${OLAN.bumpBugFigs.join(' and ')}`;
             if (OLAN.bumpBugFigs.length < 2) {

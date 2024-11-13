@@ -1,4 +1,4 @@
-2024.1.11
+2025.1.1
 * Added .seq file association support for PWA
 * Added improved browser file saving through File System API (compatible with Chrome/Edge/Opera)
 * Fixed issue causing "Illegal" figures not to show in Free Unknown Designer (where all figures are legal)
@@ -9,6 +9,16 @@
 * Added fields to sequence file to aid in figure identification (Issue #286)
 * Added four NZAC sequences for 2025
 * Added options for (multiple) form selection when saving figures separately (Issue #286)
+* Added rule downloading from openaero.net, allowing quicker rule updates
+* Added library downloading from openaero.net
+* Improved folder structure according PWA best practices
+* Removed demo/programme directive processing for rule files
+* Removed year from rule filenames
+* Changed rule year determination to directive instead of rule filename
+* Added 2025 CIVA sequences and updated CIVA rules
+* Added red marking of figures with errors in Grid mode (Issue #285)
+* On-device data storage is now required
+* Fixed sequence string not being included when emailing sequence through Android Gmail app
 
 2024.1.10
 * Fixed CIVA glider Free Known reference sequence

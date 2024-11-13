@@ -40,13 +40,18 @@ This file is part of OpenAero.
  A new x must be used for versions that create sequences not
  fully backward compatible with the previous version
 */
-const version = '2024.1.11';
+const version = '2025.1.1';
 // versionNew is an object that contains version update information
 // The structure is {vvv : [[ttt, n], ...], ...} , where
 // vvv = version number
 // ttt = update text
 // n   = importance (higher = more important)
 const versionNew = {
+  '2025.1.1': [
+    ['Added four NZAC sequences for 2025', 2],
+    ['Added rule and library downloading from openaero.net, allowing quicker updates', 3],
+    ['Added 2025 CIVA sequences and updated CIVA rules', 4],
+  ],
   '2024.1.4': [
     ['Added 2024 IAC sequences', 3],
     ['Added 2024 IMAC sequences', 3],
@@ -1102,3 +1107,6 @@ const isoCountries = {"AD":"AND","AE":"ARE","AF":"AFG","AG":"ATG",
 // also for key and value reversed
 const isoCountriesReverse = {}; 
 for (let key in isoCountries) isoCountriesReverse[isoCountries[key]] = key;
+
+// define rules global
+var rules = [];

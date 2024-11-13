@@ -2,31 +2,50 @@
 	"dir" : "ltr",
 	"lang" : "en",
 	"name" : "OpenAero",
+	"id" : "openaero",
 	"scope" : "/",
 	"display" : "standalone",
-	"start_url" : "https://openaero.net/",
+	"start_url" : "/",
+	"launch_handler" : {
+    		"client_mode": "auto"
+		},
 	"short_name" : "OpenAero",
 	"theme_color" : "#7e57c2",
 	"description" : "OpenAero helps you design aerobatic sequences. It has many features for all levels of aerobatic pilots and contest organisers.",
 	"orientation" : "any",
-	"background_color" : "transparent",
+	"background_color" : "#ffffff",
 	"related_applications" : [],
 	"prefer_related_applications" : false,
 	"icons" : [
 		{
-			"src": "https://openaero.net/img/favicons/favicon16.png",
+			"src": "https://openaero.net/assets/images/favicons/favicon16.png",
 			"sizes": "16x16"
 		},
 		{
-			"src": "https://openaero.net/img/favicons/favicon195.png",
+			"src": "https://openaero.net/assets/images/favicons/favicon195.png",
 			"sizes": "195x195"
+		},
+		{
+			"src": "https://openaero.net/assets/images/assets/Square150x150Logo.scale-400.png",
+			"sizes": "600x600"
 		}],
+	"screenshots" : [
+		{
+			"src": "https://openaero.net/assets/images/screenshots/Windows10 main view.png",
+			"sizes": "1502x1020",
+			"type": "image/png"
+		}
+	],
 	"file_handlers": [
 		{
-		"action": "/",
-		"accept": {
-			"text/plain": [".seq"]
-		}
+			"action": "/",
+			"accept": {
+				"application/octet-stream": [".seq"],
+				"text/plain": [".seq"],
+				"text/xml": [".seq"],
+				"text/*": [".seq"],
+				"*/*": [".seq"]
+			}
 		}
   	]
 }

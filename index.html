@@ -38,9 +38,9 @@
     <title>OpenAero</title>
     <!-- stylesheets, these are changed dynamically depending on browser
          and layout. The order matters! -->
-    <link rel="stylesheet" media="screen" type="text/css" href="css/general.css" id="generalCSS">
-    <link rel="stylesheet" media="screen" type="text/css" href="css/desktop.css" id="desktopCSS">
-    <link rel="stylesheet" media="screen" type="text/css" href="css/desktop-largeMobile.css" id="desktopLargeMobileCSS">
+    <link rel="stylesheet" media="screen" type="text/css" href="assets/css/general.css" id="generalCSS">
+    <link rel="stylesheet" media="screen" type="text/css" href="assets/css/desktop.css" id="desktopCSS">
+    <link rel="stylesheet" media="screen" type="text/css" href="assets/css/desktop-largeMobile.css" id="desktopLargeMobileCSS">
     <!-- styles -->
     <style type="text/css" media="print" id="printStyle">
         html {
@@ -78,23 +78,23 @@
     </style>
     <style type="text/css" id="fuDesignerStyle"></style>
     <!-- favicons -->
-    <link rel="shortcut icon" type="image/png" sizes="16x16" href="img/favicons/favicon16.png">
-    <link rel="shortcut icon" type="image/png" sizes="24x24" href="img/favicons/favicon24.png">
-    <link rel="shortcut icon" type="image/png" sizes="32x32" href="img/favicons/favicon32.png">
-    <link rel="shortcut icon" type="image/png" sizes="57x57" href="img/favicons/favicon57.png">
-    <link rel="shortcut icon" type="image/png" sizes="72x72" href="img/favicons/favicon72.png">
-    <link rel="shortcut icon" type="image/png" sizes="96x96" href="img/favicons/favicon96.png">
-    <link rel="shortcut icon" type="image/png" sizes="114x114" href="img/favicons/favicon114.png">
-    <link rel="shortcut icon" type="image/png" sizes="128x128" href="img/favicons/favicon128.png">
-    <link rel="shortcut icon" type="image/png" sizes="195x195" href="img/favicons/favicon195.png">
+    <link rel="shortcut icon" type="image/png" sizes="16x16" href="assets/images/favicons/favicon16.png">
+    <link rel="shortcut icon" type="image/png" sizes="24x24" href="assets/images/favicons/favicon24.png">
+    <link rel="shortcut icon" type="image/png" sizes="32x32" href="assets/images/favicons/favicon32.png">
+    <link rel="shortcut icon" type="image/png" sizes="57x57" href="assets/images/favicons/favicon57.png">
+    <link rel="shortcut icon" type="image/png" sizes="72x72" href="assets/images/favicons/favicon72.png">
+    <link rel="shortcut icon" type="image/png" sizes="96x96" href="assets/images/favicons/favicon96.png">
+    <link rel="shortcut icon" type="image/png" sizes="114x114" href="assets/images/favicons/favicon114.png">
+    <link rel="shortcut icon" type="image/png" sizes="128x128" href="assets/images/favicons/favicon128.png">
+    <link rel="shortcut icon" type="image/png" sizes="195x195" href="assets/images/favicons/favicon195.png">
     <!-- apple web app icon and startup image -->
-    <link rel="apple-touch-icon" href="img/favicons/favicon195.png">
+    <link rel="apple-touch-icon" href="assets/images/favicons/favicon195.png">
     <!-- DISABLED, does not work until iOS 11 !
-    <link rel="apple-touch-startup-image" href="img/favicons/favicon195.png">
-    <link rel="apple-touch-startup-image" href="img/startup.jpg">
-    <link rel="apple-touch-startup-image" href="img/startup_retina.jpg" media="(max-device-width: 480px) and (-webkit-min-device-pixel-ratio: 2)" >
-    <link rel="apple-touch-startup-image" href="img/startup_ipad_landscape.jpg" media="screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:landscape)" />
-    <link rel="apple-touch-startup-image" href="img/startup_ipad_portrait.jpg" media="screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:portrait)" />
+    <link rel="apple-touch-startup-image" href="assets/images/favicons/favicon195.png">
+    <link rel="apple-touch-startup-image" href="assets/images/startup.jpg">
+    <link rel="apple-touch-startup-image" href="assets/images/startup_retina.jpg" media="(max-device-width: 480px) and (-webkit-min-device-pixel-ratio: 2)" >
+    <link rel="apple-touch-startup-image" href="assets/images/startup_ipad_landscape.jpg" media="screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:landscape)" />
+    <link rel="apple-touch-startup-image" href="assets/images/startup_ipad_portrait.jpg" media="screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:portrait)" />
     -->
     <!-- web manifest for progressive web apps -->
     <link rel="manifest" href="/manifest.webmanifest">
@@ -121,33 +121,33 @@
     <!-- cordova.js is only loaded when NOT running Cordova and sets platform.cordova = false -->
     <script src="cordova.js"></script>
     <!-- interface languages -->
-    <script src="js/languages/en.js"></script>
-    <script src="js/languages/de.js"></script>
-    <script src="js/languages/fr.js"></script>
+    <script src="components/languages/en.js"></script>
+    <script src="components/languages/de.js"></script>
+    <script src="components/languages/fr.js"></script>
     <!-- logos -->
-    <script src="js/logo.js"></script>
+    <script src="data/logo.js"></script>
     <!-- figure definitions -->
-    <script src="js/figures23.js"></script>
+    <script src="data/figures/figures.js"></script>
     <!-- rules Worker -->
     <script src="js/rulesWorker.js"></script>
     <!-- sequence rules. Start with general and CIVA, then alphabetical -->
-    <script src="js/rules/rules23.js"></script>
-    <script src="js/rules/rules24-civa.js"></script>
-    <script src="js/rules/rules24-glider-civa.js"></script>
-    <script src="js/rules/rules23-aac.js"></script>
-    <script src="js/rules/rules22-aeci.js"></script>
-    <script src="js/rules/rules22-baea.js"></script>
-    <script src="js/rules/rules24-france.js"></script>
-    <script src="js/rules/rules15-ga.js"></script>
-    <script src="js/rules/rules24-glider-iac.js"></script>
-    <script src="js/rules/rules23-iac.js"></script>
-    <script src="js/rules/rules23-imac.js"></script>
-    <script src="js/rules/rules25-nzac.js"></script>
-    <script src="js/rules/rules20-saa.js"></script>
-    <script src="js/rules/rules24-sac.js"></script>
-    <script src="js/rules/rules23-vink.js"></script>
+    <script src="data/rules/rules.js"></script>
+    <script src="data/rules/rules-civa.js"></script>
+    <script src="data/rules/rules-glider-civa.js"></script>
+    <script src="data/rules/rules-aac.js"></script>
+    <script src="data/rules/rules-aeci.js"></script>
+    <script src="data/rules/rules-baea.js"></script>
+    <script src="data/rules/rules-france.js"></script>
+    <script src="data/rules/rules-ga.js"></script>
+    <script src="data/rules/rules-glider-iac.js"></script>
+    <script src="data/rules/rules-iac.js"></script>
+    <script src="data/rules/rules-imac.js"></script>
+    <script src="data/rules/rules-nzac.js"></script>
+    <script src="data/rules/rules-saa.js"></script>
+    <script src="data/rules/rules-sac.js"></script>
+    <script src="data/rules/rules-vink.js"></script>
     <!-- library of sequences -->
-    <script src="js/library.js"></script>
+    <script src="data/library.js"></script>
     <!-- improve look of XML output -->
     <!-- https://github.com/vkiryukhin/vkBeautify 0.99.00 beta inactive since 2018 -->
     <script src="js/vkbeautify.min.js"></script>
@@ -744,7 +744,7 @@
                             <div class="contentLabel userText" id="t_entryExitAttExt"></div>
                             <span id="figEntryButton" class="button small disableFUfig ttRight"></span>
                             <span id="entryExt" class="plusMin"></span>
-                            <span><img src="img/ee_ext-figure.png"></span>
+                            <span><img src="assets/images/ee_ext-figure.png"></span>
                             <span id="exitExt" class="plusMin"></span>
                             <span id="figExitButton" class="button small disableFUfig"></span>
                         </div>
@@ -919,7 +919,7 @@
     <!-- overlay div for loading -->
     <div id="loading">
         <div>
-            <p><img src="img/favicons/favicon195.png"></p>
+            <p><img src="assets/images/favicons/favicon195.png"></p>
             <p>OpenAero</p>
             <!-- Continue option appears after 5 seconds -->
             <p id="continueAfterLoading" style="opacity: 0;">
@@ -1046,49 +1046,49 @@
                 <div id="pilotCardLayout" class="folded">
                     <div id="pilotCardPercent" class="pilotCardLayout active">
                         <div class="pilotCard">
-                            <img id="pilotCardPercentImage" src="img/PilotCard.svg">
+                            <img id="pilotCardPercentImage" src="assets/images/PilotCard.svg">
                             <div class="pilotCardLetter"></div>
                         </div>
                         <span><input type="number" step="10" value="60" max="100" id="pilotCardPercentValue">%</span>
                     </div>
                     <div id="pilotCard2" class="pilotCardLayout">
                         <div class="pilotCard">
-                            <img src="img/PilotCard.svg">
+                            <img src="assets/images/PilotCard.svg">
                             <div class="pilotCardLetter"></div>
                         </div>
                         <div class="pilotCard">
-                            <img src="img/PilotCard.svg">
+                            <img src="assets/images/PilotCard.svg">
                             <div class="pilotCardLetter"></div>
                         </div>
                     </div>
                     <div id="pilotCard4" class="pilotCardLayout">
                         <div class="pilotCard">
-                            <img src="img/PilotCard.svg">
+                            <img src="assets/images/PilotCard.svg">
                             <div class="pilotCardLetter"></div>
                         </div>
                         <div class="pilotCard">
-                            <img src="img/PilotCard.svg">
+                            <img src="assets/images/PilotCard.svg">
                             <div class="pilotCardLetter"></div>
                         </div>
                         <div class="pilotCard">
-                            <img src="img/PilotCard.svg">
+                            <img src="assets/images/PilotCard.svg">
                             <div class="pilotCardLetter"></div>
                         </div>
                         <div class="pilotCard">
-                            <img src="img/PilotCard.svg">
+                            <img src="assets/images/PilotCard.svg">
                             <div class="pilotCardLetter"></div>
                         </div>
                     </div>
                     <div id="pilotCard2QR" class="pilotCardLayout">
                         <div class="pilotCard">
-                            <img src="img/PilotCard.svg">
+                            <img src="assets/images/PilotCard.svg">
                             <div class="pilotCardLetter"></div>
                         </div>
                         <div class="pilotCardQR">
                             <i class="material-icons">qr_code_2</i>
                         </div>
                         <div class="pilotCard">
-                            <img src="img/PilotCard.svg">
+                            <img src="assets/images/PilotCard.svg">
                             <div class="pilotCardLetter"></div>
                         </div>
                         <div class="pilotCardQR">
@@ -1648,13 +1648,13 @@
         <i id="closeInstallApp" class="material-icons">close</i>
         <span id="t_getTheApp" class="userText"></span>
         <a id="playStore" href="https://play.google.com/store/apps/details?id=net.openaero" target="_blank">
-            <img src="img/google-play-badge.png">
+            <img src="assets/images/google-play-badge.png">
         </a>
         <a id="appStore" href="https://itunes.apple.com/us/app/openaero/id1343773321" target="_blank">
-            <img src="img/ios-appstore-badge.svg">
+            <img src="assets/images/ios-appstore-badge.svg">
         </a>
         <a id="mobileInstallPWA" target="_blank">
-            <img src="img/pwa-badge.png">
+            <img src="assets/images/pwa-badge.png">
         </a>
     </div>
     <div id="noScreen"></div>

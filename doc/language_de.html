@@ -20,7 +20,7 @@
   <head>
 	<meta name="viewport" content="width=device-width">
 	<script src="../js/docs.js"></script>
-    <link rel="stylesheet" href="../css/general.css">
+    <link rel="stylesheet" href="../assets/css/general.css">
 		<!-- web manifest for progressive web apps -->
 		<link rel="manifest" href="/manifest.webmanifest">
     <TITLE>OpenAero language</TITLE>
@@ -382,14 +382,14 @@
               <b>9</b> zwei ganze gesteuerte Rollen (ohne Unterbrechung)<br>
           </p>
       <div>
-              <img src="../img/fullrolls.png" />
+              <img src="../assets/images/fullrolls.png" />
           <p>
               In oberer Logik stellt die <b>9</b> eine Ausnahme zur Regel dar. Dies ist so gewollt um Konflikte mit den Achtel-Rollen zu vermeiden.<br>
           <H4>Superlangsame Rollen</H4>
               Die nur im Segelkunstflug vorzufindenden superlangsamen Rollen werden nach gleichem, obigen Schema erzeugt, allerdings wird ihnen eine <b>0</b> voran geschrieben, also z.B. <b>01</b> für eine ganze gesteuerte, superlangsame Rolle.<br>
           </p>
           <H4>Trudler, gerissene und gestoßene Rollen</H4>
-          <img src="../img/snaprolls.png" />
+          <img src="../assets/images/snaprolls.png" />
           <p>
               Werden die Ziffern für kontinuierliche Rollen um den Suffix "<b>f</b>" (für "flick roll") erweitert, werden statt gesteuerten Rollen nun gerissene Rollen definiert. Benutzt man hingegen den Suffix "<b>if</b>" für "inverted flick roll" werden gestoßene Rollen definiert. Das gleiche Prinzip gilt für den Suffix "<b>s</b>" für "spins", also (Bauch)-Trudler, und den Suffix "<b>is</b>" für "inverted spin" - also Rückentrudler.
               <br><br>
@@ -399,14 +399,14 @@
               <b>s</b> eine ganze Trudelumdrehung auf vertikaler Abwärtslinie<br>
               <b>is</b> eine ganze gestoßene Rolle auf vertikaler Abwärtslinie<br>
               Entsprechend Aresti-Katalog sind Trudler und Rückentrudler ausschließlich auf vertikalen Abwärtslinien zulässig. Für einfache Trudler und Rückentrudler brauch also nicht die Basisfigur "<b>iv</b>" geschrieben werden - sie wird automatisch angenommen, solang keine andere, wie bspw. "<b>irp</b>" definiert ist.
-              <img src="../img/spinrolls.png" />
+              <img src="../assets/images/spinrolls.png" />
           </p>
       </div>
       <div>
           <H4>Zeiten-Rollen</H4>
               In OpenAero werden Zeiten-Rollen grundsätzlich durch zweistellige Zahlen dargestellt und zwar genau derart, wie man Sie auch auf dem Programmzettel lesen möchte nur ohne das Multiplikationszeichen "x", also z.B. "<b>32</b>" für drei Halbrollen (3x2) oder "<b>28</b>" für eine Zwei-Achtel-Rolle (2x8). Eine Vier-Zeiten-Rolle wird also dann mit <b>44</b> definiert. Zwei Vier-Zeiten-Rollen sind dann "<b>84</b>".<br> Theoretisch erkennt OpenAero sogar, wenn dieses Prinzip auf dreistellige Zahlen angewendet wird, bspw. 16x8. Der dargestellte Roll-Text gibt diese Definition sogar wieder, allerdings werden dann nur maximal zwei zusammenhängende Rollpfeile gezeichnet. Generell zeigt OpenAero bis zu 2 1/4 Rotationen an, egal welcher Roll- oder Trudelart.
               <!--You can also, theoretically, use "68" as well as "108" "128" and even "<b>168</b>" - a full two rolls with 16 points, but they are never seen in actual sequences. -->
-              <p><img src="../img/hesrolls.png" /></p>
+              <p><img src="../assets/images/hesrolls.png" /></p>
           <H4>Mehrere Rollenelemente auf gleicher Linie</H4>
               <p>
                   Für den nicht selten vorkommenden Fall, dass auf einer Linie zwei verschiedene Rollenelemente definiert werden sollen, wird das Komma "<b>,</b>" als Trennzeichen verwendet, um beide Rollenelemente voneinander abzugrenzen. Grundsätzlich interpretiert OpenAero, dass 2 aufeinander folgende, verschiedene Rollenelemente gegenläufige Drehrichtungen haben. Ist dies jedoch nicht der Fall, wird ein zusätzliches Komma, also "<b>,,</b>" benutzt.<br>
@@ -415,7 +415,7 @@
                   Anstelle zweier Kommata kann auch ein einzelnes Semikolon "<b>;</b>" für den gleichen Zweck verwendet werden.<br>
                   Beachten Sie auch hier, dass hier nach dem Komma kein Leerzeichen (aus Tippgewohnheit) folgen darf, da ansonsten OpenAero eine Figurentrennung erkennt.<br>
               </p>
-              <p><img src="../img/multirolls.png" /></p>
+              <p><img src="../assets/images/multirolls.png" /></p>
           <H4>Ändern der Rolldrehrichtung</H4>
               <p>
                   In OpenAero drehen standardmässig alle Rollen links herum.
