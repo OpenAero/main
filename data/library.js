@@ -28,12 +28,14 @@
 // - The Value is an OpenAero sequence link (use "File->Save as link" in OpenAero to generate)
 
 let library = {
-    'version': 2025.001,
+    'version': 2025.002,
     '2025 CIVA Unl Free Known':'https://openaero.net/?s=hFVubGltaXRlZIdwb3dlcmVkiEZyZWUgS25vd26JQ0lWQYo0MIswjSJAQSIgLS4ncG4oM2YsMy4nKS4gIkBCIiA0JSAv4CvgYDVzLDI0ric7PmlCcGIo4ODg4CwzaWYnKS4nLDgnLDQgIkBDIiA0OGRoKDQpNWlmJ34gIkBEIiAvfjNqaW8xNS3gICJARSIg4OArpzFhYygnsmApLDOnLDcr4ODgj0NJVkGQMjAyNS4xLjGRZ3JpZDo1',
     '2025 CIVA Adv Free Known':'https://openaero.net/?s=hEFkdmFuY2Vkh3Bvd2VyZWSIRnJlZSBLbm93bolDSVZBijMwizCNIkBBIiAxYGRoKGApJ2YnICJAQiIg4Cvg4OAyZmByYzQ4LeDg4OBgICJAQyIg4Cw4J3BiLjMr4CAiQEQiIH4tNm02Ziy0K2AgIkBFIiAyajKPQ0lWQZAyMDI1LjEuMZFncmlkOjU',
     '2025 CIVA Int Free Known':'https://openaero.net/?s=hEludGVybWVkaWF0ZYdwb3dlcmVkiEZyZWUgS25vd26JQ0lWQYozMIswjSJAQSIgbWYtICJAQiIgLWBoMjQnICJAQyIgYCsxajEgIkBEIiAyZmByYytgICJARSIgYCsnMidycLKPQ0lWQZAyMDI1LjEuMZFncmlkOjU',
     '2025 CIVA-Glider Unl Free Known':'https://openaero.net/?s=hFVubGltaXRlZIdnbGlkZXKIS25vd26JQ0lWQYoyNYswjSJAQSIgaWcyaWYgIkBCIiBvZiAiQEMiIGsyICJARCIgJzRycCgyKTIgIkBFIiAxajGPQ0lWQZAyMDI1LjEuMZFncmlkOjU',
     '2025 CIVA-Glider Adv Free Known':'https://openaero.net/?s=hEFkdmFuY2Vkh2dsaWRlcohLbm93bolDSVZBijIwizCNIkBBIiAtMnQgIkBCIiA2cyAiQEMiILJjMiAiQEQiIDJpcCAiQEUiIDItj0NJVkGQMjAyNS4xLjGRZ3JpZDo1',
+
+    '2025 AAC Int Free Known':'https://openaero.net/?s=gUFVU4RJbnRlcm1lZGlhdGWFQXVzdHJhbGlhhjIwMjWHcG93ZXJlZIhGcmVlIEtub3duiUNJVkGKMzCLMI0iQEEiIG0xLSAoMCw2KSAiQEIiIDRoNCAoMCw3KSAiQEMiIDFqMSAoMCw4KSAiQEQiIDJmcmMgKDAsMTMpICJARSIgcnCyj0FBQ5AyMDI1LjEuMZFncmlkOjU',
 
     '2025 NZAC Primary Known':'https://openaero.net/?s=hFByaW1hcnmFTlpBQyAyMDI0LzI1h3Bvd2VyZWSIS25vd26JTlpBQ4ozjTUlIGQg_ml2LnMuJ6t-IC0xJSCuri6nY66uLDKuritgIDYlIG_-IH6rK64uJ2iurqsrfiCuLicxq_6PTlpBQ5AyMDI0LjEuM5FC',
     '2025 NZAC Primary Known II':'https://openaero.net/?s=hFByaW1hcnmFTlpBQyAyMDI0LzI1h3Bvd2VyZWSIS25vd24gSUmJTlpBQ4ozjEtub3duIElJjTUlIGQg_ml2LnMuJ6t-IC0xJSCuri6nY66uLDKuritgIDYlIG_-IH6rK64uJ2iurqsrfiCuLicxq_6PTlpBQ5AyMDI0LjEuMTGRQg',

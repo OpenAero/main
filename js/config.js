@@ -51,6 +51,7 @@ const versionNew = {
     ['Added four NZAC sequences for 2025', 2],
     ['Added rule and library downloading from openaero.net, allowing quicker updates', 3],
     ['Added 2025 CIVA sequences and updated CIVA rules', 4],
+    ['Added 2025 AAC Intermediate Free Known figures', 3],
   ],
   '2024.1.4': [
     ['Added 2024 IAC sequences', 3],

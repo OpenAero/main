@@ -23,6 +23,14 @@
  * They will override any equivalent css styles in general.css and
  * mobile.css */
 
+/* Prevent text size adjustments by OS */
+html, body {
+  text-size-adjust: none;
+  -webkit-text-size-adjust: none;
+  -ms-text-size-adjust: none;
+  -moz-text-size-adjust: none;
+}
+
 select {
   background-color: #fff;
 }
@@ -196,6 +204,7 @@ select {
 }
 #leftBlockTabSelector li {
   display: inline-block;
+  line-height: 32px;
   width: 82px; /* for backward compatibility, ignored using flex */
 }
 #leftBlockTop {

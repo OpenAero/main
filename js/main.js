@@ -4654,6 +4654,7 @@ function doOnLoad() {
                     // This will be executed only when the app starts or wasn't active
                     // in the background
                     window.plugins.intent.getCordovaIntent(cordovaHandleIntent);
+
                     // Correctly set status bar in 2 seconds
                     setTimeout(function(){
                         StatusBar.overlaysWebView(false);
@@ -4841,26 +4842,23 @@ function doOnLoad() {
     if (platform.smallMobile) selectTab('tab-sequenceInfo');
 
     // Enable hiding dialogs by tapping outside dialog, but not in scrollbars
-    var els = document.getElementsByClassName('boxbg');
-    for (let i = els.length - 1; i >= 0; i--) {
-        els[i].addEventListener('mousedown', function (e) {
+    for (const el of document.getElementsByClassName('boxbg')) {
+        el.addEventListener('mousedown', function (e) {
             if (e.target && e.target.classList &&
                 e.target.classList.contains('boxbg') &&
                 (e.target.clientWidth >= e.clientX) &&
                 (e.target.clientHeight >= e.clientY)) {
                 this.classList.add('noDisplay');
             }
-        }
-        );
+        });
     }
 
     // Similarly, enable hiding the top dialog by using the Android back button
     if (platform.android) {
         document.addEventListener("backbutton", function() {
-            var els = document.getElementsByClassName('boxbg');
-            for (let i = els.length - 1; i >= 0; i--) {
-                if (!els[i].classList.contains('noDisplay')) {
-                    els[i].classList.add('noDisplay');
+            for (const el of document.getElementsByClassName('boxbg')) {
+                if (!el.classList.contains('noDisplay')) {
+                    el.classList.add('noDisplay');
                     return;
                 }
             }
@@ -4868,21 +4866,20 @@ function doOnLoad() {
     }
 
     // Enable expansion panel toggles
-    var els = document.getElementsByClassName('expand-toggle');
-    for (let i = els.length - 1; i >= 0; i--) {
-        if (els[i].parentNode.id === 'rulesLabel') {
-            els[i].parentNode.addEventListener('mousedown', () => {
+    for (const el of document.getElementsByClassName('expand-toggle')) {
+        if (el.parentNode.id === 'rulesLabel') {
+            el.parentNode.addEventListener('mousedown', () => {
                 $('rulesLabel').parentNode.classList.toggle('expanded');
                 panelHeader($('activeRules'));
             }
             );
-        } else if (els[i].parentNode.id === 'contestLabel') {
-            els[i].parentNode.addEventListener('mousedown', () => {
+        } else if (el.parentNode.id === 'contestLabel') {
+            el.parentNode.addEventListener('mousedown', () => {
                 $('contestLabel').parentNode.classList.toggle('expanded');
                 panelHeader($('activeContest'), userText.contest);
             });
         } else {
-            els[i].parentNode.addEventListener('mousedown', function (e) {
+            el.parentNode.addEventListener('mousedown', function (e) {
                 e.target.parentNode.parentNode.classList.toggle('expanded');
             });
         }
