@@ -563,7 +563,8 @@ var blobURL = URL.createObjectURL(new Blob(['(',
           } else if (rules[i].match(/^allow=/)) {
             // Apply 'allow' rules
             const
-              newCat = rules[i].replace(/^allow=/, '').match(/^[^\s]*/g),
+              newCatLine = rules[i].replace(/^allow=/, ''),
+              newCat = newCatLine.match(/^[^\s]*/g),
               newRules = newCatLine.replace(newCat, '').split(';');
             for (let j = 0; j < newRules.length; j++) {
               newRules[j] = newRules[j].replace(/^\s+|\s+$/g, '');
@@ -790,14 +791,15 @@ var blobURL = URL.createObjectURL(new Blob(['(',
       if (checkAllowRegex) {
         for (const car of checkAllowRegex) {
           for (const f of fig) {
-            if (f.aresti && car.regex.test(f.aresti) && !(f.aresti in checkAllowCatId)) {
+            if (f && f.aresti && car.regex.test(f.aresti) && !(f.aresti in checkAllowCatId)) {
               checkAllowCatId[f.aresti] = (car.rules.length == 0) ? [] : car.rules;
             }
           }
 
-          for (const f of rollFig) {
-            if (car.regex.test(f.aresti) && !(f.aresti in checkAllowCatId)) {
-              checkAllowCatId[f.aresti] = [];
+          // rollFig is not iterable, use ...in..., not ...of...
+          for (const key in rollFig) {
+            if (car.regex.test(rollFig[key].aresti) && !(rollFig[key].aresti in checkAllowCatId)) {
+              checkAllowCatId[rollFig[key].aresti] = [];
             }
           }
         }
