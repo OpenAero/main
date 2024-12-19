@@ -291,6 +291,7 @@ lang.en = {
   qLoops              : '8.7 "Q" Loops',
   doubleHumptyBumps   : '8.8 Double Humpty Bumps',
   reversing114Loops   : '8.10 Reversing 1 1/4 Loops',
+  cubanVertical       : '8.11 Cuban-vertical combinations',
   rollsAndSpins       : '9 Rolls and spins',
   nonArestiCatalog    : '0 non-Aresti catalog'
 },
@@ -612,8 +613,13 @@ lang.en = {
 	'Third roll position',
 	'Fourth roll position'],
 'rollSmall' : 'Small',
-'rollsSpinsExplain' : 'To add rolls or spins, select a base figure ' +
-	'(e.g. from family 1) and add the roll or spin onto it',
+'rollsSpinsExplain' :
+  `To add rolls or spins, select a base figure (e.g. from family 1)
+  and add the roll or spin onto it. According the Aresti catalog,
+  upright spins can only start from upright flight and inverted
+  spins only from inverted flight. Suitable base figures then proceed
+  into a vertical descending line, onto which the spin can be added.
+  See examples below.`,
 'rollSymbolLarge' : 'Large',
 'rollSymbolMedium' : 'Medium',
 'rollSymbolSize' : 'Roll symbol size',

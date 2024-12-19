@@ -5428,28 +5428,6 @@ function addEventListeners() {
 function addMenuEventListeners() {
     const id = uniqueId();
     workerCallback[id] = function () {
-        // menu showing and hiding. Add listeners to all <li> menu items
-        function addListeners(e) {
-            const li = e.getElementsByTagName('li');
-            for (let i = 0; i < li.length; i++) {
-                if (platform.mobile) {
-                    li[i].addEventListener('mousedown', menuActive);
-                } else {
-                    li[i].addEventListener('mouseover', menuActive);
-                    li[i].addEventListener('mouseout', menuInactive);
-                }
-                if (!/^zoom.+/.test(li[i].id)) {
-                    checkUL: {
-                        const els = li[i].childNodes;
-                        for (const j in els) {
-                            if (els[j].tagName && (els[j].tagName === 'UL')) break checkUL;
-                        }
-                        li[i].addEventListener('mouseup', menuTouch);
-                    }
-                }
-            }
-        }
-
         addListeners($('menu'));
 
         // Load the mobile interface when applicable, but not on Cordova, where it can be
@@ -5469,6 +5447,28 @@ function addMenuEventListeners() {
         }
     }
     rulesWorker.postMessage({ action: false, callbackId: id });
+}
+
+// menu showing and hiding. Add listeners to all <li> menu items
+function addListeners(e) {
+    const li = e.getElementsByTagName('li');
+    for (let i = 0; i < li.length; i++) {
+        if (platform.mobile) {
+            li[i].addEventListener('mousedown', menuActive);
+        } else {
+            li[i].addEventListener('mouseover', menuActive);
+            li[i].addEventListener('mouseout', menuInactive);
+        }
+        if (!/^zoom.+/.test(li[i].id)) {
+            checkUL: {
+                const els = li[i].childNodes;
+                for (const j in els) {
+                    if (els[j].tagName && (els[j].tagName === 'UL')) break checkUL;
+                }
+                li[i].addEventListener('mouseup', menuTouch);
+            }
+        }
+    }
 }
 
 // checkForApp will check the platform and present appropriate
@@ -6058,6 +6058,7 @@ function addProgrammeToMenu(key) {
 function setOptions() {
     // add programme entries
     function loadLibrary () {
+        removeChildNodes($('library'));
         for (const key in library) {
             if (key !== 'version') addProgrammeToMenu(key);
         }
@@ -6073,25 +6074,31 @@ function setOptions() {
         library = storedLibrary;
     }
     // Check library version on openaero.net
-    const xhr = new XMLHttpRequest ();
-    xhr.timeout = 5000;
-    xhr.onload = () => {
-        if (xhr.responseText) {
-            // newer, load library from openaero.net
-            console.log('Loading library from openaero.net...')
-            library = new Function(
-                `"use strict";
-                ${xhr.responseText};
-                return library;`
-            )();
-            // save loaded library in DB, including version
-            localStorage.setItem ('library', JSON.stringify (library));
-        }
-        loadLibrary();
-    };
-    xhr.onerror = xhr.ontimeout = loadLibrary;
-    xhr.open('GET', `https://openaero.net/openaero.php?library=${library.version}`, true);
-    xhr.send();
+    function checkLibraryUpdate (firstRun) {
+        const xhr = new XMLHttpRequest ();
+        xhr.timeout = 5000;
+        xhr.onload = () => {
+            if (xhr.responseText) {
+                // newer, load library from openaero.net
+                console.log('Loading library from openaero.net...')
+                library = new Function(
+                    `"use strict";
+                    ${xhr.responseText};
+                    return library;`
+                )();
+                // save loaded library in DB, including version
+                localStorage.setItem ('library', JSON.stringify (library));
+            }
+            loadLibrary();
+            if (!firstRun) addListeners($('library'));
+        };
+        xhr.onerror = xhr.ontimeout = ()=>{if (firstRun) loadLibrary()};
+        xhr.open('GET', `https://openaero.net/openaero.php?library=${library.version}`, true);
+        xhr.send();
+    }
+    checkLibraryUpdate(true);
+    // Check for an update every hour
+    setInterval(checkLibraryUpdate, 3600000);
 
     // Update menu headers for mobile
     if (platform.mobile) mobileMenuHeader();
@@ -6137,29 +6144,29 @@ function setOptions() {
 // Returns an object containing the loaded settings, or
 // false if no settings were loaded
 function loadSettingsXML(xml) {
-    var s = {};
+    const settings = {};
     if (xml) {
-        // myElement will hold every entry as a node
-        var myElement = document.createElement('div');
-        // myTextArea will translate HTML escape characters to regular ones
-        var myTextArea = document.createElement('textarea');
-        myElement.innerHTML = xml;
-        var rootNode = myElement.getElementsByTagName("sequence")[0];
+        // settingsDiv will hold every entry as a node
+        const settingsDiv = document.createElement('div');
+        settingsDiv.innerHTML = xml;
+        // textArea will translate HTML escape characters to regular ones
+        const textArea = document.createElement('textarea');
+        const rootNode = settingsDiv.getElementsByTagName("sequence")[0];
         if (!rootNode) return false;
-        var settings = rootNode.getElementsByTagName("settings")[0];
-        if (!settings) return false;
-        var nodes = settings.getElementsByTagName("setting");
+        const settingNodes = rootNode.getElementsByTagName("settings")[0];
+        if (!settingNodes) return false;
         // Put every element in the correct field
-        for (let i = 0; i < nodes.length; i++) {
-            var key = nodes[i].getElementsByTagName("key")[0].textContent;
-            var val = nodes[i].getElementsByTagName("value")[0].innerHTML;
+        for (const node of settingNodes.getElementsByTagName("setting")) {
+            const
+                key = node.getElementsByTagName("key")[0].textContent,
+                val = node.getElementsByTagName("value")[0].innerHTML;
             // only adjust settings that are in loadSettings (config.js)
             if (loadSettings.indexOf(key) != -1) {
                 if (val) {
-                    // translate escape characters by browser through myTextArea
-                    myTextArea.innerHTML = val;
+                    // translate escape characters by browser through textArea
+                    textArea.innerHTML = val;
                     // e will be the field, only put a value when it exists
-                    var e = $(key);
+                    const e = $(key);
                     if (e) {
                         if (e.type === 'checkbox') {
                             if (val === 'true') {
@@ -6168,15 +6175,15 @@ function loadSettingsXML(xml) {
                                 e.removeAttribute('checked');
                             }
                         } else {
-                            e.value = myTextArea.value;
+                            e.value = textArea.value;
                         }
-                        s[key] = myTextArea.value;
+                        settings[key] = textArea.value;
                     }
                 }
             }
         }
     }
-    if (s != {}) return s; else return false;
+    if (settings != {}) return settings; else return false;
 }
 
 // loadSettingsStorage will load the settings from storage
@@ -9074,7 +9081,7 @@ function availableFigureGroups() {
         fig.forEach (f => {
             if (Object.keys(checkAllowCatId).length === 0 || f.aresti in checkAllowCatId ||
             (activeRules && ($('hideIllegal').checked == false))) {
-                if (!checkRarelyUsed(f)) {
+                if (!checkRarelyUsed(f) && options[f.group]) {
                     options[f.group].classList.remove('noDisplay');
                     options[f.group].disabled = false;
                 }
@@ -9121,7 +9128,14 @@ function changeFigureGroup() {
     // set the correct size and row count for the figure thumbnails
     if (figGroup[figureGroup].family == 9) { // rolls and spins group
         $('figureChooserColumns').classList.add('noDisplay');
-        table.innerHTML = `<span class="userText" id="t_rollsSpinsExplain">${userText['rollsSpinsExplain']}</span>`;
+        table.innerHTML = `
+            <div class="userText" id="t_rollsSpinsExplain">
+                ${userText['rollsSpinsExplain']}
+            </div>
+            <div>
+                <img src=assets/images/single_spin.svg style="width: 49%">
+                <img src=assets/images/single_inverted_spin_on_rp.svg style="width: 49%">
+            </div>`;
         return;
     } else if (figureGroup != 0) { // normal Aresti group
         var
@@ -10546,7 +10560,7 @@ function setFigChooser(figNr) {
         // First look for the earliest figure with the correct Aresti code
         // as the same code may be used more than once (e.g. j and 1j)
         for (let i = 0; i <= figNr; i++) {
-            if (fig[i] && (fig[i].aresti == fig[figNr].aresti)) {
+            if (fig[i] && (fig[i].aresti == fig[figNr].aresti) && $(`figureChooser${i}`)) {
                 const td = $(`figureChooser${i}`).parentNode;
                 td.classList.add('selected');
                 // Set the vertical offset of the <tr> in which the element is
@@ -12530,8 +12544,10 @@ function makeFormGrid(cols, width, svg = SVGRoot) {
             }
         }
 
-        entryExit.Entry[fig[f.figNr].entryExitPower[0]]++;
-        entryExit.Exit[fig[f.figNr].entryExitPower[1]]++;
+        if (fig[f.figNr].entryExitPower) {
+            entryExit.Entry[fig[f.figNr].entryExitPower[0]]++;
+            entryExit.Exit[fig[f.figNr].entryExitPower[1]]++;
+        }
     }
 
     $('gridTotalK').innerText = totalK;
@@ -16302,7 +16318,7 @@ function addFormElementsLR(svg, print) {
                 break;
             default:
                 // Move wind arrow right of logo if the logo extends below header block
-                var rightOfLogo = (logoWidth > 0 && logoSvg.getBBox().height > 70) ? logoWidth : 0;
+                const rightOfLogo = (logoWidth > 0 && logoSvg.getBBox().height > 70) ? logoWidth : 0;
                 bBox = drawWind(45 + rightOfLogo, 75, -0.8, svg);
                 drawText('L', 20 + rightOfLogo, 105, 'formATextBoldHuge', 'middle', '', svg);
         }
@@ -16331,7 +16347,7 @@ function addFormElementsLR(svg, print) {
 
     // when downscaling more than 10%, adjust roll font size and redraw
     if (scaleX < 0.9) {
-        var redrawSVG = adjustRollFontSize(scaleX, svg);
+        const redrawSVG = adjustRollFontSize(scaleX, svg);
         // remove wind arrow
         redrawSVG.querySelectorAll('#windArrow').forEach(el => el.remove());
         sequence.innerHTML = redrawSVG.getElementById('sequence').innerHTML;
@@ -18518,7 +18534,8 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
         entryDir: entryDir,
         exitAtt: Attitude,
         exitDir: Direction,
-        family: lang.en.figureGroups[figGroup[fig[figNr].group].name],
+        family: figGroup[fig[figNr].group] ?
+            lang.en.figureGroups[figGroup[fig[figNr].group].name] : '',
         k: kFactors,
         paths: paths,
         rolls: roll,
@@ -18948,14 +18965,15 @@ function updateXYFlip(m, n) {
 
 // parseSequence parses the sequence character string
 function parseSequence() {
-    var
+    const userBuiltRegex = /^\$(\d+\.\d+\.[\d\.]+)?(\(.+\))?([+-].+)$/;
+    let
         seqNr = 1,
         subSequence = false,
         comments = false,
         figure = '',
+        base = '',
         formBDirection = 0,
-        match = false,
-        userBuiltRegex = /^\$(\d+\.\d+\.[\d\.]+)?(\(.+\))?([+-].+)$/;
+        match = false;
 
     // Clear the figureStart array
     figureStart = [];
@@ -18972,7 +18990,7 @@ function parseSequence() {
     figures = activeSequence.figures;
 
     // Find out where the sequence changed
-    var changePoints = comparePreviousSequence();
+    const changePoints = comparePreviousSequence();
 
     // Remove user-built figures from end of fig object, if applicable
     for (let i = fig.length - 1; i > 0; i--) {
@@ -18992,8 +19010,7 @@ function parseSequence() {
         // on Y axis on Form B
         if (/^G/.test(activeForm) && !(
             (seqNr == 1 && Direction != 0) || subSequence)) {
-            formBDirection += Direction;
-            if (formBDirection >= 360) formBDirection -= 360;
+            formBDirection = (formBDirection + Direction) % 360;
             if ((formBDirection === 90) || (formBDirection === 270)) {
                 // switch > and ^. Use temporary placeholder #
                 figure = figure.replace(regexSwitchDirY, '#').
@@ -19020,9 +19037,9 @@ function parseSequence() {
         }
 
         // If this is a user-built figure, append it to fig object
-        var match = figure.match(userBuiltRegex);
+        match = figure.match(userBuiltRegex);
         if (match) { // under development, DISABLE FOR PRODUCTION!
-            var rolls = match[3].match(/\([^)]*\)/g) || [];
+            const rolls = match[3].match(/\([^)]*\)/g) || [];
             fig.push({
                 // Don't allow official Aresti numbers
                 aresti: 'non-Aresti ' + ((arestiToFig[match[1]] || rollArestiToFig[match[1]]) ? '' : (match[1] || '')),
@@ -19040,7 +19057,7 @@ function parseSequence() {
             // simplify the string
 
             // replace `+ by forwardshorten for entry
-            var shorten = figure.match(regexEntryShorten);
+            let shorten = figure.match(regexEntryShorten);
             if (shorten) {
                 figure = figure.replace(regexEntryShorten,
                     new Array(shorten[0].length - shorten[1].length).join(userpat.forwardshorten) +
@@ -19048,14 +19065,14 @@ function parseSequence() {
             }
 
             // replace +` by forwardshorten for exit
-            var shorten = figure.match(regexExitShorten);
+            shorten = figure.match(regexExitShorten);
             if (shorten) {
                 figure = figure.replace(regexExitShorten, shorten[1] +
                     new Array(shorten[0].length - shorten[1].length).join(userpat.forwardshorten));
             }
 
             // replace `- by forwardshorten for negative entry
-            var shorten = figure.match(regexEntryShortenNeg);
+            shorten = figure.match(regexEntryShortenNeg);
             if (shorten) {
                 figure = figure.replace(regexEntryShortenNeg,
                     new Array(shorten[0].length - shorten[1].length + 1).join(userpat.forwardshorten) +
@@ -19063,7 +19080,7 @@ function parseSequence() {
             }
 
             // replace -` by forwardshorten for negative exit
-            var shorten = figure.match(regexExitShortenNeg);
+            shorten = figure.match(regexExitShortenNeg);
             if (shorten) {
                 figure = figure.replace(regexExitShortenNeg, shorten[1] +
                     new Array(shorten[0].length - shorten[1].length + 1).join(userpat.forwardshorten));
@@ -19143,9 +19160,9 @@ function parseSequence() {
                 f.paths = buildShape('TextBlock', figure.replace(RegExp(userpat.comment, 'g'), ''), []);
                 f.unknownFigureLetter = unknownFigureLetter;
                 // set comments, to be applied to the next real figure
-                comments = figure.replace(RegExp(userpat.comment, 'g'), '');
-                // remove unknownFigureLetter from comments when applicable
-                comments = comments.replace(/^@[A-L]/, '');
+                comments = figure
+                    .replace(RegExp(userpat.comment, 'g'), '')
+                    .replace(/^@[A-L]/, ''); // remove unknownFigureLetter from comments
             }
         } else if (match = figure.match(/^e(ja?|d|u)$/)) {
             match = match[0];
@@ -19184,10 +19201,11 @@ function parseSequence() {
             }
             f.subSequence = match;
         } else {
-            if (userBuiltRegex.test(figure)) {
+            match = figure.match(userBuiltRegex);
+            if (match) {
                 // Draw user-built figure
                 // Update figure string to the correct format
-                match = figure.match(userBuiltRegex);
+                const rolls = match[3].match(/\([^)]*\)/g) || [];
                 figure = (rolls.pop() || '').replace(/[\(\)]/g, '') + '+';
                 figure = (
                     match[3][0] +
@@ -19195,12 +19213,12 @@ function parseSequence() {
                     'x' +
                     figure
                 ).replace ('x', 'x' + rolls.join(''));
-                var base = fig[fig.length-1].base;
+                base = fig[fig.length-1].base;
                 figNrs = [fig.length-1];
             } else {
                 // Determination of the base
                 // Remove any comments inside the figure and all non-alphabet characters (except -)
-                var base = figure.replace(regexComments, '').replace(/[^a-zA-Z\-]+/g, '');
+                base = figure.replace(regexComments, '').replace(/[^a-zA-Z\-]+/g, '');
                 // Replace any x> format to move forward by x times >
                 if (regexMoveForward.test(figure)) {
                     var moveFwd = fig.match(regexMoveForward)[0];
@@ -19303,7 +19321,7 @@ function parseSequence() {
                     // add country when applicable
                     var country = false;
                     // check for three-letter flag country in separate "word"
-                    var match = comments.match(/\b[A-Z]{3}\b/g);
+                    match = comments.match(/\b[A-Z]{3}\b/g);
                     if (match) {
                         for (let j = match.length - 1; j >= 0; j--) {
                             // check for IOC countries first
