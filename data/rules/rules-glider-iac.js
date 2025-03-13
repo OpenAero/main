@@ -38,10 +38,12 @@
  * 2020.1.3: Added floating point correction for Glider Advanced Known
  * 2021.1.7: Fixed group-halfroll definition and improved description
  * 2024.1.4: Updated Adv and Unl positioning to 20 / 25 for all programs
+ * 2025.1.3
+ * - Corrected Advanced Unknown max figure K to 160
 */
 
 rules.push (
-"year=2024",
+"year=2025",
 //###############################################################################
 //#### IAC Glider Sportsman KNOWN ###############################################
 //###############################################################################
@@ -260,7 +262,7 @@ rules.push (
 "posnl=20",
 "basefig-max=9",
 "basefig-min=7",
-"k-max=145",
+"k-max=160",
 "k-maxperfig=35",
 "k-maxperfig-rule=IAC Rule 5.5.7",
 "emptyline-max=0",

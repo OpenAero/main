@@ -105,6 +105,9 @@ OpenAero 2016.1
  * 2025.1.1
  * - Implemented 2024 CIVA plenary NP2025-15 Parts 1 and 5, NP2025-17, NP2025-19
  * - Updated reference sequences for 2025
+ * 2025.1.3
+ * - Added k-min to all Free Known sequences to match the Known master set
+ *   Minimum Total K
 */
 
 rules.push (
@@ -141,6 +144,7 @@ rules.push (
 
 // Maximum K-Factor and number of figures acc. to CIVA Section 6 Part 2 Ch. 2.2.1.5
 //======================================================================================
+"k-min=115", // Known master set Minimum Total K (2.2.1.3)
 "k-max=233",	// maximum k-factor including maximum floating points
 "basefig-min=10",	// exactly 10 base figures per sequence
 "basefig-max=10",
@@ -984,6 +988,7 @@ rules.push (
 
 // Maximum K-Factor and number of figures acc. to CIVA Section 6 Part 2 Ch. 2.2.1.5
 //======================================================================================
+"k-min=87", // Known master set Minimum Total K (2.2.1.3)
 "k-max=178",	// 2014 : maximum k-factor + maximum floating points
 "basefig-min=10",	// exactly 10 base figures per sequence
 "basefig-max=10",

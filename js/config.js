@@ -40,13 +40,18 @@ This file is part of OpenAero.
  A new x must be used for versions that create sequences not
  fully backward compatible with the previous version
 */
-const version = '2025.1.2';
+const version = '2025.1.3';
 // versionNew is an object that contains version update information
 // The structure is {vvv : [[ttt, n], ...], ...} , where
 // vvv = version number
 // ttt = update text
 // n   = importance (higher = more important)
 const versionNew = {
+  '2025.1.3': [
+    ['Added 2025 SAC Intermediate Free Known figures and rules', 3],
+    ['Added 2025 IMAC sequences', 4],
+    ['Fixed .seq file association and opening on Windows', 3],
+  ],
   '2025.1.2': [
     ['Fixed issue in 2025.1.1 that broke some types of rule checking', 4],
   ],
@@ -258,10 +263,12 @@ const sequenceXMLlabels = [
 // * 
 // **********************************************************************
 
+// MUST USE VAR FOR THESE DEFINITIONS AS CHROME MIGHT BREAK OTHERWISE !!!
+
 // basic line element size
-let lineElement = 10; // Can be changed by scaling
+var lineElement = 10; // Can be changed by scaling
 // basic curve size
-let curveRadius = 40; // Can be changed by scaling
+var curveRadius = 40; // Can be changed by scaling
 const rollSymbolSizes = {'medium': 8, 'large': 12};
 function setRollSymbolSizes (sizeDescription) {
 	window.rollSymbolSize = rollSymbolSizes[sizeDescription];
@@ -294,32 +301,28 @@ function setRollSymbolSizes (sizeDescription) {
 	window.spinElementText = 0.5 + spinElement / 16;
 }
 setRollSymbolSizes('medium');
-// define golden ratio
-Math.GR = 1.618;
-// define A4 page ratio
-Math.PageRatio = 1.4143;
-// Tau is 2 times PI. Saves calculations during runtime
-Math.Tau = Math.PI * 2;
-// degToRad is Pi / 180. Saves calculations for degree to rad conversions
-Math.degToRad = Math.PI / 180;
-Math.radToDeg = 180 / Math.PI;
-// define the offset for figures in the y axis in degrees
-const yAxisOffsetDefault = 30;
-// define the scale factor on the y axis for perspective drawing
-const yAxisScaleFactor = 0.7;
-// how much to flatten turns in the Y axis
-const flattenTurn = 0.7;
-// set scaleLine object to prevent calculations in makeLine
-const scaleLine = {'x':1, 'y':1};
 // define whether to show numbers in circles
-let numberInCircle = false;
-// define whether to show curves in perspective on Y axis
-const curvePerspective = true;
-// how far apart the starts of figures should at least be
-const minFigStartDist = lineElement * 3;
-const minFigStartDistSq = minFigStartDist * minFigStartDist;
-// how much margin to use when automatically separating figures
-const separateMargin = 4;
+var numberInCircle = false;
+const
+  // define the offset for figures in the y axis in degrees
+  yAxisOffsetDefault = 30,
+  // define the scale factor on the y axis for perspective drawing
+  yAxisScaleFactor = 0.7,
+  // how much to flatten turns in the Y axis
+  flattenTurn = 0.7,
+  // set scaleLine object to prevent calculations in makeLine
+  scaleLine = {'x':1, 'y':1},
+  // define whether to show curves in perspective on Y axis
+  curvePerspective = true,
+  // how far apart the starts of figures should at least be
+  minFigStartDist = lineElement * 3,
+  minFigStartDistSq = minFigStartDist * minFigStartDist,
+  // how much margin to use when automatically separating figures
+  separateMargin = 4,
+  // Tau is 2 times PI. Saves calculations during runtime
+  Tau = Math.PI * 2,
+  // degToRad is Pi / 180. Saves calculations for degree to radian conversions
+  degToRad = Math.PI / 180;
 
 /**********************************************************************
  * 
@@ -414,7 +417,7 @@ let
 // *************
 
 // Default roll font size
-let rollFontSize = 20;
+var rollFontSize = 20;
 // Roll sizes. User displayed names are set through index.html and
 // language files
 const rollFont = {'small': 15, 'medium': 20, 'large': 25};
@@ -613,12 +616,6 @@ const negSpinTypes = [
   '6is:1 1/2 neg spin',
   '7is:1 3/4 neg spin',
   '9is:2 neg spin'];
-const gliderRollTypes = [
-  '33:3x3',
-  '63:6x3',
-  '02:1/2 Slow Roll',
-  '01:1 Slow Roll',
-  '06:1 1/2 Slow Roll'];
 
 // **********************************************************************
 // * 

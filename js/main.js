@@ -97,8 +97,6 @@ var fileName;
 var figureK = 0;
 // userText global
 var userText = [];
-// fileList is used for operations that involve multiple files
-var fileList = [];
 
 /** figures is an object that will hold all figure data of the sequence
 format is: figures[i].xxx where:
@@ -162,15 +160,17 @@ platform.touch = (('ontouchstart' in window)
     || (navigator.maxTouchPoints > 0)
     || (navigator.msMaxTouchPoints > 0));
 
-// multi is used for keeping track of multiple sequence check globals
+// multi is used for keeping track of multiple sequence check or print globals
 // processing  : false when multiple sequences are not being processed,
 //               otherwise 'check' or 'print'
+// fileList    : current list of files
 // total       : total number
 // count       : current number
 // savedSeq    : sequence active before starting multi check
 // useReference: use current reference sequence or not
 const multi = {
     processing: false,
+    fileList: [],
     total: 0,
     count: 0,
     savedSeq: '',
@@ -862,6 +862,7 @@ function cordovaPdf(uri, title) {
  *
  *************************************************************/
 
+/*
 // Open associated .seq file in Windows UWP
 if (platform.uwp) {
     Windows.UI.WebUI.WebUIApplication.addEventListener(
@@ -874,6 +875,7 @@ if (platform.uwp) {
             }
         });
 }
+*/
 
 /************************************************
  * User interface functions
@@ -1907,11 +1909,7 @@ function saveDialog(message, name, ext, param = {}) {
             $('t_saveFile').innerText = userText.saveShareFile;
         }
         // Don't show sequence link option if param.noSequenceLink is true
-        if (param.noSequenceLink) {
-            $('saveFileAddSequenceLink').classList.add('hidden');
-        } else {
-            $('saveFileAddSequenceLink').classList.remove('hidden');
-        }
+        $('saveFileAddSequenceLink').classList.toggle ('hidden', param.noSequenceLink);
     } else {
         $('saveDialog').classList.add('noDisplay');
     }
@@ -1950,7 +1948,7 @@ function printDialog(show) {
         });
     } else {
         // clear fileList in case we were in printMultiDialog
-        fileList = [];
+        multi.fileList = [];
         saveImageSizeAdjust();
 
         $('printDialog').classList.add('noDisplay');
@@ -1964,7 +1962,7 @@ function printMultiDialog() {
     menuInactiveAll();
 
     // clear the file list
-    fileList = [];
+    multi.fileList = [];
     multi.processing = false;
     clearFileListContainer($('fileDropPrintFiles'));
 
@@ -2432,7 +2430,7 @@ function getSuperFamily(aresti, category) {
 function dirAttToAngle(dir, att, nof=false) {
     let angle;
     dir = (((dir % 360) + 360) % 360) ; // set range [0, 360>
-    const dirSin = Math.sin(dir * Math.degToRad);
+    const dirSin = Math.sin(dir * degToRad);
 
     // Create offset for the Y-axis, determined by yAxisOffset
     let theta = dir - (nof ? 0 : dirSin * dirSin * (90 - yAxisOffset));
@@ -2447,9 +2445,9 @@ function dirAttToAngle(dir, att, nof=false) {
     // Check for right or left half, calculate angle and make negative for left half.
     // + 0 is required to prevent -0 values
     if ((theta < 90) || (theta > 270)) {
-        angle = ((theta + att + 360) % 360 + 0) * Math.degToRad;
+        angle = ((theta + att + 360) % 360 + 0) * degToRad;
     } else {
-        angle = ((theta - att - 360) % 360 + 0) * Math.degToRad || -Math.Tau;
+        angle = ((theta - att - 360) % 360 + 0) * degToRad || -Tau;
     }
     return angle;
 }
@@ -2654,14 +2652,14 @@ function getFigureStartStyle(f) {
 function makeFigStop(lastFig) {
     let
         paths = { style: 'pos' },
-        angle = (Direction + 90) * Math.degToRad,
+        angle = (Direction + 90) * degToRad,
         dx = roundTwo(Math.cos(angle) * lineElement / scale),
-        dy = - roundTwo(Math.sin(angle) * lineElement / scale);
+        dy = -roundTwo(Math.sin(angle) * lineElement / scale);
     if (lastFig) {
         let
             angle2 = dirAttToAngle(Direction, Attitude),
             dx2 = roundTwo(Math.cos(angle2) * lineElement),
-            dy2 = - roundTwo(Math.sin(angle2) * lineElement);
+            dy2 = -roundTwo(Math.sin(angle2) * lineElement);
         paths.path = `m ${dx2 + dx * 2},${dy2 + dy * 2} l ${-4 * dx},${-4 * dy}`;
         paths.dx = dx2;
         paths.dy = dy2;
@@ -2700,12 +2698,14 @@ function makeVertSpace(extent) {
 // 0: line length
 // 1: handle
 // 2: style
-function makeLine(Params) {
+function makeLine(params) {
+
+    const
+        extent = params[0];
     let
-        Extent = Params[0],
         angle = dirAttToAngle(Direction, Attitude),
-        dx = roundTwo(Math.cos(angle) * lineElement * Extent),
-        dy = - roundTwo(Math.sin(angle) * lineElement * Extent);
+        dx = roundTwo(Math.cos(angle) * lineElement * extent),
+        dy = -roundTwo(Math.sin(angle) * lineElement * extent);
 
     if (((Direction % 180) == 90) && curvePerspective) {
         dx = roundTwo(yAxisScaleFactor * dx);
@@ -2713,21 +2713,21 @@ function makeLine(Params) {
             dy = roundTwo(yAxisScaleFactor * dy);
         }
         if ((Attitude % 90) == 45) {
-            angle -= yAxisOffset * Math.degToRad;
-            dx = roundTwo(scaleLine.x * Math.cos(angle) * lineElement * Extent);
+            angle -= yAxisOffset * degToRad;
+            dx = roundTwo(scaleLine.x * Math.cos(angle) * lineElement * extent);
             if (yAxisOffset > 90) {
-                dy = roundTwo((-scaleLine.y * Math.cos(angle) + Math.sin(angle)) * lineElement * Extent);
+                dy = roundTwo((-scaleLine.y * Math.cos(angle) + Math.sin(angle)) * lineElement * extent);
             } else {
-                dy = - roundTwo((scaleLine.y * Math.cos(angle) + Math.sin(angle)) * lineElement * Extent);
+                dy = -roundTwo((scaleLine.y * Math.cos(angle) + Math.sin(angle)) * lineElement * extent);
             }
             trueDrawingAngle = Math.atan(-dy / dx) + (dx < 0 ? Math.PI : 0);
         }
     } else trueDrawingAngle = angle;
     return [{
         'path': `l ${dx},${dy}`,
-        'style': style[Params[2]] ? Params[2] : (NegLoad == 0) ? 'pos' : 'neg',
+        'style': style[params[2]] ? params[2] : (NegLoad == 0) ? 'pos' : 'neg',
         'class': 'line',
-        'handle': Params[1],
+        'handle': params[1],
         'dx': dx,
         'dy': dy
     }];
@@ -2775,17 +2775,17 @@ function getEllipseParameters(pAngle, yScale) {
     }
     if (yScale == 1) {
         return {
-            'xRadius': Math.sqrt(1 - Math.sin(pAngle * Math.degToRad)),
-            'yRadius': Math.sqrt(1 + Math.sin(pAngle * Math.degToRad)),
+            'xRadius': Math.sqrt(1 - Math.sin(pAngle * degToRad)),
+            'yRadius': Math.sqrt(1 + Math.sin(pAngle * degToRad)),
             'rotAngle': (90 - pAngle) / 2,
-            'hXRadius': Math.sqrt(1 + Math.sin((90 - pAngle) * Math.degToRad)),
-            'hYRadius': Math.sqrt(1 - Math.sin((90 - pAngle) * Math.degToRad)),
+            'hXRadius': Math.sqrt(1 + Math.sin((90 - pAngle) * degToRad)),
+            'hYRadius': Math.sqrt(1 - Math.sin((90 - pAngle) * degToRad)),
             'hRotAngle': - pAngle / 2
         };
     }
     const
-        a = yScale * Math.cos(pAngle * Math.degToRad),
-        b = yScale * Math.sin(pAngle * Math.degToRad);
+        a = yScale * Math.cos(pAngle * degToRad),
+        b = yScale * Math.sin(pAngle * degToRad);
     // Parameters for perspective of elements in the vertical plane
     // (loops or loop parts)
     let theta = (Math.PI + Math.atan(-2 * b / (1 - yScale * yScale))) / 2;
@@ -2835,9 +2835,9 @@ function dirAttToXYAngle(dir, att) {
     // left half
     let angle;
     if ((theta < 90) || (theta > 270)) {
-        angle = ((theta + att + 360) % 360 + 0) * Math.degToRad;
+        angle = ((theta + att + 360) % 360 + 0) * degToRad;
     } else {
-        angle = ((theta - att - 360) % 360 + 0) * Math.degToRad || -Math.Tau;
+        angle = ((theta - att - 360) % 360 + 0) * degToRad || -Tau;
     }
     trueDrawingAngle = angle;
     return angle;
@@ -2898,8 +2898,8 @@ function makeCurve(params) {
             rotAxisEllipse = roundTwo((yAxisOffset < 90) ? perspectiveParam.rotAngle : -perspectiveParam.rotAngle),
             xAxisRadius = roundTwo(perspectiveParam.xRadius * curveRadius),
             yAxisRadius = roundTwo(perspectiveParam.yRadius * curveRadius);
-        dy -= dx * Math.sin(yAxisOffset * Math.degToRad);
-        dx = dx * Math.cos(yAxisOffset * Math.degToRad);
+        dy -= dx * Math.sin(yAxisOffset * degToRad);
+        dx = dx * Math.cos(yAxisOffset * degToRad);
         paths.path = `a${xAxisRadius},${yAxisRadius} ${rotAxisEllipse} ${longCurve} ${sweepFlag} ${roundTwo(dx)},${roundTwo(dy)}`;
     } else {
         if (curveRight == 0) {
@@ -2921,7 +2921,7 @@ function makeRollTopLine() {
     const
         angle = dirAttToAngle(Direction, Attitude + 90),
         dx = roundTwo(Math.cos(angle) * lineElement075),
-        dy = - roundTwo(Math.sin(angle) * lineElement075);
+        dy = -roundTwo(Math.sin(angle) * lineElement075);
     return [{
         path:   `l ${dx},${dy} l ${-2 * dx},${-2 * dy}`,
         style:  'pos',
@@ -2937,8 +2937,8 @@ function makeRollTopLine() {
 // makeTurnArc creates arc segments for turns and rolling circles.
 // Size is in DRAWN rads
 function makeTurnArc(rad, startRad, stopRad, paths) {
-    startRad = ((startRad % Math.Tau) + Math.Tau) % Math.Tau;
-    stopRad = ((stopRad % Math.Tau) + Math.Tau) % Math.Tau;
+    startRad = ((startRad % Tau) + Tau) % Tau;
+    stopRad = ((stopRad % Tau) + Tau) % Tau;
 
     const sign = (rad >= 0) ? 1 : -1;
 
@@ -2947,20 +2947,20 @@ function makeTurnArc(rad, startRad, stopRad, paths) {
         let radEllipse = Math.atan(-1 / (Math.tan(startRad) / flattenTurn));
         // as the atan function only produces angles between -PI/2 and PI/2 we
         // may have to correct for full ellipse range
-        if ((startRad > Math.PI) && (startRad < Math.Tau)) {
+        if ((startRad > Math.PI) && (startRad < Tau)) {
             radEllipse += Math.PI;
         }
         const
             startX = Math.cos(radEllipse) * curveRadius,
-            startY = - (Math.sin(radEllipse) * curveRadius * flattenTurn);
+            startY = -(Math.sin(radEllipse) * curveRadius * flattenTurn);
         // calculate where we go to in the ellipse
         radEllipse = Math.atan(-1 / (Math.tan(stopRad) / flattenTurn));
-        if ((stopRad > Math.PI) && (stopRad < Math.Tau)) {
+        if ((stopRad > Math.PI) && (stopRad < Tau)) {
             radEllipse += Math.PI;
         }
         const
             stopX = Math.cos(radEllipse) * curveRadius,
-            stopY = - (Math.sin(radEllipse) * curveRadius * flattenTurn),
+            stopY = -(Math.sin(radEllipse) * curveRadius * flattenTurn),
             dx = roundTwo(stopX - startX) * sign,
             dy = roundTwo(stopY - startY) * sign,
             sweepFlag = (rad > 0) ? 0 : 1,
@@ -2985,11 +2985,11 @@ function makeTurnArc(rad, startRad, stopRad, paths) {
         let
             dy = yAxisScaleFactor * (Math.cos(stopRad) - Math.cos(startRad));
         const
-            dx = roundTwo((Math.sin(stopRad) - Math.sin(startRad) - dy * Math.cos(yAxisOffset * Math.degToRad)) * curveRadius) * sign,
+            dx = roundTwo((Math.sin(stopRad) - Math.sin(startRad) - dy * Math.cos(yAxisOffset * degToRad)) * curveRadius) * sign,
             sweepFlag = (rad > 0) ? 0 : 1,
             longCurve = (Math.abs(rad) < Math.PI) ? 0 : 1;
 
-        dy = roundTwo(dy * Math.sin(yAxisOffset * Math.degToRad) * curveRadius) * sign;
+        dy = roundTwo(dy * Math.sin(yAxisOffset * degToRad) * curveRadius) * sign;
 
         if ((Attitude > 90) && (Attitude < 270)) {
             paths.push({
@@ -3009,8 +3009,8 @@ function makeTurnArc(rad, startRad, stopRad, paths) {
 // makeTurnDots creates dotted arc segments for turns and rolling circles.
 // Size is in DRAWN rads
 function makeTurnDots(rad, startRad, stopRad, paths) {
-    startRad = ((startRad % Math.Tau) + Math.Tau) % Math.Tau;
-    stopRad = ((stopRad % Math.Tau) + Math.Tau) % Math.Tau;
+    startRad = ((startRad % Tau) + Tau) % Tau;
+    stopRad = ((stopRad % Tau) + Tau) % Tau;
 
     const sign = (rad >= 0) ? 1 : -1;
     if (!$('newTurnPerspective').checked) {
@@ -3018,20 +3018,20 @@ function makeTurnDots(rad, startRad, stopRad, paths) {
         let radEllipse = Math.atan(-1 / (Math.tan(startRad) / flattenTurn));
         // as the atan function only produces angles between -PI/2 and PI/2
         // we may have to correct for full ellipse range
-        if ((startRad > Math.PI) && (startRad < Math.Tau)) {
+        if ((startRad > Math.PI) && (startRad < Tau)) {
             radEllipse += Math.PI;
         }
         const
             startX = Math.cos(radEllipse) * curveRadius,
-            startY = - (Math.sin(radEllipse) * curveRadius * flattenTurn);
+            startY = -(Math.sin(radEllipse) * curveRadius * flattenTurn);
         // calculate where we go to in the ellipse
         radEllipse = Math.atan(-1 / (Math.tan(stopRad) / flattenTurn));
-        if ((stopRad > Math.PI) && (stopRad < Math.Tau)) {
+        if ((stopRad > Math.PI) && (stopRad < Tau)) {
             radEllipse += Math.PI;
         }
         const
             stopX = Math.cos(radEllipse) * curveRadius,
-            stopY = - (Math.sin(radEllipse) * curveRadius * flattenTurn),
+            stopY = -(Math.sin(radEllipse) * curveRadius * flattenTurn),
             dx = roundTwo(stopX - startX) * sign,
             dy = roundTwo(stopY - startY) * sign,
             sweepFlag = (rad > 0) ? 0 : 1,
@@ -3049,11 +3049,11 @@ function makeTurnDots(rad, startRad, stopRad, paths) {
         let
             dy = yAxisScaleFactor * (Math.cos(stopRad) - Math.cos(startRad));
         const
-            dx = roundTwo((Math.sin(stopRad) - Math.sin(startRad) - dy * Math.cos(yAxisOffset * Math.degToRad)) * curveRadius) * sign,
+            dx = roundTwo((Math.sin(stopRad) - Math.sin(startRad) - dy * Math.cos(yAxisOffset * degToRad)) * curveRadius) * sign,
             sweepFlag = (rad > 0) ? 0 : 1,
             longCurve = (Math.abs(rad) < Math.PI) ? 0 : 1;
 
-        dy = roundTwo(dy * Math.sin(yAxisOffset * Math.degToRad) * curveRadius) * sign,
+        dy = roundTwo(dy * Math.sin(yAxisOffset * degToRad) * curveRadius) * sign,
 
         paths.push({
             'path': `a ${xCurveRadius},${yCurveRadius} ${rotAxisEllipse} ${longCurve} ${sweepFlag} ${dx},${dy}`,
@@ -3109,8 +3109,8 @@ function makeTurnRoll(param, rad) {
             ' ' + roundTwo(dx) + ',' + roundTwo(dy) + ' ';
         paths.push({ 'path': path, 'style': 'pos' });
     } else {
-        var perspSin = Math.sin(yAxisOffset * Math.degToRad);
-        var perspCos = Math.cos(yAxisOffset * Math.degToRad);
+        var perspSin = Math.sin(yAxisOffset * degToRad);
+        var perspCos = Math.cos(yAxisOffset * degToRad);
         // get ellipse parameters
         var rotAxisEllipse = (yAxisOffset < 90) ? perspectiveParam.hRotAngle : -perspectiveParam.hRotAngle;
         var xRollcurveRadius = roundTwo(perspectiveParam.hXRadius * turnRollcurveRadius);
@@ -3220,11 +3220,11 @@ function makeTurn(draw) {
             var startRad = dirAttToAngle(Direction, Attitude, true);
         }
     }
-    if (stopRad < 0) stopRad += Math.Tau;
-    if (startRad < 0) startRad += Math.Tau;
+    if (stopRad < 0) stopRad += Tau;
+    if (startRad < 0) startRad += Tau;
     var startRadSave = startRad;
     var rad = sign * stopRad - sign * startRad;
-    if (rad <= 0) rad += Math.Tau;
+    if (rad <= 0) rad += Tau;
     if (numbers.length > 1) {
         // rolling turns
         var steps = 0;
@@ -3260,14 +3260,14 @@ function makeTurn(draw) {
             rollPos++;
         }
         if (extent != 360) {
-            paths = makeTurnDots(sign * (Math.Tau - rad), stopRad, startRadSave, paths);
+            paths = makeTurnDots(sign * (Tau - rad), stopRad, startRadSave, paths);
         }
         changeDir(sign * extent);
     } else {
         // regular turns
         if (extent != 360) {
             paths = makeTurnArc(sign * rad, startRad, stopRad, paths);
-            paths = makeTurnDots(sign * (Math.Tau - rad), stopRad, startRad, paths);
+            paths = makeTurnDots(sign * (Tau - rad), stopRad, startRad, paths);
             // build turn extent text with degree sign in unicode
             // not always exactly centered: fixme: improve code
             if (!$('newTurnPerspective').checked) {
@@ -3989,6 +3989,7 @@ function makeTailslide(param) {
     let
         dx = (angle > 0) ? -radius : radius,
         dy = radius;
+        
     // Make the path and move the cursor
     if (((Direction % 180) == 90) && curvePerspective) {
         var
@@ -4004,8 +4005,8 @@ function makeTailslide(param) {
     } else {
         paths[0].path = `a${radius},${radius} 0 0 ${sweepFlag} ${dx},${dy}`;
     }
-    paths[0].dx = dx;
-    paths[0].dy = dy;
+    paths[0].dx = dx + 0; // Assures the value is maintained, not the reference
+    paths[0].dy = dy + 0; //
     radius = curveRadius / 2;
     dx = (angle > 0) ? radius : -radius;
     dy = radius;
@@ -4054,10 +4055,8 @@ function tspan(line, dy = 14) {
 // It also handles assignment of figure letter codes for Free (un)known
 // operations.
 function makeTextBlock(text) {
-    var
-        paths = [],
-        rotate = false,
-        header = true;
+    const paths = [];
+    let rotate = false;
 
     // handle special code for Free (Un)known figure designation
     let match = text.match(/^@[A-Z]/);
@@ -4091,7 +4090,8 @@ function makeTextBlock(text) {
             lineNr = 0,
             line = '',
             header = true,
-            styleId = 'textBlockBorder';
+            styleId = 'textBlockBorder',
+            d;
 
         // First check for text block reposition {xx,yy}
         let moveXY = text.match(/\{(-?\d+),(-?\d+)\}/) || false;
@@ -4143,8 +4143,9 @@ function makeTextBlock(text) {
         t.appendChild(tspan(line, fontSize));
 
         // Determine final text block size
-        var w = t.getBBox().width;
-        var h = t.getBBox().height;
+        let
+            w = t.getBBox().width,
+            h = t.getBBox().height;
         // If the box will be rotated, swap w and h
         if (rotate) [w,h] = [h,w];
 
@@ -4159,16 +4160,16 @@ function makeTextBlock(text) {
         let s = Math.sin(angle);
         let c = Math.cos(angle);
         if (s == 0) { // horizontal
-            var d = w / 2;
+            d = w / 2;
         } else if (c == 0) { // vertical
-            var d = h / 2;
+            d = h / 2;
         } else { // other, choose shortest
-            var d = Math.min(Math.abs((w / 2) / c), Math.abs((h / 2) / s));
+            d = Math.min(Math.abs((w / 2) / c), Math.abs((h / 2) / s));
         }
 
         // set top-left x and y of the text box
         let x = roundTwo((c * d) - (w / 2)) + (moveXY ? parseInt(moveXY[1]) : 0);
-        let y = - roundTwo((s * d) + (h / 2)) + (moveXY ? parseInt(moveXY[2]) : 0);
+        let y = -roundTwo((s * d) + (h / 2)) + (moveXY ? parseInt(moveXY[2]) : 0);
 
         // set dx and dy for starting the figure after the text box
         let dx = moveXY ? 0 : roundTwo(2 * c * d);
@@ -4184,7 +4185,7 @@ function makeTextBlock(text) {
         // un-rotated text will be in the right position before rotation
         if (rotate) {
             x = roundTwo((c * d) - (h / 2)) + (moveXY ? parseInt(moveXY[1]) : 0);
-            y = - roundTwo((s * d) + (w / 2)) + (moveXY ? parseInt(moveXY[2]) : 0);
+            y = -roundTwo((s * d) + (w / 2)) + (moveXY ? parseInt(moveXY[2]) : 0);
         }
         paths.push({ 'textBlock': t, 'x': x, 'y': y, 'dx': dx, 'dy': dy, 'r': rotate });
 
@@ -4279,16 +4280,16 @@ function buildShape(shapeName, Params, paths = []) {
 // prev, if provided, should hold the contents and bounding box of a
 // previous text element to avoid.
 function drawShape(paths, svgElement, prev) {
-    var cur = false;
+    let cur = false;
     svgElement = svgElement || SVGRoot.getElementById('sequence');
 
     // decide if we are drawing a path or text or starting a figure
     if (paths.path) {
-        var path = document.createElementNS(svgNS, "path");
+        const path = document.createElementNS(svgNS, "path");
         path.setAttribute('d', `M ${roundTwo(X)},${roundTwo(Y)} ${paths.path}`);
 
         function pathStyle(styleList) {
-            var styleStrings = [];
+            const styleStrings = [];
             for (let i = 0; i < styleList.length; i++) styleStrings.push(style[styleList[i]]);
             return styleStrings.join(';');
         };
@@ -4730,7 +4731,7 @@ function doOnLoad() {
         launchQueue.setConsumer(async (launchParams) => {
             if (launchParams.files) {
                 loadedSequenceWindows (
-                    URL.createObjectURL(await launchParams.files[0].getFile()),
+                    await launchParams.files[0].getFile(),
                     launchParams.files[0].name
                 )
             }
@@ -4798,17 +4799,7 @@ function doOnLoad() {
     // Set OpenAero version for saving
     $('oa_version').value = version;
 
-    // add Team select list
-    const
-        fragment = document.createDocumentFragment(),
-        sortKeys = Object.keys(iocCountriesReverse).sort();
-    sortKeys[-1] = '';
-    for (let i = -1; i < sortKeys.length; i++) {
-        const option = document.createElement('option');
-        option.value = option.text = sortKeys[i];
-        fragment.appendChild(option);
-    }
-    $('team').appendChild(fragment);
+    populateTeamSelectList();
 
     // Load sequence from URL if sequence GET element is set.
     // Reload with clean url if storage is true
@@ -5816,13 +5807,21 @@ function buildPlusMinElement(id, value, el) {
 
 // addRollSelectElement adds roll select elements to the parent element
 function addRollSelectElement(figNr, rollEl, elNr, parent) {
-    var
-        thisRoll = figures[figNr].rollInfo[rollEl],
-        thisAttitude = rollAttitudes[thisRoll.attitude],
+    const
         ruleCheckRolls = activeRules && (Object.keys(checkAllowCatId).length > 0),
-        pattern = '',
         span = document.createElement('span'),
+        thisRoll = figures[figNr].rollInfo[rollEl];
+    let
+        thisAttitude = rollAttitudes[thisRoll.attitude],
+        pattern = '',
         html = `<div class="form-group"><select id="roll${rollEl}-${elNr}" class="rollSelect disableRollFUfig">`;
+
+    // Determine roll K dependent on pitch attitude and sporting class
+    function rollK(attRoll) {
+        if (rollFig[attRoll]) {
+            return (rollFig[attRoll][sportingClass.value === 'glider' ? 'kGlider' : 'kPwrd']);
+        } else return 0;
+    }
 
     span.classList.add('rollElement');
 
@@ -5831,55 +5830,46 @@ function addRollSelectElement(figNr, rollEl, elNr, parent) {
 
     // build the aileron roll options
     rollTypes.forEach ((r, i) => {
-        let roll = r.split(':');
+        const roll = r.split(':');
         // only show no roll, active roll and valid rolls
-        if (i == 0 || roll[0] == pattern || !ruleCheckRolls ||
-            $('nonArestiRolls').checked ||
-            (rollFig[thisAttitude + roll[0]].aresti) in checkAllowCatId) {
+        if ($('nonArestiRolls').checked || i == 0 || roll[0] == pattern || (
+            (!ruleCheckRolls || (rollFig[thisAttitude + roll[0]].aresti) in checkAllowCatId) &&
+            (rollK(thisAttitude + roll[0]) != 0)
+        )) {
             html += `<option value="${roll[0]}" class="rollSelectOption"`;
             if (roll[0] == pattern) html += ' selected="selected"';
             html += `>${roll[1]}</option>`;
         }
     });
 
-    // Build the positive flick options. Also allow opposite attitude as
+    // Build the flick options. Also allow opposite attitude as
     // flick may have been proceeded by half roll, except on vertical
     thisAttitude = (thisRoll.negLoad ? '-' : '+') +
         rollAttitudes[thisRoll.attitude];
-    var oppAttitude = (thisRoll.negLoad ? '+' : '-') +
+    const oppAttitude = (thisRoll.negLoad ? '+' : '-') +
         rollAttitudes[(thisRoll.attitude + 180) % 360];
 
-    posFlickTypes.forEach(r => {
-        let
-            roll = r.split(':'),
-            rollPattern = roll[0].replace(/^1/, '');
+    [posFlickTypes, negFlickTypes].forEach (type => {
+        type.forEach(r => {
+            const
+                roll = r.split(':'),
+                rollPattern = roll[0].replace(/^1/, ''),
+                flickType = /i/.test (rollPattern) ? 'negFlickSelectOption' : 'posFlickSelectOption';
 
-        if (rollPattern == pattern || !ruleCheckRolls ||
-            $('nonArestiRolls').checked ||
-            (rollFig[thisAttitude + roll[0]].aresti) in checkAllowCatId ||
-            (((thisRoll.attitude % 180) != 90 &&
-            rollFig[oppAttitude + roll[0]].aresti) in checkAllowCatId)) {
-            html += `<option value="${rollPattern}" class="posFlickSelectOption"`;
-            if (rollPattern == pattern) html += ' selected="selected"';
-            html += `>${roll[1]}</option>`;
-        }
-    });
+            if (rollPattern == pattern || $('nonArestiRolls').checked ||
+                (
+                    (rollK(thisAttitude + roll[0]) != 0) &&
+                    (!ruleCheckRolls || (rollFig[thisAttitude + roll[0]].aresti) in checkAllowCatId)
+                ) || (
+                    ((thisRoll.attitude % 180) != 90) && (rollK(oppAttitude + roll[0]) != 0) &&
+                    (!ruleCheckRolls || (rollFig[oppAttitude + roll[0]].aresti) in checkAllowCatId)
+                )) {
 
-    // Build the negative flick options. Also allow opposite attitude as
-    // flick may have been proceeded by half roll, except on vertical
-    negFlickTypes.forEach (r => {
-        let
-            roll = r.split(':'),
-            rollPattern = roll[0].replace(/^1/, '');
-        if (rollPattern == pattern || !ruleCheckRolls ||
-            $('nonArestiRolls').checked ||
-            (rollFig[thisAttitude + roll[0]].aresti) in checkAllowCatId ||
-            (((thisRoll.attitude % 180) != 90 &&
-            rollFig[oppAttitude + roll[0]].aresti) in checkAllowCatId)) {
-            html += `<option value="${rollPattern}" class="negFlickSelectOption"`;
-            if (rollPattern == pattern) html += ' selected="selected"';
-            html += `>${roll[1]}</option>`;
-        }
+                html += `<option value="${rollPattern}" class="${flickType}"`;
+                if (rollPattern == pattern) html += ' selected="selected"';
+                html += `>${roll[1]}</option>`;
+            }
+        })
     });
 
     // add spins when rollcode = 4 AND in first element, OR nonArestiRolls
@@ -5887,47 +5877,24 @@ function addRollSelectElement(figNr, rollEl, elNr, parent) {
     thisAttitude = rollAttitudes[thisRoll.attitude];
     if ((fig[figures[figNr].figNr].rolls[rollEl] === 4 && (elNr === 0)) ||
         $('nonArestiRolls').checked) {
-        // build the positive spin options
-        posSpinTypes.forEach (s => {
-            let
-                roll = s.split(':'),
-                rollPattern = roll[0].replace(/^1/, '');
-            if (rollPattern == pattern ||
-                $('nonArestiRolls').checked ||
-                (thisRoll.negLoad && (!ruleCheckRolls ||
-                    (rollFig[thisAttitude + roll[0]].aresti) in checkAllowCatId))) {
-                html += `<option value="${rollPattern}" class="posSpinSelectOption"`;
-                if (rollPattern == pattern) html += ' selected="selected"';
-                html += `>${roll[1]}</option>`;
-            }
-        });
-        // build the negative spin options
-        negSpinTypes.forEach (s => {
-            let
-                roll = s.split(':'),
-                rollPattern = roll[0].replace(/^1/, '');
-            if (rollPattern == pattern ||
-                $('nonArestiRolls').checked ||
-                (!thisRoll.negLoad && (!ruleCheckRolls ||
-                    (rollFig[thisAttitude + roll[0]].aresti) in checkAllowCatId))) {
-                html += `<option value="${rollPattern}" class="negSpinSelectOption"`;
-                if (rollPattern == pattern) html += ' selected="selected"';
-                html += `>${roll[1]}</option>`;
-            }
-        });
-    }
-    // build the glider slow roll options
-    if (sportingClass.value === 'glider') {
-        gliderRollTypes.forEach (r => {
-            var roll = r.split(':');
-            if (roll[0] == pattern || !ruleCheckRolls ||
-                $('nonArestiRolls').checked ||
-                (rollFig[thisAttitude + roll[0]] &&
-                    (rollFig[thisAttitude + roll[0]].aresti) in checkAllowCatId)) {
-                html += `<option value="${roll[0]}" class="rollSelectOption"`;
-                if (roll[0] == pattern) html += ' selected="selected"';
-                html += `>${roll[1]}</option>`;
-            }
+        [posSpinTypes, negSpinTypes].forEach (type => {
+            // build the positive spin options
+            type.forEach (s => {
+                const
+                    roll = s.split(':'),
+                    rollPattern = roll[0].replace(/^1/, ''),
+                    spinType = /i/.test (rollPattern) ? 'negSpinSelectOption' : 'posSpinSelectOption';
+
+                if (rollPattern == pattern ||
+                    $('nonArestiRolls').checked ||
+                    ((thisRoll.negLoad != /i/.test (rollPattern)) &&
+                    (rollK(thisAttitude + roll[0]) != 0) &&
+                    (!ruleCheckRolls || (rollFig[thisAttitude + roll[0]].aresti) in checkAllowCatId))) {
+                    html += `<option value="${rollPattern}" class="${spinType}"`;
+                    if (rollPattern == pattern) html += ' selected="selected"';
+                    html += `>${roll[1]}</option>`;
+                }
+            });
         });
     }
 
@@ -6306,6 +6273,7 @@ function changeLanguage() {
     selectFigure(false);
     updateUserTexts();
     updateFigureSelectorOptions();
+    populateTeamSelectList();
     if (platform.mobile) mobileMenuHeader();
     saveSettingsStorage();
     checkSequenceChanged(true);
@@ -6439,11 +6407,7 @@ function updateGridColumns() {
 
 // setPilotCardForm will show or hide pilot card options
 function setPilotCardForm() {
-    if ($('printFormPilotCards').checked) {
-        $('pilotCardLayout').classList.remove('folded');
-    } else {
-        $('pilotCardLayout').classList.add('folded');
-    }
+    $('pilotCardLayout').classList.toggle ('folded', !$('printFormPilotCards').checked);
     saveImageSizeAdjust();
     changePilotCardPercent();
 }
@@ -6488,9 +6452,7 @@ function setPrintPageSet() {
 
     $('printForms').childNodes.forEach(function (el) {
         if (el.classList && el.id !== 'sectionPrintPageSet') {
-            if ($('printPageSet').checked) {
-                el.classList.add('hidden');
-            } else el.classList.remove('hidden');
+            el.classList.toggle ('hidden', $('printPageSet').checked);
         }
     });
     if ($('printPageSet').checked) {
@@ -6623,11 +6585,7 @@ function setRulesPosHarmony(pos) {
         $('positioning').setAttribute('disabled', true);
         $('harmony').value = parseInt(posHarm.split('+')[1]) || 0;
         $('harmony').setAttribute('disabled', true);
-        if ($('harmony').value == 0) {
-            $('harmonyField').classList.add('hidden');
-        } else {
-            $('harmonyField').classList.remove('hidden');
-        }
+        $('harmonyField').classList.toggle ('hidden', $('harmony').value == 0);
     }
 
     const el = $('positioningText');
@@ -6663,8 +6621,8 @@ function setYAxisOffset(offset) {
     // set scaleLine object to prevent calculations in makeLine and other
     // functions
     if (curvePerspective) {
-        scaleLine.x = yAxisScaleFactor * Math.cos(yAxisOffset * Math.degToRad);
-        scaleLine.y = yAxisScaleFactor * Math.sin(yAxisOffset * Math.degToRad);
+        scaleLine.x = yAxisScaleFactor * Math.cos(yAxisOffset * degToRad);
+        scaleLine.y = yAxisScaleFactor * Math.sin(yAxisOffset * degToRad);
     } else {
         scaleLine.x = scaleLine.y = 1;
     }
@@ -6792,11 +6750,9 @@ function updateFigureOptions(figureId) {
         $('figureInfo').classList.remove('noFigure');
         // activate figure box
         $('selectedFigure').classList.add('active');
-        if ((activeForm === 'FU') && f.unknownFigureLetter && (f.unknownFigureLetter !== 'L')) {
-            $('addFigureText').classList.add('noDisplay');
-        } else {
-            $('addFigureText').classList.remove('noDisplay');
-        }
+        $('addFigureText').classList.toggle ('noDisplay',
+            (activeForm === 'FU') && f.unknownFigureLetter && (f.unknownFigureLetter !== 'L')
+        );
 
         if ((activeForm === 'FU') && ((f.unknownFigureLetter === 'L') || !f.unknownFigureLetter)) {
             // update and show figureStringInput
@@ -6807,14 +6763,11 @@ function updateFigureOptions(figureId) {
         }
 
         // show figure modifiers
-        if (fig[f.figNr]) {
-            $('entryExit').classList.remove('noDisplay');
-        } else $('entryExit').classList.add('noDisplay');
-        if ((f.entryAxis === 'X') || (f.seqNr === 1) || f.subSequence) {
-            $('flipYAxis').classList.remove('disable');
-        } else {
-            $('flipYAxis').classList.add('disable');
-        }
+        $('entryExit').classList.toggle ('noDisplay', !fig[f.figNr]);
+        $('flipYAxis').classList.toggle ('disable',
+            !((f.entryAxis === 'X') || (f.seqNr === 1) || f.subSequence)
+        );
+
         // set switchFirstRoll
         if (f.switchFirstRoll) {
             $('switchFirstRoll').classList.add('on');
@@ -6833,11 +6786,8 @@ function updateFigureOptions(figureId) {
             el.classList.add('disable');
         }
         // disable for Free (Un)known fig unless this figure starts on Y axis
-        if (f.entryAxis === 'Y') {
-            el.classList.remove('disableFUfig');
-        } else {
-            el.classList.add('disableFUfig');
-        }
+        el.classList.toggle ('disableFUfig', f.entryAxis !== 'Y');
+
         // set switchY
         var el = $('switchY');
         if (f.switchY) {
@@ -6848,11 +6798,8 @@ function updateFigureOptions(figureId) {
             el.classList.add('disable');
         }
         // disable for Free (Un)known fig unless this figure starts on X axis
-        if (f.entryAxis === 'X') {
-            el.classList.remove('disableFUfig');
-        } else {
-            el.classList.add('disableFUfig');
-        }
+        el.classList.toggle ('disableFUfig', f.entryAxis !== 'X');
+
         // set correct scale
         $('scale').value = f.scale || 0;
         // set move
@@ -6974,11 +6921,7 @@ function updateFigureOptions(figureId) {
             }
             var options = el.getElementsByTagName('option');
             for (let j = options.length - 1; j >= 0; j--) {
-                if (used.indexOf(options[j].value) != -1) {
-                    options[j].classList.add('used');
-                } else {
-                    options[j].classList.remove('used');
-                }
+                options[j].classList.toggle ('used', used.indexOf(options[j].value) != -1);
             }
             el.value = f.unknownFigureLetter ? f.unknownFigureLetter : 0;
         } else {
@@ -6990,16 +6933,10 @@ function updateFigureOptions(figureId) {
         // check if dealing with a real figure. If so, allow upright/inverted setting
         if (fig[f.figNr]) {
             // set entry attitude button
-            var pattern = fig[f.figNr].pattern;
-            $('figEntryButton').classList.remove('inverted');
-            if (pattern[0] === '-') {
-                $('figEntryButton').classList.add('inverted');
-            }
+            const pattern = fig[f.figNr].pattern;
+            $('figEntryButton').classList.toggle('inverted', pattern[0] === '-');
             // set exit attitude button
-            $('figExitButton').classList.remove('inverted');
-            if (pattern.slice(-1) === '-') {
-                $('figExitButton').classList.add('inverted');
-            }
+            $('figExitButton').classList.toggle('inverted', pattern.slice(-1) === '-');
         }
 
         // set entry extension
@@ -7007,12 +6944,10 @@ function updateFigureOptions(figureId) {
         // set exit extension
         $('exitExt-value').value = f.exitExt || 0;
         // show comments box
-        if (f.comments || (document.activeElement.id === 'comments')) {
-            $('commentSection').classList.add('expanded');
-        } else $('commentSection').classList.remove('expanded');
+        $('commentSection').classList.toggle ('expanded', f.comments || (document.activeElement.id === 'comments'));
         $('comments').value = f.comments ? f.comments : '';
 
-        var disable = false;
+        let disable = false;
         $('FUfigOptionsDisabled').classList.add('noDisplay');
         // when the figure is a Free (Un)known figure with a letter, disable
         // disableFUfig buttons and disableRollFUfig select
@@ -7020,19 +6955,16 @@ function updateFigureOptions(figureId) {
             figures[selectedFigure.id].unknownFigureLetter !== 'L') {
                 disable = true;
                 $('FUfigOptionsDisabled').classList.remove('noDisplay');
+            for (const el of document.getElementsByClassName('disableFUfig')) {
+                el.classList.add('disable');
+            }
         }
 
-        var els = document.getElementsByClassName('disableFUfig');
-        for (let i = els.length - 1; i >= 0; i--) {
-            if (disable) els[i].classList.add('disable');
-        }
-
-        var els = document.getElementsByClassName('disableRollFUfig');
-        for (let i = els.length - 1; i >= 0; i--) {
+        for (const el of document.getElementsByClassName('disableRollFUfig')) {
             if (disable) {
-                els[i].setAttribute('disabled', 'disabled');
+                el.setAttribute('disabled', 'disabled');
             } else {
-                els[i].removeAttribute('disabled');
+                el.removeAttribute('disabled');
             }
         }
     }
@@ -7140,34 +7072,28 @@ function addRollSelectors(figureId) {
 // setUndoRedo will update undo/redo buttons and redo object
 function setUndoRedo(e, clear) {
     if (clear) activeSequence[e] = [];
-    if (activeSequence.undo.length) {
-        $('undo').firstChild.classList.remove('disabled');
-    } else {
-        $('undo').firstChild.classList.add('disabled');
-    }
-    if (activeSequence.redo.length) {
-        $('redo').firstChild.classList.remove('disabled');
-    } else {
-        $('redo').firstChild.classList.add('disabled');
-    }
+    $('undo').firstChild.classList.toggle ('disabled', !activeSequence.undo.length);
+    $('redo').firstChild.classList.toggle ('disabled', !activeSequence.redo.length);
 }
 
 // updateFigure will be called when any figure option is updated
 // when noRedraw is true, the figure editor is not updated
 function updateFigure(noRedraw) {
-    var
+    const
         scroll = $('leftBlockContainer').scrollTop,
         // get the current string
         string = figures[selectedFigure.id].string,
         // get the base figure number
         figNr = figures[selectedFigure.id].figNr,
-        // get the pattern
-        pattern = fig[figNr].pattern,
-        // get the base
-        base = fig[figNr].base,
         // update the original pattern for entry/exit changes
         entry = $('figEntryButton'),
         exit = $('figExitButton');
+
+    let
+        // get the pattern
+        pattern = fig[figNr].pattern,
+        // get the base
+        base = fig[figNr].base;
 
     if (entry.classList.contains('inverted')) {
         pattern = `-${pattern.substring(1)}`;
@@ -7190,16 +7116,8 @@ function updateFigure(noRedraw) {
         if (figBaseLookup[base]) {
             pattern = fig[figNr].pattern.replace(/-/g, '#').replace(/\+/g, '-').replace(/#/g, '+');
             // set figEntryButton and figExitButton to correct state
-            if (base[0] === '-') {
-                entry.classList.add('inverted');
-            } else {
-                entry.classList.remove('inverted');
-            }
-            if (base.slice(-1) === '-') {
-                exit.classList.add('inverted');
-            } else {
-                exit.classList.remove('inverted');
-            }
+            entry.classList.toggle ('inverted', base[0] === '-');
+            exit.classList.toggle ('inverted', base.slice(-1) === '-');
         } else {
             // Doesn't help. Restore original pattern. No option for changing
             // upright/inverted
@@ -7208,38 +7126,39 @@ function updateFigure(noRedraw) {
     }
     // remove + from pattern
     pattern = pattern.replace(RegExp(`\\${userpat.longforward}`, 'g'), '');
-    // add rolls
-    var rollEl = 0;
-    // start at roll 1 for figures that don't have roll element 0
-    if (!$('roll0')) rollEl = 1;
+    // Add rolls
+    // Start at roll 1 for figures that don't have roll element 0
+    let rollEl = $('roll0') ? 0 : 1;
+    
     while (pattern.match(regexRollsAndLines)) {
-        var rolls = '';
+        let rolls = '';
         for (let rollNr = 0; rollNr <= rollsPerRollElement; rollNr++) {
             // apply gaps
-            var gap = $(`roll${rollEl}-gap${rollNr}-value`);
+            let gap = $(`roll${rollEl}-gap${rollNr}-value`);
             // only apply when the input element exists
             if (gap) {
                 gap = gap.value;
                 if (gap < 0) {
                     rolls += new Array(1 - gap).join(userpat.lineshorten);
                 } else if (gap > 0) {
-                    gap = gap / 3;
+                    gap /= 3;
                     rolls += new Array(parseInt(gap) + 1).join(userpat.rollext);
                     rolls += new Array(Math.round((gap - parseInt(gap)) * 3) + 1).join(userpat.rollextshort);
                 }
             }
             // apply rolls, roll direction flips, roll number flips and comments
-            var thisRoll = $(`roll${rollEl}-${rollNr}`);
+            const thisRoll = $(`roll${rollEl}-${rollNr}`);
             // only apply when the input element exists
             if (thisRoll) {
-                var rollFlip = $(`roll${rollEl}-${rollNr}-flip`);
-                var flipNumber = $(`roll${rollEl}-${rollNr}-flipNumber`);
+                const
+                    rollFlip = $(`roll${rollEl}-${rollNr}-flip`),
+                    flipNumber = $(`roll${rollEl}-${rollNr}-flipNumber`);
                 if (thisRoll.value != '') {
-                    var comment = '';
+                    let comment = '';
                     if (rollFlip.classList.contains('on')) {
                         rolls += ',';
                     } else {
-                        if (rolls.match(/[0-9fseul]/)) rolls += ';';
+                        if (/[0-9fseul]/.test(rolls)) rolls += ';';
                     }
                     if (flipNumber.classList.contains('on')) {
                         comment = userpat.flipNumber; // add to start of comment
@@ -7248,8 +7167,7 @@ function updateFigure(noRedraw) {
                     if (comment !== '') {
                         comment = userpat.comment + comment + userpat.comment;
                     }
-                    rolls += comment;
-                    rolls += thisRoll.value;
+                    rolls += comment + thisRoll.value;
                 }
             }
         }
@@ -7271,7 +7189,7 @@ function updateFigure(noRedraw) {
     }
     // move back in the figure cueue to find scale, move or subsequence
     // patterns
-    var
+    let
         i = selectedFigure.id - 1,
         moveToFig = false,
         moveForwardFig = false,
@@ -7282,7 +7200,7 @@ function updateFigure(noRedraw) {
     // continue as long as we're not at the beginning and are not on
     // a regular figure
     while ((i >= 0) && !figures[i].figNr) {
-        var prevFig = figures[i];
+        const prevFig = figures[i];
         if (prevFig) {
             if (prevFig.moveTo || prevFig.curveTo) {
                 moveToFig = i;
@@ -7299,27 +7217,23 @@ function updateFigure(noRedraw) {
         i--;
     }
     // set magnification
-    var el = $('scale');
     if (scaleFig === false) {
-        if (el.value != 0) {
-            updateSequence(selectedFigure.id - 1, el.value + '%', false);
+        if ($('scale').value != 0) {
+            updateSequence(selectedFigure.id - 1, $('scale').value + '%', false);
             return;
         }
     } else {
-        if (el.value != 0) {
-            updateSequence(scaleFig, el.value + '%', true);
+        if ($('scale').value != 0) {
+            updateSequence(scaleFig, $('scale').value + '%', true);
         } else {
             updateSequence(scaleFig, '', true);
             return;
         }
     }
-    var
+    const
         moveX = parseInt($('moveX-value').value || 0),
-        moveY = parseInt($('moveY-value').value || 0),
-        el1 = $('moveForward'),
-        el2 = $('straightLine'),
-        el3 = $('curvedLine');
-    if (el2.classList.contains('on')) {
+        moveY = parseInt($('moveY-value').value || 0);
+    if ($('straightLine').classList.contains('on')) {
         // set moveTo with straight line
         // remove any moveForward
         if (moveForwardFig != false) {
@@ -7332,8 +7246,7 @@ function updateFigure(noRedraw) {
             if (moveToFig != false) moveToFig--;
         }
         // replace any moveTo or curveTo
-        //if ((Math.abs(moveX) > 0) || (Math.abs(moveY) > 0)) {
-        var movePattern = `[${moveX},${moveY}]`;
+        const movePattern = `[${moveX},${moveY}]`;
         if (moveToFig != false) {
             // replace moveTo HERE!
             updateSequence(moveToFig, movePattern, true);
@@ -7342,7 +7255,7 @@ function updateFigure(noRedraw) {
             updateSequence(selectedFigure.id - 1, movePattern, false);
             return;
         }
-    } else if (el3.classList.contains('on')) {
+    } else if ($('curvedLine').classList.contains('on')) {
         // set moveTo with curved line
         // remove any moveForward
         if (moveForwardFig != false) {
@@ -7355,8 +7268,7 @@ function updateFigure(noRedraw) {
             if (moveToFig != false) moveToFig--;
         }
         // replace any moveTo or curveTo
-        //if ((Math.abs(moveX) > 0) || (Math.abs(moveY) > 0)) {
-        var movePattern = `(${moveX},${moveY})`;
+        const movePattern = `(${moveX},${moveY})`;
         if (moveToFig != false) {
             // replace curveTo HERE!
             updateSequence(moveToFig, movePattern, true);
@@ -7365,7 +7277,7 @@ function updateFigure(noRedraw) {
             updateSequence(selectedFigure.id - 1, movePattern, false);
             return;
         }
-    } else if (el1.classList.contains('on')) {
+    } else if ($('moveForward').classList.contains('on')) {
         // set moveForward
         // remove any moveTo
         if (moveToFig != false) {
@@ -7374,9 +7286,7 @@ function updateFigure(noRedraw) {
         }
         // replace any moveForward
         if (parseInt(moveX) > 0) {
-            if (moveX == 1) {
-                var movePattern = '>';
-            } else var movePattern = moveX + '>';
+            const movePattern = moveX == 1 ? '>' : moveX + '>';
             if (moveForwardFig != false) {
                 // replace moveForward
                 updateSequence(moveForwardFig, movePattern, true);
@@ -7399,62 +7309,62 @@ function updateFigure(noRedraw) {
         }
     }
     // set correct subSequence type
-    var sel = $('subSequenceDirections');
+    const ssd = $('subSequenceDirections');
     if ($('subSequence').classList.contains('on')) {
-        figures[selectedFigure.id].subSequence = sel.value;
+        figures[selectedFigure.id].subSequence = ssd.value;
         if (subSequence === false) {
-            updateSequence(i, sel.value, false);
+            updateSequence(i, ssd.value, false);
         } else {
-            updateSequence(subSequence, sel.value, true);
+            updateSequence(subSequence, ssd.value, true);
         }
     } else {
         if (subSequence !== false) {
             updateSequence(subSequence, '', true);
-            sel.value = userpat.subSequence;
+            ssd.value = userpat.subSequence;
         }
     }
 
     // set entry extension
-    var val = $('entryExt-value').value;
-    if (val < 0) {
+    let entryExt = $('entryExt-value').value;
+    if (entryExt < 0) {
         if (pattern[0] == '-') {
             // don't prepend + for negative entry
-            pattern = new Array(1 - val).join(userpat.lineshorten) + pattern;
+            pattern = new Array(1 - entryExt).join(userpat.lineshorten) + pattern;
         } else {
-            pattern = `${new Array(1 - val).join(userpat.lineshorten)}+${pattern}`;
+            pattern = `${new Array(1 - entryExt).join(userpat.lineshorten)}+${pattern}`;
         }
-    } else if (val > 0) {
-        val = val / 3;
+    } else if (entryExt > 0) {
+        entryExt /= 3;
         if ($('figEntryButton').classList.contains('inverted')) {
             // use '-' for negative entry
-            pattern = new Array(parseInt(val) + 1).join('-') + pattern;
+            pattern = new Array(parseInt(entryExt) + 1).join('-') + pattern;
         } else {
-            pattern = new Array(parseInt(val) + 1).join(userpat.longforward) + pattern;
+            pattern = new Array(parseInt(entryExt) + 1).join(userpat.longforward) + pattern;
         }
-        pattern = new Array(Math.round((val - parseInt(val)) * 3) + 1).join(userpat.forward) + pattern;
+        pattern = new Array(Math.round((entryExt - parseInt(entryExt)) * 3) + 1).join(userpat.forward) + pattern;
     }
 
     // set exit extension
-    val = $('exitExt-value').value;
-    if (val < 0) {
+    let exitExt = $('exitExt-value').value;
+    if (exitExt < 0) {
         if (pattern.slice(-1) == '-') {
             // don't prepend + for negative exit
-            pattern += new Array(1 - val).join(userpat.lineshorten);
+            pattern += new Array(1 - exitExt).join(userpat.lineshorten);
         } else {
-            pattern += `+${new Array(1 - val).join(userpat.lineshorten)}`;
+            pattern += `+${new Array(1 - exitExt).join(userpat.lineshorten)}`;
         }
-    } else if (val > 0) {
-        val = val / 3;
+    } else if (exitExt > 0) {
+        exitExt /= 3;
         if ($('figExitButton').classList.contains('inverted')) {
             // use '-' for negative exit
-            pattern += new Array(parseInt(val) + 1).join('-');
+            pattern += new Array(parseInt(exitExt) + 1).join('-');
         } else {
-            pattern += new Array(parseInt(val) + 1).join(userpat.longforward);
+            pattern += new Array(parseInt(exitExt) + 1).join(userpat.longforward);
         }
-        pattern += new Array(Math.round((val - parseInt(val)) * 3) + 1).join(userpat.forward);
+        pattern += new Array(Math.round((exitExt - parseInt(exitExt)) * 3) + 1).join(userpat.forward);
     }
 
-    var axisChange = figures[selectedFigure.id].entryAxisFormB;
+    const axisChange = figures[selectedFigure.id].entryAxisFormB;
 
     // set switchY
     if ($('switchY').classList.contains('on')) {
@@ -7474,26 +7384,23 @@ function updateFigure(noRedraw) {
 
     // update comments, including Free (Un)known letter
     // keep this at the end to prevent disturbing other items
-    var val = $('unknownFigure').value;
-    var comments = (val != 0) ? `@${val}` : '';
-
-    comments += $('comments').value;
+    const comments =
+        (
+            $('unknownFigure').value != 0 ? `@${$('unknownFigure').value}` : ''
+        ) + $('comments').value;
 
     // retrieve original comments
-    if (figures[selectedFigure.id].unknownFigureLetter) {
-        var oldComments = `@${figures[selectedFigure.id].unknownFigureLetter}`;
-    } else {
-        var oldComments = '';
-    }
-    oldComments += figures[selectedFigure.id].comments;
-    if (!oldComments) oldComments = '';
+    const oldComments = (figures[selectedFigure.id].unknownFigureLetter ?
+        `@${figures[selectedFigure.id].unknownFigureLetter}` : '') +
+        figures[selectedFigure.id].comments;
 
     if (comments != oldComments) {
         // move back in the figure queue to find comments
-        var match = false;
-        var i = selectedFigure.id - 1;
+        let
+            match = false,
+            i = selectedFigure.id - 1;
         while ((i >= 0) && !figures[i].figNr) {
-            var prevFig = figures[i];
+            const prevFig = figures[i];
             if (prevFig) {
                 // find a match for comments
                 match = prevFig.string.match(RegExp('^\\' + userpat.comment +
@@ -7579,13 +7486,6 @@ function getStableVersion(f) {
     xhr.onerror = xhr.ontimeout = function () { f(false) };
     xhr.open('GET', 'https://openaero.net/openaero.php?v', true);
     xhr.send();
-}
-
-// preventUnload is used to set a question asking the user if he wants
-// to leave OpenAero. Argument is false (no question) or true (question)
-function preventUnload(e) {
-    e.returnValue = userText.confirmLeave;
-    return userText.confirmLeave;
 }
 
 // checkUpdateDone checks if an update was just done. If so, it presents
@@ -7999,6 +7899,31 @@ function restoreSelection(containerEl, savedSel) {
     sel.addRange(range);
 }
 
+// Poulate team select list
+function populateTeamSelectList() {
+    // Get current selected value (if any). Used when changing language
+    const value = $('team').value;
+
+    // Clear list
+    removeChildNodes($('team'));
+
+    // Add 'None' option
+    const option = document.createElement('option');
+    option.value = '';
+    option.text = userText.none;
+    $('team').appendChild(option);
+
+    // Add IOC country codes
+    for (const key of Object.keys(iocCountriesReverse).sort()) {
+        const option = document.createElement('option');
+        option.value = option.text = key;
+        $('team').appendChild(option);
+    }
+
+    // Restore selected value
+    $('team').value = value;
+}
+
 // copyContest will copy the contest info to localStorage
 function copyContest(e) {
     noPropagation(e);
@@ -8153,9 +8078,9 @@ function logoChooser() {
             keys.push(logoName);
         }
     }
-    if (privateLogos > 2) { // max 3 private logos
-        fileDropLogo.classList.add('noDisplay');
-    } else fileDropLogo.classList.remove('noDisplay');
+    // max 3 private logos
+    fileDropLogo.classList.toggle ('noDisplay', privateLogos > 2);
+
     // build the logos in correct order
     for (const logoName of keys) {
         const div = document.createElement('div');
@@ -8717,23 +8642,18 @@ function checkSequence(show) {
             $('checkSequence').classList.add('noDisplay');
         } else {
             $('checkSequence').classList.remove('noDisplay');
-            if (activeRules) {
-                var content = `<div class="divider">${userText.checkingRules} : ${activeRules.description}</div>`;
-            } else {
-                var content = '';
-            }
+            const content = activeRules ?
+                `<div class="divider">${userText.checkingRules} : ${activeRules.description}</div>` :
+                '';
+
             // get alerts from alert area
-            var contentDiv = $('checkSequenceContent');
+            const contentDiv = $('checkSequenceContent');
             contentDiv.innerHTML = $('alerts').innerHTML;
             // remove label
             contentDiv.firstChild.remove();
             if (contentDiv.innerHTML == '') {
                 // no alerts
-                if (activeRules) {
-                    contentDiv.innerHTML = content + userText.sequenceCorrect;
-                } else {
-                    contentDiv.innerHTML = content;
-                }
+                contentDiv.innerHTML = content + activeRules ? userText.sequenceCorrect : '';
             } else {
                 // alerts present
                 contentDiv.innerHTML = content + contentDiv.innerHTML;
@@ -9445,25 +9365,16 @@ function markMatchingFigures() {
                 }
         }
     }
-    var regexString = previousPattern ? `^[\\${previousPattern.slice(-1)}].*` : '';
-    if (nextPattern) regexString += `[\\${nextPattern[0]}]\$`;
-    var regex = new RegExp(regexString);
-    var table = $('figureChooserTable');
-    var tr = table.childNodes;
-    for (let i = 0; i < tr.length; i++) {
-        var td = tr[i].childNodes;
+    const regex = new RegExp(
+        (previousPattern ? `^[\\${previousPattern.slice(-1)}].*` : '') +
+        (nextPattern ? `[\\${nextPattern[0]}]\$` : '')
+    );
+    for (const tr of $('figureChooserTable').childNodes) {
+        const td = tr.childNodes;
         // start with 2nd <td>, as first holds Aresti row nr
         for (let j = 1; j < td.length; j++) {
-            if (/^G/.test(activeForm)) {
-                td[j].classList.add('grid');
-            } else {
-                td[j].classList.remove('grid');
-            }
-            if (fig[td[j].id].pattern.match(regex)) {
-                td[j].classList.add('matchingFigure');
-            } else {
-                td[j].classList.remove('matchingFigure');
-            }
+            td[j].classList.toggle ('grid', /^G/.test(activeForm));
+            td[j].classList.toggle ('matchingFigure', regex.test(fig[td[j].id].pattern))
         }
     }
 }
@@ -9575,25 +9486,22 @@ function selectFigure(e) {
                     // getRolls creates a string that represents the rolls and
                     // their attitude in the figure
                     function getRolls(id) {
-                        var
-                            rolls = fig[id].pattern.replace(regexRolls, ''),
+                        const rolls = fig[id].pattern.replace(regexRolls, '');
+                        let
                             att = 0,
                             out = '',
-                            n = 0,
-                            d = fig[id].draw;
-                        for (let i = 0; i < d.length; i++) {
-                            if (drawAngles[d[i]]) {
-                                att += drawAngles[d[i]];
-                            } else if (d[i].match(/[hHtTuU]/)) {
+                            n = 0;
+                        for (const draw of fig[id].draw) {
+                            if (drawAngles[draw]) {
+                                att += drawAngles[draw];
+                            } else if (draw.match(/[hHtTuU]/)) {
                                 att += 180;
-                            } else if (d[i] == '_') {
-                                out += att + rolls[n];
+                            } else if (draw == '_') {
+                                out += ((att + 360) % 360) + rolls[n];
                                 n++;
-                            } else if (d[i] == '!') {
+                            } else if (draw == '!') {
                                 out += '!';
                             }
-                            if (att >= 360) att -= 360;
-                            if (att < 0) att += 360;
                         }
                         return out;
                     }
@@ -9774,9 +9682,8 @@ function selectFigureFu(id) {
     selectTab('tab-figureInfo');
 
     // deselect any previously selected
-    var els = document.getElementsByClassName(`fuFig${selectedFigure.id}`);
-    for (let i = 0; i < els.length; i++) {
-        els[i].classList.remove('active');
+    for (const el of document.getElementsByClassName(`fuFig${selectedFigure.id}`)) {
+        el.classList.remove('active');
     }
 
     $('t_addFigureText').parentNode.parentNode.classList.add('hoverdisplay');
@@ -9805,36 +9712,37 @@ function selectFigureFu(id) {
 // checkFloatingPoint checks if a floating point correction should be
 // made and adds this to the figures object where applicable
 function checkFloatingPoint() {
-    var figureK = 0;
+    let figureK = 0;
     // in case of floating-point, check total K first to determine
     // how much to take off and where. Disregard additionals.
     if (checkCatGroup.floatingPoint) {
-        var figK = [];
+        const figK = [];
         for (let i = 0; i < figures.length; i++) {
             if (figures[i].aresti && !figures[i].additional) {
-                // build array figK[i] = XXYY, where XX = K and YY = 99 - i
-                // this will enable sorting while keeping K and i relation
-                figK[i] = 99 - i;
+                // Build array figK[i] = XXXYYY, where XXX = K and YYY = 999 - i
+                // this will enable sorting while keeping K and i relation.
+                // There is no maximum for the K and a maximum of 999 figures
+                // can be used!
+                figK[i] = 999 - i;
                 for (let j = 0; j < figures[i].k.length; j++) {
                     if (!figures[i].unknownFigureLetter) {
-                        figK[i] += (figures[i].k[j] * 100);
+                        figK[i] += (figures[i].k[j] * 1000);
                     }
                     figureK += parseInt(figures[i].k[j]);
                 }
             }
         }
-        var fp = figureK - (checkCatGroup.k.max - checkCatGroup.floatingPoint);
+        let fp = figureK - (checkCatGroup.k.max - checkCatGroup.floatingPoint);
         // don't apply fp when K is too high anyway
-        if (fp > checkCatGroup.floatingPoint) fp = 0;
+        if (fp > checkCatGroup.floatingPoint) return;
         // sort figK low to high
         // identical Ks will be sorted first fig first
         figK.sort(function (a, b) { return a - b });
         while (fp > 0) {
-            var n = figK.pop();
+            const n = figK.pop();
             if (n) {
-                // retrieve correct i and set floatingPoint
-                var i = 99 - Math.round(n % 100);
-                figures[i].floatingPoint = true;
+                // retrieve correct figure id and set floatingPoint
+                figures[999 - Math.round(n % 1000)].floatingPoint = true;
                 fp--;
             }
         }
@@ -10584,11 +10492,11 @@ function setFigureSelected(figNr) {
 
     if (activeForm != 'FU') {
         // if any figure was previously selected, remove that filter
-        var selFig = SVGRoot.getElementById('figure' + selectedFigure.id);
+        const selFig = SVGRoot.getElementById('figure' + selectedFigure.id);
         if (selFig) {
-            var nodes = selFig.childNodes;
+            const nodes = selFig.childNodes;
             for (let i = nodes.length - 1; i >= 0; i--) {
-                var s = nodes[i].getAttribute('style');
+                const s = nodes[i].getAttribute('style');
                 if (s) {
                     nodes[i].setAttribute('style',
                         s.replace(/#ff00a0/g, 'black').replace(/#ff1090/g, 'red')
@@ -10606,42 +10514,42 @@ function setFigureSelected(figNr) {
 
         if (figNr !== null && figures[figNr].aresti) {
             // fill selectedFigure with BBox values
-            var el = SVGRoot.getElementById('figure' + figNr);
+            const el = SVGRoot.getElementById('figure' + figNr);
 
             $('figureHeader').innerHTML = sprintf(userText.editingFigure, figures[figNr].seqNr) +
                 ' (' + figures[figNr].k.reduce((a, v) => a + v) + 'K)';
 
             if (el) {
-                var
+                const
                     svgScale = platform.smallMobile ?
                         roundTwo(SVGRoot.viewBox.baseVal.width /
                         (SVGRoot.width.baseVal.value || 1)) || 1
                         : 1,
                     showHandles = $('showHandles').checked &&
-                        !(/^G/.test(activeForm)),
-                    nodes = el.childNodes,
-                    length = nodes.length;
+                        !(/^G/.test(activeForm));
                 selectedFigure = el.getBBox();
-                // apply color filter
-                for (let i = 0; i < length; i++) {
-                    var s = nodes[i].getAttribute('style');
+
+                for (const node of Array.from(el.childNodes)) { // Make sure the NodeList is not updated, because we will be adding nodes!
+                    // apply color filter
+                    const s = node.getAttribute('style');
                     if (s) {
-                        nodes[i].setAttribute('style',
+                        node.setAttribute('style',
                             s.replace(/black/g, '#ff00a0').replace(/red/g, '#ff1090')
                         );
                     }
+                    
                     // add editing handles where applicable. They are centered on
                     // the element. Somewhat larger circles for touch devices to
                     // improve grabbing, corrected for svg scaling
-                    if (nodes[i].id && showHandles) {
-                        var bBox = nodes[i].getBBox();
+                    if (node.id && showHandles) {
+                        const bBox = node.getBBox();
                         drawCircle({
                             'cx': roundTwo(bBox.x + bBox.width / 2),
                             'cy': roundTwo(bBox.y + bBox.height / 2),
                             'r': platform.touch ? 12 * svgScale : 8,
                             'style': style.selectedFigureHandle,
                             'cursor': 'move',
-                            'id': nodes[i].id + '-handle'
+                            'id': node.id + '-handle'
                         }, el);
                     }
                 }
@@ -10663,7 +10571,7 @@ function setFigureSelected(figNr) {
             }
         }
     } else {
-        var el = document.getElementsByClassName('fuFig' + figNr)[0];
+        const el = document.getElementsByClassName('fuFig' + figNr)[0];
         if (el) el.classList.add('active');
         $('figureHeader').innerHTML = sprintf(userText.editingFigure, '');
     }
@@ -10928,11 +10836,12 @@ function Drop() {
         // create curveTo for dragged elements when not in grid view
         if (transform) {
             // make sure a comma is used for x y separation in transform
-            var dxdy = transform.match(/[0-9\-\.]+[, ][0-9\-\.]+/) ?
-                transform.replace(/ /, ',').match(/[0-9\-\.]+,[0-9\-\.]+/)[0].split(',') :
-                [transform.match(/[0-9\-\.]+/)[0], 0];
-            var dx = parseInt(dxdy[0] / lineElement);
-            var dy = parseInt(dxdy[1] / lineElement);
+            const
+                dxdy = transform.match(/[0-9\-\.]+[, ][0-9\-\.]+/) ?
+                    transform.replace(/ /, ',').match(/[0-9\-\.]+,[0-9\-\.]+/)[0].split(',') :
+                    [transform.match(/[0-9\-\.]+/)[0], 0],
+                dx = parseInt(dxdy[0] / lineElement),
+                dy = parseInt(dxdy[1] / lineElement);
             // reverse direction for dragging in Form C
             if (/^[CL]/.test(activeForm)) dx = -dx;
             if ((dx != 0) || (dy != 0)) {
@@ -10985,7 +10894,7 @@ function changeEntryDirection() {
             if (regexCurveTo.test(figures[i].string) || regexMoveTo.test(figures[i].string)) {
                 const dxdy = figures[i].string.replace(/[^0-9\,\-]/g, '').split(',');
                 updateSequence(i,
-                    figures[i].string[0] + -parseInt(dxdy[0]) + ',' + dxdy[1] +
+                    figures[i].string[0] + -parseInt(dxdy[0]) + ',' + parseInt(dxdy[1]) +
                     figures[i].string.slice(-1),
                     true);
             }
@@ -11560,30 +11469,22 @@ function startFuDesigner(dontConfirm) {
                 }
             }
 
+            let text = '';
             if (/^G/.test(activeForm) && noAdditional) {
-                var text = 'eu';
+                text = 'eu';
             } else {
                 // rebuild the sequence according Free (Un)known designer format
                 // remove / symbols and entry/exit extension from string
-                var text = '';
-                for (let i = 0; i < figures.length; i++) {
+                for (const f of figures) {
                     // only add figures with aresti Nr. For Unknown, only add
                     // those that have a figure letter
-                    if (figures[i].aresti && (figures[i].unknownFigureLetter ||
-                        !additionalFig.max)) {
-                        var string = figures[i].string;
-                        // remove extensions, shortenings and y axis switch
-                        string = string.replace(/[~\.'`\+\/]/g, '').replace(/-+/g, '-');
-                        // remove comments
-                        string = string.replace(regexComments, '');
-                        if (!figures[i].unknownFigureLetter) {
-                            text += string + ' ';
-                        } else {
-                            text += '"@' + figures[i].unknownFigureLetter +
-                                '" ' + string + ' ';
-                        }
-                    } else if (figures[i].subSequence) {
-                        text += figures[i].subSequence + ' ';
+                    if (f.aresti && (f.unknownFigureLetter || !additionalFig.max)) {
+                        const string = f.string
+                            .replace(/[~\.'`\+\/]/g, '').replace(/-+/g, '-') // remove extensions, shortenings and y axis switch
+                            .replace(regexComments, '');                     // remove comments
+                        text += (f.unknownFigureLetter ? `"@${f.unknownFigureLetter}" ` : '') + string + ' ';
+                    } else if (f.subSequence) {
+                        text += f.subSequence + ' ';
                     }
                 }
 
@@ -11751,7 +11652,7 @@ function freeCell(sub, col, row) {
 // Free (Un)known designer
 function freeCellAddHandlers(td) {
     td.addEventListener('dragenter', () => {
-        var nodes = $('fuSequence').getElementsByClassName('hover');
+        const nodes = $('fuSequence').getElementsByClassName('hover');
         while (nodes.length) nodes[0].classList.remove('hover');
         if (this) this.classList.add('hover');
     });
@@ -12385,7 +12286,7 @@ function makeFormGrid(cols, width, svg = SVGRoot) {
 
     let
         cw = parseInt(width / cols),
-        ch = parseInt(cw * Math.GR),
+        ch = parseInt(cw * 1.618), // Golden ratio
         x = 0,
         y = 0,
         col = 0,
@@ -12698,11 +12599,13 @@ function shuffle(array) {
 // getFigureSets.
 // It is used to create groups from a large number of Unknown figures
 function createFigureProposals() {
-    var
-        realFigs = [],
+    const
         superFamilyRatio = {},
-        proposals = [],
         size = $('gridColumns').value;
+    
+    let
+        realFigs = [],
+        proposals = [];
 
     // create an array holding the indexes of real figures
     figures.forEach ((f, i) => {
@@ -12711,7 +12614,7 @@ function createFigureProposals() {
             superFamilyRatio[f.superFamily] = 0;
         }
     });
-    var propCount = Math.floor(realFigs.length / size);
+    const propCount = Math.floor(realFigs.length / size);
 
     // randomize figure order. The realFig holds the true figure index
     // and needs to be consulted after all is done
@@ -12728,7 +12631,7 @@ function createFigureProposals() {
         return { figures: [], sf: JSON.parse(JSON.stringify(superFamilyRatio)) }
     });
 
-    var figsInProposals = propCount * size;
+    const figsInProposals = propCount * size;
     // count specific families to ensure equal distibution
     for (let i = 0; i < figsInProposals; i++) {
         superFamilyRatio[figures[realFigs[i]].superFamily] += 1 / propCount;
@@ -12736,16 +12639,17 @@ function createFigureProposals() {
 
     // go through figures and build proposals
     for (let i = 0; i < figsInProposals; i++) {
-        var f = figures[realFigs[i]];
+        const f = figures[realFigs[i]];
         // shuffle proposals on every figure so we don't start by adding
         // everything to the same proposal
         proposals = shuffle(proposals);
         // match 1) exact, 2) neutral, 3) all
         for (let matchType = 1; matchType <= 3; matchType++) {
             // look at each proposal
+            let match;
             for (let prop = 0; prop < propCount; prop++) {
-                var match = false;
-                var p = proposals[prop];
+                match = false;
+                const p = proposals[prop];
                 // check if the proposal is not full, and distribution of
                 // Superfamily, except family 7
                 if ((p.figures.length < size) && ((f.superFamily == 7) ||
@@ -12756,18 +12660,18 @@ function createFigureProposals() {
                         ((matchType == 2) &&
                             (fig[f.figNr].entryExit[1] + fig[realFigs[p.figures[0]].figNr].entryExit[0]).match(/^(n[hl]|N[HL]|[hl]n|[HL]N)$/)) ||
                         (matchType == 3)) {
-                        proposals[prop].figures.unshift(i);
+                        p.figures.unshift(i);
                         // add superFamily
-                        proposals[prop].sf[f.superFamily]++;
+                        p.sf[f.superFamily]++;
                         match = true;
                     } else
                         // match at the end of proposal
                         if ((fig[f.figNr].entryExit[0] === fig[realFigs[p.figures.slice(-1)].figNr].entryExit[1]) ||
                             ((matchType == 2) &&
                                 (fig[f.figNr].entryExit[0] + fig[realFigs[p.figures.slice(-1)].figNr].entryExit[1]).match(/^(n[hl]|N[HL]|[hl]n|[HL]N)$/))) {
-                            proposals[prop].figures.push(i);
+                            p.figures.push(i);
                             // add superFamily
-                            proposals[prop].sf[f.superFamily]++;
+                            p.sf[f.superFamily]++;
                             match = true;
                         }
                 }
@@ -12788,7 +12692,7 @@ function createFigureProposals() {
     }
 
     // build a sequence string and count total K for each proposal
-    var
+    let
         content = '',
         propK,
         string;
@@ -12799,7 +12703,7 @@ function createFigureProposals() {
         propK = 0;
         string = "";
         p.figures.forEach ((pf) => {
-            var f = figures[realFigs[pf]];
+            const f = figures[realFigs[pf]];
             if (f.comments || f.unknownFigureLetter) string += '"' +
                 (f.unknownFigureLetter ? '@' + f.unknownFigureLetter : '') +
                 (f.comments ? f.comments : '') + '" ';
@@ -12816,25 +12720,26 @@ function createFigureProposals() {
 
     // set Grid rendering options
     activeSequence.figures = [];
-    var savedText = activeSequence.text;
-    var savedOrder = $('gridOrderBy').value;
+    const
+        savedText = activeSequence.text,
+        savedOrder = $('gridOrderBy').value;
+
     $('gridOrderBy').value = 'seqNr';
 
     // build Grid image for proposals
     checkSequenceChanged(true);
 
-    var svg = $('proposalsSequenceSvg');
+    const svg = $('proposalsSequenceSvg');
     prepareSvg(svg);
 
-    var h = 200 * Math.ceil(realFigs.length / size);
+    const h = 200 * Math.ceil(realFigs.length / size);
     makeFormGrid(size, size * 150, svg);
     svg.setAttribute('width', svg.getAttribute('width') * (h / svg.getAttribute('height')));
     svg.setAttribute('height', h);
 
     // restore normal Grid view
     activeSequence.figures = [];
-    activeSequence.text = savedText;
-    sequenceText.innerHTML = savedText;
+    activeSequence.text = sequenceText.innerHTML = savedText;
     $('gridOrderBy').value = savedOrder;
 
     checkSequenceChanged(true);
@@ -13376,11 +13281,7 @@ function draw() {
 function virtualKeyboard(e) {
     e.hasfocus = (document.activeElement === sequenceText) ? true : false;
     if (platform.touch && platform.mobile && !platform.smallMobile) {
-        if (document.activeElement === sequenceText) {
-            $('virtualKeyboard').classList.remove('noDisplay');
-        } else {
-            $('virtualKeyboard').classList.add('noDisplay');
-        }
+        $('virtualKeyboard').classList.toggle ('noDisplay', document.activeElement !== sequenceText);
     }
 }
 
@@ -13845,10 +13746,10 @@ function openFile(file, handler, params) {
 // removeFileListFile removes a file from fileList
 function removeFileListFile(el, callback) {
     const container = el.parentNode.parentNode;
-    fileList.splice(el.id.replace(/^removeFileListFile/, ''), 1);
+    multi.fileList.splice(el.id.replace(/^removeFileListFile/, ''), 1);
     // we need to rebuild because splice changes the indexes
     clearFileListContainer(container);
-    fileList.forEach ((f, i) => { addToFileList(i, container, callback); });
+    multi.fileList.forEach ((f, i) => { addToFileList(i, container, callback); });
 }
 
 // checkMultiDialog shows or hides the multiple sequence check dialog
@@ -13859,7 +13760,7 @@ function checkMultiDialog(show) {
 
     if (show) {
         // clear the file list
-        fileList = [];
+        multi.fileList = [];
         multi.processing = false;
         clearFileListContainer($('fileDropFiles'));
         $('t_checkSequences').classList.add('disabled');
@@ -13884,25 +13785,26 @@ function clearFileListContainer(container) {
 // callback = called on changes
 function updateFileList(evt, el, callback) {
     if (evt) {
+        let files;
         if (evt.dataTransfer) {
             noPropagation(evt);
-            var files = evt.dataTransfer.files; // FileList object.
+            files = evt.dataTransfer.files; // FileList object.
         } else {
             // get files from file element
-            var files = evt.files;
+            files = evt.files;
             // clear for next, after short wait
             setTimeout(function () { evt.parentNode.reset(); }, 400);
         }
         for (let i = 0; i < files.length; i++) {
             (function () {
                 // check if the file is not already in fileList
-                for (let j = 0; j < fileList.length; j++) {
+                for (let j = 0; j < multi.fileList.length; j++) {
                     // check for lastModfiedDate, name and size as full path is not
                     // available
-                    if ((files[i].lastModifiedDate.toString() === fileList[j].lastModifiedDate.toString()) &&
-                        (files[i].name === fileList[j].name) &&
-                        (files[i].size === fileList[j].size)) {
-                        console.log('Duplicate, not adding: ' + fileList[j].name);
+                    if ((files[i].lastModifiedDate.toString() === multi.fileList[j].lastModifiedDate.toString()) &&
+                        (files[i].name === multi.fileList[j].name) &&
+                        (files[i].size === multi.fileList[j].size)) {
+                        console.log('Duplicate, not adding: ' + multi.fileList[j].name);
                         return;
                     }
                 }
@@ -13926,8 +13828,8 @@ function loadedFileList(e, params) {
         // only add to fileList when a valid sequence was detected
         if (sequence) {
             params.file.sequence = sequence;
-            fileList.push(params.file);
-            addToFileList(fileList.length - 1, params.container, params.callback);
+            multi.fileList.push(params.file);
+            addToFileList(multi.fileList.length - 1, params.container, params.callback);
         } else {
             alertBox(userText.multiNoSequence);
         }
@@ -13952,7 +13854,7 @@ function addToFileList(id, container, callback) {
         callback();
     }, false);
     div.appendChild(i);
-    div.appendChild(document.createTextNode(fileList[id].name));
+    div.appendChild(document.createTextNode(multi.fileList[id].name));
     container.appendChild(div);
     callback();
     // adjust image size for saving
@@ -13963,9 +13865,7 @@ function addToFileList(id, container, callback) {
 // multi field or adding files with file chooser
 function updateCheckMulti(evt) {
     updateFileList(evt, $('fileDropFiles'), () => {
-        if (fileList.length) {
-            $('t_checkSequences').classList.remove('disabled');
-        } else $('t_checkSequences').classList.add('disabled');
+        $('t_checkSequences').classList.toggle ('disabled', !multi.fileList.length);
     });
 }
 
@@ -13998,16 +13898,16 @@ function checkMulti() {
 // loaded for multiple sequence checking
 function checkSequenceMulti(body) {
     $('checkMultiCounter').innerHTML = sprintf(
-        userText.checkMultiCounter, fileList[0].name, fileList.length);
+        userText.checkMultiCounter, multi.fileList[0].name, multi.fileList.length);
 
-    console.log('Checking: ' + fileList[0].name);
+    console.log('Checking: ' + multi.fileList[0].name);
     // create log entry
     var pre = document.createElement('pre');
     body.appendChild(pre);
-    pre.appendChild(document.createTextNode('File: ' + fileList[0].name + '\n'));
+    pre.appendChild(document.createTextNode('File: ' + multi.fileList[0].name + '\n'));
 
-    if (fileList[0].sequence) {
-        activateXMLsequence(fileList[0].sequence, true);
+    if (multi.fileList[0].sequence) {
+        activateXMLsequence(multi.fileList[0].sequence, true);
 
         var callback = function (data) {
             // clear any alert boxes. Errors are shown in the log.
@@ -14051,8 +13951,8 @@ function checkSequenceMulti(body) {
                 '\n--------------------------------------------------------\n'));
 
             // check next file or finalize
-            fileList.shift();
-            if (fileList.length) {
+            multi.fileList.shift();
+            if (multi.fileList.length) {
                 checkSequenceMulti(body);
             } else {
                 // show the check result window
@@ -14162,33 +14062,43 @@ function loadedQueue(evt) {
 
 // loadedSequenceWindows will be called when a sequence file has been loaded
 // on Windows
-function loadedSequenceWindows(text, name) {
-    // Obtain the read file data
-    loadSequence(text, function (xml) {
-        if (xml === false) {
-            alertBox(userText.notSequenceFile);
-            return;
-        }
+function loadedSequenceWindows(file, name) {
+    let reader = new FileReader();
 
-        if (name) {
-            updateSaveFilename(name.replace(/.*\\/, '').replace(/\.[^.]*$/, ''));
-        }
+    reader.addEventListener(
+        "load",
+        () => {
+            // Obtain the read file data
+            loadSequence(reader.result, function (xml) {
+                if (xml === false) {
+                    //alertBox(userText.notSequenceFile);
+                    return;
+                }
 
-        activateXMLsequence(xml, true);
+                if (name) {
+                    updateSaveFilename(name.replace(/.*\\/, '').replace(/\.[^.]*$/, ''));
+                }
 
-        // update the sequence if OLAN.sequence was true
-        if (OLAN.sequence) {
-            OLAN.sequence = false;
-            updateSequence(-1, '');
-            activeSequence.text = '';
-            checkSequenceChanged();
-        }
+                activateXMLsequence(xml, true);
 
-        setSequenceSaved(true);
+                // update the sequence if OLAN.sequence was true
+                if (OLAN.sequence) {
+                    OLAN.sequence = false;
+                    updateSequence(-1, '');
+                    activeSequence.text = '';
+                    checkSequenceChanged();
+                }
 
-        // Activate the loading of the checking rules (if any)
-        changeCombo('program', checkFuFiguresFile);
-    });
+                setSequenceSaved(true);
+
+                // Activate the loading of the checking rules (if any)
+                changeCombo('program', checkFuFiguresFile);
+            });
+        },
+        false,
+      );
+
+    reader.readAsDataURL(file);
 }
 
 // loadSequence loads a sequence file and does some checks. Callback
@@ -15257,9 +15167,9 @@ function buildForms(win, callback) {
 
     // buildMulti is used when building multiple sequences for print/save
     function buildMulti() {
-        var file = fileList[0];
+        var file = multi.fileList[0];
         $('processingMultiCounter').innerHTML = sprintf(
-            userText.processingMultiCounter, file.name, fileList.length);
+            userText.processingMultiCounter, file.name, multi.fileList.length);
         console.log('Processing: ' + file.name);
         // set previous settings for default values
         loadSettingsStorage('tempSavedSettings');
@@ -15281,10 +15191,7 @@ function buildForms(win, callback) {
 
         // anonymize sequence if checked
         if ($('anonymousSequences').checked) {
-            $('pilot').value = '';
-            $('team').value = '';
-            $('acreg').value = '';
-            $('actype').value = '';
+            $('pilot').value = $('team').value = $('acreg').value = $('actype').value = '';
         }
 
         // select correct logo
@@ -15359,8 +15266,8 @@ function buildForms(win, callback) {
                 }
             }
         }
-        if (fileList.length > 1) {
-            fileList.shift();
+        if (multi.fileList.length > 1) {
+            multi.fileList.shift();
             // files remaining in fileList, so buildMulti
             buildMulti();
         } else {
@@ -15393,7 +15300,7 @@ function buildForms(win, callback) {
                 multi.processing = false;
                 // restore previous settings and sequence
                 loadSettingsStorage('tempSavedSettings');
-                activateXMLsequence(savedSeq);
+                activateXMLsequence(multi.savedSeq);
                 // restore the Sequence Notes check
                 $('printNotes').checked = sequenceNotesSave;
             }
@@ -15414,9 +15321,9 @@ function buildForms(win, callback) {
     if (win) var body = win.document.createElement('body');
 
     // start the process, multi or single
-    if (fileList.length) {
+    if (multi.fileList.length) {
         // save active sequence and settings
-        var savedSeq = activeSequence.xml;
+        multi.savedSeq = activeSequence.xml;
         saveSettingsStorage('tempSavedSettings');
 
         multi.processing = 'print';
@@ -16963,7 +16870,7 @@ function saveImageSizeAdjust() {
     }
 
     // multiply this if doing printMulti
-    if (fileList.length > 1) count = count * fileList.length;
+    if (multi.fileList.length > 1) count = count * multi.fileList.length;
 
     // calculate ratio (Y / X) in base units
     var ratio = ((count * 1130) +
@@ -17186,11 +17093,12 @@ function inArray(arr, val) {
 // buildIllegal builds the symbol for an illegal figure
 function buildIllegal(i) {
     // create space before the figure
-    var paths = [];
+    let paths = [];
     paths = buildShape('FigSpace', 2, paths);
-    var angle = dirAttToAngle(Direction, Attitude);
-    var dx = Math.cos(angle) * lineElement * 6;
-    var dy = - Math.sin(angle) * lineElement * 6;
+    const
+        angle = dirAttToAngle(Direction, Attitude),
+        dx = Math.cos(angle) * lineElement * 6,
+        dy = -Math.sin(angle) * lineElement * 6;
     paths.push({
         'path': 'l ' + dx + ',' + (dy - lineElement * 6) + ' m ' +
             -dx + ',' + -dy + ' l ' + dx + ',' + (dy + lineElement * 6), 'style': 'illegalCross'
@@ -17208,14 +17116,14 @@ function buildIllegal(i) {
 // buildMoveTo builds the symbol for a moveto and moves the cursor
 // scaling should not affect movement, so divide by scale
 function buildMoveTo(dxdy, i) {
-    var paths = [];
+    const paths = [];
     if (/^[CL]/.test(activeForm)) dxdy[0] = -dxdy[0];
     paths.push({
         'path': 'l ' + roundTwo(dxdy[0] * (lineElement / scale)) +
             ',' + roundTwo(dxdy[1] * (lineElement / scale)),
         'style': 'dotted',
-        'dx': dxdy[0] * (lineElement / scale),
-        'dy': dxdy[1] * (lineElement / scale)
+        'dx': parseInt(dxdy[0]) * (lineElement / scale),
+        'dy': parseInt(dxdy[1]) * (lineElement / scale)
     });
     // Create space after the figure
     figures[i].paths = buildShape('FigSpace', 2, paths);
@@ -17225,12 +17133,13 @@ function buildMoveTo(dxdy, i) {
 // buildCurveTo builds the symbol for a curveto and moves the cursor
 // scaling should not affect movement, so divide by scale
 function buildCurveTo(dxdy, i) {
-    var paths = [];
+    const paths = [];
     if (/^[CL]/.test(activeForm)) dxdy[0] = -dxdy[0];
-    var angle = dirAttToAngle(Direction, Attitude);
-    var dist = Math.sqrt(dxdy[0] * dxdy[0] + dxdy[1] * dxdy[1]);
-    var dx = Math.cos(angle) * (lineElement / scale) * dist / 2;
-    var dy = - Math.sin(angle) * (lineElement / scale) * dist / 2;
+    const
+        angle = dirAttToAngle(Direction, Attitude),
+        dist = Math.sqrt(dxdy[0] * dxdy[0] + dxdy[1] * dxdy[1]),
+        dx = Math.cos(angle) * (lineElement / scale) * dist / 2,
+        dy = -Math.sin(angle) * (lineElement / scale) * dist / 2;
 
     paths.push({
         'path': 'c ' + roundTwo(dx) + ',' + roundTwo(dy) + ' ' +
@@ -18813,7 +18722,7 @@ function updateSequence(figNr, figure, replace, fromFigSel, force) {
                                 dx += parseInt(figures[i].paths[0].dx * (scale / lineElement));
                                 dy += parseInt(figures[i].paths[0].dy * (scale / lineElement));
                             } else {
-                                var dxdy = figures[i].string.replace(/[^0-9\,\-]/g, '').split(',');
+                                const dxdy = figures[i].string.replace(/[^0-9\,\-]/g, '').split(',');
                                 dx += parseInt(dxdy[0]);
                                 dy += parseInt(dxdy[1]);
                             }
@@ -18981,8 +18890,8 @@ function parseSequence() {
     additionals = 0;
     // Make sure the scale is set to 1 before parsing
     if (scale != 1) {
-        curveRadius = curveRadius / scale;
-        lineElement = lineElement / scale;
+        curveRadius /= scale;
+        lineElement /= scale;
         scale = 1;
     }
 
@@ -19107,19 +19016,19 @@ function parseSequence() {
             // do not do moveTo, curveTo or moveForward on first figure
             if ((figure.charAt(0) == userpat.moveto) && (seqNr > 1)) {
                 // Move to new position
-                var dxdy = figure.replace(/[^0-9\,\-]/g, '').split(',');
+                const dxdy = figure.replace(/[^0-9\,\-]/g, '').split(',');
                 if ((dxdy[0] >= 0 || dxdy[0] < 0) && (dxdy[1] >= 0 || dxdy[1] < 0)) {
                     buildMoveTo(dxdy, i);
                 }
             } else if ((figure.charAt(0) == userpat.curveTo) && (seqNr > 1)) {
                 // Curve to new position
-                var dxdy = figure.replace(/[^0-9\,\-]/g, '').split(',');
+                const dxdy = figure.replace(/[^0-9\,\-]/g, '').split(',');
                 if ((dxdy[0] >= 0 || dxdy[0] < 0) && (dxdy[1] >= 0 || dxdy[1] < 0)) {
                     buildCurveTo(dxdy, i);
                 }
             } else if (regexMoveForward.test(figure) && (seqNr > 1)) {
                 // Move forward without connecting line
-                var moveFwd = figure.match(regexMoveForward)[0];
+                const moveFwd = figure.match(regexMoveForward)[0];
                 if (parseInt(moveFwd)) {
                     buildMoveForward(parseInt(moveFwd) +
                         moveFwd.length -
@@ -19130,7 +19039,7 @@ function parseSequence() {
                 }
             } else if (regexMoveDown.test(figure)) {
                 // Move down without connecting line
-                var moveDn = figure.match(regexMoveDown)[0];
+                const moveDn = figure.match(regexMoveDown)[0];
                 if (parseInt(moveDn)) {
                     buildMoveDown(parseInt(moveDn) + moveDn.length - moveDn.match(/\d*/).length - 1, i);
                 } else {
@@ -19139,12 +19048,12 @@ function parseSequence() {
             } else if (figure.charAt(figure.length - 1) == userpat.scale) {
                 // Change scale
                 if (scale != 1) {
-                    curveRadius = curveRadius / scale;
-                    lineElement = lineElement / scale;
+                    curveRadius /= scale;
+                    lineElement /= scale;
                 }
-                scale = Math.max(1 + (parseInt(figure.replace(userpat.scale, '')) / 10), 0.1) || 1;
-                curveRadius = curveRadius * scale;
-                lineElement = lineElement * scale;
+                scale = parseFloat(Math.max(1 + (parseInt(figure.replace(userpat.scale, '')) / 10)), 0.1);
+                curveRadius *= scale;
+                lineElement *= scale;
                 f.scale = true;
                 //      } else if (figure.match (regexSequenceOptions)) {
             } else if (figure == userpat.subSequence) {
@@ -19353,8 +19262,8 @@ function parseSequence() {
                 firstFigure = false;
                 // Reset scale to 1 after completing a figure
                 if (scale != 1) {
-                    curveRadius = curveRadius / scale;
-                    lineElement = lineElement / scale;
+                    curveRadius /= scale;
+                    lineElement /= scale;
                     scale = 1;
                 }
             } else if (base != '') {

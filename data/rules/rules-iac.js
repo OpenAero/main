@@ -58,6 +58,8 @@
  * - Updated pos K for Intermediate to 20 and for Advanced to 30
  * 2024.1.4
  * - Updated IAC Sportsman Free maximum K to 130 (129 + 1 fp)
+ * 2025.1.3
+ * - Updated IAC Sportsman Free maximum K to 116 (115 + 1 fp)
 */
 
 rules.push (
@@ -94,7 +96,7 @@ rules.push (
 
 "posnl=10",
 "basefig-max=12",
-"k-max=130",
+"k-max=116", // = 115 + 1 fp
 "floating-point=1",
 
 "basefigex11-repeat=1",

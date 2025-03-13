@@ -1,6 +1,17 @@
 2025.1.3
 * Enabled hourly library update checking
 * Improved spin addition explanation in Figure Editor (German and French to do)
+* Added 2025 SAC Intermediate Free Known figures and rules
+* Added check to all CIVA Free Known sequences for the Known set Minimum Total K
+* Improved Team selection list by making the first option 'None'
+* Added 2025 IMAC sequences
+* Updated 2025 IAC Sportsman Free K to 115 (Issue #292)
+* Corrected IAC Glider Advanced Unknown max figure K to 160 (Issue #293)
+* Fixed selection option of rolls that are not in Glider Aresti (Issue #294)
+* Removed Glider 3x3 and super-slow rolls as these are no longer in the catalogue (Issue #294)
+* Fixed incorrect display of zoomed tailslides (bug introduced in 2024)
+* Fixed issue of failing sequence drawings on Chrome Version 134.0.6998.89
+* Fixed .seq file association and opening on Windows
 
 2025.1.2
 * Fixed issue in 2025.1.1 that broke some types of rule checking

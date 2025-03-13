@@ -615,11 +615,12 @@ lang.en = {
 'rollSmall' : 'Small',
 'rollsSpinsExplain' :
   `To add rolls or spins, select a base figure (e.g. from family 1)
-  and add the roll or spin onto it. According the Aresti catalog,
-  upright spins can only start from upright flight and inverted
-  spins only from inverted flight. Suitable base figures then proceed
-  into a vertical descending line, onto which the spin can be added.
-  See examples below.`,
+  and add the roll or spin onto it.<br/>
+  Upright spins can only start from upright flight and inverted
+  spins only from inverted flight (in Aresti sequences). Suitable base
+  figures then proceed into a vertical descending line, onto which the
+  spin can be added. See examples below for base figures 1.1.6.3 and
+  8.6.1.4.`,
 'rollSymbolLarge' : 'Large',
 'rollSymbolMedium' : 'Medium',
 'rollSymbolSize' : 'Roll symbol size',

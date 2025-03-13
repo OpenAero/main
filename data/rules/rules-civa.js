@@ -115,6 +115,9 @@ OpenAero 2016.3.2
 2025.1.1
 - Removed double negative Horizontal "8" figures from allowed Unknowns
 - Updated reference sequences for 2025
+2025.1.3
+- Added k-min to all Free Known sequences to match the Known set
+  Minimum Total K
 */
 
 // open the rules.push command
@@ -140,6 +143,7 @@ rules.push(
     "(CIVA Unlimited Free)",
     "posnl=40",//assume no line judges
     "poslj=20",
+    "k-min=225", // Minimum K for the Known set (2.2.1.4)
     "k-max=420",
 
     "more=CIVA/IAC Unlimited Free",
@@ -204,6 +208,7 @@ rules.push(
 
     "basefig-min=10",
     "basefig-max=10",
+    "k-min=225", // Minimum K for the Known set (2.2.1.4)
     "k-max=450",
 
     "basefig-repeat=1",
@@ -1205,6 +1210,7 @@ rules.push(
 "[CIVA Advanced Free Known]",
 "posnl=30",//no line judges
 "poslj=10",
+"k-min=160", // Minimum K for the Known set (2.2.1.4)
 "k-max=320",
 "basefig-min=10",
 "basefig-max=10",
@@ -1592,6 +1598,7 @@ rules.push(
 "[CIVA Intermediate Free Known]",
 "posnl=30",//no line judges
 "poslj=10",
+"k-min=100", // Minimum K for the Known set (2.2.1.4)
 "k-max=200",
 "basefig-min=10",
 "basefig-max=10",

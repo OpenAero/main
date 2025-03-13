@@ -59,6 +59,8 @@ const precacheFiles = [
 'assets/images/PilotCard.svg',
 'assets/images/pwa-badge.png',
 'assets/images/sequence_info.png',
+'assets/images/single_inverted_spin_on_rp.svg',
+'assets/images/single_spin.svg',
 'assets/images/snaprolls.png',
 'assets/images/spinrolls.png',
 'index.html',
