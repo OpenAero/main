@@ -40,13 +40,16 @@ This file is part of OpenAero.
  A new x must be used for versions that create sequences not
  fully backward compatible with the previous version
 */
-const version = '2025.1.3';
+const version = '2025.1.4';
 // versionNew is an object that contains version update information
 // The structure is {vvv : [[ttt, n], ...], ...} , where
 // vvv = version number
 // ttt = update text
 // n   = importance (higher = more important)
 const versionNew = {
+  '2025.1.4': [
+    ['Added 2025/2026 NZAC sequences', 3],
+  ],
   '2025.1.3': [
     ['Added 2025 SAC Intermediate Free Known figures and rules', 3],
     ['Added 2025 IMAC sequences', 4],

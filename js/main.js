@@ -10840,10 +10840,9 @@ function Drop() {
                 dxdy = transform.match(/[0-9\-\.]+[, ][0-9\-\.]+/) ?
                     transform.replace(/ /, ',').match(/[0-9\-\.]+,[0-9\-\.]+/)[0].split(',') :
                     [transform.match(/[0-9\-\.]+/)[0], 0],
-                dx = parseInt(dxdy[0] / lineElement),
+                dx = parseInt(dxdy[0] / lineElement) * (/^[CL]/.test(activeForm) ? -1 : 1),
                 dy = parseInt(dxdy[1] / lineElement);
             // reverse direction for dragging in Form C
-            if (/^[CL]/.test(activeForm)) dx = -dx;
             if ((dx != 0) || (dy != 0)) {
                 updateSequence(dragTarget.id.replace('figure', '') - 1,
                     '(' + dx + ',' + dy + ')',

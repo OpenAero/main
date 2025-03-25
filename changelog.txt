@@ -1,3 +1,8 @@
+2025.1.4
+* Added 2025/2026 NZAC sequences
+* Updated SAA rules
+* Fixed issue that caused problems when dragging figures in Form C (wind left) (Issue #297)
+
 2025.1.3
 * Enabled hourly library update checking
 * Improved spin addition explanation in Figure Editor (German and French to do)
