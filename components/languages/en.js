@@ -736,6 +736,7 @@ lang.en = {
   'switchY' : 'Switch Y exit direction'
 }, // end tooltip sub-array
 'totalK' : 'Total K',
+'transparentBackground' : 'Transparent background',
 'trgViolation' : 'Trg Violation',
 'unlockSequence' : 'Unlock',
 'unusedFigureLetters' : 'Unused figure letter(s): %s',
@@ -801,6 +802,5 @@ lang.en = {
 'xBoxEntry' : 'Cross-box entry',
 'xBoxEntryAway' : 'Cross-box entry away',
 'zipImageFilenamePattern' : 'Filename pattern',
-'zoom' : 'Zoom'
-// end of key-value pairs. No comma after last
+'zoom' : 'Zoom',
 };

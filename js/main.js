@@ -19,7 +19,12 @@
 
 // **************************************************************
 // *
-// *           BASE VARIABLES
+// *           GLOBAL VARIABLES
+// *
+// * All global variables should be properties of the OA object.
+// * When defined through the OAconst function, they can not be
+// * reassigned.
+// * This is on ongoing refactorization.
 // *
 // **************************************************************
 "use strict";
@@ -32,48 +37,47 @@ if (!window.requestFileSystem && window.webkitRequestFileSystem) {
 }
 
 // interval id
-var intervalID = [];
-
+OA.intervalID = [];
 // trueDrawingAngle is used for correctly drawing on Y axis
-var trueDrawingAngle;
+OA.trueDrawingAngle = 0;
 // set y axis offset to the default
-var yAxisOffset = yAxisOffsetDefault;
+OA.yAxisOffset = yAxisOffsetDefault;
 // Attitude goes from 0 to 359
 // 0 = upright LTR, 45 = 45 up LTR, 90 = vertical up belly right etc
-var Attitude = 0;
+OA.attitude = 0;
 // Direction goes from 0 to 359 and indicates the direction the aircraft
 // would have if it was pulled to level flight. It is combined with Attitude
 // to define overall direction allowing integers for all whole degrees
 // 0 = LTR, 90 = front to back, 180 = RTL, 270 = back to front. But when
 // Attitude is inverted directions are reversed!
-var Direction = 0;
+OA.direction = 0;
 // NegLoad indicates whether the current vertical has a negative load
 // 0 = positive, 1 = negative
-var NegLoad = 0;
+OA.negLoad = 0;
 // goRight determines in which direction a vertical 1/4 roll to the
 // X axis will go. True = right (=upwind on form B), false = left
-var goRight = true;
+OA.goRight = true;
 // goFront determines direction for 1/4 roll to Y axis
-var goFront = true;
+OA.goFront = true;
 // updateAxisDir determines if it should be updated in changeAtt
-var updateAxisDir = true;
+OA.updateAxisDir = true;
 // X is x position on canvas
-var X = 0;
+OA.X = 0;
 // Y is y position on canvas
-var Y = 0;
+OA.Y = 0;
 // Scale is the current scaling factor
 // 1 = default, .5 is 50%, 2 is 200%
-var scale = 1;
+OA.scale = 1;
 // activeForm holds the currently displayed form
 // activeForm == 'C' is true when form C is drawn. It is used in various
 // functions to ensure exact mirroring
-var activeForm = 'B';
+OA.activeForm = 'B';
 // sequenceEditing is true when the sequence drawing output is set for
 // editing and false when set for output (e.g. printing)
-var sequenceEditing = true;
+OA.sequenceEditing = true;
 // activeSequence holds the current sequence string, separate figures,
 // XML string with all sequence info, undo, redo and filename
-const activeSequence = {
+OA.activeSequence = {
     'text': '',
     'figures': [],
     'xml': null,
@@ -83,20 +87,20 @@ const activeSequence = {
 };
 // referenceSequence is used for checking Free (Un)known sequence against
 // reference
-const referenceSequence = { figures: [] };
+OA.referenceSequence = { figures: [] };
 // sequenceSaved is true when the current sequence has been saved. It
 // starts out true as we start with an empty sequence
-var sequenceSaved = true;
+OA.sequenceSaved = true;
 // sequenceText will hold the sequence_text input field object
-var sequenceText;
+OA.sequenceText = false;
 // sportingClass will hold the class select object
-var sportingClass;
+OA.sportingClass = false;
 // fileName will hold the fileName span
-var fileName;
+OA.fileName = false;
 // figureK holds the current total figureK
-var figureK = 0;
+OA.figureK = 0;
 // userText global
-var userText = [];
+OA.userText = [];
 
 /** figures is an object that will hold all figure data of the sequence
 format is: figures[i].xxx where:
@@ -124,39 +128,39 @@ unknownFigureLetter  letter for Free (Un)known figures
 subSeq               subsequence number, used in Free (Un)known Designer
 switchFirstRoll      multi switch figures. true/false/null
 */
-var figures = [];
+OA.figures = [];
 
 // firstFigure is true when the figure is the first of the (sub)sequence
-var firstFigure = true;
+OA.firstFigure = true;
 // additionals holds the number of additional figures in the sequence
-var additionals = 0;
+OA.additionals = 0;
 // unknownFigureLetter holds the letter assigned to the upcoming figure
-var unknownFigureLetter = false;
+OA.unknownFigureLetter = false;
 // Get ellipse perameters for perspective drawing
-var perspectiveParam = getEllipseParameters(yAxisOffsetDefault, yAxisScaleFactor);
+OA.perspectiveParam = getEllipseParameters(yAxisOffsetDefault, yAxisScaleFactor);
 // logoImg holds the active logo image
-var logoImg = false;
+OA.logoImg = false;
 // figureStart holds the start positions (x,y) of all figures
-var figureStart = [];
+OA.figureStart = [];
 // selectFigure holds variables for the currently selected figure
-var selectedFigure = { 'id': null };
+OA.selectedFigure = { 'id': null };
 // SVGRoot is the sequence SVG object
-var SVGRoot = null;
+OA.SVGRoot = null;
 // These variables are used for dragging and dropping
-var TrueCoords = null;
-var GrabPoint = null;
-var dragTarget = null;
+OA.trueCoords = null;
+OA.grabPoint = null;
+OA.dragTarget = null;
 
 // platform.mobile is true when running on a mobile device (e.g. tablet)
 /** SET TO true FOR TESTING MOBILE */
-platform.mobile = (window.matchMedia("(max-width: 767px)").matches ||
+OA.platform.mobile = (window.matchMedia("(max-width: 767px)").matches ||
     ("ontouchstart" in document.documentElement) ||
     (navigator.userAgent.indexOf('IEMobile') !== -1) || 
-    platform.cordova ||
+    OA.platform.cordova ||
     false); // here
 
 // platform.touch is true on touch enabled devices
-platform.touch = (('ontouchstart' in window)
+OA.platform.touch = (('ontouchstart' in window)
     || (navigator.maxTouchPoints > 0)
     || (navigator.msMaxTouchPoints > 0));
 
@@ -168,43 +172,43 @@ platform.touch = (('ontouchstart' in window)
 // count       : current number
 // savedSeq    : sequence active before starting multi check
 // useReference: use current reference sequence or not
-const multi = {
+OAconst ('multi', {
     processing: false,
     fileList: [],
     total: 0,
     count: 0,
     savedSeq: '',
     useReference: false
-};
+});
 
 // saveData is used to hold data for filesaving
-const saveData = { blob: '', ext: '' };
+OAconst ('saveData', { blob: '', ext: '' });
 
 // variable for OLAN Humpty Bump check, N check and automatic conversion
 // of roll directions. Only used when opening OLAN files
-const OLAN = {
+OAconst ('OLAN', {
     bumpBugCheck: false,
     bumpBugFigs: [],
     nBugFigs: [],
     sequence: false,
     inFigureXSwitchFig: Infinity
-};
+});
 
 // seqCheckAvail indicates if sequence checking is available for a
 // rule/cat/seq combination
-var seqCheckAvail = {};
+OA.seqCheckAvail = {};
 // variables used for checking sequence validity
-var checkAllowCatId = [];  // Catalogue Numbers for allowed figures
-var checkCatGroup = [];
-var activeRules = false;   // Are rules active? If so, is object {description: ,logo:}
-var infoCheck = [];        // Seq info fields to be filled out when saving or printing
-var figureLetters = '';    // Letters that can be assigned to individual figures
-var additionalFig = { 'max': 0, 'totalK': 0 };    // Additional figures, max and K
-var ruleSuperFamily = [];  // Array of rules for determining figure SF
+OA.checkAllowCatId = [];  // Catalogue Numbers for allowed figures
+OA.checkCatGroup = [];
+OA.activeRules = false;   // Are rules active? If so, is object {description: ,logo:}
+OA.infoCheck = [];        // Seq info fields to be filled out when saving or printing
+OA.figureLetters = '';    // Letters that can be assigned to individual figures
+OA.additionalFig = { 'max': 0, 'totalK': 0 };    // Additional figures, max and K
+OA.ruleSuperFamily = [];  // Array of rules for determining figure SF
 
 // savedReference saves the active Reference sequence when it is
 // automatically changed by the reference directive in rules
-var savedReference = '';
+OA.savedReference = '';
 
 /** fig will hold all figures in the catalog, and queue figures in the
 form fig[i].xxx where xxx is:
@@ -221,30 +225,30 @@ draw    : the drawing instructions for each figure
 group   : to which group every figure belongs
 unknownFigureLetter : the figure letter, if applicable
 */
-let fig = [];
+OA.fig = [];
 // arestiToFig holds all fig index numbers under key of Aresti number
-const arestiToFig = {};
+OAconst ('arestiToFig', {});
 // rulesKFigures holds Aresti numbers of figures that had K changed in rules
-let rulesKFigures = {};
+OA.rulesKFigures = {};
 
 // fuFig is similar to fig, holding figures for the Free (Un)known Designer
-const fuFig = {};
+OAconst ('fuFig', {});
 
 // figBaseLookup holds the same data as fig.base, but with the base as
 // key and corresponding figure(s) as an array for fast lookup
-var figBaseLookup = [];
+OA.figBaseLookup = [];
 // figGroup holds the figure group data
-var figGroup = [];
+OA.figGroup = [];
 // rollFig wild hold all rolls as objects, key = rollBase
-var rollFig = {};
+OA.rollFig = {};
 // rollArestiToFig holds all rollBase values under key of Aresti number
-var rollArestiToFig = {};
+OA.rollArestiToFig = {};
 // alertMsgs will hold any alerts about figures and the sequence
-var alertMsgs = [];
+OA.alertMsgs = [];
 // alertMsgsRules will hold the Rulebook reference for alerts
-var alertMsgRules = {};
+OA.alertMsgRules = {};
 // errors is used for tracking startup errors
-var errors = [];
+OA.errors = [];
 
 /**************************************************************
  *
@@ -803,15 +807,15 @@ function cordovaHandleIntent(intent) {	// intent.action android.intent.action.MA
                 });
             });
         }, function (error) {
-            if (platform.android) {
+            if (OA.platform.android) {
                 window.plugins.webintent.getUri(
                     function (uri) {
                         if (uri.match(/^https:\/\/openaero.net\/\?s=/)) {
                             launchURL({ url: uri });
-                        } else alertBox(userText.saveDeviceFirst);
+                        } else alertBox(OA.userText.saveDeviceFirst);
                     }
                 );
-            } else alertBox(userText.saveDeviceFirst);
+            } else alertBox(OA.userText.saveDeviceFirst);
         });
     } /*else {
 		window.FilePath.resolveNativePath(intent.clipItems[0].uri, function(path) {
@@ -833,8 +837,8 @@ function cordovaSave(blob, filename) {
             files: [`df:${filename};${evt.target.result}`]
         }
         if ($('addSequenceLink').checked) {
-            options.message = `${userText.emailHeader}
-                https://openaero.net/?s=${encodeBase64Url(compressSequence(activeSequence.xml))}`;
+            options.message = `${OA.userText.emailHeader}
+                https://openaero.net/?s=${encodeBase64Url(compressSequence(OA.activeSequence.xml))}`;
         }
         window.plugins.socialsharing.shareWithOptions(options);
     }
@@ -1427,20 +1431,20 @@ function removeChildNodes(container) {
 function switchSmallMobile() {
     hideFigureSelector(); /* to prevent leftBlock from being invisible */
     saveSettingsStorage();
-    platform.smallMobile = !platform.smallMobile;
+    OA.platform.smallMobile = !OA.platform.smallMobile;
     // select no figure
-    if (selectedFigure.id !== null) selectFigure(false);
+    if (OA.selectedFigure.id !== null) selectFigure(false);
     // load CSS depending on smallMobile, largeMobile or desktop version
     const
         link = $('desktopLargeMobileCSS'),
         svg = $('sequenceArea');
-    if (platform.smallMobile) {
+    if (OA.platform.smallMobile) {
 
         // set smallMobile css
         link.setAttribute('href', 'assets/css/smallMobile.css');
 
         // update folowing parts of interface when not in Free Unknown Designer
-        if (activeForm != 'FU') {
+        if (OA.activeForm != 'FU') {
             // show sequence tab
             $('tab-sequenceArea').classList.remove('noDisplay');
             // hide sequence svg and move to before fuFigures
@@ -1488,7 +1492,7 @@ function switchSmallMobile() {
         $('main').insertBefore($('figureSelector'), $('main').firstChild);
 
         // show mini form A
-        miniFormA = true;
+        OA.miniFormA = true;
 
         checkSequenceChanged();
     }
@@ -1497,8 +1501,8 @@ function switchSmallMobile() {
     // set undo/redo button size
     setUndoRedo();
     // clear all figure chooser svgs
-    fig.forEach ((f) => { if (f) delete f.svg });
-    setFormLayout(activeForm);
+    OA.fig.forEach ((f) => { if (f) delete f.svg });
+    setFormLayout(OA.activeForm);
     // redraw sequence
     draw();
     // Activate the first figure selection group
@@ -1547,9 +1551,9 @@ function mobileInterface() {
     }
 
     // disable or change some items for iOS
-    if (platform.ios) {
+    if (OA.platform.ios) {
         // hide all save options, except on Cordova app
-        if (!platform.cordova) {
+        if (!OA.platform.cordova) {
             $('t_saveSequence').parentNode.classList.add('noDisplay');
             $('t_saveFigsSeparate').parentNode.classList.add('noDisplay');
             $('t_saveQueueFile').parentNode.classList.add('noDisplay');
@@ -1615,8 +1619,8 @@ function panelHeader(el, empty = '') {
             values = [];
         for (let i = 0; i < inputs.length; i++) {
             // add input values
-            if ((inputs[i].tagName === 'SELECT') && userText[inputs[i].value]) {
-                values.push(userText[inputs[i].value]);
+            if ((inputs[i].tagName === 'SELECT') && OA.userText[inputs[i].value]) {
+                values.push(OA.userText[inputs[i].value]);
             } else {
                 // use non-breaking spaces to keep input values together
                 values.push(inputs[i].value.replace(/ /, "\u00A0"));
@@ -1693,41 +1697,41 @@ function rebuildSequenceSvg() {
     // Save the current width and height to prevent "blinking"
     // while building the new sequence svg
     let width, height;
-    if (SVGRoot) {
-        width = SVGRoot.getAttribute('width');
-        height = SVGRoot.getAttribute('height');
+    if (OA.SVGRoot) {
+        width = OA.SVGRoot.getAttribute('width');
+        height = OA.SVGRoot.getAttribute('height');
     }
     $("sequenceArea").childNodes.forEach(c => {
         if (/svg/i.test(c.tagName)) c.remove();
     });
-    SVGRoot = newSvg();
-    SVGRoot.setAttribute("xmlns:xlink", xlinkNS);
-    SVGRoot.setAttribute("id", "sequenceSvg");
-    SVGRoot.setAttribute("viewBox", "0 0 800 600");
-    if (width) SVGRoot.setAttribute('width', width);
-    if (height) SVGRoot.setAttribute('height', height);
-    SVGRoot.setAttribute("viewport-fill", "white");
+    OA.SVGRoot = newSvg();
+    OA.SVGRoot.setAttribute("xmlns:xlink", xlinkNS);
+    OA.SVGRoot.setAttribute("id", "sequenceSvg");
+    OA.SVGRoot.setAttribute("viewBox", "0 0 800 600");
+    if (width) OA.SVGRoot.setAttribute('width', width);
+    if (height) OA.SVGRoot.setAttribute('height', height);
+    if (!$('transparentBackground').checked) OA.SVGRoot.setAttribute("viewport-fill", "white");
     // enable figure selection and drag&drop on all forms except A
-    if (activeForm != 'A') {
+    if (OA.activeForm != 'A') {
         // set touchDevice actions
-        if (platform.touch) {
-            SVGRoot.addEventListener('touchstart', grabFigure, false);
-            SVGRoot.addEventListener('touchmove', Drag, false);
-            SVGRoot.addEventListener('touchend', Drop, false);
+        if (OA.platform.touch) {
+            OA.SVGRoot.addEventListener('touchstart', grabFigure, false);
+            OA.SVGRoot.addEventListener('touchmove', Drag, false);
+            OA.SVGRoot.addEventListener('touchend', Drop, false);
         }
         // set mouse actions, also for touchDevice as this may also be a
         // touch enabled browser with mouse
-        SVGRoot.addEventListener('mousedown', grabFigure, false);
-        SVGRoot.addEventListener('mousemove', Drag, false);
-        SVGRoot.addEventListener('mouseup', Drop, false);
+        OA.SVGRoot.addEventListener('mousedown', grabFigure, false);
+        OA.SVGRoot.addEventListener('mousemove', Drag, false);
+        OA.SVGRoot.addEventListener('mouseup', Drop, false);
     }
 
-    $("sequenceArea").appendChild(SVGRoot);
+    $("sequenceArea").appendChild(OA.SVGRoot);
 
     // these svg points hold x and y values...
     // very handy, but they do not display on the screen
-    TrueCoords = SVGRoot.createSVGPoint();
-    GrabPoint = SVGRoot.createSVGPoint();
+    OA.trueCoords = OA.SVGRoot.createSVGPoint();
+    OA.grabPoint = OA.SVGRoot.createSVGPoint();
 }
 
 // prepareSvg clears a provided svg and prepares it for figure addition
@@ -1796,7 +1800,7 @@ function alertBox(message, title, buttons) {
         for (const key in buttons) {
             const button = document.createElement('span');
             button.classList.add('textButton', 'addedButton');
-            button.innerHTML = userText[buttons[key].name];
+            button.innerHTML = OA.userText[buttons[key].name];
             button.addEventListener('mousedown', buttons[key].function);
             $('t_closeAlert').parentNode.insertBefore(button, $('t_closeAlert'));
         }
@@ -1841,7 +1845,7 @@ function dialogBuildContents(boxName, message, title) {
     // Make the title
     if (title && (typeof title === 'object')) {
         title.params = title.params || [];
-        title.params.splice(0, 0, userText[title.userText]);
+        title.params.splice(0, 0, OA.userText[title.userText]);
         $(boxName + 'Title').innerHTML =
             sprintf.apply(undefined, title.params);
     } else {
@@ -1850,7 +1854,7 @@ function dialogBuildContents(boxName, message, title) {
     // Make the message
     if (message.userText) {
         message.params = message.params || [];
-        message.params.splice(0, 0, userText[message.userText]);
+        message.params.splice(0, 0, OA.userText[message.userText]);
         $(boxName + 'Message').innerHTML =
             sprintf.apply(undefined, message.params);
         // add language chooser, assure correct title formatting
@@ -1881,11 +1885,11 @@ function addLanguageChooser(boxName, message, title) {
                 $('language').value = this.getAttribute('language');
                 changeLanguage();
                 // update dialog box texts and rebuild language chooser
-                title.params[0] = userText[title.userText];
+                title.params[0] = OA.userText[title.userText];
                 $(boxName + 'Title').innerHTML =
                     sprintf.apply(undefined, title.params);
-                message.params[0] = userText[message.userText] +
-                    (errors ? `<p>${errors.join('</p><p>')}</p>` : '');
+                message.params[0] = OA.userText[message.userText] +
+                    (OA.errors ? `<p>${OA.errors.join('</p><p>')}</p>` : '');
                 $(boxName + 'Message').innerHTML =
                     sprintf.apply(undefined, message.params);
                 addLanguageChooser(boxName, message, title);
@@ -1905,8 +1909,8 @@ function saveDialog(message, name, ext, param = {}) {
         $('saveFileMessage').innerHTML = message;
         $('dlTextField').value = name;
         $('fileExt').innerHTML = ext;
-        if (platform.cordova) {
-            $('t_saveFile').innerText = userText.saveShareFile;
+        if (OA.platform.cordova) {
+            $('t_saveFile').innerText = OA.userText.saveShareFile;
         }
         // Don't show sequence link option if param.noSequenceLink is true
         $('saveFileAddSequenceLink').classList.toggle ('hidden', param.noSequenceLink);
@@ -1931,7 +1935,7 @@ function printDialog(show) {
             new QRCode(
                 $('qrCodeForPrint'),
                 {
-                    text: `https://openaero.net/?s=${encodeBase64Url(compressSequence(activeSequence.xml))}`,
+                    text: `https://openaero.net/?s=${encodeBase64Url(compressSequence(OA.activeSequence.xml))}`,
                     width: 600,
                     height: 600
                 }
@@ -1948,7 +1952,7 @@ function printDialog(show) {
         });
     } else {
         // clear fileList in case we were in printMultiDialog
-        multi.fileList = [];
+        OA.multi.fileList = [];
         saveImageSizeAdjust();
 
         $('printDialog').classList.add('noDisplay');
@@ -1962,12 +1966,12 @@ function printMultiDialog() {
     menuInactiveAll();
 
     // clear the file list
-    multi.fileList = [];
-    multi.processing = false;
+    OA.multi.fileList = [];
+    OA.multi.processing = false;
     clearFileListContainer($('fileDropPrintFiles'));
 
-    $('printMultiCurrentRules').innerHTML = activeRules ?
-        activeRules.description.replace(/ /g, '&nbsp;') : userText.none;
+    $('printMultiCurrentRules').innerHTML = OA.activeRules ?
+        OA.activeRules.description.replace(/ /g, '&nbsp;') : OA.userText.none;
 
     setPrintPageSet();
     $('printDialog').classList.remove('noDisplay');
@@ -2015,7 +2019,7 @@ function proposalsDialog(e) {
 
 // proposalsToGrid loads the proposals from the dialog to the Grid
 function proposalsToGrid() {
-    sequenceText.innerHTML = $('proposals').textContent.trim();
+    OA.sequenceText.innerHTML = $('proposals').textContent.trim();
     proposalsDialog(false);
     checkSequenceChanged(true);
 }
@@ -2025,8 +2029,8 @@ function helpWindow(url, title) {
     // set a small delay to make sure the menu is not again activated
     setTimeout(menuInactiveAll, 100);
 
-    if (platform.cordova) {
-        if (platform.android && /\.pdf$/.test(url)) {
+    if (OA.platform.cordova) {
+        if (OA.platform.android && /\.pdf$/.test(url)) {
             /* cordovaPdf(url, title); */
         } else {
             let win = cordova.InAppBrowser.open(
@@ -2040,12 +2044,12 @@ function helpWindow(url, title) {
                 })
             });
         }
-    } else if (platform.mobile && !platform.ios && !/\.pdf$/.test(url)) {
+    } else if (OA.platform.mobile && !OA.platform.ios && !/\.pdf$/.test(url)) {
         // for platform.mobile, open inline except for PDF
         $('helpBox').classList.remove('noDisplay');
         $('helpTitle').innerText = title;
         $('helpContent').firstChild.src = url;
-    } else if (platform.uwp) {
+    } else if (OA.platform.uwp) {
         window.open(
             url,
             title,
@@ -2073,31 +2077,31 @@ function aboutDialog() {
     function show(stableVersion) {
         let compText = '';
         if (!stableVersion) {
-            compText = userText.aboutUnknown;
+            compText = OA.userText.aboutUnknown;
             stableVersion = '-';
         } else {
             switch (compVersion(version, stableVersion)) {
                 case -1:
-                    compText = userText.aboutOlder;
-                    if (platform.cordova && platform.ios) {
-                        compText += userText.aboutOlderIos;
+                    compText = OA.userText.aboutOlder;
+                    if (OA.platform.cordova && OA.platform.ios) {
+                        compText += OA.userText.aboutOlderIos;
                     } else
-                        if (platform.cordova && platform.android) {
-                            compText += userText.aboutOlderAndroid;
+                        if (OA.platform.cordova && OA.platform.android) {
+                            compText += OA.userText.aboutOlderAndroid;
                         } else
                             if (!window.location.hostname.match(/^(.+\.)?openaero.net$/)) {
-                                compText += userText.aboutOlderCopy;
+                                compText += OA.userText.aboutOlderCopy;
                             } else {
-                                compText += userText.aboutOlderCache;
+                                compText += OA.userText.aboutOlderCache;
                             }
                     break;
                 case 1:
-                    compText = userText.aboutNewer;
+                    compText = OA.userText.aboutNewer;
             }
         }
         alertBox(
-            sprintf(userText.aboutText, version, stableVersion.split(' ')[0], compText),
-            userText.about);
+            sprintf(OA.userText.aboutText + (window.Windows ? 'Running on Windows' : ''), version, stableVersion.split(' ')[0], compText),
+            OA.userText.about + window.Windows ? 'Running on Windows' : 'Running on Windows');
         {
             const id = uniqueId();
             workerCallback[id] = function (value) {
@@ -2263,7 +2267,7 @@ function selectTab(e) {
     });
 
     // some special changes when in smallMobile fuDesigner
-    if (platform.smallMobile && activeForm == 'FU') {
+    if (OA.platform.smallMobile && OA.activeForm == 'FU') {
         if (li.id == 'tab-figureInfo') {
             $('leftBlockTabSelector').style.width =
                 $('leftBlock').style.width =
@@ -2325,13 +2329,13 @@ function updateUserTexts() {
 
     // Merge the active language over English into userText
     //userText = {...lang.en, ...language};
-    [lang.en, language].forEach(e => Object.assign(userText,e));
+    [lang.en, language].forEach(e => Object.assign(OA.userText,e));
 
     // update userText in rulesWorker
     rulesWorker.postMessage({
         action: 'userText',
         language: $('language').value,
-        userText: userText
+        userText: OA.userText
     });
 
     // rebuild buttons and tooltips
@@ -2374,8 +2378,8 @@ function setSequenceSaved(value) {
     const id = uniqueId();
     workerCallback[id] = function () {
         if (value) {
-            setTimeout(function () { sequenceSaved = true; }, 200);
-        } else sequenceSaved = false;
+            setTimeout(function () { OA.sequenceSaved = true; }, 200);
+        } else OA.sequenceSaved = false;
     }
     rulesWorker.postMessage({ action: false, callbackId: id });
 }
@@ -2384,7 +2388,7 @@ function setSequenceSaved(value) {
 // for rule checking by Worker
 function simplifyFigures() {
     const figs = [];
-    figures.forEach ((f) => {
+    OA.figures.forEach ((f) => {
         figs.push({
             additional: f.additional,
             aresti: f.aresti,
@@ -2405,9 +2409,9 @@ function simplifyFigures() {
 // described by an array of Aresti numbers
 function getSuperFamily(aresti, category) {
 
-    const superFamily = (activeRules && ruleSuperFamily.length) ?
+    const superFamily = (OA.activeRules && OA.ruleSuperFamily.length) ?
         // set Super Family from rules when applicable
-        ruleSuperFamily :
+        OA.ruleSuperFamily :
         // otherwise, check if a matching category is active or default to "advanced"
         (superFamilies[category.toLowerCase()] || superFamilies.advanced);
 
@@ -2433,7 +2437,7 @@ function dirAttToAngle(dir, att, nof=false) {
     const dirSin = Math.sin(dir * degToRad);
 
     // Create offset for the Y-axis, determined by yAxisOffset
-    let theta = dir - (nof ? 0 : dirSin * dirSin * (90 - yAxisOffset));
+    let theta = dir - (nof ? 0 : dirSin * dirSin * (90 - OA.yAxisOffset));
 
     // No Y-axis correction for pure verticals. This could be changed to a cos^2(att)
     // correction on yAxisOffset above, but would then also affect diagonal lines
@@ -2455,28 +2459,28 @@ function dirAttToAngle(dir, att, nof=false) {
 // changeDir changes Direction global by value
 // and checks it stays within 0-359
 function changeDir(value) {
-    Direction = (((Direction + value) % 360) + 360) % 360;
+    OA.direction = (((OA.direction + value) % 360) + 360) % 360;
 }
 
 // changeAtt changes Attitude global by value
 // and checks it stays within 0-359
 function changeAtt(value) {
-    Attitude = (((Attitude + value) % 360) + 360) % 360;
+    OA.attitude = (((OA.attitude + value) % 360) + 360) % 360;
     // update goRight for attitude changes. We monitor the exit direction
     // but also the direction through the top or bottom when ending vert.
     // Don't update this time when updateAxisDir is false, used for
     // double bumps
-    if (updateAxisDir) {
-        if (((Direction % 180) == 0) && (value != 0)) {
-            goRight = (Direction == 0) ? false : true;
-            if ((Attitude > 90) && (Attitude < 270)) {
-                goRight = !goRight;
-            } else if ((Attitude == 90) || (Attitude == 270)) {
-                if ((Attitude == 90) == (value < 0)) goRight = !goRight;
+    if (OA.updateAxisDir) {
+        if (((OA.direction % 180) == 0) && (value != 0)) {
+            OA.goRight = (OA.direction == 0) ? false : true;
+            if ((OA.attitude > 90) && (OA.attitude < 270)) {
+                OA.goRight = !OA.goRight;
+            } else if ((OA.attitude == 90) || (OA.attitude == 270)) {
+                if ((OA.attitude == 90) == (value < 0)) OA.goRight = !OA.goRight;
             }
         }
     } else {
-        updateAxisDir = true;
+        OA.updateAxisDir = true;
     }
 }
 
@@ -2484,7 +2488,7 @@ function changeAtt(value) {
 function changeRollFontSize(s) {
     const regex = new RegExp(`font-size:[ ]*${rollFontSize}px;`);
     rollFontSize = s;
-    style.rollText = style.rollText.replace(regex, `font-size: ${rollFontSize}px;`);
+    OA.style.rollText = OA.style.rollText.replace(regex, `font-size: ${rollFontSize}px;`);
 }
 
 // myGetBBox accepts an element and returns the bBox for the element and
@@ -2516,7 +2520,7 @@ function myGetBBox(e) {
 // and horizontal size scaling of the "bar"
 // The return value is an array with the width and height of the bounding rectangle
 function drawWind(x, y, signScale, svgEl) {
-    svgEl = svgEl || SVGRoot.getElementById('sequence');
+    svgEl = svgEl || OA.SVGRoot.getElementById('sequence');
     const
         sign = Math.sign(signScale),
         g = document.createElementNS(svgNS, 'g'),
@@ -2527,9 +2531,9 @@ function drawWind(x, y, signScale, svgEl) {
         'M' + x + ',' + (y + 6) + ' l ' + (-signScale * 90) +
             ',0 l 0,-6 l ' + (-sign * 16) + ',16 l ' + (sign * 16) +
             ',16 l 0,-6 l ' + (signScale * 90) + ',0 z');
-    path.setAttribute('style', style.windArrow);
+    path.setAttribute('style', OA.style.windArrow);
     g.appendChild(path);
-    drawText(/^(iac|imac)$/.test(formStyle) ? userText.windIAC : userText.wind,
+    drawText(/^(iac|imac)$/.test(OA.formStyle) ? OA.userText.windIAC : OA.userText.wind,
         x - (signScale * 50), y + 20, 'miniFormA', 'middle', '', g);
     svgEl.appendChild(g);
     return { width: Math.abs(signScale * 90 + sign * 16), height: 32 };
@@ -2541,7 +2545,7 @@ function makeFigStart(params) {
         seqNr = params.seqNr,
         first = params.first,
         paths = [],
-        angle = dirAttToAngle(Direction, Attitude);
+        angle = dirAttToAngle(OA.direction, OA.attitude);
 
     // Create a marker for possible automatic repositioning of the figure
     // start and applying styles after full definition of figure
@@ -2553,8 +2557,8 @@ function makeFigStart(params) {
     let
         radius = refRadius;
     // draw numbers in circles when numberInCircle set AND seqNr present
-    if (numberInCircle && seqNr && (activeForm != 'A')) {
-        if (first && !(/^G/.test(activeForm))) {
+    if (numberInCircle && seqNr && (OA.activeForm != 'A')) {
+        if (first && !(/^G/.test(OA.activeForm))) {
             radius = refRadius + 4;
             const
                 ax = roundTwo(radius * Math.cos(angle - open)),
@@ -2587,11 +2591,11 @@ function makeFigStart(params) {
             'dy': - Math.sin(angle) * refRadius
         });
     } else {
-        if (first && (activeForm !== 'A') && !(/^G/.test(activeForm))) {
+        if (first && (OA.activeForm !== 'A') && !(/^G/.test(OA.activeForm))) {
             paths.push({ 'path': 'm 3,-6 a7,7 0 1 1 -6,0', 'style': 'openFigureStartMarker' });
         }
         // Add the figure number, except on Form A
-        if (seqNr && (activeForm !== 'A')) {
+        if (seqNr && (OA.activeForm !== 'A')) {
             paths.push({
                 'text': seqNr,
                 'style': 'figNbr_09',
@@ -2616,13 +2620,13 @@ function makeFigStart(params) {
 // getFigureStartStyle returns a style for the figure start
 function getFigureStartStyle(f) {
     // only apply style when editing and not in FU editor
-    if (!sequenceEditing || /^[^BC]/.test(activeForm)) return false;
+    if (!OA.sequenceEditing || /^[^BC]/.test(OA.activeForm)) return false;
 
     if (f.unknownFigureLetter) {
         // set "additional" style for figures with letter L
         if (f.unknownFigureLetter == 'L') return 'additional';
         // check all other figures for use of the same letter
-        for (const fig of figures) {
+        for (const fig of OA.figures) {
             if (fig.aresti &&
                 fig.seqNr != f.seqNr &&
                 fig.unknownFigureLetter === f.unknownFigureLetter) {
@@ -2630,8 +2634,8 @@ function getFigureStartStyle(f) {
             }
         }
         // check figures against reference sequence if active
-        if (referenceSequence.figures[f.unknownFigureLetter]) {
-            const refFig = referenceSequence.figures[f.unknownFigureLetter];
+        if (OA.referenceSequence.figures[f.unknownFigureLetter]) {
+            const refFig = OA.referenceSequence.figures[f.unknownFigureLetter];
             if (refFig.checkLine !== f.checkLine) {
                 return 'error';
             } else if (refFig.entryDir === refFig.exitDir) {
@@ -2652,12 +2656,12 @@ function getFigureStartStyle(f) {
 function makeFigStop(lastFig) {
     let
         paths = { style: 'pos' },
-        angle = (Direction + 90) * degToRad,
-        dx = roundTwo(Math.cos(angle) * lineElement / scale),
-        dy = -roundTwo(Math.sin(angle) * lineElement / scale);
+        angle = (OA.direction + 90) * degToRad,
+        dx = roundTwo(Math.cos(angle) * lineElement / OA.scale),
+        dy = -roundTwo(Math.sin(angle) * lineElement / OA.scale);
     if (lastFig) {
         let
-            angle2 = dirAttToAngle(Direction, Attitude),
+            angle2 = dirAttToAngle(OA.direction, OA.attitude),
             dx2 = roundTwo(Math.cos(angle2) * lineElement),
             dy2 = -roundTwo(Math.sin(angle2) * lineElement);
         paths.path = `m ${dx2 + dx * 2},${dy2 + dy * 2} l ${-4 * dx},${-4 * dy}`;
@@ -2673,12 +2677,12 @@ function makeFigStop(lastFig) {
 // makeFigSpace creates space after figure
 // scaling should not affect movement, so divide by scale
 function makeFigSpace(extent) {
-    const angle = dirAttToAngle(Direction, Attitude);
+    const angle = dirAttToAngle(OA.direction, OA.attitude);
     return [{
         'path': '',
         'style': 'neg',
-        'dx': roundTwo(Math.cos(angle) * (lineElement / scale) * extent),
-        'dy': roundTwo(-Math.sin(angle) * (lineElement / scale) * extent)
+        'dx': roundTwo(Math.cos(angle) * (lineElement / OA.scale) * extent),
+        'dy': roundTwo(-Math.sin(angle) * (lineElement / OA.scale) * extent)
     }];
 }
 
@@ -2689,7 +2693,7 @@ function makeVertSpace(extent) {
         'path': '',
         'style': 'neg',
         'dx': 0,
-        'dy': (lineElement / scale) * extent
+        'dy': (lineElement / OA.scale) * extent
     }];
 }
 
@@ -2703,29 +2707,29 @@ function makeLine(params) {
     const
         extent = params[0];
     let
-        angle = dirAttToAngle(Direction, Attitude),
+        angle = dirAttToAngle(OA.direction, OA.attitude),
         dx = roundTwo(Math.cos(angle) * lineElement * extent),
         dy = -roundTwo(Math.sin(angle) * lineElement * extent);
 
-    if (((Direction % 180) == 90) && curvePerspective) {
+    if (((OA.direction % 180) == 90) && curvePerspective) {
         dx = roundTwo(yAxisScaleFactor * dx);
-        if (!((Attitude == 90) || (Attitude == 270))) {
+        if (!((OA.attitude == 90) || (OA.attitude == 270))) {
             dy = roundTwo(yAxisScaleFactor * dy);
         }
-        if ((Attitude % 90) == 45) {
-            angle -= yAxisOffset * degToRad;
+        if ((OA.attitude % 90) == 45) {
+            angle -= OA.yAxisOffset * degToRad;
             dx = roundTwo(scaleLine.x * Math.cos(angle) * lineElement * extent);
-            if (yAxisOffset > 90) {
+            if (OA.yAxisOffset > 90) {
                 dy = roundTwo((-scaleLine.y * Math.cos(angle) + Math.sin(angle)) * lineElement * extent);
             } else {
                 dy = -roundTwo((scaleLine.y * Math.cos(angle) + Math.sin(angle)) * lineElement * extent);
             }
-            trueDrawingAngle = Math.atan(-dy / dx) + (dx < 0 ? Math.PI : 0);
+            OA.trueDrawingAngle = Math.atan(-dy / dx) + (dx < 0 ? Math.PI : 0);
         }
-    } else trueDrawingAngle = angle;
+    } else OA.trueDrawingAngle = angle;
     return [{
         'path': `l ${dx},${dy}`,
-        'style': style[params[2]] ? params[2] : (NegLoad == 0) ? 'pos' : 'neg',
+        'style': OA.style[params[2]] ? params[2] : (OA.negLoad == 0) ? 'pos' : 'neg',
         'class': 'line',
         'handle': params[1],
         'dx': dx,
@@ -2738,7 +2742,7 @@ function makeLine(params) {
 function makeMove(Params) {
     const
         Extent = Params[0],
-        angle = dirAttToAngle(Direction, Attitude);
+        angle = dirAttToAngle(OA.direction, OA.attitude);
     return [{
         'path': '',
         'style': '',
@@ -2753,10 +2757,10 @@ function makeCorner(param) {
     // make sure param is an Integer
     param = parseInt(param);
     changeAtt(param);
-    NegLoad = (param >= 0) ? 0 : 1;
+    OA.negLoad = (param >= 0) ? 0 : 1;
     return [{
         'path': '',
-        'style': (NegLoad == 0) ? 'pos' : 'neg'
+        'style': (OA.negLoad == 0) ? 'pos' : 'neg'
     }];
 }
 
@@ -2839,7 +2843,7 @@ function dirAttToXYAngle(dir, att) {
     } else {
         angle = ((theta - att - 360) % 360 + 0) * degToRad || -Tau;
     }
-    trueDrawingAngle = angle;
+    OA.trueDrawingAngle = angle;
     return angle;
 }
 
@@ -2861,23 +2865,23 @@ function makeCurve(params) {
         pullPush = (angle >= 0) ? 0 : 1,
         longCurve = (Math.abs(angle) > 180) ? 1 : 0,
         // Calculate at which angle the curve starts
-        radStart = dirAttToAngle(Direction, Attitude),
-        radStartXY = dirAttToXYAngle(Direction, Attitude);
+        radStart = dirAttToAngle(OA.direction, OA.attitude),
+        radStartXY = dirAttToXYAngle(OA.direction, OA.attitude);
 
-    NegLoad = pullPush;
+    OA.negLoad = pullPush;
 
     if (params.style) {
         paths.style = params.style;
     } else {
-        paths.style = (NegLoad == 0) ? 'pos' : 'neg';
+        paths.style = (OA.negLoad == 0) ? 'pos' : 'neg';
     }
 
     changeAtt(angle);
 
     // Calculate at which angle the curve stops
     const
-        radStop = dirAttToAngle(Direction, Attitude),
-        radStopXY = dirAttToXYAngle(Direction, Attitude);
+        radStop = dirAttToAngle(OA.direction, OA.attitude),
+        radStopXY = dirAttToXYAngle(OA.direction, OA.attitude);
     // See if we are curving left or right, depending on radStart and PullPush
     let curveRight = (radStart >= 0) ? 0 : 1;
     if (pullPush == 1) curveRight = 1 - curveRight;
@@ -2885,7 +2889,7 @@ function makeCurve(params) {
     const sweepFlag = curveRight;
     let dx, dy;
     // Make the path and move the cursor
-    if (((Direction % 180) == 90) && curvePerspective) {
+    if (((OA.direction % 180) == 90) && curvePerspective) {
         curveRight = (radStartXY >= 0) ? 0 : 1;
         if (pullPush == 1) curveRight = 1 - curveRight;
         dx = yAxisScaleFactor * ((Math.sin(radStopXY) - Math.sin(radStartXY))) * curveRadius;
@@ -2895,11 +2899,11 @@ function makeCurve(params) {
             dy = -dy;
         }
         const
-            rotAxisEllipse = roundTwo((yAxisOffset < 90) ? perspectiveParam.rotAngle : -perspectiveParam.rotAngle),
-            xAxisRadius = roundTwo(perspectiveParam.xRadius * curveRadius),
-            yAxisRadius = roundTwo(perspectiveParam.yRadius * curveRadius);
-        dy -= dx * Math.sin(yAxisOffset * degToRad);
-        dx = dx * Math.cos(yAxisOffset * degToRad);
+            rotAxisEllipse = roundTwo((OA.yAxisOffset < 90) ? OA.perspectiveParam.rotAngle : -OA.perspectiveParam.rotAngle),
+            xAxisRadius = roundTwo(OA.perspectiveParam.xRadius * curveRadius),
+            yAxisRadius = roundTwo(OA.perspectiveParam.yRadius * curveRadius);
+        dy -= dx * Math.sin(OA.yAxisOffset * degToRad);
+        dx = dx * Math.cos(OA.yAxisOffset * degToRad);
         paths.path = `a${xAxisRadius},${yAxisRadius} ${rotAxisEllipse} ${longCurve} ${sweepFlag} ${roundTwo(dx)},${roundTwo(dy)}`;
     } else {
         if (curveRight == 0) {
@@ -2919,7 +2923,7 @@ function makeCurve(params) {
 // makeRollTopLine creates the small lines around rolls in the top
 function makeRollTopLine() {
     const
-        angle = dirAttToAngle(Direction, Attitude + 90),
+        angle = dirAttToAngle(OA.direction, OA.attitude + 90),
         dx = roundTwo(Math.cos(angle) * lineElement075),
         dy = -roundTwo(Math.sin(angle) * lineElement075);
     return [{
@@ -2966,7 +2970,7 @@ function makeTurnArc(rad, startRad, stopRad, paths) {
             sweepFlag = (rad > 0) ? 0 : 1,
             longCurve = (Math.abs(rad) < Math.PI) ? 0 : 1;
 
-        if ((Attitude > 90) && (Attitude < 270)) {
+        if ((OA.attitude > 90) && (OA.attitude < 270)) {
             paths.push({
                 'path': `a ${curveRadius},${roundTwo(curveRadius * flattenTurn)} 0 ${longCurve} ${sweepFlag} ${dx},${dy}`,
                 'style': 'neg', 'dx': dx, 'dy': dy
@@ -2979,19 +2983,19 @@ function makeTurnArc(rad, startRad, stopRad, paths) {
         }
     } else {
         const
-            rotAxisEllipse = (yAxisOffset < 90) ? perspectiveParam.rRotAngle : -perspectiveParam.hRotAngle,
-            xCurveRadius = roundTwo(perspectiveParam.hXRadius * curveRadius),
-            yCurveRadius = roundTwo(perspectiveParam.hYRadius * curveRadius);
+            rotAxisEllipse = (OA.yAxisOffset < 90) ? OA.perspectiveParam.rRotAngle : -OA.perspectiveParam.hRotAngle,
+            xCurveRadius = roundTwo(OA.perspectiveParam.hXRadius * curveRadius),
+            yCurveRadius = roundTwo(OA.perspectiveParam.hYRadius * curveRadius);
         let
             dy = yAxisScaleFactor * (Math.cos(stopRad) - Math.cos(startRad));
         const
-            dx = roundTwo((Math.sin(stopRad) - Math.sin(startRad) - dy * Math.cos(yAxisOffset * degToRad)) * curveRadius) * sign,
+            dx = roundTwo((Math.sin(stopRad) - Math.sin(startRad) - dy * Math.cos(OA.yAxisOffset * degToRad)) * curveRadius) * sign,
             sweepFlag = (rad > 0) ? 0 : 1,
             longCurve = (Math.abs(rad) < Math.PI) ? 0 : 1;
 
-        dy = roundTwo(dy * Math.sin(yAxisOffset * degToRad) * curveRadius) * sign;
+        dy = roundTwo(dy * Math.sin(OA.yAxisOffset * degToRad) * curveRadius) * sign;
 
-        if ((Attitude > 90) && (Attitude < 270)) {
+        if ((OA.attitude > 90) && (OA.attitude < 270)) {
             paths.push({
                 'path': `a ${xCurveRadius},${yCurveRadius} ${rotAxisEllipse} ${longCurve} ${sweepFlag} ${dx},${dy}`,
                 'style': 'neg', 'dx': dx, 'dy': dy
@@ -3043,17 +3047,17 @@ function makeTurnDots(rad, startRad, stopRad, paths) {
         });
     } else {
         const 
-            rotAxisEllipse = (yAxisOffset < 90) ? perspectiveParam.hRotAngle : -perspectiveParam.hRotAngle,
-            xCurveRadius = roundTwo(perspectiveParam.hXRadius * curveRadius),
-            yCurveRadius = roundTwo(perspectiveParam.hYRadius * curveRadius);
+            rotAxisEllipse = (OA.yAxisOffset < 90) ? OA.perspectiveParam.hRotAngle : -OA.perspectiveParam.hRotAngle,
+            xCurveRadius = roundTwo(OA.perspectiveParam.hXRadius * curveRadius),
+            yCurveRadius = roundTwo(OA.perspectiveParam.hYRadius * curveRadius);
         let
             dy = yAxisScaleFactor * (Math.cos(stopRad) - Math.cos(startRad));
         const
-            dx = roundTwo((Math.sin(stopRad) - Math.sin(startRad) - dy * Math.cos(yAxisOffset * degToRad)) * curveRadius) * sign,
+            dx = roundTwo((Math.sin(stopRad) - Math.sin(startRad) - dy * Math.cos(OA.yAxisOffset * degToRad)) * curveRadius) * sign,
             sweepFlag = (rad > 0) ? 0 : 1,
             longCurve = (Math.abs(rad) < Math.PI) ? 0 : 1;
 
-        dy = roundTwo(dy * Math.sin(yAxisOffset * degToRad) * curveRadius) * sign,
+        dy = roundTwo(dy * Math.sin(OA.yAxisOffset * degToRad) * curveRadius) * sign,
 
         paths.push({
             'path': `a ${xCurveRadius},${yCurveRadius} ${rotAxisEllipse} ${longCurve} ${sweepFlag} ${dx},${dy}`,
@@ -3109,12 +3113,12 @@ function makeTurnRoll(param, rad) {
             ' ' + roundTwo(dx) + ',' + roundTwo(dy) + ' ';
         paths.push({ 'path': path, 'style': 'pos' });
     } else {
-        var perspSin = Math.sin(yAxisOffset * degToRad);
-        var perspCos = Math.cos(yAxisOffset * degToRad);
+        var perspSin = Math.sin(OA.yAxisOffset * degToRad);
+        var perspCos = Math.cos(OA.yAxisOffset * degToRad);
         // get ellipse parameters
-        var rotAxisEllipse = (yAxisOffset < 90) ? perspectiveParam.hRotAngle : -perspectiveParam.hRotAngle;
-        var xRollcurveRadius = roundTwo(perspectiveParam.hXRadius * turnRollcurveRadius);
-        var yRollcurveRadius = roundTwo(perspectiveParam.hYRadius * turnRollcurveRadius);
+        var rotAxisEllipse = (OA.yAxisOffset < 90) ? OA.perspectiveParam.hRotAngle : -OA.perspectiveParam.hRotAngle;
+        var xRollcurveRadius = roundTwo(OA.perspectiveParam.hXRadius * turnRollcurveRadius);
+        var yRollcurveRadius = roundTwo(OA.perspectiveParam.hYRadius * turnRollcurveRadius);
         // Make the tip shape
         var radPoint = rad + sign * arrowTipLength;
         dxTip = ((Math.cos(radPoint) - radCos) * turnRollcurveRadius);
@@ -3166,30 +3170,30 @@ function makeTurn(draw) {
     if ((extent == 90) || (extent == 270)) {
         var dirChange = sign * extent;
         changeDir(dirChange);
-        if ((Direction % 180) == 0) {
+        if ((OA.direction % 180) == 0) {
             // Set depending on goRight on X axis
-            if ((((Direction == 0) == (Attitude == 0)) != goRight) == (!/^[CL]/.test(activeForm))) {
+            if ((((OA.direction == 0) == (OA.attitude == 0)) != OA.goRight) == (!/^[CL]/.test(OA.activeForm))) {
                 sign = -sign;
                 rollDir = -rollDir;
             }
         } else {
             // Set towards viewer on Y axis
-            if (((Direction == 90) == (Attitude == 0)) == (!/^[CL]/.test(activeForm))) {
+            if (((OA.direction == 90) == (OA.attitude == 0)) == (!/^[CL]/.test(OA.activeForm))) {
                 sign = -sign;
                 rollDir = -rollDir;
             }
         }
         changeDir(-dirChange);
     } else {
-        if ((Direction % 180) == 0) {
+        if ((OA.direction % 180) == 0) {
             // towards viewer X-to-X axis
-            if (((Direction == 0) == (Attitude < 180)) == (!/^[CL]/.test(activeForm))) {
+            if (((OA.direction == 0) == (OA.attitude < 180)) == (!/^[CL]/.test(OA.activeForm))) {
                 sign = -sign;
                 rollDir = -rollDir;
             }
         } else {
             // according goRight Y-to-Y axis
-            if ((((Direction == 90) == (Attitude == 0)) != goRight) == (!/^[CL]/.test(activeForm))) {
+            if ((((OA.direction == 90) == (OA.attitude == 0)) != OA.goRight) == (!/^[CL]/.test(OA.activeForm))) {
                 sign = -sign;
                 rollDir = -rollDir;
             }
@@ -3201,23 +3205,23 @@ function makeTurn(draw) {
     // See if we start with an outside roll
     var rollDir = /J/.test(draw) ? -sign : sign;
     // See if we start inverted, this will also flip the drawing direction
-    if (Attitude == 180) rollDir = -rollDir;
+    if (OA.attitude == 180) rollDir = -rollDir;
 
     // use for wingover
-    var newAttitude = extent == 180 ? (360 - Attitude) % 360 : Attitude;
+    var newAttitude = extent == 180 ? (360 - OA.attitude) % 360 : OA.attitude;
 
     // See if direction change is called for by the preparsed draw string
-    if (newAttitude != Attitude) {
+    if (newAttitude != OA.attitude) {
         // for wingover, HACK
-        var stopRad = dirAttToXYAngle(Direction + (sign * extent), newAttitude);
-        var startRad = dirAttToXYAngle(Direction, Attitude);
+        var stopRad = dirAttToXYAngle(OA.direction + (sign * extent), newAttitude);
+        var startRad = dirAttToXYAngle(OA.direction, OA.attitude);
     } else {
         if (!$('newTurnPerspective').checked) {
-            var stopRad = dirAttToAngle(Direction + (sign * extent), newAttitude);
-            var startRad = dirAttToAngle(Direction, Attitude);
+            var stopRad = dirAttToAngle(OA.direction + (sign * extent), newAttitude);
+            var startRad = dirAttToAngle(OA.direction, OA.attitude);
         } else {
-            var stopRad = dirAttToAngle(Direction + (sign * extent), newAttitude, true);
-            var startRad = dirAttToAngle(Direction, Attitude, true);
+            var stopRad = dirAttToAngle(OA.direction + (sign * extent), newAttitude, true);
+            var startRad = dirAttToAngle(OA.direction, OA.attitude, true);
         }
     }
     if (stopRad < 0) stopRad += Tau;
@@ -3274,8 +3278,8 @@ function makeTurn(draw) {
                 var dx = -sign * (Math.sin(stopRad)) * curveRadius;
                 var dy = -sign * (Math.cos(stopRad)) * curveRadius * flattenTurn;
             } else {
-                var dx = -sign * (Math.sin(stopRad)) * perspectiveParam.hXRadius * curveRadius;
-                var dy = -sign * (Math.cos(stopRad)) * perspectiveParam.hYRadius * curveRadius + rollFontSize / 3;
+                var dx = -sign * (Math.sin(stopRad)) * OA.perspectiveParam.hXRadius * curveRadius;
+                var dy = -sign * (Math.cos(stopRad)) * OA.perspectiveParam.hYRadius * curveRadius + rollFontSize / 3;
             }
 
             paths.push({
@@ -3287,7 +3291,7 @@ function makeTurn(draw) {
             });
             changeDir(sign * extent);
             // used for wingover
-            Attitude = newAttitude;
+            OA.attitude = newAttitude;
         } else {
             paths = makeTurnArc(sign * Math.PI, startRad, startRad + Math.PI, paths);
             changeDir(180);
@@ -3376,7 +3380,7 @@ function makeRoll(params) {
         sign = params[0] > 0 ? 1 : -1,
         sweepFlag = params[0] > 0 ? 1 : 0,
         rollTop = params.length > 2 ? params[2] : false,
-        rad = (Attitude % 90) == 45 ? trueDrawingAngle : dirAttToAngle(Direction, Attitude);
+        rad = (OA.attitude % 90) == 45 ? OA.trueDrawingAngle : dirAttToAngle(OA.direction, OA.attitude);
 
     // calculate sin and cos for rad once to save calculation time
     var radSin = Math.sin(rad);
@@ -3483,9 +3487,9 @@ function makeRoll(params) {
             // Make the line between the two rolls.
             // Only move the pointer (no line) for rolls in the top
             if (rollTop) {
-                paths = buildShape('Move', [1 / scale], paths);
+                paths = buildShape('Move', [1 / OA.scale], paths);
             } else {
-                paths = buildShape('Line', [1 / scale], paths);
+                paths = buildShape('Line', [1 / OA.scale], paths);
             }
             // Get the relative movement by the line and use this to build the
             // tip additional line
@@ -3522,7 +3526,7 @@ function makeSnap(params) {
         extent = Math.abs(params[0]),
         sign = params[0] > 0 ? 1 : -1,
         rollTop = params.length > 2 ? params[2] : false,
-        rad = (Attitude % 90) == 45 ? trueDrawingAngle : dirAttToAngle(Direction, Attitude),
+        rad = (OA.attitude % 90) == 45 ? OA.trueDrawingAngle : dirAttToAngle(OA.direction, OA.attitude),
         // calculate sin and cos for rad once to save calculation time
         radSin = Math.sin(rad),
         radCos = Math.cos(rad),
@@ -3583,15 +3587,15 @@ function makeSnap(params) {
         if (extent > 0) {
             // Save the status of the load variable, don't want to change that
             // during the roll
-            var saveLoad = NegLoad;
+            var saveLoad = OA.negLoad;
             // Make the line between the two rolls
             // Only move the pointer for rolls in the top
             if (rollTop) {
-                paths = buildShape('Move', [snapElement017 / scale], paths);
+                paths = buildShape('Move', [snapElement017 / OA.scale], paths);
             } else {
-                paths = buildShape('Line', [snapElement017 / scale], paths);
+                paths = buildShape('Line', [snapElement017 / OA.scale], paths);
             }
-            NegLoad = saveLoad;
+            OA.negLoad = saveLoad;
             // Get the relative movement by the line and use this to build the
             // tip additional line
             dx = -roundTwo(paths[paths.length-1].dx + radCos * snapElement2);
@@ -3620,7 +3624,7 @@ function makeSpin(params) {
         paths = [],
         extent = Math.abs(params[0]),
         sign = params[0] > 0 ? 1 : -1,
-        rad = dirAttToAngle(Direction, Attitude),
+        rad = dirAttToAngle(OA.direction, OA.attitude),
         // calculate sin and cos for rad once to save calculation time
         radSin = Math.sin(rad),
         radCos = Math.cos(rad);
@@ -3686,9 +3690,9 @@ function makeSpin(params) {
             // Make the line between the two rolls. Always positive for now
             // Only move the pointer for rolls in the top
             if (rollTop) {
-                paths = buildShape('Move', [0.5 / scale], paths);
+                paths = buildShape('Move', [0.5 / OA.scale], paths);
             } else {
-                paths = buildShape('Line', [0.5 / scale], paths);
+                paths = buildShape('Line', [0.5 / OA.scale], paths);
             }
             // Get the relative movement by the line and use this to build the
             // tip additional line
@@ -3717,7 +3721,7 @@ function makeShoulderRoll(params) {
         paths = [],
         extent = Math.abs(params[0]),
         sign = params[0] > 0 ? 1 : -1,
-        rad = (Attitude % 90) == 45 ? trueDrawingAngle : dirAttToAngle(Direction, Attitude),
+        rad = (OA.attitude % 90) == 45 ? OA.trueDrawingAngle : dirAttToAngle(OA.direction, OA.attitude),
         // calculate sin and cos for rad once to save calculation time
         radSin = Math.sin(rad),
         radCos = Math.cos(rad),
@@ -3764,11 +3768,11 @@ function makeShoulderRoll(params) {
         if (extent > 0) {
             // Save the status of the load variable, don't want to change that
             // during the roll
-            var saveLoad = NegLoad;
+            var saveLoad = OA.negLoad;
             // Make the line between the two rolls
             // Only move the pointer for rolls in the top
-            paths = buildShape(rollTop ? 'Move' : 'Line', [0.5 / scale], paths);
-            NegLoad = saveLoad;
+            paths = buildShape(rollTop ? 'Move' : 'Line', [0.5 / OA.scale], paths);
+            OA.negLoad = saveLoad;
             // Get the relative movement by the line and use this to build the
             // tip additional line
             path = 'm ' + roundTwo(-radSin * snapElement2 * sign + radCos * snapElement) + ',' +
@@ -3795,7 +3799,7 @@ function makeRuade(params) {
         extent = Math.abs(params[0]),
         sign = params[0] > 0 ? 1 : -1,
         rollTop = params.length > 2 ? params[2] : false,
-        rad = (Attitude % 90) == 45 ? trueDrawingAngle : dirAttToAngle(Direction, Attitude),
+        rad = (OA.attitude % 90) == 45 ? OA.trueDrawingAngle : dirAttToAngle(OA.direction, OA.attitude),
         // calculate sin and cos for rad once to save calculation time
         radSin = Math.sin(rad),
         radCos = Math.cos(rad);
@@ -3842,15 +3846,15 @@ function makeRuade(params) {
         if (extent > 0) {
             // Save the status of the load variable, don't want to change that
             // during the roll
-            var saveLoad = NegLoad;
+            var saveLoad = OA.negLoad;
             // Make the line between the two rolls
             // Only move the pointer for rolls in the top
             if (rollTop) {
-                paths = buildShape('Move', [0.5 / scale], paths);
+                paths = buildShape('Move', [0.5 / OA.scale], paths);
             } else {
-                paths = buildShape('Line', [0.5 / scale], paths);
+                paths = buildShape('Line', [0.5 / OA.scale], paths);
             }
-            NegLoad = saveLoad;
+            OA.negLoad = saveLoad;
             // Get the relative movement by the line and use this to build the
             // tip additional line
             path = 'm ' + roundTwo(-radSin * snapElement2 * sign + radCos * snapElement) + ',' +
@@ -3877,7 +3881,7 @@ function makeLomcevak(params) {
         extent = Math.abs(params[0]),
         sign = params[0] > 0 ? 1 : -1,
         rollTop = params.length > 2 ? params[2] : false,
-        rad = (Attitude % 90) == 45 ? trueDrawingAngle : dirAttToAngle(Direction, Attitude),
+        rad = (OA.attitude % 90) == 45 ? OA.trueDrawingAngle : dirAttToAngle(OA.direction, OA.attitude),
         // calculate sin and cos for rad once to save calculation time
         radSin = Math.sin(rad),
         radCos = Math.cos(rad);
@@ -3930,15 +3934,15 @@ function makeLomcevak(params) {
         if (extent > 0) {
             // Save the status of the load variable, don't want to change that
             // during the roll
-            var saveLoad = NegLoad;
+            var saveLoad = OA.negLoad;
             // Make the line between the two rolls
             // Only move the pointer for rolls in the top
             if (rollTop) {
-                paths = buildShape('Move', [0.5 / scale], paths);
+                paths = buildShape('Move', [0.5 / OA.scale], paths);
             } else {
-                paths = buildShape('Line', [0.5 / scale], paths);
+                paths = buildShape('Line', [0.5 / OA.scale], paths);
             }
-            NegLoad = saveLoad;
+            OA.negLoad = saveLoad;
             // Get the relative movement by the line and use this to build the
             // tip additional line
             path = 'm ' + roundTwo(-radSin * snapElement2 * sign + radCos * snapElement) + ',' +
@@ -3962,9 +3966,9 @@ function makeHammer(extent) {
         dx: 0,
         dy: lineElement * extent
     };
-    Attitude = 270;
+    OA.attitude = 270;
     changeDir(180);
-    if ((Direction % 180) == 90) {
+    if ((OA.direction % 180) == 90) {
         paths.path = `l ${roundTwo(scaleLine.x * lineElement)},${roundTwo((1 - scaleLine.y) * lineElement)}`;
     } else {
         paths.path = `l ${lineElement},${lineElement}`;
@@ -3978,10 +3982,10 @@ function makeTailslide(param) {
     let
         paths = new Array(Array(), Array()),
         sweepFlag = 1,
-        angle = dirAttToAngle(Direction, Attitude),
+        angle = dirAttToAngle(OA.direction, OA.attitude),
         radius = curveRadius;
 
-    NegLoad = 0;
+    OA.negLoad = 0;
     if (param == figpat.tailslidewheels) angle = -angle;
     sweepFlag = (angle > 0) ? 1 : 0;
     paths[0].style = (param == figpat.tailslidecanopy) ? 'pos' : 'neg';
@@ -3991,15 +3995,15 @@ function makeTailslide(param) {
         dy = radius;
         
     // Make the path and move the cursor
-    if (((Direction % 180) == 90) && curvePerspective) {
+    if (((OA.direction % 180) == 90) && curvePerspective) {
         var
-            rotAxisEllipse = (yAxisOffset < 90) ? perspectiveParam.rotAngle : -perspectiveParam.rotAngle,
-            xAxisRadius = perspectiveParam.xRadius * radius,
-            yAxisRadius = perspectiveParam.yRadius * radius;
+            rotAxisEllipse = (OA.yAxisOffset < 90) ? OA.perspectiveParam.rotAngle : -OA.perspectiveParam.rotAngle,
+            xAxisRadius = OA.perspectiveParam.xRadius * radius,
+            yAxisRadius = OA.perspectiveParam.yRadius * radius;
 
         dx *= scaleLine.x;
         dy -= dx * scaleLine.y;
-        if (yAxisOffset > 90) dx = -dx;
+        if (OA.yAxisOffset > 90) dx = -dx;
 
         paths[0].path = `a${roundTwo(xAxisRadius)},${roundTwo(yAxisRadius)} ${rotAxisEllipse} 0 ${sweepFlag} ${roundTwo(dx)},${roundTwo(dy)}`;
     } else {
@@ -4010,10 +4014,10 @@ function makeTailslide(param) {
     radius = curveRadius / 2;
     dx = (angle > 0) ? radius : -radius;
     dy = radius;
-    if (((Direction % 180) == 90) && curvePerspective) {
+    if (((OA.direction % 180) == 90) && curvePerspective) {
         dx *= scaleLine.x;
         dy -= dx * scaleLine.y;
-        if (yAxisOffset > 90) dx = -dx;
+        if (OA.yAxisOffset > 90) dx = -dx;
 
         paths[1].path = `a${roundTwo(xAxisRadius)},${roundTwo(yAxisRadius)} ${rotAxisEllipse} 0 ${sweepFlag} ${roundTwo(dx)},${roundTwo(dy)}`;
     } else {
@@ -4022,7 +4026,7 @@ function makeTailslide(param) {
     paths[1].style = 'pos';
     paths[1].dx = dx;
     paths[1].dy = dy;
-    Attitude = 270;
+    OA.attitude = 270;
     return paths;
 }
 
@@ -4062,26 +4066,26 @@ function makeTextBlock(text) {
     let match = text.match(/^@[A-Z]/);
     if (match) {
         text = text.replace(match[0], '');
-        unknownFigureLetter = match[0].replace('@', '');
+        OA.unknownFigureLetter = match[0].replace('@', '');
     }
     // handle special code for Unknown additional
     if (/^additional$/.test(text)) {
         text = '';
-        unknownFigureLetter = 'L';
+        OA.unknownFigureLetter = 'L';
     }
 
     // remove letter if it is an additional figure and none are allowed
-    if ((unknownFigureLetter === 'L') && !additionalFig.max) {
-        unknownFigureLetter = false;
+    if ((OA.unknownFigureLetter === 'L') && !OA.additionalFig.max) {
+        OA.unknownFigureLetter = false;
     }
 
     if (text != '') {
         // temporarily attach text to SVG root
-        const t = SVGRoot.appendChild(document.createElementNS(svgNS, 'text'));
-        t.setAttribute('style', style.textBlock);
+        const t = OA.SVGRoot.appendChild(document.createElementNS(svgNS, 'text'));
+        t.setAttribute('style', OA.style.textBlock);
 
         // determine fontSize or use default of 20
-        let fontSize = style.textBlock.match(/font-size:[ ]*(\d+)px/)[1] || 20;
+        let fontSize = OA.style.textBlock.match(/font-size:[ ]*(\d+)px/)[1] || 20;
 
         // Parse special codes
         // Not all OLAN special codes are supported yet. They will be
@@ -4097,7 +4101,7 @@ function makeTextBlock(text) {
         let moveXY = text.match(/\{(-?\d+),(-?\d+)\}/) || false;
         if (moveXY) {
             text = text.replace (/\{(-?\d+),(-?\d+)\}/, '');
-            moveXY[1] = parseInt(moveXY[1]) * lineElement * (/^[CL]/.test(activeForm) ? -1 : 1);
+            moveXY[1] = parseInt(moveXY[1]) * lineElement * (/^[CL]/.test(OA.activeForm) ? -1 : 1);
             moveXY[2] = parseInt(moveXY[2]) * lineElement;
         }
         // Now go through the rest of the text
@@ -4150,12 +4154,12 @@ function makeTextBlock(text) {
         if (rotate) [w,h] = [h,w];
 
         // remove element from SVG root
-        SVGRoot.removeChild(t);
+        OA.SVGRoot.removeChild(t);
 
         // calculate where the center of the box should be
         // rotation is taken into account
         // current angle = angle to box center
-        const angle = dirAttToAngle(Direction, Attitude);
+        const angle = dirAttToAngle(OA.direction, OA.attitude);
         // find distance from box edge to center in this direction
         let s = Math.sin(angle);
         let c = Math.cos(angle);
@@ -4281,16 +4285,16 @@ function buildShape(shapeName, Params, paths = []) {
 // previous text element to avoid.
 function drawShape(paths, svgElement, prev) {
     let cur = false;
-    svgElement = svgElement || SVGRoot.getElementById('sequence');
+    svgElement = svgElement || OA.SVGRoot.getElementById('sequence');
 
     // decide if we are drawing a path or text or starting a figure
     if (paths.path) {
         const path = document.createElementNS(svgNS, "path");
-        path.setAttribute('d', `M ${roundTwo(X)},${roundTwo(Y)} ${paths.path}`);
+        path.setAttribute('d', `M ${roundTwo(OA.X)},${roundTwo(OA.Y)} ${paths.path}`);
 
         function pathStyle(styleList) {
             const styleStrings = [];
-            for (let i = 0; i < styleList.length; i++) styleStrings.push(style[styleList[i]]);
+            for (let i = 0; i < styleList.length; i++) styleStrings.push(OA.style[styleList[i]]);
             return styleStrings.join(';');
         };
         path.setAttribute('style', pathStyle(paths.style.split(';')));
@@ -4302,14 +4306,14 @@ function drawShape(paths, svgElement, prev) {
         // option for rotating paths. Not used yet but may become usefull
         // for fitting rolls and snaps to curve in top or bottom of loop
         if ('rotate' in paths) {
-            path.setAttribute('transform', `rotate(${paths.rotate} ${X} ${Y})`);
+            path.setAttribute('transform', `rotate(${paths.rotate} ${OA.X} ${OA.Y})`);
         }
         svgElement.appendChild(path);
     } else if (paths.text) {
         var text = drawText(
             paths.text,
-            roundTwo(X + paths.x),
-            roundTwo(Y + paths.y),
+            roundTwo(OA.X + paths.x),
+            roundTwo(OA.Y + paths.y),
             paths.style,
             paths['text-anchor'],
             false,
@@ -4355,8 +4359,8 @@ function drawShape(paths, svgElement, prev) {
                     roundTwo(parseFloat(prev.t.getAttribute('x')) + cos * overlap));
                 prev.t.setAttribute('y',
                     roundTwo(parseFloat(prev.t.getAttribute('y')) + sin * overlap));
-                text.setAttribute('x', roundTwo(X + paths.x - cos * overlap));
-                text.setAttribute('y', roundTwo(Y + paths.y - sin * overlap));
+                text.setAttribute('x', roundTwo(OA.X + paths.x - cos * overlap));
+                text.setAttribute('y', roundTwo(OA.Y + paths.y - sin * overlap));
             }
         }
     } else if (paths.textBlock) {
@@ -4364,11 +4368,11 @@ function drawShape(paths, svgElement, prev) {
         var spans = tb.getElementsByTagName('tspan');
         // set all tspan x values
         for (let i = 0; i < spans.length; i++) {
-            spans[i].setAttribute('x', roundTwo(X + paths.x));
+            spans[i].setAttribute('x', roundTwo(OA.X + paths.x));
         }
         // set text x value
-        tb.setAttribute('x', roundTwo(X + paths.x));
-        tb.setAttribute('y', roundTwo(Y + paths.y));
+        tb.setAttribute('x', roundTwo(OA.X + paths.x));
+        tb.setAttribute('y', roundTwo(OA.Y + paths.y));
         // when a rotation is specified, rotate around center
         svgElement.appendChild(tb);
         if (paths.r) {
@@ -4378,43 +4382,43 @@ function drawShape(paths, svgElement, prev) {
     } else if (paths.figureStart) {
         // Check if figure starts do not overlap when this is not the first
         // figure
-        if (figureStart.length > 0) {
+        if (OA.figureStart.length > 0) {
             // count is used to make sure there is never an infinite loop
             var count = 0;
             do {
                 // Walk through the figure starts and see if we find any distance
                 // lower than minimum with the one we're making now
                 var overlap = false;
-                for (let i = 0; i < figureStart.length; i++) {
-                    var distSq = (figureStart[i].x - X) * (figureStart[i].x - X) +
-                        (figureStart[i].y - Y) * (figureStart[i].y - Y);
+                for (let i = 0; i < OA.figureStart.length; i++) {
+                    var distSq = (OA.figureStart[i].x - OA.X) * (OA.figureStart[i].x - OA.X) +
+                        (OA.figureStart[i].y - OA.Y) * (OA.figureStart[i].y - OA.Y);
                     if (distSq < minFigStartDistSq) {
                         // found one that's too close. Move the start down and run again
-                        Y = parseInt(figureStart[i].y + Math.sqrt(minFigStartDistSq - ((figureStart[i].x - X) * (figureStart[i].x - X))) + 1);
+                        OA.Y = parseInt(OA.figureStart[i].y + Math.sqrt(minFigStartDistSq - ((OA.figureStart[i].x - OA.X) * (OA.figureStart[i].x - OA.X))) + 1);
                         overlap = true;
                         count++;
                         break; // break for loop
                     }
                 }
             } while (overlap && (count < 10000));
-            Y = roundTwo(Y);
+            OA.Y = roundTwo(OA.Y);
         }
         // Put this figure's start in the figureStart array for checking
         // against the next one
-        figureStart.push({ 'x': X, 'y': Y });
+        OA.figureStart.push({ 'x': OA.X, 'y': OA.Y });
     }
-    if ('dx' in paths) X = roundTwo(X + paths.dx);
-    if ('dy' in paths) Y = roundTwo(Y + paths.dy);
+    if ('dx' in paths) OA.X = roundTwo(OA.X + paths.dx);
+    if ('dy' in paths) OA.Y = roundTwo(OA.Y + paths.dy);
     return cur;
 }
 
 // drawLine draws a line from x,y to x+dx,y+dy in style styleId
 // When an svg object is provided, it will be used i.s.o. the standard sequenceSvg
 function drawLine(x, y, dx, dy, styleId, svg) {
-    svg = svg || SVGRoot.getElementById('sequence');
+    svg = svg || OA.SVGRoot.getElementById('sequence');
     const path = document.createElementNS(svgNS, "path");
     path.setAttribute('d', `M ${roundTwo(x)},${roundTwo(y)} l ${roundTwo(dx)},${roundTwo(dy)}`);
-    path.setAttribute('style', style[styleId]);
+    path.setAttribute('style', OA.style[styleId]);
     svg.appendChild(path);
 }
 
@@ -4423,13 +4427,13 @@ function drawLine(x, y, dx, dy, styleId, svg) {
 // sequenceSvg
 // If style[styleId] does not exist, use styleId as style directly
 // The function returns the drawn rectangle
-function drawRectangle(x, y, width, height, styleId = '', svg = SVGRoot.getElementById('sequence')) {
+function drawRectangle(x, y, width, height, styleId = '', svg = OA.SVGRoot.getElementById('sequence')) {
     const path = document.createElementNS(svgNS, "rect");
     path.setAttribute('x', x);
     path.setAttribute('y', y);
     path.setAttribute('width', width);
     path.setAttribute('height', height);
-    path.setAttribute('style', style[styleId] || styleId);
+    path.setAttribute('style', OA.style[styleId] || styleId);
     svg.appendChild(path);
     return path;
 }
@@ -4437,10 +4441,10 @@ function drawRectangle(x, y, width, height, styleId = '', svg = SVGRoot.getEleme
 // drawText draws any text at position x, y in style styleId with
 // optional anchor, id, svg
 function drawText(text, x, y, styleId, anchor, id, svg, params={}) {
-    svg = svg || SVGRoot.getElementById('sequence');
+    svg = svg || OA.SVGRoot.getElementById('sequence');
     const newText = document.createElementNS(svgNS, "text");
     if (id) newText.setAttribute('id', id);
-    if (style && styleId) newText.setAttribute('style', style[styleId]);
+    if (OA.style && styleId) newText.setAttribute('style', OA.style[styleId]);
     if (anchor) newText.setAttribute('text-anchor', anchor);
     newText.setAttribute('x', roundTwo(x));
     newText.setAttribute('y', roundTwo(y));
@@ -4456,7 +4460,7 @@ function drawText(text, x, y, styleId, anchor, id, svg, params={}) {
 // w and h are width and height. With one of them not set the other will
 // be determined automatically
 function drawTextArea(text, x, y, w, h, styleId, id, svg) {
-    svg = svg || SVGRoot.getElementById('sequence');
+    svg = svg || OA.SVGRoot.getElementById('sequence');
 
     // determine current svg width for later checking of correct
     // foreignObject handling
@@ -4472,7 +4476,7 @@ function drawTextArea(text, x, y, w, h, styleId, id, svg) {
     }
     if (h) newText.setAttribute('height', roundTwo(h));
     div.innerHTML = text;
-    if (styleId) div.setAttribute('style', style[styleId]);
+    if (styleId) div.setAttribute('style', OA.style[styleId]);
     newText.appendChild(div);
     svg.appendChild(newText);
 
@@ -4491,7 +4495,7 @@ function drawTextArea(text, x, y, w, h, styleId, id, svg) {
         textLine.appendChild(textNode);
         newText.appendChild(textLine);
         svg.appendChild(newText);
-        if (styleId) newText.setAttribute('style', style[styleId]);
+        if (styleId) newText.setAttribute('style', OA.style[styleId]);
         var lineHeight = textLine.getBBox().height;
         y += lineHeight;
         // Now that we know, start building the lines, word by word
@@ -4522,7 +4526,7 @@ function drawTextArea(text, x, y, w, h, styleId, id, svg) {
 
 // drawCircle draws a circle
 function drawCircle(attributes, svg) {
-    svg = svg || SVGRoot.getElementById('sequence');
+    svg = svg || OA.SVGRoot.getElementById('sequence');
     const circle = document.createElementNS(svgNS, "circle");
     for (let key in attributes) circle.setAttribute(key, attributes[key]);
     svg.appendChild(circle);
@@ -4530,7 +4534,7 @@ function drawCircle(attributes, svg) {
 
 // drawImage draws an image
 function drawImage(attributes, svg) {
-    svg = svg || SVGRoot.getElementById('sequence');
+    svg = svg || OA.SVGRoot.getElementById('sequence');
     const image = document.createElementNS(svgNS, 'image');
     for (let key in attributes) {
         if (key === 'href') {
@@ -4548,7 +4552,7 @@ function doOnLoad() {
 
     // Immediately remove splash screen on Windows or Cordova app
     // as splash screen is shown by the app itself
-    if (platform.uwp || platform.cordova) $('loading').remove();
+    if (OA.platform.uwp || OA.platform.cordova) $('loading').remove();
 
     // Check browser requirements by checking for Promise support.
     // OpenAero will not function without it!
@@ -4572,17 +4576,17 @@ function doOnLoad() {
     }
 
     // define DOM variables
-    sequenceText = $('sequence_text');
-    sportingClass = $('class');
-    rulesWorker.postMessage({ action: 'sportingClass', class: sportingClass.value });
-    fileName = $('fileName');
+    OA.sequenceText = $('sequence_text');
+    OA.sportingClass = $('class');
+    rulesWorker.postMessage({ action: 'sportingClass', class: OA.sportingClass.value });
+    OA.fileName = $('fileName');
 
     // Cordova app settings
-    if (platform.cordova) {
+    if (OA.platform.cordova) {
         
         if (device.isiOSAppOnMac) {
             // Use the desktop interface when running on Mac
-            platform.mobile = false;
+            OA.platform.mobile = false;
             /** QR Scanner disabled as it crashes app
             // Update menu for QR code scanning
             $('t_openSequenceLink').parentNode.classList.remove('divider');
@@ -4623,19 +4627,19 @@ function doOnLoad() {
 
                     // fix iOS Cordova contenteditable focus bug by setting
                     // contentEditable to false on blur and restoring on focus
-                    sequenceText.addEventListener('blur', () => {
-                        sequenceText.setAttribute('contentEditable', false);
+                    OA.sequenceText.addEventListener('blur', () => {
+                        OA.sequenceText.setAttribute('contentEditable', false);
                     });
-                    sequenceText.addEventListener('touchstart', () => {
-                        sequenceText.setAttribute('contentEditable', true);
+                    OA.sequenceText.addEventListener('touchstart', () => {
+                        OA.sequenceText.setAttribute('contentEditable', true);
                     });
-                    sequenceText.addEventListener('focus', () => {
-                        sequenceText.setAttribute('contentEditable', true);
+                    OA.sequenceText.addEventListener('focus', () => {
+                        OA.sequenceText.setAttribute('contentEditable', true);
                     });
 
                     // Make sure full height is used before selecting keyboard
                     // (seems like iOS bug)
-                    sequenceText.focus();
+                    OA.sequenceText.focus();
 
                     // add status bar inside webview
                     $('cordovaStatusBar').classList.remove('noDisplay');
@@ -4669,7 +4673,7 @@ function doOnLoad() {
         }
     }
 
-    fileName.innerText = localStorage.getItem('fileName');
+    OA.fileName.innerText = localStorage.getItem('fileName');
 
     // set correct options and menu items in various places
     setOptions();
@@ -4702,9 +4706,9 @@ function doOnLoad() {
     // Parse the rules asynchronously
     rulesWorker.postMessage({
         action: 'initialize',
-        arestiToFig, arestiToFig,
-        fig: fig,
-        rollFig: rollFig,
+        arestiToFig: OA.arestiToFig, arestiToFig: OA.arestiToFig,
+        fig: OA.fig,
+        rollFig: OA.rollFig,
         rules: rules,
         superFamilies: superFamilies
     });
@@ -4712,13 +4716,13 @@ function doOnLoad() {
     // add all listeners for clicks, keyup etc
     addEventListeners();
 
-    if (!(platform.android || platform.ios || platform.uwp || platform.windows10)) {
+    if (!(OA.platform.android || OA.platform.ios || OA.platform.uwp || OA.platform.windows10)) {
         // setup PWA handler. Must be done early to ensure triggering of
         // beforeinstallprompt
-        const installPWA = $(platform.mobile ?
+        const installPWA = $(OA.platform.mobile ?
             'mobileInstallPWA' : 't_installApp');
         window.addEventListener('beforeinstallprompt', (e) => {
-            platform.supportsPWA = true;
+            OA.platform.supportsPWA = true;
             installPWA.addEventListener('mousedown', () => {
                 installPWA.parentNode.classList.add('noDisplay');
                 e.prompt();
@@ -4740,14 +4744,14 @@ function doOnLoad() {
     
     // Give Cordova or PWA three seconds to start, then...
     setTimeout(function () {
-        if (!platform.cordova) checkForApp();
+        if (!OA.platform.cordova) checkForApp();
     }, 3000);
 
     // build sequence svg
     rebuildSequenceSvg();
 
     // remove zoomMenu when zoom is not supported
-    if (!('zoom' in document.body.style) && !platform.mobile) {
+    if (!('zoom' in document.body.style) && !OA.platform.mobile) {
         $('zoomMenu').classList.add('noDisplay');
     }
 
@@ -4761,20 +4765,20 @@ function doOnLoad() {
         // Setup the drag n drop listeners for multi file checking
         dropZone.addEventListener('dragover', handleDragOver, false);
         dropZone.addEventListener('drop', updateCheckMulti, false);
-        $('t_chooseFiles').innerHTML = userText.chooseFilesOrDrop;
+        $('t_chooseFiles').innerHTML = OA.userText.chooseFilesOrDrop;
         $('t_chooseFiles').id = 't_chooseFilesOrDrop';
         // Setup the drag n drop listeners for multi file printing
         var dropZone = $('fileDropPrint');
         dropZone.addEventListener('dragover', handleDragOver, false);
         dropZone.addEventListener('drop', updatePrintMulti, false);
-        $('t_chooseFilesPrint').innerHTML = userText.chooseFilesOrDropPrint;
+        $('t_chooseFilesPrint').innerHTML = OA.userText.chooseFilesOrDropPrint;
         $('t_chooseFilesPrint').id = 't_chooseFilesOrDropPrint';
         // Setup the drag n drop listeners for logo uploading
         var dropZone = $('fileDropLogo');
         dropZone.addEventListener('dragover', handleDragOver, false);
         dropZone.addEventListener('drop', openLogoFile, false);
         // Setup the drag n drop listener for file opening
-        if (!platform.mobile) {
+        if (!OA.platform.mobile) {
             $('topBlock').addEventListener('dragover', handleDragOver, false);
             $('topBlock').addEventListener('drop', dropSequence);
             $('main').addEventListener('drop', dropSequence);
@@ -4795,7 +4799,7 @@ function doOnLoad() {
     saveImageSizeAdjust();
     // Set default Y axis offset and start direction
     setYAxisOffset(yAxisOffsetDefault);
-    Direction = 0;
+    OA.direction = 0;
     // Set OpenAero version for saving
     $('oa_version').value = version;
 
@@ -4815,9 +4819,9 @@ function doOnLoad() {
     // When no sequence is active yet, load sequence storage (if any).
     // Do this after the rules have been loaded to make sure rules stay
     // in Sequence info
-    if (!activeSequence.xml) {
-        activeSequence.xml = localStorage.getItem ('sequence');
-        activateXMLsequence(activeSequence.xml);
+    if (!OA.activeSequence.xml) {
+        OA.activeSequence.xml = localStorage.getItem ('sequence');
+        activateXMLsequence(OA.activeSequence.xml);
     }
     
     // Activate rules
@@ -4828,9 +4832,9 @@ function doOnLoad() {
     // Select active Form.
     // Need to do this to make sure the sequence is drawn when loaded
     // from localStorage or url
-    selectForm(activeForm);
+    selectForm(OA.activeForm);
 
-    if (platform.smallMobile) selectTab('tab-sequenceInfo');
+    if (OA.platform.smallMobile) selectTab('tab-sequenceInfo');
 
     // Enable hiding dialogs by tapping outside dialog, but not in scrollbars
     for (const el of document.getElementsByClassName('boxbg')) {
@@ -4845,7 +4849,7 @@ function doOnLoad() {
     }
 
     // Similarly, enable hiding the top dialog by using the Android back button
-    if (platform.android) {
+    if (OA.platform.android) {
         document.addEventListener("backbutton", function() {
             for (const el of document.getElementsByClassName('boxbg')) {
                 if (!el.classList.contains('noDisplay')) {
@@ -4867,7 +4871,7 @@ function doOnLoad() {
         } else if (el.parentNode.id === 'contestLabel') {
             el.parentNode.addEventListener('mousedown', () => {
                 $('contestLabel').parentNode.classList.toggle('expanded');
-                panelHeader($('activeContest'), userText.contest);
+                panelHeader($('activeContest'), OA.userText.contest);
             });
         } else {
             el.parentNode.addEventListener('mousedown', function (e) {
@@ -4877,13 +4881,13 @@ function doOnLoad() {
     }
 
     // Check if we are running from a file
-    if (!platform.cordova && window.location.protocol === 'file:') {
-        if (presentFileError) errors.push(userText.runFromFile);
+    if (!OA.platform.cordova && window.location.protocol === 'file:') {
+        if (presentFileError) OA.errors.push(OA.userText.runFromFile);
     }
 
     // show alert box for any errors
-    if (errors.length) alertBox(`<p>${errors.join('</p><p>')}</p>`);
-    errors = [];
+    if (OA.errors.length) alertBox(`<p>${OA.errors.join('</p><p>')}</p>`);
+    OA.errors = [];
 
     // Check if an update has just been done
     checkUpdateDone();
@@ -4899,7 +4903,7 @@ function doOnLoad() {
 
     // Load completed, except possibly for asynchronous rule loading.
     // Fade out and remove splash screen in a second
-    if (!(platform.cordova || platform.uwp)) {
+    if (!(OA.platform.cordova || OA.platform.uwp)) {
         setTimeout(function () { $('loading').style = 'opacity: 0.01;'; }, 600);
         setTimeout(function () { $('loading').remove(); }, 1000);
     }
@@ -4924,8 +4928,8 @@ function launchURL(launchData) {
             // 1.5.0 and later : base64url encoded link
             string = decodeBase64Url(match);
             if (string === false) {
-                alertBox(sprintf(userText.openSequenceLinkError, launchData.url),
-                    userText.openSequenceLink);
+                alertBox(sprintf(OA.userText.openSequenceLinkError, launchData.url),
+                    OA.userText.openSequenceLink);
                 return false;
             }
             // test for first character code between 128 and 159
@@ -4996,7 +5000,7 @@ function appZoom(e) {
     const zoomSteps = ['0.33', '0.5', '0.67', '0.75', '0.9', '1',
         '1.1', '1.25', '1.5', '1.75', '2', '2.5', '3'];
     let zoom = false;
-    if (platform.mobile) {
+    if (OA.platform.mobile) {
         zoom = (parseInt($('zoom').textContent.match(/\d+/)[0])/100).toString();
     } else {
         zoom = document.body.style.zoom ? document.body.style.zoom : '1';
@@ -5013,7 +5017,7 @@ function appZoom(e) {
     // only update zoom when zoom has a valid value
     if (zoom) {
         $('zoom').textContent = parseInt(zoom * 100) + '%';
-        if (platform.mobile) {
+        if (OA.platform.mobile) {
             checkSequenceChanged(true);
         } else {
             document.body.style.zoom = zoom;
@@ -5027,21 +5031,21 @@ function appZoom(e) {
 function addEventListeners() {
     document.addEventListener('keydown', keyListener, false);
 
-    if (platform.touch) {
+    if (OA.platform.touch) {
         // zoom for touch devices
         document.addEventListener('keydown', appZoom, false);
 
         // remove all menus when tapping anywhere outside menu
         document.addEventListener('touchstart', function (evt) {
-            var el = evt.target;
+            let el = evt.target;
             while (el && el !== this) {
                 if ((el.id === 'menu') || (el.id === 'hamburgerMenu')) return;
                 el = el.parentNode;
             }
             setTimeout(menuInactiveAll, 200);
             // on smallMobile, also remove figureSelector when tapping outside
-            if (platform.smallMobile) {
-                el = evt.target;
+            if (OA.platform.smallMobile) {
+                let el = evt.target;
                 while (el && el !== this) {
                     if (el.id === 'figureSelector') return;
                     el = el.parentNode;
@@ -5134,11 +5138,11 @@ function addEventListeners() {
     // sequence string
     $('undo').addEventListener('mousedown', clickButton, false);
     $('redo').addEventListener('mousedown', clickButton, false);
-    sequenceText.addEventListener('input', checkSequenceChanged, false);
-    sequenceText.addEventListener('keyup', checkSequenceChanged, false);
-    sequenceText.addEventListener('mouseup', checkSequenceChanged, false);
-    sequenceText.addEventListener('focus', virtualKeyboard, false);
-    sequenceText.addEventListener('blur', virtualKeyboard, false);
+    OA.sequenceText.addEventListener('input', checkSequenceChanged, false);
+    OA.sequenceText.addEventListener('keyup', checkSequenceChanged, false);
+    OA.sequenceText.addEventListener('mouseup', checkSequenceChanged, false);
+    OA.sequenceText.addEventListener('focus', virtualKeyboard, false);
+    OA.sequenceText.addEventListener('blur', virtualKeyboard, false);
 
     // virtual keyboard
     if (window.visualViewport) {
@@ -5151,7 +5155,7 @@ function addEventListeners() {
     $('virtualKeyboard').addEventListener('mouseup', releaseVirtualKeyboard, false);
 
     // grid info
-    if (platform.touch) {
+    if (OA.platform.touch) {
         $('gridInfo').addEventListener('touchstart', grabFigure);
         $('gridInfo').addEventListener('touchmove', Drag);
     }
@@ -5183,7 +5187,7 @@ function addEventListeners() {
     $('actype').addEventListener('change', changeSequenceInfo, false);
     $('acreg').addEventListener('change', changeSequenceInfo, false);
 
-    sportingClass.addEventListener('change', selectPwrdGlider, false);
+    OA.sportingClass.addEventListener('change', selectPwrdGlider, false);
     $('positioning').addEventListener('change', changeSequenceInfo, false);
     $('t_referenceSequence').addEventListener('mousedown', referenceSequenceDialog);
     $('harmony').addEventListener('change', changeSequenceInfo, false);
@@ -5293,7 +5297,7 @@ function addEventListeners() {
     $('queueColumns').addEventListener('change', changeQueueColumns, false);
     $('positionClearAuto').addEventListener('change', () => { saveSettingsStorage() }, false);
     $('showHandles').addEventListener('change', () => {
-        setFigureSelected(selectedFigure.id);
+        setFigureSelected(OA.selectedFigure.id);
         saveSettingsStorage()
     }, false);
     $('showOptiSeqArea').addEventListener('change', () => {
@@ -5341,9 +5345,9 @@ function addEventListeners() {
         // close dialog 1 second after click
         window.setTimeout(function () { saveDialog() }, 1000);
         let name = sanitizeFileName($('dlTextField').value);
-        if (platform.cordova) {
-            cordovaSave(saveData.blob, name + saveData.ext);
-        } else saveAs(saveData.blob, name + saveData.ext);
+        if (OA.platform.cordova) {
+            cordovaSave(OA.saveData.blob, name + OA.saveData.ext);
+        } else saveAs(OA.saveData.blob, name + OA.saveData.ext);
     });
     $('t_cancelSave').addEventListener('mousedown', () => { saveDialog() }, false);
 
@@ -5362,9 +5366,11 @@ function addEventListeners() {
     $('t_openSequenceLinkCancel').addEventListener('mousedown', () => { openSequenceLink(false) });
 
     // print/save image dialog
-    var inputs = $('printDialog').getElementsByTagName('input');
-    for (let i = 0; i < inputs.length; i++) {
-        inputs[i].addEventListener('change', savePrintDialogStorage, false);
+    {
+        const inputs = $('printDialog').getElementsByTagName('input');
+        for (let i = 0; i < inputs.length; i++) {
+            inputs[i].addEventListener('change', savePrintDialogStorage, false);
+        }
     }
     $('multiLogo').addEventListener('change', savePrintDialogStorage, false);
     $('manual.html_save_print').addEventListener('mousedown', () => {
@@ -5423,12 +5429,12 @@ function addMenuEventListeners() {
 
         // Load the mobile interface when applicable, but not on Cordova, where it can be
         // loaded after deviceReady
-        if (!platform.cordova && (platform.mobile || platform.smallMobile)) mobileInterface();
+        if (!OA.platform.cordova && (OA.platform.mobile || OA.platform.smallMobile)) mobileInterface();
 
         // when smallMobile is checked (loaded from settings), or when screen
         // width is small and no setting is found, switch to smallMobile.
         // Use window.screen.width to get CSS pixels
-        if (platform.mobile && $('smallMobile').checked) {
+        if (OA.platform.mobile && $('smallMobile').checked) {
             switchSmallMobile();
         } else if (window.screen.width < 640) {
             if (!/\bsmallMobile\b/.test(localStorage.getItem ('settings'))) {
@@ -5444,7 +5450,7 @@ function addMenuEventListeners() {
 function addListeners(e) {
     const li = e.getElementsByTagName('li');
     for (let i = 0; i < li.length; i++) {
-        if (platform.mobile) {
+        if (OA.platform.mobile) {
             li[i].addEventListener('mousedown', menuActive);
         } else {
             li[i].addEventListener('mouseover', menuActive);
@@ -5465,14 +5471,14 @@ function addListeners(e) {
 // checkForApp will check the platform and present appropriate
 // information for getting an app
 function checkForApp() {
-    if (platform.chrome) {
+    if (OA.platform.chrome) {
         // chrome app is discontinued from june 2020 onwards
-        confirmBox(userText.warningChrome, '', () => {
+        confirmBox(OA.userText.warningChrome, '', () => {
             window.open('https://openaero.net');
             chrome.management.uninstallSelf();
         });
-    } else if (platform.android || platform.ios ||
-        (platform.mobile && !(platform.cordova || platform.uwp))) {
+    } else if (OA.platform.android || OA.platform.ios ||
+        (OA.platform.mobile && !(OA.platform.cordova || OA.platform.uwp))) {
         // Show the banner for getting the Android, iOS or PWA app under
         // certain conditions
         const
@@ -5484,9 +5490,9 @@ function checkForApp() {
             if (timestamp < (timeNow - 86400 * 7)) { // ask once a week
                 localStorage.setItem('installAppAsked', timeNow);
                 banner.classList.remove('noDisplay');
-                if (platform.android) {
+                if (OA.platform.android) {
                     banner.classList.add('android');
-                } else if (platform.ios) {
+                } else if (OA.platform.ios) {
                     banner.classList.add('ios');
                 } else banner.classList.add('pwa');
                 // use setTimeout before showing to allow subtle entry
@@ -5495,19 +5501,19 @@ function checkForApp() {
             }
         } else localStorage.setItem('installAppAsked', 1);
 
-    } else if (platform.uwp) {
+    } else if (OA.platform.uwp) {
         // inside UWP app, do nothing
-    } else if (platform.windows10) {
+    } else if (OA.platform.windows10) {
         // add the link to Windows 10 installation to Tools
         $('installDesktopApp').classList.remove('noDisplay');
         $('t_installApp').addEventListener(
             'mousedown', () => {
-                window.location = platform.windowsStore;
+                window.location = OA.platform.windowsStore;
             }
         );
     } else {
         // add the install link to Tools on PWA enabled browsers
-        if (platform.supportsPWA) {
+        if (OA.platform.supportsPWA) {
             $('installDesktopApp').classList.remove('noDisplay');
         }
     }
@@ -5517,16 +5523,16 @@ function checkForApp() {
 
 // clickButton is called when clicking certain buttons
 function clickButton() {
-    var e = this;
+    const e = this;
 
     // don't click disabled buttons
     if (e.classList.contains('disable')) return;
 
     // when the figure is a Free (Un)known figure with a letter, don't
     // click disableFUfig buttons
-    if (selectedFigure.id) {
-        if (figures[selectedFigure.id].unknownFigureLetter) {
-            if (figures[selectedFigure.id].unknownFigureLetter !== 'L') {
+    if (OA.selectedFigure.id) {
+        if (OA.figures[OA.selectedFigure.id].unknownFigureLetter) {
+            if (OA.figures[OA.selectedFigure.id].unknownFigureLetter !== 'L') {
                 if (e.classList.contains('disableFUfig')) {
                     return;
                 }
@@ -5583,46 +5589,46 @@ function clickButton() {
     // take action
     switch (e.id) {
         case 'undo':
-            if (activeSequence.undo.length) {
+            if (OA.activeSequence.undo.length) {
                 setTimeout(function () {
-                    activeSequence.redo.push(activeSequence.xml);
-                    activeSequence.addUndo = false;
-                    activateXMLsequence(activeSequence.undo.pop());
+                    OA.activeSequence.redo.push(OA.activeSequence.xml);
+                    OA.activeSequence.addUndo = false;
+                    activateXMLsequence(OA.activeSequence.undo.pop());
                     changeSequenceInfo();
-                    activeSequence.addUndo = true;
+                    OA.activeSequence.addUndo = true;
                     setUndoRedo();
                 }, 200);
             }
             // don't continue. Not a figure function
             return;
         case 'redo':
-            if (activeSequence.redo.length) {
+            if (OA.activeSequence.redo.length) {
                 setTimeout(function () {
-                    activeSequence.undo.push(activeSequence.xml);
-                    activeSequence.addUndo = false;
-                    activateXMLsequence(activeSequence.redo.pop());
+                    OA.activeSequence.undo.push(OA.activeSequence.xml);
+                    OA.activeSequence.addUndo = false;
+                    activateXMLsequence(OA.activeSequence.redo.pop());
                     changeSequenceInfo();
-                    activeSequence.addUndo = true;
+                    OA.activeSequence.addUndo = true;
                     setUndoRedo();
                 }, 200);
             }
             // don't continue. Not a figure function
             return;
         case 'deleteFig':
-            if (selectedFigure.id !== null) {
-                var flipY = activeSequence.text.replace(regexComments, '').match(regexFlipYAxis);
+            if (OA.selectedFigure.id !== null) {
+                const flipY = OA.activeSequence.text.replace(regexComments, '').match(regexFlipYAxis);
                 // remove all previous drawing figures and the figure itself
-                while (selectedFigure.id > 0) {
-                    if (figures[selectedFigure.id - 1].figNr) {
+                while (OA.selectedFigure.id > 0) {
+                    if (OA.figures[OA.selectedFigure.id - 1].figNr) {
                         break;
                     } else {
-                        updateSequence(selectedFigure.id - 1, '', true);
+                        updateSequence(OA.selectedFigure.id - 1, '', true);
                     }
                 }
-                updateSequence(selectedFigure.id, '', true);
+                updateSequence(OA.selectedFigure.id, '', true);
                 // when Y was flipped and we removed the figure with the only
                 // flip symbol, put it back
-                if (flipY && !activeSequence.text.replace(regexComments, '').match(regexFlipYAxis)) {
+                if (flipY && !OA.activeSequence.text.replace(regexComments, '').match(regexFlipYAxis)) {
                     flipYAxis();
                 }
                 selectFigure(false);
@@ -5630,13 +5636,13 @@ function clickButton() {
             // don't continue function, figure has been removed
             return;
         case 'flipYAxis':
-            if (selectedFigure.id !== null) {
+            if (OA.selectedFigure.id !== null) {
                 function flipFigureYAxis(id) {
-                    var v = figures[id].string;
+                    let v = OA.figures[id].string;
                     if (v.replace(regexComments, '').match(regexFlipYAxis)) {
                         // disable flip
-                        var t = '';
-                        var inComment = false;
+                        let t = '';
+                        let inComment = false;
                         for (let i = 0; i < v.length; i++) {
                             // disregard / in comments
                             if (v[i] === userpat.comment) inComment = !inComment;
@@ -5650,7 +5656,7 @@ function clickButton() {
                     updateSequence(id, v, true);
                 }
 
-                flipFigureYAxis(selectedFigure.id);
+                flipFigureYAxis(OA.selectedFigure.id);
                 // don't continue function. Figure already changed
                 return;
             }
@@ -5694,7 +5700,7 @@ function clickButton() {
             break;
         case 'rotate90':
             // Define subsequent rotation steps
-            var rotate = {
+            const rotate = {
                 '//': 'ej',
                 eu: 'ej',
                 ej: 'ed',
@@ -5702,16 +5708,16 @@ function clickButton() {
                 eja: ''
             };
             // The first figure rotation is changed by changing sequence entry
-            if (figures[selectedFigure.id].seqNr == 1) {
-                if (figures[0] && entryOptions[figures[0].string]) {
-                    updateSequence(0, rotate[figures[0].string], true);
+            if (OA.figures[OA.selectedFigure.id].seqNr == 1) {
+                if (OA.figures[0] && entryOptions[OA.figures[0].string]) {
+                    updateSequence(0, rotate[OA.figures[0].string], true);
                 } else {
                     $('t_xBoxEntry').dispatchEvent(new Event('mousedown'));
                 }
             } else
             // Subsequent figure rotations are changed using subsequence logic
-            if (figures[selectedFigure.id].seqNr > 1) {
-                if (figures[selectedFigure.id].subSequence) {
+            if (OA.figures[OA.selectedFigure.id].seqNr > 1) {
+                if (OA.figures[OA.selectedFigure.id].subSequence) {
                     $('subSequenceDirections').value =
                         rotate[$('subSequenceDirections').value];
                     if (!$('subSequenceDirections').value) {
@@ -5732,8 +5738,8 @@ function clickButton() {
             break;
         case 'switchX':
         case 'switchY':
-            var l = figures[selectedFigure.id].unknownFigureLetter;
-            if (l && (l !== 'L') && ('switchFirstRoll' in figures[selectedFigure.id])) {
+            const l = OA.figures[OA.selectedFigure.id].unknownFigureLetter;
+            if (l && (l !== 'L') && ('switchFirstRoll' in OA.figures[OA.selectedFigure.id])) {
                 $('switchFirstRoll').classList.toggle('on');
             }
     }
@@ -5758,8 +5764,8 @@ function buildButtons() {
         el[i].classList.remove('on');
     }
     // add tooltips, but not on touchscreen
-    if (!platform.mobile && !platform.touch) {
-        for (let key in userText.tooltip) {
+    if (!OA.platform.mobile && !OA.platform.touch) {
+        for (let key in OA.userText.tooltip) {
             const el = $(key);
             // add empty div and class on first run
             if (!el.classList.contains('tooltip')) {
@@ -5767,14 +5773,13 @@ function buildButtons() {
                 el.appendChild(document.createElement('div'));
             }
 
-            el.lastChild.innerHTML = userText.tooltip[key];
+            el.lastChild.innerHTML = OA.userText.tooltip[key];
         }
     }
 }
 
 // build an element with plus/minus buttons and return it
-function buildPlusMinElement(id, value, el) {
-    el = el || document.createElement('span');
+function buildPlusMinElement(id, value, el = document.createElement('span')) {
 
     let span = document.createElement('span');
     span.classList.add('minButton');
@@ -5795,10 +5800,10 @@ function buildPlusMinElement(id, value, el) {
     span.addEventListener('click', clickButton, false);
     el.appendChild(span);
 
-    if (!platform.smallMobile && (userText.tooltip[id])) {
+    if (!OA.platform.smallMobile && (OA.userText.tooltip[id])) {
         el.classList.add('tooltip', 'ttRight');
         const div = document.createElement('div');
-        div.innerHTML = userText.tooltip[id];
+        div.innerHTML = OA.userText.tooltip[id];
         el.appendChild(div);
     }
 
@@ -5808,9 +5813,9 @@ function buildPlusMinElement(id, value, el) {
 // addRollSelectElement adds roll select elements to the parent element
 function addRollSelectElement(figNr, rollEl, elNr, parent) {
     const
-        ruleCheckRolls = activeRules && (Object.keys(checkAllowCatId).length > 0),
+        ruleCheckRolls = OA.activeRules && (Object.keys(OA.checkAllowCatId).length > 0),
         span = document.createElement('span'),
-        thisRoll = figures[figNr].rollInfo[rollEl];
+        thisRoll = OA.figures[figNr].rollInfo[rollEl];
     let
         thisAttitude = rollAttitudes[thisRoll.attitude],
         pattern = '',
@@ -5818,8 +5823,8 @@ function addRollSelectElement(figNr, rollEl, elNr, parent) {
 
     // Determine roll K dependent on pitch attitude and sporting class
     function rollK(attRoll) {
-        if (rollFig[attRoll]) {
-            return (rollFig[attRoll][sportingClass.value === 'glider' ? 'kGlider' : 'kPwrd']);
+        if (OA.rollFig[attRoll]) {
+            return (OA.rollFig[attRoll][OA.sportingClass.value === 'glider' ? 'kGlider' : 'kPwrd']);
         } else return 0;
     }
 
@@ -5833,7 +5838,7 @@ function addRollSelectElement(figNr, rollEl, elNr, parent) {
         const roll = r.split(':');
         // only show no roll, active roll and valid rolls
         if ($('nonArestiRolls').checked || i == 0 || roll[0] == pattern || (
-            (!ruleCheckRolls || (rollFig[thisAttitude + roll[0]].aresti) in checkAllowCatId) &&
+            (!ruleCheckRolls || (OA.rollFig[thisAttitude + roll[0]].aresti) in OA.checkAllowCatId) &&
             (rollK(thisAttitude + roll[0]) != 0)
         )) {
             html += `<option value="${roll[0]}" class="rollSelectOption"`;
@@ -5859,10 +5864,10 @@ function addRollSelectElement(figNr, rollEl, elNr, parent) {
             if (rollPattern == pattern || $('nonArestiRolls').checked ||
                 (
                     (rollK(thisAttitude + roll[0]) != 0) &&
-                    (!ruleCheckRolls || (rollFig[thisAttitude + roll[0]].aresti) in checkAllowCatId)
+                    (!ruleCheckRolls || (OA.rollFig[thisAttitude + roll[0]].aresti) in OA.checkAllowCatId)
                 ) || (
                     ((thisRoll.attitude % 180) != 90) && (rollK(oppAttitude + roll[0]) != 0) &&
-                    (!ruleCheckRolls || (rollFig[oppAttitude + roll[0]].aresti) in checkAllowCatId)
+                    (!ruleCheckRolls || (OA.rollFig[oppAttitude + roll[0]].aresti) in OA.checkAllowCatId)
                 )) {
 
                 html += `<option value="${rollPattern}" class="${flickType}"`;
@@ -5875,7 +5880,7 @@ function addRollSelectElement(figNr, rollEl, elNr, parent) {
     // add spins when rollcode = 4 AND in first element, OR nonArestiRolls
     // is enabled
     thisAttitude = rollAttitudes[thisRoll.attitude];
-    if ((fig[figures[figNr].figNr].rolls[rollEl] === 4 && (elNr === 0)) ||
+    if ((OA.fig[OA.figures[figNr].figNr].rolls[rollEl] === 4 && (elNr === 0)) ||
         $('nonArestiRolls').checked) {
         [posSpinTypes, negSpinTypes].forEach (type => {
             // build the positive spin options
@@ -5889,7 +5894,7 @@ function addRollSelectElement(figNr, rollEl, elNr, parent) {
                     $('nonArestiRolls').checked ||
                     ((thisRoll.negLoad != /i/.test (rollPattern)) &&
                     (rollK(thisAttitude + roll[0]) != 0) &&
-                    (!ruleCheckRolls || (rollFig[thisAttitude + roll[0]].aresti) in checkAllowCatId))) {
+                    (!ruleCheckRolls || (OA.rollFig[thisAttitude + roll[0]].aresti) in OA.checkAllowCatId))) {
                     html += `<option value="${rollPattern}" class="${spinType}"`;
                     if (rollPattern == pattern) html += ' selected="selected"';
                     html += `>${roll[1]}</option>`;
@@ -5970,7 +5975,7 @@ function addProgrammeToMenu(key) {
             li = document.createElement('li');
             li.setAttribute('id', `year${year}`);
             li.innerHTML = `<span>${year}</span>
-                <i class="material-icons ${platform.mobile ? 'rightArrow' : 'leftArrow'}"></i>`;
+                <i class="material-icons ${OA.platform.mobile ? 'rightArrow' : 'leftArrow'}"></i>`;
             ul = document.createElement('ul');
             li.appendChild(ul);
             $('library').appendChild(li);
@@ -6068,7 +6073,7 @@ function setOptions() {
     setInterval(checkLibraryUpdate, 3600000);
 
     // Update menu headers for mobile
-    if (platform.mobile) mobileMenuHeader();
+    if (OA.platform.mobile) mobileMenuHeader();
 
     // set settings dialog options
 
@@ -6083,8 +6088,8 @@ function setOptions() {
 
     // set default values
     $('numberInCircle').setAttribute('value', numberInCircle);
-    $('zipImageFilenamePattern').setAttribute('value', zipImageFilenamePattern);
-    $('zipImageFilenamePattern').setAttribute('size', zipImageFilenamePattern.length);
+    $('zipImageFilenamePattern').setAttribute('value', OA.zipImageFilenamePattern);
+    $('zipImageFilenamePattern').setAttribute('size', OA.zipImageFilenamePattern.length);
 
     // set roll font sizes
     for (const key in rollFont) {
@@ -6096,8 +6101,8 @@ function setOptions() {
     }
 
     // add styles to settings dialog, sorted alphabetically
-    for (const key of Object.keys(style).sort()) {
-        styleSave[key] = style[key];
+    for (const key of Object.keys(OA.style).sort()) {
+        styleSave[key] = OA.style[key];
         const opt = document.createElement('option');
         opt.setAttribute('value', key);
         opt.innerHTML = key;
@@ -6274,7 +6279,7 @@ function changeLanguage() {
     updateUserTexts();
     updateFigureSelectorOptions();
     populateTeamSelectList();
-    if (platform.mobile) mobileMenuHeader();
+    if (OA.platform.mobile) mobileMenuHeader();
     saveSettingsStorage();
     checkSequenceChanged(true);
 }
@@ -6282,16 +6287,16 @@ function changeLanguage() {
 // getStyle will retrieve a style and put it's value in the Settings
 // styleString field
 function getStyle() {
-    $('styleString').value = style[$('styles').value];
+    $('styleString').value = OA.style[$('styles').value];
 }
 
 // updateStyle will change a style after it has been changed in the
 // Settings styleString field
 function updateStyle() {
-    style[$('styles').value] = this.value;
+    OA.style[$('styles').value] = this.value;
     // update rollFontSize if applicable
     if ($('styles').value === 'rollText') {
-        rollFontSize = style.rollText.match(regexRollFontSize)[1];
+        rollFontSize = OA.style.rollText.match(regexRollFontSize)[1];
     }
     // redraw sequence
     draw();
@@ -6300,9 +6305,9 @@ function updateStyle() {
 // resetStyle resets a style (or all) to the default value
 function resetStyle(all) {
     if (all) {
-        for (const key in style) style[key] = styleSave[key];
+        for (const key in OA.style) OA.style[key] = styleSave[key];
     } else {
-        style[$('styles').value] = styleSave[$('styles').value];
+        OA.style[$('styles').value] = styleSave[$('styles').value];
     }
     getStyle();
     draw();
@@ -6311,9 +6316,9 @@ function resetStyle(all) {
 // stylingSave saves all styling values to an XML file
 function stylingSave() {
     const xml = document.implementation.createDocument(null, 'styling');
-    for (const key in style) {
+    for (const key in OA.style) {
         const node = xml.createElement(key);
-        node.appendChild (xml.createTextNode(style[key]));
+        node.appendChild (xml.createTextNode(OA.style[key]));
         xml.firstChild.appendChild(node);
     }
     saveFile(
@@ -6344,8 +6349,8 @@ function loadedStyling(evt) {
     }
     // xml will hold every entry as a node
     const xml = new DOMParser().parseFromString(fileString, 'text/xml');
-    for (const key in style) {
-        if (XML.get (xml, key)) style[key] = XML.get (xml, key);
+    for (const key in OA.style) {
+        if (XML.get (xml, key)) OA.style[key] = XML.get (xml, key);
     }
     // redraw to apply changed styling
     draw();
@@ -6357,8 +6362,8 @@ function restoreDefaultSettings() {
     // close settings dialog
     settingsDialog();
     confirmBox(
-        userText.restoreDefaultSettingsConfirm,
-        userText.restoreDefaultSettings,
+        OA.userText.restoreDefaultSettingsConfirm,
+        OA.userText.restoreDefaultSettings,
         function () {
             localStorage.setItem('settings', '');
             // reload the page, sequence will be provided by localStorage
@@ -6534,7 +6539,7 @@ function updatePrintPageSetLayout() {
 
     // Show information to add wind direction after pilot card character
     if (/[0-9TFQ]$/.test(string)) {
-        html += `<p>${userText.addWindAfterPilotCardCharacter}</p>`;
+        html += `<p>${OA.userText.addWindAfterPilotCardCharacter}</p>`;
     }
 
     $('printPageSetLayout').innerHTML = html;
@@ -6542,17 +6547,17 @@ function updatePrintPageSetLayout() {
 
 // selectPwrdGlider is activated when powered or glider is chosen
 function selectPwrdGlider() {
-    rulesWorker.postMessage({ action: 'sportingClass', class: sportingClass.value });
+    rulesWorker.postMessage({ action: 'sportingClass', class: OA.sportingClass.value });
     // update figure chooser
     changeFigureGroup();
     // update figure entryExit values
-    if (sportingClass.value === 'glider') {
-        for (let i = fig.length - 1; i >= 0; i--) {
-            if (fig[i]) fig[i].entryExit = fig[i].entryExitGlider;
+    if (OA.sportingClass.value === 'glider') {
+        for (let i = OA.fig.length - 1; i >= 0; i--) {
+            if (OA.fig[i]) OA.fig[i].entryExit = OA.fig[i].entryExitGlider;
         }
     } else {
-        for (let i = fig.length - 1; i >= 0; i--) {
-            if (fig[i]) fig[i].entryExit = fig[i].entryExitPower;
+        for (let i = OA.fig.length - 1; i >= 0; i--) {
+            if (OA.fig[i]) OA.fig[i].entryExit = OA.fig[i].entryExitPower;
         }
     }
     // update rule list
@@ -6566,10 +6571,10 @@ function selectPwrdGlider() {
         changeSequenceInfo();
         // hide Harmony field for powered
         if ($('harmonyField')) {
-            if (sportingClass.value === 'powered') {
+            if (OA.sportingClass.value === 'powered') {
                 $('harmonyField').classList.add('hidden');
                 $('harmony').setAttribute('disabled', true);
-            } else if (!activeRules) {
+            } else if (!OA.activeRules) {
                 $('harmonyField').classList.remove('hidden');
                 $('harmony').removeAttribute('disabled');
             }
@@ -6617,12 +6622,12 @@ function setRulesPosHarmony(pos) {
 
 // setYAxisOffset sets the Y axis offset
 function setYAxisOffset(offset) {
-    yAxisOffset = offset;
+    OA.yAxisOffset = offset;
     // set scaleLine object to prevent calculations in makeLine and other
     // functions
     if (curvePerspective) {
-        scaleLine.x = yAxisScaleFactor * Math.cos(yAxisOffset * degToRad);
-        scaleLine.y = yAxisScaleFactor * Math.sin(yAxisOffset * degToRad);
+        scaleLine.x = yAxisScaleFactor * Math.cos(OA.yAxisOffset * degToRad);
+        scaleLine.y = yAxisScaleFactor * Math.sin(OA.yAxisOffset * degToRad);
     } else {
         scaleLine.x = scaleLine.y = 1;
     }
@@ -6633,8 +6638,8 @@ function setYAxisOffset(offset) {
 function updateFigureEditor() {
     if ($('figureInfo')) {
         displaySelectedFigure();
-        addRollSelectors(selectedFigure.id);
-        updateFigureOptions(selectedFigure.id);
+        addRollSelectors(OA.selectedFigure.id);
+        updateFigureOptions(OA.selectedFigure.id);
     }
 }
 
@@ -6644,7 +6649,7 @@ function showFigureSelector() {
     const figureSelector = $('figureSelector');
     updateFigureSelectorOptions();
     figureSelector.classList.add('active');
-    if (activeForm === 'FU') {
+    if (OA.activeForm === 'FU') {
         // set figureString correctly, using positioning relative to leftBlock
         $('leftBlock').scrollTop = 0;
         figureSelector.insertBefore(
@@ -6679,17 +6684,17 @@ function displaySelectedFigure() {
     svg.setAttribute('width', 140);
     svg.setAttribute('height', 140);
 
-    if (selectedFigure.id !== null) {
+    if (OA.selectedFigure.id !== null) {
         // assign this figure an id of -2 to prevent filtering etc.
-        figures[-2] = figures[selectedFigure.id];
+        OA.figures[-2] = OA.figures[OA.selectedFigure.id];
         // reset X and Y and clear figureStart to prevent adjusting
         // figure position
-        X = Y = 0;
-        figureStart = [];
+        OA.X = OA.Y = 0;
+        OA.figureStart = [];
         drawFullFigure(-2, true, svg);
 
-        const bBox = figures[-2].bBox;
-        delete figures[-2];
+        const bBox = OA.figures[-2].bBox;
+        delete OA.figures[-2];
         // Set viewBox from figure bBox
         const
             xMargin = bBox.width / 20,
@@ -6706,7 +6711,7 @@ function displaySelectedFigure() {
 // var figureId is the id of the figures[] object
 function updateFigureOptions(figureId) {
     var
-        f = figures[figureId],
+        f = OA.figures[figureId],
         figureOptions = $('figureOptions');
 
     // show figure box and figureOptions by default
@@ -6717,11 +6722,11 @@ function updateFigureOptions(figureId) {
     // hide figureStringInput by default
     $('figureString').classList.add('noDisplay');
 
-    if ((activeForm !== 'FU') && (!f || (f && !f.aresti))) selectedFigure.id = null;
+    if ((OA.activeForm !== 'FU') && (!f || (f && !f.aresti))) OA.selectedFigure.id = null;
 
-    if (selectedFigure.id === null) {
+    if (OA.selectedFigure.id === null) {
         $('figureInfo').classList.add('noFigure');
-        if (activeForm !== 'FU') {
+        if (OA.activeForm !== 'FU') {
             // clear figure box
             $('selectedFigure').classList.remove('active');
         } else {
@@ -6751,10 +6756,10 @@ function updateFigureOptions(figureId) {
         // activate figure box
         $('selectedFigure').classList.add('active');
         $('addFigureText').classList.toggle ('noDisplay',
-            (activeForm === 'FU') && f.unknownFigureLetter && (f.unknownFigureLetter !== 'L')
+            (OA.activeForm === 'FU') && f.unknownFigureLetter && (f.unknownFigureLetter !== 'L')
         );
 
-        if ((activeForm === 'FU') && ((f.unknownFigureLetter === 'L') || !f.unknownFigureLetter)) {
+        if ((OA.activeForm === 'FU') && ((f.unknownFigureLetter === 'L') || !f.unknownFigureLetter)) {
             // update and show figureStringInput
             if ($('figureStringInput').value !== f.string) {
                 $('figureStringInput').value = (!/[LX]/.test(f.string)) ? f.string : '';
@@ -6763,42 +6768,52 @@ function updateFigureOptions(figureId) {
         }
 
         // show figure modifiers
-        $('entryExit').classList.toggle ('noDisplay', !fig[f.figNr]);
+        $('entryExit').classList.toggle ('noDisplay', !OA.fig[f.figNr]);
         $('flipYAxis').classList.toggle ('disable',
             !((f.entryAxis === 'X') || (f.seqNr === 1) || f.subSequence)
         );
 
         // set switchFirstRoll
-        if (f.switchFirstRoll) {
-            $('switchFirstRoll').classList.add('on');
-        } else if (f.switchFirstRoll === false) {
-            $('switchFirstRoll').classList.remove('on');
-        } else {
-            $('switchFirstRoll').classList.add('disable');
+        {
+            const el = $('switchFirstRoll');
+            if (f.switchFirstRoll) {
+                el.classList.add('on');
+            } else if (f.switchFirstRoll === false) {
+                el.classList.remove('on');
+            } else {
+                el.classList.add('disable');
+            }
+            // disable for Free (Un)known fig unless this figure starts on Y axis
+            el.classList.toggle ('disableFUfig', f.entryAxis !== 'Y');
         }
+
         // set switchX
-        var el = $('switchX');
-        if (f.switchX) {
-            el.classList.add('on');
-        } else if (f.switchX === false) {
-            el.classList.remove('on');
-        } else {
-            el.classList.add('disable');
+        {
+            const el = $('switchX');
+            if (f.switchX) {
+                el.classList.add('on');
+            } else if (f.switchX === false) {
+                el.classList.remove('on');
+            } else {
+                el.classList.add('disable');
+            }
+            // disable for Free (Un)known fig unless this figure starts on Y axis
+            el.classList.toggle ('disableFUfig', f.entryAxis !== 'Y');
         }
-        // disable for Free (Un)known fig unless this figure starts on Y axis
-        el.classList.toggle ('disableFUfig', f.entryAxis !== 'Y');
 
         // set switchY
-        var el = $('switchY');
-        if (f.switchY) {
-            el.classList.add('on');
-        } else if (f.switchY === false) {
-            el.classList.remove('on');
-        } else {
-            el.classList.add('disable');
+        {
+            const el = $('switchY');
+            if (f.switchY) {
+                el.classList.add('on');
+            } else if (f.switchY === false) {
+                el.classList.remove('on');
+            } else {
+                el.classList.add('disable');
+            }
+            // disable for Free (Un)known fig unless this figure starts on X axis
+            el.classList.toggle ('disableFUfig', f.entryAxis !== 'X');
         }
-        // disable for Free (Un)known fig unless this figure starts on X axis
-        el.classList.toggle ('disableFUfig', f.entryAxis !== 'X');
 
         // set correct scale
         $('scale').value = f.scale || 0;
@@ -6815,11 +6830,11 @@ function updateFigureOptions(figureId) {
         // go back in the figure list until we end up at the beginning OR
         // find a real figure OR find a move figure
         var i = figureId - 1;
-        while ((i >= 0) && !figures[i].figNr) {
-            var prevFig = figures[i];
+        while ((i >= 0) && !OA.figures[i].figNr) {
+            var prevFig = OA.figures[i];
             if (prevFig) {
                 if (prevFig.moveTo) {
-                    $('moveX-value').value = /^[CL]/.test(activeForm) ?
+                    $('moveX-value').value = /^[CL]/.test(OA.activeForm) ?
                         -prevFig.moveTo[0] : prevFig.moveTo[0];
                     $('moveY-value').value = prevFig.moveTo[1];
                     $('straightLine').classList.add('on');
@@ -6828,7 +6843,7 @@ function updateFigureOptions(figureId) {
                     $('moveYCont').classList.remove('collapsed');
                     break;
                 } else if (prevFig.curveTo) {
-                    $('moveX-value').value = /^[CL]/.test(activeForm) ?
+                    $('moveX-value').value = /^[CL]/.test(OA.activeForm) ?
                         -prevFig.curveTo[0] : prevFig.curveTo[0];
                     $('moveY-value').value = prevFig.curveTo[1];
                     $('curvedLine').classList.add('on');
@@ -6854,7 +6869,7 @@ function updateFigureOptions(figureId) {
         }
         // set subSequence, but disable for first real figure except on
         // Free (Un)known designer
-        if ((i == -1) && (activeForm !== 'FU')) {
+        if ((i == -1) && (OA.activeForm !== 'FU')) {
             $('subSequence').classList.add('disable');
             $('subSequenceDirection').classList.add('noDisplay');
         } else if (f.subSequence) {
@@ -6869,26 +6884,26 @@ function updateFigureOptions(figureId) {
         // only show unknown figure letter selector when figureLetters
         // defined, or when the value was not 0 to enable changing
         var el = $('unknownFigure');
-        if ((figureLetters !== '') || f.unknownFigureLetter) {
+        if ((OA.figureLetters !== '') || f.unknownFigureLetter) {
             // clear select list
             removeChildNodes(el);
             // build select list
-            var listLetters = figureLetters;
+            var listLetters = OA.figureLetters;
             var option = document.createElement('option');
             option.setAttribute('value', '0');
-            option.innerHTML = userText.noFreeUnknownFig;
+            option.innerHTML = OA.userText.noFreeUnknownFig;
             el.appendChild(option);
-            if (additionalFig.max > 0) {
+            if (OA.additionalFig.max > 0) {
                 var option = document.createElement('option');
                 option.setAttribute('value', 'L');
-                option.innerHTML = userText.freeUnknownAdditional;
+                option.innerHTML = OA.userText.freeUnknownAdditional;
                 el.appendChild(option);
                 listLetters += 'L';
             }
-            for (let j = 0; j < figureLetters.length; j++) {
+            for (let j = 0; j < OA.figureLetters.length; j++) {
                 var option = document.createElement('option');
-                option.setAttribute('value', figureLetters[j]);
-                option.innerHTML = userText.freeUnknownFig + figureLetters[j];
+                option.setAttribute('value', OA.figureLetters[j]);
+                option.innerHTML = OA.userText.freeUnknownFig + OA.figureLetters[j];
                 el.appendChild(option);
             }
             // add the actual figure letter as an option if not present in list
@@ -6897,9 +6912,9 @@ function updateFigureOptions(figureId) {
                     var option = document.createElement('option');
                     option.setAttribute('value', f.unknownFigureLetter);
                     if (f.unknownFigureLetter === 'L') {
-                        option.innerHTML = userText.freeUnknownAdditional;
+                        option.innerHTML = OA.userText.freeUnknownAdditional;
                     } else {
-                        option.innerHTML = userText.freeUnknownFig +
+                        option.innerHTML = OA.userText.freeUnknownFig +
                             f.unknownFigureLetter;
                     }
                     el.appendChild(option);
@@ -6908,14 +6923,14 @@ function updateFigureOptions(figureId) {
 
             // set Unknown Figure and selector colors
             el.parentNode.classList.remove('hidden');
-            if (activeForm === 'FU') {
+            if (OA.activeForm === 'FU') {
                 el.setAttribute('disabled', 'disabled');
             } else el.removeAttribute('disabled');
             var used = [];
-            for (let j = figures.length - 1; j >= 0; j--) {
-                if (figures[j].unknownFigureLetter && figures[j].aresti && (j != figureId)) {
-                    if (figures[j].unknownFigureLetter != 'L') {
-                        used.push(figures[j].unknownFigureLetter);
+            for (let j = OA.figures.length - 1; j >= 0; j--) {
+                if (OA.figures[j].unknownFigureLetter && OA.figures[j].aresti && (j != figureId)) {
+                    if (OA.figures[j].unknownFigureLetter != 'L') {
+                        used.push(OA.figures[j].unknownFigureLetter);
                     }
                 }
             }
@@ -6931,9 +6946,9 @@ function updateFigureOptions(figureId) {
         }
 
         // check if dealing with a real figure. If so, allow upright/inverted setting
-        if (fig[f.figNr]) {
+        if (OA.fig[f.figNr]) {
             // set entry attitude button
-            const pattern = fig[f.figNr].pattern;
+            const pattern = OA.fig[f.figNr].pattern;
             $('figEntryButton').classList.toggle('inverted', pattern[0] === '-');
             // set exit attitude button
             $('figExitButton').classList.toggle('inverted', pattern.slice(-1) === '-');
@@ -6951,8 +6966,8 @@ function updateFigureOptions(figureId) {
         $('FUfigOptionsDisabled').classList.add('noDisplay');
         // when the figure is a Free (Un)known figure with a letter, disable
         // disableFUfig buttons and disableRollFUfig select
-        if (figures[selectedFigure.id].unknownFigureLetter &&
-            figures[selectedFigure.id].unknownFigureLetter !== 'L') {
+        if (OA.figures[OA.selectedFigure.id].unknownFigureLetter &&
+            OA.figures[OA.selectedFigure.id].unknownFigureLetter !== 'L') {
                 disable = true;
                 $('FUfigOptionsDisabled').classList.remove('noDisplay');
             for (const el of document.getElementsByClassName('disableFUfig')) {
@@ -6975,30 +6990,30 @@ function updateFigureOptions(figureId) {
 // var figureId is the id of the figures[] object
 function addRollSelectors(figureId) {
     const rollEl = $('rollInfo');
-    if ((figureId === null) || !fig[figures[figureId].figNr]) {
+    if ((figureId === null) || !OA.fig[OA.figures[figureId].figNr]) {
         rollEl.classList.add('noDisplay');
     } else {
         rollEl.classList.remove('noDisplay');
-        const rolls = fig[figures[figureId].figNr].rolls;
+        const rolls = OA.fig[OA.figures[figureId].figNr].rolls;
         // clear selectors
         removeChildNodes(rollEl);
         // show the applicable roll selectors
         if (rolls) {
             // check if rule-illegal rolls are allowed in settings and present warning if so
-            if (activeRules && $('nonArestiRolls').checked) {
+            if (OA.activeRules && $('nonArestiRolls').checked) {
                 const div = document.createElement('div');
                 div.classList.add('content');
                 div.id = 't_ruleIllegalRollsEnabled';
-                div.innerHTML = userText.ruleIllegalRollsEnabled;
+                div.innerHTML = OA.userText.ruleIllegalRollsEnabled;
                 rollEl.appendChild(div);
                 div.addEventListener('mousedown', () => { settingsDialog('expert'); });
             }
             let rollNr = 0;
             for (let i = 0; i < rolls.length; i++) {
                 if ((parseInt(rolls[i]) > 0) &&
-                    !((rolls[i] == 4) && figures[figureId].rollInfo[i].rollTop)) {
+                    !((rolls[i] == 4) && OA.figures[figureId].rollInfo[i].rollTop)) {
                     const
-                        rollInfo = figures[figureId].rollInfo[i],
+                        rollInfo = OA.figures[figureId].rollInfo[i],
                         div = document.createElement('div');
                     rollEl.appendChild(div);
                     div.id = `roll${i}`;
@@ -7006,14 +7021,14 @@ function addRollSelectors(figureId) {
                     {
                         const divdiv = document.createElement('div');
                         divdiv.classList.add('contentLabel');
-                        divdiv.innerHTML = userText.rollPos[rollNr];
+                        divdiv.innerHTML = OA.userText.rollPos[rollNr];
                         div.appendChild(divdiv);
                     }
                     // roll positions of type 9 only allow changing line length
                     if (rolls[i] == 9) {
                         const divdiv = document.createElement('div');
                         divdiv.classList.add('clearBoth');
-                        divdiv.innerHTML = `<font color="red">${userText.noRollAllowed}</font>`;
+                        divdiv.innerHTML = `<font color="red">${OA.userText.noRollAllowed}</font>`;
                         div.appendChild(divdiv);
                     }
                     // loop until max rolls per element + 1
@@ -7040,9 +7055,9 @@ function addRollSelectors(figureId) {
                         const divdiv = document.createElement('div');
                         divdiv.classList.add('rollGaps');
                         // only show 'Gaps' text for non-smallMobile
-                        if (!platform.smallMobile) {
+                        if (!OA.platform.smallMobile) {
                             const span = document.createElement('span');
-                            span.innerHTML = userText.gaps;
+                            span.innerHTML = OA.userText.gaps;
                             div.appendChild(span);
                         }
                         for (let j = 0; j < subRolls; j++) {
@@ -7071,9 +7086,9 @@ function addRollSelectors(figureId) {
 
 // setUndoRedo will update undo/redo buttons and redo object
 function setUndoRedo(e, clear) {
-    if (clear) activeSequence[e] = [];
-    $('undo').firstChild.classList.toggle ('disabled', !activeSequence.undo.length);
-    $('redo').firstChild.classList.toggle ('disabled', !activeSequence.redo.length);
+    if (clear) OA.activeSequence[e] = [];
+    $('undo').firstChild.classList.toggle ('disabled', !OA.activeSequence.undo.length);
+    $('redo').firstChild.classList.toggle ('disabled', !OA.activeSequence.redo.length);
 }
 
 // updateFigure will be called when any figure option is updated
@@ -7082,18 +7097,18 @@ function updateFigure(noRedraw) {
     const
         scroll = $('leftBlockContainer').scrollTop,
         // get the current string
-        string = figures[selectedFigure.id].string,
+        string = OA.figures[OA.selectedFigure.id].string,
         // get the base figure number
-        figNr = figures[selectedFigure.id].figNr,
+        figNr = OA.figures[OA.selectedFigure.id].figNr,
         // update the original pattern for entry/exit changes
         entry = $('figEntryButton'),
         exit = $('figExitButton');
 
     let
         // get the pattern
-        pattern = fig[figNr].pattern,
+        pattern = OA.fig[figNr].pattern,
         // get the base
-        base = fig[figNr].base;
+        base = OA.fig[figNr].base;
 
     if (entry.classList.contains('inverted')) {
         pattern = `-${pattern.substring(1)}`;
@@ -7110,18 +7125,18 @@ function updateFigure(noRedraw) {
         base = base.substring(0, base.length - 1) + '+';
     }
     // check if the base exists
-    if (!figBaseLookup[base]) {
+    if (!OA.figBaseLookup[base]) {
         // if not, try flipping entry AND exit
-        base = fig[figNr].base.replace(/-/g, '#').replace(/\+/g, '-').replace(/#/g, '+');
-        if (figBaseLookup[base]) {
-            pattern = fig[figNr].pattern.replace(/-/g, '#').replace(/\+/g, '-').replace(/#/g, '+');
+        base = OA.fig[figNr].base.replace(/-/g, '#').replace(/\+/g, '-').replace(/#/g, '+');
+        if (OA.figBaseLookup[base]) {
+            pattern = OA.fig[figNr].pattern.replace(/-/g, '#').replace(/\+/g, '-').replace(/#/g, '+');
             // set figEntryButton and figExitButton to correct state
             entry.classList.toggle ('inverted', base[0] === '-');
             exit.classList.toggle ('inverted', base.slice(-1) === '-');
         } else {
             // Doesn't help. Restore original pattern. No option for changing
             // upright/inverted
-            pattern = fig[figNr].pattern;
+            pattern = OA.fig[figNr].pattern;
         }
     }
     // remove + from pattern
@@ -7190,7 +7205,7 @@ function updateFigure(noRedraw) {
     // move back in the figure cueue to find scale, move or subsequence
     // patterns
     let
-        i = selectedFigure.id - 1,
+        i = OA.selectedFigure.id - 1,
         moveToFig = false,
         moveForwardFig = false,
         moveDownFig = false,
@@ -7199,8 +7214,8 @@ function updateFigure(noRedraw) {
 
     // continue as long as we're not at the beginning and are not on
     // a regular figure
-    while ((i >= 0) && !figures[i].figNr) {
-        const prevFig = figures[i];
+    while ((i >= 0) && !OA.figures[i].figNr) {
+        const prevFig = OA.figures[i];
         if (prevFig) {
             if (prevFig.moveTo || prevFig.curveTo) {
                 moveToFig = i;
@@ -7211,7 +7226,7 @@ function updateFigure(noRedraw) {
             } else if (prevFig.scale) {
                 scaleFig = i;
             } else if (prevFig.subSequence) {
-                if ((i > 0) || (activeForm == 'FU')) subSequence = i;
+                if ((i > 0) || (OA.activeForm == 'FU')) subSequence = i;
             }
         }
         i--;
@@ -7219,7 +7234,7 @@ function updateFigure(noRedraw) {
     // set magnification
     if (scaleFig === false) {
         if ($('scale').value != 0) {
-            updateSequence(selectedFigure.id - 1, $('scale').value + '%', false);
+            updateSequence(OA.selectedFigure.id - 1, $('scale').value + '%', false);
             return;
         }
     } else {
@@ -7252,7 +7267,7 @@ function updateFigure(noRedraw) {
             updateSequence(moveToFig, movePattern, true);
         } else {
             // add new moveTo
-            updateSequence(selectedFigure.id - 1, movePattern, false);
+            updateSequence(OA.selectedFigure.id - 1, movePattern, false);
             return;
         }
     } else if ($('curvedLine').classList.contains('on')) {
@@ -7274,7 +7289,7 @@ function updateFigure(noRedraw) {
             updateSequence(moveToFig, movePattern, true);
         } else {
             // add new curveTo
-            updateSequence(selectedFigure.id - 1, movePattern, false);
+            updateSequence(OA.selectedFigure.id - 1, movePattern, false);
             return;
         }
     } else if ($('moveForward').classList.contains('on')) {
@@ -7292,7 +7307,7 @@ function updateFigure(noRedraw) {
                 updateSequence(moveForwardFig, movePattern, true);
             } else {
                 // add new moveForward
-                updateSequence(selectedFigure.id - 1, movePattern, false);
+                updateSequence(OA.selectedFigure.id - 1, movePattern, false);
                 return;
             }
         } else if (moveForwardFig != false) {
@@ -7311,7 +7326,7 @@ function updateFigure(noRedraw) {
     // set correct subSequence type
     const ssd = $('subSequenceDirections');
     if ($('subSequence').classList.contains('on')) {
-        figures[selectedFigure.id].subSequence = ssd.value;
+        OA.figures[OA.selectedFigure.id].subSequence = ssd.value;
         if (subSequence === false) {
             updateSequence(i, ssd.value, false);
         } else {
@@ -7364,7 +7379,7 @@ function updateFigure(noRedraw) {
         pattern += new Array(Math.round((exitExt - parseInt(exitExt)) * 3) + 1).join(userpat.forward);
     }
 
-    const axisChange = figures[selectedFigure.id].entryAxisFormB;
+    const axisChange = OA.figures[OA.selectedFigure.id].entryAxisFormB;
 
     // set switchY
     if ($('switchY').classList.contains('on')) {
@@ -7378,7 +7393,7 @@ function updateFigure(noRedraw) {
 
     // when there was a flipYaxis in this figure, add it to the beginning
     // of the pattern
-    if (figures[selectedFigure.id].string.indexOf(userpat.flipYaxis) > -1) {
+    if (OA.figures[OA.selectedFigure.id].string.indexOf(userpat.flipYaxis) > -1) {
         pattern = userpat.flipYaxis + pattern;
     }
 
@@ -7390,17 +7405,17 @@ function updateFigure(noRedraw) {
         ) + $('comments').value;
 
     // retrieve original comments
-    const oldComments = (figures[selectedFigure.id].unknownFigureLetter ?
-        `@${figures[selectedFigure.id].unknownFigureLetter}` : '') +
-        figures[selectedFigure.id].comments;
+    const oldComments = (OA.figures[OA.selectedFigure.id].unknownFigureLetter ?
+        `@${OA.figures[OA.selectedFigure.id].unknownFigureLetter}` : '') +
+        OA.figures[OA.selectedFigure.id].comments;
 
     if (comments != oldComments) {
         // move back in the figure queue to find comments
         let
             match = false,
-            i = selectedFigure.id - 1;
-        while ((i >= 0) && !figures[i].figNr) {
-            const prevFig = figures[i];
+            i = OA.selectedFigure.id - 1;
+        while ((i >= 0) && !OA.figures[i].figNr) {
+            const prevFig = OA.figures[i];
             if (prevFig) {
                 // find a match for comments
                 match = prevFig.string.match(RegExp('^\\' + userpat.comment +
@@ -7419,7 +7434,7 @@ function updateFigure(noRedraw) {
         // no match, apply new
         if (!match && (comments != '')) {
             updateSequence(
-                selectedFigure.id - 1,
+                OA.selectedFigure.id - 1,
                 `"${comments}"`,
                 false,
                 false,
@@ -7430,21 +7445,21 @@ function updateFigure(noRedraw) {
 
     // update the sequence with the final pattern
     if (pattern !== string) {
-        updateSequence(selectedFigure.id, pattern, true);
+        updateSequence(OA.selectedFigure.id, pattern, true);
     } else if (!noRedraw) {
-        updateFigureOptions(selectedFigure.id);
+        updateFigureOptions(OA.selectedFigure.id);
     }
     $('leftBlockContainer').scrollTop = scroll;
 }
 
 // updateFigureComments updates the figure coments
 function updateFigureComments() {
-    if (intervalID.updateFigureComments) {
-        window.clearTimeout(intervalID.updateFigureComments);
+    if (OA.intervalID.updateFigureComments) {
+        window.clearTimeout(OA.intervalID.updateFigureComments);
     }
-    intervalID.updateFigureComments = window.setTimeout(function () {
+    OA.intervalID.updateFigureComments = window.setTimeout(function () {
         updateFigure();
-        delete intervalID.updateFigureComments;
+        delete OA.intervalID.updateFigureComments;
     }, 100);
 }
 
@@ -7462,9 +7477,9 @@ function getLatestVersion() {
                     const banner = $('installApp');
                     banner.classList.remove('noDisplay');
                     $('t_getTheApp').innerHTML =
-                        sprintf(userText.updateApp, latestVersion.split(' ')[0]);
-                    if (platform.android) banner.classList.add('android');
-                    if (platform.ios) banner.classList.add('ios');
+                        sprintf(OA.userText.updateApp, latestVersion.split(' ')[0]);
+                    if (OA.platform.android) banner.classList.add('android');
+                    if (OA.platform.ios) banner.classList.add('ios');
                     banner.classList.add('update', 'show');
                 } else {
                     // Set "reload" in localStorage to make sure we only reload once
@@ -7514,12 +7529,12 @@ function checkUpdateDone() {
 
         // Wait a few seconds to give platform.cordova to be set if applicable
         setTimeout(function () {
-            if (platform.cordova || platform.uwp) {
+            if (OA.platform.cordova || OA.platform.uwp) {
                 alertBox(
                     { userText: 'installedApp' },
                     { userText: 'installation' }
                 );
-            } else if (platform.windows10) {
+            } else if (OA.platform.windows10) {
                 alertBox(
                     { userText: 'installedWindows10', params: [window.location.host] },
                     { userText: 'installation' }
@@ -7553,7 +7568,7 @@ function checkUpdateDone() {
             action: 'versionUpdate',
             rules: rules
         });
-        alertBox(sprintf(userText.versionNew, prevVersion, version, li));
+        alertBox(sprintf(OA.userText.versionNew, prevVersion, version, li));
         // create link for changelog
         $('changelog').addEventListener(
             'mousedown',
@@ -7598,23 +7613,23 @@ function changeSequenceInfo() {
             }
         }
         xml += '</sequence>';
-        if (xml != activeSequence.xml) {
-            if (activeSequence.addUndo) {
+        if (xml != OA.activeSequence.xml) {
+            if (OA.activeSequence.addUndo) {
                 // add undo and clear redo
-                if (activeSequence.xml) {
-                    activeSequence.undo.push(activeSequence.xml);
+                if (OA.activeSequence.xml) {
+                    OA.activeSequence.undo.push(OA.activeSequence.xml);
                     // maximum 100 undos
-                    while (activeSequence.undo.length > 100) {
-                        activeSequence.undo.shift();
+                    while (OA.activeSequence.undo.length > 100) {
+                        OA.activeSequence.undo.shift();
                     }
                 }
 
                 setUndoRedo('redo', true);
             }
             // put everything in activeSequence.xml object
-            activeSequence.xml = xml;
+            OA.activeSequence.xml = xml;
             // save activeSequence.xml in storage 'sequence'
-            localStorage.setItem('sequence', activeSequence.xml);
+            localStorage.setItem('sequence', OA.activeSequence.xml);
         }
         checkInfo();
         // update 'Notes' field height
@@ -7631,7 +7646,7 @@ function buildFigureXML() {
     let
         figNr = 0,
         totalK = 0;
-    for (const fig of figures) {
+    for (const fig of OA.figures) {
         if (fig.aresti) {
             figNr++;
             let figK = 0;
@@ -7642,9 +7657,9 @@ function buildFigureXML() {
             // Append figure letter if applicable
             if (fig.unknownFigureLetter) {
                 // if rules are loaded, check if letter is allowed accordingly
-                if ((figureLetters.indexOf(fig.unknownFigureLetter) > -1) ||
-                    (additionalFig.max && (fig.unknownFigureLetter === 'L')) ||
-                    !activeRules) {
+                if ((OA.figureLetters.indexOf(fig.unknownFigureLetter) > -1) ||
+                    (OA.additionalFig.max && (fig.unknownFigureLetter === 'L')) ||
+                    !OA.activeRules) {
                     f.appendChild(document.createElement('letter'))
                         .appendChild(document.createTextNode(fig.unknownFigureLetter));
                 }
@@ -7668,10 +7683,10 @@ function buildFigureXML() {
             // Adjust figure K for additionals
             if (fig.unknownFigureLetter) {
                 if (fig.unknownFigureLetter == 'L') {
-                    if (additionals <= additionalFig.max) {
-                        figK = additionalFig.totalK / additionals;
-                    } else if (additionalFig.max > 0) {
-                        figK = additionalFig.totalK / additionalFig.max;
+                    if (OA.additionals <= OA.additionalFig.max) {
+                        figK = OA.additionalFig.totalK / OA.additionals;
+                    } else if (OA.additionalFig.max > 0) {
+                        figK = OA.additionalFig.totalK / OA.additionalFig.max;
                     }
                 }
             }
@@ -7738,9 +7753,9 @@ function changeCombo(id, callback) {
     function disable(e) {
         e.value = '';
         if (e.id === 'program') {
-            e.placeholder = userText.selectCategoryFirst;
+            e.placeholder = OA.userText.selectCategoryFirst;
         } else {
-            e.placeholder = userText.selectRulesFirst;
+            e.placeholder = OA.userText.selectRulesFirst;
         }
         e.setAttribute('disabled', 'disabled');
         e.nextElementSibling.innerHTML = '';
@@ -7748,7 +7763,7 @@ function changeCombo(id, callback) {
     function enable(e) {
         e.placeholder = '';
         e.removeAttribute('disabled');
-        e.nextElementSibling.innerHTML = userText[e.id];
+        e.nextElementSibling.innerHTML = OA.userText[e.id];
     }
 
     let
@@ -7761,21 +7776,21 @@ function changeCombo(id, callback) {
         if (rulesLogo[ruleName]) selectLogo(rulesLogo[ruleName]);
 
         // set CIVA, IAC or IMAC forms default
-        formStyle = /^(iac|imac)$/i.test($('rules').value) ?
+        OA.formStyle = /^(iac|imac)$/i.test($('rules').value) ?
             $('rules').value.match(/(iac|imac)/i)[1].toLowerCase() : 'civa';
-        $('formStyle').value = formStyle;
+        $('formStyle').value = OA.formStyle;
 
         // clear category if these rules exist but do not contain the category
-        if (seqCheckAvail[ruleName] && !seqCheckAvail[ruleName].cats[categoryName]) {
+        if (OA.seqCheckAvail[ruleName] && !OA.seqCheckAvail[ruleName].cats[categoryName]) {
             $('category').value = $('program').value = '';
         }
     }
 
     if ((id === 'rules') || (id === 'category')) {
         // clear program if this category exists but does not contain the program
-        if (seqCheckAvail[ruleName] &&
-            seqCheckAvail[ruleName].cats[categoryName] &&
-            !seqCheckAvail[ruleName].cats[categoryName].seqs[programName]) {
+        if (OA.seqCheckAvail[ruleName] &&
+            OA.seqCheckAvail[ruleName].cats[categoryName] &&
+            !OA.seqCheckAvail[ruleName].cats[categoryName].seqs[programName]) {
             $('program').value = '';
         }
     }
@@ -7910,7 +7925,7 @@ function populateTeamSelectList() {
     // Add 'None' option
     const option = document.createElement('option');
     option.value = '';
-    option.text = userText.none;
+    option.text = OA.userText.none;
     $('team').appendChild(option);
 
     // Add IOC country codes
@@ -8038,21 +8053,19 @@ function buildLogoSvg(logoImage, x, y, width, height, blackWhite) {
 function logoChooser() {
     if ($('lockContest').classList.contains('locked')) return;
     // define logo thumbnail width and height
-    var width = 80;
-    var height = 80;
+    const
+        width = 80,
+        height = 80;
     // show the logo chooser container
-    var container = $('logoChooserContainer');
-    container.classList.remove('noDisplay');
+    $('logoChooserContainer').classList.remove('noDisplay');
     // clear logo file when present
     if ($('logoFile')) $('logoFile').value = '';
     // Show all the logo images
-    container = $('chooseLogo');
+    $('fileDropLogo').style.width = (width - 40) + 'px';
+    $('fileDropLogo').style.height = (height - 40) + 'px';
     // Clean up the container
-    var fileDropLogo = $('fileDropLogo');
-    fileDropLogo.style.width = (width - 40) + 'px';
-    fileDropLogo.style.height = (height - 40) + 'px';
-    while (container.lastChild !== fileDropLogo) {
-        container.lastChild.remove();
+    while ($('chooseLogo').lastChild !== $('fileDropLogo')) {
+        $('chooseLogo').lastChild.remove();
     }
     // add logoImages
     const count = JSON.parse(localStorage.getItem ('logoSelectionCount') || null);
@@ -8079,12 +8092,12 @@ function logoChooser() {
         }
     }
     // max 3 private logos
-    fileDropLogo.classList.toggle ('noDisplay', privateLogos > 2);
+    $('fileDropLogo').classList.toggle ('noDisplay', privateLogos > 2);
 
     // build the logos in correct order
     for (const logoName of keys) {
         const div = document.createElement('div');
-        container.appendChild(div);
+        $('chooseLogo').appendChild(div);
         div.setAttribute("alt", logoName);
         div.addEventListener('mousedown', selectLogo, false);
         div.appendChild(buildLogoSvg(logoImages[logoName], 0, 0, width, height));
@@ -8096,7 +8109,7 @@ function logoChooser() {
             button.innerHTML = '<i class="material-icons">close</i>';
             // make sure we remove on touch devices by using touchstart
             // which fires before mousedown
-            if (platform.touch) {
+            if (OA.platform.touch) {
                 button.addEventListener('touchstart', deleteLogo);
             }
             button.addEventListener('mousedown', deleteLogo);
@@ -8121,8 +8134,8 @@ function selectLogo(logo) {
     }
 
     // check if there already was a logo to replace
-    const replace = logoImg ? true : false;
-    logoImg = logoImages[logo];
+    const replace = OA.logoImg ? true : false;
+    OA.logoImg = logoImages[logo];
     $('logo').value = logo;
     if (!replace) drawActiveLogo();
     // move the logo smoothly into place from logoChooser
@@ -8165,7 +8178,7 @@ function drawActiveLogo() {
         // Create logo svg
         let link = $('logoImage');
         if (link.firstChild) link.firstChild.remove();
-        link.appendChild(buildLogoSvg(logoImg, 0, 0, width, height));
+        link.appendChild(buildLogoSvg(OA.logoImg, 0, 0, width, height));
 
         $('removeLogo').classList.remove('noDisplay');
         $('contest').classList.add('hasLogo');
@@ -8176,7 +8189,7 @@ function drawActiveLogo() {
 // removeLogo makes it possible to remove the previously chosen logo
 function removeLogo() {
     if ($('lockContest').classList.contains('locked')) return;
-    logoImg = false;
+    OA.logoImg = false;
     // Remove 'remove logo' link and logo image
     $('removeLogo').classList.add('noDisplay');
     $('activeLogo').classList.add('empty');
@@ -8219,7 +8232,7 @@ function parseFiguresFile() {
         rolls = [];
 
     // add the Queue 'figure group' at the beginning
-    figGroup[0] = { 'family': '*', 'name': userText.figureQueue };
+    OA.figGroup[0] = { 'family': '*', 'name': OA.userText.figureQueue };
     // add an option for the group to the figure selector
     var option = document.createElement('option');
     option.setAttribute('value', 0);
@@ -8241,14 +8254,14 @@ function parseFiguresFile() {
             // increase figGroupNr counter
             figGroupNr++;
             // parse family and name
-            figGroup[figGroupNr] = {
+            OA.figGroup[figGroupNr] = {
                 'family': splitLine[0].replace(/^F/, ''),
                 'name': splitLine[1]
             };
             // add an option for the group to the figure selector
             var option = document.createElement('option');
             option.setAttribute('value', figGroupNr);
-            option.setAttribute('id', `t_figureGroups.${figGroup[figGroupNr].name}`);
+            option.setAttribute('id', `t_figureGroups.${OA.figGroup[figGroupNr].name}`);
             option.classList.add ('userText');
             if (figMainGroup != line[1]) {
                 figMainGroup = line[1];
@@ -8264,38 +8277,38 @@ function parseFiguresFile() {
                 if (!arestiK[1].match(/:/)) kFactors[1] = kFactors[0];
                 // Split K factors on the colon; kFactors[0] is for Powered,
                 // kFactors[1] is for Gliders
-                fig[i] = {
+                OA.fig[i] = {
                     'aresti': arestiK[0],
                     'kPwrd': parseInt(kFactors[0]),
                     'kGlider': parseInt(kFactors[1]),
                     'group': figGroupNr,
                     'pattern': splitLine[0]
                 };
-                (arestiToFig[arestiK[0]] || (arestiToFig[arestiK[0]] = [])).push(i);
+                (OA.arestiToFig[arestiK[0]] || (OA.arestiToFig[arestiK[0]] = [])).push(i);
                 // Extract roll elements for everything but roll figures
                 // and (rolling) turns
                 if (regexTurn.test(splitLine[0])) {
                     // handle (rolling) turns
                     theBase = splitLine[0];
-                    if (theBase in figBaseLookup) {
-                        figBaseLookup[theBase].push(i);
+                    if (theBase in OA.figBaseLookup) {
+                        OA.figBaseLookup[theBase].push(i);
                     } else {
-                        figBaseLookup[theBase] = [i];
+                        OA.figBaseLookup[theBase] = [i];
                     }
-                    fig[i].base = theBase;
-                    fig[i].draw = splitLine[2];
-                    fig[i].entryExit = fig[i].entryExitGlider = fig[i].entryExitPower =
+                    OA.fig[i].base = theBase;
+                    OA.fig[i].draw = splitLine[2];
+                    OA.fig[i].entryExit = OA.fig[i].entryExitGlider = OA.fig[i].entryExitPower =
                         theBase.replace(/[^-+]*/g, '').replace(/-/g, 'n').replace(/\+/g, 'N');
                 } else if (splitLine.length > 2) {
                     // handle everything except (rolling) turns and rolls
                     theBase = splitLine[0].replace(regexTurnsAndRolls, '');
-                    if (theBase in figBaseLookup) {
-                        figBaseLookup[theBase].push(i);
+                    if (theBase in OA.figBaseLookup) {
+                        OA.figBaseLookup[theBase].push(i);
                     } else {
-                        figBaseLookup[theBase] = [i];
+                        OA.figBaseLookup[theBase] = [i];
                     }
-                    fig[i].base = theBase;
-                    fig[i].draw = splitLine[2];
+                    OA.fig[i].base = theBase;
+                    OA.fig[i].draw = splitLine[2];
                     // Find which rolls are possible in this figure, handle the
                     // empty base of rolls on horizontal
                     if (theBase.replace(/[\+\-]+/g, '') != '') {
@@ -8304,39 +8317,39 @@ function parseFiguresFile() {
                         rollbase = Array(splitLine[0].replace(/[\+\-]+/g, ''));
                     }
                     rolls = rollbase.join(')').replace(/[\(\+\-]+/g, '').split(')');
-                    fig[i].rolls = [];
+                    OA.fig[i].rolls = [];
                     for (let r = 0; r < rolls.length; r++) {
                         switch (rolls[r]) {
                             case (figpat.fullroll):
-                                fig[i].rolls[r] = 1;
+                                OA.fig[i].rolls[r] = 1;
                                 break;
                             case (figpat.halfroll):
-                                fig[i].rolls[r] = 2;
+                                OA.fig[i].rolls[r] = 2;
                                 break;
                             case (figpat.anyroll):
-                                fig[i].rolls[r] = 3;
+                                OA.fig[i].rolls[r] = 3;
                                 break;
                             case (figpat.spinroll):
-                                fig[i].rolls[r] = 4;
+                                OA.fig[i].rolls[r] = 4;
                                 break;
                             case (figpat.longforward):
-                                fig[i].rolls[r] = 9;
+                                OA.fig[i].rolls[r] = 9;
                                 break;
                             default:
-                                fig[i].rolls[r] = 0;
+                                OA.fig[i].rolls[r] = 0;
                         }
                     }
                     // create entry/exit speed and attitude codes
-                    entryExit = fig[i].draw.replace(/[^dvzmcpro_]/gi, '');
+                    entryExit = OA.fig[i].draw.replace(/[^dvzmcpro_]/gi, '');
                     // assure only half rolls remain
                     entryExitSplit = entryExit.split('_');
                     for (let j = 0; j < entryExitSplit.length; j++) {
                         // if first roll does not exist, combine this drawing part
                         // with the next roll (e.g. +id^-)
-                        if (fig[i].rolls[0] === 0) {
-                            if (fig[i].rolls[j + 1] === 2) entryExitSplit[j] += '^';
+                        if (OA.fig[i].rolls[0] === 0) {
+                            if (OA.fig[i].rolls[j + 1] === 2) entryExitSplit[j] += '^';
                         } else {
-                            if (fig[i].rolls[j] === 2) entryExitSplit[j] += '^';
+                            if (OA.fig[i].rolls[j] === 2) entryExitSplit[j] += '^';
                         }
                     }
                     // add attitude info
@@ -8355,20 +8368,20 @@ function parseFiguresFile() {
                         } else return (att === '+') ? 'N' : 'n';
                     }
 
-                    fig[i].entryExitGlider = getCode(theBase[0], 'glider', 'entry') +
+                    OA.fig[i].entryExitGlider = getCode(theBase[0], 'glider', 'entry') +
                         getCode(theBase.slice(-1), 'glider', 'exit');
-                    fig[i].entryExitPower = getCode(theBase[0], 'power', 'entry') +
+                    OA.fig[i].entryExitPower = getCode(theBase[0], 'power', 'entry') +
                         getCode(theBase.slice(-1), 'power', 'exit');
-                    fig[i].entryExit = fig[i].entryExitPower;
+                    OA.fig[i].entryExit = OA.fig[i].entryExitPower;
                 } else {
                     // Handle rolls
-                    delete (fig[i]); // no fig object for rolls
-                    rollFig[splitLine[0]] = {
+                    delete (OA.fig[i]); // no fig object for rolls
+                    OA.rollFig[splitLine[0]] = {
                         aresti: arestiK[0],
                         kPwrd: parseInt(kFactors[0]),
                         kGlider: parseInt(kFactors[1])
                     };
-                    (rollArestiToFig[arestiK[0]] || (rollArestiToFig[arestiK[0]] = [])).push(splitLine[0]);
+                    (OA.rollArestiToFig[arestiK[0]] || (OA.rollArestiToFig[arestiK[0]] = [])).push(splitLine[0]);
                 }
             }
         }
@@ -8383,7 +8396,7 @@ function parseFiguresFile() {
 // getRuleName will create the correct, active, ruleName
 function getRuleName() {
     return (
-        (sportingClass.value === 'glider' ? 'glider-' : '') +
+        (OA.sportingClass.value === 'glider' ? 'glider-' : '') +
         $('rules').value.toLowerCase()
     );
 }
@@ -8396,15 +8409,15 @@ function updateRulesList(avail) {
             $('rulesList'),
         fragment = document.createDocumentFragment(),
         // create list of names and sort by uppercase name, with CIVA always first
-        ruleNames = Object.keys(seqCheckAvail)
+        ruleNames = Object.keys(OA.seqCheckAvail)
             .filter((ruleName) => {
-                return (sportingClass.value === 'glider' === /^glider-/.test(ruleName)) &&
-                seqCheckAvail[ruleName].show}
+                return (OA.sportingClass.value === 'glider' === /^glider-/.test(ruleName)) &&
+                OA.seqCheckAvail[ruleName].show}
             ).sort((a,b) => {
-                if (seqCheckAvail[a].name.toUpperCase() == 'CIVA' ||
-                    seqCheckAvail[a].name.toUpperCase() < seqCheckAvail[b].name.toUpperCase()
+                if (OA.seqCheckAvail[a].name.toUpperCase() == 'CIVA' ||
+                    OA.seqCheckAvail[a].name.toUpperCase() < OA.seqCheckAvail[b].name.toUpperCase()
                 ) return -1;
-                if (seqCheckAvail[a].name.toUpperCase() > seqCheckAvail[b].name.toUpperCase()) return 1;
+                if (OA.seqCheckAvail[a].name.toUpperCase() > OA.seqCheckAvail[b].name.toUpperCase()) return 1;
                 return 0;
             });
 
@@ -8420,7 +8433,7 @@ function updateRulesList(avail) {
         fragment.appendChild(listItem);
     }
 
-    if (avail) seqCheckAvail = avail; // update when avail provided
+    if (avail) OA.seqCheckAvail = avail; // update when avail provided
 
     // clear list
     removeChildNodes(el);
@@ -8428,7 +8441,7 @@ function updateRulesList(avail) {
     addRuleItem('');
     // build list
     for (const ruleName of ruleNames) {
-        addRuleItem(seqCheckAvail[ruleName].name);
+        addRuleItem(OA.seqCheckAvail[ruleName].name);
     }
     el.appendChild(fragment);
 }
@@ -8444,12 +8457,12 @@ function updateCategoryList() {
 
     removeChildNodes(el);
     // Populate category list
-    if (seqCheckAvail[ruleName]) {
-        for (const n in seqCheckAvail[ruleName].cats) {
-            if (seqCheckAvail[ruleName].cats[n].show) {
+    if (OA.seqCheckAvail[ruleName]) {
+        for (const n in OA.seqCheckAvail[ruleName].cats) {
+            if (OA.seqCheckAvail[ruleName].cats[n].show) {
                 const listItem = document.createElement($('category').list ? 'option' : 'li');
                 listItem.appendChild(document.createTextNode(
-                    seqCheckAvail[ruleName].cats[n].name
+                    OA.seqCheckAvail[ruleName].cats[n].name
                 ));
                 fragment.appendChild(listItem);
             }
@@ -8470,12 +8483,12 @@ function updateProgramList() {
 
     removeChildNodes(el);
     // Populate program list
-    if (seqCheckAvail[ruleName] && seqCheckAvail[ruleName].cats[categoryName]) {
-        for (const n in seqCheckAvail[ruleName].cats[categoryName].seqs) {
-            if (seqCheckAvail[ruleName].cats[categoryName].seqs[n][0] != '*') {
+    if (OA.seqCheckAvail[ruleName] && OA.seqCheckAvail[ruleName].cats[categoryName]) {
+        for (const n in OA.seqCheckAvail[ruleName].cats[categoryName].seqs) {
+            if (OA.seqCheckAvail[ruleName].cats[categoryName].seqs[n][0] != '*') {
                 const listItem = document.createElement($('program').list ? 'option' : 'li');
                 listItem.appendChild(document.createTextNode(
-                    seqCheckAvail[ruleName].cats[categoryName].seqs[n]
+                    OA.seqCheckAvail[ruleName].cats[categoryName].seqs[n]
                 ));
                 fragment.appendChild(listItem);
             }
@@ -8489,26 +8502,26 @@ function checkRules(callback) {
     const id = uniqueId();
     workerCallback[id] = callback;
 
-    multi.useReference = $('multiUseReference').checked;
+    OA.multi.useReference = $('multiUseReference').checked;
 
     rulesWorker.postMessage({
         action: 'checkRules',
-        activeSequenceText: activeSequence.text,
+        activeSequenceText: OA.activeSequence.text,
         figures: simplifyFigures(),
         nonArestiRolls: $('nonArestiRolls').checked,
-        multi: multi,
+        multi: OA.multi,
         callbackId: id
     });
 }
 
 // activateRules is called by loadRules Worker
 function activateRules(data) {
-    additionalFig = data.additionalFig;
-    checkAllowCatId = data.checkAllowCatId;
-    checkCatGroup = data.checkCatGroup;
-    infoCheck = data.infoCheck;
-    activeRules = data.activeRules;
-    ruleSuperFamily = data.ruleSuperFamily;
+    OA.additionalFig = data.additionalFig;
+    OA.checkAllowCatId = data.checkAllowCatId;
+    OA.checkCatGroup = data.checkCatGroup;
+    OA.infoCheck = data.infoCheck;
+    OA.activeRules = data.activeRules;
+    OA.ruleSuperFamily = data.ruleSuperFamily;
 
     // set the activeRules marker
     $('rulesActive').classList.add('good');
@@ -8519,16 +8532,16 @@ function activateRules(data) {
     }
 
     // set a rule based logo if applicable
-    if (activeRules.logo) selectLogo(activeRules.logo);
+    if (OA.activeRules.logo) selectLogo(OA.activeRules.logo);
 
     if (data.updatedFig) {
-        fig = data.updatedFig;
+        OA.fig = data.updatedFig;
         // Assure that queue figures are reloaded if applicable
         queueFromStorage();
     }
 
     if (data.figureLetters) {
-        figureLetters = data.figureLetters;
+        OA.figureLetters = data.figureLetters;
         // show reference sequence link
         $('t_referenceSequence').classList.remove('noDisplay');
     } else {
@@ -8544,7 +8557,7 @@ function activateRules(data) {
     $('printSF').checked = data.ruleSuperFamily.length ? true : false;
     $('printSF').disabled = data.ruleSuperFamily.length ? true : false;
 
-    rulesKFigures = data.rulesKFigures;
+    OA.rulesKFigures = data.rulesKFigures;
 
     // update reference sequence
     changeReferenceSequence(true);
@@ -8554,8 +8567,8 @@ function activateRules(data) {
 // It should only be called from the rule Worker
 function unloadRules(updatedFig) {
     if (updatedFig) {
-        rulesKFigures = {};
-        fig = updatedFig;
+        OA.rulesKFigures = {};
+        OA.fig = updatedFig;
         // Assure that queue figures are reloaded if applicable
         queueFromStorage();
         console.log('Resetting K factors');
@@ -8565,14 +8578,14 @@ function unloadRules(updatedFig) {
     $('printSF').checked = false;
     $('printSF').disabled = false;
 
-    figureLetters = '';
-    activeRules = false;
+    OA.figureLetters = '';
+    OA.activeRules = false;
     $('rulesActive').classList.remove('good');
 
     // remove disable property of positioning and harmony
     $('positioning').removeAttribute('disabled');
     $('harmony').removeAttribute('disabled');
-    if (sportingClass.value !== 'powered') {
+    if (OA.sportingClass.value !== 'powered') {
         $('harmonyField').classList.remove('hidden');
     }
     // Hide options for choosing positioning K
@@ -8582,13 +8595,13 @@ function unloadRules(updatedFig) {
     // hide reference sequence button
     $('t_referenceSequence').classList.add('noDisplay');
     // restore Reference sequence to previous value
-    $('referenceSequenceString').value = savedReference;
+    $('referenceSequenceString').value = OA.savedReference;
     $('referenceSequenceString').removeAttribute('disabled');
     $('t_referenceSequenceFixed').classList.add('noDisplay');
 
     // Set formStyle value depending on Rules field only
-    formStyle = /^(iac|imac)$/i.test(rules.value) ? strToLower(rules.value).match(/(iac|imac)/)[1] : 'civa';
-    $('formStyle').value = formStyle;
+    OA.formStyle = /^(iac|imac)$/i.test(rules.value) ? strToLower(rules.value).match(/(iac|imac)/)[1] : 'civa';
+    $('formStyle').value = OA.formStyle;
 
     // make sure only available figure groups are shown in chooser
     availableFigureGroups();
@@ -8628,7 +8641,7 @@ function checkSequence(show) {
                     }
                     div.appendChild(pre);
                     return `<div id="logBox">${div.innerHTML}</div>`;
-                }, userText.sequenceCheckLog,
+                }, OA.userText.sequenceCheckLog,
                     [{
                         'name': 'copyClipboard', 'function': function () {
                             window.getSelection().selectAllChildren($('logBox'));
@@ -8642,8 +8655,8 @@ function checkSequence(show) {
             $('checkSequence').classList.add('noDisplay');
         } else {
             $('checkSequence').classList.remove('noDisplay');
-            const content = activeRules ?
-                `<div class="divider">${userText.checkingRules} : ${activeRules.description}</div>` :
+            const content = OA.activeRules ?
+                `<div class="divider">${OA.userText.checkingRules} : ${OA.activeRules.description}</div>` :
                 '';
 
             // get alerts from alert area
@@ -8653,7 +8666,7 @@ function checkSequence(show) {
             contentDiv.firstChild.remove();
             if (contentDiv.innerHTML == '') {
                 // no alerts
-                contentDiv.innerHTML = content + activeRules ? userText.sequenceCorrect : '';
+                contentDiv.innerHTML = content + OA.activeRules ? OA.userText.sequenceCorrect : '';
             } else {
                 // alerts present
                 contentDiv.innerHTML = content + contentDiv.innerHTML;
@@ -8723,13 +8736,13 @@ function changeReferenceSequence(auto) {
         // remove all line breaks from the sequence reference
         string = $('referenceSequenceString').value.replace(/(\r\n|\n|\r)/gm, ' '),
         match,
-        savedText = activeSequence.text,
+        savedText = OA.activeSequence.text,
         thisFigure = { 'string': '', 'stringStart': 0, 'stringEnd': 0 },
         inText = false,
-        activeFormSave = activeForm;
+        activeFormSave = OA.activeForm;
 
-    activeSequence.figures = [];
-    if (auto !== true) savedReference = string;
+    OA.activeSequence.figures = [];
+    if (auto !== true) OA.savedReference = string;
 
     for (let i = 0; i <= string.length; i++) {
         if (string[i] == userpat.comment) inText = !inText;
@@ -8745,7 +8758,7 @@ function changeReferenceSequence(auto) {
                 }
                 // only add figures that are not empty
                 if (thisFigure.string != '') {
-                    activeSequence.figures.push({
+                    OA.activeSequence.figures.push({
                         'string': thisFigure.string,
                         'stringStart': thisFigure.stringStart,
                         'stringEnd': i
@@ -8762,21 +8775,21 @@ function changeReferenceSequence(auto) {
     }
 
     // Parse sequence
-    activeForm = 'G';
-    Attitude = Direction = X = Y = 0;
+    OA.activeForm = 'G';
+    OA.attitude = OA.direction = OA.X = OA.Y = 0;
 
     // See if there is a y-axis flip symbol and activate it, except when
     // it matches the subSequence code which is similar (/ or //). Usually
     // this is done by parseSequence, but it checks activeSequence.text
     if (string.replace(regexComments, '').match(regexFlipYAxis)) {
-        setYAxisOffset(180 - yAxisOffset);
+        setYAxisOffset(180 - OA.yAxisOffset);
     }
 
     parseSequence();
 
-    activeForm = activeFormSave;
+    OA.activeForm = activeFormSave;
 
-    var figCount = figures.filter((figure) => figure.aresti).length;
+    var figCount = OA.figures.filter((figure) => figure.aresti).length;
 
     const div = $('referenceSequenceDialog');
     var noDisplay = div.classList.contains('noDisplay');
@@ -8800,31 +8813,31 @@ function changeReferenceSequence(auto) {
     // restore div to previous state
     if (noDisplay) div.classList.add('noDisplay');
 
-    referenceSequence.figures = {};
-    for (let i = 0; i < figures.length; i++) {
-        if (figures[i].aresti && figures[i].unknownFigureLetter) {
-            referenceSequence.figures[figures[i].unknownFigureLetter] = figures[i];
+    OA.referenceSequence.figures = {};
+    for (let i = 0; i < OA.figures.length; i++) {
+        if (OA.figures[i].aresti && OA.figures[i].unknownFigureLetter) {
+            OA.referenceSequence.figures[OA.figures[i].unknownFigureLetter] = OA.figures[i];
         }
     }
 
-    var remaining = figureLetters;
-    for (let i = 0; i < figureLetters.length; i++) {
-        if (referenceSequence.figures[figureLetters[i]]) {
-            remaining = remaining.replace(figureLetters[i], '');
+    var remaining = OA.figureLetters;
+    for (let i = 0; i < OA.figureLetters.length; i++) {
+        if (OA.referenceSequence.figures[OA.figureLetters[i]]) {
+            remaining = remaining.replace(OA.figureLetters[i], '');
         }
     }
     $('referenceSequenceAlerts').innerHTML = remaining ?
-        sprintf(userText.unusedFigureLetters, remaining.split('').join(' ')) : '';
+        sprintf(OA.userText.unusedFigureLetters, remaining.split('').join(' ')) : '';
 
     // send relevant parts of referenceSequence to rulesWorker
     var refSeqCheck = { figures: {} };
-    for (let key in referenceSequence.figures) {
+    for (let key in OA.referenceSequence.figures) {
         refSeqCheck.figures[key] = {
-            checkLine: referenceSequence.figures[key].checkLine,
-            entryDir: referenceSequence.figures[key].entryDir,
-            entryAtt: referenceSequence.figures[key].entryAtt,
-            exitDir: referenceSequence.figures[key].exitDir,
-            exitAtt: referenceSequence.figures[key].exitAtt
+            checkLine: OA.referenceSequence.figures[key].checkLine,
+            entryDir: OA.referenceSequence.figures[key].entryDir,
+            entryAtt: OA.referenceSequence.figures[key].entryAtt,
+            exitDir: OA.referenceSequence.figures[key].exitDir,
+            exitAtt: OA.referenceSequence.figures[key].exitAtt
         }
     }
     rulesWorker.postMessage({
@@ -8833,10 +8846,10 @@ function changeReferenceSequence(auto) {
     });
 
     // restore sequence
-    alertMsgs = [];
-    alertMsgRules = {};
-    activeSequence.figures = [];
-    activeSequence.text = sequenceText.innerText = savedText;
+    OA.alertMsgs = [];
+    OA.alertMsgRules = {};
+    OA.activeSequence.figures = [];
+    OA.activeSequence.text = OA.sequenceText.innerText = savedText;
 
     checkSequenceChanged(true);
 }
@@ -8845,16 +8858,16 @@ function changeReferenceSequence(auto) {
 // highlights any empty info fields with red borders (checkInfo class)
 function checkInfo() {
     // first clear all red borders
-    var el = document.getElementsByClassName('checkInfo');
+    const el = document.getElementsByClassName('checkInfo');
     for (let i = el.length - 1; i >= 0; i--) {
         el[i].removeAttribute('required');
         el[i].classList.remove('checkInfo');
     }
     // when no rules are active, revert to default: pilot, actype, acreg
-    if (!activeRules) infoCheck = ['pilot', 'actype', 'acreg'];
+    if (!OA.activeRules) OA.infoCheck = ['pilot', 'actype', 'acreg'];
     // add red borders to missing info
-    for (let i = 0; i < infoCheck.length; i++) {
-        el = $(infoCheck[i]);
+    for (let i = 0; i < OA.infoCheck.length; i++) {
+        const el = $(OA.infoCheck[i]);
         if (el) {
             el.setAttribute('required', true);
             if (el.value == '') el.classList.add('checkInfo');
@@ -8866,31 +8879,32 @@ function checkInfo() {
 // When no missing info is detected, function f is executed.
 // Otherwise, a warning is presented and f executed only after confirm
 function missingInfoCheck(f) {
-    var el = document.getElementsByClassName('checkInfo');
+    const els = document.getElementsByClassName('checkInfo');
 
-    if (el.length === 0) {
+    if (els.length === 0) {
         f();
     } else {
-        var warning = userText.missingInfo + '</br>';
-        for (let i = 0; i < el.length; i++) {
-            warning += `</br>\n${userText[el[i].id].replace(/&amp;/g, '&')}`;
+        let warning = OA.userText.missingInfo + '</br>';
+        for (const el of els) {
+            warning += `</br>\n${OA.userText[el.id].replace(/&amp;/g, '&')}`;
         }
-        confirmBox(warning, userText.missingInfoTitle, f);
+        confirmBox(warning, OA.userText.missingInfoTitle, f);
     }
 }
 
 // updateFigureSelectorOptions updates the figure chooser options
 function updateFigureSelectorOptions(selectedOption) {
     const container = $('figureSelectorOptionsDiv');
+    let options;
     if (container) {
         removeChildNodes(container);
 
         // only make a selector when there is at least one figure in the seq
         // and we are not in Free (Un)known designer
-        if ((figures.findIndex(f => 'aresti' in f) >= 0) && (activeForm != 'FU')) {
+        if ((OA.figures.findIndex(f => 'aresti' in f) >= 0) && (OA.activeForm != 'FU')) {
             // Options are different when a figure is selected
-            if (selectedFigure.id !== null) {
-                var options = [
+            if (OA.selectedFigure.id !== null) {
+                options = [
                     'figSelectorAddBefore',
                     'figSelectorReplace',
                     'figSelectorAddAfter'
@@ -8898,7 +8912,7 @@ function updateFigureSelectorOptions(selectedOption) {
                 // set default option to add after
                 if (!selectedOption) selectedOption = 'figSelectorAddAfter';
             } else {
-                var options = [
+                options = [
                     'figSelectorAddStart',
                     'figSelectorAddEnd'
                 ];
@@ -8906,21 +8920,22 @@ function updateFigureSelectorOptions(selectedOption) {
                 if (!selectedOption) selectedOption = 'figSelectorAddEnd';
             }
 
-            var div = document.createElement('div');
+            const div = document.createElement('div');
             div.id = 'figureSelectorOptions';
             options.forEach ((o, i) => {
-                var button = document.createElement('div');
+                const
+                    button = document.createElement('div'),
+                    text = document.createElement('div');
+
                 button.classList.add ('figureSelectorOptionsButton');
                 button.id = o;
-                if (o == selectedOption) {
-                    button.classList.add('selected');
-                }
-                let text = document.createElement('div');
-                text.appendChild(document.createTextNode(userText[options[i]]));
+                button.classList.toggle('selected', o == selectedOption);
+
+                text.appendChild(document.createTextNode(OA.userText[options[i]]));
                 button.appendChild(text);
                 // On smallMobile, add an image of the active figure
                 // as a reminder
-                if (button.id == 'figSelectorReplace' && platform.smallMobile) {
+                if (button.id == 'figSelectorReplace' && OA.platform.smallMobile) {
                     button.appendChild($('selectedFigureSvg').cloneNode(true));
                     button.lastChild.setAttribute('id', 'selectedFigureSvgInChooser');
                     button.lastChild.setAttribute('width', '50');
@@ -8945,14 +8960,14 @@ function updateFigureSelectorOptions(selectedOption) {
 // changeFigureString is executed when the figureString in the Figure
 // Selector is changed
 function changeFigureString(e) {
-    var string = this.value.replace(/ /g, '');
+    let string = this.value.replace(/ /g, '');
 
     if (e.inputType === 'insertText') {
         if (e.data === ' ') return false;
     } else this.value = string;
 
-    string = string || (additionalFig.max ? 'L' : 'X');
-    updateSequence(selectedFigure.id, string, true, true);
+    string = string || (OA.additionalFig.max ? 'L' : 'X');
+    updateSequence(OA.selectedFigure.id, string, true, true);
     this.focus();
 }
 
@@ -8979,7 +8994,7 @@ function checkRarelyUsed (fig) {
 function availableFigureGroups() {
     const
         options = $('figureGroupClone').childNodes,
-        firstGroup = (activeForm === 'FU') ? 0 : 1,
+        firstGroup = (OA.activeForm === 'FU') ? 0 : 1,
         value = $('figureGroup').value;
 
     // Clear figureGroup <select>
@@ -8987,27 +9002,27 @@ function availableFigureGroups() {
 
     // hide all options, except rolls and spins
     for (let i = firstGroup; i < options.length; i++) {
-        if (figGroup[i].family != 9) {
+        if (OA.figGroup[i].family != 9) {
             options[i].classList.add('noDisplay');
             options[i].disabled = 'disabled';
         }
     }
     if ($('hideRarelyUsed').checked == true || (
-        (Object.keys(checkAllowCatId).length > 0) &&
-        activeRules &&
+        (Object.keys(OA.checkAllowCatId).length > 0) &&
+        OA.activeRules &&
         ($('hideIllegal').checked == true) &&
-        (activeForm !== 'FU'))) {
+        (OA.activeForm !== 'FU'))) {
         // show all options that are applicable
-        fig.forEach (f => {
-            if (Object.keys(checkAllowCatId).length === 0 || f.aresti in checkAllowCatId ||
-            (activeRules && ($('hideIllegal').checked == false))) {
+        OA.fig.forEach (f => {
+            if (Object.keys(OA.checkAllowCatId).length === 0 || f.aresti in OA.checkAllowCatId ||
+            (OA.activeRules && ($('hideIllegal').checked == false))) {
                 if (!checkRarelyUsed(f) && options[f.group]) {
                     options[f.group].classList.remove('noDisplay');
                     options[f.group].disabled = false;
                 }
             }
         });
-    } else if (activeForm !== 'FU') {
+    } else if (OA.activeForm !== 'FU') {
         // show all options
         for (let i = 1; i < options.length; i++) {
             options[i].classList.remove('noDisplay');
@@ -9043,14 +9058,14 @@ function changeFigureGroup() {
         fragment = document.createDocumentFragment();
 
     // If the requested figureGroup does not exist, set to singleLines by default
-    if (!figGroup[figureGroup]) figureGroup = e.value = 1;
+    if (!OA.figGroup[figureGroup]) figureGroup = e.value = 1;
     
     // set the correct size and row count for the figure thumbnails
-    if (figGroup[figureGroup].family == 9) { // rolls and spins group
+    if (OA.figGroup[figureGroup].family == 9) { // rolls and spins group
         $('figureChooserColumns').classList.add('noDisplay');
         table.innerHTML = `
             <div class="userText" id="t_rollsSpinsExplain">
-                ${userText['rollsSpinsExplain']}
+                ${OA.userText['rollsSpinsExplain']}
             </div>
             <div>
                 <img src=assets/images/single_spin.svg style="width: 49%">
@@ -9071,30 +9086,30 @@ function changeFigureGroup() {
         $('figureChooserColumns').classList.add('noDisplay');
     }
 
-    firstFigure = false;
+    OA.firstFigure = false;
 
     removeChildNodes(table);
-    for (let i = 0; i < fig.length; i++) {
-        if (fig[i]) {
+    for (let i = 0; i < OA.fig.length; i++) {
+        if (OA.fig[i]) {
             // Only draw figures that are in this group AND have not been
             // drawn before (e.g. 1j and j)
-            if ((fig[i].group == figureGroup) && !inArray(arestiDraw, (fig[i].aresti + fig[i].draw))) {
-                if (!fig[i].svg) {
+            if ((OA.fig[i].group == figureGroup) && !inArray(arestiDraw, (OA.fig[i].aresti + OA.fig[i].draw))) {
+                if (!OA.fig[i].svg) {
                     // The figure has not been drawn in this session, go ahead and
                     // draw it. First we take the original base and remove + and
                     // replace full/any roll/spin symbols by '1'
-                    var figure = fig[i].pattern.replace(/[\+]/g, '')
+                    var figure = OA.fig[i].pattern.replace(/[\+]/g, '')
                         .replace(regexFullAnySpinRoll, '1');
                     // next we replace half roll symbols by actual half rolls
                     figure = figure.replace(regexHalfRoll, '2');
-                    figures[-1] = [];
+                    OA.figures[-1] = [];
 
-                    Attitude = Direction = (figure[0] != '-') ? 0 : 180;
+                    OA.attitude = OA.direction = (figure[0] != '-') ? 0 : 180;
 
                     // build the figure
                     // fig[i].string is only set for Queue figures
-                    if (fig[i].string) {
-                        buildFigure([i], fig[i].string, false, -1);
+                    if (OA.fig[i].string) {
+                        buildFigure([i], OA.fig[i].string, false, -1);
                     } else {
                         buildFigure([i], figure, false, -1, true);
                     }
@@ -9102,8 +9117,8 @@ function changeFigureGroup() {
                     prepareSvg(svg);
                     // reset X and Y and clear figureStart to prevent adjusting
                     // figure position
-                    X = Y = 0;
-                    figureStart = [];
+                    OA.X = OA.Y = 0;
+                    OA.figureStart = [];
                     // draw the figure
                     drawFullFigure(-1, true, svg);
                     // retrieve the group holding the figure and set viewbox
@@ -9122,29 +9137,29 @@ function changeFigureGroup() {
                     svg.setAttribute('height', size);
                     svg.setAttribute('id', `figureChooser${i}`);
                     // add the svg to fig[i] as xml text
-                    fig[i].svg = new XMLSerializer().serializeToString(svg);
+                    OA.fig[i].svg = new XMLSerializer().serializeToString(svg);
                     svg.setAttribute('id', 'figureChooserSvg');
                     // add the roll Aresti nrs to fig if applicable
-                    fig[i].rollBase = [];
-                    for (let j = 1; j < figures[-1].aresti.length; j++) {
-                        fig[i].rollBase[j - 1] = rollArestiToFig[figures[-1].aresti[j]][0];
+                    OA.fig[i].rollBase = [];
+                    for (let j = 1; j < OA.figures[-1].aresti.length; j++) {
+                        OA.fig[i].rollBase[j - 1] = OA.rollArestiToFig[OA.figures[-1].aresti[j]][0];
                     }
                 }
-                if ((fig[i].aresti.match(newRow) && (fig[i].group != 0)) || (colCount == 0)) {
+                if ((OA.fig[i].aresti.match(newRow) && (OA.fig[i].group != 0)) || (colCount == 0)) {
                     colCount = 0;
                     var tr = document.createElement('tr');
                     var td = document.createElement('td');
                     tr.appendChild(td);
                     td.classList.add('arestiRow');
                     // add Aresti row number if not in queue or non-Aresti figures
-                    if ((fig[i].group != 0) && !/^0/.test(fig[i].aresti)) {
+                    if ((OA.fig[i].group != 0) && !/^0/.test(OA.fig[i].aresti)) {
                         // Add additional empty row when going to a lower arestiRow.
                         // This happens, for example, for the various double bump
                         // drawing styles
-                        if (arestiRow > parseInt(fig[i].aresti.match(/^\d+\.\d+\.(\d+)/)[1])) {
+                        if (arestiRow > parseInt(OA.fig[i].aresti.match(/^\d+\.\d+\.(\d+)/)[1])) {
                             tr.classList.add ('newDrawingGroup');
                         }
-                        arestiRow = parseInt(fig[i].aresti.match(/^\d+\.\d+\.(\d+)/)[1]);
+                        arestiRow = parseInt(OA.fig[i].aresti.match(/^\d+\.\d+\.(\d+)/)[1]);
                         td.innerHTML = arestiRow;
                     }
                     fragment.appendChild(tr);
@@ -9155,57 +9170,57 @@ function changeFigureGroup() {
                 td.setAttribute('id', i);
                 var inner = document.createElement('div');
                 td.appendChild(inner);
-                inner.innerHTML = fig[i].svg;
+                inner.innerHTML = OA.fig[i].svg;
                 td.addEventListener('mousedown', function () { selectFigure(this) });
                 var rollK = 0;
-                if (!fig[i].rollBase) fig[i].rollBase = [];
-                if (sportingClass.value === 'glider') {
-                    var k = fig[i].kGlider;
-                    for (let j = 0; j < fig[i].rollBase.length; j++) {
+                if (!OA.fig[i].rollBase) OA.fig[i].rollBase = [];
+                if (OA.sportingClass.value === 'glider') {
+                    var k = OA.fig[i].kGlider;
+                    for (let j = 0; j < OA.fig[i].rollBase.length; j++) {
                         // Set rollK to -1 when this roll has 0K -> illegal
                         // Can only happen for queue figures
-                        if ((rollFig[fig[i].rollBase[j]].kGlider === 0) &&
+                        if ((OA.rollFig[OA.fig[i].rollBase[j]].kGlider === 0) &&
                             (figureGroup == 0)) {
                             rollK = -1;
                             break;
                         }
                         // only count half rolls and rolls in queue figures
-                        if (fig[i].string || (/2$/.test(fig[i].rollBase[j]))) {
-                            rollK += rollFig[fig[i].rollBase[j]].kRules ?
-                                rollFig[fig[i].rollBase[j]].kRules :
-                                rollFig[fig[i].rollBase[j]].kGlider;
+                        if (OA.fig[i].string || (/2$/.test(OA.fig[i].rollBase[j]))) {
+                            rollK += OA.rollFig[OA.fig[i].rollBase[j]].kRules ?
+                                OA.rollFig[OA.fig[i].rollBase[j]].kRules :
+                                OA.rollFig[OA.fig[i].rollBase[j]].kGlider;
                         }
                     }
                 } else {
-                    var k = fig[i].kPwrd;
-                    for (let j = 0; j < fig[i].rollBase.length; j++) {
+                    var k = OA.fig[i].kPwrd;
+                    for (let j = 0; j < OA.fig[i].rollBase.length; j++) {
                         // Set rollK to -1 when this roll has 0K -> illegal
                         // Can only happen for queue figures
-                        if ((rollFig[fig[i].rollBase[j]].kPwrd === 0) &&
+                        if ((OA.rollFig[OA.fig[i].rollBase[j]].kPwrd === 0) &&
                             (figureGroup == 0)) {
                             rollK = -1;
                             break;
                         }
                         // only count half rolls and rolls in queue figures
-                        if (fig[i].string || (/2$/.test(fig[i].rollBase[j]))) {
-                            rollK += rollFig[fig[i].rollBase[j]].kRules ?
-                                rollFig[fig[i].rollBase[j]].kRules :
-                                rollFig[fig[i].rollBase[j]].kPwrd;
+                        if (OA.fig[i].string || (/2$/.test(OA.fig[i].rollBase[j]))) {
+                            rollK += OA.rollFig[OA.fig[i].rollBase[j]].kRules ?
+                                OA.rollFig[OA.fig[i].rollBase[j]].kRules :
+                                OA.rollFig[OA.fig[i].rollBase[j]].kPwrd;
                         }
                     }
                 }
-                if (fig[i].kRules) k = fig[i].kRules;
+                if (OA.fig[i].kRules) k = OA.fig[i].kRules;
                 if (rollK > 0) {
                     k += `(+${rollK})`;
                 } else if (rollK < 0) {
                     k += '<font color="red">(N/A)</font>';
                 }
-                fig[i].rollK = rollK;
+                OA.fig[i].rollK = rollK;
 
                 inner.innerHTML += `K:${k}`;
 
                 // extra for figures in queueGroup
-                if (fig[i].group == 0) {
+                if (OA.fig[i].group == 0) {
                     // add class queue
                     td.classList.add('queue');
                     // add a 'remove' button
@@ -9215,16 +9230,16 @@ function changeFigureGroup() {
                     div.innerHTML = '<i class="material-icons">close</i>';
                     // make sure we remove on touch devices by using touchstart
                     // which fires before mousedown
-                    if (platform.touch) {
+                    if (OA.platform.touch) {
                         div.addEventListener('touchstart', removeFromQueue);
                     }
                     div.addEventListener('mousedown', removeFromQueue);
                     inner.appendChild(div);
                     // add the unknownFigureLetter where defined
-                    if (fig[i].unknownFigureLetter) {
+                    if (OA.fig[i].unknownFigureLetter) {
                         var div = document.createElement('div');
                         div.classList.add('UFletterInQueue');
-                        div.innerHTML = fig[i].unknownFigureLetter;
+                        div.innerHTML = OA.fig[i].unknownFigureLetter;
                         inner.appendChild(div);
                     }
                 }
@@ -9233,17 +9248,17 @@ function changeFigureGroup() {
 
                 // add this figure's Aresti number and pattern to arestiDraw
                 // so it is not drawn twice
-                arestiDraw.push(fig[i].aresti + fig[i].draw);
+                arestiDraw.push(OA.fig[i].aresti + OA.fig[i].draw);
             }
         }
     }
     // When any figure was drawn, redraw sequence
-    if (-1 in figures) {
+    if (-1 in OA.figures) {
         // Clear alert messages created by building figures
-        alertMsgs = [];
-        alertMsgRules = {};
+        OA.alertMsgs = [];
+        OA.alertMsgRules = {};
         // Delete this figure
-        delete figures[-1];
+        delete OA.figures[-1];
     }
 
     table.appendChild(fragment);
@@ -9260,21 +9275,19 @@ function markFigures() {
 
 // markUsedFigures marks figures that are already in the sequence
 function markUsedFigures() {
-    var
-        table = $('figureChooserTable'),
-        tr = table.childNodes;
+    const tr = $('figureChooserTable').childNodes;
 
     for (let i = 0; i < tr.length; i++) {
-        var td = tr[i].childNodes;
+        const td = tr[i].childNodes;
         for (let j = 1; j < td.length; j++) {
             td[j].classList.remove('queueUsed');
             td[j].classList.remove('queueUsedMulti');
             // add class queueUsed if the figure is already present in
             // the sequence
-            for (let k = 0; k < figures.length; k++) {
-                if (!figures[k]) break;
-                if (figures[k].aresti && fig[td[j].id].aresti) {
-                    if ((`queue-${figures[k].aresti.join('-')}`) === fig[td[j].id].aresti) {
+            for (let k = 0; k < OA.figures.length; k++) {
+                if (!OA.figures[k]) break;
+                if (OA.figures[k].aresti && OA.fig[td[j].id].aresti) {
+                    if ((`queue-${OA.figures[k].aresti.join('-')}`) === OA.fig[td[j].id].aresti) {
                         if (td[j].classList.contains('queueUsed')) {
                             td[j].classList.remove('queueUsed');
                             td[j].classList.add('queueUsedMulti');
@@ -9296,72 +9309,73 @@ function markMatchingFigures() {
     let sel = false;
     // for the Free (Un)known designer, the selector is hidden. We always do
     // replace in that case
-    if (activeForm === 'FU') {
+    if (OA.activeForm === 'FU') {
         sel = 'figSelectorReplace';
     } else {
         let el = $('figureSelectorOptions');
         if (el && el.getElementsByClassName('selected')[0]) sel = el.getElementsByClassName('selected')[0].id;
     }
-    var previousPattern = false;
-    var nextPattern = false;
+    let
+        previousPattern = false,
+        nextPattern = false;
     if (sel) {
         switch (sel) {
             case 'figSelectorAddStart':
-                for (let i = 0; i < figures.length; i++) {
-                    if (figures[i].aresti) {
-                        nextPattern = fig[figures[i].figNr].pattern;
+                for (let i = 0; i < OA.figures.length; i++) {
+                    if (OA.figures[i].aresti) {
+                        nextPattern = OA.fig[OA.figures[i].figNr].pattern;
                         break;
-                    } else if (figures[i].subSequence) break;
+                    } else if (OA.figures[i].subSequence) break;
                 }
                 break;
             case 'figSelectorAddBefore':
-                for (let i = 0; i < figures.length; i++) {
-                    if (figures[i].aresti) {
-                        if (selectedFigure.id > i) {
-                            previousPattern = fig[figures[i].figNr].pattern;
+                for (let i = 0; i < OA.figures.length; i++) {
+                    if (OA.figures[i].aresti) {
+                        if (OA.selectedFigure.id > i) {
+                            previousPattern = OA.fig[OA.figures[i].figNr].pattern;
                         } else {
-                            nextPattern = fig[figures[i].figNr].pattern;
+                            nextPattern = OA.fig[OA.figures[i].figNr].pattern;
                             break;
                         }
                     }
                 }
                 break;
             case 'figSelectorReplace':
-                for (let i = 0; i < figures.length; i++) {
-                    if (selectedFigure.id > i) {
-                        if (figures[i].aresti) {
-                            previousPattern = fig[figures[i].figNr].pattern;
-                        } else if (figures[i].subSequence) {
+                for (let i = 0; i < OA.figures.length; i++) {
+                    if (OA.selectedFigure.id > i) {
+                        if (OA.figures[i].aresti) {
+                            previousPattern = OA.fig[OA.figures[i].figNr].pattern;
+                        } else if (OA.figures[i].subSequence) {
                             previousPattern = false;
                         }
-                    } else if (selectedFigure.id < i) {
-                        if (figures[i].aresti) {
-                            nextPattern = fig[figures[i].figNr].pattern;
+                    } else if (OA.selectedFigure.id < i) {
+                        if (OA.figures[i].aresti) {
+                            nextPattern = OA.fig[OA.figures[i].figNr].pattern;
                             break;
-                        } else if (figures[i].subSequence) {
+                        } else if (OA.figures[i].subSequence) {
                             break;
                         }
                     }
                 }
                 break;
             case 'figSelectorAddAfter':
-                for (let i = 0; i < figures.length; i++) {
-                    if (figures[i].aresti) {
-                        if (selectedFigure.id == i) {
-                            previousPattern = fig[figures[i].figNr].pattern;
-                        } else if (selectedFigure.id < i) {
-                            nextPattern = fig[figures[i].figNr].pattern;
+                for (let i = 0; i < OA.figures.length; i++) {
+                    if (OA.figures[i].aresti) {
+                        if (OA.selectedFigure.id == i) {
+                            previousPattern = OA.fig[OA.figures[i].figNr].pattern;
+                        } else if (OA.selectedFigure.id < i) {
+                            nextPattern = OA.fig[OA.figures[i].figNr].pattern;
                             break;
                         }
                     }
                 }
                 break;
             case 'figSelectorAddEnd':
-                for (let i = figures.length - 1; i >= 0; i--) {
-                    if (figures[i].aresti) {
-                        previousPattern = fig[figures[i].figNr].pattern;
+                for (let i = OA.figures.length - 1; i >= 0; i--) {
+                    if (OA.figures[i].aresti) {
+                        previousPattern = OA.fig[OA.figures[i].figNr].pattern;
                         break;
-                    } else if (figures[i].subSequence) break;
+                    } else if (OA.figures[i].subSequence) break;
                 }
         }
     }
@@ -9373,8 +9387,8 @@ function markMatchingFigures() {
         const td = tr.childNodes;
         // start with 2nd <td>, as first holds Aresti row nr
         for (let j = 1; j < td.length; j++) {
-            td[j].classList.toggle ('grid', /^G/.test(activeForm));
-            td[j].classList.toggle ('matchingFigure', regex.test(fig[td[j].id].pattern))
+            td[j].classList.toggle ('grid', /^G/.test(OA.activeForm));
+            td[j].classList.toggle ('matchingFigure', regex.test(OA.fig[td[j].id].pattern))
         }
     }
 }
@@ -9388,7 +9402,7 @@ function markNotAllowedFigures() {
 
     function legalFigure(td) {
         td.classList.remove('figureNotAllowed');
-        if (!$('hideRarelyUsed').checked || !checkRarelyUsed(fig[td.id])) {
+        if (!$('hideRarelyUsed').checked || !checkRarelyUsed(OA.fig[td.id])) {
             td.classList.remove('hidden');
             showRow = true;
         }
@@ -9396,13 +9410,13 @@ function markNotAllowedFigures() {
 
     function illegalFigure(td) {
         if (($('hideIllegal').checked == true) &&
-            (activeForm !== 'FU') &&
+            (OA.activeForm !== 'FU') &&
             ($('figureGroup').value != 0)) {
             td.classList.add('hidden');
             td.classList.remove('matchingFigure');
         } else {
-            if (!$('hideRarelyUsed').checked || !checkRarelyUsed(fig[td.id])) {
-                if (activeForm !== 'FU') td.classList.add('figureNotAllowed');
+            if (!$('hideRarelyUsed').checked || !checkRarelyUsed(OA.fig[td.id])) {
+                if (OA.activeForm !== 'FU') td.classList.add('figureNotAllowed');
                 showRow = true;
             }
         }
@@ -9414,25 +9428,25 @@ function markNotAllowedFigures() {
         showRow = false;
 
         for (let j = 1; j < td.length; j++) {
-            if ((sportingClass.value === 'powered') && (fig[td[j].id].kPwrd == 0)) {
+            if ((OA.sportingClass.value === 'powered') && (OA.fig[td[j].id].kPwrd == 0)) {
                 illegalFigure(td[j]);
-            } else if ((sportingClass.value === 'glider') && (fig[td[j].id].kGlider == 0)) {
+            } else if ((OA.sportingClass.value === 'glider') && (OA.fig[td[j].id].kGlider == 0)) {
                 illegalFigure(td[j]);
-            } else if (activeRules) {
-                if (Object.keys(checkAllowCatId).length > 0) {
-                    var aresti = fig[td[j].id].aresti;
-                    if (!fig[td[j].id].kRules) {
-                        var totalK = parseInt((sportingClass.value === 'powered') ?
-                            fig[td[j].id].kPwrd : fig[td[j].id].kGlider);
-                    } else var totalK = parseInt(fig[td[j].id].kRules);
-                    totalK += parseInt(fig[td[j].id].rollK);
+            } else if (OA.activeRules) {
+                if (Object.keys(OA.checkAllowCatId).length > 0) {
+                    var aresti = OA.fig[td[j].id].aresti;
+                    if (!OA.fig[td[j].id].kRules) {
+                        var totalK = parseInt((OA.sportingClass.value === 'powered') ?
+                            OA.fig[td[j].id].kPwrd : OA.fig[td[j].id].kGlider);
+                    } else var totalK = parseInt(OA.fig[td[j].id].kRules);
+                    totalK += parseInt(OA.fig[td[j].id].rollK);
 
                     if (aresti.match(/^queue-/)) {
                         aresti = aresti.match(/^queue-([0-9\.]+)/)[1];
                     }
 
-                    if (!(aresti in checkAllowCatId) || (checkCatGroup.k &&
-                        checkCatGroup.k.maxperfig && (checkCatGroup.k.maxperfig < totalK))) {
+                    if (!(aresti in OA.checkAllowCatId) || (OA.checkCatGroup.k &&
+                        OA.checkCatGroup.k.maxperfig && (OA.checkCatGroup.k.maxperfig < totalK))) {
                         illegalFigure(td[j]);
                     } else {
                         legalFigure(td[j]);
@@ -9445,10 +9459,10 @@ function markNotAllowedFigures() {
             }
         }
         // hide row when no legal figures present
-        if ((($('hideIllegal').checked == true && activeForm !== 'FU')
+        if ((($('hideIllegal').checked == true && OA.activeForm !== 'FU')
             || $('hideRarelyUsed').checked == true) &&
             ($('figureGroup').value != 0) &&
-            (figGroup[$('figureGroup').value].family != 9) &&
+            (OA.figGroup[$('figureGroup').value].family != 9) &&
             !showRow) {
             tr.classList.add('noDisplay');
         }
@@ -9466,7 +9480,7 @@ function selectFigure(e) {
     if (e === null) e = false;
 
     // show figure editor tab
-    if ((e !== false) && !platform.smallMobile) selectTab('tab-figureInfo');
+    if ((e !== false) && !OA.platform.smallMobile) selectTab('tab-figureInfo');
 
     var queueFigure = false;
     var fromChooser = (typeof e === 'object');
@@ -9474,10 +9488,10 @@ function selectFigure(e) {
         let options = $('figureSelectorOptions') ?
             $('figureSelectorOptions').getElementsByClassName('selected')[0].id : false;
         // check if this was triggered by removing a figure. If so, do nothing
-        if (!fig[e.id]) return;
+        if (!OA.fig[e.id]) return;
         // use the string if provided (for Queue figures)
-        if (fig[e.id].string) {
-            figure = fig[e.id].string;
+        if (OA.fig[e.id].string) {
+            figure = OA.fig[e.id].string;
             queueFigure = e.id;
         } else {
             // when doing a replace, check if this is a similar figure
@@ -9486,12 +9500,12 @@ function selectFigure(e) {
                     // getRolls creates a string that represents the rolls and
                     // their attitude in the figure
                     function getRolls(id) {
-                        const rolls = fig[id].pattern.replace(regexRolls, '');
+                        const rolls = OA.fig[id].pattern.replace(regexRolls, '');
                         let
                             att = 0,
                             out = '',
                             n = 0;
-                        for (const draw of fig[id].draw) {
+                        for (const draw of OA.fig[id].draw) {
                             if (drawAngles[draw]) {
                                 att += drawAngles[draw];
                             } else if (draw.match(/[hHtTuU]/)) {
@@ -9507,12 +9521,12 @@ function selectFigure(e) {
                     }
 
                     // replace similar figures, keeping rolls, extensions etc
-                    if (getRolls(e.id) === getRolls(figures[selectedFigure.id].figNr)) {
+                    if (getRolls(e.id) === getRolls(OA.figures[OA.selectedFigure.id].figNr)) {
                         // change the base figure
-                        figures[selectedFigure.id].pattern = fig[e.id].pattern;
-                        figures[selectedFigure.id].figNr = e.id;
+                        OA.figures[OA.selectedFigure.id].pattern = OA.fig[e.id].pattern;
+                        OA.figures[OA.selectedFigure.id].figNr = e.id;
                         // Update figure editor to new figure
-                        updateFigureOptions(selectedFigure.id);
+                        updateFigureOptions(OA.selectedFigure.id);
                         // Update the actual figure according figure editor
                         updateFigure();
                         // no more work needed, figure has been changed
@@ -9523,9 +9537,9 @@ function selectFigure(e) {
             if (!figure) {
                 // Replace the selected figure or add a new figure at the end
                 // first we take the original base and remove + and full/any roll symbols
-                var figure = fig[e.id].pattern.replace(regexPlusFullAnyRoll, '');
+                var figure = OA.fig[e.id].pattern.replace(regexPlusFullAnyRoll, '');
                 // Special case, put 0 for a horizontal line (figure 1.1.1.1)
-                if (fig[e.id].pattern === '+_+') figure = '0';
+                if (OA.fig[e.id].pattern === '+_+') figure = '0';
                 // replace half roll symbols by actual half rolls
                 figure = figure.replace(regexHalfRoll, '2');
                 // remove non-necessary roll elements in parenthesis, but only when
@@ -9542,8 +9556,8 @@ function selectFigure(e) {
                 case 'figSelectorAddStart':
                     // find the first 'figure', except sequence options
                     // and add before that one
-                    for (let i = 0; i < figures.length; i++) {
-                        if (!figures[i].string.match(regexSequenceOptions)) {
+                    for (let i = 0; i < OA.figures.length; i++) {
+                        if (!OA.figures[i].string.match(regexSequenceOptions)) {
                             updateSequence(i - 1, figure, false, true);
                             setFigureSelected(i);
                             break;
@@ -9552,9 +9566,9 @@ function selectFigure(e) {
                     break;
                 case 'figSelectorAddBefore':
                     let i;
-                    for (i = selectedFigure.id - 1; i >= 0; i--) {
+                    for (i = OA.selectedFigure.id - 1; i >= 0; i--) {
                         if (i > -1) {
-                            if (figures[i].string.match(regexSequenceOptions) || figures[i].aresti) {
+                            if (OA.figures[i].string.match(regexSequenceOptions) || OA.figures[i].aresti) {
                                 break;
                             }
                         }
@@ -9563,41 +9577,41 @@ function selectFigure(e) {
                     setFigureSelected(i + 1);
                     break;
                 case 'figSelectorReplace':
-                    updateSequence(selectedFigure.id, figure, true, true);
+                    updateSequence(OA.selectedFigure.id, figure, true, true);
                     break;
                 case 'figSelectorAddAfter':
-                    updateSequence(selectedFigure.id, figure, false, true);
-                    setFigureSelected(parseInt(selectedFigure.id) + 1);
+                    updateSequence(OA.selectedFigure.id, figure, false, true);
+                    setFigureSelected(parseInt(OA.selectedFigure.id) + 1);
                     break;
                 case 'figSelectorAddEnd':
-                    updateSequence(figures.length - 1, figure, false, true);
-                    setFigureSelected(figures.length - 1);
+                    updateSequence(OA.figures.length - 1, figure, false, true);
+                    setFigureSelected(OA.figures.length - 1);
                     break;
             }
-        } else if (activeForm === 'FU') {
+        } else if (OA.activeForm === 'FU') {
             // in Free (Un)known designer, always replace active figure
-            updateSequence(selectedFigure.id, figure, true);
+            updateSequence(OA.selectedFigure.id, figure, true);
         } else {
             // otherwise, add a new figure at the end
-            updateSequence(figures.length - 1, figure, false, true);
-            setFigureSelected(figures.length - 1);
+            updateSequence(OA.figures.length - 1, figure, false, true);
+            setFigureSelected(OA.figures.length - 1);
         }
     } else if (e !== false) {
         // redirect to selectFigureFU in Free (Un)known designer
-        if (activeForm === 'FU') {
+        if (OA.activeForm === 'FU') {
             selectFigureFu(e);
             return;
         }
 
         setFigureSelected(e);
-        e = SVGRoot.getElementById(`figure${e}`);
+        e = OA.SVGRoot.getElementById(`figure${e}`);
     }
     var elFT = $('t_addFigureText');
-    if (e != false && selectedFigure.id !== null) {
+    if (e != false && OA.selectedFigure.id !== null) {
         // => a figure is selected
         // hide the figure selector for smallMobile browsers, but highlight the
         // chosen figure in case the figure selector is shown again
-        if (platform.smallMobile) hideFigureSelector();
+        if (OA.platform.smallMobile) hideFigureSelector();
         var table = $('figureChooserTable');
         var selected = table.getElementsByClassName('selected');
         // remove selected class for all
@@ -9609,18 +9623,18 @@ function selectFigure(e) {
             e.parentNode.classList.add('selected');
         }
         elFT.parentNode.parentNode.classList.add('hoverdisplay');
-        elFT.innerHTML = userText.clickChangeFigure;
+        elFT.innerHTML = OA.userText.clickChangeFigure;
 
         // with figure loaded from chooser, remove any unknown figure letters
         // and add queue unknown figure letter if applicable. Don't do this
         // in Free (Un)known designer
-        if (fromChooser && (activeForm !== 'FU')) {
-            var uf = queueFigure ? fig[queueFigure].unknownFigureLetter : false;
+        if (fromChooser && (OA.activeForm !== 'FU')) {
+            var uf = queueFigure ? OA.fig[queueFigure].unknownFigureLetter : false;
 
-            for (let i = selectedFigure.id - 1; i >= 0; i--) {
-                if (figures[i].aresti) {
+            for (let i = OA.selectedFigure.id - 1; i >= 0; i--) {
+                if (OA.figures[i].aresti) {
                     break;
-                } else if (figures[i].unknownFigureLetter) {
+                } else if (OA.figures[i].unknownFigureLetter) {
                     updateSequence(i, '', true);
                 }
             }
@@ -9637,27 +9651,27 @@ function selectFigure(e) {
             if (queueFigure) {
                 setFigChooser(queueFigure);
             } else {
-                setFigChooser(figures[selectedFigure.id].figNr);
+                setFigChooser(OA.figures[OA.selectedFigure.id].figNr);
             }
         } else updateFigureSelectorOptions();
 
         // Highlight the figure in the sequence text when we were not editing
         // the comments and not in FU designer
-        if ((activeForm !== 'FU') && (document.activeElement.id !== 'comments')) {
-            var start = figures[selectedFigure.id].stringStart;
-            for (let i = selectedFigure.id - 1; i >= 0; i--) {
-                if (figures[i].aresti) {
+        if ((OA.activeForm !== 'FU') && (document.activeElement.id !== 'comments')) {
+            var start = OA.figures[OA.selectedFigure.id].stringStart;
+            for (let i = OA.selectedFigure.id - 1; i >= 0; i--) {
+                if (OA.figures[i].aresti) {
                     break;
                 } else {
-                    start = figures[i].stringStart;
+                    start = OA.figures[i].stringStart;
                 }
             }
-            highlight(sequenceText, start, figures[selectedFigure.id].stringEnd);
+            highlight(OA.sequenceText, start, OA.figures[OA.selectedFigure.id].stringEnd);
         }
     } else {
         // e===false => select no figure
         // remove highlight
-        if (activeForm !== 'FU') highlight(sequenceText);
+        if (OA.activeForm !== 'FU') highlight(OA.sequenceText);
         // set selected figure to null
         setFigureSelected(null);
         if ($('figureInfo')) {
@@ -9668,10 +9682,10 @@ function selectFigure(e) {
             // correctly set the figure change/edit block
             $('selectedFigureSvg').innerHTML = "";
             elFT.parentNode.parentNode.classList.remove('hoverdisplay');
-            elFT.innerHTML = userText.clickAddFigure;
+            elFT.innerHTML = OA.userText.clickAddFigure;
             $('figureHeader').innerHTML = '';
         }
-        if (activeForm === 'FU') selectTab('tab-fuFigures');
+        if (OA.activeForm === 'FU') selectTab('tab-fuFigures');
     }
     setQueueMenuOptions();
 }
@@ -9682,12 +9696,12 @@ function selectFigureFu(id) {
     selectTab('tab-figureInfo');
 
     // deselect any previously selected
-    for (const el of document.getElementsByClassName(`fuFig${selectedFigure.id}`)) {
+    for (const el of document.getElementsByClassName(`fuFig${OA.selectedFigure.id}`)) {
         el.classList.remove('active');
     }
 
     $('t_addFigureText').parentNode.parentNode.classList.add('hoverdisplay');
-    $('t_addFigureText').innerHTML = userText.clickChangeFigure;
+    $('t_addFigureText').innerHTML = OA.userText.clickChangeFigure;
 
     setFigureSelected(id);
 
@@ -9695,8 +9709,8 @@ function selectFigureFu(id) {
     updateFigureEditor();
 
     // set figure chooser for new additionaL and eXtra figures, or hide for others
-    if (((figures[id].unknownFigureLetter === 'L') && (figures[id].string === 'L')) ||
-        (figures[id].string === 'X')) {
+    if (((OA.figures[id].unknownFigureLetter === 'L') && (OA.figures[id].string === 'L')) ||
+        (OA.figures[id].string === 'X')) {
         updateFigureSelectorOptions();
         markMatchingFigures();
         showFigureSelector();
@@ -9715,26 +9729,26 @@ function checkFloatingPoint() {
     let figureK = 0;
     // in case of floating-point, check total K first to determine
     // how much to take off and where. Disregard additionals.
-    if (checkCatGroup.floatingPoint) {
+    if (OA.checkCatGroup.floatingPoint) {
         const figK = [];
-        for (let i = 0; i < figures.length; i++) {
-            if (figures[i].aresti && !figures[i].additional) {
+        for (let i = 0; i < OA.figures.length; i++) {
+            if (OA.figures[i].aresti && !OA.figures[i].additional) {
                 // Build array figK[i] = XXXYYY, where XXX = K and YYY = 999 - i
                 // this will enable sorting while keeping K and i relation.
                 // There is no maximum for the K and a maximum of 999 figures
                 // can be used!
                 figK[i] = 999 - i;
-                for (let j = 0; j < figures[i].k.length; j++) {
-                    if (!figures[i].unknownFigureLetter) {
-                        figK[i] += (figures[i].k[j] * 1000);
+                for (let j = 0; j < OA.figures[i].k.length; j++) {
+                    if (!OA.figures[i].unknownFigureLetter) {
+                        figK[i] += (OA.figures[i].k[j] * 1000);
                     }
-                    figureK += parseInt(figures[i].k[j]);
+                    figureK += parseInt(OA.figures[i].k[j]);
                 }
             }
         }
-        let fp = figureK - (checkCatGroup.k.max - checkCatGroup.floatingPoint);
+        let fp = figureK - (OA.checkCatGroup.k.max - OA.checkCatGroup.floatingPoint);
         // don't apply fp when K is too high anyway
-        if (fp > checkCatGroup.floatingPoint) return;
+        if (fp > OA.checkCatGroup.floatingPoint) return;
         // sort figK low to high
         // identical Ks will be sorted first fig first
         figK.sort(function (a, b) { return a - b });
@@ -9742,7 +9756,7 @@ function checkFloatingPoint() {
             const n = figK.pop();
             if (n) {
                 // retrieve correct figure id and set floatingPoint
-                figures[999 - Math.round(n % 1000)].floatingPoint = true;
+                OA.figures[999 - Math.round(n % 1000)].floatingPoint = true;
                 fp--;
             }
         }
@@ -9761,20 +9775,20 @@ function makeMiniFormAScreen() {
     removeChildNodes($('miniFormAHeader'));
     removeChildNodes($('miniFormA'));
     // Check if any figure has a figure letter. If so, add column @
-    figures.forEach(fig => {
+    OA.figures.forEach(fig => {
         if (fig.unknownFigureLetter) columns = ['Fig', '@', 'K', '&Sigma;'];
     });   
     // Remove K column for smallMobile
-    if (platform.smallMobile) columns.splice(-2, 1);
+    if (OA.platform.smallMobile) columns.splice(-2, 1);
     // Add column headers
     columns.forEach(col => {
         let td = document.createElement('td');
-        td.innerHTML = (platform.smallMobile && col == '&Sigma;') ? 'K' : col;
+        td.innerHTML = (OA.platform.smallMobile && col == '&Sigma;') ? 'K' : col;
         tr.appendChild(td);
     });
     $('miniFormAHeader').appendChild(tr);
     // Go through the figures
-    figures.forEach ((fig, i) => {
+    OA.figures.forEach ((fig, i) => {
         if (fig.aresti) {
             let tr = document.createElement('tr');            
             tr.id = `miniFormA-figure${i}`;
@@ -9798,13 +9812,13 @@ function makeMiniFormAScreen() {
                         var figK = 0;
                         // Check for additionals
                         if (fig.unknownFigureLetter == 'L') {
-                            if (additionals <= additionalFig.max) {
-                                figK = additionalFig.totalK / additionals;
+                            if (OA.additionals <= OA.additionalFig.max) {
+                                figK = OA.additionalFig.totalK / OA.additionals;
                             } else {
-                                if (additionalFig.max > 0) {
-                                    figK = additionalFig.totalK / additionalFig.max;
+                                if (OA.additionalFig.max > 0) {
+                                    figK = OA.additionalFig.totalK / OA.additionalFig.max;
                                 }
-                                checkAlert(sprintf(userText.maxAdditionals, additionalFig.max),
+                                checkAlert(sprintf(OA.userText.maxAdditionals, OA.additionalFig.max),
                                     false,
                                     fig.seqNr);
                             }
@@ -9817,7 +9831,7 @@ function makeMiniFormAScreen() {
                         totalK += figK;
                         // Check if K was modified
                         fig.aresti.forEach(a => {
-                            if (a in rulesKFigures) modifiedK.push(fig.seqNr);
+                            if (a in OA.rulesKFigures) modifiedK.push(fig.seqNr);
                         });
                 }
                 tr.appendChild(td);
@@ -9949,16 +9963,16 @@ function makeMiniFormAScreen() {
         // Otherwise, reposition the figure
         let
             newSeqNr,
-            id = selectedFigure.id,
+            id = OA.selectedFigure.id,
             // Set dropAfter id. Set to false if dropping at beginning
             dropAfter = draggedRow.previousSibling ?
                 parseInt(draggedRow.previousSibling.id.match(/^miniFormA-figure(\d+)$/)[1]) : false,
             // Find the first 'figure' after the preceding real figure. This could include
             // move 'figures', figure letters etc
-            selFigStart = figures[
-                figures.findIndex(fig => fig.seqNr == figures[id].seqNr - 1) + 1
+            selFigStart = OA.figures[
+                OA.figures.findIndex(fig => fig.seqNr == OA.figures[id].seqNr - 1) + 1
             ].stringStart,
-            figString = activeSequence.text.slice(selFigStart, figures[id].stringEnd);
+            figString = OA.activeSequence.text.slice(selFigStart, OA.figures[id].stringEnd);
 
         draggedRow = null; // reset draggedRow for next drag
 
@@ -9966,35 +9980,35 @@ function makeMiniFormAScreen() {
             // Drop at the beginning
             newSeqNr = 1;
             updateSequenceText(
-                `${activeSequence.text.slice(0, selFigStart)} ${activeSequence.text.slice(figures[id].stringEnd)}`
+                `${OA.activeSequence.text.slice(0, selFigStart)} ${OA.activeSequence.text.slice(OA.figures[id].stringEnd)}`
             );
             checkSequenceChanged();
             // Drop after entry option, when present
-            updateSequence(/^e(u|d|j|ja) /.test(activeSequence.text) ? 0 : -1, figString);
+            updateSequence(/^e(u|d|j|ja) /.test(OA.activeSequence.text) ? 0 : -1, figString);
         } else {
             if (dropAfter < id) {
                 // Drop before original position
-                newSeqNr = figures[dropAfter].seqNr + 1;
+                newSeqNr = OA.figures[dropAfter].seqNr + 1;
                 updateSequenceText(
-                    activeSequence.text.slice(0, figures[dropAfter].stringEnd) + ' ' +
-                    figString + activeSequence.text.slice(figures[dropAfter].stringEnd, selFigStart) +
-                    activeSequence.text.slice(figures[id].stringEnd)
+                    OA.activeSequence.text.slice(0, OA.figures[dropAfter].stringEnd) + ' ' +
+                    figString + OA.activeSequence.text.slice(OA.figures[dropAfter].stringEnd, selFigStart) +
+                    OA.activeSequence.text.slice(OA.figures[id].stringEnd)
                 );
             } else {
                 // Drop after original position
-                newSeqNr = figures[dropAfter].seqNr;
+                newSeqNr = OA.figures[dropAfter].seqNr;
                 updateSequenceText(
-                    activeSequence.text.slice(0, selFigStart) +
-                    activeSequence.text.slice(figures[id].stringEnd, figures[dropAfter].stringEnd) +
-                    ' ' + figString + activeSequence.text.slice(figures[dropAfter].stringEnd)
+                    OA.activeSequence.text.slice(0, selFigStart) +
+                    OA.activeSequence.text.slice(OA.figures[id].stringEnd, OA.figures[dropAfter].stringEnd) +
+                    ' ' + figString + OA.activeSequence.text.slice(OA.figures[dropAfter].stringEnd)
                 );
             }
             checkSequenceChanged();
             // Update non-existing figure to clean up sequence string
-            updateSequence(figures.length);
+            updateSequence(OA.figures.length);
         }
         selectFigure(
-            figures.findIndex(fig => fig.seqNr == newSeqNr)
+            OA.figures.findIndex(fig => fig.seqNr == newSeqNr)
         );
     }
     
@@ -10010,7 +10024,7 @@ function makeMiniFormAScreen() {
     });
     
     // Create total K footer
-    $('miniFormAFooter').innerHTML = platform.smallMobile ?
+    $('miniFormAFooter').innerHTML = OA.platform.smallMobile ?
         `<tr>
             <td colspan=${columns.length}>
                 Total K
@@ -10028,13 +10042,13 @@ function makeMiniFormAScreen() {
             </td>
         </tr>`;
     // Show maximum K when applicable, corrected for floatingPoint
-    if (activeRules && checkCatGroup.k && checkCatGroup.k.max) {
-    $('miniFormAFooter').innerHTML += platform.smallMobile ?
+    if (OA.activeRules && OA.checkCatGroup.k && OA.checkCatGroup.k.max) {
+    $('miniFormAFooter').innerHTML += OA.platform.smallMobile ?
         `<tr>
             <td colspan=${columns.length}>
                 Max K
                 <br />
-                ${checkCatGroup.k.max - (checkCatGroup.floatingPoint || 0)}
+                ${OA.checkCatGroup.k.max - (OA.checkCatGroup.floatingPoint || 0)}
             </td>
         </tr>`
         :
@@ -10043,29 +10057,29 @@ function makeMiniFormAScreen() {
                 Max K
             </td>
             <td>
-                ${checkCatGroup.k.max - (checkCatGroup.floatingPoint || 0)}
+                ${OA.checkCatGroup.k.max - (OA.checkCatGroup.floatingPoint || 0)}
             </td>
         </tr>`;
     }
     // Set fixed width of modifiedK (required by Windows app, no CSS solution found)
-    if (platform.uwp) $('modifiedK').style.width = `${$('miniFormAHeader').getBoundingClientRect().width}px`;
+    if (OA.platform.uwp) $('modifiedK').style.width = `${$('miniFormAHeader').getBoundingClientRect().width}px`;
     // Add text when K has been modified by rules
     $('modifiedK').innerHTML = modifiedK.length ?
-        changedFigureKText(modifiedK, activeRules.description) : '';
+        changedFigureKText(modifiedK, OA.activeRules.description) : '';
 }
 
 // adjustMiniFormAPosition adjusts the  position of mini form A and wind arrow, when
 // in Form B or C, not on smallMobile and the figureSelector is active
 function adjustMiniFormAPosition() {
     $('miniFormAContainer').style.transform = $('t_windArrow').style.transform = '';
-    if (/[BC]/.test(activeForm) && !platform.smallMobile && $('figureSelector').classList.contains('active')) {
+    if (/[BC]/.test(OA.activeForm) && !OA.platform.smallMobile && $('figureSelector').classList.contains('active')) {
         const translateX = `translateX(${- Math.min(
             $('sequenceArea').clientWidth-$('sequenceSvg').getAttribute('width')-$('miniFormAContainer').offsetWidth - 36,
             $('figureSelector').offsetWidth - 12
         )}px)`;
         $('miniFormAContainer').style.transform = translateX;
         // Only adjust wind arrow on Form B
-        if (activeForm == 'B') $('t_windArrow').style.transform = translateX;
+        if (OA.activeForm == 'B') $('t_windArrow').style.transform = translateX;
     }
 }
 
@@ -10080,15 +10094,15 @@ function makeMiniFormA(x, y, tiny) {
         modifiedK = [],
         widths = tiny ? [28, 0, 0, 35] : [30, 60, 26, 25],
         totalWidth = widths.reduce((a, b) => a + b, 0),
-        svg = SVGRoot.getElementById('sequence').appendChild(document.createElementNS(svgNS, 'g')),
+        svg = OA.SVGRoot.getElementById('sequence').appendChild(document.createElementNS(svgNS, 'g')),
         background = drawRectangle(x, y, totalWidth, 1, 'formRect', svg);
         
     svg.id = 'miniFormA';
 
     if (!tiny) {
         // set the header for the correct sporting class
-        if (sportingClass.options[sportingClass.selectedIndex]) {
-            var myClass = sportingClass.options[sportingClass.selectedIndex].innerHTML;
+        if (OA.sportingClass.options[OA.sportingClass.selectedIndex]) {
+            var myClass = OA.sportingClass.options[OA.sportingClass.selectedIndex].innerHTML;
             drawText(myClass, blockX + 4, blockY + 17, 'miniFormATotal', 'start', '', svg);
             drawRectangle(blockX, blockY, totalWidth, 24, 'formLine', svg);
             blockY += 24;
@@ -10107,16 +10121,16 @@ function makeMiniFormA(x, y, tiny) {
     }
     blockY += 24;
 
-    for (let i = 0; i < figures.length; i++) {
-        var aresti = figures[i].aresti;
-        var k = figures[i].k;
+    for (let i = 0; i < OA.figures.length; i++) {
+        var aresti = OA.figures[i].aresti;
+        var k = OA.figures[i].k;
         if (aresti) {
             figNr++;
             var figK = 0;
             var topBlockY = blockY;
             if (tiny) blockY += 24;
             for (let j = 0; j < aresti.length; j++) {
-                if (aresti[j] in rulesKFigures) modifiedK.push(figNr);
+                if (aresti[j] in OA.rulesKFigures) modifiedK.push(figNr);
                 figK += parseInt(k[j]);
                 if (!tiny) {
                     if (/^non-Aresti /.test(aresti[j])) {
@@ -10131,19 +10145,19 @@ function makeMiniFormA(x, y, tiny) {
                 }
             }
             // Adjust figure K for additionals
-            if (figures[i].unknownFigureLetter) {
+            if (OA.figures[i].unknownFigureLetter) {
                 if (aresti.length < 2) blockY += 12;
                 drawText(figNr, blockX + widths[0] - 4,
                     (topBlockY + blockY) / 2 + 4,
                     tiny ? 'formATextMedium' : 'miniFormA', 'end', '', svg);
-                if (figures[i].unknownFigureLetter == 'L') {
-                    if (additionals <= additionalFig.max) {
-                        figK = additionalFig.totalK / additionals;
+                if (OA.figures[i].unknownFigureLetter == 'L') {
+                    if (OA.additionals <= OA.additionalFig.max) {
+                        figK = OA.additionalFig.totalK / OA.additionals;
                     } else {
-                        if (additionalFig.max > 0) {
-                            figK = additionalFig.totalK / additionalFig.max;
+                        if (OA.additionalFig.max > 0) {
+                            figK = OA.additionalFig.totalK / OA.additionalFig.max;
                         }
-                        checkAlert(sprintf(userText.maxAdditionals, additionalFig.max),
+                        checkAlert(sprintf(OA.userText.maxAdditionals, OA.additionalFig.max),
                             false,
                             figNr);
                     }
@@ -10151,7 +10165,7 @@ function makeMiniFormA(x, y, tiny) {
                         (topBlockY + blockY) / 2 + 16,
                         tiny ? 'formATextBold' : 'miniFormABold', 'end', '', svg);
                 } else {
-                    drawText(figures[i].unknownFigureLetter,
+                    drawText(OA.figures[i].unknownFigureLetter,
                         blockX + widths[0] - 4,
                         (topBlockY + blockY) / 2 + 16,
                         tiny ? 'formATextBold' : 'miniFormA', 'end', '', svg);
@@ -10162,7 +10176,7 @@ function makeMiniFormA(x, y, tiny) {
                     tiny ? 'formATextMedium' : 'miniFormA', 'end', '', svg);
             }
             // adjust figure K for floating point
-            if (figures[i].floatingPoint) {
+            if (OA.figures[i].floatingPoint) {
                 if (topBlockY == blockY) blockY += 12;
                 drawText(`(${figK})`, blockX + totalWidth - 4,
                     (topBlockY + blockY) / 2 + 15, 'miniFormASmall', 'end', '', svg);
@@ -10195,9 +10209,9 @@ function makeMiniFormA(x, y, tiny) {
         drawText('Total K', blockX + 32, blockY + 17, 'formATextMedium', 'middle', '', svg);
         drawText(figureK, blockX + 32, blockY + 38, 'formATextXL', 'middle', '', svg);
         // add maximum K (corrected for Floating Point) where applicable
-        if (activeRules && checkCatGroup.k && checkCatGroup.k.max) {
-            let max = checkCatGroup.k.max;
-            if (checkCatGroup.floatingPoint) max -= checkCatGroup.floatingPoint;
+        if (OA.activeRules && OA.checkCatGroup.k && OA.checkCatGroup.k.max) {
+            let max = OA.checkCatGroup.k.max;
+            if (OA.checkCatGroup.floatingPoint) max -= OA.checkCatGroup.floatingPoint;
             drawText('Max K', blockX + totalWidth / 2, blockY + 54,
                 'formATextMedium', 'middle', '', svg);
             drawText(max, blockX + totalWidth / 2, blockY + 74,
@@ -10211,9 +10225,9 @@ function makeMiniFormA(x, y, tiny) {
     } else {
         drawText(`Total K = ${figureK}`, blockX + 4, blockY + 21, 'miniFormATotal', 'start', '', svg);
         // add maximum K (corrected for Floating Point) where applicable
-        if (activeRules && checkCatGroup.k && checkCatGroup.k.max) {
-            let max = checkCatGroup.k.max;
-            if (checkCatGroup.floatingPoint) max -= checkCatGroup.floatingPoint;
+        if (OA.activeRules && OA.checkCatGroup.k && OA.checkCatGroup.k.max) {
+            let max = OA.checkCatGroup.k.max;
+            if (OA.checkCatGroup.floatingPoint) max -= OA.checkCatGroup.floatingPoint;
             drawText(`(max K = ${max})`,
                 blockX + 4, blockY + 36, 'miniFormAMax', 'start', '', svg);
             drawRectangle(blockX, blockY, totalWidth, 48, 'formLine', svg);
@@ -10227,7 +10241,7 @@ function makeMiniFormA(x, y, tiny) {
     // add text when K has been modified by rules
     if (modifiedK.length) {
         drawTextArea(
-            changedFigureKText(modifiedK, activeRules.description),
+            changedFigureKText(modifiedK, OA.activeRules.description),
             blockX + 4,
             blockY + 4,
             totalWidth - 8,
@@ -10261,108 +10275,108 @@ function grabFigure(evt) {
 
     // Put the coordinates of object evt in TrueCoords global.
     if (evt.changedTouches && evt.changedTouches[0] && ('pageX' in evt.changedTouches[0])) {
-        TrueCoords.x = evt.changedTouches[0].pageX;
-        TrueCoords.y = evt.changedTouches[0].pageY;
+        OA.trueCoords.x = evt.changedTouches[0].pageX;
+        OA.trueCoords.y = evt.changedTouches[0].pageY;
     } else {
-        TrueCoords.x = evt.clientX;
-        TrueCoords.y = evt.clientY;
+        OA.trueCoords.x = evt.clientX;
+        OA.trueCoords.y = evt.clientY;
     }
 
-    var svg = SVGRoot;
+    var svg = OA.SVGRoot;
     var viewBox = svg.getAttribute('viewBox').split(' ');
 
-    dragTarget = null;
+    OA.dragTarget = null;
     // find out which element we moused down on
 
     // First we check if we're trying to drag a draggable panel
     // E.g.: Grid Info panel
     if (this.classList.contains('draggablePanel')) {
         this.classList.add('dragging');
-        dragTarget = this;
+        OA.dragTarget = this;
         //evt.preventDefault(); // prevent default drag & drop
-        var transform = dragTarget.style.transform.match(/-?[\d]*px/g) || [0, 0];
+        var transform = OA.dragTarget.style.transform.match(/-?[\d]*px/g) || [0, 0];
 
-        GrabPoint.x = TrueCoords.x - parseInt(transform[0]);
-        GrabPoint.y = TrueCoords.y - parseInt(transform[1]);
+        OA.grabPoint.x = OA.trueCoords.x - parseInt(transform[0]);
+        OA.grabPoint.y = OA.trueCoords.y - parseInt(transform[1]);
         return;
     }
 
     // first see if we grabbed a figure handle
     if (evt.target.id.match(/-handle$/)) {
-        dragTarget = evt.target;
+        OA.dragTarget = evt.target;
 
-        dragTarget.targetLine = svg.getElementById(
-            dragTarget.id.replace(/-handle$/, ''));
+        OA.dragTarget.targetLine = svg.getElementById(
+            OA.dragTarget.id.replace(/-handle$/, ''));
 
         // get dx and dy for this line
-        var match = dragTarget.targetLine.getAttribute('d').match(/l ([0-9\-\.]+)[, ]([0-9\-\.]+)/);
-        dragTarget.linedx = parseFloat(match[1]);
-        dragTarget.linedy = parseFloat(match[2]);
+        var match = OA.dragTarget.targetLine.getAttribute('d').match(/l ([0-9\-\.]+)[, ]([0-9\-\.]+)/);
+        OA.dragTarget.linedx = parseFloat(match[1]);
+        OA.dragTarget.linedy = parseFloat(match[2]);
 
-        if (dragTarget.id.match(/entry-handle$/)) {
+        if (OA.dragTarget.id.match(/entry-handle$/)) {
             // get entry gap element
-            dragTarget.gap = $('entryExt-value');
-            dragTarget.lineLength = parseInt(
-                figures[dragTarget.id.match(/^figure(\d+)/)[1]].entryLength
+            OA.dragTarget.gap = $('entryExt-value');
+            OA.dragTarget.lineLength = parseInt(
+                OA.figures[OA.dragTarget.id.match(/^figure(\d+)/)[1]].entryLength
             );
-        } else if (dragTarget.id.match(/exit-handle$/)) {
+        } else if (OA.dragTarget.id.match(/exit-handle$/)) {
             // get exit gap element
-            dragTarget.gap = $('exitExt-value');
-            dragTarget.lineLength = parseInt(
-                figures[dragTarget.id.match(/^figure(\d+)/)[1]].exitLength
+            OA.dragTarget.gap = $('exitExt-value');
+            OA.dragTarget.lineLength = parseInt(
+                OA.figures[OA.dragTarget.id.match(/^figure(\d+)/)[1]].exitLength
             );
         } else {
             // get current roll gap element
-            dragTarget.gap = $(
-                dragTarget.id.match(/roll\d+-gap\d+/)[0] + '-value');
+            OA.dragTarget.gap = $(
+                OA.dragTarget.id.match(/roll\d+-gap\d+/)[0] + '-value');
 
             // get current line length from figures object
-            match = dragTarget.id.match(/^figure(\d+)-roll(\d+)-gap(\d+)/);
-            var roll = figures[match[1]].rolls[match[2]];
+            match = OA.dragTarget.id.match(/^figure(\d+)-roll(\d+)-gap(\d+)/);
+            var roll = OA.figures[match[1]].rolls[match[2]];
             var gapnr = 0;
             for (let i = 0; i < roll.length; i++) {
                 if ('lineLength' in roll[i]) {
                     if (gapnr == match[3]) {
-                        dragTarget.lineLength = Math.max(parseInt(roll[i].lineLength), 0.02);
+                        OA.dragTarget.lineLength = Math.max(parseInt(roll[i].lineLength), 0.02);
                         break;
                     } else gapnr++;
                 }
             }
-            if (!dragTarget.lineLength) {
-                dragTarget.lineLength = Math.max(parseInt(roll.lineLengthAfter), 0.02);
+            if (!OA.dragTarget.lineLength) {
+                OA.dragTarget.lineLength = Math.max(parseInt(roll.lineLengthAfter), 0.02);
             }
         }
         // get current gap starting value
-        dragTarget.gapValue = parseInt(dragTarget.gap.value);
+        OA.dragTarget.gapValue = parseInt(OA.dragTarget.gap.value);
 
         // grab magnifier
     } else if (evt.target.id === 'magnifier') {
-        dragTarget = evt.target;
+        OA.dragTarget = evt.target;
 
-        selectedFigure.bottom = parseInt(selectedFigure.y) + parseInt(selectedFigure.height);
-        selectedFigure.scale = $('scale').value;
-        selectedFigure.diagonal = Math.sqrt(
-            Math.pow(selectedFigure.width, 2) + Math.pow(selectedFigure.height, 2));
+        OA.selectedFigure.bottom = parseInt(OA.selectedFigure.y) + parseInt(OA.selectedFigure.height);
+        OA.selectedFigure.scale = $('scale').value;
+        OA.selectedFigure.diagonal = Math.sqrt(
+            Math.pow(OA.selectedFigure.width, 2) + Math.pow(OA.selectedFigure.height, 2));
 
         // grab full sequence figures
     } else if (evt.target.parentNode.id.match(/^figure\d+$/)) {
-        if (figures[evt.target.parentNode.id.replace('figure', '')].draggable) {
+        if (OA.figures[evt.target.parentNode.id.replace('figure', '')].draggable) {
             //set the item moused down on as the element to be dragged
-            dragTarget = evt.target.parentNode;
+            OA.dragTarget = evt.target.parentNode;
         }
     } else if (evt.target.parentNode.id === 'sequenceArea') {
         // clicked somewhere in the SVG container, maybe within figure bBox?
         // svg may be rescaled on smallMobile browser
-        const margin = platform.smallMobile ? svg.getAttribute('width') / viewBox[2] * 5 : 5;
+        const margin = OA.platform.smallMobile ? svg.getAttribute('width') / viewBox[2] * 5 : 5;
         const zoom = parseInt($('zoom').textContent.match(/\d+/)[0]) / 100;
-        GrabPoint.x = TrueCoords.x / zoom;
-        GrabPoint.y = TrueCoords.y / zoom;
-        var x = TrueCoords.x / zoom;
-        var y = TrueCoords.y / zoom;
+        OA.grabPoint.x = OA.trueCoords.x / zoom;
+        OA.grabPoint.y = OA.trueCoords.y / zoom;
+        var x = OA.trueCoords.x / zoom;
+        var y = OA.trueCoords.y / zoom;
 
         // Find the figure that is closest and set it to be the dragTarget
         let minDistSq = Infinity;
-        figures.forEach ((f, i) => {
+        OA.figures.forEach ((f, i) => {
             if (f.draggable) {
                 let figure = svg.getElementById(`figure${i}`);
                 if (figure) {
@@ -10375,7 +10389,7 @@ function grabFigure(evt) {
                             Math.pow(y - (bBox.top + (bBox.height / 2)), 2);
                         if (distSq < minDistSq) {
                             minDistSq = distSq;
-                            dragTarget = figure;
+                            OA.dragTarget = figure;
                         }
                     }
                 }
@@ -10383,40 +10397,40 @@ function grabFigure(evt) {
         });
     }
 
-    if (dragTarget) {
+    if (OA.dragTarget) {
         evt.preventDefault(); // prevent default drag & drop
 
         // save current scrollTop, to be restored after Drop
-        dragTarget.scrollTopSave = $('sequenceArea').scrollTop;
-        dragTarget.scrollLeftSave = $('sequenceArea').scrollLeft;
+        OA.dragTarget.scrollTopSave = $('sequenceArea').scrollTop;
+        OA.dragTarget.scrollLeftSave = $('sequenceArea').scrollLeft;
 
         // move this element to the "top" of the display, so it is
         // always over other elements
-        if (!dragTarget.id.match(/^(.*-handle|magnifier)$/)) {
-            dragTarget.parentNode.appendChild(dragTarget);
+        if (!OA.dragTarget.id.match(/^(.*-handle|magnifier)$/)) {
+            OA.dragTarget.parentNode.appendChild(OA.dragTarget);
         }
 
         // turn off all pointer events to the dragged element, this does 2 things:
         //    1) allows us to drag text elements without selecting the text
         //    2) allows us to find out where the dragged element is dropped (see Drop)
-        dragTarget.setAttribute('pointer-events', 'none');
+        OA.dragTarget.setAttribute('pointer-events', 'none');
 
         // Enlarge svg to cover top and left, except on smallMobile and Grid.
         // Also, don't do this when selecting the first figure as this can not
         // be dragged.
         // Additionally, reposition optimalSequenceArea div
-        if (!platform.smallMobile && !(/^G/.test(activeForm)) &&
-            !((/^figure\d+$/.test(dragTarget.id) && figures[dragTarget.id.replace(/^figure/, '')].seqNr == '1'))) {
+        if (!OA.platform.smallMobile && !(/^G/.test(OA.activeForm)) &&
+            !((/^figure\d+$/.test(OA.dragTarget.id) && OA.figures[OA.dragTarget.id.replace(/^figure/, '')].seqNr == '1'))) {
             var svgRect = svg.getBoundingClientRect();
-            var w = window.innerWidth + dragTarget.scrollLeftSave;
-            var h = window.innerHeight + dragTarget.scrollTopSave;
+            var w = window.innerWidth + OA.dragTarget.scrollLeftSave;
+            var h = window.innerHeight + OA.dragTarget.scrollTopSave;
             svg.setAttribute('viewBox',
-                roundTwo(viewBox[0] - svgRect.left - dragTarget.scrollLeftSave) + ' ' +
-                roundTwo(viewBox[1] - svgRect.top - dragTarget.scrollTopSave) + ' ' + w + ' ' + h
+                roundTwo(viewBox[0] - svgRect.left - OA.dragTarget.scrollLeftSave) + ' ' +
+                roundTwo(viewBox[1] - svgRect.top - OA.dragTarget.scrollTopSave) + ' ' + w + ' ' + h
             );
             $('optimalSequenceArea').style.transform = 'translate(' +
-                parseInt(svgRect.left + dragTarget.scrollLeftSave) + 'px, ' +
-                parseInt(svgRect.top + dragTarget.scrollTopSave) + 'px)';
+                parseInt(svgRect.left + OA.dragTarget.scrollLeftSave) + 'px, ' +
+                parseInt(svgRect.top + OA.dragTarget.scrollTopSave) + 'px)';
             svg.setAttribute('width', w);
             svg.setAttribute('height', h);
             // correct position for padding
@@ -10432,15 +10446,15 @@ function grabFigure(evt) {
         // we need to find the current position and translation of the grabbed element,
         //    so that we only apply the differential between the current location
         //    and the new location
-        GrabPoint.x = TrueCoords.x;
-        GrabPoint.y = TrueCoords.y;
+        OA.grabPoint.x = OA.trueCoords.x;
+        OA.grabPoint.y = OA.trueCoords.y;
 
         // blur sequenceText area
-        sequenceText.blur();
+        OA.sequenceText.blur();
 
         // the dragTarget id is the new selectedFigure.id
-        if (!dragTarget.id.match(/^(.*-handle|magnifier)$/)) {
-            selectFigure(dragTarget.id.replace('figure', ''));
+        if (!OA.dragTarget.id.match(/^(.*-handle|magnifier)$/)) {
+            selectFigure(OA.dragTarget.id.replace('figure', ''));
         }
     } else {
         selectFigure(false);
@@ -10451,11 +10465,11 @@ function grabFigure(evt) {
 // highlights the figure provided by figNr
 function setFigChooser(figNr) {
     // check if fig[figNr] is valid
-    if (fig[figNr]) {
+    if (OA.fig[figNr]) {
         const options = $('figureGroup').options;
         let selectedGroup;
         for (let i = options.length - 1; i >= 0; i--) {
-            if (options[i].value == fig[figNr].group) {
+            if (options[i].value == OA.fig[figNr].group) {
                 options[i].setAttribute('selected', 'true');
                 selectedGroup = options[i];
                 $('figureGroup').selectedIndex = i;
@@ -10468,7 +10482,7 @@ function setFigChooser(figNr) {
         // First look for the earliest figure with the correct Aresti code
         // as the same code may be used more than once (e.g. j and 1j)
         for (let i = 0; i <= figNr; i++) {
-            if (fig[i] && (fig[i].aresti == fig[figNr].aresti) && $(`figureChooser${i}`)) {
+            if (OA.fig[i] && (OA.fig[i].aresti == OA.fig[figNr].aresti) && $(`figureChooser${i}`)) {
                 const td = $(`figureChooser${i}`).parentNode;
                 td.classList.add('selected');
                 // Set the vertical offset of the <tr> in which the element is
@@ -10486,13 +10500,13 @@ function setFigureSelected(figNr) {
     if (figNr === false || isNaN(figNr)) figNr = null;
     // allow selecting figures without aresti nr in Free Unknown designer
     // (temporarily empty free figures), but not in other cases
-    if (activeForm !== 'FU') {
-        while (figures[figNr] && !figures[figNr].aresti) figNr++;
+    if (OA.activeForm !== 'FU') {
+        while (OA.figures[figNr] && !OA.figures[figNr].aresti) figNr++;
     }
 
-    if (activeForm != 'FU') {
+    if (OA.activeForm != 'FU') {
         // if any figure was previously selected, remove that filter
-        const selFig = SVGRoot.getElementById('figure' + selectedFigure.id);
+        const selFig = OA.SVGRoot.getElementById('figure' + OA.selectedFigure.id);
         if (selFig) {
             const nodes = selFig.childNodes;
             for (let i = nodes.length - 1; i >= 0; i--) {
@@ -10507,27 +10521,27 @@ function setFigureSelected(figNr) {
                     nodes[i].remove();
                 }
             }
-            if ($(`miniFormA-figure${selectedFigure.id}`)){
-                $(`miniFormA-figure${selectedFigure.id}`).classList.remove('selected');
+            if ($(`miniFormA-figure${OA.selectedFigure.id}`)){
+                $(`miniFormA-figure${OA.selectedFigure.id}`).classList.remove('selected');
             }
         }
 
-        if (figNr !== null && figures[figNr].aresti) {
+        if (figNr !== null && OA.figures[figNr].aresti) {
             // fill selectedFigure with BBox values
-            const el = SVGRoot.getElementById('figure' + figNr);
+            const el = OA.SVGRoot.getElementById('figure' + figNr);
 
-            $('figureHeader').innerHTML = sprintf(userText.editingFigure, figures[figNr].seqNr) +
-                ' (' + figures[figNr].k.reduce((a, v) => a + v) + 'K)';
+            $('figureHeader').innerHTML = sprintf(OA.userText.editingFigure, OA.figures[figNr].seqNr) +
+                ' (' + OA.figures[figNr].k.reduce((a, v) => a + v) + 'K)';
 
             if (el) {
                 const
-                    svgScale = platform.smallMobile ?
-                        roundTwo(SVGRoot.viewBox.baseVal.width /
-                        (SVGRoot.width.baseVal.value || 1)) || 1
+                    svgScale = OA.platform.smallMobile ?
+                        roundTwo(OA.SVGRoot.viewBox.baseVal.width /
+                        (OA.SVGRoot.width.baseVal.value || 1)) || 1
                         : 1,
                     showHandles = $('showHandles').checked &&
-                        !(/^G/.test(activeForm));
-                selectedFigure = el.getBBox();
+                        !(/^G/.test(OA.activeForm));
+                OA.selectedFigure = el.getBBox();
 
                 for (const node of Array.from(el.childNodes)) { // Make sure the NodeList is not updated, because we will be adding nodes!
                     // apply color filter
@@ -10546,8 +10560,8 @@ function setFigureSelected(figNr) {
                         drawCircle({
                             'cx': roundTwo(bBox.x + bBox.width / 2),
                             'cy': roundTwo(bBox.y + bBox.height / 2),
-                            'r': platform.touch ? 12 * svgScale : 8,
-                            'style': style.selectedFigureHandle,
+                            'r': OA.platform.touch ? 12 * svgScale : 8,
+                            'style': OA.style.selectedFigureHandle,
                             'cursor': 'move',
                             'id': node.id + '-handle'
                         }, el);
@@ -10556,10 +10570,10 @@ function setFigureSelected(figNr) {
                 // add scale handle
                 if (showHandles) {
                     drawImage({
-                        x: selectedFigure.x + selectedFigure.width - 10,
-                        y: selectedFigure.y - 20,
-                        width: platform.touch ? 32 * svgScale : 24,
-                        height: platform.touch ? 32 * svgScale : 24,
+                        x: OA.selectedFigure.x + OA.selectedFigure.width - 10,
+                        y: OA.selectedFigure.y - 20,
+                        width: OA.platform.touch ? 32 * svgScale : 24,
+                        height: OA.platform.touch ? 32 * svgScale : 24,
                         'id': 'magnifier',
                         cursor: 'move',
                         href: 'assets/images/magnifier.svg'
@@ -10573,98 +10587,98 @@ function setFigureSelected(figNr) {
     } else {
         const el = document.getElementsByClassName('fuFig' + figNr)[0];
         if (el) el.classList.add('active');
-        $('figureHeader').innerHTML = sprintf(userText.editingFigure, '');
+        $('figureHeader').innerHTML = sprintf(OA.userText.editingFigure, '');
     }
 
     // set selectedFigure.id
-    selectedFigure.id = figNr;
+    OA.selectedFigure.id = figNr;
 }
 
 // setSeqViewBox correctly sets the sequence svg viewbox 
 function setSeqViewBox() {
     const
-        bBox = SVGRoot.getElementById('sequence').getBBox(),
+        bBox = OA.SVGRoot.getElementById('sequence').getBBox(),
         x = parseInt(bBox.x),
         y = parseInt(bBox.y),
         w = parseInt(bBox.width),
         h = parseInt(bBox.height);
 
     // Change the viewBox to make the sequence fit
-    SVGRoot.setAttribute('viewBox', `${x - 3} ${y - 3} ${w + 5} ${h + 5}`);
+    OA.SVGRoot.setAttribute('viewBox', `${x - 3} ${y - 3} ${w + 5} ${h + 5}`);
 
     // Restore width and height when not on smallMobile
-    if (!platform.smallMobile) {
-        SVGRoot.setAttribute('width', w + 5);
-        SVGRoot.setAttribute('height', h + 5);
+    if (!OA.platform.smallMobile) {
+        OA.SVGRoot.setAttribute('width', w + 5);
+        OA.SVGRoot.setAttribute('height', h + 5);
     }
 }
 
 // Drag allows to drag the selected figure or handle to a new position
 function Drag(evt) {
-    if (!dragTarget) return;
+    if (!OA.dragTarget) return;
 
     evt.preventDefault(); // prevent default dag & drop and scrolling on touch devices
 
     // don't drag figures when in grid view
-    if (/^G/.test(activeForm) && !dragTarget.classList.contains('draggablePanel')) return;
+    if (/^G/.test(OA.activeForm) && !OA.dragTarget.classList.contains('draggablePanel')) return;
 
     // put the coordinates of object evt in TrueCoords global
-    if (platform.touch && evt.changedTouches && evt.changedTouches[0] && evt.changedTouches[0].pageX) {
-        TrueCoords.x = evt.changedTouches[0].pageX;
-        TrueCoords.y = evt.changedTouches[0].pageY;
+    if (OA.platform.touch && evt.changedTouches && evt.changedTouches[0] && evt.changedTouches[0].pageX) {
+        OA.trueCoords.x = evt.changedTouches[0].pageX;
+        OA.trueCoords.y = evt.changedTouches[0].pageY;
     } else {
-        TrueCoords.x = evt.clientX;
-        TrueCoords.y = evt.clientY;
+        OA.trueCoords.x = evt.clientX;
+        OA.trueCoords.y = evt.clientY;
     }
 
     // if we don't currently have an element in tow, don't do anything
-    if (dragTarget) {
+    if (OA.dragTarget) {
         // prevent scrolling on touch devices
         // if (platform.touch) evt.preventDefault();
 
         // find out what we are dragging
-        if (dragTarget.id.match(/-handle$/)) {
+        if (OA.dragTarget.id.match(/-handle$/)) {
             // Dragging a handle
 
-            var crossLineC = -dragTarget.linedx * GrabPoint.x - dragTarget.linedy * GrabPoint.y;
+            var crossLineC = -OA.dragTarget.linedx * OA.grabPoint.x - OA.dragTarget.linedy * OA.grabPoint.y;
             // calculate the correct displacement of the handle, along it's
             // line
-            var d = (dragTarget.linedx * TrueCoords.x +
-                dragTarget.linedy * TrueCoords.y + crossLineC) /
-                (Math.pow(dragTarget.linedx, 2) +
-                    Math.pow(dragTarget.linedy, 2));
-            var newX = dragTarget.linedx * d;
-            var newY = dragTarget.linedy * d;
+            var d = (OA.dragTarget.linedx * OA.trueCoords.x +
+                OA.dragTarget.linedy * OA.trueCoords.y + crossLineC) /
+                (Math.pow(OA.dragTarget.linedx, 2) +
+                    Math.pow(OA.dragTarget.linedy, 2));
+            var newX = OA.dragTarget.linedx * d;
+            var newY = OA.dragTarget.linedy * d;
 
             // do not adjust all the way to 0 line length
             if (d > -0.5) {
                 // apply a new tranform translation to the dragged handle, to
                 // display it in its new location
-                dragTarget.setAttribute('transform',
+                OA.dragTarget.setAttribute('transform',
                     'translate(' + newX + ',' + newY + ')');
 
                 // transform the line which we are adjusting
                 newX *= 2;
                 newY *= 2;
-                var d = dragTarget.targetLine.getAttribute('d');
+                var d = OA.dragTarget.targetLine.getAttribute('d');
                 d = d.replace(/l ([0-9\-\.]+)[, ]([0-9\-\.]+)/, 'l ' +
-                    (dragTarget.linedx + newX) + ',' +
-                    (dragTarget.linedy + newY));
-                dragTarget.targetLine.setAttribute('d', d);
+                    (OA.dragTarget.linedx + newX) + ',' +
+                    (OA.dragTarget.linedy + newY));
+                OA.dragTarget.targetLine.setAttribute('d', d);
 
                 // also change the gap value to reflect this transform
-                if (dragTarget.linedx != 0) {
-                    dragTarget.gap.value = Math.round(dragTarget.gapValue +
-                        (dragTarget.lineLength / dragTarget.linedx) * newX);
+                if (OA.dragTarget.linedx != 0) {
+                    OA.dragTarget.gap.value = Math.round(OA.dragTarget.gapValue +
+                        (OA.dragTarget.lineLength / OA.dragTarget.linedx) * newX);
                 } else {
-                    dragTarget.gap.value = Math.round(dragTarget.gapValue +
-                        (dragTarget.lineLength / dragTarget.linedy) * newY);
+                    OA.dragTarget.gap.value = Math.round(OA.dragTarget.gapValue +
+                        (OA.dragTarget.lineLength / OA.dragTarget.linedy) * newY);
                 }
 
                 // when adjusting a vertical up, we need to check if this is
                 // followed by a hammerhead or point tip
                 // If so, we don't adjust the position of anything following it.
-                var el = dragTarget.targetLine;
+                var el = OA.dragTarget.targetLine;
                 var elStop = null;
                 var lastHandle = null;
                 do {
@@ -10685,7 +10699,7 @@ function Drag(evt) {
                 if (!elStop) lastHandle = null;
 
                 // move all later elements of this figure, upto stop if applicable
-                var el = dragTarget.targetLine;
+                var el = OA.dragTarget.targetLine;
                 while (el !== elStop) {
                     if (!(el = el.nextSibling)) break;
                     if (!el.id.match(/-handle$/)) {
@@ -10695,7 +10709,7 @@ function Drag(evt) {
                 }
 
                 // and move all later handles, upto last if applicable
-                el = dragTarget;
+                el = OA.dragTarget;
                 while ((lastHandle !== el.id)) {
                     if (!(el = el.nextSibling)) break;
                     if (el.id.match(/-handle$/)) {
@@ -10706,9 +10720,9 @@ function Drag(evt) {
 
                 // move subsequent figures, if no elStop
                 if (elStop === null) {
-                    for (let figureNr = parseInt(dragTarget.parentNode.id.match(/\d+/)) + 1;
-                        figureNr < figures.length; figureNr++) {
-                        var figure = SVGRoot.getElementById('figure' + figureNr);
+                    for (let figureNr = parseInt(OA.dragTarget.parentNode.id.match(/\d+/)) + 1;
+                        figureNr < OA.figures.length; figureNr++) {
+                        var figure = OA.SVGRoot.getElementById('figure' + figureNr);
                         if (figure) {
                             figure.setAttribute('transform',
                                 'translate(' + newX + ',' + newY + ')');
@@ -10719,118 +10733,118 @@ function Drag(evt) {
                 // Adjust magnifier position
                 // Do this by first removing it, then determining the bBox and
                 // putting it back
-                dragTarget.parentNode.lastChild.remove();
+                OA.dragTarget.parentNode.lastChild.remove();
                 var
-                    bBox = dragTarget.parentNode.getBBox(),
-                    svgScale = platform.smallMobile ?
-                        roundTwo(SVGRoot.viewBox.baseVal.width /
-                        SVGRoot.width.baseVal.value) || 1
+                    bBox = OA.dragTarget.parentNode.getBBox(),
+                    svgScale = OA.platform.smallMobile ?
+                        roundTwo(OA.SVGRoot.viewBox.baseVal.width /
+                        OA.SVGRoot.width.baseVal.value) || 1
                         : 1;
                 // add scale handle
                 drawImage({
                     x: bBox.x + bBox.width - 10,
                     y: bBox.y - 20,
-                    width: platform.touch ? 32 * svgScale : 24,
-                    height: platform.touch ? 32 * svgScale : 24,
+                    width: OA.platform.touch ? 32 * svgScale : 24,
+                    height: OA.platform.touch ? 32 * svgScale : 24,
                     'id': 'magnifier',
                     cursor: 'move',
                     href: 'assets/images/magnifier.svg'
-                }, dragTarget.parentNode);
+                }, OA.dragTarget.parentNode);
             }
-        } else if (dragTarget.id === 'magnifier') {
+        } else if (OA.dragTarget.id === 'magnifier') {
             // Dragging magnifier
 
             var scale = Math.sqrt(
-                Math.pow(TrueCoords.x + parseInt(selectedFigure.width) - GrabPoint.x, 2) +
-                Math.pow(-TrueCoords.y + parseInt(selectedFigure.height) + GrabPoint.y, 2)) /
-                selectedFigure.diagonal;
+                Math.pow(OA.trueCoords.x + parseInt(OA.selectedFigure.width) - OA.grabPoint.x, 2) +
+                Math.pow(-OA.trueCoords.y + parseInt(OA.selectedFigure.height) + OA.grabPoint.y, 2)) /
+                OA.selectedFigure.diagonal;
 
             // scale figure (and magnifier)
-            dragTarget.parentNode.setAttribute('transform',
+            OA.dragTarget.parentNode.setAttribute('transform',
                 'translate (' +
-                ((parseInt(selectedFigure.x)) * (1 - scale)) + ',' +
-                ((parseInt(selectedFigure.bottom)) * (1 - scale)) +
+                ((parseInt(OA.selectedFigure.x)) * (1 - scale)) + ',' +
+                ((parseInt(OA.selectedFigure.bottom)) * (1 - scale)) +
                 ') scale (' + scale + ')');
 
             // Set scale. Math.log gets the natural logarithm. The number
             // 14.427 = 10 / log (2)
             $('scale').value = parseInt(
-                parseInt(selectedFigure.scale) + Math.log(scale) * 14.427);
+                parseInt(OA.selectedFigure.scale) + Math.log(scale) * 14.427);
 
             // Don't drag the first real figure, it's auto positioned
-        } else if (dragTarget.id.match(/^figure\d+$/) &&
-            (figures[dragTarget.id.replace(/^figure/, '')].seqNr != '1')) {
+        } else if (OA.dragTarget.id.match(/^figure\d+$/) &&
+            (OA.figures[OA.dragTarget.id.replace(/^figure/, '')].seqNr != '1')) {
             // Dragging a complete figure
 
             // account for the offset between the element's origin and the
             // exact place we grabbed it
-            var newX = parseInt(TrueCoords.x - GrabPoint.x);
-            var newY = parseInt(TrueCoords.y - GrabPoint.y);
+            var newX = parseInt(OA.trueCoords.x - OA.grabPoint.x);
+            var newY = parseInt(OA.trueCoords.y - OA.grabPoint.y);
 
             // apply a new tranform translation to the dragged element, to display
             // it in its new location
-            dragTarget.setAttribute('transform', 'translate(' + newX + ',' + newY + ')');
+            OA.dragTarget.setAttribute('transform', 'translate(' + newX + ',' + newY + ')');
 
             // move subsequent figures
-            for (let figureNr = parseInt(dragTarget.id.match(/\d+/)) + 1; figureNr < figures.length; figureNr++) {
-                var figure = SVGRoot.getElementById('figure' + figureNr);
+            for (let figureNr = parseInt(OA.dragTarget.id.match(/\d+/)) + 1; figureNr < OA.figures.length; figureNr++) {
+                var figure = OA.SVGRoot.getElementById('figure' + figureNr);
                 if (figure) {
                     figure.setAttribute('transform',
                         'translate(' + newX + ',' + newY + ')');
                 }
             }
-        } else if (dragTarget.id === 'gridInfo') {
-            var newX = parseInt(TrueCoords.x - GrabPoint.x);
-            var newY = parseInt(TrueCoords.y - GrabPoint.y);
+        } else if (OA.dragTarget.id === 'gridInfo') {
+            var newX = parseInt(OA.trueCoords.x - OA.grabPoint.x);
+            var newY = parseInt(OA.trueCoords.y - OA.grabPoint.y);
 
             // apply a new tranform translation to the dragged element, to
             // display it in its new location. Only allow translation to left
             // and bottom, and limit to left edge
-            dragTarget.style.transform = 'translate(' + Math.min(newX, 0) +
+            OA.dragTarget.style.transform = 'translate(' + Math.min(newX, 0) +
                 'px,' + Math.max(newY, 0) + 'px)';
-            var leftX = dragTarget.getBoundingClientRect().left;
+            var leftX = OA.dragTarget.getBoundingClientRect().left;
             if (leftX < 0) {
-                dragTarget.style.transform = 'translate(' + Math.min(newX - leftX, 0) +
+                OA.dragTarget.style.transform = 'translate(' + Math.min(newX - leftX, 0) +
                     'px,' + Math.max(newY, 0) + 'px)';
             }
 
             return;
         }
 
-        if (platform.smallMobile) setSeqViewBox();
+        if (OA.platform.smallMobile) setSeqViewBox();
     }
 }
 
 // Drop is activated when a figure or handle is dropped
 function Drop() {
     // if we aren't currently dragging an element, don't do anything
-    if (!dragTarget) return;
+    if (!OA.dragTarget) return;
 
     $('main').style.top = '';
 
     // turn the pointer-events back on, so we can grab this item later
-    dragTarget.setAttribute('pointer-events', 'all');
+    OA.dragTarget.setAttribute('pointer-events', 'all');
 
-    if (dragTarget.classList.contains('draggablePanel')) {
-        dragTarget.classList.remove('dragging');
-        dragTarget = null;
+    if (OA.dragTarget.classList.contains('draggablePanel')) {
+        OA.dragTarget.classList.remove('dragging');
+        OA.dragTarget = null;
         return;
     }
 
     // restore sequenceArea size
-    SVGRoot.parentNode.classList.remove('sequenceOverlay');
+    OA.SVGRoot.parentNode.classList.remove('sequenceOverlay');
     $('leftBlock').removeAttribute('style');
     $('leftBlockTabSelector').removeAttribute('style');
     // restore optimalSequenceArea position
     $('optimalSequenceArea').style.removeProperty('transform');
 
-    const transform = dragTarget.getAttribute('transform');
+    const transform = OA.dragTarget.getAttribute('transform');
 
-    if (dragTarget.id.match(/^(.*-handle|magnifier)$/)) {
+    if (OA.dragTarget.id.match(/^(.*-handle|magnifier)$/)) {
         // Dropping a handle or magnifier
         updateFigure();
         setSeqViewBox();
-    } else if (!/^G/.test(activeForm)) {
+    } else if (!/^G/.test(OA.activeForm)) {
         // Dropping a complete figure
 
         // create curveTo for dragged elements when not in grid view
@@ -10840,11 +10854,11 @@ function Drop() {
                 dxdy = transform.match(/[0-9\-\.]+[, ][0-9\-\.]+/) ?
                     transform.replace(/ /, ',').match(/[0-9\-\.]+,[0-9\-\.]+/)[0].split(',') :
                     [transform.match(/[0-9\-\.]+/)[0], 0],
-                dx = parseInt(dxdy[0] / lineElement) * (/^[CL]/.test(activeForm) ? -1 : 1),
+                dx = parseInt(dxdy[0] / lineElement) * (/^[CL]/.test(OA.activeForm) ? -1 : 1),
                 dy = parseInt(dxdy[1] / lineElement);
             // reverse direction for dragging in Form C
             if ((dx != 0) || (dy != 0)) {
-                updateSequence(dragTarget.id.replace('figure', '') - 1,
+                updateSequence(OA.dragTarget.id.replace('figure', '') - 1,
                     '(' + dx + ',' + dy + ')',
                     false,
                     false,
@@ -10854,12 +10868,12 @@ function Drop() {
         setSeqViewBox();
     }
 
-    $('sequenceArea').scrollTop = dragTarget.scrollTopSave;
-    $('sequenceArea').scrollLeft = dragTarget.scrollLeftSave;
+    $('sequenceArea').scrollTop = OA.dragTarget.scrollTopSave;
+    $('sequenceArea').scrollLeft = OA.dragTarget.scrollLeftSave;
 
     // set the global variable to null, so nothing will be dragged until
     // we grab the next element
-    dragTarget = null;
+    OA.dragTarget = null;
 }
 
 /**********************************************************************
@@ -10880,8 +10894,8 @@ function changeEntryDirection() {
         if (entryOptions[code] === this.id.replace(/^t_/, '')) break;
     }
     updateSequenceOptions('');
-    if (activeSequence.figures[0] && entryOptions[activeSequence.figures[0].string]) {
-        prevEntry = activeSequence.figures[0].string;
+    if (OA.activeSequence.figures[0] && entryOptions[OA.activeSequence.figures[0].string]) {
+        prevEntry = OA.activeSequence.figures[0].string;
     }
 
     // Flip move options if applicable. Would like to do full rotation
@@ -10889,16 +10903,16 @@ function changeEntryDirection() {
     // rotation. So only support for changing directly from upwind to
     // downwind and vv
     if ((code + prevEntry) === 'ed') { // match 'ed' + '' and '' + 'ed'
-        for (let i = 0; i < figures.length; i++) {
-            if (regexCurveTo.test(figures[i].string) || regexMoveTo.test(figures[i].string)) {
-                const dxdy = figures[i].string.replace(/[^0-9\,\-]/g, '').split(',');
+        for (let i = 0; i < OA.figures.length; i++) {
+            if (regexCurveTo.test(OA.figures[i].string) || regexMoveTo.test(OA.figures[i].string)) {
+                const dxdy = OA.figures[i].string.replace(/[^0-9\,\-]/g, '').split(',');
                 updateSequence(i,
-                    figures[i].string[0] + -parseInt(dxdy[0]) + ',' + parseInt(dxdy[1]) +
-                    figures[i].string.slice(-1),
+                    OA.figures[i].string[0] + -parseInt(dxdy[0]) + ',' + parseInt(dxdy[1]) +
+                    OA.figures[i].string.slice(-1),
                     true);
             }
             // flip Y axis when we have a crossbox inside the sequence
-            if (figures[i].entryAxis === 'Y') doFlipY = true;
+            if (OA.figures[i].entryAxis === 'Y') doFlipY = true;
         }
     }
 
@@ -10911,7 +10925,7 @@ function changeEntryDirection() {
 // flipYAxis will flip the drawn direction of the Y axis for the whole
 // sequence
 function flipYAxis() {
-    const v = sequenceText.innerText;
+    const v = OA.sequenceText.innerText;
     if (v.replace(regexComments, '').match(regexFlipYAxis)) {
         // disable flip
         let
@@ -10933,12 +10947,12 @@ function flipYAxis() {
                 t += v[i];
             }
         }
-        sequenceText.innerText = t;
+        OA.sequenceText.innerText = t;
     } else {
         // add flip to first real figure, if it exists
-        for (let i = 0; i < figures.length; i++) {
-            if (figures[i].aresti) {
-                updateSequence(i, userpat.flipYaxis + figures[i].string, true);
+        for (let i = 0; i < OA.figures.length; i++) {
+            if (OA.figures[i].aresti) {
+                updateSequence(i, userpat.flipYaxis + OA.figures[i].string, true);
                 break;
             }
         }
@@ -10971,12 +10985,12 @@ function updateSequenceOptions(code) {
 // clearPositioning removes all figure positioning elements
 function clearPositioningOption() {
     // only do this when on Form B or C
-    if (/^[BC]/.test(activeForm)) {
+    if (/^[BC]/.test(OA.activeForm)) {
         // confirm clearing the position formatting
-        confirmBox(userText.clearPositioningConfirm,
-            userText.clearPositioning, clearPositioning);
+        confirmBox(OA.userText.clearPositioningConfirm,
+            OA.userText.clearPositioning, clearPositioning);
     } else {
-        alertBox(userText.notOnFormBC);
+        alertBox(OA.userText.notOnFormBC);
     }
 }
 
@@ -10986,10 +11000,10 @@ function clearPositioning() {
     // make sure no figure is selected
     selectFigure(false);
     // remove all moveTo, curveTo and moveForward figures
-    for (let i = 0; i < figures.length; i++) {
-        if (figures[i].moveTo || figures[i].curveTo || figures[i].moveForward) {
+    for (let i = 0; i < OA.figures.length; i++) {
+        if (OA.figures[i].moveTo || OA.figures[i].curveTo || OA.figures[i].moveForward) {
             updateSequence(i, '', true);
-            if (changesMade) activeSequence.undo.pop();
+            if (changesMade) OA.activeSequence.undo.pop();
             changesMade = true;
             i--;
         }
@@ -11002,13 +11016,13 @@ function clearPositioning() {
 // - newly created, or
 // - base figure changed
 function separateFigure(id) {
-    if (figures[id]) {
-        let selectFig = selectedFigure.id;
+    if (OA.figures[id]) {
+        let selectFig = OA.selectedFigure.id;
 
         // remove any previous move 'figure'
         let i = id - 1;
-        if (figures[i]) {
-            if (figures[i].moveTo || figures[i].curveTo || figures[i].moveForward) {
+        if (OA.figures[i]) {
+            if (OA.figures[i].moveTo || OA.figures[i].curveTo || OA.figures[i].moveForward) {
                 selectFig--;
                 updateSequence(i, '', true);
                 i--;
@@ -11016,19 +11030,19 @@ function separateFigure(id) {
         }
         i++;
         // need to define bBox here
-        figures[i].bBox = myGetBBox($('figure' + i));
+        OA.figures[i].bBox = myGetBBox($('figure' + i));
         // separate the figure itself
         moveClear(i);
 
         // select correct figure
         setFigureSelected(selectFig);
         // find the next real figure and separate that one
-        i = selectedFigure.id + 1;
-        while (figures[i]) {
-            if (figures[i].aresti) {
+        i = OA.selectedFigure.id + 1;
+        while (OA.figures[i]) {
+            if (OA.figures[i].aresti) {
                 moveClear(i);
                 break;
-            } else if (figures[i].moveTo || figures[i].curveTo || figures[i].moveForward) {
+            } else if (OA.figures[i].moveTo || OA.figures[i].curveTo || OA.figures[i].moveForward) {
                 // remove move 'figures'
                 updateSequence(i, '', true);
             } else {
@@ -11045,7 +11059,7 @@ function separateFigures(noConfirm) {
         // clearPositioning is false when no changes were made. In this
         // case, add undo
         if (!clearPositioning()) {
-            activeSequence.undo.push(activeSequence.xml);
+            OA.activeSequence.undo.push(OA.activeSequence.xml);
         }
         // Start a loop that will continue until nothing's done any more,
         // or until 10000 iterations
@@ -11054,30 +11068,30 @@ function separateFigures(noConfirm) {
             var movedFigure = false;
             let i = 1;
             // start going through the figures from the second figure
-            while (i < figures.length && !movedFigure) {
+            while (i < OA.figures.length && !movedFigure) {
                 movedFigure = moveClear(i);
                 i++;
             }
             count++;
         } while (movedFigure && count < 10000);
         // replace any (0,0) curveTo by a 2> moveForward
-        figures.forEach ((f, i) => {
+        OA.figures.forEach ((f, i) => {
             if (f.string === "(0,0)") updateSequence(i, '2>', true);
         });
     }
 
     // Only check for need of confirmation on Form B or C
-    if (/^[BC]/.test(activeForm)) {
+    if (/^[BC]/.test(OA.activeForm)) {
         if (noConfirm === true) {
             f();
         } else {
             // confirm clearing the position formatting. When confirmed, the
             // function f is executed
-            confirmBox(userText.separateFiguresConfirm,
-                userText.separateFigures, f);
+            confirmBox(OA.userText.separateFiguresConfirm,
+                OA.userText.separateFigures, f);
         }
     } else {
-        alertBox(userText.notOnFormBC);
+        alertBox(OA.userText.notOnFormBC);
     }
 }
 
@@ -11087,14 +11101,14 @@ function moveClear(i) {
     // put separateMargin in m
     const m = separateMargin;
     // get the bBox set for the figure
-    const bBoxI = figures[i].bBox;
+    const bBoxI = OA.figures[i].bBox;
     // only do something for real Aresti figures
-    if (bBoxI && figures[i].aresti) {
+    if (bBoxI && OA.figures[i].aresti) {
         let
             moveLR = 0,
             // for horizontal movement, move in the same direction as the figure entry
-            moveLRsign = (figures[i].entryDir % 180) == 0 ?
-                (figures[i].entryAtt == figures[i].entryDir ? 1 : -1) : 0,
+            moveLRsign = (OA.figures[i].entryDir % 180) == 0 ?
+                (OA.figures[i].entryAtt == OA.figures[i].entryDir ? 1 : -1) : 0,
             moveDown = 0,
             repeat;
         // loop through all nodes of relevant figures. Whenever we encounter
@@ -11103,8 +11117,8 @@ function moveClear(i) {
             repeat = false;
             // go through all previous figures
             for (let j = i - 1; j >= 0; j--) {
-                const bBoxJ = figures[j].bBox;
-                if (bBoxJ && figures[j].aresti) {
+                const bBoxJ = OA.figures[j].bBox;
+                if (bBoxJ && OA.figures[j].aresti) {
                     // go through all nodes of previous figures
                     for (let k = 0; k < bBoxJ.nodes.length; k++) {
                         const bBoxK = bBoxJ.nodes[k];
@@ -11150,7 +11164,7 @@ function moveClear(i) {
             // Movement of the figure required. Round the values of moveLR. Tests show
             // that rounding will still assure sufficient spacing 
             moveLR = Math.round(moveLR / lineElement);
-            if (activeForm === 'C') {
+            if (OA.activeForm === 'C') {
                 moveLR = -moveLR;
                 moveLRsign = -moveLRsign;
             }
@@ -11168,7 +11182,7 @@ function moveClear(i) {
                 updateSequence(i - 1, `(0,${moveDown})`, false);
             }
             // don't add undo for this
-            activeSequence.undo.pop();
+            OA.activeSequence.undo.pop();
             return true;
         }
     }
@@ -11179,22 +11193,22 @@ function moveClear(i) {
 // or in an other svg object when provided
 function drawFullFigure(i, draggable, svg) {
     // default to SVGRoot when no svg object provided
-    svg = svg || SVGRoot;
+    svg = svg || OA.SVGRoot;
     // Mark the starting position of the figure
-    figures[i].startPos = { 'x': X, 'y': Y };
-    figures[i].draggable = draggable;
+    OA.figures[i].startPos = { 'x': OA.X, 'y': OA.Y };
+    OA.figures[i].draggable = draggable;
     // return for no-draw figures
-    if (!figures[i].paths) return;
+    if (!OA.figures[i].paths) return;
     // Create a group for the figure, draw it and apply to the SVG
     let group = document.createElementNS(svgNS, "g");
     group.setAttribute('id', 'figure' + i);
     // put the group in the DOM
     svg.getElementById('sequence').appendChild(group);
     let bBox = false;
-    figures[i].paths.forEach ((p) => {
+    OA.figures[i].paths.forEach ((p) => {
         bBox = drawShape(p, group, bBox) || bBox;
     });
-    figures[i].bBox = myGetBBox(group);
+    OA.figures[i].bBox = myGetBBox(group);
 }
 
 // setQueueMenuOptions enables/disables queue menu options as applicable
@@ -11203,7 +11217,7 @@ function setQueueMenuOptions() {
     $('t_addAllToQueue').parentNode.removeEventListener('mousedown', addAllToQueue);
     $('t_clearQueue').parentNode.removeEventListener('mousedown', clearQueue);
     $('t_saveQueueFile').parentNode.removeEventListener('mousedown', saveQueue);
-    if (fig.slice(-1) && fig.slice(-1)[0] && fig.slice(-1)[0].group == 0) {
+    if (OA.fig.slice(-1) && OA.fig.slice(-1)[0] && OA.fig.slice(-1)[0].group == 0) {
         $('t_clearQueue').parentNode.classList.remove('disabled');
         $('t_saveQueueFile').parentNode.classList.remove('disabled');
         $('t_clearQueue').parentNode.addEventListener('mousedown', clearQueue);
@@ -11212,13 +11226,13 @@ function setQueueMenuOptions() {
         $('t_clearQueue').parentNode.classList.add('disabled');
         $('t_saveQueueFile').parentNode.classList.add('disabled');
     }
-    if (figures[selectedFigure.id]) {
+    if (OA.figures[OA.selectedFigure.id]) {
         $('t_addToQueue').parentNode.classList.remove('disabled');
         $('t_addToQueue').parentNode.addEventListener('mousedown', addToQueue);
     } else {
         $('t_addToQueue').parentNode.classList.add('disabled');
     }
-    if (figures.length) {
+    if (OA.figures.length) {
         $('t_addAllToQueue').parentNode.classList.remove('disabled');
         $('t_addAllToQueue').parentNode.addEventListener('mousedown', addAllToQueue);
     } else {
@@ -11237,24 +11251,24 @@ function showQueue() {
 function changeQueueColumns() {
     saveSettingsStorage();
     // clear queue figure SVGs first, to allow resizing
-    fig.forEach ((f) => { if (f && f.group == 0) f.svg = false; });
+    OA.fig.forEach ((f) => { if (f && f.group == 0) f.svg = false; });
     showQueue();
 }
 
 // addToQueue adds the selected figure to the figure queue
 function addToQueue(e) {
     const
-        f = figures[selectedFigure.id],
+        f = OA.figures[OA.selectedFigure.id],
         figNr = f.figNr;
     // create aresti string
     // queue-[base]-[roll1]-[roll2]-...
     const aresti = 'queue-' + f.aresti.join('-');
     // check if the figure is already in the queue
-    let i = fig.length - 1;
-    while (fig[i]) {
-        if (fig[i].group == 0) {
-            if (fig[i].aresti == aresti) {
-                if (e) alertBox(userText.figureAlreadyInQueue);
+    let i = OA.fig.length - 1;
+    while (OA.fig[i]) {
+        if (OA.fig[i].group == 0) {
+            if (OA.fig[i].aresti == aresti) {
+                if (e) alertBox(OA.userText.figureAlreadyInQueue);
                 return;
             }
             i--;
@@ -11276,20 +11290,20 @@ function addToQueue(e) {
     }
     // Handle the very special case where there's only an upright or
     // inverted spin and the base figure is an iv
-    if (/^-?\d*i?s/.test(string) && /iv/.test(fig[figNr].base)) {
+    if (/^-?\d*i?s/.test(string) && /iv/.test(OA.fig[figNr].base)) {
         string = string.replace(/(\d*i?s)/, "iv$1");
     }
 
     // append the figure to the fig object
-    fig.push({
+    OA.fig.push({
         'aresti': aresti,
-        'base': fig[figNr].base,
-        'rolls': fig[figNr].rolls,
-        'draw': fig[figNr].draw,
-        'pattern': fig[figNr].pattern,
-        'kPwrd': fig[figNr].kPwrd,
-        'kGlider': fig[figNr].kGlider,
-        'kRules': fig[figNr].kRules,
+        'base': OA.fig[figNr].base,
+        'rolls': OA.fig[figNr].rolls,
+        'draw': OA.fig[figNr].draw,
+        'pattern': OA.fig[figNr].pattern,
+        'kPwrd': OA.fig[figNr].kPwrd,
+        'kGlider': OA.fig[figNr].kGlider,
+        'kRules': OA.fig[figNr].kRules,
         'unknownFigureLetter': f.unknownFigureLetter,
         'group': 0,
         'string': string
@@ -11304,21 +11318,21 @@ function addToQueue(e) {
 function addAllToQueue() {
     // check if there are any figures to add
     let noFigures = true;
-    for (const f of figures) {
+    for (const f of OA.figures) {
         if (f.aresti) {
             noFigures = false;
             break;
         }
     }
     if (noFigures) {
-        alertBox(userText.addAllToQueueNoFigures, userText.addAllToQueue);
+        alertBox(OA.userText.addAllToQueueNoFigures, OA.userText.addAllToQueue);
         return;
     }
 
-    infoBox(userText.addAllToQueueWait, userText.addAllToQueue);
+    infoBox(OA.userText.addAllToQueueWait, OA.userText.addAllToQueue);
     setTimeout(function () {
-        const selFig = selectedFigure.id;
-        figures.forEach ((f, i) => {
+        const selFig = OA.selectedFigure.id;
+        OA.figures.forEach ((f, i) => {
             if (f.aresti) {
                 selectFigure(i);
                 addToQueue(false);
@@ -11337,7 +11351,7 @@ function addAllToQueue() {
 // removeFromQueue removes a figure from the queue
 function removeFromQueue(e) {
     noPropagation(e);
-    fig.splice(e.target.parentNode.id.replace(/^removeFromQueue/, ''), 1);
+    OA.fig.splice(e.target.parentNode.id.replace(/^removeFromQueue/, ''), 1);
     showQueue();
     setQueueMenuOptions();
     queueToStorage();
@@ -11345,21 +11359,21 @@ function removeFromQueue(e) {
 
 // clearQueue removes all figures from queue
 function clearQueue() {
-    let figLast = fig.length - 1;
-    while (!fig[figLast]) {
-        fig.length -= 1;
+    let figLast = OA.fig.length - 1;
+    while (!OA.fig[figLast]) {
+        OA.fig.length -= 1;
         figLast -= 1;
     }
     // only do anything when there are actually figures in the queue
-    if (fig[figLast].group == 0) {
+    if (OA.fig[figLast].group == 0) {
         showQueue();
         // confirm removing all
-        confirmBox(userText.clearQueueConfirm, userText.clearQueue, () => {
+        confirmBox(OA.userText.clearQueueConfirm, OA.userText.clearQueue, () => {
             // start removing figures
             let i = figLast;
-            while (fig[i]) {
-                if (fig[i].group == 0) {
-                    fig.pop();
+            while (OA.fig[i]) {
+                if (OA.fig[i].group == 0) {
+                    OA.fig.pop();
                     i--;
                 } else break;
             }
@@ -11376,10 +11390,10 @@ function clearQueue() {
 // restarts
 function queueToStorage() {
     const queue = [];
-    let figLast = fig.findLastIndex((f) => f);
+    let figLast = OA.fig.findLastIndex((f) => f);
 
-    while (fig[figLast] && (fig[figLast].group == 0)) {
-        queue.push(fig[figLast]);
+    while (OA.fig[figLast] && (OA.fig[figLast].group == 0)) {
+        queue.push(OA.fig[figLast]);
         figLast--;
     }
 
@@ -11390,7 +11404,7 @@ function queueToStorage() {
 function queueFromStorage() {
     const queue = JSON.parse (localStorage.getItem ('queue') || null);
     while (queue && queue.length) {
-        fig.push(queue.pop());
+        OA.fig.push(queue.pop());
     }
     setQueueMenuOptions();
 }
@@ -11403,8 +11417,8 @@ function queueFromStorage() {
 
 // startFuDesigner starts the Free (Un)known Designer
 function startFuDesigner(dontConfirm) {
-    if (!figureLetters) {
-        alertBox(userText.FUDesignNotFreeUnknown, userText.fuDesigner);
+    if (!OA.figureLetters) {
+        alertBox(OA.userText.FUDesignNotFreeUnknown, OA.userText.fuDesigner);
         return false;
     }
     if (!buildFuFiguresTab()) {
@@ -11421,12 +11435,12 @@ function startFuDesigner(dontConfirm) {
         hideFigureSelector();
         menuInactiveAll();
 
-        infoBox(userText.FUstarting, userText.fuDesigner);
+        infoBox(OA.userText.FUstarting, OA.userText.fuDesigner);
 
         // use setTimeout to assure the infoBox shows
         setTimeout(function () {
             // Free Unknown Designer for smallMobile
-            if (platform.smallMobile) {
+            if (OA.platform.smallMobile) {
                 // hide sequence tab
                 $('tab-sequenceArea').classList.add('noDisplay');
 
@@ -11443,7 +11457,7 @@ function startFuDesigner(dontConfirm) {
             // add fuDesigner class to body
             document.body.classList.add('fuDesigner');
 
-            if (platform.mobile) {
+            if (OA.platform.mobile) {
                 // move items from File menu to main menu for quick access
                 var items = document.getElementsByClassName('menuFileItem');
                 for (let i = 0; i < items.length; i++) {
@@ -11456,28 +11470,28 @@ function startFuDesigner(dontConfirm) {
             }
 
             // clear undo and redo
-            activeSequence.undo = activeSequence.redo = [];
+            OA.activeSequence.undo = OA.activeSequence.redo = [];
 
             // clear the sequence if loading from Grid and no Additional
             // figure present
             var noAdditional = true;
-            for (let i = 0; i < figures.length; i++) {
-                if (figures[i].unknownFigureLetter === 'L') {
+            for (let i = 0; i < OA.figures.length; i++) {
+                if (OA.figures[i].unknownFigureLetter === 'L') {
                     noAdditional = false;
                     break;
                 }
             }
 
             let text = '';
-            if (/^G/.test(activeForm) && noAdditional) {
+            if (/^G/.test(OA.activeForm) && noAdditional) {
                 text = 'eu';
             } else {
                 // rebuild the sequence according Free (Un)known designer format
                 // remove / symbols and entry/exit extension from string
-                for (const f of figures) {
+                for (const f of OA.figures) {
                     // only add figures with aresti Nr. For Unknown, only add
                     // those that have a figure letter
-                    if (f.aresti && (f.unknownFigureLetter || !additionalFig.max)) {
+                    if (f.aresti && (f.unknownFigureLetter || !OA.additionalFig.max)) {
                         const string = f.string
                             .replace(/[~\.'`\+\/]/g, '').replace(/-+/g, '-') // remove extensions, shortenings and y axis switch
                             .replace(regexComments, '');                     // remove comments
@@ -11492,7 +11506,7 @@ function startFuDesigner(dontConfirm) {
                 if (text === 'eu eu') text = 'eu';
             }
 
-            sequenceText.innerText = text;
+            OA.sequenceText.innerText = text;
 
             checkSequenceChanged(true);
 
@@ -11519,7 +11533,7 @@ function startFuDesigner(dontConfirm) {
     if (dontConfirm) {
         f();
     } else {
-        confirmBox(userText.clearPositioningConfirm, userText.fuDesigner, f);
+        confirmBox(OA.userText.clearPositioningConfirm, OA.userText.fuDesigner, f);
     }
 }
 
@@ -11532,7 +11546,7 @@ function exitFuDesigner(newSequence) {
 
     function exitFu() {
         if (!newSequence) {
-            infoBox(userText.FUfinalizing, userText.finalizeSequence);
+            infoBox(OA.userText.FUfinalizing, OA.userText.finalizeSequence);
         }
 
         // use setTimeout to assure the infoBox shows
@@ -11544,7 +11558,7 @@ function exitFuDesigner(newSequence) {
             // disableFUdesigner
             $('fuDesignerStyle').innerHTML = '';
 
-            if (platform.mobile) {
+            if (OA.platform.mobile) {
                 // move items from main menu back to File menu
                 var ul = $('menuFileUl');
                 var items = document.getElementsByClassName('menuFileItem');
@@ -11560,7 +11574,7 @@ function exitFuDesigner(newSequence) {
             }
 
             // clear undo and redo
-            activeSequence.undo = activeSequence.redo = [];
+            OA.activeSequence.undo = OA.activeSequence.redo = [];
 
             $('fu_figures').value = '';
 
@@ -11571,11 +11585,11 @@ function exitFuDesigner(newSequence) {
                 selectForm('B');
 
                 // remove unassigned Free figures
-                sequenceText.innerText = sequenceText.innerText.replace(/X/g, '');
+                OA.sequenceText.innerText = OA.sequenceText.innerText.replace(/X/g, '');
                 checkSequenceChanged();
 
                 separateFigures(true);
-                sequenceText.innerText = sequenceText.innerText.trim()
+                OA.sequenceText.innerText = OA.sequenceText.innerText.trim()
                     .replace(/ e(u|d|j|ja)$/, '')
                     .replace(/^eu[ ]*/, '');
 
@@ -11599,8 +11613,8 @@ function exitFuDesigner(newSequence) {
             // Layout is now restored to desktop/largeMobile.
             // If we were in smallMobile layout, reactivate required elements
 
-            if (platform.smallMobile) {
-                platform.smallMobile = false;
+            if (OA.platform.smallMobile) {
+                OA.platform.smallMobile = false;
                 switchSmallMobile();
                 selectTab('tab-sequenceInfo');
             }
@@ -11620,20 +11634,20 @@ function exitFuDesigner(newSequence) {
 
         var myAlerts = div.innerHTML;
 
-        figures.forEach ((f) => { if (f.aresti) sub = f.subSeq; });
+        OA.figures.forEach ((f) => { if (f.aresti) sub = f.subSeq; });
         if (sub > 1) {
-            myAlerts += '<br />' + sprintf(userText.FUmultipleSubsequences, sub);
+            myAlerts += '<br />' + sprintf(OA.userText.FUmultipleSubsequences, sub);
         }
 
-        if (myAlerts.match(RegExp('(' + userText.setUpright + ')|(' +
-            userText.setInverted + ')'))) {
-            myAlerts += '<br />' + userText.FUexitEntryMatch;
+        if (myAlerts.match(RegExp('(' + OA.userText.setUpright + ')|(' +
+            OA.userText.setInverted + ')'))) {
+            myAlerts += '<br />' + OA.userText.FUexitEntryMatch;
         }
 
         if (myAlerts !== '') {
-            var confirmText = '<p>' + userText.FUerrorsDetected + '</p><p>' +
-                myAlerts + '</p><p>' + userText.FUconfirmExit + '</p>';
-            confirmBox(confirmText, userText.finalizeSequence, exitFu);
+            var confirmText = '<p>' + OA.userText.FUerrorsDetected + '</p><p>' +
+                myAlerts + '</p><p>' + OA.userText.FUconfirmExit + '</p>';
+            confirmBox(confirmText, OA.userText.finalizeSequence, exitFu);
         } else {
             exitFu();
         }
@@ -11692,7 +11706,7 @@ function handleFreeDragFigureStart(e) {
     } else if (l === 'X') {
         e.dataTransfer.setData('text', 'X');
     } else {
-        e.dataTransfer.setData('text', '"@' + l + '" ' + fuFig[l].string);
+        e.dataTransfer.setData('text', '"@' + l + '" ' + OA.fuFig[l].string);
     }
 }
 
@@ -11739,10 +11753,10 @@ function handleFreeDrop(e) {
     if (this.classList.contains('fuNewSub')) {
         // drop figure or subsequence to new subsequence. Make sure it ends with 'eu'
         string = string.replace(regexSub, '');
-        updateSequence(figures.length - 1, string + ' eu');
+        updateSequence(OA.figures.length - 1, string + ' eu');
         // when dropping Additional, select and open figure editor
         if (string.match(/\@L/) || (string === 'X')) {
-            selectFigureFu(figures.length - 2);
+            selectFigureFu(OA.figures.length - 2);
         }
     } else {
         // drop figure or subsequence on figure (or end)
@@ -11750,7 +11764,7 @@ function handleFreeDrop(e) {
         var string = e.dataTransfer.getData('text');
 
         // if unknownFigureLetter is set, drop one figure earlier
-        var previous = figures[figNr].unknownFigureLetter ? 1 : 0;
+        var previous = OA.figures[figNr].unknownFigureLetter ? 1 : 0;
 
         // a subsequence is marked by "n" at the start, where
         // n = subsequence number
@@ -11758,9 +11772,9 @@ function handleFreeDrop(e) {
         // check if dropping subsequence
         if (match) {
             // don't drop subsequence on itself
-            if (figures[figNr - 1].subSeq != match[1]) {
+            if (OA.figures[figNr - 1].subSeq != match[1]) {
                 var t = '';
-                figures.forEach ((f, i) => {
+                OA.figures.forEach ((f, i) => {
                     // put subsequence in new location
                     if (i == (figNr - previous)) {
                         t += ` ${string.replace(match[0], '')} `;
@@ -11768,7 +11782,7 @@ function handleFreeDrop(e) {
                     // only keep figures that were not in original subsequence
                     if (f.subSeq != match[1]) t += ` ${f.string} `;
                 });
-                sequenceText.innerText = sanitizeSpaces(t);
+                OA.sequenceText.innerText = sanitizeSpaces(t);
                 checkSequenceChanged();
             }
         } else {
@@ -11784,7 +11798,7 @@ function handleFreeDrop(e) {
     // Restore scroll location
     $('fuSequence').scrollTop = scrollTop;
 
-    sequenceText.innerText = sanitizeSpaces(sequenceText.innerText);
+    OA.sequenceText.innerText = sanitizeSpaces(OA.sequenceText.innerText);
     return false;
 }
 
@@ -11809,13 +11823,13 @@ function handleFreeRemove(e, el) {
         // Because sequenceText is simply formatted in Designer, and sequence change
         // is checked later, simply update sequenceText. Run check to see if previous
         // figure was figureletter and needs to be removed too
-        sequenceText.innerText =
-            sequenceText.innerText.substring(0,
-                figures[figNr - ((/^\"\@[A-Z]/.test(figures[figNr - 1].string)) ? 1 : 0)].stringStart) +
-            sequenceText.innerText.substring(figures[figNr].stringEnd);
+        OA.sequenceText.innerText =
+            OA.sequenceText.innerText.substring(0,
+                OA.figures[figNr - ((/^\"\@[A-Z]/.test(OA.figures[figNr - 1].string)) ? 1 : 0)].stringStart) +
+            OA.sequenceText.innerText.substring(OA.figures[figNr].stringEnd);
 
         // remove any multiple entry options, keeping last one. And clean up spaces
-        sequenceText.innerText = sanitizeSpaces(sequenceText.innerText.replace(/(e[udj] +)+(e[udj])/, '$2'));
+        OA.sequenceText.innerText = sanitizeSpaces(OA.sequenceText.innerText.replace(/(e[udj] +)+(e[udj])/, '$2'));
 
         checkSequenceChanged();
 
@@ -11828,7 +11842,7 @@ function handleFreeRemove(e, el) {
 function handleFreeDeselect(e) {
     noPropagation(e); // Stops some browsers from redirecting.
 
-    document.querySelectorAll('.fuFig' + selectedFigure.id).forEach(e => {
+    document.querySelectorAll('.fuFig' + OA.selectedFigure.id).forEach(e => {
         e.classList.remove('active');
     });
 
@@ -11851,29 +11865,29 @@ function handleFreeSelect(evt) {
 // buildFuFiguresTab fills the fuFigures tab with the Free (Un)known
 // lettered figures in the active sequence.
 function buildFuFiguresTab() {
-    Object.keys(fuFig).forEach(key => {delete fuFig[key]});
+    Object.keys(OA.fuFig).forEach(key => {delete OA.fuFig[key]});
 
-    for (let f of figures) {
+    for (let f of OA.figures) {
         let l = f.unknownFigureLetter;
-        if (l && (figureLetters.indexOf(l) > -1) && f.aresti) {
+        if (l && (OA.figureLetters.indexOf(l) > -1) && f.aresti) {
             const figNr = f.figNr;
             // check if this letter exists already. If this happens, present
             // error message and return false
-            if (fuFig[l]) {
-                alertBox(sprintf(userText.FUDesignletterMulti, l), userText.fuDesigner);
+            if (OA.fuFig[l]) {
+                alertBox(sprintf(OA.userText.FUDesignletterMulti, l), OA.userText.fuDesigner);
                 return false;
             }
             // append the figure to the fuFig array
-            fuFig[l] = {
+            OA.fuFig[l] = {
                 // Aresti string: fu-[base]-[roll1]-[roll2]-...
                 'aresti': 'fu-' + f.aresti.join('-'),
-                'base': fig[figNr].base,
-                'rolls': fig[figNr].rolls,
-                'draw': fig[figNr].draw,
-                'pattern': fig[figNr].pattern,
-                'kPwrd': fig[figNr].kPwrd,
-                'kGlider': fig[figNr].kGlider,
-                'kRules': fig[figNr].kRules,
+                'base': OA.fig[figNr].base,
+                'rolls': OA.fig[figNr].rolls,
+                'draw': OA.fig[figNr].draw,
+                'pattern': OA.fig[figNr].pattern,
+                'kPwrd': OA.fig[figNr].kPwrd,
+                'kGlider': OA.fig[figNr].kGlider,
+                'kRules': OA.fig[figNr].kRules,
                 'figNr': figNr
             };
             // remove extensions/shortenings and y axis switch
@@ -11893,21 +11907,21 @@ function buildFuFiguresTab() {
             // Handle the very special case where there's only an upright or
             // inverted spin and the base figure is an iv
             if (/\d*i?s/.test(string) && !/iv/.test(string) &&
-                /iv/.test(fuFig[l].base)) {
+                /iv/.test(OA.fuFig[l].base)) {
                 string = string.replace(/(\d*i?s)/, "iv$1");
             }
 
-            fuFig[l].string = string;
+            OA.fuFig[l].string = string;
         }
     };
 
     // check if we have all required figures. If not, present error
     // message and return false
     var missing = '';
-    figureLetters.split('').forEach ((l) => { if (!fuFig[l]) missing += l; });
+    OA.figureLetters.split('').forEach ((l) => { if (!OA.fuFig[l]) missing += l; });
 
     if (missing) {
-        alertBox(sprintf(userText.FUDesignMissingLetters, missing), userText.fuDesigner);
+        alertBox(sprintf(OA.userText.FUDesignMissingLetters, missing), OA.userText.fuDesigner);
         return false;
     }
 
@@ -11915,39 +11929,39 @@ function buildFuFiguresTab() {
     var
         svg = $('figureChooserSvg'),
         // Define chooser width. Add margin to scroll for touch devices and iOS apps on Mac
-        width = platform.smallMobile ? 90 : (platform.touch || (platform.cordova && device.isiOSAppOnMac) ? 110 : 120),
+        width = OA.platform.smallMobile ? 90 : (OA.platform.touch || (OA.platform.cordova && device.isiOSAppOnMac) ? 110 : 120),
         height = 100,
-        maxColCount = platform.smallMobile ? 1 : 2,
+        maxColCount = OA.platform.smallMobile ? 1 : 2,
         colCount = 0,
-        letters = figureLetters.split(''),
+        letters = OA.figureLetters.split(''),
         table = $('fuFiguresTable'),
         tr,
         fragment = document.createDocumentFragment();
 
-    firstFigure = false;
+    OA.firstFigure = false;
 
     $('fu_figures').value = '';
     removeChildNodes(table);
     // put figures in table. In essence this is a trimmed version of the
     // routine in changeFigureGroup
-    letters.push(additionalFig.max ? 'L' : 'X');
+    letters.push(OA.additionalFig.max ? 'L' : 'X');
     letters.forEach((l) => {
         // clear the svg
         prepareSvg(svg);
         if (!/[LX]/.test(l)) {
             // clear figure
-            figures[-1] = [];
+            OA.figures[-1] = [];
 
             // Set correct attitude and direction for figures starting inverted
-            Attitude = Direction = (fuFig[l].base[0] != '-') ? 0 : 180;
+            OA.attitude = OA.direction = (OA.fuFig[l].base[0] != '-') ? 0 : 180;
 
             // build the figure
-            buildFigure([fuFig[l].figNr], fuFig[l].string, false, -1);
+            buildFigure([OA.fuFig[l].figNr], OA.fuFig[l].string, false, -1);
 
             // reset X and Y and clear figureStart to prevent adjusting
             // figure position
-            X = Y = 0;
-            figureStart = [];
+            OA.X = OA.Y = 0;
+            OA.figureStart = [];
             // draw the figure
             drawFullFigure(-1, true, svg);
             // retrieve the group holding the figure and set viewbox
@@ -11967,16 +11981,16 @@ function buildFuFiguresTab() {
             svg.setAttribute('height', height);
             svg.setAttribute('id', 'fuFig' + l);
             // add the svg to fuFig[l] as xml text
-            fuFig[l].svg = new XMLSerializer().serializeToString(svg);
+            OA.fuFig[l].svg = new XMLSerializer().serializeToString(svg);
             // restore svg id
             svg.setAttribute('id', 'figureChooserSvg');
             // add the roll Aresti nrs to fig if applicable
-            fuFig[l].rollBase = [];
-            for (let j = 1; j < figures[-1].aresti.length; j++) {
-                fuFig[l].rollBase[j - 1] = rollArestiToFig[figures[-1].aresti[j]][0];
+            OA.fuFig[l].rollBase = [];
+            for (let j = 1; j < OA.figures[-1].aresti.length; j++) {
+                OA.fuFig[l].rollBase[j - 1] = OA.rollArestiToFig[OA.figures[-1].aresti[j]][0];
             }
 
-            $('fu_figures').value += `"@${l}" ${fuFig[l].string} `;
+            $('fu_figures').value += `"@${l}" ${OA.fuFig[l].string} `;
         }
         if (colCount == 0) {
             tr = document.createElement('tr');
@@ -11988,14 +12002,14 @@ function buildFuFiguresTab() {
         tr.appendChild(td);
         td.setAttribute('id', 'fu' + l);
         if (!(/[LX]/.test(l))) {
-            td.innerHTML = fuFig[l].svg;
+            td.innerHTML = OA.fuFig[l].svg;
             // add the unknownFigureLetter and K
             td.innerHTML += `<div class="UFletterInQueue">${l}</div>` +
                 '<div class="UFKInQueue">K:' +
-                figures[-1].k.reduce((a, b) => a + b) + '</div>';
+                OA.figures[-1].k.reduce((a, b) => a + b) + '</div>';
         } else {
             var textDiv = td.appendChild(document.createElement('div'));
-            textDiv.innerHTML = userText[(l === 'L') ? 'additional' : 'free'];
+            textDiv.innerHTML = OA.userText[(l === 'L') ? 'additional' : 'free'];
         }
         td.setAttribute(iosDragDropShim.enabled ? 'data-draggable' : 'draggable', true);
         td.addEventListener('dragstart', handleFreeDragFigureStart);
@@ -12017,8 +12031,8 @@ function buildFuFiguresTab() {
 // changedFigureKText creates a well-formatted string
 function changedFigureKText(figs) {
     if (figs && figs.length > 1) {
-        return sprintf(userText.changedFigureKMulti, figs.join(','), activeRules.description);
-    } else return sprintf(userText.changedFigureK, figs[0], activeRules.description);
+        return sprintf(OA.userText.changedFigureKMulti, figs.join(','), OA.activeRules.description);
+    } else return sprintf(OA.userText.changedFigureK, figs[0], OA.activeRules.description);
 }
 
 // makeFormA creates Form A from the figures object
@@ -12026,16 +12040,16 @@ function makeFormA() {
     var
         figNr = 0,
         modifiedK = [],
-        svgElement = SVGRoot.getElementById('sequence');
+        svgElement = OA.SVGRoot.getElementById('sequence');
 
     setYAxisOffset(yAxisOffsetDefault);
-    Direction = 0;
+    OA.direction = 0;
 
     // Count how many real figures there are
-    figures.forEach ((f, i) => {
+    OA.figures.forEach ((f, i) => {
         if (f.aresti) {
             // Build the figure at the top-left
-            X = Y = 0;
+            OA.X = OA.Y = 0;
             drawFullFigure(i, false);
             figNr++;
         }
@@ -12043,7 +12057,7 @@ function makeFormA() {
     // The final form will be 800x1000px, leaving room for the print header
     var columnTitleHeight = 50;
     // define column titles and widths
-    switch (formStyle) {
+    switch (OA.formStyle) {
         case 'iac':
             var columnTitles = ['No', 'Symbol', 'Cat. No.', 'K', 'Total K', 'Grade', 'Remarks'];
             var columnWidths = [20, 100, 70, 30, 60, 80, 259];
@@ -12074,13 +12088,13 @@ function makeFormA() {
     });
     var y = columnTitleHeight;
     var row = 0;
-    figureK = 0;
-    for (let i = 0; i < figures.length; i++) {
+    OA.figureK = 0;
+    for (let i = 0; i < OA.figures.length; i++) {
         // reduce rowheight for last one so border fits within height 1000
         if (row == (figNr - 1)) rowHeight -= 2;
         // find Aresti nr(s) and k(s) for figure
-        var aresti = figures[i].aresti;
-        var k = figures[i].k;
+        var aresti = OA.figures[i].aresti;
+        var k = OA.figures[i].k;
         // only draw if there is a (fake) aresti number
         if (aresti) {
             var x = 0;
@@ -12097,7 +12111,7 @@ function makeFormA() {
                     case (1):
                         drawRectangle(x, y, columnWidths[column], rowHeight, 'pos');
                         // Get the drawn figure from the SVG and set the correct scaling
-                        var group = SVGRoot.getElementById('figure' + i);
+                        var group = OA.SVGRoot.getElementById('figure' + i);
                         var bBox = group.getBBox();
                         var scaleFigure = roundTwo(Math.min((columnWidths[column] - 10) / bBox.width, (rowHeight - 20) / bBox.height));
                         var xMargin = (columnWidths[column] - bBox.width * scaleFigure) / 2;
@@ -12116,7 +12130,7 @@ function makeFormA() {
                                 13),
                             8);
                         for (let j = 0; j < aresti.length; j++) {
-                            if (aresti[j] in rulesKFigures) modifiedK.push(row + 1);
+                            if (aresti[j] in OA.rulesKFigures) modifiedK.push(row + 1);
                             if (/^non-Aresti /.test(aresti[j])) {
                                 // User-built figures have red "Aresti" numbers
                                 drawText(aresti[j].replace(/^non-Aresti /, ''),
@@ -12132,7 +12146,7 @@ function makeFormA() {
                                     'start');
                             }
                         }
-                        if (figures[i].floatingPoint && /^(iac|imac)$/.test(formStyle)) {
+                        if (OA.figures[i].floatingPoint && /^(iac|imac)$/.test(OA.formStyle)) {
                             // add 'F.P.' to IAC form A when applicable
                             drawText('F.P.',
                                 x + columnWidths[column] / 2,
@@ -12159,14 +12173,14 @@ function makeFormA() {
                             figK += parseInt(k);
                         });
                         // Adjust figure K for additionals
-                        if (figures[i].additional) {
-                            if (additionals <= additionalFig.max) {
-                                figK = additionalFig.totalK / additionals;
+                        if (OA.figures[i].additional) {
+                            if (OA.additionals <= OA.additionalFig.max) {
+                                figK = OA.additionalFig.totalK / OA.additionals;
                             } else {
-                                if (additionalFig.max > 0) {
-                                    figK = additionalFig.totalK / additionalFig.max[sportingClass.value];
+                                if (OA.additionalFig.max > 0) {
+                                    figK = OA.additionalFig.totalK / OA.additionalFig.max[OA.sportingClass.value];
                                 }
-                                checkAlert(sprintf(userText.maxAdditionals, additionalFig.max),
+                                checkAlert(sprintf(OA.userText.maxAdditionals, OA.additionalFig.max),
                                     false,
                                     row + 1);
                             }
@@ -12174,7 +12188,7 @@ function makeFormA() {
                         break;
                     case (4):
                         drawRectangle(x, y, columnWidths[column], rowHeight, 'formLine');
-                        if (figures[i].floatingPoint) {
+                        if (OA.figures[i].floatingPoint) {
                             drawText('(' + figK + ')',
                                 x + columnWidths[column] / 2,
                                 y + rowHeight / 2 + 10,
@@ -12194,31 +12208,31 @@ function makeFormA() {
                                 'middle');
                         }
                         if (($('printSF').checked === true) &&
-                            (figures[i].superFamily)) {
-                            drawText('SF ' + figures[i].superFamily,
+                            (OA.figures[i].superFamily)) {
+                            drawText('SF ' + OA.figures[i].superFamily,
                                 x + columnWidths[column] / 2,
                                 y + rowHeight - 10,
                                 'formAText',
                                 'middle');
                         }
                         // check if mark as additional or specific unknown figure
-                        if (figures[i].additional) {
+                        if (OA.figures[i].additional) {
                             drawText('additional',
                                 x + columnWidths[column] / 2,
                                 y + 15,
                                 'formAText',
                                 'middle');
-                        } else if (figures[i].unknownFigureLetter) {
-                            drawText('Fig ' + figures[i].unknownFigureLetter,
+                        } else if (OA.figures[i].unknownFigureLetter) {
+                            drawText('Fig ' + OA.figures[i].unknownFigureLetter,
                                 x + columnWidths[column] / 2,
                                 y + 15,
                                 'formAText',
                                 'middle');
                         }
-                        figureK += figK;
+                        OA.figureK += figK;
                         break;
                     case (5):
-                        if (formStyle == 'civa') {
+                        if (OA.formStyle == 'civa') {
                             drawCircle({
                                 cx: x + columnWidths[column] / 2,
                                 cy: y + rowHeight * 0.8, r: 2, fill: 'black'
@@ -12252,18 +12266,18 @@ function makeFormA() {
         }
     }
     if (modifiedK.length) {
-        drawText(changedFigureKText(modifiedK, activeRules.description),
+        drawText(changedFigureKText(modifiedK, OA.activeRules.description),
             0, y + 12, 'miniFormAModifiedK', 'start', '', svgElement);
-        SVGRoot.setAttribute("viewBox", '0 0 800 1020');
-    } else SVGRoot.setAttribute("viewBox", '0 0 800 1000');
+        OA.SVGRoot.setAttribute("viewBox", '0 0 800 1020');
+    } else OA.SVGRoot.setAttribute("viewBox", '0 0 800 1000');
 
-    SVGRoot.setAttribute("width", '800px');
-    SVGRoot.setAttribute("height", '1000px');
+    OA.SVGRoot.setAttribute("width", '800px');
+    OA.SVGRoot.setAttribute("height", '1000px');
 }
 
 // makeFormB creates Form B from the figures array
 function makeFormB() {
-    figures.forEach((f, i) => {
+    OA.figures.forEach((f, i) => {
         // only make real figures draggable
         if (f.paths.length) drawFullFigure(i, f.aresti && true);
     });
@@ -12272,7 +12286,7 @@ function makeFormB() {
 
 // makeFormC creates Form C from the figures array
 function makeFormC() {
-    figures.forEach((f, i) => {
+    OA.figures.forEach((f, i) => {
         // only make real figures draggable
         if (f.paths.length) drawFullFigure(i, f.aresti && true);
     });
@@ -12280,7 +12294,7 @@ function makeFormC() {
 }
 
 // makeFormGrid creates a grid of figures
-function makeFormGrid(cols, width, svg = SVGRoot) {
+function makeFormGrid(cols, width, svg = OA.SVGRoot) {
     width = width || 800; // capture negative widths
 
     let
@@ -12302,7 +12316,7 @@ function makeFormGrid(cols, width, svg = SVGRoot) {
 
     // draw all real figures, ordered as selected
     const orderBy = $('gridOrderBy').value;
-    figures.forEach ((f, i) => {
+    OA.figures.forEach ((f, i) => {
         if (f.aresti) {
             sortFigures.push({ id: i, orderBy: f[orderBy] });
         }
@@ -12319,7 +12333,7 @@ function makeFormGrid(cols, width, svg = SVGRoot) {
     }
 
     for (let i = 0; i < sortFigures.length; i++) {
-        const f = figures[sortFigures[i].id];
+        const f = OA.figures[sortFigures[i].id];
 
         // draw rectangle
         const rect = drawRectangle(x, y, cw, ch, 'formLine', svg);
@@ -12334,7 +12348,7 @@ function makeFormGrid(cols, width, svg = SVGRoot) {
             x + 5, yy, 'formATextBold', 'start', '', svg);
         totalK += f.k.reduce ((a,b) => a + b);
         for (let j = f.k.length - 1; j >= 0; j--) {
-            if (f.aresti[j] in rulesKFigures) modifiedK.push(f.seqNr);
+            if (f.aresti[j] in OA.rulesKFigures) modifiedK.push(f.seqNr);
             yy -= 15;
             drawText(f.aresti[j] + '(' + f.k[j] + ')',
                 x + 5,
@@ -12422,7 +12436,7 @@ function makeFormGrid(cols, width, svg = SVGRoot) {
         const fh = yy - y - 10;
         // set X and Y to 0 to prevent roundoff errors in figure drawing
         // and scaling
-        X = Y = 0;
+        OA.X = OA.Y = 0;
         drawFullFigure(sortFigures[i].id, f.paths[0].figureStart, svg);
         const bBox = f.bBox;
         // set figure size to column width - 20
@@ -12444,9 +12458,9 @@ function makeFormGrid(cols, width, svg = SVGRoot) {
             }
         }
 
-        if (fig[f.figNr].entryExitPower) {
-            entryExit.Entry[fig[f.figNr].entryExitPower[0]]++;
-            entryExit.Exit[fig[f.figNr].entryExitPower[1]]++;
+        if (OA.fig[f.figNr].entryExitPower) {
+            entryExit.Entry[OA.fig[f.figNr].entryExitPower[0]]++;
+            entryExit.Exit[OA.fig[f.figNr].entryExitPower[1]]++;
         }
     }
 
@@ -12455,13 +12469,13 @@ function makeFormGrid(cols, width, svg = SVGRoot) {
     // update viewbox and svg height
     var height = y + ch + 2;
     if (modifiedK.length) {
-        drawText(changedFigureKText(modifiedK, activeRules.description),
+        drawText(changedFigureKText(modifiedK, OA.activeRules.description),
             0, -4, 'miniFormAModifiedK', 'start', '', svgElement);
         height += 12;
         svg.setAttribute("viewBox", '-1 -13 ' + (width + 2) + ' ' + height);
     } else svg.setAttribute("viewBox", '-1 -1 ' + (width + 2) + ' ' + height);
 
-    if (platform.smallMobile) {
+    if (OA.platform.smallMobile) {
         svg.removeAttribute("width");
         svg.removeAttribute("height");
     } else {
@@ -12472,7 +12486,7 @@ function makeFormGrid(cols, width, svg = SVGRoot) {
     // go through the figures again, set maximum scale to scaleMin * 2
     // and recenter horizontally when necessary
     sortFigures.forEach ((s) => {
-        var f = figures[s.id];
+        var f = OA.figures[s.id];
         var scale = f.viewScale;
         if (scale > (scaleMin * 2)) {
             var scale = scaleMin * 2;
@@ -12505,8 +12519,8 @@ function makeFormGrid(cols, width, svg = SVGRoot) {
     // Here we match these until no more matches are possible
 
     var sets = [];
-    figures.forEach ((f) => {
-        if (f.aresti) sets.push(fig[f.figNr].entryExit);
+    OA.figures.forEach ((f) => {
+        if (f.aresti) sets.push(OA.fig[f.figNr].entryExit);
     });
 
     // run the matching routine both on the normal and reverse order of
@@ -12518,10 +12532,10 @@ function makeFormGrid(cols, width, svg = SVGRoot) {
         ) - 1, 0
     );
 
-    if (additionalFig.max) {
+    if (OA.additionalFig.max) {
         $('gridAdditionals').setAttribute('class', 'remaining' + Math.max(
-            Math.min(additionalFig.max - $('gridAdditionals').textContent, 4), -1));
-            $('gridAdditionals').textContent += ' / ' + additionalFig.max;
+            Math.min(OA.additionalFig.max - $('gridAdditionals').textContent, 4), -1));
+            $('gridAdditionals').textContent += ' / ' + OA.additionalFig.max;
     } else $('gridAdditionals').setAttribute('class', '');
 }
 
@@ -12607,7 +12621,7 @@ function createFigureProposals() {
         proposals = [];
 
     // create an array holding the indexes of real figures
-    figures.forEach ((f, i) => {
+    OA.figures.forEach ((f, i) => {
         if (f.aresti) {
             realFigs.push(i);
             superFamilyRatio[f.superFamily] = 0;
@@ -12622,7 +12636,7 @@ function createFigureProposals() {
     // now sort by Superfamily. This prevents filling up proposals before
     // "difficult" Superfamilies are spread out
     realFigs.sort((a, b) => 
-        figures[a].superFamily - figures[b].superFamily
+        OA.figures[a].superFamily - OA.figures[b].superFamily
     );
 
     // build empty proposals
@@ -12633,12 +12647,12 @@ function createFigureProposals() {
     const figsInProposals = propCount * size;
     // count specific families to ensure equal distibution
     for (let i = 0; i < figsInProposals; i++) {
-        superFamilyRatio[figures[realFigs[i]].superFamily] += 1 / propCount;
+        superFamilyRatio[OA.figures[realFigs[i]].superFamily] += 1 / propCount;
     }
 
     // go through figures and build proposals
     for (let i = 0; i < figsInProposals; i++) {
-        const f = figures[realFigs[i]];
+        const f = OA.figures[realFigs[i]];
         // shuffle proposals on every figure so we don't start by adding
         // everything to the same proposal
         proposals = shuffle(proposals);
@@ -12655,9 +12669,9 @@ function createFigureProposals() {
                     (p.sf[f.superFamily] < superFamilyRatio[f.superFamily]))) {
                     // match at the beginning of proposal
                     if (!p.length || // always add to empty proposal
-                        (fig[f.figNr].entryExit[1] === fig[realFigs[p.figures[0]].figNr].entryExit[0]) ||
+                        (OA.fig[f.figNr].entryExit[1] === OA.fig[realFigs[p.figures[0]].figNr].entryExit[0]) ||
                         ((matchType == 2) &&
-                            (fig[f.figNr].entryExit[1] + fig[realFigs[p.figures[0]].figNr].entryExit[0]).match(/^(n[hl]|N[HL]|[hl]n|[HL]N)$/)) ||
+                            (OA.fig[f.figNr].entryExit[1] + OA.fig[realFigs[p.figures[0]].figNr].entryExit[0]).match(/^(n[hl]|N[HL]|[hl]n|[HL]N)$/)) ||
                         (matchType == 3)) {
                         p.figures.unshift(i);
                         // add superFamily
@@ -12665,9 +12679,9 @@ function createFigureProposals() {
                         match = true;
                     } else
                         // match at the end of proposal
-                        if ((fig[f.figNr].entryExit[0] === fig[realFigs[p.figures.slice(-1)].figNr].entryExit[1]) ||
+                        if ((OA.fig[f.figNr].entryExit[0] === OA.fig[realFigs[p.figures.slice(-1)].figNr].entryExit[1]) ||
                             ((matchType == 2) &&
-                                (fig[f.figNr].entryExit[0] + fig[realFigs[p.figures.slice(-1)].figNr].entryExit[1]).match(/^(n[hl]|N[HL]|[hl]n|[HL]N)$/))) {
+                                (OA.fig[f.figNr].entryExit[0] + OA.fig[realFigs[p.figures.slice(-1)].figNr].entryExit[1]).match(/^(n[hl]|N[HL]|[hl]n|[HL]N)$/))) {
                             p.figures.push(i);
                             // add superFamily
                             p.sf[f.superFamily]++;
@@ -12696,13 +12710,13 @@ function createFigureProposals() {
         propK,
         string;
 
-    $('proposalsTotalK').innerHTML = userText.proposalsTotalK;
-    sequenceText.innerHTML = '';
+    $('proposalsTotalK').innerHTML = OA.userText.proposalsTotalK;
+    OA.sequenceText.innerHTML = '';
     proposals.forEach ((p) => {
         propK = 0;
         string = "";
         p.figures.forEach ((pf) => {
-            const f = figures[realFigs[pf]];
+            const f = OA.figures[realFigs[pf]];
             if (f.comments || f.unknownFigureLetter) string += '"' +
                 (f.unknownFigureLetter ? '@' + f.unknownFigureLetter : '') +
                 (f.comments ? f.comments : '') + '" ';
@@ -12712,15 +12726,15 @@ function createFigureProposals() {
         $('proposalsTotalK').innerHTML += propK +
             '&nbsp;&nbsp;'
         content += string.trim() + '\n';
-        sequenceText.innerHTML += string;
+        OA.sequenceText.innerHTML += string;
     });
 
     $('proposals').textContent = content;
 
     // set Grid rendering options
-    activeSequence.figures = [];
+    OA.activeSequence.figures = [];
     const
-        savedText = activeSequence.text,
+        savedText = OA.activeSequence.text,
         savedOrder = $('gridOrderBy').value;
 
     $('gridOrderBy').value = 'seqNr';
@@ -12737,8 +12751,8 @@ function createFigureProposals() {
     svg.setAttribute('height', h);
 
     // restore normal Grid view
-    activeSequence.figures = [];
-    activeSequence.text = sequenceText.innerHTML = savedText;
+    OA.activeSequence.figures = [];
+    OA.activeSequence.text = OA.sequenceText.innerHTML = savedText;
     $('gridOrderBy').value = savedOrder;
 
     checkSequenceChanged(true);
@@ -12749,8 +12763,8 @@ function createFigureProposals() {
 function makeFree() {
     // set sizes
     var
-        cellW = platform.smallMobile ? 100 : 120,
-        cellH = platform.smallMobile ? 80 : 100,
+        cellW = OA.platform.smallMobile ? 100 : 120,
+        cellH = OA.platform.smallMobile ? 80 : 100,
         div = $('fuSequence'),
         subseqString = '',
         sub = 1,     // current subsequence number
@@ -12765,7 +12779,7 @@ function makeFree() {
         totalK = 0,
         freeFigures = 0;
 
-    Direction = 0;
+    OA.direction = 0;
 
     // make sure the sequence is shown
     document.body.classList.add('fuDesigner');
@@ -12830,19 +12844,19 @@ function makeFree() {
     function endSubseq(id, string) {
         // build END block
         const td = getTd();
-        if (figures[id - 1] && (figures[id - 1].exitAtt !== undefined)) {
+        if (OA.figures[id - 1] && (OA.figures[id - 1].exitAtt !== undefined)) {
             const svg = newSvg();
             td.appendChild(svg);
             // set X and Y to 0 to prevent roundoff errors in figure drawing
             // and scaling
-            X = Y = 0;
-            Attitude = figures[id - 1].exitAtt;
-            Direction = figures[id - 1].exitDir;
-            NegLoad = ((Attitude > 90) && (Attitude < 270)) ? 1 : 0;
+            OA.X = OA.Y = 0;
+            OA.attitude = OA.figures[id - 1].exitAtt;
+            OA.direction = OA.figures[id - 1].exitDir;
+            OA.negLoad = ((OA.attitude > 90) && (OA.attitude < 270)) ? 1 : 0;
 
-            figures[id].paths = buildShape('Line', [6]);
-            figures[id].paths = buildShape('FigStop', false, figures[id].paths);
-            figures[id].paths = buildShape('FigStop', true, figures[id].paths);
+            OA.figures[id].paths = buildShape('Line', [6]);
+            OA.figures[id].paths = buildShape('FigStop', false, OA.figures[id].paths);
+            OA.figures[id].paths = buildShape('FigStop', true, OA.figures[id].paths);
             drawFullFigure(id, false, svg);
             const thisFig = svg.getElementById('figure' + id);
             const bBox = thisFig.getBBox();
@@ -12861,13 +12875,13 @@ function makeFree() {
             svg.setAttribute('height', cellH);
         }
 
-        if (!additionalFig.max) {
+        if (!OA.additionalFig.max) {
             // add Total K
             const div = document.createElement('div');
             div.classList.add('UFKInFigure');
             div.innerHTML = 'Total K: ' + totalK;
-            if (activeRules && checkCatGroup.k && checkCatGroup.k.max) {
-                div.innerHTML += '<br />Max K: ' + checkCatGroup.k.max;
+            if (OA.activeRules && OA.checkCatGroup.k && OA.checkCatGroup.k.max) {
+                div.innerHTML += '<br />Max K: ' + OA.checkCatGroup.k.max;
             }
             td.appendChild(div);
         }
@@ -12919,26 +12933,26 @@ function makeFree() {
     }
 
     // make sure the sequence ends with 'eu' marked as subSequence
-    if (figures.slice(-1) && figures[figures.length-1].string == 'eu') {
-        figures.pop();
+    if (OA.figures.slice(-1) && OA.figures[OA.figures.length-1].string == 'eu') {
+        OA.figures.pop();
     }
-    figures.push({ 'string': 'eu', 'subSequence': true });
+    OA.figures.push({ 'string': 'eu', 'subSequence': true });
 
     // check for multiple use of same letter
-    const usedLetters = figures.reduce((acc, f) => {
+    const usedLetters = OA.figures.reduce((acc, f) => {
         const l = f.unknownFigureLetter;
         if (!acc[l]) acc[l] = 0;
         if (f.aresti) acc[l]++;
         return acc;
     }, {});
     // draw all real figures
-    figures.forEach ((f, i) => {
+    OA.figures.forEach ((f, i) => {
 
         f.subSeq = sub;
         if (f.aresti) {
             var td = getTd();
             addRemoveFigureButton(td);
-            if (!additionalFig.max) totalK += addFigureK(td, f);
+            if (!OA.additionalFig.max) totalK += addFigureK(td, f);
             td.classList.add('fuFig' + i);
 
             var svg = newSvg();
@@ -12946,7 +12960,7 @@ function makeFree() {
 
             // set different class for Additional and Free figures
             if (f.unknownFigureLetter === 'L') {
-                if (additionalFig && (usedLetters.L > additionalFig.max)) {
+                if (OA.additionalFig && (usedLetters.L > OA.additionalFig.max)) {
                     td.classList.add('additionalFigureMulti');
                 } else {
                     td.classList.add('additionalFigure');
@@ -12964,14 +12978,14 @@ function makeFree() {
 
             // append every figure with it's letter to subseqString (no letter
             // needed for Free figures in Free Known)
-            if (!additionalFig.max && !f.unknownFigureLetter) {
+            if (!OA.additionalFig.max && !f.unknownFigureLetter) {
                 subseqString += f.string + ' ';
             } else {
                 subseqString += '"@' + f.unknownFigureLetter + '" ' + f.string + ' ';
             }
             // set X and Y to 0 to prevent roundoff errors in figure drawing
             // and scaling
-            X = Y = 0;
+            OA.X = OA.Y = 0;
             drawFullFigure(i, false, svg);
             var bBox = f.bBox;
             var thisFig = svg.getElementById('figure' + i);
@@ -13005,23 +13019,23 @@ function makeFree() {
             }
 
             prevSub = sub;
-        } else if (f.subSequence && (i > 0) && (figures[i-1].aresti || figures[i-1].string == 'X')) {
+        } else if (f.subSequence && (i > 0) && (OA.figures[i-1].aresti || OA.figures[i-1].string == 'X')) {
             // new subsequence, end previous
             table = endSubseq(i, '"' + sub + '" ' + subseqString);
             div.appendChild(table);
             // set subSeq number of new subsequence
-            figures[i].subSeq = sub;
+            OA.figures[i].subSeq = sub;
         } else if (/^[LX]$/.test(f.string)) {
             // undefined Additional figure
             var td = getTd();
-            td.innerHTML = userText[(f.string === 'L') ? 'additional' : 'free'];
+            td.innerHTML = OA.userText[(f.string === 'L') ? 'additional' : 'free'];
 
             addRemoveFigureButton(td);
             td.classList.add('fuFig' + i, 'additionalFigure');
 
             freeCellAddHandlers(td);
             // append Additional to subseqString
-            subseqString += (additionalFig.max ? '"@L" L ' : 'X ');
+            subseqString += (OA.additionalFig.max ? '"@L" L ' : 'X ');
 
             prevSub = sub;
         }
@@ -13033,22 +13047,22 @@ function makeFree() {
     var td = freeCell(sub, 1, 1);
     freeCellAddHandlers(td);
     tr.appendChild(td);
-    td.innerHTML = (sub === 1) ? userText.dropFigureHere : userText.newCopySubsequence;
+    td.innerHTML = (sub === 1) ? OA.userText.dropFigureHere : OA.userText.newCopySubsequence;
     td.classList.add('fuNewSub');
 
     // mark figures in fuFiguresTable
-    (figureLetters + (additionalFig.max ? 'L' : 'X')).split('').forEach (l => {
+    (OA.figureLetters + (OA.additionalFig.max ? 'L' : 'X')).split('').forEach (l => {
         let td = $('fu' + l);
         // check if td exists to prevent failing ungracefully
         if (td) {
             td.classList.value = ''; // Clear all classes
-            let match = sequenceText.innerText.match(RegExp(`"@${l}"`, 'g'));
+            let match = OA.sequenceText.innerText.match(RegExp(`"@${l}"`, 'g'));
             if (match) {
                 td.classList.add('figUsed');
                 if (l === 'L') {
-                    td.firstChild.innerHTML = `${userText.additional}<br />${match.length}x`;
+                    td.firstChild.innerHTML = `${OA.userText.additional}<br />${match.length}x`;
                 }
-                if (match.length > ((l === 'L' && additionalFig.max) ? additionalFig.max : 1)) {
+                if (match.length > ((l === 'L' && OA.additionalFig.max) ? OA.additionalFig.max : 1)) {
                     td.classList.add('figUsedMulti');
                 }
             } else if (l === 'X') {
@@ -13056,15 +13070,15 @@ function makeFree() {
                 // set Free figure defaults. Should be overridden by rules
                 let freeFigMin = 5;
                 let freeFigMax = 5;
-                if (activeRules && checkCatGroup && checkCatGroup.basefig) {
-                    freeFigMin = checkCatGroup.basefig.min - figureLetters.length;
-                    freeFigMax = checkCatGroup.basefig.max - figureLetters.length;
+                if (OA.activeRules && OA.checkCatGroup && OA.checkCatGroup.basefig) {
+                    freeFigMin = OA.checkCatGroup.basefig.min - OA.figureLetters.length;
+                    freeFigMax = OA.checkCatGroup.basefig.max - OA.figureLetters.length;
                 }
                 if ((freeFigures < freeFigMin) || (freeFigures > freeFigMax)) {
                     td.classList.add('figUsedMulti');
                 }
-                td.firstChild.innerHTML = `${userText.free}<br />${freeFigures} / ${freeFigMax}`;
-            } else if (l === 'L') td.firstChild.innerHTML = userText.additional;
+                td.firstChild.innerHTML = `${OA.userText.free}<br />${freeFigures} / ${freeFigMax}`;
+            } else if (l === 'L') td.firstChild.innerHTML = OA.userText.additional;
         }
     });
 }
@@ -13073,7 +13087,7 @@ function makeFree() {
 // in describing text form. Can be used by a caller
 function makeFormDescription(svg) {
     var text = '<div style="width: 800px;height: 990px;column-count: 3;">';
-    figures.forEach ((f) => {
+    OA.figures.forEach ((f) => {
         if (f.aresti) {
             text += '<div style="break-inside: avoid;"><strong>Figure ' + f.seqNr + '</strong><ol>';
             f.description.forEach ((d) => { text += '<li>' + d + '</li>'; });
@@ -13089,7 +13103,7 @@ function makeFormDescription(svg) {
 function addFormElements(form) {
     // Find out how big the SVG has become and adjust margins
     var
-        bBox = SVGRoot.getElementById('sequence').getBBox(),
+        bBox = OA.SVGRoot.getElementById('sequence').getBBox(),
         x = parseInt(bBox.x),
         y = parseInt(bBox.y) - 40,
         w = parseInt(bBox.width),
@@ -13100,27 +13114,27 @@ function addFormElements(form) {
         makeMiniFormAScreen();
         // Add a transparent rectangle around the figure on screen to
         // prevent rescaling when handles are shown on a selected figure
-        if ($('showHandles').checked && (/^[BC]/.test(activeForm))) {
-            SVGRoot.getElementById('sequence').childNodes.forEach (group => {
+        if ($('showHandles').checked && (/^[BC]/.test(OA.activeForm))) {
+            OA.SVGRoot.getElementById('sequence').childNodes.forEach (group => {
                 let bBox = group.getBBox();
                 drawRectangle (
-                    bBox.x - (platform.touch ? 16 : 8),
+                    bBox.x - (OA.platform.touch ? 16 : 8),
                     bBox.y - 20,
-                    bBox.width + (platform.touch ? 48 : 24),
-                    bBox.height + (platform.touch ? 32 : 32),
+                    bBox.width + (OA.platform.touch ? 48 : 24),
+                    bBox.height + (OA.platform.touch ? 32 : 32),
                     'stroke: none; fill: none'
                 );
             });
         }
     } else {
         // Add mini Form A, but only to Form B or C when miniFormA is set
-        if (/^[BC]/.test(form) && miniFormA) {
-            var miniFormASize = makeMiniFormA((w + x) + 20, y + 50, miniFormA === 'tiny');
+        if (/^[BC]/.test(form) && OA.miniFormA) {
+            var miniFormASize = makeMiniFormA((w + x) + 20, y + 50, OA.miniFormA === 'tiny');
         }
 
         // Draw wind arrow on Form B and C
         if (/^B/.test(form)) {
-            drawWind((w + x) + (miniFormA ? miniFormASize.width + 20 : 0), y, 1);
+            drawWind((w + x) + (OA.miniFormA ? miniFormASize.width + 20 : 0), y, 1);
         } else if (/^C/.test(form)) {
             drawWind(x, y, -1);
         }
@@ -13128,12 +13142,12 @@ function addFormElements(form) {
 
     // Set optimal sequence area size and check if the sequence is not exceeding it
     // SmallMobile code is not working correctly yet in 2023.1.1. Keep for later update.
-    if ($('showOptiSeqArea').checked && /^[BC]/.test(form) && !platform.smallMobile) {
+    if ($('showOptiSeqArea').checked && /^[BC]/.test(form) && !OA.platform.smallMobile) {
         const
             optArea = $('optimalSequenceArea'),
-            optWidth = (formStyle == 'civa') ? 561 : 605,
-            optHeight = (formStyle == 'civa') ? 1080 : 1090,
-            scaleSvg = platform.smallMobile ? Math.min((window.innerWidth - 8) / (w + 5), 2) : 1;
+            optWidth = (OA.formStyle == 'civa') ? 561 : 605,
+            optHeight = (OA.formStyle == 'civa') ? 1080 : 1090,
+            scaleSvg = OA.platform.smallMobile ? Math.min((window.innerWidth - 8) / (w + 5), 2) : 1;
 
         optArea.classList.remove('noDisplay');
         optArea.style.width = `${optWidth * scaleSvg}px`;
@@ -13148,12 +13162,12 @@ function addFormElements(form) {
     // Resize svg if we are smallMobile, to a max factor 2
     // Do this with a tiny delay to allow miniFormA to draw and size
     // to be determined
-    if (platform.smallMobile) {
+    if (OA.platform.smallMobile) {
         setTimeout(e => {
-            const scaleSvg = platform.smallMobile ?
+            const scaleSvg = OA.platform.smallMobile ?
                 Math.min((window.innerWidth - $('miniFormAContainer').getBoundingClientRect().width - 16) / (w + 5), 2) : 1;
-            SVGRoot.setAttribute("width", scaleSvg * (w + 5));
-            SVGRoot.setAttribute("height", scaleSvg * (h + 5));
+            OA.SVGRoot.setAttribute("width", scaleSvg * (w + 5));
+            OA.SVGRoot.setAttribute("height", scaleSvg * (h + 5));
         }, 1);
     }
 }
@@ -13162,8 +13176,8 @@ function addFormElements(form) {
 // to alertMsgs and alertMsgRules
 function addAlertsToAlertMsgs(data) {
     data.alertMsgs.forEach ((a) => {
-        alertMsgs.push(a);
-        alertMsgRules[a] = data.alertMsgRules[a];
+        OA.alertMsgs.push(a);
+        OA.alertMsgRules[a] = data.alertMsgRules[a];
     });
 }
 
@@ -13179,27 +13193,27 @@ function displayAlerts() {
         // will be shown first as '(' comes before all letters
         // However, during sorting we change (x) to (0x) to assure figures
         // below 10 are shown before later figures
-        alertMsgs.sort(function (a, b) {
+        OA.alertMsgs.sort(function (a, b) {
             return (
                 a.replace(/^\((\d[\),])/, '(0$1') < b.replace(/^\((\d[\),])/, '(0$1') ? -1 : 1
             );
         });
         // Add a message to the top to warn if no rules are loaded
-        if (!activeRules) alertMsgs.unshift(userText.noRules);
+        if (!OA.activeRules) OA.alertMsgs.unshift(OA.userText.noRules);
         // Set box color of figures in Grid mode to normal before
         // checking errors later
-        if (/^G/.test (activeForm)) {
-            for (const box of SVGRoot.getElementsByClassName('figureBox')) {
-                box.style = style['formLine'];
+        if (/^G/.test (OA.activeForm)) {
+            for (const box of OA.SVGRoot.getElementsByClassName('figureBox')) {
+                box.style = OA.style['formLine'];
             }
         }
         // Display messages
-        alertMsgs.forEach ((a) => {
+        OA.alertMsgs.forEach ((a) => {
             const span = document.createElement('span');
             span.innerHTML = a;
-            if (alertMsgRules[a]) {
+            if (OA.alertMsgRules[a]) {
                 const div = document.createElement('div');
-                div.innerHTML = alertMsgRules[a];
+                div.innerHTML = OA.alertMsgRules[a];
                 span.appendChild(div);
                 span.classList.add('alertMsgRule');
             }
@@ -13207,14 +13221,14 @@ function displayAlerts() {
             // use <br> because sequence check log uses simple formatting
             container.appendChild(document.createElement('br'));
             // Mark figures with alerts with a red box in Grid mode
-            if (/^G/.test (activeForm) && /^\(\d+\)/.test(a)) {
-                const box = SVGRoot.getElementById (`figure${a.match(/\d+/)[0]}-box`);
-                if (box) box.style = style['corr'];
+            if (/^G/.test (OA.activeForm) && /^\(\d+\)/.test(a)) {
+                const box = OA.SVGRoot.getElementById (`figure${a.match(/\d+/)[0]}-box`);
+                if (box) box.style = OA.style['corr'];
             }
         });
         // Clear all alerts
-        alertMsgs = [];
-        alertMsgRules = {};
+        OA.alertMsgs = [];
+        OA.alertMsgRules = {};
     }
 }
 
@@ -13224,16 +13238,16 @@ function draw() {
     rebuildSequenceSvg();
     // reset all drawing variables to default values
     // firstFigure is disabled in Free (Un)known designer
-    firstFigure = (activeForm !== 'FU') ? true : false;
-    Attitude = X = Y = 0;
-    if (/^[CL]/.test(activeForm)) {
-        goRight = false;
+    OA.firstFigure = (OA.activeForm !== 'FU') ? true : false;
+    OA.attitude = OA.X = OA.Y = 0;
+    if (/^[CL]/.test(OA.activeForm)) {
+        OA.goRight = false;
         setYAxisOffset(180 - yAxisOffsetDefault);
-        Direction = 180;
+        OA.direction = 180;
     } else {
-        goRight = true;
+        OA.goRight = true;
         setYAxisOffset(yAxisOffsetDefault);
-        Direction = 0;
+        OA.direction = 0;
     }
     // get current numberInCircle setting
     //changeRollFontSize ($('rollFontSize').value);
@@ -13244,7 +13258,7 @@ function draw() {
     // By default, don't show optimalSequenceArea. Will be activated on form B and C
     $('optimalSequenceArea').classList.add('noDisplay');
     // Draw requested form
-    switch (activeForm) {
+    switch (OA.activeForm) {
         case 'A':
             makeFormA();
             break;
@@ -13265,11 +13279,11 @@ function draw() {
             break;
         default:
             makeFormGrid($('gridColumns').value,
-                platform.smallMobile ? 240 * Math.sqrt($('gridColumns').value) : false);
+                OA.platform.smallMobile ? 240 * Math.sqrt($('gridColumns').value) : false);
     }
 
     // check if selectedFigure.id is still valid
-    if (!figures[selectedFigure.id]) selectFigure(false);
+    if (!OA.figures[OA.selectedFigure.id]) selectFigure(false);
 
     // Adjust position of mini Form A    
     adjustMiniFormAPosition();
@@ -13278,9 +13292,9 @@ function draw() {
 // virtualKeyboard shows or hides the virtual keyboard for
 // special keys for touch devices, except on small mobile
 function virtualKeyboard(e) {
-    e.hasfocus = (document.activeElement === sequenceText) ? true : false;
-    if (platform.touch && platform.mobile && !platform.smallMobile) {
-        $('virtualKeyboard').classList.toggle ('noDisplay', document.activeElement !== sequenceText);
+    e.hasfocus = (document.activeElement === OA.sequenceText) ? true : false;
+    if (OA.platform.touch && OA.platform.mobile && !OA.platform.smallMobile) {
+        $('virtualKeyboard').classList.toggle ('noDisplay', document.activeElement !== OA.sequenceText);
     }
 }
 
@@ -13288,7 +13302,7 @@ function virtualKeyboard(e) {
 // clicked
 function clickVirtualKeyboard(e) {
     // remove blur handler until clicking complete
-    sequenceText.removeEventListener('blur', virtualKeyboard);
+    OA.sequenceText.removeEventListener('blur', virtualKeyboard);
 
     const key = e.target.textContent;
     if (key.length === 1) {
@@ -13298,15 +13312,15 @@ function clickVirtualKeyboard(e) {
             e.target.classList.remove('clicked');
         }, 1000);
 
-        const range = saveSelection(sequenceText);
+        const range = saveSelection(OA.sequenceText);
 
-        sequenceText.innerText = sequenceText.innerText.substring(0, range.start) +
-            key + sequenceText.innerText.substring(range.end);
+        OA.sequenceText.innerText = OA.sequenceText.innerText.substring(0, range.start) +
+            key + OA.sequenceText.innerText.substring(range.end);
         checkSequenceChanged();
 
         range.start++;
         range.end = range.start;
-        restoreSelection(sequenceText, range);
+        restoreSelection(OA.sequenceText, range);
     }
 }
 
@@ -13314,37 +13328,37 @@ function clickVirtualKeyboard(e) {
 // released
 function releaseVirtualKeyboard(e) {
     // restore blur handler
-    sequenceText.addEventListener(
+    OA.sequenceText.addEventListener(
         'blur',
         virtualKeyboard,
         false);
-    sequenceText.focus();
+    OA.sequenceText.focus();
     e.target.classList.remove('clicked');
 }
 
 // updateSequenceText updates the sequence text and keeps caret location
 function updateSequenceText(string) {
-    if (document.activeElement === sequenceText) {
+    if (document.activeElement === OA.sequenceText) {
         // focussed, maintain caret position
         let
-            range = saveSelection(sequenceText),
+            range = saveSelection(OA.sequenceText),
             selStart = range.start,
             selEnd = range.end;
 
         // remove all line breaks from the sequence input field
-        sequenceText.innerHTML = string;
+        OA.sequenceText.innerHTML = string;
 
         // put caret back in correct place
         range = document.createRange();
         let sel = window.getSelection();
 
-        range.setStart(sequenceText.firstChild, selStart);
-        range.setEnd(sequenceText.firstChild, selEnd);
+        range.setStart(OA.sequenceText.firstChild, selStart);
+        range.setEnd(OA.sequenceText.firstChild, selEnd);
         sel.removeAllRanges();
         sel.addRange(range);
     } else {
         // not focussed, just replace
-        sequenceText.innerHTML = string;
+        OA.sequenceText.innerHTML = string;
     }
 }
 
@@ -13354,30 +13368,30 @@ function updateSequenceText(string) {
 function checkSequenceChanged(force) {
     var selStart = 0;
 
-    if (document.activeElement === sequenceText) {
-        var range = saveSelection(sequenceText);
+    if (document.activeElement === OA.sequenceText) {
+        var range = saveSelection(OA.sequenceText);
         selStart = range.start;
     }
 
-    if (/(\r\n|\n|\r)/gm.test(sequenceText.innerHTML)) {
-        updateSequenceText(sequenceText.innerHTML.replace(/(\r\n|\n|\r)/gm, ' '));
+    if (/(\r\n|\n|\r)/gm.test(OA.sequenceText.innerHTML)) {
+        updateSequenceText(OA.sequenceText.innerHTML.replace(/(\r\n|\n|\r)/gm, ' '));
     }
 
     var selectFigureId = false;
 
     // whenever the sequence is empty, clear the filename
-    if (sequenceText.innerText == '') updateSaveFilename();
+    if (OA.sequenceText.innerText == '') updateSaveFilename();
 
     // Prevent OpenAero from being left unintentionally
-    if (activeSequence.text != sequenceText.innerText) {
+    if (OA.activeSequence.text != OA.sequenceText.innerText) {
         setSequenceSaved(false);
     }
 
-    if ((activeSequence.text != sequenceText.innerText.replace(/\u00a0/g, ' ')) || (force === true)) {
+    if ((OA.activeSequence.text != OA.sequenceText.innerText.replace(/\u00a0/g, ' ')) || (force === true)) {
         // reset sequence entry options
         updateSequenceOptions('');
-        activeSequence.text = sequenceText.innerText.replace(/\u00a0/g, ' ');
-        var string = activeSequence.text;
+        OA.activeSequence.text = OA.sequenceText.innerText.replace(/\u00a0/g, ' ');
+        var string = OA.activeSequence.text;
 
         // whenever the string is empty, consider it 'saved'
         if (string === '') setSequenceSaved(true);
@@ -13426,9 +13440,9 @@ function checkSequenceChanged(force) {
                         thisFigure.string = '';
                         // make the selected figure the same as the one selected in
                         // the string, when the string has focus
-                        if (sequenceText.hasfocus) {
+                        if (OA.sequenceText.hasfocus) {
                             if ((selStart >= thisFigure.stringStart) && (selStart < i)) {
-                                if (selectedFigure.id != (figure.length - 1)) {
+                                if (OA.selectedFigure.id != (figure.length - 1)) {
                                     selectFigureId = figure.length - 1;
                                 }
                             }
@@ -13444,13 +13458,13 @@ function checkSequenceChanged(force) {
         }
 
         // save previous figures for ^ > flip check
-        activeSequence.previousFigures = JSON.parse(JSON.stringify(activeSequence.figures));
+        OA.activeSequence.previousFigures = JSON.parse(JSON.stringify(OA.activeSequence.figures));
 
         // Now assign to activeSequence
-        activeSequence.figures = figure;
+        OA.activeSequence.figures = figure;
 
         // Get current scroll position of the sequence
-        var scrollPosition = SVGRoot ? SVGRoot.parentNode.scrollTop : 0;
+        var scrollPosition = OA.SVGRoot ? OA.SVGRoot.parentNode.scrollTop : 0;
 
         // Update activeSequence.xml and storage
         changeSequenceInfo();
@@ -13459,41 +13473,41 @@ function checkSequenceChanged(force) {
         draw();
 
         // scale sequence if zoom is set on mobile
-        if (platform.mobile && (activeForm !== 'FU')) {
-            if (SVGRoot.getAttribute('width') && SVGRoot.getAttribute('height')) {
+        if (OA.platform.mobile && (OA.activeForm !== 'FU')) {
+            if (OA.SVGRoot.getAttribute('width') && OA.SVGRoot.getAttribute('height')) {
                 const zoom = parseInt($('zoom').textContent.match(/\d+/)[0]) / 100;
-                SVGRoot.setAttribute('width', parseInt(SVGRoot.getAttribute('width')) * zoom);
-                SVGRoot.setAttribute('height', parseInt(SVGRoot.getAttribute('height')) * zoom);
+                OA.SVGRoot.setAttribute('width', parseInt(OA.SVGRoot.getAttribute('width')) * zoom);
+                OA.SVGRoot.setAttribute('height', parseInt(OA.SVGRoot.getAttribute('height')) * zoom);
             }
         }
 
         // Select the correct figure when applicable
-        if ((selectFigureId !== false) && (selectedFigure.id !== null)) {
+        if ((selectFigureId !== false) && (OA.selectedFigure.id !== null)) {
             selectFigure(selectFigureId);
         }
 
         // Set the correct scroll position
-        if (SVGRoot) SVGRoot.parentNode.scrollTop = scrollPosition;
+        if (OA.SVGRoot) OA.SVGRoot.parentNode.scrollTop = scrollPosition;
 
         // Update figure editor when a figure is being edited
-        if (selectedFigure.id !== null) updateFigureEditor();
+        if (OA.selectedFigure.id !== null) updateFigureEditor();
 
         // Update marking of figures in figure selector when active
         if ($('figureSelector') && $('figureSelector').classList.contains('active')) {
             markFigures();
         }
-    } else if (document.activeElement === sequenceText) {
+    } else if (document.activeElement === OA.sequenceText) {
         // when no change was made, just check where the caret in the
         // sequence text is and when necessary change selected figure
-        for (let i = 0; i < figures.length; i++) {
-            if ((selStart >= figures[i].stringStart) && (selStart <= figures[i].stringEnd)) {
-                if (figures[i].aresti) {
+        for (let i = 0; i < OA.figures.length; i++) {
+            if ((selStart >= OA.figures[i].stringStart) && (selStart <= OA.figures[i].stringEnd)) {
+                if (OA.figures[i].aresti) {
                     selectFigureId = i;
                 }
                 break;
             }
         }
-        if (selectFigureId != selectedFigure.id) {
+        if (selectFigureId != OA.selectedFigure.id) {
             selectFigure(selectFigureId);
         }
     }
@@ -13501,15 +13515,15 @@ function checkSequenceChanged(force) {
 
 // selectForm selects which Form to show
 function selectForm(form) {
-    activeForm = form;
+    OA.activeForm = form;
     rulesWorker.postMessage({ action: 'activeForm', form: form });
     updateDefaultView();
     // always do a full redraw of the form and figure editor as these may
     // change when switching to or from Grid view
     checkSequenceChanged(true);
 
-    if (selectedFigure.id) updateFigureEditor();
-    if (platform.smallMobile) selectTab('tab-sequenceArea');
+    if (OA.selectedFigure.id) updateFigureEditor();
+    if (OA.platform.smallMobile) selectTab('tab-sequenceArea');
     setFormLayout(form);
     selectFigure(false);
     adjustMiniFormAPosition();
@@ -13527,10 +13541,10 @@ function setFormLayout(form) {
         $('moveControls').classList.remove('hidden');
         $('rotateControls').classList.add('hidden');
     }
-    if (/^G/.test(form) && !platform.smallMobile) {
+    if (/^G/.test(form) && !OA.platform.smallMobile) {
         $('gridInfo').classList.remove('hidden');
-    } else if (form === 'A' && platform.smallMobile) {
-        SVGRoot.style = 'width: 280vw; height: auto;';
+    } else if (form === 'A' && OA.platform.smallMobile) {
+        OA.SVGRoot.style = 'width: 280vw; height: auto;';
     } else {
         $('gridInfo').setAttribute('style', '');
         $('gridInfo').classList.add('hidden');
@@ -13547,27 +13561,27 @@ function flyingMode() {
         // Clear sequence svg
         rebuildSequenceSvg();
         // Add only the figures
-        figures.forEach ((f, i) => { if (f.paths.length) drawFullFigure(i); });
+        OA.figures.forEach ((f, i) => { if (f.paths.length) drawFullFigure(i); });
         // Change the viewBox to make the sequence fit
         let
-            bBox = SVGRoot.getElementById('sequence').getBBox(),
+            bBox = OA.SVGRoot.getElementById('sequence').getBBox(),
             x = parseInt(bBox.x),
             y = parseInt(bBox.y),
             w = parseInt(bBox.width),
             h = parseInt(bBox.height);
-        SVGRoot.setAttribute("viewBox",
+        OA.SVGRoot.setAttribute("viewBox",
             (x - 3) + ' ' + (y - 3) + ' ' + (w + 5) + ' ' + (h + 5));
-        $('flyingModeSequence').appendChild(SVGRoot.cloneNode(true));
+        $('flyingModeSequence').appendChild(OA.SVGRoot.cloneNode(true));
         $('flyingModeSequence').lastChild.id = 'flyingModeSequenceForm' + form;
     });
-    activeForm = 'F';
+    OA.activeForm = 'F';
     // start keep awaking (Cordova only)
     if (window.plugins && window.plugins.insomnia) window.plugins.insomnia.keepAwake();
 }
 
 // switchWindArrow switches the wind direction
 function switchWindArrow() {
-    if (activeForm == 'F') {
+    if (OA.activeForm == 'F') {
         $('flyingModeSequence').style = 'transform: rotateY(90deg)';
         setTimeout(() => {
             $('mainOverlay').classList.toggle('B');
@@ -13575,7 +13589,7 @@ function switchWindArrow() {
             $('flyingModeSequence').style = ''
         }, 150);
     } else {
-        selectForm(activeForm == 'B' ? 'C' : 'B');
+        selectForm(OA.activeForm == 'B' ? 'C' : 'B');
     }
 }
 
@@ -13596,11 +13610,11 @@ function updateDefaultView(queue) {
     if (queue) {
         el.value = 'queue';
     } else {
-        if (/^G/.test(activeForm)) {
+        if (/^G/.test(OA.activeForm)) {
             el.value = 'grid:' + $('gridColumns').value;
-        } else if (activeForm === 'FU') {
+        } else if (OA.activeForm === 'FU') {
             el.value = 'freeUnknown';
-        } else el.value = activeForm;
+        } else el.value = OA.activeForm;
     }
     changeSequenceInfo();
 }
@@ -13613,14 +13627,14 @@ function updateDefaultView(queue) {
 function clearSequence() {
     function clear() {
 
-        if (activeForm !== 'FU') {
+        if (OA.activeForm !== 'FU') {
             // activate empty sequence
             activateXMLsequence();
             // set OpenAero version for saving
             $('oa_version').value = version;
             updateDefaultView();
         } else {
-            sequenceText.innerText = 'eu';
+            OA.sequenceText.innerText = 'eu';
             checkSequenceChanged();
             displayAlerts();
 
@@ -13629,9 +13643,9 @@ function clearSequence() {
 
     }
 
-    if (!sequenceSaved) {
-        confirmBox(userText.sequenceNotSavedWarning,
-            userText.clearSequence, clear);
+    if (!OA.sequenceSaved) {
+        confirmBox(OA.userText.sequenceNotSavedWarning,
+            OA.userText.clearSequence, clear);
     } else {
         clear();
     }
@@ -13655,7 +13669,7 @@ function openLogoFile(evt) {
 // programme will load a programme
 function programme() {
     const key = this.id.replace(/^programme-/, '');
-    OLAN.bumpBugCheck = false;
+    OA.OLAN.bumpBugCheck = false;
     updateSaveFilename();
     if (/^<sequence>/.test(library[key])) {
         activateXMLsequence(library[key]);
@@ -13681,9 +13695,9 @@ function openSequence(evt) {
     const e = evt && evt.dataTransfer && evt.dataTransfer.files && evt.dataTransfer.files[0] ?
         evt.dataTransfer.files[0] : $('file').files[0];
     // Check if the current sequence was saved. If not, present a dialog
-    if (!sequenceSaved) {
-        confirmBox(userText.sequenceNotSavedWarning,
-            userText.openSequence, () => { openFile(e, 'Sequence') });
+    if (!OA.sequenceSaved) {
+        confirmBox(OA.userText.sequenceNotSavedWarning,
+            OA.userText.openSequence, () => { openFile(e, 'Sequence') });
     } else openFile(e, 'Sequence');
 }
 
@@ -13745,10 +13759,10 @@ function openFile(file, handler, params) {
 // removeFileListFile removes a file from fileList
 function removeFileListFile(el, callback) {
     const container = el.parentNode.parentNode;
-    multi.fileList.splice(el.id.replace(/^removeFileListFile/, ''), 1);
+    OA.multi.fileList.splice(el.id.replace(/^removeFileListFile/, ''), 1);
     // we need to rebuild because splice changes the indexes
     clearFileListContainer(container);
-    multi.fileList.forEach ((f, i) => { addToFileList(i, container, callback); });
+    OA.multi.fileList.forEach ((f, i) => { addToFileList(i, container, callback); });
 }
 
 // checkMultiDialog shows or hides the multiple sequence check dialog
@@ -13759,12 +13773,12 @@ function checkMultiDialog(show) {
 
     if (show) {
         // clear the file list
-        multi.fileList = [];
-        multi.processing = false;
+        OA.multi.fileList = [];
+        OA.multi.processing = false;
         clearFileListContainer($('fileDropFiles'));
         $('t_checkSequences').classList.add('disabled');
         $('checkMulti').classList.remove('noDisplay');
-        $('multiCurrentRules').innerHTML = activeRules ? activeRules.description.replace(/ /g, '&nbsp;') : userText.none;
+        $('multiCurrentRules').innerHTML = OA.activeRules ? OA.activeRules.description.replace(/ /g, '&nbsp;') : OA.userText.none;
     } else {
         $('checkMulti').classList.add('noDisplay');
     }
@@ -13797,13 +13811,13 @@ function updateFileList(evt, el, callback) {
         for (let i = 0; i < files.length; i++) {
             (function () {
                 // check if the file is not already in fileList
-                for (let j = 0; j < multi.fileList.length; j++) {
+                for (let j = 0; j < OA.multi.fileList.length; j++) {
                     // check for lastModfiedDate, name and size as full path is not
                     // available
-                    if ((files[i].lastModifiedDate.toString() === multi.fileList[j].lastModifiedDate.toString()) &&
-                        (files[i].name === multi.fileList[j].name) &&
-                        (files[i].size === multi.fileList[j].size)) {
-                        console.log('Duplicate, not adding: ' + multi.fileList[j].name);
+                    if ((files[i].lastModifiedDate.toString() === OA.multi.fileList[j].lastModifiedDate.toString()) &&
+                        (files[i].name === OA.multi.fileList[j].name) &&
+                        (files[i].size === OA.multi.fileList[j].size)) {
+                        console.log('Duplicate, not adding: ' + OA.multi.fileList[j].name);
                         return;
                     }
                 }
@@ -13827,10 +13841,10 @@ function loadedFileList(e, params) {
         // only add to fileList when a valid sequence was detected
         if (sequence) {
             params.file.sequence = sequence;
-            multi.fileList.push(params.file);
-            addToFileList(multi.fileList.length - 1, params.container, params.callback);
+            OA.multi.fileList.push(params.file);
+            addToFileList(OA.multi.fileList.length - 1, params.container, params.callback);
         } else {
-            alertBox(userText.multiNoSequence);
+            alertBox(OA.userText.multiNoSequence);
         }
     });
 }
@@ -13853,7 +13867,7 @@ function addToFileList(id, container, callback) {
         callback();
     }, false);
     div.appendChild(i);
-    div.appendChild(document.createTextNode(multi.fileList[id].name));
+    div.appendChild(document.createTextNode(OA.multi.fileList[id].name));
     container.appendChild(div);
     callback();
     // adjust image size for saving
@@ -13864,7 +13878,7 @@ function addToFileList(id, container, callback) {
 // multi field or adding files with file chooser
 function updateCheckMulti(evt) {
     updateFileList(evt, $('fileDropFiles'), () => {
-        $('t_checkSequences').classList.toggle ('disabled', !multi.fileList.length);
+        $('t_checkSequences').classList.toggle ('disabled', !OA.multi.fileList.length);
     });
 }
 
@@ -13879,12 +13893,12 @@ function checkMulti() {
     if (this.classList.contains('disabled')) return;
 
     // save active sequence
-    multi.savedSeq = activeSequence.xml;
-    multi.processing = 'check';
+    OA.multi.savedSeq = OA.activeSequence.xml;
+    OA.multi.processing = 'check';
 
     infoBox(
         '<span id="checkMultiCounter"></span>',
-        userText.checkMulti);
+        OA.userText.checkMulti);
 
     // hide dialog screen
     checkMultiDialog();
@@ -13897,16 +13911,16 @@ function checkMulti() {
 // loaded for multiple sequence checking
 function checkSequenceMulti(body) {
     $('checkMultiCounter').innerHTML = sprintf(
-        userText.checkMultiCounter, multi.fileList[0].name, multi.fileList.length);
+        OA.userText.checkMultiCounter, OA.multi.fileList[0].name, OA.multi.fileList.length);
 
-    console.log('Checking: ' + multi.fileList[0].name);
+    console.log('Checking: ' + OA.multi.fileList[0].name);
     // create log entry
     var pre = document.createElement('pre');
     body.appendChild(pre);
-    pre.appendChild(document.createTextNode('File: ' + multi.fileList[0].name + '\n'));
+    pre.appendChild(document.createTextNode('File: ' + OA.multi.fileList[0].name + '\n'));
 
-    if (multi.fileList[0].sequence) {
-        activateXMLsequence(multi.fileList[0].sequence, true);
+    if (OA.multi.fileList[0].sequence) {
+        activateXMLsequence(OA.multi.fileList[0].sequence, true);
 
         var callback = function (data) {
             // clear any alert boxes. Errors are shown in the log.
@@ -13930,15 +13944,15 @@ function checkSequenceMulti(body) {
                 div.firstChild.remove();
 
                 if (div.innerHTML == '') {
-                    if (activeRules) {
-                        pre.appendChild(document.createTextNode('Rules: ' + activeRules.description + '\n'));
-                        pre.appendChild(document.createTextNode(userText.sequenceCorrect + '\n'));
+                    if (OA.activeRules) {
+                        pre.appendChild(document.createTextNode('Rules: ' + OA.activeRules.description + '\n'));
+                        pre.appendChild(document.createTextNode(OA.userText.sequenceCorrect + '\n'));
                     } else {
-                        pre.appendChild(document.createTextNode(userText.noRules + '\n'));
+                        pre.appendChild(document.createTextNode(OA.userText.noRules + '\n'));
                     }
                 } else {
-                    if (activeRules) {
-                        pre.appendChild(document.createTextNode('Rules: ' + activeRules.description + '\n'));
+                    if (OA.activeRules) {
+                        pre.appendChild(document.createTextNode('Rules: ' + OA.activeRules.description + '\n'));
                     }
                     body.appendChild(div);
                 }
@@ -13950,13 +13964,13 @@ function checkSequenceMulti(body) {
                 '\n--------------------------------------------------------\n'));
 
             // check next file or finalize
-            multi.fileList.shift();
-            if (multi.fileList.length) {
+            OA.multi.fileList.shift();
+            if (OA.multi.fileList.length) {
                 checkSequenceMulti(body);
             } else {
                 // show the check result window
                 alertBox('<div id="logBox">' + body.innerHTML + '</div>',
-                    userText.sequenceCheckLog,
+                    OA.userText.sequenceCheckLog,
                     [{
                         'name': 'copyClipboard', 'function': function () {
                             window.getSelection().selectAllChildren($('logBox'));
@@ -13972,9 +13986,9 @@ function checkSequenceMulti(body) {
                 // restore saved sequence. First unload rules to make sure
                 // reference sequence is correctly loaded from rules
                 rulesWorker.postMessage({ action: 'unloadRules' });
-                activateXMLsequence(multi.savedSeq);
+                activateXMLsequence(OA.multi.savedSeq);
 
-                multi.processing = false;
+                OA.multi.processing = false;
             }
         }
 
@@ -14003,7 +14017,7 @@ function loadedSequence(evt, name) {
     // Obtain the read file data
     loadSequence(evt.target.result, function (xml) {
         if (xml === false) {
-            alertBox(userText.notSequenceFile);
+            alertBox(OA.userText.notSequenceFile);
             return;
         }
 
@@ -14012,9 +14026,9 @@ function loadedSequence(evt, name) {
         activateXMLsequence(xml, true);
 
         // update the sequence if OLAN.sequence was true
-        if (OLAN.sequence) {
-            OLAN.sequence = false;
-            activeSequence.text = '';
+        if (OA.OLAN.sequence) {
+            OA.OLAN.sequence = false;
+            OA.activeSequence.text = '';
             checkSequenceChanged();
         }
 
@@ -14032,22 +14046,22 @@ function loadedQueue(evt) {
         if (fileString === false) return;
 
         // save current sequence
-        const sequence = activeSequence.xml;
+        const sequence = OA.activeSequence.xml;
 
         // clear queue
-        for (let i = fig.length - 1; i >= 0; i--) {
-            if (fig[i]) {
-                if (fig[i].group == 0) {
-                    delete fig[i];
+        for (let i = OA.fig.length - 1; i >= 0; i--) {
+            if (OA.fig[i]) {
+                if (OA.fig[i].group == 0) {
+                    delete OA.fig[i];
                 } else break;
             }
         }
         // put the figures in the queue
         activateXMLsequence(fileString);
 
-        figures.forEach ((f, i) => {
+        OA.figures.forEach ((f, i) => {
             if (f.aresti) {
-                selectedFigure.id = i;
+                OA.selectedFigure.id = i;
                 addToQueue(false);
             }
         });
@@ -14081,10 +14095,10 @@ function loadedSequenceWindows(file, name) {
                 activateXMLsequence(xml, true);
 
                 // update the sequence if OLAN.sequence was true
-                if (OLAN.sequence) {
-                    OLAN.sequence = false;
+                if (OA.OLAN.sequence) {
+                    OA.OLAN.sequence = false;
                     updateSequence(-1, '');
-                    activeSequence.text = '';
+                    OA.activeSequence.text = '';
                     checkSequenceChanged();
                 }
 
@@ -14117,11 +14131,11 @@ function loadSequence(fileString, callback) {
                 const string = steg.decode(image);
                 if (string.match(/^<sequence/)) {
                     // this is an OpenAero sequence, no need to do OLAN checks
-                    OLAN.bumpBugCheck = false;
+                    OA.OLAN.bumpBugCheck = false;
                     callback(string);
                     return;
                 } else {
-                    console.log('*** ' + userText.notSequenceFile);
+                    console.log('*** ' + OA.userText.notSequenceFile);
                     callback(false);
                 }
             }
@@ -14135,7 +14149,7 @@ function loadSequence(fileString, callback) {
 
             if (/^<sequence/.test(fileString)) {
                 // this is an OpenAero sequence, no need to do OLAN checks
-                OLAN.bumpBugCheck = false;
+                OA.OLAN.bumpBugCheck = false;
                 callback(fileString);
                 return;
             }
@@ -14147,13 +14161,13 @@ function loadSequence(fileString, callback) {
         }
     } catch (err) { console.log(err) }
 
-    console.log('*** ' + userText.notSequenceFile);
+    console.log('*** ' + OA.userText.notSequenceFile);
     callback(false);
 }
 
 // OLANtoXML transforms an OLAN file to OpenAero XML
 function OLANtoXML(string) {
-    OLAN.sequence = true;
+    OA.OLAN.sequence = true;
     var activeKey = false;
     var lines = string.split('\n');
     string = '<sequence>';
@@ -14187,7 +14201,7 @@ function OLANtoXML(string) {
     if (activeKey) string += '</' + activeKey + '>';
     // end with current oa_version to prevent some error messages
     string += '<oa_version>' + version + '</oa_version></sequence>';
-    OLAN.bumpBugCheck = true;
+    OA.OLAN.bumpBugCheck = true;
 
     return string;
 }
@@ -14198,7 +14212,7 @@ function activateXMLsequence(xml, noLoadRules) {
     let freeUnknownSequence = '';
 
     // make sure no figure is selected
-    if (selectedFigure.id !== null) selectFigure(false);
+    if (OA.selectedFigure.id !== null) selectFigure(false);
 
     // unlock sequence when locked
     if ($('lock_sequence').value) lockSequence();
@@ -14213,11 +14227,11 @@ function activateXMLsequence(xml, noLoadRules) {
         }
     });
     if (!$('lockContest').classList.contains('locked')) {
-        logoImg = false;
+        OA.logoImg = false;
     }
     // set 'class' to powered by default to provide compatibility with OLAN
     // and older OpenAero versions
-    sportingClass.value = 'powered';
+    OA.sportingClass.value = 'powered';
 
     if (xml) {
         // myElement will hold every entry as a node
@@ -14265,7 +14279,7 @@ function activateXMLsequence(xml, noLoadRules) {
             $('acreg').value = parseAircraft('registration');
         }
 
-        var prevForm = activeForm;
+        var prevForm = OA.activeForm;
         // check for default_view
         var view = $('default_view').value;
         if (view) {
@@ -14273,24 +14287,24 @@ function activateXMLsequence(xml, noLoadRules) {
             switch (view[0]) {
                 case 'grid':
                     $('gridColumns').value = view[1];
-                    activeForm = 'G';
+                    OA.activeForm = 'G';
                     break;
                 case 'queue':
-                    activeForm = 'G';
+                    OA.activeForm = 'G';
                     break;
                 case 'freeUnknown':
-                    freeUnknownSequence = sequenceText.innerText;
-                    sequenceText.innerText = $('fu_figures').value;
-                    activeForm = 'FU';
+                    freeUnknownSequence = OA.sequenceText.innerText;
+                    OA.sequenceText.innerText = $('fu_figures').value;
+                    OA.activeForm = 'FU';
                     break;
                 default:
                     if (('ABC'.indexOf(view[0])) > -1) {
-                        activeForm = view[0];
-                    } else activeForm = 'B';
+                        OA.activeForm = view[0];
+                    } else OA.activeForm = 'B';
             }
-        } else activeForm = 'B';
+        } else OA.activeForm = 'B';
 
-        setFormLayout(activeForm);
+        setFormLayout(OA.activeForm);
 
         var logo = $('logo').value;
         if (logoImages[logo]) selectLogo(logo); else removeLogo();
@@ -14301,10 +14315,10 @@ function activateXMLsequence(xml, noLoadRules) {
     // hide Harmony field for powered
     const el = $('harmonyField');
     if (el) {
-        if (sportingClass.value === 'powered') {
+        if (OA.sportingClass.value === 'powered') {
             el.classList.add('hidden');
             $('harmony').setAttribute('disabled', true);
-        } else if (!activeRules) {
+        } else if (!OA.activeRules) {
             // Activate for glider if no rules are active, otherwise should be set by rules
             el.classList.remove('hidden');
             $('harmony').removeAttribute('disabled');
@@ -14313,13 +14327,13 @@ function activateXMLsequence(xml, noLoadRules) {
 
     // set panel headers correctly
     panelHeader($('activeRules'));
-    panelHeader($('activeContest'), userText.contest);
+    panelHeader($('activeContest'), OA.userText.contest);
 
     // Load rules when applicable and update sequence data
 
     if (!noLoadRules) {
         // restore Reference sequence to previous value
-        $('referenceSequenceString').value = savedReference;
+        $('referenceSequenceString').value = OA.savedReference;
         $('referenceSequenceString').removeAttribute('disabled');
         $('t_referenceSequenceFixed').classList.add('noDisplay');
         rulesWorker.postMessage({
@@ -14335,9 +14349,9 @@ function activateXMLsequence(xml, noLoadRules) {
     // through rulesWorker
     const id = uniqueId();
     workerCallback[id] = function () {
-        if ((activeForm === 'FU') && (prevForm !== 'FU')) {
-            if (!startFuDesigner(true)) activeForm = prevForm;
-        } else if ((activeForm !== 'FU') && (prevForm === 'FU')) {
+        if ((OA.activeForm === 'FU') && (prevForm !== 'FU')) {
+            if (!startFuDesigner(true)) OA.activeForm = prevForm;
+        } else if ((OA.activeForm !== 'FU') && (prevForm === 'FU')) {
             exitFuDesigner(true);
         } else {
             // update sequence
@@ -14347,7 +14361,7 @@ function activateXMLsequence(xml, noLoadRules) {
         // if the loaded sequence was a (partial) Free (Un)known composed
         // sequence, load that now that the figures tab has been loaded
         if (freeUnknownSequence) {
-            sequenceText.innerText = freeUnknownSequence;
+            OA.sequenceText.innerText = freeUnknownSequence;
             checkSequenceChanged();
         } else {
             // lock sequence when applicable
@@ -14372,17 +14386,17 @@ function activateXMLsequence(xml, noLoadRules) {
 // asked if he wants to open it in the Free (Un)known Designer
 function checkFuFiguresFile() {
 
-    let l = figureLetters;
+    let l = OA.figureLetters;
     if (l &&
         !$('lock_sequence').value &&
-        !multi.processing) {
-        for (let i = 0; i < figures.length; i++) {
+        !OA.multi.processing) {
+        for (let i = 0; i < OA.figures.length; i++) {
             // when we find a figure without a letter, or with an incorrect
             // letter (including L), stop and return
-            if (figures[i].aresti) {
-                if (figures[i].unknownFigureLetter &&
-                    (l.indexOf(figures[i].unknownFigureLetter) >= 0)) {
-                    l = l.replace(figures[i].unknownFigureLetter, '');
+            if (OA.figures[i].aresti) {
+                if (OA.figures[i].unknownFigureLetter &&
+                    (l.indexOf(OA.figures[i].unknownFigureLetter) >= 0)) {
+                    l = l.replace(OA.figures[i].unknownFigureLetter, '');
                 } else return;
             }
         }
@@ -14393,7 +14407,7 @@ function checkFuFiguresFile() {
             ref.value = '';
             // add figures including letter AND any sequence options (to make
             // sure direction changers work correctly)
-            figures.forEach ((f) => {
+            OA.figures.forEach ((f) => {
                 if (f.aresti && f.unknownFigureLetter &&
                     (f.unknownFigureLetter !== 'L')) {
                     ref.value += `"@${f.unknownFigureLetter}" ${f.string} `;
@@ -14405,15 +14419,15 @@ function checkFuFiguresFile() {
             $('referenceSequenceDialog').classList.add('noDisplay');
 
             confirmBox(
-                userText[(additionalFig.max ? 'FUstartOnLoad' : 'FKstartOnLoad')],
-                userText.openSequence +
+                OA.userText[(OA.additionalFig.max ? 'FUstartOnLoad' : 'FKstartOnLoad')],
+                OA.userText.openSequence +
                 ' <span class="info" id="manual.html_free_unknown_designer">' +
                 '<i class="material-icons info">info</i></span>',
                 function () { startFuDesigner(true) }
             );
             $('manual.html_free_unknown_designer').addEventListener('mousedown',
                 function () {
-                    helpWindow('doc/manual.html#free_unknown_designer', userText.fuDesigner);
+                    helpWindow('doc/manual.html#free_unknown_designer', OA.userText.fuDesigner);
                 }
             );
         }
@@ -14448,20 +14462,20 @@ function checkOpenAeroVersion() {
 
     // before 1.2.3
     if (oa_version.value == '') {
-        if (sequenceText.innerText != '') alerts += userText.warningPre123;
+        if (OA.sequenceText.innerText != '') alerts += OA.userText.warningPre123;
     }
 
     // before 1.2.4: check for bumps
     if (compVersion(oa_version.value, '1.2.4') < 0) {
-        if (sequenceText.innerText.match(/p?bp?b/)) {
-            alerts += userText.warningPre124;
+        if (OA.sequenceText.innerText.match(/p?bp?b/)) {
+            alerts += OA.userText.warningPre124;
         }
     }
 
     // before 1.3.7: check for flicks started from knife edge
     if (compVersion(oa_version.value, '1.3.7') < 0) {
-        if (sequenceText.innerText.match(/((^|[^0-9])(4|[357]4?))[if\.'`]*[,;][\.'`]*[357]i?f/)) {
-            alerts += userText.warningPre137;
+        if (OA.sequenceText.innerText.match(/((^|[^0-9])(4|[357]4?))[if\.'`]*[,;][\.'`]*[357]i?f/)) {
+            alerts += OA.userText.warningPre137;
         }
     }
 
@@ -14469,8 +14483,8 @@ function checkOpenAeroVersion() {
     // check for double bumps with enlarged radius and rolls on the
     // first and second line, where the first roll is of uneven quarters
     if (compVersion(oa_version.value, '2016.1') < 0) {
-        if (sequenceText.innerText.match(/B/)) {
-            var f = sanitizeSpaces(sequenceText.innerText).split(' ');
+        if (OA.sequenceText.innerText.match(/B/)) {
+            var f = sanitizeSpaces(OA.sequenceText.innerText).split(' ');
             for (let i = 0; i < f.length; i++) {
                 // remove comments
                 f[i] = f[i].replace(regexComments, '');
@@ -14482,7 +14496,7 @@ function checkOpenAeroVersion() {
                 f[i] = f[i].replace(/\d+/g, 'q').replace(/,/g, '');
                 // check for correct match
                 if (f[i].match(/^(q|qr|rq)B+\([qr]/)) {
-                    alerts += userText.warningPre20161;
+                    alerts += OA.userText.warningPre20161;
                     break;
                 }
             }
@@ -14493,13 +14507,13 @@ function checkOpenAeroVersion() {
     // remove all figures that end with " but do not start with ".
     // Older OpenAero versions would just disregard those
     if (compVersion(oa_version.value, '2016.1.1') < 0) {
-        while (sequenceText.innerText.match(/(^| )[^" ]+"[^"]*"( |$)/)) {
-            sequenceText.innerText = sequenceText.innerText.replace(/(^| )[^" ]+"[^"]*"( |$)/, ' ');
+        while (OA.sequenceText.innerText.match(/(^| )[^" ]+"[^"]*"( |$)/)) {
+            OA.sequenceText.innerText = OA.sequenceText.innerText.replace(/(^| )[^" ]+"[^"]*"( |$)/, ' ');
         }
         // check for X-Y direction changers when loading as Grid
         if ($('default_view').value.match(/^grid:\d+$/) &&
-            sequenceText.innerText.match(/[a-zA-Z][^ ]*[>^]/)) {
-            alerts += userText.warningPre201611;
+            OA.sequenceText.innerText.match(/[a-zA-Z][^ ]*[>^]/)) {
+            alerts += OA.userText.warningPre201611;
         }
     }
 
@@ -14508,11 +14522,11 @@ function checkOpenAeroVersion() {
     // fix figures where necessary and present warning
     if (compVersion(oa_version.value, '2019.2') < 0) {
         // remove any irrelevant parts, including full rolls, and match
-        if (sequenceText.innerText.replace(/[^\dzt ]|1|22|44|88|9|42|84|168/g, '').match(/\dzt/)) {
+        if (OA.sequenceText.innerText.replace(/[^\dzt ]|1|22|44|88|9|42|84|168/g, '').match(/\dzt/)) {
             // basic check passed, now check thoroughly and correct
             checkSequenceChanged();
             var s = false;
-            figures.forEach ((f, i) => {
+            OA.figures.forEach ((f, i) => {
                 if (f.aresti && f.aresti[0].match(/1\.2\.1[12]/)) {
                     s = f.string;
                     var m = s.match(/(zt[^-]*)(-+)/);
@@ -14527,7 +14541,7 @@ function checkOpenAeroVersion() {
                     updateSequence(i, s, true);
                 }
             });
-            if (s) alerts += userText.warningPre20192;
+            if (s) alerts += OA.userText.warningPre20192;
         }
     }
 
@@ -14538,12 +14552,12 @@ function checkOpenAeroVersion() {
     // sequence, but only check the first two version parts. So checking
     // version 2016.2.1 against 2016.2.2 would not trigger the warning
     if (compVersion(oa_version.value, version, 2) > 0) {
-        alerts += userText.warningNewerVersion;
+        alerts += OA.userText.warningNewerVersion;
     }
 
-    if ((alerts != '') && !multi.processing) {
+    if ((alerts != '') && !OA.multi.processing) {
         // don't show when processing multiple files
-        alertBox(alerts + userText.warningPre);
+        alertBox(alerts + OA.userText.warningPre);
     }
     // set version to current version for subsequent saving
     oa_version.value = version;
@@ -14583,7 +14597,7 @@ function compVersion(v1, v2, parts) {
 function loadedLogo(evt) {
     // check file for maximum size
     if (evt.loaded > 1048576) {
-        alertBox(userText.logoFileTooLarge);
+        alertBox(OA.userText.logoFileTooLarge);
         return;
     }
     const privateLogoImages = JSON.parse (localStorage.getItem ('logoImages') || null) || {};
@@ -14610,7 +14624,7 @@ function loadedLogo(evt) {
             err.name === "QuotaExceededError" ||
             // Firefox
             err.name === "NS_ERROR_DOM_QUOTA_REACHED")) {
-            alertBox(userText.logoFileTooLarge);
+            alertBox(OA.userText.logoFileTooLarge);
         }
         return;
     }
@@ -14639,7 +14653,7 @@ function sanitizeFileName(fname) {
 function updateSaveFilename(fname) {
     // make sure the filename is legal
     fname = fname ? sanitizeFileName(fname) : '';
-    $('dlTextField').value = fileName.innerText = fname;
+    $('dlTextField').value = OA.fileName.innerText = fname;
     localStorage.setItem('fileName', fname);
 }
 
@@ -14660,8 +14674,8 @@ function saveFile(data, name, ext, filter, format, param={}) {
         data = new Uint8Array(byteN);
     }
 
-    saveData.blob = new Blob([data], { type: format.replace(/;.+$/, '') });
-    saveData.ext = ext;
+    OA.saveData.blob = new Blob([data], { type: format.replace(/;.+$/, '') });
+    OA.saveData.ext = ext;
 
     // depending on platform we choose a method for
     // saving the file with the following preference:
@@ -14671,7 +14685,7 @@ function saveFile(data, name, ext, filter, format, param={}) {
     // 4) Use showSaveFilePicker when available (Chrome/Edge/Opera since late 2020)
     // 5) Use "download" attribute
 
-    if (platform.uwp) {
+    if (OA.platform.uwp) {
         // 1) Windows UWP saving
         var savePicker = new Windows.Storage.Pickers.FileSavePicker();
         savePicker.suggestedStartLocation =
@@ -14685,7 +14699,7 @@ function saveFile(data, name, ext, filter, format, param={}) {
                 // Open the returned file in order to copy the data
                 file.openAsync(Windows.Storage.FileAccessMode.readWrite).then(function (output) {
                     // Get the IInputStream stream from the blob object
-                    var input = saveData.blob.msDetachStream();
+                    var input = OA.saveData.blob.msDetachStream();
 
                     // Copy the stream from the blob to the File stream
                     Windows.Storage.Streams.RandomAccessStream.copyAsync(input, output).then(function () {
@@ -14708,6 +14722,8 @@ function saveFile(data, name, ext, filter, format, param={}) {
             }
         });
         return result;
+    } else if (OA.platform.cordova) { // On Cordova, use this instead of showSaveFilePicker 
+        saveDialog(' ', name, ext, param);
     } else if ("showSaveFilePicker" in window) {
         // Use showSaveFilePicker when available (Chrome/Edge/Opera since late 2020)
         async function getNewFileHandle(name, ext) {
@@ -14729,19 +14745,17 @@ function saveFile(data, name, ext, filter, format, param={}) {
                 // Create writable file stream
                 const writable = await fileHandle.createWritable();
                 // Write the contents of the file to the stream.
-                await writable.write(saveData.blob);
+                await writable.write(OA.saveData.blob);
                 // Close the file and write the contents to disk.
                 await writable.close();
             } else result = false;
         }
         getNewFileHandle(name, ext).catch (err => {result = false});
-    } else if (platform.cordova) {
-        saveDialog(' ', name, ext, param);
-    } else if (platform.ios) {
-        saveDialog(userText.iOSsaveFileMessage, name, ext, param);
+    } else if (OA.platform.ios) {
+        saveDialog(OA.userText.iOSsaveFileMessage, name, ext, param);
     } else {
         // Fall back to legacy file picking
-        saveDialog(userText.downloadHTML5, name, ext, param);
+        saveDialog(OA.userText.downloadHTML5, name, ext, param);
     }
 
     return result;
@@ -14755,12 +14769,12 @@ function saveSequence() {
         // take the original sequence XML,
         // remove the end tag, add figure XML and add the end tag again.
         // Then beautify the output.
-        let xml = activeSequence.xml.replace('</sequence>', '');
+        let xml = OA.activeSequence.xml.replace('</sequence>', '');
         // check if the alerts box contains no alerts. If so, add verified
         // tag
-        if (activeRules &&
+        if (OA.activeRules &&
             ($('alerts').childElementCount < 2)) {
-            xml += '<verified>' + activeRules.description + '</verified>';
+            xml += '<verified>' + OA.activeRules.description + '</verified>';
         }
         xml += buildFigureXML();
         xml += buildSettingsXML();
@@ -14782,26 +14796,26 @@ function saveSequence() {
 // the .seq file is standard xml
 function saveQueue() {
     const
-        sequenceString = sequenceText.innerText,
+        sequenceString = OA.sequenceText.innerText,
         queueFigs = [];
-    for (let i = fig.length - 1; i >= 0; i--) {
-        if (fig[i]) {
-            if (fig[i].group == 0) {
-                queueFigs.push(fig[i].string);
+    for (let i = OA.fig.length - 1; i >= 0; i--) {
+        if (OA.fig[i]) {
+            if (OA.fig[i].group == 0) {
+                queueFigs.push(OA.fig[i].string);
             } else break;
         }
     }
     if (queueFigs.length == 0) {
-        alertBox(userText.queueEmpty);
+        alertBox(OA.userText.queueEmpty);
         return;
     }
     // put queue figures in sequence for saving
-    sequenceText.innerText = queueFigs.join(' // ');
+    OA.sequenceText.innerText = queueFigs.join(' // ');
     updateDefaultView(true);
     checkSequenceChanged();
     saveFile(
         // Beautify the output
-        vkbeautify.xml(activeSequence.xml),
+        vkbeautify.xml(OA.activeSequence.xml),
         activeFileName('QUEUE'),
         '.seq',
         { 'name': 'OpenAero Queue', 'filter': '.seq' },
@@ -14809,7 +14823,7 @@ function saveQueue() {
     );
 
     // restore sequence
-    sequenceText.innerText = sequenceString;
+    OA.sequenceText.innerText = sequenceString;
     updateDefaultView();
     checkSequenceChanged();
 }
@@ -14909,11 +14923,11 @@ function saveAsURL() {
     
     function save() {
 
-        const url = 'https://openaero.net/?s=' + encodeBase64Url(compressSequence(activeSequence.xml));
+        const url = 'https://openaero.net/?s=' + encodeBase64Url(compressSequence(OA.activeSequence.xml));
 
-        alertBox('<p>' + userText.saveAsURLFromApp +
+        alertBox('<p>' + OA.userText.saveAsURLFromApp +
             '</p><textarea id="saveAsURLArea" readonly></textarea>',
-            userText.saveAsURLTitle,
+            OA.userText.saveAsURLTitle,
             [{
                 'name': 'copyClipboard', 'function': function () {
                     if (!copyFrom.select()) copyFrom.setSelectionRange(0, 9999);
@@ -14933,8 +14947,8 @@ function saveAsURL() {
 // QRcode shows an alertBox containing a QR code holding the sequence link
 function QRcode() {
     // Show alertBox with temporary "generating" text
-    alertBox('<div id="QRcode">' + userText.generatingQRCode + '</div>',
-        userText.qrCodeTitle);
+    alertBox('<div id="QRcode">' + OA.userText.generatingQRCode + '</div>',
+        OA.userText.qrCodeTitle);
     // Use setTimeout to generate QR code asynchronously
     setTimeout(function () {
         const div = document.createElement('div');
@@ -14943,7 +14957,7 @@ function QRcode() {
         new QRCode(
             div,
             {
-                text: 'https://openaero.net/?s=' + encodeBase64Url(compressSequence(activeSequence.xml)),
+                text: 'https://openaero.net/?s=' + encodeBase64Url(compressSequence(OA.activeSequence.xml)),
                 width: 600,
                 height: 600
             }
@@ -14981,14 +14995,14 @@ function scanQRcode() {
         } else if (err) {
             // Other error
             alertBox(
-                sprintf(userText.qrScanFail, err.name),
-                userText.openSequenceLink
+                sprintf(OA.userText.qrScanFail, err.name),
+                OA.userText.openSequenceLink
             );
         } else if (!launchURL({ url: sequenceLink })) {
             // Show an error when launchURL gives an error
             alertBox(
-                sprintf(userText.openSequenceLinkError, sequenceLink),
-                userText.openSequenceLink
+                sprintf(OA.userText.openSequenceLinkError, sequenceLink),
+                OA.userText.openSequenceLink
             );
             // Should be good...
         } else updateSaveFilename(); // clear filename
@@ -15012,9 +15026,9 @@ function emailSequence() {
         // The template literal newlines and text position below are
         // important for layout!
         const
-            body = `${userText.emailHeader}
+            body = `${OA.userText.emailHeader}
 
-https://openaero.net/?s=${encodeBase64Url(compressSequence(activeSequence.xml))}`,
+https://openaero.net/?s=${encodeBase64Url(compressSequence(OA.activeSequence.xml))}`,
             subject = activeFileName() || 'Sequence';
         el.setAttribute('href',
             `mailto:%20?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`);
@@ -15039,8 +15053,8 @@ function openSequenceLink(e) {
         dialog.classList.add('noDisplay');
         if (!launchURL({ url: link.value })) {
             alertBox(
-                sprintf(userText.openSequenceLinkError, link.value),
-                userText.openSequenceLink
+                sprintf(OA.userText.openSequenceLinkError, link.value),
+                OA.userText.openSequenceLink
             );
         } else updateSaveFilename(); // clear filename
     } else {
@@ -15077,7 +15091,7 @@ function aircraft() {
 // 2) Check if called from "Save PDF" on Cordova app
 function printForms(evt) {
 
-    if (platform.cordova) {
+    if (OA.platform.cordova) {
         beforePrint(evt);
     } else {
         window.print();
@@ -15119,7 +15133,7 @@ function beforePrint(evt) {
         window.document.title = activeFileName();
 
         // On Cordova, start printing now
-        if (platform.cordova) {
+        if (OA.platform.cordova) {
             var printHtml =
                 '<html>' +
                 '<head>' +
@@ -15153,11 +15167,11 @@ function beforePrint(evt) {
 // Otherwise an SVG holding the forms is sent to callback
 function buildForms(win, callback) {
     var
-        activeFormSave = activeForm,
+        activeFormSave = OA.activeForm,
         svg = '',
         translateY = 0,
         // save the miniFormA value and set miniFormA depending on checkbox
-        miniFormASave = miniFormA,
+        miniFormASave = OA.miniFormA,
         // save the Sequence Notes check
         sequenceNotesSave = $('printNotes').checked,
         // save the current logo
@@ -15166,9 +15180,9 @@ function buildForms(win, callback) {
 
     // buildMulti is used when building multiple sequences for print/save
     function buildMulti() {
-        var file = multi.fileList[0];
+        var file = OA.multi.fileList[0];
         $('processingMultiCounter').innerHTML = sprintf(
-            userText.processingMultiCounter, file.name, multi.fileList.length);
+            OA.userText.processingMultiCounter, file.name, OA.multi.fileList.length);
         console.log('Processing: ' + file.name);
         // set previous settings for default values
         loadSettingsStorage('tempSavedSettings');
@@ -15222,23 +15236,23 @@ function buildForms(win, callback) {
         if (data) addAlertsToAlertMsgs(data);
 
         // go through the pages by parsing printPageSetString
-        var string = $('printPageSetString').value.toUpperCase();
+        const string = $('printPageSetString').value.toUpperCase();
         for (let i = 0; i < string.length; i++) {
             if (/[ABCRLGD_ ]/.test(string[i]) ||
                 (/\d[><]|[TFQ][><=]/.test(string.substring(i, i + 2)))) {
                 if (/[BCG]\+|\d[><]|[TFQ][><=]/.test(string.substring(i, i + 2))) {
-                    activeForm = string.substring(i, i + 2);
+                    OA.activeForm = string.substring(i, i + 2);
                     i++;
-                } else activeForm = string[i];
+                } else OA.activeForm = string[i];
 
-                var formSVG = /^[_ ]/.test(activeForm) ? '' : buildForm(win);
+                let formSVG = /^[_ ]/.test(OA.activeForm) ? '' : buildForm(win);
 
                 if (win) {
-                    var div = win.document.createElement('div');
+                    const div = win.document.createElement('div');
                     div.setAttribute('class', 'breakAfter noScreen');
                     div.innerHTML = formSVG;
                     // make sure we only keep the svg images in the div
-                    var nodes = div.childNodes;
+                    let nodes = div.childNodes;
                     for (let k = nodes.length - 1; k >= 0; k--) {
                         if (!/svg/i.test(nodes[k].tagName)) nodes[k].remove();
                     }
@@ -15265,8 +15279,8 @@ function buildForms(win, callback) {
                 }
             }
         }
-        if (multi.fileList.length > 1) {
-            multi.fileList.shift();
+        if (OA.multi.fileList.length > 1) {
+            OA.multi.fileList.shift();
             // files remaining in fileList, so buildMulti
             buildMulti();
         } else {
@@ -15280,13 +15294,15 @@ function buildForms(win, callback) {
 
             if (!win) {
                 svg += '</svg>';
-                var height = translateY -
-                    parseInt($('pageSpacing').value) + 10;
+                const height = translateY - parseInt($('pageSpacing').value) + 10;
                 // update first rectangle
+                if (!$('transparentBackground').checked) {
+                    svg = svg
+                        .replace(/<rect [^>]+>/, '<rect x="-5" y="-20" ' +
+                        'width="810" height="' + (height + 40) + '" ' +
+                        'style="fill: white;"/>');
+                }
                 svg = svg
-                    .replace(/<rect [^>]+>/, '<rect x="-5" y="-20" ' +
-                    'width="810" height="' + (height + 40) + '" ' +
-                    'style="fill: white;"/>')
                     // Update viewBox
                     // Add some margin to make sure bold lines etc are correctly shown
                     .replace(/viewBox="[^"]*"/, `viewBox="-5 -5 810 ${height}"`)
@@ -15295,11 +15311,11 @@ function buildForms(win, callback) {
                     .replace(/height="[^"]*"/, `height="${$('imageHeight').value}px"`);
             }
 
-            if (multi.processing) {
-                multi.processing = false;
+            if (OA.multi.processing) {
+                OA.multi.processing = false;
                 // restore previous settings and sequence
                 loadSettingsStorage('tempSavedSettings');
-                activateXMLsequence(multi.savedSeq);
+                activateXMLsequence(OA.multi.savedSeq);
                 // restore the Sequence Notes check
                 $('printNotes').checked = sequenceNotesSave;
             }
@@ -15309,7 +15325,7 @@ function buildForms(win, callback) {
         }
     }
 
-    formStyle = $('formStyle').value;
+    OA.formStyle = $('formStyle').value;
 
     // make sure no figure is selected
     selectFigure(false);
@@ -15320,15 +15336,15 @@ function buildForms(win, callback) {
     if (win) var body = win.document.createElement('body');
 
     // start the process, multi or single
-    if (multi.fileList.length) {
+    if (OA.multi.fileList.length) {
         // save active sequence and settings
-        multi.savedSeq = activeSequence.xml;
+        OA.multi.savedSeq = OA.activeSequence.xml;
         saveSettingsStorage('tempSavedSettings');
 
-        multi.processing = 'print';
+        OA.multi.processing = 'print';
         infoBox(
             '<span id="processingMultiCounter"></span>',
-            userText.printMulti);
+            OA.userText.printMulti);
         buildMulti();
     } else buildSingle();
 
@@ -15336,15 +15352,15 @@ function buildForms(win, callback) {
     $('sequenceArea').classList.add ('screen');
     
     // Reset the screen to the normal view
-    miniFormA = miniFormASave;
+    OA.miniFormA = miniFormASave;
     selectForm(activeFormSave);
 }
 
 // adjustRollFontSize will adjust the rollFontSize to compensate for
 // scaling in buildForm
-function adjustRollFontSize(scale, svg = SVGRoot) {
-    var baseRollFontSize = rollFontSize;
-    SVGRoot = svg; // make sure this svg and SVGRoot are synchronized
+function adjustRollFontSize(scale, svg = OA.SVGRoot) {
+    const baseRollFontSize = rollFontSize;
+    OA.SVGRoot = svg; // make sure this svg and SVGRoot are synchronized
 
     // increase rollFontSize for significant downscaling, and redraw
     if (parseInt(rollFontSize / Math.sqrt(scale)) > rollFontSize) {
@@ -15352,30 +15368,31 @@ function adjustRollFontSize(scale, svg = SVGRoot) {
         draw();
         changeRollFontSize(baseRollFontSize);
     }
-    return SVGRoot;
+    return OA.SVGRoot;
 }
 
-// buildForm will build a complete SVG string for printing a form
-// from a provided SVG object and activeForm global.
+// buildForm will build a complete SVG string for printing or saving a form
+// from a provided SVG object and activeForm global. 'print' is set to true
+// when printing, not saving.
 // The default size of the page is A4, 800x1130
 function buildForm(print) {
 
     // generate output for saving, not editing
-    sequenceEditing = false;
+    OA.sequenceEditing = false;
 
-    miniFormA = /^[BC]\+/.test(activeForm);
+    OA.miniFormA = /^[BC]\+/.test(OA.activeForm);
 
-    if (/^[0-9TFQ]/.test(activeForm)) {
-        var activeFormSave = activeForm.toString();
-        activeForm = (activeForm[1] === '>') ? 'L' : 'R';
+    if (/^[0-9TFQ]/.test(OA.activeForm)) {
+        const activeFormSave = OA.activeForm.toString();
+        OA.activeForm = (OA.activeForm[1] === '>') ? 'L' : 'R';
         draw();
-        activeForm = activeFormSave;
+        OA.activeForm = activeFormSave;
     } else draw();
 
-    var bBox = SVGRoot.getBBox();
-    var mySVG = SVGRoot;
+    let bBox = OA.SVGRoot.getBBox();
+    let mySVG = OA.SVGRoot;
 
-    switch (activeForm.replace(/[0-9TFQ][><=]/, 'P')) {
+    switch (OA.activeForm.replace(/[0-9TFQ][><=]/, 'P')) {
         case 'G':
         case 'G+':
             addFormElementsGrid(mySVG);
@@ -15383,49 +15400,48 @@ function buildForm(print) {
 
         case 'P':
             // 1 to 4 pilot cards on a sheet
-            var
+            let
                 rotate = false,
-                flipSecond = (activeForm[1] === '=') ? true : false;
-            switch (activeForm[0]) {
+                flipSecond = (OA.activeForm[1] === '=') ? true : false,
+                copies = 2,
+                width = 400,
+                height = 565,
+                w, x, h, y,
+                seq2, x2;
+            switch (OA.activeForm[0]) {
                 case 'T':
-                    var copies = 2;
                     rotate = true;
-                    var width = 565;
-                    var height = 800;
+                    width = 565;
+                    height = 800;
                     break;
                 case 'F':
-                    var copies = 4;
-                    var width = 400;
-                    var height = 565;
+                    copies = 4;
                     break;
                 case 'Q':
-                    var copies = 2;
-                    var width = 400;
-                    var height = 565;
                     break;
                 default:
-                    var copies = 1;
-                    var width = (parseInt(activeForm[0]) * 80) || 800;
-                    var height = (parseInt(activeForm[0]) * 113) || 1130;
+                    copies = 1;
+                    width = (parseInt(OA.activeForm[0]) * 80) || 800;
+                    height = (parseInt(OA.activeForm[0]) * 113) || 1130;
             }
             if (copies !== 1) {
                 // add 10% margin
-                var w = parseInt(bBox.width) * 1.1;
-                var x = parseInt(bBox.x) - bBox.width * 0.05;
-                var h = parseInt(bBox.height) * 1.1;
-                var y = parseInt(bBox.y) - bBox.height * 0.05;
+                w = parseInt(bBox.width) * 1.1;
+                x = parseInt(bBox.x) - bBox.width * 0.05;
+                h = parseInt(bBox.height) * 1.1;
+                y = parseInt(bBox.y) - bBox.height * 0.05;
             } else {
-                var w = parseInt(bBox.width);
-                var x = parseInt(bBox.x);
-                var h = parseInt(bBox.height);
-                var y = parseInt(bBox.y);
+                w = parseInt(bBox.width);
+                x = parseInt(bBox.x);
+                h = parseInt(bBox.height);
+                y = parseInt(bBox.y);
             }
 
             // find correct scale
-            var scale = roundTwo(Math.min(width / w, height / h));
+            const scale = roundTwo(Math.min(width / w, height / h));
 
             // make copies and translate / rotate / scale
-            var seq1 = mySVG.getElementById('sequence');
+            const seq1 = mySVG.getElementById('sequence');
 
             if (rotate) {
                 // use matrix transform to rotate, scale and translate
@@ -15440,14 +15456,14 @@ function buildForm(print) {
 
             // Handle pilot card prints with more than 1 copy
             if (copies !== 1) {
-                var addQRcode = /^Q/.test(activeForm);
+                const addQRcode = /^Q/.test(OA.activeForm);
                 if (flipSecond) {
-                    activeForm = 'L';
+                    OA.activeForm = 'L';
                     draw();
-                    var bBox = SVGRoot.getBBox();
-                    var seq2 = SVGRoot.getElementById('sequence');
-                    var x2 = parseInt(bBox.x) - bBox.width * 0.05;
-                } else var seq2 = seq1.cloneNode(true);
+                    bBox = OA.SVGRoot.getBBox();
+                    seq2 = OA.SVGRoot.getElementById('sequence');
+                    x2 = parseInt(bBox.x) - bBox.width * 0.05;
+                } else seq2 = seq1.cloneNode(true);
                 seq2.setAttribute('id', 'seq2');
                 if (rotate) {
                     // use matrix transform to rotate, scale and translate
@@ -15463,7 +15479,7 @@ function buildForm(print) {
                 mySVG.appendChild(seq2);
                 // See if we need to add the QR codes. These have a fixed size of 300x300
                 if (addQRcode) {
-                    var qrImage = $('qrCodeForPrint').children[0].toDataURL("image/png");
+                    const qrImage = $('qrCodeForPrint').children[0].toDataURL("image/png");
                     drawImage({
                         x: width + 50, y: 20, width: 300, height: 300,
                         preserveAspectRatio: 'xMaxYMax',
@@ -15479,13 +15495,13 @@ function buildForm(print) {
 
             // Handle pilot card prints with 2 copies
             if (copies === 4) {
-                var seq3 = seq1.cloneNode(true);
+                const seq3 = seq1.cloneNode(true);
                 seq3.setAttribute('id', 'seq2');
                 seq3.setAttribute('transform', 'translate(' +
                     roundTwo(-x * scale) + ',' + roundTwo(-y * scale + height) +
                     ') scale(' + scale + ')');
                 mySVG.appendChild(seq3);
-                var seq4 = seq2.cloneNode(true);
+                const seq4 = seq2.cloneNode(true);
                 seq4.setAttribute('id', 'seq4');
                 seq4.setAttribute('transform', 'translate(' +
                     roundTwo(((flipSecond ? -x2 : -x) * scale) + width) + ',' +
@@ -15508,28 +15524,29 @@ function buildForm(print) {
             // Find the size and adjust scaling if necessary
             
             // The sequence max width=800, height=1000 (Form A) or 950 (Form B & C)
-            var maxHeight = activeForm === 'A' ? 1000 :
+            var maxHeight = OA.activeForm === 'A' ? 1000 :
                 ($('printCheck').checked ? 938 : 950);
 
-            switch (formStyle) {
+            switch (OA.formStyle) {
                 case 'iac':
+                    {
                     // IAC forms
-                    var
-                        moveRight = 15;
-                        w = parseInt(bBox.width);
-                        h = parseInt(bBox.height + 20); // add some margin to the bottom
-
-                    // check maximum scale from print dialog
-                    var maxScale = $('maxScaling').value / 100;
+                    const
+                        w = parseInt(bBox.width),
+                        h = parseInt(bBox.height + 20), // add some margin to the bottom
+                        maxScale = $('maxScaling').value / 100; // maximum scale from print dialog
+                    let
+                        moveRight = 15,
+                        scale = 1,
+                        marginTop = 120;
 
                     // For form A we need to add the righthand scoring column, so
                     // max width = 580
-                    if (activeForm === 'A') {
-                        var scale = Math.min(580 / w, maxScale);
-                        var marginTop = 130;
+                    if (OA.activeForm === 'A') {
+                        scale = Math.min(580 / w, maxScale);
+                        marginTop = 130;
                     } else {
-                        var scale = Math.min(700 / w, maxScale);
-                        var marginTop = 120;
+                        scale = Math.min(700 / w, maxScale);
                     }
                     // check for max height
                     if ((maxHeight / h) < scale) {
@@ -15546,10 +15563,10 @@ function buildForm(print) {
                     // remove wind arrow
                     mySVG.querySelectorAll('#windArrow').forEach(el => el.remove());
 
-                    if (activeForm === 'A') {
+                    if (OA.activeForm === 'A') {
                         // check if the columns should be stretched (max factor 1.2)
                         moveRight = 0;
-                        var xScale = (scale * w) < 580 ? Math.min(580 / w, 1.2) : scale;
+                        const xScale = (scale * w) < 580 ? Math.min(580 / w, 1.2) : scale;
 
                         mySVG.getElementById('sequence').setAttribute('transform', 'translate(' +
                             roundTwo(moveRight - (bBox.x * scale)) + ',' +
@@ -15568,220 +15585,238 @@ function buildForm(print) {
 
                     // IACnoUpwindNote adds text for sequences that do not start upwind
                     function IACnoUpwindNote() {
-                        for (let i = 0; i < figures.length; i++) {
-                            if (figures[i].aresti) {
-                                if ((figures[i].entryDir + figures[i].entryAtt) % 360 !=
-                                    (activeForm[0] === 'B' ? 0 : 180)) {
-                                    var el = drawText(
-                                        figures[i].entryDir % 180 == 90 ? userText.iacNoteYAxisEntry : userText.iacNoteDownwindEntry,
-                                        activeForm[0] === 'B' ? 10 : 730,
+                        for (const fig of OA.figures) {
+                            if (fig.aresti) {
+                                if ((fig.entryDir + fig.entryAtt) % 360 !=
+                                    (OA.activeForm[0] === 'B' ? 0 : 180)) {
+                                    const el = drawText(
+                                        fig.entryDir % 180 == 90 ? OA.userText.iacNoteYAxisEntry : OA.userText.iacNoteDownwindEntry,
+                                        OA.activeForm[0] === 'B' ? 10 : 730,
                                         136, 'IACFormEntryNote',
-                                        activeForm[0] === 'B' ? 'start' : 'end',
+                                        OA.activeForm[0] === 'B' ? 'start' : 'end',
                                         'IACFormEntryNote', mySVG);
-                                    // add white background over sequence border
-                                    bBox = el.getBBox();
-                                    drawRectangle(
-                                        roundTwo(bBox.x - 4),
-                                        roundTwo(bBox.y - 4),
-                                        roundTwo(bBox.width + 8),
-                                        roundTwo(bBox.height + 8),
-                                        'formBackground',
-                                        mySVG);
-                                    // re-append the text element to put it above white background
-                                    mySVG.appendChild(el);
+                                    if (!$('transparentBackground').checked) {
+                                        // add white background over sequence border
+                                        const bBox = el.getBBox();
+                                        drawRectangle(
+                                            roundTwo(bBox.x - 4),
+                                            roundTwo(bBox.y - 4),
+                                            roundTwo(bBox.width + 8),
+                                            roundTwo(bBox.height + 8),
+                                            'formBackground',
+                                            mySVG);
+                                        // re-append the text element to put it above white background
+                                        mySVG.appendChild(el);
+                                    }
                                 }
-                                break;
+                                return;
                             }
                         }
                     }
 
                     // rebuild wind arrow in the correct place and check if a note
                     // needs to be added for non-upwind start
-                    if (activeForm[0] === 'B') {
+                    if (OA.activeForm[0] === 'B') {
                         drawWind(740, 110, 1, mySVG);
                         IACnoUpwindNote();
-                    } else if (activeForm[0] === 'C') {
+                    } else if (OA.activeForm[0] === 'C') {
                         drawWind(0, 110, -1, mySVG);
                         IACnoUpwindNote();
                     }
 
                     // Add all necessary elements
-                    if (logoImg) {
-                        if (activeForm === 'A') {
-                            var logoSvg = buildLogoSvg(logoImg, 610, 930, 110, 110,
-                                $('blackWhite').checked);
-                        } else {
-                            var logoSvg = buildLogoSvg(logoImg, 0, 10, 80, 100,
-                                $('blackWhite').checked);
-                        }
-                        mySVG.appendChild(logoSvg);
+                    if (OA.logoImg) {
+                        mySVG.appendChild((
+                            () =>
+                                {
+                                    if (OA.activeForm === 'A') {
+                                        return buildLogoSvg(OA.logoImg, 610, 930, 110, 110,
+                                            $('blackWhite').checked);
+                                    } else {
+                                        return buildLogoSvg(OA.logoImg, 0, 10, 80, 100,
+                                            $('blackWhite').checked);
+                                    }                                    
+                                }
+                            )()
+                        );
                     }
                     buildHeader(mySVG);
-                    if (activeForm === 'A') {
+                    if (OA.activeForm === 'A') {
                         buildScoreColumn(mySVG);
                         buildCornertab(mySVG);
                     }
                     break;
+                }
                 case 'imac':
-                    // IMAC forms
+                    {
+                        // IMAC forms
+                        const
+                            w = parseInt(bBox.width),
+                            h = parseInt(bBox.height + 20), // add some margin to the bottom
+                            // maximum scale from print dialog
+                            maxScale = $('maxScaling').value / 100,
+                            // define the width of the basic form, without scoring column
+                            formWidth = OA.activeForm === 'A' ? 540 : 800;
+                        let
+                            moveRight = 15,
+                            scale = Math.min(formWidth / w, maxScale),
+                            marginTop = OA.activeForm === 'A' ? 90 : 100,
+                            miniFormAGroup = mySVG.getElementById('miniFormA');
+                        
+                        const miniFormAbBox = miniFormAGroup ? miniFormAGroup.getBBox() : null;
 
-                    var
-                        moveRight = 15,
-                        bBox = mySVG.getBBox(),
-                        w = parseInt(bBox.width),
-                        h = parseInt(bBox.height + 20), // add some margin to the bottom
-                        // define the width of the basic form, without scoring column
-                        formWidth = activeForm === 'A' ? 540 : 800,
-                        // maximum scale from print dialog
-                        maxScale = $('maxScaling').value / 100,
-                        scale = Math.min(formWidth / w, maxScale),
-                        marginTop = activeForm === 'A' ? 90 : 100,
-                        miniFormAGroup = mySVG.getElementById('miniFormA');
-                    
-                    if (miniFormAGroup) var miniFormAbBox = miniFormAGroup.getBBox();
-
-                    // check for max height
-                    if ((maxHeight / h) < scale) {
-                        scale = Math.min(maxHeight / h, maxScale);
-                        // height limited, so we can move the sequence right for centering
-                        moveRight = Math.max((formWidth - (w * scale)) / 2, 0) + 15;
-                        // Move form C to the right when miniFormA was used
-                        // (in original drawing, miniFormA is always on the right)
-                        if (miniFormAGroup && /^C/.test(activeForm)) {
-                            moveRight += miniFormAbBox.width;
+                        // check for max height
+                        if ((maxHeight / h) < scale) {
+                            scale = Math.min(maxHeight / h, maxScale);
+                            // height limited, so we can move the sequence right for centering
+                            moveRight = Math.max((formWidth - (w * scale)) / 2, 0) + 15;
+                            // Move form C to the right when miniFormA was used
+                            // (in original drawing, miniFormA is always on the right)
+                            if (miniFormAGroup && /^C/.test(OA.activeForm)) {
+                                moveRight += miniFormAbBox.width;
+                            }
                         }
-                    }
 
-                    // Check if roll font size should be enlarged because of downscaling.
-                    // Do this before adding wind and box around sequence as sequence
-                    // may be redrawn!
-                    mySVG = adjustRollFontSize(scale, mySVG);
+                        // Check if roll font size should be enlarged because of downscaling.
+                        // Do this before adding wind and box around sequence as sequence
+                        // may be redrawn!
+                        mySVG = adjustRollFontSize(scale, mySVG);
 
-                    // Remove wind arrow and miniFormA
-                    mySVG.querySelectorAll('#windArrow,#miniFormA').forEach(el => el.remove());
+                        // Remove wind arrow and miniFormA
+                        mySVG.querySelectorAll('#windArrow,#miniFormA').forEach(el => el.remove());
 
-                    if (activeForm === 'A') {
-                        // check if the columns should be stretched (max factor 1.2)
-                        moveRight = 0;
-                        var xScale = (scale * w) < formWidth ? Math.min(formWidth / w, 1.2) : scale;
+                        if (OA.activeForm === 'A') {
+                            // check if the columns should be stretched (max factor 1.2)
+                            moveRight = 0;
+                            const xScale = (scale * w) < formWidth ? Math.min(formWidth / w, 1.2) : scale;
 
-                        mySVG.getElementById('sequence').setAttribute('transform', 'translate(' +
-                            roundTwo(moveRight - (bBox.x * scale)) + ',' +
-                            roundTwo(marginTop - bBox.y * scale) +
-                            ') scale(' + xScale + ',' + scale + ')');
-                        mySVG.getElementById('sequence').setAttribute('preserveAspectRatio', 'none');
+                            mySVG.getElementById('sequence').setAttribute('transform', 'translate(' +
+                                roundTwo(moveRight - (bBox.x * scale)) + ',' +
+                                roundTwo(marginTop - bBox.y * scale) +
+                                ') scale(' + xScale + ',' + scale + ')');
+                            mySVG.getElementById('sequence').setAttribute('preserveAspectRatio', 'none');
 
-                        buildScoreColumn(mySVG);
-                    } else {
-                        // Insert box containing sequence
-                        drawRectangle(0, 110, formWidth, 965, 'formLine', mySVG);
-
-                        mySVG.getElementById('sequence').setAttribute('transform', 'translate(' +
-                            roundTwo(moveRight - (bBox.x * scale)) + ',' +
-                            roundTwo(marginTop - bBox.y * scale) +
-                            ') scale(' + scale + ')');
-
-                        // rebuild wind arrow and miniFormA in the correct place
-                        if (/^B/.test(activeForm)) {
-                            drawWind(formWidth, 94, 1, mySVG);
+                            buildScoreColumn(mySVG);
                         } else {
-                            drawWind(0, 94, -1, mySVG);
-                        }
-                        if (miniFormAGroup) {
-                            // append miniFormA to the svg at top level
-                            mySVG.appendChild(miniFormAGroup);
-                            var miniFormAbBox = miniFormAGroup.getBBox();
-                            miniFormAGroup.setAttribute('transform', 'translate(' +
-                                roundTwo(-miniFormAbBox.x +
-                                    (/^B/.test(activeForm) ? 800 - miniFormAbBox.width : 0)
-                                ) + ',' +
-                                roundTwo(1075 - (miniFormAbBox.y + miniFormAbBox.height)) +
-                                ')');
-                        }
-                    }
+                            // Insert box containing sequence
+                            drawRectangle(0, 110, formWidth, 965, 'formLine', mySVG);
 
-                    // Add chosen logo image
-                    if (logoImg) {
-                        if (activeForm === 'A') {
-                            var logoSvg = buildLogoSvg(logoImg, 550, 0, 240, 110,
-                                $('blackWhite').checked);
-                        } else {
-                            var logoSvg = buildLogoSvg(logoImg, 610, 0, 190, 100,
-                                $('blackWhite').checked);
-                        }
-                        mySVG.appendChild(logoSvg);
-                    }
+                            mySVG.getElementById('sequence').setAttribute('transform', 'translate(' +
+                                roundTwo(moveRight - (bBox.x * scale)) + ',' +
+                                roundTwo(marginTop - bBox.y * scale) +
+                                ') scale(' + scale + ')');
 
-                    // Add form header
-                    buildHeader(mySVG);
-                    break;
+                            // rebuild wind arrow and miniFormA in the correct place
+                            if (/^B/.test(OA.activeForm)) {
+                                drawWind(formWidth, 94, 1, mySVG);
+                            } else {
+                                drawWind(0, 94, -1, mySVG);
+                            }
+                            if (miniFormAGroup) {
+                                // append miniFormA to the svg at top level
+                                mySVG.appendChild(miniFormAGroup);
+                                const miniFormAbBox = miniFormAGroup.getBBox();
+                                miniFormAGroup.setAttribute('transform', 'translate(' +
+                                    roundTwo(-miniFormAbBox.x +
+                                        (/^B/.test(OA.activeForm) ? 800 - miniFormAbBox.width : 0)
+                                    ) + ',' +
+                                    roundTwo(1075 - (miniFormAbBox.y + miniFormAbBox.height)) +
+                                    ')');
+                            }
+                        }
+
+                        // Add chosen logo image
+                        if (OA.logoImg) {
+                            mySVG.appendChild((
+                                () =>
+                                    {
+                                        if (OA.activeForm === 'A') {
+                                            return buildLogoSvg(OA.logoImg, 550, 0, 240, 110,
+                                                $('blackWhite').checked);
+                                        } else {
+                                            return buildLogoSvg(OA.logoImg, 610, 0, 190, 100,
+                                                $('blackWhite').checked);
+                                        }                                    
+                                    }
+                                )()
+                            );
+                        }
+
+                        // Add form header
+                        buildHeader(mySVG);
+                        break;
+                    }
                 case 'civa':
-                    // CIVA forms
-                    var
-                        moveRight = 10,
-                        w = parseInt(bBox.width),
-                        h = parseInt(bBox.height + 20), // add some margin to the bottom
-                        // set maximum scale from print dialog
-                        maxScale = $('maxScaling').value / 100;
+                    {
+                        // CIVA forms
+                        const
+                            w = parseInt(bBox.width),
+                            h = parseInt(bBox.height + 20); // add some margin to the bottom
+                        let
+                            marginTop = 140,
+                            moveRight = 10,
+                            maxScale = $('maxScaling').value / 100, // set maximum scale from print dialog
+                            scale = 1;
 
-                    // take the tear-off tab into account with no miniFormA
-                    // (defined by X + Y = 1620)
-                    if (!miniFormA && (1620 / (w + h)) < maxScale) maxScale = 1620 / (w + h);
+                        // take the tear-off tab into account with no miniFormA
+                        // (defined by X + Y = 1620)
+                        if (!OA.miniFormA && (1620 / (w + h)) < maxScale) maxScale = 1620 / (w + h);
 
-                    // For form A we need to add the righthand scoring column, so
-                    // max width = 620. For Form B and C max width = 788 to always
-                    // provide 10px left and 2px right margin to sequence.
-                    if (activeForm === 'A') {
-                        var scale = Math.min(600 / w, maxScale);
-                        var marginTop = 130;
-                    } else {
-                        var scale = Math.min(788 / w, maxScale);
-                        var marginTop = 140;
+                        // For form A we need to add the righthand scoring column, so
+                        // max width = 620. For Form B and C max width = 788 to always
+                        // provide 10px left and 2px right margin to sequence.
+                        if (OA.activeForm === 'A') {
+                            scale = Math.min(600 / w, maxScale);
+                            marginTop = 130;
+                        } else {
+                            scale = Math.min(788 / w, maxScale);
+                        }
+                        // check for max height
+                        if ((maxHeight / h) < scale) {
+                            scale = Math.min(maxHeight / h, maxScale);
+                            // height limited, so we can move the sequence right for centering
+                            // limit this on tear-off tab
+                            moveRight = Math.max(1620 - ((w + h) * scale), 0) / 2;
+                        }
+
+                        mySVG = adjustRollFontSize(scale, mySVG);
+
+                        if (OA.activeForm === 'A') {
+                            // check if the columns should be stretched (maximum factor 1.2)
+                            moveRight = 0;
+                            const xScale = (scale * w < 620) ? Math.min(620 / w, 1.2) : scale;
+                            mySVG.getElementById('sequence').setAttribute('preserveAspectRatio', 'none');
+
+                            mySVG.getElementById('sequence').setAttribute('transform', 'translate(' +
+                                roundTwo(moveRight - (bBox.x * scale)) + ',' +
+                                roundTwo(marginTop - bBox.y * scale) +
+                                ') scale(' + xScale + ',' + scale + ')');
+                        } else {
+                            mySVG.getElementById('sequence').setAttribute('transform', 'translate(' +
+                                roundTwo(moveRight - (bBox.x * scale)) + ',' +
+                                roundTwo(marginTop - bBox.y * scale) +
+                                ') scale(' + scale + ')');
+                        }
+
+                        // Add all basic form elements
+                        const header = document.createElementNS(svgNS, 'g');
+                        buildHeader(header, (()=>{
+                            // Add logo, and return width
+                            if (OA.logoImg) {
+                                const logoSvg = buildLogoSvg(OA.logoImg, 0, 0, 200, 120,
+                                    $('blackWhite').checked);
+                                mySVG.appendChild(logoSvg);
+                                return (parseInt(logoSvg.getBBox().width) + 10);
+                            } else return 0;
+                        })());
+                        mySVG.appendChild(header);
+
+                        if (OA.activeForm === 'A') buildScoreColumn(mySVG);
+                        buildCornertab(mySVG);
                     }
-                    // check for max height
-                    if ((maxHeight / h) < scale) {
-                        scale = Math.min(maxHeight / h, maxScale);
-                        // height limited, so we can move the sequence right for centering
-                        // limit this on tear-off tab
-                        moveRight = Math.max(1620 - ((w + h) * scale), 0) / 2;
-                    }
-
-                    mySVG = adjustRollFontSize(scale, mySVG);
-
-                    if (activeForm === 'A') {
-                        // check if the columns should be stretched (maximum factor 1.2)
-                        moveRight = 0;
-                        var xScale = (scale * w < 620) ? Math.min(620 / w, 1.2) : scale;
-                        mySVG.getElementById('sequence').setAttribute('preserveAspectRatio', 'none');
-
-                        mySVG.getElementById('sequence').setAttribute('transform', 'translate(' +
-                            roundTwo(moveRight - (bBox.x * scale)) + ',' +
-                            roundTwo(marginTop - bBox.y * scale) +
-                            ') scale(' + xScale + ',' + scale + ')');
-                    } else {
-                        mySVG.getElementById('sequence').setAttribute('transform', 'translate(' +
-                            roundTwo(moveRight - (bBox.x * scale)) + ',' +
-                            roundTwo(marginTop - bBox.y * scale) +
-                            ') scale(' + scale + ')');
-                    }
-
-                    // Add all necessary elements
-                    var logoWidth = 0;
-                    if (logoImg) {
-                        var logoSvg = buildLogoSvg(logoImg, 0, 0, 200, 120,
-                            $('blackWhite').checked);
-                        mySVG.appendChild(logoSvg);
-                        logoWidth = parseInt(logoSvg.getBBox().width) + 10;
-                    }
-                    var header = document.createElementNS(svgNS, 'g');
-                    buildHeader(header, logoWidth);
-                    mySVG.appendChild(header);
-
-                    if (activeForm === 'A') buildScoreColumn(mySVG);
-                    buildCornertab(mySVG);
                 }
 
-                if (/^[BC]/.test(activeForm)) {
+                if (/^[BC]/.test(OA.activeForm)) {
                     // add sequence string when checked.
                     if ($('printString').checked) {
                         addSequenceString(mySVG, { x: 10, y: 1085, width: 600, height: 40 }, print);
@@ -15802,47 +15837,49 @@ function buildForm(print) {
     // Add the notes to the top when checked. This will result in a
     // "vertical flattening" of the entire form
     if ($('printNotes').checked) {
+        const
+            group = document.createElementNS(svgNS, 'g'),
+            t = OA.SVGRoot.appendChild(document.createElementNS(svgNS, 'text')),
+            dy = OA.style.printNotes.match(/font-size[ ]*:[ ]*([\d]+)/)[1],
+            lines = $('notes').value.replace(/\r/g, '').split('\n');
+        
         // rebuild entire svg in group
-        var g = document.createElementNS(svgNS, 'g');
         while (mySVG.childNodes.length > 0) {
-            g.appendChild(mySVG.firstChild);
+            group.appendChild(mySVG.firstChild);
         }
+
         // temporarily attach text to SVGRoot. Needed as after possible
         // roll scaling, mySVG may be detached from DOM and t.getBBox()
         // does not work
-        var
-            t = SVGRoot.appendChild(document.createElementNS(svgNS, 'text')),
-            dy = style.printNotes.match(/font-size[ ]*:[ ]*([\d]+)/)[1],
-            lines = $('notes').value.replace(/\r/g, '').split('\n');
 
-        t.setAttribute('style', style.printNotes);
+        t.setAttribute('style', OA.style.printNotes);
         lines.forEach ((l) => { t.appendChild(tspan(l, dy)) });
 
-        var box = t.getBBox();
+        const box = t.getBBox();
         mySVG.appendChild(t);
         t.setAttribute('transform', 'translate(' + roundTwo(-box.x) + ',' +
             roundTwo(-box.y) + ')');
-        g.setAttribute('transform', 'translate (0,' +
+        group.setAttribute('transform', 'translate (0,' +
             roundTwo(box.height + 4) + ') scale (1,' +
             ((1126 - box.height) / 1130) + ')');
-        mySVG.appendChild(g);
+        mySVG.appendChild(group);
     }
 
-    // Insert rectangle (=background) at the beginning
-    var path = document.createElementNS(svgNS, "rect");
-    path.setAttribute('x', '-5');
-    path.setAttribute('y', '0');
-    path.setAttribute('width', '810');
-    path.setAttribute('height', '1130');
-    path.setAttribute('style', style.formBackground);
-    mySVG.insertBefore(path, mySVG.firstChild);
-
-    var svg = mySVG;
+    if (!$('transparentBackground').checked) {
+        // Insert rectangle (=background) at the beginning
+        const path = document.createElementNS(svgNS, "rect");
+        path.setAttribute('x', '-5');
+        path.setAttribute('y', '0');
+        path.setAttribute('width', '810');
+        path.setAttribute('height', '1130');
+        path.setAttribute('style', OA.style.formBackground);
+        mySVG.insertBefore(path, mySVG.firstChild);
+    }
 
     // For some reason serializeToString may convert the xlink:href to
     // a0:href or just href for the logo image
     // So we change it back right away because otherwise the logo isn't displayed
-    var sequenceSVG = new XMLSerializer().serializeToString(svg).replace(/ [^ ]*href/g, ' xlink:href');
+    let sequenceSVG = new XMLSerializer().serializeToString(mySVG).replace(/ [^ ]*href/g, ' xlink:href');
     sequenceSVG = '<?xml version="1.0" standalone="no"?>\n' +
         '<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.2//EN" ' +
         '"http://www.w3.org/Graphics/SVG/1.2/DTD/svg12.dtd">\n' + sequenceSVG;
@@ -15851,9 +15888,9 @@ function buildForm(print) {
     if ($('blackWhite').checked) {
         sequenceSVG = sequenceSVG
             // replace style neg by negBW
-            .replace(RegExp(`"${style.neg}"`, 'g'), `"${style.negBW}"`)
+            .replace(RegExp(`"${OA.style.neg}"`, 'g'), `"${OA.style.negBW}"`)
             // replace style negfill by negfillBW
-            .replace(RegExp(`"${style.negfill}"`, 'g'), `"${style.negfillBW}"`)
+            .replace(RegExp(`"${OA.style.negfill}"`, 'g'), `"${OA.style.negfillBW}"`)
             // replace remaining red by black
             .replace(/\bred;/g, 'black;');
     }
@@ -15874,7 +15911,7 @@ function buildForm(print) {
     }
 
     // go back to editing output mode
-    sequenceEditing = true;
+    OA.sequenceEditing = true;
 
     return sequenceSVG;
 }
@@ -15882,7 +15919,7 @@ function buildForm(print) {
 // addSequenceString will add a correctly formatted sequence string to
 // a sequence diagram
 function addSequenceString(svg, textBox, print) {
-    var txt = sanitizeSpaces(activeSequence.text);
+    let txt = sanitizeSpaces(OA.activeSequence.text);
     // When printing a PDF, we prefer textarea as this improves
     // copy/paste
     // When saving as image, we can not use textarea as this will
@@ -15894,20 +15931,21 @@ function addSequenceString(svg, textBox, print) {
         drawTextArea(txt, textBox.x, textBox.y,
             textBox.width, textBox.height, $('blackWhite').checked ? 'sequenceStringBW' : 'sequenceString', '', svg);
     } else {
-        var g = document.createElementNS(svgNS, 'g');
+        const g = document.createElementNS(svgNS, 'g');
         drawText(txt, 0, 0, $('blackWhite').checked ? 'sequenceStringBW' : 'sequenceString', '', 'start', g);
         svg.appendChild(g);
 
-        var scaleBox = '';
+        let scaleBox = '';
 
-        var box = g.getBBox();
+        let box = g.getBBox();
         if (box.width > textBox.width) {
             g.firstChild.remove();
             // medium to long text
             // split on last possible space, might create three lines
-            var words = txt.split(' ');
-            var lines = [''];
-            var maxChar = parseInt(txt.length * (textBox.width / box.width));
+            const
+                words = txt.split(' '),
+                lines = [''],
+                maxChar = parseInt(txt.length * (textBox.width / box.width));
             words.forEach ((w) => {
                 if ((lines.slice(-1).length + w.length) < maxChar) {
                     lines[lines.length - 1] += w + ' ';
@@ -15933,7 +15971,7 @@ function addSequenceString(svg, textBox, print) {
             }
             //  adjust X scale if necessary
             box = g.getBBox();
-            var scaleX = textBox.width / box.width;
+            const scaleX = textBox.width / box.width;
             if (scaleX < 1) {
                 scaleBox = ' scale (' + scaleX + ',1)';
             }
@@ -15945,16 +15983,16 @@ function addSequenceString(svg, textBox, print) {
 
 // addCheckResult will add the check result to a sequence
 function addCheckResult(svg, pos) {
-    var
+    const
         d = new Date(),
-        text = userText.sequenceTest +
+        text = OA.userText.sequenceTest +
             d.getDate() + '-' +
             parseInt(d.getMonth() + 1) + '-' +
             d.getFullYear() + ' ' +
             d.getHours() + ':' +
             ('0' + d.getMinutes()).slice(-2) + ' ' +
             'OpenAero ' + version + ' ' +
-            (activeRules ? activeRules.description : '') + ' ',
+            (OA.activeRules ? OA.activeRules.description : '') + ' ',
         g = document.createElementNS(svgNS, 'g'),
         // get alerts from alert area
         alertMessages = $('alerts').getElementsByTagName('SPAN');
@@ -15963,25 +16001,24 @@ function addCheckResult(svg, pos) {
 
     if (alertMessages.length < 1) { // no messages
         // no alerts
-        if (activeRules) {
-            drawText(text + userText.sequenceCorrect, pos.x, pos.y,
+        if (OA.activeRules) {
+            drawText(text + OA.userText.sequenceCorrect, pos.x, pos.y,
                 $('blackWhite').checked ? 'sequenceStringBW' : 'sequenceString', '', 'start', g);
         }
     } else {
         // alerts present
-        var y = pos.y;
         for (let i = alertMessages.length - 1; i >= 0; i--) {
-            drawText(alertMessages[i].innerText, pos.x, y,
+            drawText(alertMessages[i].innerText, pos.x, pos.y,
                 $('blackWhite').checked ? 'sequenceStringBW' : 'sequenceString', '', 'start', g);
-            y -= 12;
+            pos.y -= 12;
         }
-        drawText(text + userText.sequenceHasErrors, pos.x, y,
+        drawText(text + OA.userText.sequenceHasErrors, pos.x, pos.y,
             $('blackWhite').checked ? 'sequenceStringBW' : 'sequenceString', '', 'start', g);
     }
 
     svg.appendChild(g);
-    alertMsgs = [];
-    alertMsgRules = {};
+    OA.alertMsgs = [];
+    OA.alertMsgRules = {};
     return g.getBBox();
 }
 
@@ -15990,21 +16027,21 @@ function addCheckResult(svg, pos) {
 function addFormElementsLR(svg, print) {
     // logo
     var logoWidth = 0;
-    if (logoImg) {
-        var logoSvg = buildLogoSvg(logoImg, 0, 0, 112, 112,
+    if (OA.logoImg) {
+        var logoSvg = buildLogoSvg(OA.logoImg, 0, 0, 112, 112,
             $('blackWhite').checked);
         svg.appendChild(logoSvg);
         logoWidth = parseInt(logoSvg.getBBox().width);
     }
     // header
-    switch (formStyle) {
+    switch (OA.formStyle) {
         case 'iac':
         case 'imac':
             // Sequence info
             drawRectangle(logoWidth + 10, 2, 526 - logoWidth, 45, 'formLine', svg);
             drawLine(logoWidth + 10, 23, 526 - logoWidth, 0, 'formLine', svg);
             drawText('Çategory: ' +
-                (sportingClass.value === 'glider' ? ' Glider' : 'Power') + ' ' +
+                (OA.sportingClass.value === 'glider' ? ' Glider' : 'Power') + ' ' +
                 $('category').value,
                 logoWidth + 20, 17, 'formAText', 'start', '', svg);
             drawText('Date: ' + $('date').value,
@@ -16014,9 +16051,9 @@ function addFormElementsLR(svg, print) {
 
             // Header K block
             drawRectangle(553, 2, 41, 75, 'formLine', svg);
-            drawText(userText.figureK, 573, 12, 'formATextTiny', 'middle', '', svg);
+            drawText(OA.userText.figureK, 573, 12, 'formATextTiny', 'middle', '', svg);
             drawLine(553, 38, 41, 0, 'formLine', svg);
-            drawText(userText.totalK, 573, 48, 'formATextTiny', 'middle', '', svg);
+            drawText(OA.userText.totalK, 573, 48, 'formATextTiny', 'middle', '', svg);
 
             // Header judges block
             drawRectangle(602, 2, 129, 75, 'formLineBold', svg);
@@ -16037,7 +16074,7 @@ function addFormElementsLR(svg, print) {
             drawText($('rules').value,
                 logoWidth + 20, 25, 'formATextLarge', 'start', '', svg);
             drawText($('category').value +
-                (sportingClass.value === 'glider' ? ' Glider' : ''),
+                (OA.sportingClass.value === 'glider' ? ' Glider' : ''),
                 logoWidth / 2 + 250, 25, 'formATextLarge', 'middle', '', svg);
             drawText($('date').value,
                 490, 25, 'formATextLarge', 'end', '', svg);
@@ -16048,31 +16085,31 @@ function addFormElementsLR(svg, print) {
 
             // Header K block
             drawRectangle(510, 2, 50, 98, 'formLine', svg);
-            drawText(userText.figureK, 535, 15, 'formATextSmall', 'middle', '', svg);
+            drawText(OA.userText.figureK, 535, 15, 'formATextSmall', 'middle', '', svg);
             drawLine(510, 51, 50, 0, 'formLine', svg);
-            drawText(userText.totalK, 535, 64, 'formATextSmall', 'middle', '', svg);
+            drawText(OA.userText.totalK, 535, 64, 'formATextSmall', 'middle', '', svg);
 
             // Header judges block
             drawRectangle(570, 2, 150, 98, 'formLineBold', svg);
-            drawText(userText.judgesName, 580, 13, 'formATextTiny', 'start', '', svg);
+            drawText(OA.userText.judgesName, 580, 13, 'formATextTiny', 'start', '', svg);
             drawLine(570, 51, 150, 0, 'formLine', svg);
-            drawText(userText.signature, 580, 62, 'formATextTiny', 'start', '', svg);
-            drawText(userText.number, 670, 62, 'formATextTiny', 'start', '', svg);
+            drawText(OA.userText.signature, 580, 62, 'formATextTiny', 'start', '', svg);
+            drawText(OA.userText.number, 670, 62, 'formATextTiny', 'start', '', svg);
 
             drawRectangle(730, 2, 68, 98, 'formLineBold', svg);
-            drawText(userText.flightNr, 765, 15, 'formATextSmall', 'middle', '', svg);
+            drawText(OA.userText.flightNr, 765, 15, 'formATextSmall', 'middle', '', svg);
             drawText($('flight_nb').value, 764, 55, 'formATextXL', 'middle', '', svg);
     }
 
     // continue from bottom
 
     // pilot info line
-    drawText(userText.pilot + ':', 160, 1128, 'formATextSmall', 'end', '', svg);
+    drawText(OA.userText.pilot + ':', 160, 1128, 'formATextSmall', 'end', '', svg);
     drawText($('pilot').value, 165, 1128, 'formATextLarge', 'start', '', svg);
-    drawText(userText.ac + ':', 495, 1128, 'formATextSmall', 'end', '', svg);
+    drawText(OA.userText.ac + ':', 495, 1128, 'formATextSmall', 'end', '', svg);
     drawText(aircraft(), 500, 1128, 'formATextLarge', 'start', '', svg);
     if ($('team').value) {
-        drawText(userText.team + ':', 740, 1128, 'formATextSmall', 'end', '', svg);
+        drawText(OA.userText.team + ':', 740, 1128, 'formATextSmall', 'end', '', svg);
         drawText($('team').value, 745, 1128, 'formATextLarge', 'start', '', svg);
     }
 
@@ -16097,11 +16134,11 @@ function addFormElementsLR(svg, print) {
         totalK = 0,
         modifiedK = [];
 
-    figures.forEach ((f) => {
+    OA.figures.forEach ((f) => {
         if (f.aresti && (rows < f.aresti.length)) { rows = f.aresti.length; }
     });
 
-    figures.forEach ((f) => {
+    OA.figures.forEach ((f) => {
         if (f.aresti) {
             figureNr++;
             var figK = 0;
@@ -16111,7 +16148,7 @@ function addFormElementsLR(svg, print) {
             drawText('K', x + 70, 15, 'miniFormABold', 'end', '', g);
             var y = 27;
             f.aresti.forEach ((fa, i) => {
-                if (fa in rulesKFigures) modifiedK.push(figureNr);
+                if (fa in OA.rulesKFigures) modifiedK.push(figureNr);
                 drawText(fa, x, y, 'miniFormA', 'start', '', g);
                 drawText(f.k[i], x + 70, y, 'miniFormA', 'end', '', g);
                 figK += parseInt(f.k[i]);
@@ -16120,13 +16157,13 @@ function addFormElementsLR(svg, print) {
 
             // Adjust figure K for additionals
             if (f.unknownFigureLetter && (f.unknownFigureLetter === 'L')) {
-                if (additionals <= additionalFig.max) {
-                    figK = additionalFig.totalK / additionals;
+                if (OA.additionals <= OA.additionalFig.max) {
+                    figK = OA.additionalFig.totalK / OA.additionals;
                 } else {
-                    if (additionalFig.max > 0) {
-                        figK = additionalFig.totalK / additionalFig.max;
+                    if (OA.additionalFig.max > 0) {
+                        figK = OA.additionalFig.totalK / OA.additionalFig.max;
                     }
-                    checkAlert(sprintf(userText.maxAdditionals, additionalFig.max),
+                    checkAlert(sprintf(OA.userText.maxAdditionals, OA.additionalFig.max),
                         false,
                         figureNr);
                 }
@@ -16160,7 +16197,7 @@ function addFormElementsLR(svg, print) {
 
     // figureK and totalK
     // Header K block
-    switch (formStyle) {
+    switch (OA.formStyle) {
         case 'iac':
         case 'imac':
             drawText(totalK, 573, 32, 'formATextLarge', 'middle', '', svg);
@@ -16170,7 +16207,7 @@ function addFormElementsLR(svg, print) {
     }
     totalK += parseInt($('positioning').value || 0) +
         parseInt($('harmony').value || 0);
-    switch (formStyle) {
+    switch (OA.formStyle) {
         case 'iac':
         case 'imac':
             drawText(totalK, 573, 68, 'formATextLarge', 'middle', '', svg);
@@ -16195,7 +16232,7 @@ function addFormElementsLR(svg, print) {
 
     // add warning for modified K when applicable
     if (modifiedK.length) {
-        drawText(changedFigureKText(modifiedK, activeRules.description),
+        drawText(changedFigureKText(modifiedK, OA.activeRules.description),
             10, seqBottom - 8, 'modifiedK', 'start', '', svg);
         seqBottom -= 10;
     }
@@ -16204,8 +16241,8 @@ function addFormElementsLR(svg, print) {
     svg.querySelectorAll('#windArrow').forEach(el => el.remove());
 
     // rebuild wind arrow in the correct place, and add form letter
-    if (activeForm === 'R') {
-        switch (formStyle) {
+    if (OA.activeForm === 'R') {
+        switch (OA.formStyle) {
             case 'iac':
             case 'imac':
                 bBox = drawWind(485, 55, 0.8, svg);
@@ -16216,7 +16253,7 @@ function addFormElementsLR(svg, print) {
                 drawText('R', 480, 105, 'formATextBoldHuge', 'middle', '', svg);
         }
     } else {
-        switch (formStyle) {
+        switch (OA.formStyle) {
             case 'iac':
             case 'imac':
                 bBox = drawWind(logoWidth + 50, 55, -0.8, svg);
@@ -16232,7 +16269,7 @@ function addFormElementsLR(svg, print) {
 
     // scale and position sequence
     var
-        width = (formStyle == 'civa') ? 480 : 523,
+        width = (OA.formStyle == 'civa') ? 480 : 523,
         maxScale = $('maxScaling').value / 100,
         sequence = svg.getElementById('sequence');
 
@@ -16260,7 +16297,7 @@ function addFormElementsLR(svg, print) {
     }
 
     // penalty block
-    if (formStyle == 'civa') {
+    if (OA.formStyle == 'civa') {
         blockTop -= 114;
         drawRectangle(510, blockTop, 289, 104, 'formLine', svg);
         drawRectangle(614, blockTop, 39, 104, 'formLineBold', svg);
@@ -16269,18 +16306,18 @@ function addFormElementsLR(svg, print) {
         drawLine(510, blockTop + 52, 289, 0, 'formLine', svg);
         drawLine(510, blockTop + 78, 289, 0, 'formLine', svg);
 
-        drawText(userText.tooLow, 516, blockTop + 18, 'formAText', 'start', '', svg);
-        drawText(userText.tooHigh, 516, blockTop + 44, 'formAText', 'start', '', svg);
-        drawText(userText.interruptions, 516, blockTop + 70, 'formAText', 'start', '', svg);
-        drawText(userText.insertions, 516, blockTop + 96, 'formAText', 'start', '', svg);
-        drawText(userText.trgViolation, 661, blockTop + 18, 'formAText', 'start', '', svg);
-        drawText(userText.wingRocks, 661, blockTop + 44, 'formAText', 'start', '', svg);
-        drawText(userText.disqualified, 661, blockTop + 70, 'formAText', 'start', '', svg);
-        drawText(userText.otherNote, 661, blockTop + 96, 'formAText', 'start', '', svg);
+        drawText(OA.userText.tooLow, 516, blockTop + 18, 'formAText', 'start', '', svg);
+        drawText(OA.userText.tooHigh, 516, blockTop + 44, 'formAText', 'start', '', svg);
+        drawText(OA.userText.interruptions, 516, blockTop + 70, 'formAText', 'start', '', svg);
+        drawText(OA.userText.insertions, 516, blockTop + 96, 'formAText', 'start', '', svg);
+        drawText(OA.userText.trgViolation, 661, blockTop + 18, 'formAText', 'start', '', svg);
+        drawText(OA.userText.wingRocks, 661, blockTop + 44, 'formAText', 'start', '', svg);
+        drawText(OA.userText.disqualified, 661, blockTop + 70, 'formAText', 'start', '', svg);
+        drawText(OA.userText.otherNote, 661, blockTop + 96, 'formAText', 'start', '', svg);
     }
 
     // position and harmony
-    switch (formStyle) {
+    switch (OA.formStyle) {
         case 'iac':
         case 'imac':
             blockTop -= 55;
@@ -16296,7 +16333,7 @@ function addFormElementsLR(svg, print) {
             drawRectangle(510, blockTop, 143, 40, 'formLine', svg);
             drawRectangle(593, blockTop, 60, 40, 'formLineBold', svg);
             drawCircle({ cx: 623, cy: blockTop + 27, r: 2, fill: 'black' }, svg);
-            drawText(userText.positioning, 552, blockTop + 12, 'formATextSmall', 'middle', '', svg);
+            drawText(OA.userText.positioning, 552, blockTop + 12, 'formATextSmall', 'middle', '', svg);
             drawText($('positioning').value,
                 552, blockTop + 32, 'formATextLarge', 'middle', '', svg);
 
@@ -16305,14 +16342,14 @@ function addFormElementsLR(svg, print) {
                 drawRectangle(668, blockTop, 130, 40, 'formLine', svg);
                 drawRectangle(738, blockTop, 60, 40, 'formLineBold', svg);
                 drawCircle({ cx: 768, cy: blockTop + 27, r: 2, fill: 'black' }, svg);
-                drawText(userText.harmony, 703, blockTop + 12, 'formATextSmall', 'middle', '', svg);
+                drawText(OA.userText.harmony, 703, blockTop + 12, 'formATextSmall', 'middle', '', svg);
                 drawText($('harmony').value,
                     703, blockTop + 32, 'formATextLarge', 'middle', '', svg);
             }
     }
 
     // figure grading block
-    switch (formStyle) {
+    switch (OA.formStyle) {
         case 'iac':
         case 'imac':
             drawRectangle(553, 90, 245, blockTop - 105, 'formLine', svg);
@@ -16361,10 +16398,10 @@ function addFormElementsLR(svg, print) {
 
 // buildHeader will append the sequence header
 function buildHeader(svg, logoWidth) {
-    switch (formStyle) {
+    switch (OA.formStyle) {
         case 'iac':
             // IAC Forms
-            if (activeForm === 'A') {
+            if (OA.activeForm === 'A') {
                 drawRectangle(0, 0, 60, 130, 'formLine', svg);
                 drawRectangle(60, 0, 740, 50, 'formLine', svg);
                 drawRectangle(60, 50, 240, 80, 'formLine', svg);
@@ -16373,19 +16410,19 @@ function buildHeader(svg, logoWidth) {
                 drawRectangle(520, 50, 120, 80, 'formLine', svg);
                 drawRectangle(640, 50, 70, 80, 'formLine', svg);
                 drawRectangle(710, 50, 89, 80, 'formLineBold', svg);
-                drawText(activeForm[0], 30, 75, 'formATextBoldHuge', 'middle', '', svg);
+                drawText(OA.activeForm[0], 30, 75, 'formATextBoldHuge', 'middle', '', svg);
                 drawText('INTERNATIONAL AEROBATIC CLUB SCORESHEET', 430, 35, 'formATextLarge', 'middle', '', svg);
-                drawText(userText.contest + ':', 65, 70, 'formAText', 'start', '', svg);
+                drawText(OA.userText.contest + ':', 65, 70, 'formAText', 'start', '', svg);
                 drawText($('location').value, 180, 100, 'formATextMedium', 'middle', '', svg);
-                drawText(userText.date + ':', 305, 70, 'formAText', 'start', '', svg);
+                drawText(OA.userText.date + ':', 305, 70, 'formAText', 'start', '', svg);
                 drawText($('date').value, 350, 100, 'formATextMedium', 'middle', '', svg);
-                drawText(userText.category + ':', 405, 70, 'formAText', 'start', '', svg);
-                drawText(userText[sportingClass.value], 460, 95, 'formATextMedium', 'middle', '', svg);
+                drawText(OA.userText.category + ':', 405, 70, 'formAText', 'start', '', svg);
+                drawText(OA.userText[OA.sportingClass.value], 460, 95, 'formATextMedium', 'middle', '', svg);
                 drawText($('category').value, 460, 115, 'formATextMedium', 'middle', '', svg);
-                drawText(userText.programme + ':', 525, 70, 'formAText', 'start', '', svg);
+                drawText(OA.userText.programme + ':', 525, 70, 'formAText', 'start', '', svg);
                 drawText($('program').value, 580, 100, 'formATextMedium', 'middle', '', svg);
-                drawText(userText.pilotnumberIAC1, 645, 70, 'formAText', 'start', '', svg);
-                drawText(userText.pilotnumberIAC2, 645, 95, 'formAText', 'start', '', svg);
+                drawText(OA.userText.pilotnumberIAC1, 645, 70, 'formAText', 'start', '', svg);
+                drawText(OA.userText.pilotnumberIAC2, 645, 95, 'formAText', 'start', '', svg);
             } else {
                 // sequence info box
                 drawRectangle(90, 10, 550, 100, 'formLine', svg);
@@ -16394,30 +16431,30 @@ function buildHeader(svg, logoWidth) {
                 drawLine(140, 10, 0, 50, 'formLine', svg); // |
                 drawLine(490, 10, 0, 100, 'formLine', svg);// ||
                 drawLine(290, 60, 0, 50, 'formLine', svg); // |
-                drawText(activeForm[0], 115, 48, 'formATextBoldHuge', 'middle', '', svg);
-                drawText(userText.contest + ':', 150, 25,
+                drawText(OA.activeForm[0], 115, 48, 'formATextBoldHuge', 'middle', '', svg);
+                drawText(OA.userText.contest + ':', 150, 25,
                     'formAText', 'start', '', svg);
                 drawText($('location').value, 315, 47,
                     'formATextLarge', 'middle', '', svg);
-                drawText(userText.category + ':', 500, 25,
+                drawText(OA.userText.category + ':', 500, 25,
                     'formAText', 'start', '', svg);
-                drawText(`${userText[sportingClass.value]} ${$('category').value}`, 565, 47,
+                drawText(`${OA.userText[OA.sportingClass.value]} ${$('category').value}`, 565, 47,
                     'formATextMedium', 'middle', '', svg);
-                drawText(userText.date + ':', 100, 75,
+                drawText(OA.userText.date + ':', 100, 75,
                     'formAText', 'start', '', svg);
                 drawText($('date').value, 190, 97,
                     'formATextLarge', 'middle', '', svg);
-                drawText(userText.program + ':', 300, 75,
+                drawText(OA.userText.program + ':', 300, 75,
                     'formAText', 'start', '', svg);
                 drawText($('program').value, 390, 97,
                     'formATextLarge', 'middle', '', svg);
-                drawText(userText.pilotNo, 530, 90,
+                drawText(OA.userText.pilotNo, 530, 90,
                     'formAText', 'middle', '', svg);
 
                 // tear-off tab
                 drawLine(640, 0, 159, 160, 'formLine', svg);
                 drawLine(650, 0, 149, 150, 'dotted', svg);
-                drawText(userText.pilot + ': ' +
+                drawText(OA.userText.pilot + ': ' +
                     $('pilot').value, 670, 10, 'formAText',
                     'start', 'pilotText', svg);
                 // rotate pilot text elements by 45 degr CW
@@ -16447,7 +16484,7 @@ function buildHeader(svg, logoWidth) {
             break;
         case 'imac':
             // IMAC Forms
-            if (activeForm === 'A') {
+            if (OA.activeForm === 'A') {
                 drawRectangle(0, 0, 540, 90, 'formLine', svg);
                 drawLine(40, 0, 0, 90, 'formLine', svg); //  |
                 drawLine(40, 30, 500, 0, 'formLine', svg); // +---------------------------
@@ -16458,11 +16495,11 @@ function buildHeader(svg, logoWidth) {
                     ${$('program').value}  
                     Scoresheet`,
                     290, 17, 'formATextBold', 'middle', '', svg);
-                drawText(`${userText.contest}:`, 45, 45, 'formAText', 'start', '', svg);
+                drawText(`${OA.userText.contest}:`, 45, 45, 'formAText', 'start', '', svg);
                 drawText($('location').value, 120, 75, 'formATextMedium', 'middle', '', svg);
-                drawText(`${userText.date}:`, 205, 45, 'formAText', 'start', '', svg);
+                drawText(`${OA.userText.date}:`, 205, 45, 'formAText', 'start', '', svg);
                 drawText($('date').value, 250, 75, 'formATextMedium', 'middle', '', svg);
-                drawText(`${userText.category}:`, 305, 45, 'formAText', 'start', '', svg);
+                drawText(`${OA.userText.category}:`, 305, 45, 'formAText', 'start', '', svg);
                 drawText($('category').value, 420, 75, 'formATextXL', 'middle', '', svg);
             } else {
                 // sequence info box
@@ -16470,18 +16507,18 @@ function buildHeader(svg, logoWidth) {
                 drawLine(40, 10, 0, 40, 'formLine', svg); //  |
                 drawLine(0, 50, 600, 0, 'formLine', svg); // --------------------
                 drawLine(160, 50, 0, 40, 'formLine', svg);//      |
-                drawText(activeForm[0], 20, 40, 'formATextBoldXXL', 'middle', '', svg);
-                drawText(`${userText.contest}:`, 48, 25,
+                drawText(OA.activeForm[0], 20, 40, 'formATextBoldXXL', 'middle', '', svg);
+                drawText(`${OA.userText.contest}:`, 48, 25,
                     'formAText', 'start', '', svg);
                 drawText($('location').value, 320, 37,
                     'formATextLarge', 'middle', '', svg);
                 drawText($('category').value, 230, 77,
                     'formATextLarge', 'start', '', svg);
-                drawText(`${userText.date}:`, 8, 66,
+                drawText(`${OA.userText.date}:`, 8, 66,
                     'formAText', 'start', '', svg);
                 drawText($('date').value, 45, 77,
                     'formATextLarge', 'start', '', svg);
-                drawText(`${userText.program}:`, 168, 66,
+                drawText(`${OA.userText.program}:`, 168, 66,
                     'formAText', 'start', '', svg);
                 drawText($('program').value, 590, 77,
                     'formATextLarge', 'end', '', svg);
@@ -16493,19 +16530,19 @@ function buildHeader(svg, logoWidth) {
             drawText($('location').value + ' ' +
                 $('date').value, 425, 33, 'formATextLarge', 'middle', '', svg);
             drawRectangle(720, 0, 79, 65, 'formLine', svg);
-            drawText('Form ' + activeForm[0], 760, 33, 'formATextLarge', 'middle', '', svg);
+            drawText('Form ' + OA.activeForm[0], 760, 33, 'formATextLarge', 'middle', '', svg);
             drawRectangle(logoWidth, 65, 80, 65, 'formLine', svg);
-            drawText(userText.pilotID, logoWidth + 5, 75, 'miniFormA', 'start', '', svg);
+            drawText(OA.userText.pilotID, logoWidth + 5, 75, 'miniFormA', 'start', '', svg);
             drawText($('pilot_id').value, logoWidth + 40, 115, 'formATextHuge', 'middle', '', svg);
             drawRectangle(logoWidth + 80, 65, 640 - logoWidth, 65, 'formLine', svg);
             drawText(
                 $('rules').value + ' ' +
-                (sportingClass.value === 'glider' ? 'Glider ' : '') +
+                (OA.sportingClass.value === 'glider' ? 'Glider ' : '') +
                 $('category').value + ' ' +
                 $('program').value,
                 475, 105, 'formATextLarge', 'middle', '', svg);
             drawRectangle(720, 65, 79, 65, 'formLine', svg);
-            drawText(userText.flightNr, 725, 75, 'miniFormA', 'start', '', svg);
+            drawText(OA.userText.flightNr, 725, 75, 'miniFormA', 'start', '', svg);
             drawText($('flight_nb').value, 760, 115, 'formATextHuge', 'middle', '', svg);
     }
 }
@@ -16516,7 +16553,7 @@ function addFormElementsGrid(svg) {
     svg.setAttribute("height", '100%');
     svg.setAttribute("viewBox", '0 0 800 1130');
 
-    if (/^G\+|D/.test(activeForm)) {
+    if (/^G\+|D/.test(OA.activeForm)) {
         var children = svg.childNodes;
         for (let i = 0; i < children.length; i++) {
             children[i].setAttribute('transform',
@@ -16525,8 +16562,8 @@ function addFormElementsGrid(svg) {
         }
 
         var logoWidth = 0;
-        if (logoImg) {
-            var logoSvg = buildLogoSvg(logoImg, 0, 0, 200, 120,
+        if (OA.logoImg) {
+            var logoSvg = buildLogoSvg(OA.logoImg, 0, 0, 200, 120,
                 $('blackWhite').checked);
             svg.appendChild(logoSvg);
             logoWidth = parseInt(logoSvg.getBBox().width) + 32;
@@ -16544,7 +16581,7 @@ function addFormElementsGrid(svg) {
 
         drawText(
             $('rules').value + ' ' +
-            (sportingClass.value === 'glider' ? 'Glider ' : '') +
+            (OA.sportingClass.value === 'glider' ? 'Glider ' : '') +
             $('category').value + ' ' +
             $('program').value,
             logoWidth, 60, 'formATextXL', 'start', '', svg);
@@ -16556,7 +16593,7 @@ function addFormElementsGrid(svg) {
 
 // buildScoreColumn will append the righthand scoring column
 function buildScoreColumn(svg) {
-    switch (formStyle) {
+    switch (OA.formStyle) {
         case 'iac':
             drawRectangle(580, 130, 120, 50, 'formLine', svg);
             drawText('Item', 650, 155, 'formAText', 'middle', '', svg);
@@ -16578,8 +16615,8 @@ function buildScoreColumn(svg) {
             drawText('INC. PRESENTATION =', 590, 320, 'formAText', 'start', '', svg);
             drawRectangle(740, 290, 59, 40, 'formLine', svg);
 
-            drawText(figureK, 770, 265, 'formATextLarge', 'middle', '', svg);
-            var totalK = figureK;
+            drawText(OA.figureK, 770, 265, 'formATextLarge', 'middle', '', svg);
+            var totalK = OA.figureK;
             if (parseInt($('positioning').value)) {
                 totalK += parseInt($('positioning').value);
             }
@@ -16616,7 +16653,7 @@ function buildScoreColumn(svg) {
             drawText(
                 'Name:',
                 595,
-                y + 15 + parseInt(style.formAText.match(/font-size[ ]*:[ ]*(\d+)px/)[1]),
+                y + 15 + parseInt(OA.style.formAText.match(/font-size[ ]*:[ ]*(\d+)px/)[1]),
                 'formAText',
                 'start',
                 '',
@@ -16631,7 +16668,7 @@ function buildScoreColumn(svg) {
             drawText(
                 'Name:',
                 595,
-                y + 15 + parseInt(style.formAText.match(/font-size[ ]*:[ ]*(\d+)px/)[1]),
+                y + 15 + parseInt(OA.style.formAText.match(/font-size[ ]*:[ ]*(\d+)px/)[1]),
                 'formAText',
                 'start',
                 '',
@@ -16669,7 +16706,7 @@ function buildScoreColumn(svg) {
             // Total K
             drawRectangle(740, 400, 59, 40, 'formLine', svg);
             drawText('TOTAL K =', 620, 425, 'formATextLarge', 'start', '', svg);
-            drawText(figureK, 770, 425, 'formATextBoldLarge', 'middle', '', svg);
+            drawText(OA.figureK, 770, 425, 'formATextBoldLarge', 'middle', '', svg);
 
             // pilot and A/C Type block
             drawLine(680, 480, 0, 580, 'dotted', svg);
@@ -16722,9 +16759,9 @@ function buildScoreColumn(svg) {
             drawRectangle(710, 280, 89, 25, 'formLine', svg);
             drawText('Total K', 755, 295, 'formAText', 'middle', '', svg);
             drawRectangle(620, 305, 90, 50, 'formLine', svg);
-            drawText(figureK, 665, 330, 'formATextLarge', 'middle', '', svg);
+            drawText(OA.figureK, 665, 330, 'formATextLarge', 'middle', '', svg);
             drawRectangle(710, 305, 89, 50, 'formLine', svg);
-            var totalK = figureK;
+            var totalK = OA.figureK;
             if (parseInt($('positioning').value)) {
                 totalK += parseInt($('positioning').value);
             }
@@ -16748,7 +16785,7 @@ function buildScoreColumn(svg) {
             drawRectangle(750, y, 49, penalties.length * 25, 'formLineBold', svg);
             penalties.forEach ((p) => {
                 drawRectangle(620, y, 179, 25, 'formLine', svg);
-                drawText(userText[p], 628, y + 18, 'formAText', 'start', '', svg);
+                drawText(OA.userText[p], 628, y + 18, 'formAText', 'start', '', svg);
                 y += 25;
             });
 
@@ -16782,7 +16819,7 @@ function buildCornertab(svg) {
     // Add pilot's name
     if ($('pilot').value) {
         var newText = document.createElementNS(svgNS, "text");
-        newText.setAttribute('style', style.formATextBold);
+        newText.setAttribute('style', OA.style.formATextBold);
         newText.setAttribute('text-anchor', 'middle');
         newText.setAttribute('x', 730);
         newText.setAttribute('y', 1060);
@@ -16793,23 +16830,23 @@ function buildCornertab(svg) {
     }
     // Add pilot text
     var newText = document.createElementNS(svgNS, "text");
-    newText.setAttribute('style', style.formAText);
+    newText.setAttribute('style', OA.style.formAText);
     newText.setAttribute('text-anchor', 'middle');
     newText.setAttribute('x', 780);
     newText.setAttribute('y', 1035);
     newText.setAttribute('transform', 'rotate(-45 780 1035)');
-    var textNode = document.createTextNode(userText.pilot);
+    var textNode = document.createTextNode(OA.userText.pilot);
     newText.appendChild(textNode);
     svg.appendChild(newText);
     // Add aircraft info
     if (aircraft()) {
         var newText = document.createElementNS(svgNS, "text");
-        newText.setAttribute('style', style.formATextBold);
+        newText.setAttribute('style', OA.style.formATextBold);
         newText.setAttribute('text-anchor', 'middle');
         newText.setAttribute('x', 755);
         newText.setAttribute('y', 1085);
         newText.setAttribute('transform', 'rotate(-45 755 1085)');
-        if (formStyle == 'iac') {
+        if (OA.formStyle == 'iac') {
             var textNode = document.createTextNode($('acreg').value);
         } else {
             var textNode = document.createTextNode(aircraft());
@@ -16819,12 +16856,12 @@ function buildCornertab(svg) {
     }
     // Add aircraft text
     var newText = document.createElementNS(svgNS, "text");
-    newText.setAttribute('style', style.formAText);
+    newText.setAttribute('style', OA.style.formAText);
     newText.setAttribute('text-anchor', 'middle');
     newText.setAttribute('x', 785);
     newText.setAttribute('y', 1080);
     newText.setAttribute('transform', 'rotate(-45 785 1080)');
-    var textNode = document.createTextNode(userText.ac);
+    var textNode = document.createTextNode(OA.userText.ac);
     newText.appendChild(textNode);
     svg.appendChild(newText);
 }
@@ -16833,16 +16870,16 @@ function buildCornertab(svg) {
 // default file name. The result is appended with 'append' when supplied
 function activeFileName(append) {
     append = append || '';
-    if (!fileName.innerText) {
+    if (!OA.fileName.innerText) {
         var fname = $('location').value + ' ';
-        if (sportingClass.value == 'glider') fname += 'Glider ';
+        if (OA.sportingClass.value == 'glider') fname += 'Glider ';
         fname += $('category').value + ' ' +
             $('program').value + ' ' +
             $('pilot').value;
         fname = sanitizeSpaces(fname);
         updateSaveFilename(fname);
     } else {
-        fname = fileName.innerText;
+        fname = OA.fileName.innerText;
     }
     fname += append;
     return fname;
@@ -16869,7 +16906,7 @@ function saveImageSizeAdjust() {
     }
 
     // multiply this if doing printMulti
-    if (multi.fileList.length > 1) count = count * multi.fileList.length;
+    if (OA.multi.fileList.length > 1) count = count * OA.multi.fileList.length;
 
     // calculate ratio (Y / X) in base units
     var ratio = ((count * 1130) +
@@ -16901,7 +16938,7 @@ function saveSVG() {
 
 // savePNG will save a PNG image as selected in print/save dialog
 function savePNG() {
-    infoBox(userText.convertingToPng, userText.convertingTitle);
+    infoBox(OA.userText.convertingToPng, OA.userText.convertingTitle);
 
     // wrap conversion in try, in case it fails
     try {
@@ -16926,8 +16963,8 @@ function savePNG() {
         infoBox();
         draw();
         alertBox(
-            sprintf(userText.convertingFailed, encodeURI(err.stack)),
-            userText.convertingTitle);
+            sprintf(OA.userText.convertingFailed, encodeURI(err.stack)),
+            OA.userText.convertingTitle);
         return;
     }
 }
@@ -16942,8 +16979,8 @@ function saveFigs() {
         width = $('saveFigsSeparateWidth').value.replace(/[^0-9]/g, '') + 'px',
         height = $('saveFigsSeparateHeight').value.replace(/[^0-9]/g, '') + 'px',
         // Which forms?
-        saveForms = $('saveFigsSeparateForms').value || activeForm[0],
-        activeFormSave = activeForm;
+        saveForms = $('saveFigsSeparateForms').value || OA.activeForm[0],
+        activeFormSave = OA.activeForm;
     let
         // create new zip object
         zip = new JSZip(),
@@ -16951,7 +16988,7 @@ function saveFigs() {
         i = 0;
 
     // Generate output for saving, not editing
-    sequenceEditing = false;
+    OA.sequenceEditing = false;
 
     // Activate first form
     selectForm(forms.shift());
@@ -16959,7 +16996,7 @@ function saveFigs() {
     // zipFigure is called recursively to add figures to the zip file,
     // switch forms and finally save the zip file
     function zipFigure() {
-        if (i === figures.length) {
+        if (i === OA.figures.length) {
             if (forms.length) {
                 // Activate the next form
                 selectForm(forms.shift());
@@ -16981,14 +17018,14 @@ function saveFigs() {
                     });
 
                 // restore svg to editing mode
-                sequenceEditing = true;
+                OA.sequenceEditing = true;
                 selectForm (activeFormSave);
                 selectFigure(false);
                 draw();
             }
-        } else if (figures[i].figNr) {
+        } else if (OA.figures[i].figNr) {
             // go through the active form and get each figure from the edit figure box
-            selectedFigure.id = i;
+            OA.selectedFigure.id = i;
             displaySelectedFigure();
             let svg = $('selectedFigureSvg');
             if (!$('saveFigsSeparateFigureNumbers').checked) {
@@ -17004,12 +17041,12 @@ function saveFigs() {
             fName = fName.replace(/%aircraft/g, aircraft());
             fName = fName.replace(/%location/g, $('location').value);
             fName = fName.replace(/%date/g, $('date').value);
-            fName = fName.replace(/%class/g, sportingClass.value);
+            fName = fName.replace(/%class/g, OA.sportingClass.value);
             fName = fName.replace(/%rules/g, $('rules').value);
             fName = fName.replace(/%category/g, $('category').value);
             fName = fName.replace(/%program/g, $('program').value);
-            fName = fName.replace(/%form/g, activeForm[0]);
-            fName = fName.replace(/%figure/g, figures[i].seqNr);
+            fName = fName.replace(/%form/g, OA.activeForm[0]);
+            fName = fName.replace(/%figure/g, OA.figures[i].seqNr);
             if ($('saveFigsSeparateImageFormat').value == 'png') {
                 // rasterize canvas to png data URL (without data URL info) and
                 // put in ZIP file
@@ -17095,7 +17132,7 @@ function buildIllegal(i) {
     let paths = [];
     paths = buildShape('FigSpace', 2, paths);
     const
-        angle = dirAttToAngle(Direction, Attitude),
+        angle = dirAttToAngle(OA.direction, OA.attitude),
         dx = Math.cos(angle) * lineElement * 6,
         dy = -Math.sin(angle) * lineElement * 6;
     paths.push({
@@ -17108,66 +17145,66 @@ function buildIllegal(i) {
     });
     // Create empty space after illegal figure symbol
     paths = buildShape('FigSpace', 2, paths);
-    figures[i].paths = paths;
-    figures[i].unknownFigureLetter = unknownFigureLetter;
+    OA.figures[i].paths = paths;
+    OA.figures[i].unknownFigureLetter = OA.unknownFigureLetter;
 }
 
 // buildMoveTo builds the symbol for a moveto and moves the cursor
 // scaling should not affect movement, so divide by scale
 function buildMoveTo(dxdy, i) {
     const paths = [];
-    if (/^[CL]/.test(activeForm)) dxdy[0] = -dxdy[0];
+    if (/^[CL]/.test(OA.activeForm)) dxdy[0] = -dxdy[0];
     paths.push({
-        'path': 'l ' + roundTwo(dxdy[0] * (lineElement / scale)) +
-            ',' + roundTwo(dxdy[1] * (lineElement / scale)),
+        'path': 'l ' + roundTwo(dxdy[0] * (lineElement / OA.scale)) +
+            ',' + roundTwo(dxdy[1] * (lineElement / OA.scale)),
         'style': 'dotted',
-        'dx': parseInt(dxdy[0]) * (lineElement / scale),
-        'dy': parseInt(dxdy[1]) * (lineElement / scale)
+        'dx': parseInt(dxdy[0]) * (lineElement / OA.scale),
+        'dy': parseInt(dxdy[1]) * (lineElement / OA.scale)
     });
     // Create space after the figure
-    figures[i].paths = buildShape('FigSpace', 2, paths);
-    figures[i].moveTo = dxdy;
+    OA.figures[i].paths = buildShape('FigSpace', 2, paths);
+    OA.figures[i].moveTo = dxdy;
 }
 
 // buildCurveTo builds the symbol for a curveto and moves the cursor
 // scaling should not affect movement, so divide by scale
 function buildCurveTo(dxdy, i) {
     const paths = [];
-    if (/^[CL]/.test(activeForm)) dxdy[0] = -dxdy[0];
+    if (/^[CL]/.test(OA.activeForm)) dxdy[0] = -dxdy[0];
     const
-        angle = dirAttToAngle(Direction, Attitude),
+        angle = dirAttToAngle(OA.direction, OA.attitude),
         dist = Math.sqrt(dxdy[0] * dxdy[0] + dxdy[1] * dxdy[1]),
-        dx = Math.cos(angle) * (lineElement / scale) * dist / 2,
-        dy = -Math.sin(angle) * (lineElement / scale) * dist / 2;
+        dx = Math.cos(angle) * (lineElement / OA.scale) * dist / 2,
+        dy = -Math.sin(angle) * (lineElement / OA.scale) * dist / 2;
 
     paths.push({
         'path': 'c ' + roundTwo(dx) + ',' + roundTwo(dy) + ' ' +
-            roundTwo(dxdy[0] * (lineElement / scale) - dx) + ',' +
-            roundTwo(dxdy[1] * (lineElement / scale) - dy) + ' ' +
-            roundTwo(dxdy[0] * (lineElement / scale)) + ',' +
-            roundTwo(dxdy[1] * (lineElement / scale)),
+            roundTwo(dxdy[0] * (lineElement / OA.scale) - dx) + ',' +
+            roundTwo(dxdy[1] * (lineElement / OA.scale) - dy) + ' ' +
+            roundTwo(dxdy[0] * (lineElement / OA.scale)) + ',' +
+            roundTwo(dxdy[1] * (lineElement / OA.scale)),
         'style': 'dotted',
-        'dx': (dxdy[0] * (lineElement / scale)),
-        'dy': (dxdy[1] * (lineElement / scale))
+        'dx': (dxdy[0] * (lineElement / OA.scale)),
+        'dy': (dxdy[1] * (lineElement / OA.scale))
     });
     // Create space after the figure
-    figures[i].paths = buildShape('FigSpace', 2, paths);
-    figures[i].curveTo = dxdy;
+    OA.figures[i].paths = buildShape('FigSpace', 2, paths);
+    OA.figures[i].curveTo = dxdy;
 }
 
 // buildMoveForward moves the cursor forward
 function buildMoveForward(extent, i) {
     if (extent > 0) {
-        figures[i].paths = buildShape('FigSpace', extent);
-        figures[i].moveForward = extent;
+        OA.figures[i].paths = buildShape('FigSpace', extent);
+        OA.figures[i].moveForward = extent;
     }
 }
 
 // buildMoveDown moves the cursor downward
 function buildMoveDown(extent, i) {
     if (extent > 0) {
-        figures[i].paths = buildShape('VertSpace', extent);
-        figures[i].moveDown = extent;
+        OA.figures[i].paths = buildShape('VertSpace', extent);
+        OA.figures[i].moveDown = extent;
     }
 }
 
@@ -17191,23 +17228,23 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
         // vertical down after hammerhead, tailslide or after roll element
         lowKFlick = false,
         // entryAxis identifies the axis on which the figure starts
-        entryAxis = ((Direction % 180) == 0) ? 'X' : 'Y',
-        entryAtt = Attitude,
-        entryDir = Direction,
+        entryAxis = ((OA.direction % 180) == 0) ? 'X' : 'Y',
+        entryAtt = OA.attitude,
+        entryDir = OA.direction,
         description = [],
         figCheckLine = '';
 
     // goFront is set to true for every new figure that starts to front
-    if (((Direction == 90) && (Attitude == 0)) || ((Direction == 270) && (Attitude == 180))) {
-        goFront = false;
+    if (((OA.direction == 90) && (OA.attitude == 0)) || ((OA.direction == 270) && (OA.attitude == 180))) {
+        OA.goFront = false;
     } else {
-        goFront = true;
+        OA.goFront = true;
     }
 
-    var bareFigBase = fig[figNr].base.replace(/[+-]+/g, '');
+    var bareFigBase = OA.fig[figNr].base.replace(/[+-]+/g, '');
 
     // In the first part we handle everything except (rolling) turns
-    if (!regexTurn.test(fig[figNr].base)) {
+    if (!regexTurn.test(OA.fig[figNr].base)) {
         // First we split the figstring in it's elements, the bareFigBase
         // is empty for rolls on horizontal.
         if (bareFigBase != '') {
@@ -17233,7 +17270,7 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
             var splitLR = Array(figString);
         }
         // start with an empty set of rolls
-        for (let i = 0; i < fig[figNr].rolls.length; i++) {
+        for (let i = 0; i < OA.fig[figNr].rolls.length; i++) {
             rollPatterns[i] = '';
         }
         // Find the roll patterns
@@ -17245,7 +17282,7 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
                 if (/\(/.test(r)) {
                     rollPatterns[i + 1] = r.replace(/\(/g, '');
                 } else {
-                    rollPatterns[fig[figNr].rolls.length - 1] = r;
+                    rollPatterns[OA.fig[figNr].rolls.length - 1] = r;
                 }
             });
         }
@@ -17266,7 +17303,7 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
             var rollPattern = r;
             rollSums[i] = 0;
             var
-                rollSign = (/^[CL]/.test(activeForm)) ? -1 : 1,
+                rollSign = (/^[CL]/.test(OA.activeForm)) ? -1 : 1,
                 extent = 0,
                 subRoll = 0,
                 flipRoll = false,
@@ -17287,18 +17324,18 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
                             case (userpat.rollext):
                                 // Long line before or after roll, twice the length of
                                 // the same pattern in figures.js
-                                roll[i].push({ 'type': 'line', 'extent': 3, 'load': NegLoad });
+                                roll[i].push({ 'type': 'line', 'extent': 3, 'load': OA.negLoad });
                                 rollInfo[i].gap[subRoll] += 3;
                                 break;
                             case (userpat.rollextshort):
                                 // Short line before or after roll, twice the length of
                                 // the same pattern in figures.js
-                                roll[i].push({ 'type': 'line', 'extent': 1, 'load': NegLoad });
+                                roll[i].push({ 'type': 'line', 'extent': 1, 'load': OA.negLoad });
                                 rollInfo[i].gap[subRoll]++;
                                 break;
                             case (userpat.lineshorten):
                                 // Make line before or after roll shorter
-                                roll[i].push({ 'type': 'line', 'extent': -1, 'load': NegLoad });
+                                roll[i].push({ 'type': 'line', 'extent': -1, 'load': OA.negLoad });
                                 rollInfo[i].gap[subRoll]--;
                                 break;
                             case (userpat.opproll):
@@ -17321,7 +17358,7 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
                                     'l': 'posLomcevak'
                                 }[char];
                                 if (extent > 0) {
-                                    roll[i].push({ 'type': 'line', 'extent': 2, 'load': NegLoad });
+                                    roll[i].push({ 'type': 'line', 'extent': 2, 'load': OA.negLoad });
                                 }
                                 roll[i].push({
                                     'type': type,
@@ -17353,7 +17390,7 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
                                 }[rollPattern.charAt(j + 1)];
                                 if (type) {
                                     if (extent > 0) {
-                                        roll[i].push({ 'type': 'line', 'extent': 2, 'load': NegLoad });
+                                        roll[i].push({ 'type': 'line', 'extent': 2, 'load': OA.negLoad });
                                     }
                                     j++;
                                     roll[i].push({
@@ -17384,9 +17421,9 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
                                     if (extent > 0) {
                                         var regex = /[fs]/;
                                         if (regex.test(rollPattern)) {
-                                            roll[i].push({ 'type': 'line', 'extent': 2, 'load': NegLoad })
+                                            roll[i].push({ 'type': 'line', 'extent': 2, 'load': OA.negLoad })
                                         } else {
-                                            roll[i].push({ 'type': 'line', 'extent': 1, 'load': NegLoad })
+                                            roll[i].push({ 'type': 'line', 'extent': 1, 'load': OA.negLoad })
                                         }
                                     }
 
@@ -17493,9 +17530,9 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
                                             });
                                     }
                                     if (illegalSnapSpin) {
-                                        alertMsgs.push('(' + seqNr + ') ' +
+                                        OA.alertMsgs.push('(' + seqNr + ') ' +
                                             rollPattern.substring(startJ, j + 1) +
-                                            userText.illegalFig +
+                                            OA.userText.illegalFig +
                                             rollPattern.substring(startJ, startJ + 1) +
                                             illegalSnapSpin);
                                         extent = 0;
@@ -17516,7 +17553,7 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
                                     var startJ = j;
                                     // When there was a roll before, add a line first
                                     if (extent > 0) {
-                                        roll[i].push({ 'type': 'line', 'extent': 2, 'load': NegLoad });
+                                        roll[i].push({ 'type': 'line', 'extent': 2, 'load': OA.negLoad });
                                         extent = 0;
                                     }
                                     j++;
@@ -17569,7 +17606,7 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
         });
         // Set the number of the first roll for drawing later on
         // To do this we check the fig.pattern for a roll match before the base
-        var rollnr = regexRollBeforeBase.test(fig[figNr].pattern) ? 0 : 1;
+        var rollnr = regexRollBeforeBase.test(OA.fig[figNr].pattern) ? 0 : 1;
 
         // If there are multiple figNrs we check the rolls to see which one
         // matches best. It's very important that with different figures with
@@ -17581,10 +17618,10 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
             figNrs.forEach ((fn) => {
                 var rollCorr = 0;
                 roll.forEach ((r, i) => {
-                    if (fig[fn].rolls[i] == 2) {
+                    if (OA.fig[fn].rolls[i] == 2) {
                         // half roll symbol at this position in fig[xx].rolls[yy]
                         rollCorr += Math.abs((rollSums[i] + 180) % 360);
-                    } else if (/[^34]/.test(fig[fn].rolls[i])) {
+                    } else if (/[^34]/.test(OA.fig[fn].rolls[i])) {
                         // full or no roll symbol at this position in fig[xx].rolls[yy]
                         // 'no roll' can be no roll line at all (rolls[j] undefined)
                         // or only line without roll allowed as in some P-loops
@@ -17594,36 +17631,36 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
                         // to similar figures with a roll allowed. Whenever a roll is chosen in
                         // this element, make the "no roll allowed" figure less likely to be chosen
                         // by adding 360 to the rollCorr.
-                        if (r.length && fig[fn].rolls[i] == 9) rollCorr += 360;
+                        if (r.length && OA.fig[fn].rolls[i] == 9) rollCorr += 360;
                     }
                 });
                 if (rollCorr < rollCorrMin) {
                     rollCorrMin = rollCorr;
                     figNr = fn;
-                    rollnr = regexRollBeforeBase.test(fig[figNr].pattern) ? 0 : 1;
+                    rollnr = regexRollBeforeBase.test(OA.fig[figNr].pattern) ? 0 : 1;
                 }
             });
-            var figureDraw = fig[figNr].draw;
-        } else var figureDraw = fig[figNrs[0]].draw;
-    } else var figureDraw = fig[figNrs[0]].draw;
+            var figureDraw = OA.fig[figNr].draw;
+        } else var figureDraw = OA.fig[figNrs[0]].draw;
+    } else var figureDraw = OA.fig[figNrs[0]].draw;
     // The chosen figure is now final, so we can:
     // * assign Aresti Nr and K Factor to the figure
     // * fix the figNr in the figures object
     // * remove rolls where only line shortening/lengthening is allowed
-    var arestiNrs = new Array(fig[figNr].aresti);
-    if (!fig[figNr].kRules) {
-        if ((sportingClass.value === 'glider') && fig[figNr].kGlider) {
-            var kFactors = [parseInt(fig[figNr].kGlider)];
+    var arestiNrs = new Array(OA.fig[figNr].aresti);
+    if (!OA.fig[figNr].kRules) {
+        if ((OA.sportingClass.value === 'glider') && OA.fig[figNr].kGlider) {
+            var kFactors = [parseInt(OA.fig[figNr].kGlider)];
         } else {
-            var kFactors = [parseInt(fig[figNr].kPwrd)];
+            var kFactors = [parseInt(OA.fig[figNr].kPwrd)];
         }
-    } else var kFactors = [parseInt(fig[figNr].kRules)];
-    figures[figStringIndex].figNr = figNr;
-    figCheckLine = fig[figNr].aresti;
+    } else var kFactors = [parseInt(OA.fig[figNr].kRules)];
+    OA.figures[figStringIndex].figNr = figNr;
+    figCheckLine = OA.fig[figNr].aresti;
 
     // consolidate gaps for lines without rolls
     roll.forEach ((r, i) => {
-        if (fig[figNr].rolls[i] === 9) {
+        if (OA.fig[figNr].rolls[i] === 9) {
             for (let j = 0; j < r.length; j++) {
                 if (r[j].type !== 'line') {
                     r.splice(j, 1);
@@ -17639,7 +17676,7 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
     // and shortening and apply them
     var entryExt = 0;
     var exitExt = 0;
-    if (activeForm !== 'A') {
+    if (OA.activeForm !== 'A') {
         // get position for the base (1) OR the roll(s) on a horizontal (2)
         if (bareFigBase != '') {
             var basePos = figString.indexOf(bareFigBase);
@@ -17678,7 +17715,7 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
         }
     }
 
-    figures[figStringIndex].unknownFigureLetter = unknownFigureLetter;
+    OA.figures[figStringIndex].unknownFigureLetter = OA.unknownFigureLetter;
 
     // Now we go through the drawing instructions
     var
@@ -17692,7 +17729,7 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
         paths = buildShape('FigStart',
             {
                 'seqNr': seqNr,
-                'first': firstFigure,
+                'first': OA.firstFigure,
                 'figId': figStringIndex
             },
             paths),
@@ -17700,15 +17737,15 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
 
     // add any paths that were already provided
     // (e.g. for autocorrect red circle)
-    if (figures[figStringIndex].paths) {
-        figures[figStringIndex].paths.forEach((p) => { paths.push(p); });
+    if (OA.figures[figStringIndex].paths) {
+        OA.figures[figStringIndex].paths.forEach((p) => { paths.push(p); });
     }
 
     for (let i = 0; i < figureDraw.length; i++) {
         // set correct load
         if ((figureDraw[i] == figpat.longforward) || (figureDraw[i] == figpat.forward)) {
-            if ((Attitude != 90) && (Attitude != 270)) {
-                NegLoad = ((Attitude > 90) && (Attitude < 270)) ? 1 : 0;
+            if ((OA.attitude != 90) && (OA.attitude != 270)) {
+                OA.negLoad = ((OA.attitude > 90) && (OA.attitude < 270)) ? 1 : 0;
             }
         }
         // Sum continuous lines in the figure
@@ -17755,7 +17792,7 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
                     }
                     if (entryLine) {
                         params.push('entry');
-                        figures[figStringIndex].entryLength = lineSum;
+                        OA.figures[figStringIndex].entryLength = lineSum;
                         entryLine = false;
                     }
 
@@ -17772,7 +17809,7 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
             case (figpat.pushhammer):
                 paths = buildShape('Hammer', lineLength, paths);
                 // down line after hammer always positive
-                NegLoad = false;
+                OA.negLoad = false;
                 lowKFlick = true;
                 break;
             // Make tailslides
@@ -17787,8 +17824,8 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
                 break;
             // Make rolls, including any line lenghthening and/or shortening
             case (figpat.fullroll):
-                rollInfo[rollnr].attitude = Attitude;
-                rollInfo[rollnr].negLoad = NegLoad;
+                rollInfo[rollnr].attitude = OA.attitude;
+                rollInfo[rollnr].negLoad = OA.negLoad;
                 // Make a space on the figCheckLine before every possible roll
                 figCheckLine += ' ';
                 // mark rolls in the top
@@ -17807,7 +17844,7 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
                             if (lineDraw) {
                                 // set a fixed distance for rolls in the top
                                 if (rollTop) {
-                                    rollPaths = buildShape('Move', [1.2 / scale], rollPaths);
+                                    rollPaths = buildShape('Move', [1.2 / OA.scale], rollPaths);
                                 } else {
                                     // Minimum gap is 2 units between rolls to assure clear
                                     // roll separation, 1 in other cases.
@@ -17842,22 +17879,22 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
 
                         // Find which roll in figures.js matches. There should only
                         // be one. Then add Aresti nr and K factor
-                        var rollAtt = rollAttitudes[Attitude];
+                        var rollAtt = rollAttitudes[OA.attitude];
                         // Find the correct snap/load combination
                         // Snaps started knife edge are judged as
                         // 'pos from neg'/'neg from pos' with foot-down entry
                         if ((r.type == 'possnap') || (r.type == 'negsnap')) {
-                            if (((Attitude == 90) || (Attitude == 270)) && lowKFlick) {
+                            if (((OA.attitude == 90) || (OA.attitude == 270)) && lowKFlick) {
                                 // Handle snaps on verticals where lowKFlick is set
                                 rollAtt = (r.type == 'possnap') ? '+' + rollAtt : '-' + rollAtt;
-                            } else if (((rollSum % 180) == 0) || (Attitude == 90) || (Attitude == 270)) {
+                            } else if (((rollSum % 180) == 0) || (OA.attitude == 90) || (OA.attitude == 270)) {
                                 // Handle snaps on verticals and from non-knife-edge
-                                rollAtt = (NegLoad == 0) ? '+' + rollAtt : '-' + rollAtt;
+                                rollAtt = (OA.negLoad == 0) ? '+' + rollAtt : '-' + rollAtt;
                             } else {
                                 // Handle snaps from knife edge. Use rollSum to find the
                                 // previous amount of roll. Use switches to determine
                                 // correct virtual load/attitude combination
-                                var inv = ((Attitude > 90) && (Attitude < 270));
+                                var inv = ((OA.attitude > 90) && (OA.attitude < 270));
                                 inv = (inv == (((Math.abs(rollSum) - 90) % 360) == 0));
                                 inv = (inv == ((rollSum * r.extent) > 0));
                                 // 1) Foot up for pos start, foot down for neg start
@@ -17871,12 +17908,12 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
                         if (!$('nonArestiRolls').checked) {
                             // Check if spin is allowed on this roll position
                             if (r.type.match(/^(pos|neg)spin$/) &&
-                                (fig[figNr].rolls[rollnr] != 4)) {
+                                (OA.fig[figNr].rolls[rollnr] != 4)) {
                                 checkAlert(
-                                    userText.alert.spinsStartHorizontal,
+                                    OA.userText.alert.spinsStartHorizontal,
                                     false,
                                     seqNr,
-                                    (sportingClass.value === 'glider') ?
+                                    (OA.sportingClass.value === 'glider') ?
                                         'Sporting Code Section 6 Part II, B.9.27.2' :
                                         'Sporting Code Section 6 Part I, B.9.29.1'
                                 );
@@ -17884,21 +17921,21 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
                                 // Check if posspin and negspin are on correctly loaded line
                                 // Crossover spins will create alert when nonArestiRolls is
                                 // not checked (Aresti Catalogue item 26)
-                                if (((r.type == 'posspin') && !NegLoad) ||
-                                    ((r.type == 'negspin') && NegLoad)) {
-                                    checkAlert(userText.alert.noCrossoverSpin,
+                                if (((r.type == 'posspin') && !OA.negLoad) ||
+                                    ((r.type == 'negspin') && OA.negLoad)) {
+                                    checkAlert(OA.userText.alert.noCrossoverSpin,
                                         false,
                                         seqNr,
                                         'Aresti Catalogue item 26');
                                 }
                             }
                         }
-                        var thisRoll = rollFig[rollAtt + r.pattern];
+                        var thisRoll = OA.rollFig[rollAtt + r.pattern];
                         if (thisRoll) {
                             arestiNrs.push(thisRoll.aresti);
                             if (thisRoll.kRules) {
                                 kFactors.push(parseInt(thisRoll.kRules));
-                            } else if ((sportingClass.value === 'glider') && (thisRoll.kGlider)) {
+                            } else if ((OA.sportingClass.value === 'glider') && (thisRoll.kGlider)) {
                                 kFactors.push(parseInt(thisRoll.kGlider));
                             } else {
                                 kFactors.push(parseInt(thisRoll.kPwrd));
@@ -17948,7 +17985,7 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
                                     false,
                                     false,
                                     r.comment,
-                                    figureChooser ? fig[figNr].rolls[rollnr] : false
+                                    figureChooser ? OA.fig[figNr].rolls[rollnr] : false
                                 ),
                                     rollPaths);
                                 lineLength += parseInt((Math.abs(r.extent) - 1) / 360) * (10 / lineElement);
@@ -18061,9 +18098,9 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
                             // Half rolls and all rolls in the vertical change
                             // direction and possibly attitude
                             if (((rollSum + 180) % 360) == 0) {
-                                Attitude = 180 - Attitude;
-                                if (Attitude < 0) Attitude += 360;
-                                if (/^[CL]/.test(activeForm)) {
+                                OA.attitude = 180 - OA.attitude;
+                                if (OA.attitude < 0) OA.attitude += 360;
+                                if (/^[CL]/.test(OA.activeForm)) {
                                     changeDir(-Math.abs(rollSum));
                                 } else {
                                     changeDir(Math.abs(rollSum));
@@ -18071,12 +18108,12 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
                                 rollSum = 0;
                                 attChanged = 180 - attChanged;
                                 // correct load for half rolls in top of loop
-                                if (rollTop) NegLoad = 1 - NegLoad;
+                                if (rollTop) OA.negLoad = 1 - OA.negLoad;
                             }
                             // check correct load after rolls that are not vertical or
                             // in top of loop
-                            if ((Attitude != 90) && (Attitude != 270) && (!rollTop)) {
-                                NegLoad = (((Attitude > 90) && (Attitude < 270))) ? 1 : 0;
+                            if ((OA.attitude != 90) && (OA.attitude != 270) && (!rollTop)) {
+                                OA.negLoad = (((OA.attitude > 90) && (OA.attitude < 270))) ? 1 : 0;
                             }
                         }
                     });
@@ -18086,7 +18123,7 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
 
                     rollSum = rollSums[rollnr];
                     // See if we have to autocorrect the rolls
-                    if (fig[figNr].rolls[rollnr] == 1) {
+                    if (OA.fig[figNr].rolls[rollnr] == 1) {
                         var autoCorr = -(rollSum % 360);
                         // When a line is standing by to be built, build it before
                         // doing the autocorrect
@@ -18094,7 +18131,7 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
                             if (lineDraw) {
                                 // set a fixed distance for rolls in the top
                                 if (rollTop) {
-                                    rollPaths = buildShape('Move', [1.2 / scale], rollPaths);
+                                    rollPaths = buildShape('Move', [1.2 / OA.scale], rollPaths);
                                 } else {
                                     if (lineSum > 0) {
                                         lineLength += lineSum;
@@ -18111,7 +18148,7 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
                             if (rollDone) {
                                 // set a fixed distance for rolls in the top
                                 if (rollTop) {
-                                    rollPaths = buildShape('Move', [1.2 / scale], rollPaths);
+                                    rollPaths = buildShape('Move', [1.2 / OA.scale], rollPaths);
                                 } else {
                                     rollPaths = buildShape('Line', [2], rollPaths);
                                     lineLength += 2;
@@ -18119,11 +18156,11 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
                             }
                         }
                         if (attChanged == 180) {
-                            Attitude = 180 - Attitude;
-                            if (Attitude < 0) Attitude += 360;
+                            OA.attitude = 180 - OA.attitude;
+                            if (OA.attitude < 0) OA.attitude += 360;
                             changeDir(180);
                         }
-                    } else if (fig[figNr].rolls[rollnr] == 2) {
+                    } else if (OA.fig[figNr].rolls[rollnr] == 2) {
                         autoCorr = -((rollSum + 180) % 360);
                         // When a line is standing by to be built, build it before
                         // doing the autocorrect
@@ -18131,7 +18168,7 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
                             if (lineDraw) {
                                 // set a fixed distance for rolls in the top
                                 if (rollTop) {
-                                    rollPaths = buildShape('Move', [1.2 / scale], rollPaths);
+                                    rollPaths = buildShape('Move', [1.2 / OA.scale], rollPaths);
                                 } else {
                                     if (lineSum > 0) {
                                         lineLength += lineSum;
@@ -18148,7 +18185,7 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
                             if (rollDone) {
                                 // set a fixed distance for rolls in the top
                                 if (rollTop) {
-                                    rollPaths = buildShape('Move', [1.2 / scale], rollPaths);
+                                    rollPaths = buildShape('Move', [1.2 / OA.scale], rollPaths);
                                 } else {
                                     rollPaths = buildShape('Line', [2], rollPaths);
                                     lineLength += 2;
@@ -18157,8 +18194,8 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
                         }
                         // Half rolls change direction, attitude and load
                         if (attChanged == 0) {
-                            Attitude = 180 - Attitude;
-                            if (Attitude < 0) Attitude += 360;
+                            OA.attitude = 180 - OA.attitude;
+                            if (OA.attitude < 0) OA.attitude += 360;
                             changeDir(180);
                         }
                     } else {
@@ -18169,7 +18206,7 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
                         rollPaths = buildShape('Roll', Array(autoCorr, 0, false, false, true), rollPaths);
                         // Find which roll in figures.js matches. There should only be one.
                         // Then add Aresti nr and K factor
-                        var rollAtt = rollAttitudes[Attitude];
+                        var rollAtt = rollAttitudes[OA.attitude];
                         switch (Math.abs(autoCorr)) {
                             case (90):
                                 var addRoll = rollAtt + '4';
@@ -18184,21 +18221,21 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
                                 var addRoll = false;
                         }
                         if (addRoll) {
-                            arestiNrs.push(rollFig[addRoll].aresti);
-                            if (rollFig[addRoll].kRules) {
-                                kFactors.push(parseInt(rollFig[addRoll].kRules));
-                            } else if ((sportingClass.value === 'glider') && (rollFig[addRoll].kGlider)) {
-                                kFactors.push(parseInt(rollFig[addRoll].kGlider));
-                            } else kFactors.push(parseInt(rollFig[addRoll].kPwrd));
+                            arestiNrs.push(OA.rollFig[addRoll].aresti);
+                            if (OA.rollFig[addRoll].kRules) {
+                                kFactors.push(parseInt(OA.rollFig[addRoll].kRules));
+                            } else if ((OA.sportingClass.value === 'glider') && (OA.rollFig[addRoll].kGlider)) {
+                                kFactors.push(parseInt(OA.rollFig[addRoll].kGlider));
+                            } else kFactors.push(parseInt(OA.rollFig[addRoll].kPwrd));
                         }
-                        alertMsgs.push('(' + seqNr + ') ' + userText.autocorrectRoll);
+                        OA.alertMsgs.push('(' + seqNr + ') ' + OA.userText.autocorrectRoll);
                     }
                     // Add the second curve segment after a roll in the top
                     // Invert the angle when it was a half roll
                     // Move the pointer to where the roll should be. Start it offset
                     // so it is centered on the top (especially for multiple rolls)
                     if (rollTop) {
-                        if (fig[figNr].rolls[rollnr] == 2) {
+                        if (OA.fig[figNr].rolls[rollnr] == 2) {
                             rollTopAngleAfter = -rollTopAngleAfter;
                         }
                         var topLineAngle = (rollTopAngleAfter > 0) ? 45 : -45;
@@ -18254,7 +18291,7 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
                     figString = checkQRollSwitch(
                         figString,
                         figStringIndex,
-                        fig[figNr].pattern,
+                        OA.fig[figNr].pattern,
                         seqNr,
                         rollSum,
                         figureDraw,
@@ -18274,7 +18311,7 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
                 figString = checkQRollSwitch(
                     figString,
                     figStringIndex,
-                    fig[figNr].pattern,
+                    OA.fig[figNr].pattern,
                     seqNr,
                     90,
                     figureDraw,
@@ -18290,14 +18327,14 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
                 // when this was an OLAN sequence, check for previous in-figure
                 // X axis swap and autocorrect the exit of this figure for the
                 // next round
-                if (OLAN.sequence) OLANXSwitch(figStringIndex);
+                if (OA.OLAN.sequence) OLANXSwitch(figStringIndex);
 
                 if (regexChangeDir.test(figString)) {
-                    figures[figStringIndex].switchX = true;
-                    var prefix = (/^[CL]/.test(activeForm)) ? '' : userpat.moveforward;
+                    OA.figures[figStringIndex].switchX = true;
+                    var prefix = (/^[CL]/.test(OA.activeForm)) ? '' : userpat.moveforward;
                 } else {
-                    figures[figStringIndex].switchX = false;
-                    var prefix = (/^[CL]/.test(activeForm)) ? userpat.moveforward : '';
+                    OA.figures[figStringIndex].switchX = false;
+                    var prefix = (/^[CL]/.test(OA.activeForm)) ? userpat.moveforward : '';
                 }
                 paths = buildShape('Turn', prefix +
                     figureDraw.replace(/[^jioJIO\d]+/g, ''), paths);
@@ -18312,7 +18349,7 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
                     var angle = parseInt(drawAngles[figureDraw.charAt(i)]);
                     // add text to description
                     description.push(sprintf(
-                        (angle > 0) ? userText.pullLoop : userText.pushLoop, Math.abs(angle)));
+                        (angle > 0) ? OA.userText.pullLoop : OA.userText.pushLoop, Math.abs(angle)));
                     // Draw sharp angles for corners less than 180 unless
                     // specifically told to make a curve by '=' symbol
                     if ((Math.abs(angle) < 180) && (figureDraw.charAt(i + 1) != '=')) {
@@ -18331,7 +18368,7 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
                             // part later to determine the top
                             // We do this by finding the point closest to the center of
                             // looping shape that has Attitude 0 or 180
-                            var attTop = Attitude + (angle / 2);
+                            var attTop = OA.attitude + (angle / 2);
                             var diffTop = ((attTop / 180) - parseInt((attTop + 90) / 180)) * 180;
                             if (Math.abs(diffTop) > 90) {
                                 diffTop = ((attTop / 180) - parseInt((attTop - 90) / 180)) * 180;
@@ -18376,7 +18413,7 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
                         // if applicable, reset curveRadius when done
                         if (figureDraw.charAt(i + 1) == '/') curveRadius *= 2;
                     }
-                    NegLoad = (angle < 0) ? 1 : 0;
+                    OA.negLoad = (angle < 0) ? 1 : 0;
                     // The lineLength may be necessary for e.g. hammerhead and is
                     // set to 0 after any angle
                     lineLength = 0;
@@ -18414,7 +18451,7 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
     // there is no more processing after this
     if (lineDraw) {
         paths = buildShape('Line', [Math.max(lineSum, 1), 'exit'], paths);
-        figures[figStringIndex].exitLength = Math.max(lineSum, 1);
+        OA.figures[figStringIndex].exitLength = Math.max(lineSum, 1);
     }
 
     // Make the end of figure symbol
@@ -18430,9 +18467,9 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
 
     // The figure is complete. Create the final figure object for later
     // processing such as drawing Forms and point & click figure editing
-    Object.assign(figures[figStringIndex], {
+    Object.assign(OA.figures[figStringIndex], {
         aresti: arestiNrs,
-        base: fig[figNr].base,
+        base: OA.fig[figNr].base,
         checkLine: figCheckLine,
         description: description,
         entryExt: entryExt,
@@ -18440,25 +18477,25 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
         entryAxis: entryAxis,
         entryAtt: entryAtt,
         entryDir: entryDir,
-        exitAtt: Attitude,
-        exitDir: Direction,
-        family: figGroup[fig[figNr].group] ?
-            lang.en.figureGroups[figGroup[fig[figNr].group].name] : '',
+        exitAtt: OA.attitude,
+        exitDir: OA.direction,
+        family: OA.figGroup[OA.fig[figNr].group] ?
+            lang.en.figureGroups[OA.figGroup[OA.fig[figNr].group].name] : '',
         k: kFactors,
         paths: paths,
         rolls: roll,
         rollInfo: rollInfo,
-        scale: Math.round((scale - 1) * 10),
+        scale: Math.round((OA.scale - 1) * 10),
         seqNr: seqNr,
         superFamily: getSuperFamily(arestiNrs,
-            sportingClass.value == 'glider' ? 'glider' : $('category').value
+            OA.sportingClass.value == 'glider' ? 'glider' : $('category').value
         ),
-        unknownFigureLetter: unknownFigureLetter,
+        unknownFigureLetter: OA.unknownFigureLetter,
     });
-    unknownFigureLetter = false;
+    OA.unknownFigureLetter = false;
 
     // now that the figure is determined, apply marking to figureStart
-    const figureStartStyle = getFigureStartStyle(figures[figStringIndex]);
+    const figureStartStyle = getFigureStartStyle(OA.figures[figStringIndex]);
     if (figureStartStyle) {
         let i = 0;
         while (i < paths.length && !paths[i].figureStart) i++;
@@ -18477,21 +18514,21 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
             }
         }
         // copy update to figures.paths
-        figures[figStringIndex].paths = paths;
+        OA.figures[figStringIndex].paths = paths;
     }
 
 
     // set OLAN.inFigureXSwitchFig (used for OLAN sequence autocorrect) to
     // Infinity when we exit on X axis
-    if ((Direction % 180) == 0) OLAN.inFigureXSwitchFig = Infinity;
+    if ((OA.direction % 180) == 0) OA.OLAN.inFigureXSwitchFig = Infinity;
 }
 
 // checkQRollSwitch checks for vertical 1/4 rolls and determines
 // roll direction.
 // Only run one X and one Y switch per figure
 function checkQRollSwitch(figString, figStringIndex, pattern, seqNr, rollSum, figureDraw, fdIndex, roll, rollnr) {
-    if (((Attitude == 90) || (Attitude == 270)) && (rollSum % 180)) {
-        if (/^[CL]/.test(activeForm)) {
+    if (((OA.attitude == 90) || (OA.attitude == 270)) && (rollSum % 180)) {
+        if (/^[CL]/.test(OA.activeForm)) {
             changeDir(-Math.abs(rollSum));
         } else {
             changeDir(Math.abs(rollSum));
@@ -18547,20 +18584,20 @@ function checkQRollSwitch(figString, figStringIndex, pattern, seqNr, rollSum, fi
 
                         var switchDir = regex.test(figString);
                         if (switchDir) figString = figString.replace(regex, "$1");
-                        figures[figStringIndex].switchFirstRoll = switchDir;
+                        OA.figures[figStringIndex].switchFirstRoll = switchDir;
 
-                        if ((Direction % 180) == 0) {
-                            if (((((Attitude == 90) == (Direction == 0)) == (nextAngle > 0)) == goRight) != switchDir) {
+                        if ((OA.direction % 180) == 0) {
+                            if (((((OA.attitude == 90) == (OA.direction == 0)) == (nextAngle > 0)) == OA.goRight) != switchDir) {
                                 changeDir(180);
                             }
-                            goFront = !goFront;
+                            OA.goFront = !OA.goFront;
                         } else {
-                            if (((((Attitude == 90) == (Direction == 270)) == (nextAngle > 0)) == goFront) != switchDir) {
+                            if (((((OA.attitude == 90) == (OA.direction == 270)) == (nextAngle > 0)) == OA.goFront) != switchDir) {
                                 changeDir(180);
                             }
-                            if (updateAxisDir) goFront = !goFront;
+                            if (OA.updateAxisDir) OA.goFront = !OA.goFront;
                         }
-                        updateAxisDir = false;
+                        OA.updateAxisDir = false;
                         return figString;
                     } else {
                         // The exit direction will be based on this roll next time
@@ -18577,7 +18614,7 @@ function checkQRollSwitch(figString, figStringIndex, pattern, seqNr, rollSum, fi
                 nextRollExtent += 180;
             }
         }
-        if ((Direction % 180) == 0) {
+        if ((OA.direction % 180) == 0) {
             // change roll direction depending on the X direction we want to
             // fly after the vertical
             // count angles greater than 180 as negative. e.g. Rev P-loop will
@@ -18585,32 +18622,32 @@ function checkQRollSwitch(figString, figStringIndex, pattern, seqNr, rollSum, fi
             if (Math.abs(nextAngle) > 180) nextAngle = -nextAngle;
             // multiple switches decide if we should go right or left
             // each switch toggles the decision
-            if (((((Attitude == 90) == (Direction == 0)) == (nextAngle > 0)) == goRight) != switchVert) {
+            if (((((OA.attitude == 90) == (OA.direction == 0)) == (nextAngle > 0)) == OA.goRight) != switchVert) {
                 changeDir(180);
             }
             // when this was an OLAN sequence, check for previous in-figure
             // X axis swap and autocorrect this figure for the next round
-            if (OLAN.sequence) OLANXSwitch(figStringIndex);
+            if (OA.OLAN.sequence) OLANXSwitch(figStringIndex);
             if (regexSwitchDirX.test(figString)) {
                 changeDir(180);
-                figures[figStringIndex].switchX = true;
-                OLAN.inFigureXSwitchFig = figStringIndex; // used for OLAN auto correct
+                OA.figures[figStringIndex].switchX = true;
+                OA.OLAN.inFigureXSwitchFig = figStringIndex; // used for OLAN auto correct
                 // Remove this direction changer from the figure string once
                 // applied and no Q roll follows
                 if (nextRollExtent == 0) {
                     figString = figString.replace(regexSwitchDirX, '');
                 }
-            } else figures[figStringIndex].switchX = false;
+            } else OA.figures[figStringIndex].switchX = false;
             // check for the OLAN Humpty Bump direction bug
-            if (OLAN.bumpBugCheck) {
+            if (OA.OLAN.bumpBugCheck) {
                 if (regexOLANBumpBug.test(pattern)) {
-                    OLAN.bumpBugFigs.push(seqNr);
+                    OA.OLAN.bumpBugFigs.push(seqNr);
                     // autocorrect loaded OLAN sequence when applicable
-                    if (OLAN.sequence) {
+                    if (OA.OLAN.sequence) {
                         if (regexSwitchDirX.test(figString)) {
-                            figures[figStringIndex].string = figures[figStringIndex].string.replace(regexSwitchDirX, '');
+                            OA.figures[figStringIndex].string = OA.figures[figStringIndex].string.replace(regexSwitchDirX, '');
                         } else {
-                            figures[figStringIndex].string = figures[figStringIndex].string + userpat.switchDirX;
+                            OA.figures[figStringIndex].string = OA.figures[figStringIndex].string + userpat.switchDirX;
                         }
                     }
                 }
@@ -18618,36 +18655,36 @@ function checkQRollSwitch(figString, figStringIndex, pattern, seqNr, rollSum, fi
             // just changed from Y to X axis. Make the default direction for
             // a subsequent X to Y in the same figure go the other way. This
             // will keep e.g. 4b4 the same when starting on X or Y axis
-            if (updateAxisDir) goFront = !goFront;
+            if (OA.updateAxisDir) OA.goFront = !OA.goFront;
         } else {
             // count angles greater than 180 as negative. e.g. Rev P-loop will
             // first go the 'wrong' way before ending the 'right' way
             if (Math.abs(nextAngle) > 180) nextAngle = -nextAngle;
             // autocorrect loaded OLAN sequence when applicable
-            if (OLAN.sequence && !goFront) {
-                goFront = true;
+            if (OA.OLAN.sequence && !OA.goFront) {
+                OA.goFront = true;
                 if (regexSwitchDirY.test(figString)) {
-                    figures[figStringIndex].string = figures[figStringIndex].string.replace(regexSwitchDirY, '');
+                    OA.figures[figStringIndex].string = OA.figures[figStringIndex].string.replace(regexSwitchDirY, '');
                 } else {
-                    figures[figStringIndex].string += userpat.switchDirY;
+                    OA.figures[figStringIndex].string += userpat.switchDirY;
                 }
             }
-            if (((((Attitude == 90) == (Direction == 90)) == (nextAngle < 0)) == goFront) != switchVert) {
+            if (((((OA.attitude == 90) == (OA.direction == 90)) == (nextAngle < 0)) == OA.goFront) != switchVert) {
                 changeDir(180);
             }
             if (regexSwitchDirY.test(figString)) {
                 changeDir(180);
-                figures[figStringIndex].switchY = true;
+                OA.figures[figStringIndex].switchY = true;
                 if (nextRollExtent == 0) {
                     figString = figString.replace(regexSwitchDirY, '');
                 }
             } else {
-                figures[figStringIndex].switchY = false;
+                OA.figures[figStringIndex].switchY = false;
             }
             // check for the OLAN N direction bug
-            if (OLAN.bumpBugCheck && figures[figStringIndex].switchX) {
+            if (OA.OLAN.bumpBugCheck && OA.figures[figStringIndex].switchX) {
                 if (regexOLANNBug.test(pattern)) {
-                    OLAN.nBugFigs.push(seqNr);
+                    OA.OLAN.nBugFigs.push(seqNr);
                 }
             }
         }
@@ -18661,11 +18698,11 @@ function checkQRollSwitch(figString, figStringIndex, pattern, seqNr, rollSum, fi
 // X axis swap and autocorrect the exit of this figure for the
 // next round
 function OLANXSwitch(figStringIndex) {
-    if (OLAN.inFigureXSwitchFig < figStringIndex) {
-        if (regexSwitchDirX.test(figures[figStringIndex].string)) {
-            figures[figStringIndex].string = figures[figStringIndex].string.replace(regexSwitchDirX, '');
+    if (OA.OLAN.inFigureXSwitchFig < figStringIndex) {
+        if (regexSwitchDirX.test(OA.figures[figStringIndex].string)) {
+            OA.figures[figStringIndex].string = OA.figures[figStringIndex].string.replace(regexSwitchDirX, '');
         } else {
-            figures[figStringIndex].string += userpat.switchDirX;
+            OA.figures[figStringIndex].string += userpat.switchDirX;
         }
     }
 }
@@ -18686,8 +18723,8 @@ function updateSequence(figNr, figure, replace, fromFigSel, force) {
     if (fromFigSel) {
         var prevFig = replace ? figNr - 1 : figNr;
         // correct direction changers
-        if (figures[prevFig] && figure.match(/[a-zA-Z]/) &&
-            (figures[prevFig].exitAxis === 'Y')) {
+        if (OA.figures[prevFig] && figure.match(/[a-zA-Z]/) &&
+            (OA.figures[prevFig].exitAxis === 'Y')) {
             // switch > and ^. Use temporary placeholder #
             figure = figure.replace(regexSwitchDirY, '#').
                 replace(regexSwitchDirX, userpat.switchDirY).
@@ -18696,11 +18733,11 @@ function updateSequence(figNr, figure, replace, fromFigSel, force) {
     }
 
     // just return if asked to replace an identical figure
-    if (replace && (figures[figNr].string == figure) && !force) return;
+    if (replace && (OA.figures[figNr].string == figure) && !force) return;
 
     var string = '';
     var separator = (figure == '') ? '' : ' ';
-    for (let i = figures.length - 1; i >= 0; i--) {
+    for (let i = OA.figures.length - 1; i >= 0; i--) {
         if (i == figNr) {
             if (!replace) {
                 // Handle (multiple) moveto or curveto
@@ -18711,36 +18748,36 @@ function updateSequence(figNr, figure, replace, fromFigSel, force) {
                         dx = parseInt(dxdy[0]),
                         dy = parseInt(dxdy[1]);
                     // go back until we find a real figure
-                    while (figures[i] && !figures[i].seqNr) {
+                    while (OA.figures[i] && !OA.figures[i].seqNr) {
                         // check for previous move, curve or movefoward
-                        if (figures[i].moveTo || figures[i].curveTo || figures[i].moveForward) {
+                        if (OA.figures[i].moveTo || OA.figures[i].curveTo || OA.figures[i].moveForward) {
                             // keep straight line when that was the previous way of moving
-                            if (figures[i].moveTo) curve = false;
+                            if (OA.figures[i].moveTo) curve = false;
                             // sum dx and dy
-                            if (figures[i].moveForward) {
-                                dx += parseInt(figures[i].paths[0].dx * (scale / lineElement));
-                                dy += parseInt(figures[i].paths[0].dy * (scale / lineElement));
+                            if (OA.figures[i].moveForward) {
+                                dx += parseInt(OA.figures[i].paths[0].dx * (OA.scale / lineElement));
+                                dy += parseInt(OA.figures[i].paths[0].dy * (OA.scale / lineElement));
                             } else {
-                                const dxdy = figures[i].string.replace(/[^0-9\,\-]/g, '').split(',');
+                                const dxdy = OA.figures[i].string.replace(/[^0-9\,\-]/g, '').split(',');
                                 dx += parseInt(dxdy[0]);
                                 dy += parseInt(dxdy[1]);
                             }
                             // correcting the selected figure id is done here
-                            if ((selectedFigure.id !== null) && (i < figNr)) {
+                            if ((OA.selectedFigure.id !== null) && (i < figNr)) {
                                 // for every second and subsequent replace of move,
                                 // we reduce the selected figure id
-                                if (!updateSelected) selectedFigure.id--;
+                                if (!updateSelected) OA.selectedFigure.id--;
                             }
                             // don't update the selectedFigure.id later
                             updateSelected = false;
                         } else {
                             // no move figure, add it to the start of the string and
                             // continue looking
-                            string = figures[i].string + ' ' + string;
+                            string = OA.figures[i].string + ' ' + string;
                         }
                         i--;
                         // no move on the first figure, so stop there
-                        if ((i == 0) || (figures[i].seqNr < 2)) break;
+                        if ((i == 0) || (OA.figures[i].seqNr < 2)) break;
                     }
                     if (!updateSelected) {
                         // only build the move when it is more than one unit
@@ -18748,7 +18785,7 @@ function updateSequence(figNr, figure, replace, fromFigSel, force) {
                             figure = curve ? '(' + dx + ',' + dy + ')' : '[' + dx + ',' + dy + ']';
                         } else {
                             figure = '';
-                            selectedFigure.id--;
+                            OA.selectedFigure.id--;
                         }
                     }
                 }
@@ -18759,10 +18796,10 @@ function updateSequence(figNr, figure, replace, fromFigSel, force) {
                 string = figure + separator + string;
             }
             if (!replace && (i >= 0)) {
-                string = figures[i].string + ' ' + string;
+                string = OA.figures[i].string + ' ' + string;
             }
         } else {
-            string = figures[i].string + ' ' + string;
+            string = OA.figures[i].string + ' ' + string;
         }
     }
 
@@ -18770,20 +18807,20 @@ function updateSequence(figNr, figure, replace, fromFigSel, force) {
     if (figNr < 0) string = figure + separator + string;
 
     // check if the selected figure id has to be changed
-    if ((selectedFigure.id !== null) && updateSelected) {
-        if (replace && (figure === '') && (selectedFigure.id === figNr)) {
+    if ((OA.selectedFigure.id !== null) && updateSelected) {
+        if (replace && (figure === '') && (OA.selectedFigure.id === figNr)) {
             selectFigure(false);
-        } else if (selectedFigure.id > figNr) {
+        } else if (OA.selectedFigure.id > figNr) {
             if (replace) {
-                if (figure === '') selectedFigure.id--;
+                if (figure === '') OA.selectedFigure.id--;
             } else {
-                selectedFigure.id++;
+                OA.selectedFigure.id++;
             }
         }
     }
 
     // remove last added space, update field
-    sequenceText.innerText = string.replace(/ $/, '');
+    OA.sequenceText.innerText = string.replace(/ $/, '');
 
     // check for sequence changes
     checkSequenceChanged(force);
@@ -18791,10 +18828,10 @@ function updateSequence(figNr, figure, replace, fromFigSel, force) {
     // use automatic positioning if checked
     if (fromFigSel &&
         $('positionClearAuto').checked &&
-        (activeForm !== 'FU')) {
+        (OA.activeForm !== 'FU')) {
         if (replace) {
             // need to get bBox as it hasn't been loaded yet
-            figures[figNr].bBox = myGetBBox($('figure' + figNr));
+            OA.figures[figNr].bBox = myGetBBox($('figure' + figNr));
             separateFigure(figNr);
         } else {
             separateFigure(figNr + 1);
@@ -18802,16 +18839,16 @@ function updateSequence(figNr, figure, replace, fromFigSel, force) {
     }
 
     // reselect correct figure
-    setFigureSelected(selectedFigure.id);
+    setFigureSelected(OA.selectedFigure.id);
 
     // If there is now a move figure before the first real
     // figure, remove that
-    for (let i = 0; i < figures.length; i++) {
-        if (figures[i].aresti) break;
-        if (regexMoveForward.test(figures[i].string) ||
-            regexMoveDown.test(figures[i].string) ||
-            regexMoveTo.test(figures[i].string) ||
-            regexCurveTo.test(figures[i].string)) {
+    for (let i = 0; i < OA.figures.length; i++) {
+        if (OA.figures[i].aresti) break;
+        if (regexMoveForward.test(OA.figures[i].string) ||
+            regexMoveDown.test(OA.figures[i].string) ||
+            regexMoveTo.test(OA.figures[i].string) ||
+            regexCurveTo.test(OA.figures[i].string)) {
                 updateSequence(i, '', true);
                 break;
             }
@@ -18823,12 +18860,12 @@ function updateSequence(figNr, figure, replace, fromFigSel, force) {
 // "o b4 h3 q" to "o d b h3 q" would return [1,2]
 // with no change, the return is [false, false]
 function comparePreviousSequence() {
-    if (activeSequence.previousFigures) {
+    if (OA.activeSequence.previousFigures) {
         let
-            m = activeSequence.previousFigures.length - 1,
-            n = activeSequence.figures.length - 1;
+            m = OA.activeSequence.previousFigures.length - 1,
+            n = OA.activeSequence.figures.length - 1;
         while ((m >= 0) && (n >= 0)) {
-            if (activeSequence.previousFigures[m].string === activeSequence.figures[n].string) {
+            if (OA.activeSequence.previousFigures[m].string === OA.activeSequence.figures[n].string) {
                 m--;
                 n--;
             } else {
@@ -18850,21 +18887,21 @@ function updateXYFlip(m, n) {
     const dmn = m - n;
     let sub = false;
 
-    if (activeSequence.figures[n]) {
-        let text = activeSequence.text.substring(0, activeSequence.figures[n].stringStart);
-        for (let i = n; i < activeSequence.figures.length; i++) {
-            let s = activeSequence.figures[i].string;
+    if (OA.activeSequence.figures[n]) {
+        let text = OA.activeSequence.text.substring(0, OA.activeSequence.figures[n].stringStart);
+        for (let i = n; i < OA.activeSequence.figures.length; i++) {
+            let s = OA.activeSequence.figures[i].string;
             if (s.match(/^e(u|d|j|ja)$/)) sub = true;
             // Only act on figures that previously had an unknownFigureLetter.
             // This will also prevent matching moves, such as "12>", ">", "^^"
             // Also, do not flip XY in new subsequences
-            if (activeSequence.previousFigures[i + dmn].unknownFigureLetter && !sub) {
+            if (OA.activeSequence.previousFigures[i + dmn].unknownFigureLetter && !sub) {
                 // switch > and ^. Use temporary placeholder #
                 s = s.replace(regexSwitchDirY, '#').
                     replace(regexSwitchDirX, userpat.switchDirY).
                     replace(/#/g, userpat.switchDirX);
             }
-            activeSequence.figures[i].string = s;
+            OA.activeSequence.figures[i].string = s;
             text += s + ' ';
         }
         updateSequenceText(text);
@@ -18884,30 +18921,30 @@ function parseSequence() {
         match = false;
 
     // Clear the figureStart array
-    figureStart = [];
+    OA.figureStart = [];
 
-    additionals = 0;
+    OA.additionals = 0;
     // Make sure the scale is set to 1 before parsing
-    if (scale != 1) {
-        curveRadius /= scale;
-        lineElement /= scale;
-        scale = 1;
+    if (OA.scale != 1) {
+        curveRadius /= OA.scale;
+        lineElement /= OA.scale;
+        OA.scale = 1;
     }
 
     // Get the split string from activeSequence
-    figures = activeSequence.figures;
+    OA.figures = OA.activeSequence.figures;
 
     // Find out where the sequence changed
     const changePoints = comparePreviousSequence();
 
     // Remove user-built figures from end of fig object, if applicable
-    for (let i = fig.length - 1; i > 0; i--) {
-        if (/^non-Aresti /.test((fig[i] || {}).aresti)) {
-            fig.splice(i,1);
-        } else if (/^\d/.test((fig[i] || {}).aresti)) break;
+    for (let i = OA.fig.length - 1; i > 0; i--) {
+        if (/^non-Aresti /.test((OA.fig[i] || {}).aresti)) {
+            OA.fig.splice(i,1);
+        } else if (/^\d/.test((OA.fig[i] || {}).aresti)) break;
     }
 
-    figures.forEach ((f, i) => {
+    OA.figures.forEach ((f, i) => {
         // make sure all paths are empty
         f.paths = [];
 
@@ -18916,9 +18953,9 @@ function parseSequence() {
         // first figure of a subsequence. This means
         // we have to correct direction switchers if the figure would start
         // on Y axis on Form B
-        if (/^G/.test(activeForm) && !(
-            (seqNr == 1 && Direction != 0) || subSequence)) {
-            formBDirection = (formBDirection + Direction) % 360;
+        if (/^G/.test(OA.activeForm) && !(
+            (seqNr == 1 && OA.direction != 0) || subSequence)) {
+            formBDirection = (formBDirection + OA.direction) % 360;
             if ((formBDirection === 90) || (formBDirection === 270)) {
                 // switch > and ^. Use temporary placeholder #
                 figure = figure.replace(regexSwitchDirY, '#').
@@ -18926,7 +18963,7 @@ function parseSequence() {
                     replace(/#/g, userpat.switchDirX);
                 f.entryAxisFormB = 'Y';
             }
-            Direction = (Attitude == 0) ? 0 : 180;
+            OA.direction = (OA.attitude == 0) ? 0 : 180;
         }
 
         // See if there is a y-axis flip symbol and activate it, except when
@@ -18934,23 +18971,23 @@ function parseSequence() {
         // - the previous figure did not exit on X axis (not applicable
         //   for Grid)
         flipY: if (figure.replace(regexComments, '').match(regexFlipYAxis)) {
-            if (!(/^G/.test(activeForm))) {
+            if (!(/^G/.test(OA.activeForm))) {
                 for (let j = i - 1; j >= 0; j--) {
-                    if (figures[j].aresti) {
-                        if (figures[j].exitAxis == 'X') break; else break flipY;
+                    if (OA.figures[j].aresti) {
+                        if (OA.figures[j].exitAxis == 'X') break; else break flipY;
                     }
                 }
             }
-            setYAxisOffset(180 - yAxisOffset);
+            setYAxisOffset(180 - OA.yAxisOffset);
         }
 
         // If this is a user-built figure, append it to fig object
         match = figure.match(userBuiltRegex);
         if (match) { // under development, DISABLE FOR PRODUCTION!
             const rolls = match[3].match(/\([^)]*\)/g) || [];
-            fig.push({
+            OA.fig.push({
                 // Don't allow official Aresti numbers
-                aresti: 'non-Aresti ' + ((arestiToFig[match[1]] || rollArestiToFig[match[1]]) ? '' : (match[1] || '')),
+                aresti: 'non-Aresti ' + ((OA.arestiToFig[match[1]] || OA.rollArestiToFig[match[1]]) ? '' : (match[1] || '')),
                 base: match[3][0] + 'x+',
                 draw: match[3].replace(/[+-]/g, '').replace(/\([^)]*\)/g, '_'),
                 kPwrd: parseInt(((match[2] || '').match(/\((\d+)[:)]/) || [])[1] || 0),
@@ -19046,27 +19083,27 @@ function parseSequence() {
                 }
             } else if (figure.charAt(figure.length - 1) == userpat.scale) {
                 // Change scale
-                if (scale != 1) {
-                    curveRadius /= scale;
-                    lineElement /= scale;
+                if (OA.scale != 1) {
+                    curveRadius /= OA.scale;
+                    lineElement /= OA.scale;
                 }
-                scale = parseFloat(Math.max(1 + (parseInt(figure.replace(userpat.scale, '')) / 10)), 0.1);
-                curveRadius *= scale;
-                lineElement *= scale;
+                OA.scale = parseFloat(Math.max(1 + (parseInt(figure.replace(userpat.scale, '')) / 10)), 0.1);
+                curveRadius *= OA.scale;
+                lineElement *= OA.scale;
                 f.scale = true;
                 //      } else if (figure.match (regexSequenceOptions)) {
             } else if (figure == userpat.subSequence) {
                 // Start subsequence
-                firstFigure = true;
+                OA.firstFigure = true;
                 f.subSequence = subSequence = '//';
-                if (Attitude == 180) {
-                    Attitude = 0;
+                if (OA.attitude == 180) {
+                    OA.attitude = 0;
                     changeDir(180);
                 }
             } else if (regexTextBlock.test(figure)) {
                 // add text block
                 f.paths = buildShape('TextBlock', figure.replace(RegExp(userpat.comment, 'g'), ''), []);
-                f.unknownFigureLetter = unknownFigureLetter;
+                f.unknownFigureLetter = OA.unknownFigureLetter;
                 // set comments, to be applied to the next real figure
                 comments = figure
                     .replace(RegExp(userpat.comment, 'g'), '')
@@ -19074,38 +19111,38 @@ function parseSequence() {
             }
         } else if (match = figure.match(/^e(ja?|d|u)$/)) {
             match = match[0];
-            Attitude = 0;
+            OA.attitude = 0;
             // sequence entry options
             if (match === 'eja') {
                 // Crossbox away entry 'figure'
-                Direction = 90;
+                OA.direction = 90;
             } else if (match === 'ej') {
                 // Crossbox entry 'figure'
-                Direction = 270;
+                OA.direction = 270;
             } else if (match === 'ed') {
                 // Downwind entry 'figure'
-                if (/^[CL]/.test(activeForm)) {
-                    Direction = 0;
-                    goRight = true;
+                if (/^[CL]/.test(OA.activeForm)) {
+                    OA.direction = 0;
+                    OA.goRight = true;
                 } else {
-                    Direction = 180;
-                    goRight = false;
+                    OA.direction = 180;
+                    OA.goRight = false;
                 }
             } else if (match === 'eu') {
                 // Upwind entry 'figure'
-                if (/^[CL]/.test(activeForm)) {
-                    Direction = 180;
-                    goRight = false;
+                if (/^[CL]/.test(OA.activeForm)) {
+                    OA.direction = 180;
+                    OA.goRight = false;
                 } else {
-                    Direction = 0;
-                    goRight = true;
+                    OA.direction = 0;
+                    OA.goRight = true;
                 }
             }
-            if (firstFigure) {
+            if (OA.firstFigure) {
                 updateSequenceOptions(match);
             } else {
                 subSequence = match;
-                firstFigure = true;
+                OA.firstFigure = true;
             }
             f.subSequence = match;
         } else {
@@ -19121,15 +19158,15 @@ function parseSequence() {
                     'x' +
                     figure
                 ).replace ('x', 'x' + rolls.join(''));
-                base = fig[fig.length-1].base;
-                figNrs = [fig.length-1];
+                base = OA.fig[OA.fig.length-1].base;
+                figNrs = [OA.fig.length-1];
             } else {
                 // Determination of the base
                 // Remove any comments inside the figure and all non-alphabet characters (except -)
                 base = figure.replace(regexComments, '').replace(/[^a-zA-Z\-]+/g, '');
                 // Replace any x> format to move forward by x times >
                 if (regexMoveForward.test(figure)) {
-                    var moveFwd = fig.match(regexMoveForward)[0];
+                    var moveFwd = OA.fig.match(regexMoveForward)[0];
                     if (parseInt(moveFwd)) {
                         figure = figure.replace(regexMoveForward, parseInt(moveFwd) + moveFwd.length - moveFwd.match(/\d*/).length - 1);
                     } else {
@@ -19163,7 +19200,7 @@ function parseSequence() {
                     if (base.charAt(base.length - 1) != '-') base += '+';
                 }
                 // set subSequence to true for subsequence 'figures'
-                if (/^\+e(ja?|d|u)\+$/.test(base) && !firstFigure) {
+                if (/^\+e(ja?|d|u)\+$/.test(base) && !OA.firstFigure) {
                     subSequence = true;
                 }
 
@@ -19174,24 +19211,24 @@ function parseSequence() {
                     if (base.charAt(base.length - 1) != '-') base += '+';
                 }
                 // Retrieve the figNrs (if any) from array figBaseLookup
-                var figNrs = figBaseLookup[base];
+                var figNrs = OA.figBaseLookup[base];
             }
 
             // Autocorrect the entry attitude for figures after the first
             // (sub)figure where necessary
-            if (!(firstFigure || subSequence)) {
-                if ((Attitude == 0 && base[0] == '-') || (Attitude == 180 && base[0] == '+')) {
+            if (!(OA.firstFigure || subSequence)) {
+                if ((OA.attitude == 0 && base[0] == '-') || (OA.attitude == 180 && base[0] == '+')) {
                     // Show warning, except in Grid view
-                    if (!(/^G/.test(activeForm))) {
-                        let angle = dirAttToAngle(Direction, Attitude);
-                        alertMsgs.push(`(${seqNr}) ${userText[Attitude == 0 ? 'setUpright' : 'setInverted']}`);
+                    if (!(/^G/.test(OA.activeForm))) {
+                        let angle = dirAttToAngle(OA.direction, OA.attitude);
+                        OA.alertMsgs.push(`(${seqNr}) ${OA.userText[OA.attitude == 0 ? 'setUpright' : 'setInverted']}`);
                         // draw circle around figure start
                         f.paths = [{
                             'path': `m ${-rollcurveRadius * 1.2 - Math.cos(angle) * 4},${Math.sin(angle) * 4} a${rollcurveRadius * 1.2},${rollcurveRadius * 1.2} 0 1 1 0,0.01`,
                             'style': 'corr'
                         }];
                     }
-                    Attitude = 180 - Attitude;
+                    OA.attitude = 180 - OA.attitude;
                     changeDir(180);
                 }
             }
@@ -19199,20 +19236,20 @@ function parseSequence() {
             if (figNrs) {
                 // When the first figure starts negative we make sure the
                 // Attitude is inverted and the DRAWING direction stays the same
-                if ((firstFigure || subSequence) && (base.charAt(0) == '-')) {
-                    Attitude = 180;
+                if ((OA.firstFigure || subSequence) && (base.charAt(0) == '-')) {
+                    OA.attitude = 180;
                     changeDir(-180);
                 }
                 // switch default goRight for every figure that starts on X axis
-                if ((Direction % 180) == 0) {
-                    goRight = ((Direction == 180) == (Attitude == 0));
+                if ((OA.direction % 180) == 0) {
+                    OA.goRight = ((OA.direction == 180) == (OA.attitude == 0));
                 }
                 // build the figure into the figures object
                 buildFigure(figNrs, figure, seqNr, i);
                 // check if this is a additional
                 if (regexAdditional.test(figure) ||
                     (f.unknownFigureLetter && f.unknownFigureLetter == 'L')) {
-                    additionals++;
+                    OA.additionals++;
                     f.additional = true;
                 }
 
@@ -19258,32 +19295,32 @@ function parseSequence() {
 
                 // increase sequence figure number
                 seqNr++;
-                firstFigure = false;
+                OA.firstFigure = false;
                 // Reset scale to 1 after completing a figure
-                if (scale != 1) {
-                    curveRadius /= scale;
-                    lineElement /= scale;
-                    scale = 1;
+                if (OA.scale != 1) {
+                    curveRadius /= OA.scale;
+                    lineElement /= OA.scale;
+                    OA.scale = 1;
                 }
             } else if (base != '') {
-                if (firstFigure) updateSequenceOptions('');
+                if (OA.firstFigure) updateSequenceOptions('');
                 // No viable figure found, therefore Illegal
                 buildIllegal(i);
-                if (i == (figures.length - (activeForm === 'FU' ? 2 : 1))) {
-                    alertMsgs.push(userText.illegalAtEnd);
+                if (i == (OA.figures.length - (OA.activeForm === 'FU' ? 2 : 1))) {
+                    OA.alertMsgs.push(OA.userText.illegalAtEnd);
                 } else {
-                    alertMsgs.push(userText.illegalBefore + seqNr);
+                    OA.alertMsgs.push(OA.userText.illegalBefore + seqNr);
                 }
             }
         }
 
         // set the exitAxis for every figure, including draw only
-        f.exitAxis = ((Direction % 180) == 0) ? 'X' : 'Y';
+        f.exitAxis = ((OA.direction % 180) == 0) ? 'X' : 'Y';
 
         // check if this is the changePoint
         if (i === changePoints[1]) {
             // check if the exitAxis has been changed
-            if (activeSequence.previousFigures[changePoints[0]].exitAxis !== f.exitAxis) {
+            if (OA.activeSequence.previousFigures[changePoints[0]].exitAxis !== f.exitAxis) {
                 updateXYFlip(changePoints[0] + 1, i + 1);
             }
         }
@@ -19294,44 +19331,44 @@ function parseSequence() {
     // Check the sequence against the correct rules
     checkRules(function (data) {
         data.alertMsgs.forEach ((a) => {
-            alertMsgs.push(a);
-            alertMsgRules[a] = data.alertMsgRules[a];
+            OA.alertMsgs.push(a);
+            OA.alertMsgRules[a] = data.alertMsgRules[a];
         });
         displayAlerts();
     });
     // check for any OLAN Humpty Bump bug messages
-    if (OLAN.bumpBugCheck) {
+    if (OA.OLAN.bumpBugCheck) {
         let warning = '';
-        if (OLAN.bumpBugFigs.length >= 1) {
-            warning = `Fig ${OLAN.bumpBugFigs.join(' and ')}`;
-            if (OLAN.bumpBugFigs.length < 2) {
-                warning += userText.OLANBumpBugWarning;
-            } else warning += userText.OLANBumpBugWarningMulti;
+        if (OA.OLAN.bumpBugFigs.length >= 1) {
+            warning = `Fig ${OA.OLAN.bumpBugFigs.join(' and ')}`;
+            if (OA.OLAN.bumpBugFigs.length < 2) {
+                warning += OA.userText.OLANBumpBugWarning;
+            } else warning += OA.userText.OLANBumpBugWarningMulti;
         }
-        if (OLAN.nBugFigs.length >= 1) {
-            warning += 'Fig ' + OLAN.OLAN.nBugFigs.join(' and ');
-            if (OLAN.nBugFigs.length < 2) {
-                warning += userText.OLANNBugWarning;
-            } else warning += userText.OLANNBugWarningMulti;
+        if (OA.OLAN.nBugFigs.length >= 1) {
+            warning += 'Fig ' + OA.OLAN.OLAN.nBugFigs.join(' and ');
+            if (OA.OLAN.nBugFigs.length < 2) {
+                warning += OA.userText.OLANNBugWarning;
+            } else warning += OA.userText.OLANNBugWarningMulti;
         }
         if (warning != '') {
-            alertBox(warning + userText.OLANBugWarningFooter);
-            OLAN.bumpBugFigs = OLAN.nBugFigs = [];
-            OLAN.bumpBugCheck = false;
+            alertBox(warning + OA.userText.OLANBugWarningFooter);
+            OA.OLAN.bumpBugFigs = OA.OLAN.nBugFigs = [];
+            OA.OLAN.bumpBugCheck = false;
         }
     }
     // Build the last figure stop shape at the last real figure after
     // all's done.
-    if (!firstFigure && !(/^(G)|(FU)$/.test(activeForm))) {
-        const i = figures.findLastIndex((figure) => figure.aresti);
+    if (!OA.firstFigure && !(/^(G)|(FU)$/.test(OA.activeForm))) {
+        const i = OA.figures.findLastIndex((figure) => figure.aresti);
         // remove space at end of figure
-        figures[i].paths.pop();
-        figures[i].paths = buildShape('FigStop', true, figures[i].paths);
+        OA.figures[i].paths.pop();
+        OA.figures[i].paths = buildShape('FigStop', true, OA.figures[i].paths);
     }
 }
 
 // do initialization when all DOM content has been loaded and device is ready (cordova)
-if (platform.cordova) {
+if (OA.platform.cordova) {
     document.addEventListener("deviceready", doOnLoad);
 } else {
     document.addEventListener("DOMContentLoaded", doOnLoad, false);

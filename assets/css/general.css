@@ -2948,6 +2948,6 @@ tr.insertAfter td {
     position: absolute;
     bottom: 16px;
 }
-#mainOverlay.movedFromView {
+#mainOverlay.movedFromView, .movedFromView #t_windArrow, .movedFromView #miniFormAContainer {
     top: 100% !important;
 }

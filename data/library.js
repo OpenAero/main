@@ -21,14 +21,14 @@
 // This file contains sequences which will be available in menu Library
 
 // library is an object for the Library Menu
-// The 'version' Key indicates the library update version and should be increased
+// The 'version' key indicates the library update version and should be increased
 // for each update. Use format YYYY.VVV (e.g. 2025.001, 2025.002, ...)
 // For the library sequences:
-// - The Key is the path (Year > Folder > Sequence Name)
-// - The Value is an OpenAero sequence link (use "File->Save as link" in OpenAero to generate)
+// - The key is the path (Year > Folder > Sequence Name)
+// - The value is an OpenAero sequence link (use "File > Save as link" in OpenAero to generate)
 
 let library = {
-    'version': 2025.006,
+    'version': 2025.007,
     '2026 NZAC Primary Known':'https://openaero.net/?s=hFByaW1hcnmFTlpBQyAyMDI1LzI2h3Bvd2VyZWSIS25vd24gMYlOWkFDijONNSUgYCtkK-AgaXYucy4nIC0xJSCuridjrq4uLDInK2AgMiUgYCtvIP6rLidoLier_iAuMSuPTlpBQ5AyMDI1LjEuM5FC',
     '2026 NZAC Primary Known II':'https://openaero.net/?s=hFByaW1hcnmFTlpBQyAyMDI1LzI2h3Bvd2VyZWSIS25vd24gMolOWkFDijONNSUgYCtkK-AgaXYucy4nIC0xJSCuridjrq4uLDInK2AgMiUgYCtvIP6rLidoLier_iAuMSuPTlpBQ5AyMDI1LjEuM5FC',
     '2026 NZAC Primary Known III':'https://openaero.net/?s=hFByaW1hcnmFTlpBQyAyMDI1LzI2h3Bvd2VyZWSIS25vd24gM4lOWkFDijONZWQgqysyaqsrfiD-K2l2LnMuJ6t-IH4uJ2gup34gricxq34gKDIsMCkgMSUgp2OuLiwypyvgICgtMSwwKSAtMiUgb49OWkFDkDIwMjUuMS4zkUI',
@@ -73,6 +73,8 @@ let library = {
     '2025 BAeA Unl Free Known':'https://openaero.net/?s=hFVubGltaXRlZIdwb3dlcmVkiEZyZWUgS25vd26JQkFlQYo0MIswjSJAQSIgLS4ncG4oM2YsMy4nKS4gIkBCIiA0JSAv4CvgYDVzLDI0ric7PmlCcGIo4ODg4CwzaWYnKS4nLDgnLDQgIkBDIiA0OGRoKDQpNWlmJ34gIkBEIiAvfjNqaW8xNS3gICJARSIg4OArpzFhYygnsmApLDOnLDcr4ODgj0JBZUGQMjAyNS4xLjSRZ3JpZDo1',
     '2025 BAeA Adv Free Known':'https://openaero.net/?s=hEFkdmFuY2Vkh3Bvd2VyZWSIRnJlZSBLbm93bolCQWVBijMwizCNIkBBIiAxYGRoKGApJ2YnICJAQiIg4Cvg4OAyZmByYzQ4LeDg4OBgICJAQyIg4Cw4J3BiLjMr4CAiQEQiIH4tNm02Ziy0K2AgIkBFIiAyajKPQkFlQZAyMDI1LjEuNJFncmlkOjU',
     '2025 BAeA Int Free Known':'https://openaero.net/?s=hEludGVybWVkaWF0ZYdwb3dlcmVkiEZyZWUgS25vd26JQkFlQYozMIswjSJAQSIgbWYtICJAQiIgLWBoMjQnICJAQyIgYCsxajEgIkBEIiAyZmByYytgICJARSIgYCsnMidycLKPQkFlQZAyMDI1LjEuNJFncmlkOjU',
+    '2025 BAeA Sportsman Known':'https://openaero.net/?s=hFNwb3J0c4dwb3dlcmVkiEtub3duiUJBZUGKMTWLMI3gYiAtMiUg4CtkK-Ag4CtpduA2c66uLqur_iAzJSBtMiAoNCwwKSAyaiAoLTQsMTApIDUlIGAyYSvgIDEgLTIlICdjJzKuri4nIH5oLicgNSUgfuDg4OAy4HJjK-Dg4ODg4CCyj0JBZUGQMjAyNS4xLjSRQg',
+    '2025 BAeA Club Known':'https://openaero.net/?s=hENsdWKHcG93ZXJlZIhLbm93bolCQWVBijEwizCNbyAoMCwwKSBgYzKuricgKC0xLDApIGinq6sgMmogMY9CQWVBkDIwMjUuMS40kUI',
 
     '2024 CIVA Unl Free Known':'https://openaero.net/?s=hFVubGltaXRlZIdwb3dlcmVkiEZyZWUgS25vd26JQ0lWQYo0MIswjSJAQSIgsmRoKCw0KTVmICJAQiIgLDV0YTNmICJAQyIgNSUgJyyybigsNWlmLDMpMSctICJARCIgtGFjKDYpMzI7NmYt4GAgIkBFIiAtMmpvMi2PQ0lWQZAyMDIzLjMuMTeRZ3JpZDo1',
     '2024 CIVA Adv Free Known':'https://openaero.net/?s=hEFkdmFuY2Vkh3Bvd2VyZWSIRnJlZSBLbm93bolDSVZBijMwizCNIkBBIiAsOW0zMiw2Zi0gIkBCIiAtMmpvMTUgIkBDIiAycG4oYGanKTQtICJARCIgLW-0LSAiQEUiIC3g4DVpcy6naWI4j0NJVkGQMjAyMy4zLjE3kWdyaWQ6NQ',

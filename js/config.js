@@ -32,21 +32,38 @@ This file is part of OpenAero.
  * Variables that should never be changed during execution are
  * defined as const.
  *
- **************************************************************
+ **************************************************************/
+"use strict";
+var OA = {};
 
- **************
+// OAconst is used to define properties of OA that should not
+// be changed during runtime
+function OAconst (name, value) {
+  Object.defineProperty (OA, name, {
+    value: value,
+    writable: false,
+    enumerable: true,
+    configurable: false
+  });
+}
+
+ /**************
  Define active version number of OpenAero
  It is of format yyyy.x.z
  A new x must be used for versions that create sequences not
  fully backward compatible with the previous version
 */
-const version = '2025.1.4';
+const version = '2025.1.6';
 // versionNew is an object that contains version update information
 // The structure is {vvv : [[ttt, n], ...], ...} , where
 // vvv = version number
 // ttt = update text
 // n   = importance (higher = more important)
 const versionNew = {
+  '2025.1.6': [
+    ['Added 2025 BAeA rules and sequences', 3],
+    ['Fixed inability to switch first roll direction in a Free (Un)known figure that starts on Y axis', 4],
+  ],
   '2025.1.4': [
     ['Added 2025/2026 NZAC sequences', 3],
   ],
@@ -216,7 +233,7 @@ const svgNS = "http://www.w3.org/2000/svg";
 const xlinkNS = "http://www.w3.org/1999/xlink";
 
 // platform holds various platform variables
-const platform = {
+OAconst ('platform', {
   // platform.cordova is set to true here. It is set to false in
 	// cordova.js when not compiled on Cordova
   cordova:   true,
@@ -228,7 +245,7 @@ const platform = {
 	windows10: /Windows\ NT\ 1/.test(navigator.userAgent),
 	windowsStore: 'ms-windows-store://pdp/?productid=9PDSX9ZDRB9B',
 	uwp:       window.Windows
-};
+});
 
 // Define the labels (=input field ids) for saving/loading sequences.
 // Sequence link saving uses the index (pilot=0, team=1, etc) to shorten the link.
@@ -366,7 +383,7 @@ const
   'rollFontSize',
   'nonArestiRolls'],
   // define default language
-  defaultLanguage = 'en';
+  defaultLanguage = 'en',
   // define language object
   lang = {},
   // entryOptions are in reverse order of displayed
@@ -407,13 +424,12 @@ const
     /^0\.[0-9]+\./
   ];
 
-let
-  // show mini Form A on Form B and C
-  miniFormA = true,
-  // define default form style (civa, iac or imac)
-  formStyle = 'civa',
-  // define default pattern for figure images saved in ZIP
-  zipImageFilenamePattern = '%location %category %program %pilot Form %form_fig_%figure';
+// show mini Form A on Form B and C
+OA.miniFormA = true;
+// define default form style (civa, iac or imac)
+OA.formStyle = 'civa';
+// define default pattern for figure images saved in ZIP
+OA.zipImageFilenamePattern = '%location %category %program %pilot Form %form_fig_%figure';
 
 // *************
 // Define styles and font sizes
@@ -430,7 +446,7 @@ const styleSave = {};
 
 // style holds the style objects
 // !!! don't use 'entry' or 'exit', they are reserved !!!
-const style = {
+OAconst ('style', {
   // Positive line style
   'pos' : 'stroke: black; stroke-width: 1.5px; fill: none; vector-effect: non-scaling-stroke;',
   //'chooserPos' : 'stroke: black; stroke-width: 3px; fill: none;',
@@ -529,7 +545,7 @@ const style = {
   // Selection styles
   'selectedFigureBox' : 'stroke: #0000ff; stroke-width: 1; stroke-opacity: 0.7; fill: transparent',
   'selectedFigureHandle' : 'stroke: #0000ff; stroke-width: 1; fill: #0000ff; fill-opacity: 0.2'
-}
+});
 
 /**********************************************************************
  * 
@@ -714,7 +730,7 @@ const
 	regexExitShortenNeg = /([a-zA-Z].*-)`+/,
 	regexExtendShorten = new RegExp ('[\\' + userpat.longforward + '\\' +
 		userpat.forward + '\\' + userpat.rollext + '\\' +
-		userpat.rollextshort + '\\' + userpat.lineshorten + ']', 'g');
+		userpat.rollextshort + '\\' + userpat.lineshorten + ']', 'g'),
 	// match the Y axis flip symbol
 	regexFlipYAxis = /(^|[^\/])\/([^\/]|$)/,
 	// match a Free Unknown figure number
@@ -740,7 +756,7 @@ const
 	regexHalfRoll = new RegExp ('\\' + figpat.halfroll, 'g'),
 	regexRollBeforeBase = new RegExp ('^[\\+-][\\' + figpat.halfroll +
 		'\\'  + figpat.fullroll + '\\' + figpat.anyroll + '\\' +
-		figpat.spinroll + '\\' + figpat.longforward + ']'); // /^[\+\-][_\^\&\$\~]/ 
+		figpat.spinroll + '\\' + figpat.longforward + ']'), // /^[\+\-][_\^\&\$\~]/ 
 	regexRolls = new RegExp ('[\\' + figpat.halfroll + '\\' +
 		figpat.fullroll + '\\' + figpat.anyroll + '\\' + 
 		figpat.spinroll + ']', 'g'),

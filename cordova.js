@@ -2,4 +2,4 @@
  * So we set platform.cordova to false.
  */
 
-platform.cordova = false;
+OA.platform.cordova = false;

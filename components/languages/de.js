@@ -698,6 +698,7 @@ lang.de = {
     'switchY' : 'Umschalten der Ausgangsrichtung auf Y Achse'
   }, // end tooltip sub-array
   'totalK' : 'Gesamt K',
+  'transparentBackground' : 'Transparenter Hintergrund',
   'trgViolation' : 'Verstoß',
   'unlockSequence' : 'Entsperren',
   'unusedFigureLetters' : 'Unbenutzte(r) Figurbuchstabe(n): %s',
@@ -761,6 +762,5 @@ lang.de = {
   'xBoxEntry' : 'Querrichtungseingang heran',
   'xBoxEntryAway' : 'Querrichtungseingang hinweg',
   'zipImageFilenamePattern' : 'Muster für Figureneinzelbilder-Dateinamen',
-  'zoom' : 'Zoom'
-  // end of key-value pairs. No comma after last
+  'zoom' : 'Zoom',
 }; 

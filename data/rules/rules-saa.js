@@ -1,4 +1,4 @@
-// OpenAero rules-saa.js file
+﻿// OpenAero rules-saa.js file
 
 // This file is part of OpenAero.
 
@@ -41,9 +41,9 @@ rules.push (
   // 2025 Set of Figures: 
   'reference="@A" 3joi15- "@B" 44dbif;2 "@C" 3fbb1 "@D" 4,5dq1 "@E" 5,3m2if;1-',
 
-  "more=SAA Excellence Free Known",
+  //"more=SAA Excellence Free Known", 
 
-  "(SAA Excellence Free Known)",
+  //"(SAA Excellence Free Known)",
 
   "basefig-min=10",
   "basefig-max=10",

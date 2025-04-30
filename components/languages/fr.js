@@ -676,6 +676,7 @@ lang.fr = {
   'switchY' : 'Change le sens de la sortie sur l\'axe Y'
 }, // end tooltip sub-array
 'totalK' : 'K total',
+'transparentBackground' : 'Fond transparent',
 'trgViolation' : 'Echauf. non OK',
 'unlockSequence' : 'Déverrouiller',
 'unusedFigureLetters' : 'Lettre(s) inutilisée(s) : %s',
@@ -741,6 +742,5 @@ lang.fr = {
 'xBoxEntry' : 'Débuter de face',
 'xBoxEntryAway' : 'Débuter de derrière',
 'zipImageFilenamePattern' : 'Chaîne de définition des noms des fichiers image',
-'zoom' : 'Zoom'
-// end of key-value pairs. No comma after last
+'zoom' : 'Zoom',
 };
