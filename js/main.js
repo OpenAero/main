@@ -1982,6 +1982,21 @@ function printMultiDialog() {
     $('printOptions').classList.remove('content2cols');
 }
 
+// libraryDialog shows or hides the library dialog with tab e when supplied
+// when false, the dialog is closed. newlibrary
+function libraryDialog(e) {
+    // hide all menus
+    menuInactiveAll();
+
+    if (e) {
+        $('libraryDialog').classList.remove('noDisplay');
+        // select specific tab if required
+        if ($(`tab-${e}`)) selectTab(`tab-${e}`);
+    } else {
+        $('libraryDialog').classList.add('noDisplay');
+    }
+}
+
 // settingsDialog shows or hides the settings dialog with tab e when supplied
 // when false, the dialog is closed
 function settingsDialog(e) {
@@ -2507,6 +2522,19 @@ function myGetBBox(e) {
         bBox.nodes[i].bottom = bBox.nodes[i].y + bBox.nodes[i].height;
     }
     return bBox;
+}
+
+/*******************************************************************************
+ Members functionality
+ *******************************************************************************/
+
+// currentUser gets user name. The cookie is set in WordPress by
+// wp-content/themes/twentytwentyfive/functions.php
+
+function currentUser () {
+    const currentUser = ('; '+document.cookie).split(`; user_login=`).pop().split(';')[0];
+    $('currentUser').innerHTML = currentUser || '<a href="/user">Login</a>';
+    return currentUser;
 }
 
 /*******************************************************************************
@@ -4907,6 +4935,8 @@ function doOnLoad() {
         setTimeout(function () { $('loading').style = 'opacity: 0.01;'; }, 600);
         setTimeout(function () { $('loading').remove(); }, 1000);
     }
+
+    currentUser();
 }
 
 // launchURL is run during doOnLoad (web) or on event onLaunched (App)
@@ -5106,6 +5136,9 @@ function addEventListeners() {
     $('t_checkMultipleSeq').parentNode.addEventListener('mousedown', () => { checkMultiDialog(true) }, false);
     $('t_printMultipleSeq').parentNode.addEventListener('mousedown', printMultiDialog, false);
     $('rulesFile').addEventListener('change', openRulesFile, false);
+    // New style library dialog; newlibrary
+    //$('t_library').parentNode.addEventListener('mousedown', libraryDialog, false);
+
     $('t_settings').parentNode.addEventListener('mousedown', settingsDialog, false);
 
     $('t_finalizeSequence').addEventListener('mousedown', () => { exitFuDesigner(false) });
@@ -5414,6 +5447,13 @@ function addEventListeners() {
 
     // QR code scanner
     $('t_cancelQRscan').addEventListener('mousedown', cancelQRscan, false);
+
+    // Re-acquire wakeLock after visibility change, if set before
+    document.addEventListener("visibilitychange", async () => {
+        if (OA.wakeLock && document.visibilityState === "visible") {
+            OA.wakeLock = await navigator.wakeLock.request("screen");
+        }
+    });
 
     // Printing
     window.onbeforeprint = beforePrint;
@@ -6001,6 +6041,13 @@ function addProgrammeToMenu(key) {
             subsubli.innerHTML = `<span>${key.replace(/^[\d]+ [^ ]+[ ]*/, '')}</span>`;
             subsubli.setAttribute('id', `programme-${key}`);
             subsubli.addEventListener('click', programme, false);
+            // newlibrary
+            /*
+            {
+            launchURL({ 'url': library[key] });
+            //parseSequence();
+            }
+            */
             subul.appendChild(subsubli);
             // Sort the sub-sub menues on size.
             // If previous ul has less children, swap ul. This keeps the
@@ -9645,6 +9692,7 @@ function selectFigure(e) {
         // update all figure options
         updateFigureEditor();
 
+        /*
         // set the figure chooser, except when queue is set and not empty
         if (($('figureGroup').selectedIndex !== 0) ||
             ($('figureChooserTable').childNodes.length === 0)) {
@@ -9653,7 +9701,7 @@ function selectFigure(e) {
             } else {
                 setFigChooser(OA.figures[OA.selectedFigure.id].figNr);
             }
-        } else updateFigureSelectorOptions();
+        } else */ updateFigureSelectorOptions();
 
         // Highlight the figure in the sequence text when we were not editing
         // the comments and not in FU designer
@@ -13552,7 +13600,7 @@ function setFormLayout(form) {
 }
 
 // flyingMode switches the view to Flying mode
-function flyingMode() {
+async function flyingMode() {
     const drawForms = $('mainOverlay').classList.contains ('C') ? ['B', 'C'] : ['C', 'B'];
     $('flyingModeTop').appendChild($('t_windArrow'));
     $('flyingMode').classList.remove('flyingModeHidden');
@@ -13563,7 +13611,7 @@ function flyingMode() {
         // Add only the figures
         OA.figures.forEach ((f, i) => { if (f.paths.length) drawFullFigure(i); });
         // Change the viewBox to make the sequence fit
-        let
+        const
             bBox = OA.SVGRoot.getElementById('sequence').getBBox(),
             x = parseInt(bBox.x),
             y = parseInt(bBox.y),
@@ -13573,10 +13621,32 @@ function flyingMode() {
             (x - 3) + ' ' + (y - 3) + ' ' + (w + 5) + ' ' + (h + 5));
         $('flyingModeSequence').appendChild(OA.SVGRoot.cloneNode(true));
         $('flyingModeSequence').lastChild.id = 'flyingModeSequenceForm' + form;
+        // Multiply sequence dimensions by 100 to assure it fills the
+        // available viewport (restricted by CSS)
+        $('flyingModeSequence').lastChild.setAttribute(
+            "width", $('flyingModeSequence').lastChild.getAttribute("width") + '00'
+        );
+        $('flyingModeSequence').lastChild.setAttribute(
+            "height", $('flyingModeSequence').lastChild.getAttribute("height") + '00'
+        );
     });
     OA.activeForm = 'F';
-    // start keep awaking (Cordova only)
-    if (window.plugins && window.plugins.insomnia) window.plugins.insomnia.keepAwake();
+    // Don't sleep screen
+    if (window.plugins && window.plugins.insomnia) {
+        // Cordova
+        window.plugins.insomnia.keepAwake();
+    } else if ("wakeLock" in navigator) {
+        // Supported browsers
+        // Create a reference for the Wake Lock.
+        OA.wakeLock = null;
+
+        // Request a wake lock
+        try {
+            OA.wakeLock = await navigator.wakeLock.request("screen");
+        } catch (err) {
+            // The Wake Lock request has failed - usually system related, such as battery.
+        }
+    }
 }
 
 // switchWindArrow switches the wind direction
@@ -13595,14 +13665,22 @@ function switchWindArrow() {
 
 // exitFlyingMode exits the Flying mode
 function exitFlyingMode() {
-    // stop keep awaking (Cordova only)
-    if (window.plugins && window.plugins.insomnia) window.plugins.insomnia.allowSleepAgain();
     // switch to normal view
     selectForm($('mainOverlay').classList.contains('C') ? 'C' : 'B');
     $('optimalSequenceArea').after($('t_windArrow'));
     $('flyingMode').classList.add('flyingModeHidden');
     // clear sequences after timeout
     setTimeout(function () { $('flyingModeSequence').innerHTML = '' }, 500);
+    // Allow sleep again
+    if (window.plugins && window.plugins.insomnia) {
+        // Cordova
+        window.plugins.insomnia.allowSleepAgain();
+    } else if (OA.wakeLock) {
+        // Supported browsers
+        OA.wakeLock.release().then(() => {
+            OA.wakeLock = null;
+        });
+    }
 }
 // updateDefaultView updates the hidden defaultView value
 function updateDefaultView(queue) {
@@ -13759,10 +13837,16 @@ function openFile(file, handler, params) {
 // removeFileListFile removes a file from fileList
 function removeFileListFile(el, callback) {
     const container = el.parentNode.parentNode;
-    OA.multi.fileList.splice(el.id.replace(/^removeFileListFile/, ''), 1);
-    // we need to rebuild because splice changes the indexes
-    clearFileListContainer(container);
-    OA.multi.fileList.forEach ((f, i) => { addToFileList(i, container, callback); });
+    // animate removal
+    el.parentNode.style = 'transition: margin-left 0.3s ease-in; margin-left: -100%;';
+    // actually remove after delay for animation
+    setTimeout(
+        () => {
+            OA.multi.fileList.splice(el.id.replace(/^removeFileListFile/, ''), 1);
+            // we need to rebuild because splice changes the indexes
+            clearFileListContainer(container);
+            OA.multi.fileList.forEach ((f, i) => { addToFileList(i, container, callback); });
+        }, 300);
 }
 
 // checkMultiDialog shows or hides the multiple sequence check dialog
@@ -13859,7 +13943,7 @@ function addToFileList(id, container, callback) {
     const
         div = document.createElement('div'),
         i = document.createElement('i');
-    i.classList.add('fileListFileRemove', 'material-icons');
+    i.classList.add('fileListFileRemove', 'material-icons', 'button');
     i.id = 'removeFileListFile' + id;
     i.innerHTML = 'close';
     i.addEventListener('mousedown', () => {
@@ -14778,8 +14862,24 @@ function saveSequence() {
         }
         xml += buildFigureXML();
         xml += buildSettingsXML();
+        
+        // Append the sequence svg with wind from the right
+        {
+            const activeFormSave = OA.activeForm; // save current form view
+            // Set wind from the right and draw
+            OA.activeForm = 'B';
+            draw();
+            // Update id for saved file and append svg
+            $('sequenceSvg').id = 'sequence_drawing_wind_right';
+            xml += new XMLSerializer().serializeToString($('sequence_drawing_wind_right'));
+            // restore form view
+            OA.activeForm = activeFormSave;
+            draw();
+        }
+
         xml += '</sequence>';
         xml = vkbeautify.xml(xml);
+
         saveFile(
             xml,
             activeFileName() || 'sequence',

@@ -27,7 +27,7 @@
 // are *not* checked (just too many of them to input for this first go), nor
 // are there any checks for special Unknown rules (e.g., "no snap on entry/exit line").
 
-// See rules23.js for details on the various directives below.
+// See rules.js for details on the various directives below.
 
 
 /**
@@ -40,6 +40,8 @@
  * 2024.1.4: Updated Adv and Unl positioning to 20 / 25 for all programs
  * 2025.1.3
  * - Corrected Advanced Unknown max figure K to 160
+ * 2025.1.7
+ * - Corrected Sportsman Free max K to 103
 */
 
 rules.push (
@@ -70,10 +72,10 @@ rules.push (
 
 // maximum k-factor and number of figures acc. to civa section 6 part ii ch. 2.2.1.5
 //======================================================================================
-"k-max=178",	// 2014 : maximum k-factor + maximum floating points
-"basefig-min=10",	// exactly 10 base figures per sequence
-"basefig-max=10",
-"floating-point=3",	// 3 points may be reduced
+//"k-max=178",	// 2014 : maximum k-factor + maximum floating points
+//"basefig-min=10",	// exactly 10 base figures per sequence
+//"basefig-max=10",
+//"floating-point=3",	// 3 points may be reduced
 
 "more=incomplete",
 
@@ -93,7 +95,7 @@ rules.push (
 "[glider-IAC Sportsman Free]",
 
 "posnl=15",
-"k-max=97",
+"k-max=103",
 "floating-point=3",
 
 "fam2-min=1",

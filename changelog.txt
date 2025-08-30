@@ -1,3 +1,14 @@
+2025.1.7
+* Added screen keep-alive in Flying Mode for browsers supporting Screen Wake Lock API
+* Adjusted Flying Mode display to always use full available screen
+* Added 2025 IAC sequences
+* Added blue drag handle to selected figure in mini form A
+* (temporarily) disabled figure chooser setting when selecting a figure (line 9655)
+* Added svg image of sequence with wind from the right to sequences saved as .seq
+* Corrected Unknown 1,3,4,5 to Unknown 1,2,3,4 in CIVA glider rules
+* Corrected IAC Glider Sportsman Free K to 103
+* Fixed issue causing "allow-defrules" directive to be disregarded
+
 2025.1.6
 * Added 2025 BAeA rules and sequences
 * Fixed inability to switch first roll direction in a Free (Un)known figure that starts on Y axis

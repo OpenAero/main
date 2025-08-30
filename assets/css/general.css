@@ -1140,18 +1140,18 @@ option.used {
 #sequenceInfo .flatTextButton {
 	font-size: 14px;
 }
-#sequenceInfo .button {
+.material-icons.button {
 	width: auto;
 	height: auto;
 	border: none;
 	border-radius: 8px;
 	background: transparent;
 }
-#sequenceInfo .button:hover:not(.disabled) {
+.material-icons.button:hover:not(.disabled) {
   background-color: #cdf;
   transition: all 0.1s ease-in-out;
 }
-#sequenceInfo .button:active:not(.disabled) {
+.material-icons.button:active:not(.disabled) {
   box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 0 0 16px rgba(89, 189, 255, 0.6);
 }
 #sequenceInfo div.form-group:only-of-type {
@@ -1603,8 +1603,10 @@ option.used {
 }
 .fileListFileRemove {
 	position: relative;
+  top: -3px !important;
 	bottom: -5px;
   margin: 0 8px 0 0 !important;
+  color: red;
 }
 #t_printSavePdf {
 	margin-left: 4px;
@@ -1748,6 +1750,17 @@ option.used {
 /* checkMulti dialog */
 #multiCurrentRules, #printMultiCurrentRules {
   font-weight: bold;
+}
+
+/* Library dialog */
+#libraryFilters {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+#libraryFilters .form-group {
+  margin: 1em;
+  flex-grow: 1;
 }
 
 /* Settings dialog */
@@ -2321,7 +2334,7 @@ table#figureChooserTable div {
 	text-shadow: -1px -1px rgba(255,255,255,0.5), -1px 1px rgba(255,255,255,0.5), 1px -1px rgba(255,255,255,0.5), 1px 1px rgba(255,255,255,0.5);
   z-index: 9;
 }
-.removeFigureButton i, .deleteLogoButton i {
+.removeFigureButton i, .deleteLogoButton i, #removeLogo {
   color: red;
 }
 .removeFigureButton:hover, .deleteLogoButton:hover {
@@ -2797,7 +2810,8 @@ table#figureChooserTable div {
 }
 #miniFormAContainer table {
   font-size: 0.8em;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0 1px;
 }
 #miniFormAHeader {
   position: sticky;
@@ -2811,6 +2825,9 @@ table#figureChooserTable div {
   position: relative;
   cursor: move;
   cursor: ns-resize;
+  cursor: grab;
+  cursor: -moz-grab;
+  cursor: -webkit-grab;
   line-height: 1.5em;
   z-index: 0;
 }
@@ -2837,8 +2854,19 @@ table#figureChooserTable div {
   font-weight: bold;
   text-align: left;
 }
+#miniFormAContainer tr.selected td:first-of-type {
+  border-left: 1px solid #00f;
+  border-radius: 12px 0 0 12px;
+}
+#miniFormAContainer tr.selected td:last-of-type {
+  border-right: 1px solid #00f;
+  border-radius: 0 12px 12px 0;
+}
 #miniFormAContainer tr.selected td {
   color: #ff00a0;
+  background: rgba(0, 0, 255, 0.2);
+  border-bottom: 1px solid #00f;
+  border-top: 1px solid #00f;
 }
 #miniFormAContainer tr.dragging {
   color: white;

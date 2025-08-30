@@ -446,6 +446,7 @@
                     </li>
                 </ul>
                 <span id="t_finalizeSequence" class="textButton userText"></span>
+                <span id="currentUser" style="float: right; font-size: 6px;"></span>
             </div>
             <div class="clearBoth"></div>
             <!-- Sequence text -->
@@ -1334,6 +1335,78 @@
             <div class="textButton close userText" id="t_logoChooserCancel"></div>
         </div>
     </div>
+
+    <!-- Library -->
+    <div id="libraryDialog" class="boxbg noPrint fullscreen noDisplay">
+        <div class="box">
+            <span class="boxTitle">
+                <span class="userText" id="t_libraryTitle"></span>
+                <span class="info" id="manual.html_library">
+                    <i class="material-icons info">info</i>
+                </span>
+            </span>
+            <span class="tabSelector">
+                <ul>
+                    <li id="tab-general" class="activeTab">
+                        <span class="userText" id="t_mySequences"></span>
+                    </li>
+                    <li id="tab-styling" class="inactiveTab">
+                        <span class="userText" id="t_allSequences"></span>
+                    </li>
+                </ul>
+            </span>
+            <div id="libraryFilters">
+                <div class="form-group">
+                    <select name="class" id="libraryYear" class="panelHeader">
+                        <option value="2026" selected>2026</option>
+                        <option value="2025">2025</option>
+                    </select>
+                    <label class="control-label userText" id="t_libraryYear" for="libraryYear"></label><i class="bar"></i>
+                </div>
+                <div class="form-group">
+                    <select name="libraryClass" id="libraryClass" class="panelHeader">
+                        <option value="powered" class="userText" id="t_powered" selected></option>
+                        <option value="glider" class="userText" id="t_glider"></option>
+                    </select>
+                    <label class="control-label userText" id="t_libraryClass" for="libraryClass"></label><i class="bar"></i>
+                </div>
+                <div class="form-group">
+                    <select name="libraryRules" id="libraryRules" class="panelHeader">
+                        <option value="powered" class="userText" id="t_powered" selected></option>
+                        <option value="glider" class="userText" id="t_glider"></option>
+                    </select>
+                    <label class="control-label userText" id="t_libraryRules" for="libraryRules"></label><i class="bar"></i>
+                </div>
+                <div class="form-group">
+                    <select name="libraryCategory" id="libraryCategory" class="panelHeader">
+                        <option value="powered" class="userText" id="t_powered" selected></option>
+                        <option value="glider" class="userText" id="t_glider"></option>
+                    </select>
+                    <label class="control-label userText" id="t_libraryCategory" for="libraryCategory"></label><i class="bar"></i>
+                </div>
+                <div class="form-group">
+                    <select name="libraryProgram" id="libraryProgram" class="panelHeader">
+                        <option value="powered" class="userText" id="t_powered" selected></option>
+                        <option value="glider" class="userText" id="t_glider"></option>
+                    </select>
+                    <label class="control-label userText" id="t_libraryProgram" for="libraryProgram"></label><i class="bar"></i>
+                </div>
+            </div>
+            </div>
+            <!-- My sequences -->
+            <div id="sequenceList">
+            
+            </div>
+
+            <!-- Public sequences -->
+            <div id="sequencePreview">
+                
+            </div>
+            
+            <div class="textButton close userText" id="t_libraryClose"></div>
+        </div>
+    </div>
+    <!-- end Library -->
 
     <!-- Settings -->
     <div id="settingsDialog" class="boxbg noPrint fullscreen noDisplay">

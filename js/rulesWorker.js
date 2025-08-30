@@ -1160,9 +1160,7 @@ var blobURL = URL.createObjectURL(new Blob(['(',
                           console.log(`* Error: conversion ${conversion}, used in rule ${rule}, is undefined`);
                         } else {
                           log.push('Apply: ' + checkRule[rule].conv);
-                          let
-                            checkLine,
-                            logLine;
+                          let logLine;
                           if (checkConv[conversion][0].fullFigure) {
                             checkLine = fullCheckLine.slice();
                             logLine = 'Converted: ' + checkLine + ' => ';
@@ -1172,7 +1170,7 @@ var blobURL = URL.createObjectURL(new Blob(['(',
                             }
                           } else {
                             // Check for individual roll Aresti number conversions
-                            let check = checkArray.slice();
+                            const check = checkArray.slice();
                             logLine = 'Converted: ' + fullCheckLine + ' => ';
                             for (const conv of checkConv[conversion]) {
                               for (let m = 0; m < check.length; m++) {
@@ -1629,7 +1627,7 @@ var blobURL = URL.createObjectURL(new Blob(['(',
             value));
           break;
         default:
-          alertMsgs.push(alertFig + value);
+          alertMsgs.push(`${alertFig} ${value}`);
       }
       alertMsgRules[alertMsgs[alertMsgs.length - 1]] = rule;
     }

@@ -108,6 +108,8 @@ OpenAero 2016.1
  * 2025.1.3
  * - Added k-min to all Free Known sequences to match the Known master set
  *   Minimum Total K
+ * 2025.1.7
+ * - Corrected Unknown 1,3,4,5 to Unknown 1,2,3,4
 */
 
 rules.push (
@@ -445,17 +447,17 @@ rules.push (
 "more=glider-CIVA Unlimited Unknown",
 
 //###################
+"[glider-CIVA Unlimited Unknown 2]",
+"infocheck=positioning",
+"more=glider-CIVA Unlimited Unknown",
+
+//###################
 "[glider-CIVA Unlimited Unknown 3]",
 "infocheck=positioning",
 "more=glider-CIVA Unlimited Unknown",
 
 //###################
 "[glider-CIVA Unlimited Unknown 4]",
-"infocheck=positioning",
-"more=glider-CIVA Unlimited Unknown",
-
-//###################
-"[glider-CIVA Unlimited Unknown 5]",
 "infocheck=positioning",
 "more=glider-CIVA Unlimited Unknown",
 
@@ -473,15 +475,15 @@ rules.push (
 
 //###################
 "[glider-CIVA Unlimited Programme 4]",
-"more=glider-CIVA Unlimited Unknown 3",
+"more=glider-CIVA Unlimited Unknown 2",
 
 //###################
 "[glider-CIVA Unlimited Programme 5]",
-"more=glider-CIVA Unlimited Unknown 4",
+"more=glider-CIVA Unlimited Unknown 3",
 
 //###################
 "[glider-CIVA Unlimited Programme 6]",
-"more=glider-CIVA Unlimited Unknown 5",
+"more=glider-CIVA Unlimited Unknown 4",
 
 //###################
 "(glider-CIVA Unlimited Unknown)",
@@ -1266,17 +1268,17 @@ rules.push (
 "more=glider-CIVA Advanced Unknown",
 
 //###################
+"[glider-CIVA Advanced Unknown 2]",
+"infocheck=positioning",
+"more=glider-CIVA Advanced Unknown",
+
+//###################
 "[glider-CIVA Advanced Unknown 3]",
 "infocheck=positioning",
 "more=glider-CIVA Advanced Unknown",
 
 //###################
 "[glider-CIVA Advanced Unknown 4]",
-"infocheck=positioning",
-"more=glider-CIVA Advanced Unknown",
-
-//###################
-"[glider-CIVA Advanced Unknown 5]",
 "infocheck=positioning",
 "more=glider-CIVA Advanced Unknown",
 
@@ -1290,13 +1292,13 @@ rules.push (
 "more=glider-CIVA Advanced Free",
 
 "[glider-CIVA Advanced Programme 4]",
-"more=glider-CIVA Advanced Unknown 3",
+"more=glider-CIVA Advanced Unknown 2",
 
 "[glider-CIVA Advanced Programme 5]",
-"more=glider-CIVA Advanced Unknown 4",
+"more=glider-CIVA Advanced Unknown 3",
 
 "[glider-CIVA Advanced Programme 6]",
-"more=glider-CIVA Advanced Unknown 5",
+"more=glider-CIVA Advanced Unknown 4",
 
 //###################
 "[glider-CIVA Advanced Unknown Figs]",
