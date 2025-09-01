@@ -4612,8 +4612,8 @@ function doOnLoad() {
     // Cordova app settings
     if (OA.platform.cordova) {
         
-        if (device.isiOSAppOnMac) {
-            // Use the desktop interface when running on Mac
+        if (device.isiOSAppOnMac || device.isMacCatalystApp) {
+            // Use the desktop interface when running on Mac Catalyst
             OA.platform.mobile = false;
             /** QR Scanner disabled as it crashes app
             // Update menu for QR code scanning
@@ -5178,7 +5178,8 @@ function addEventListeners() {
     OA.sequenceText.addEventListener('blur', virtualKeyboard, false);
 
     // virtual keyboard
-    if (window.visualViewport) {
+    if (window.visualViewport &&
+        (typeof device !== 'undefined' ? !(device.isiOSAppOnMac || device.isMacCatalystApp) : true)) {
         window.visualViewport.addEventListener("resize", () => {
             $('virtualKeyboard').style.top = window.visualViewport.height - 42 + 'px';
             $('virtualKeyboard').style.bottom = 'auto';

@@ -53,13 +53,17 @@ function OAconst (name, value) {
  A new x must be used for versions that create sequences not
  fully backward compatible with the previous version
 */
-const version = '2025.1.6';
+const version = '2025.1.8';
 // versionNew is an object that contains version update information
 // The structure is {vvv : [[ttt, n], ...], ...} , where
 // vvv = version number
 // ttt = update text
 // n   = importance (higher = more important)
 const versionNew = {
+  '2025.1.8': [
+    ['Improved Flying Mode display', 3],
+    ['Added 2025 IAC sequences and rules', 3],
+  ],
   '2025.1.6': [
     ['Added 2025 BAeA rules and sequences', 3],
     ['Fixed inability to switch first roll direction in a Free (Un)known figure that starts on Y axis', 4],
