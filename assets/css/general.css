@@ -2979,3 +2979,8 @@ tr.insertAfter td {
 #mainOverlay.movedFromView, .movedFromView #t_windArrow, .movedFromView #miniFormAContainer {
     top: 100% !important;
 }
+
+#currentUser {
+  display: none;
+  float: right;
+}

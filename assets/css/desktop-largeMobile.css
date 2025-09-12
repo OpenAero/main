@@ -235,6 +235,9 @@
     padding-top: 18px;
     padding-right: 200px;
 }
+#sequenceArea.figureSelectorInView svg {
+    margin-right: 300px;
+}
 .sequenceOverlay {
     left: -25px !important;
     top: -20px !important;

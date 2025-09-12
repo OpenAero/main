@@ -28,6 +28,8 @@
 2024.1.4
 - Updated Int/Adv/Unl reference sequences
 - Updated Sports Free maximum K to 129
+2025.1.9
+- Updated Free Known reference figures for 2025
 */
 
 rules.push (
@@ -103,7 +105,7 @@ rules.push (
 "[NZAC Unlimited Free Known]",
 "posnl=40",//assume no line judges
 "poslj=20",
-'reference="@A" 22dh(,4)5f "@B" ,5ta3f "@C" 5% \',22n(,5if,3)1\'- "@D" 44ac(6)32;6f-``` "@E" -2jo2-',
+'reference="@A" -.\'pn(3f,3.\'). "@B" 4% /``+```5s,24..\';>iBpb(````````,3if\').\',8\',4 "@C" 48dh(4)5if\'~ "@D" /~3jio15-`` "@E" ````+\'\'1ac(\'22`),3\'\',7+``````',
 
 "more=NZAC/IAC Unlimited Free Known",
 
@@ -659,7 +661,7 @@ rules.push (
 
 "figure-letters=ABCDE",
 
-'reference="@A" ,9m32,6f- "@B" -2jo15 "@C" 2pn(`f\'\')4- "@D" -o44- "@E" -````5is.\'\'ib8',
+'reference="@A" 1`dh(`)\'f\' "@B" ``+``````2f`rc48-````````` "@C" ``,8\'pb.3+`` "@D" ~-6m6f,44+` "@E" 2j2',
 
 // what info should be filled out
 "infocheck=pilot;actype;acreg;positioning",
@@ -1023,7 +1025,7 @@ rules.push (
 
 "figure-letters=ABCDE",
 
-'reference="@A" sirp32 "@B" irc4,3 "@C" 1j1 "@D" 4b "@E" of',
+'reference="@A" mf- "@B" -`h24\' "@C" `+1j1 "@D" 2f`rc+` "@E" `+\'2\'rp22',
 
 // what info should be filled out
 "infocheck=pilot;actype;acreg;positioning",

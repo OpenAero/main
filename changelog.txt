@@ -1,3 +1,10 @@
+2025.1.9
+* Adjusted mini form A positioning with figure selector for portrait/landscape
+* Fixed figure positioning after reordering from mini form A
+* Fixed issue that caused Notes text to appear inside the sequence form instead of above it
+* Updated NZAC Free Known reference figures for 2025
+* Further fixed issue related to "allow-defrules"
+
 2025.1.8
 * Added screen keep-alive in Flying Mode for browsers supporting Screen Wake Lock API
 * Adjusted Flying Mode display to always use full available screen

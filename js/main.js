@@ -6694,17 +6694,17 @@ function updateFigureEditor() {
 // showFigureSelector displays the base figure selector
 // for some reason sliding only works from the left for smallMobile !?
 function showFigureSelector() {
-    const figureSelector = $('figureSelector');
     updateFigureSelectorOptions();
-    figureSelector.classList.add('active');
+    $('figureSelector').classList.add('active');
     if (OA.activeForm === 'FU') {
         // set figureString correctly, using positioning relative to leftBlock
         $('leftBlock').scrollTop = 0;
-        figureSelector.insertBefore(
+        $('figureSelector').insertBefore(
             $('figureString'),
-            figureSelector.firstChild);
+            $('figureSelector').firstChild);
     }
     adjustMiniFormAPosition();
+    $('sequenceArea').classList.add ('figureSelectorInView');
 }
 
 // hideFigureSelector hides the base figure selector
@@ -6716,7 +6716,8 @@ function hideFigureSelector() {
         $('figureString'),
         $('figureInfo').nextSibling);
     // Reset position of mini form A and windarrow
-        adjustMiniFormAPosition();
+    adjustMiniFormAPosition();
+    $('sequenceArea').classList.remove ('figureSelectorInView');
 }
 
 // hideLogoChooser hides the logo chooser
@@ -9981,13 +9982,13 @@ function makeMiniFormAScreen() {
             $('placeFigure').classList.remove('noDisplay');
             if (!draggedRow.previousSibling) {
                 // Drop location before first figure
-                var id = draggedRow.nextSibling.id.match(/^miniFormA-figure(\d+)$/)[1];
+                const id = draggedRow.nextSibling.id.match(/^miniFormA-figure(\d+)$/)[1];
                 centerFigure(id);
                 $('placeFigure').style.left = $('figure'+id).firstChild.getBoundingClientRect().left + 'px';
                 $('placeFigure').style.top = $('figure'+id).firstChild.getBoundingClientRect().top + 'px';
             } else {
                 // Drop location after figure
-                var id = draggedRow.previousSibling.id.match(/^miniFormA-figure(\d+)$/)[1];
+                const id = draggedRow.previousSibling.id.match(/^miniFormA-figure(\d+)$/)[1];
                 centerFigure(id);
                 $('placeFigure').style.left = $('figure'+id).lastChild.getBoundingClientRect().left + 'px';
                 $('placeFigure').style.top = $('figure'+id).lastChild.getBoundingClientRect().top + 'px';
@@ -10010,8 +10011,8 @@ function makeMiniFormAScreen() {
         }
 
         // Otherwise, reposition the figure
-        let
-            newSeqNr,
+        let newSeqNr;
+        const
             id = OA.selectedFigure.id,
             // Set dropAfter id. Set to false if dropping at beginning
             dropAfter = draggedRow.previousSibling ?
@@ -10021,7 +10022,14 @@ function makeMiniFormAScreen() {
             selFigStart = OA.figures[
                 OA.figures.findIndex(fig => fig.seqNr == OA.figures[id].seqNr - 1) + 1
             ].stringStart,
-            figString = OA.activeSequence.text.slice(selFigStart, OA.figures[id].stringEnd);
+            // Define the figString, remove repositionings
+            figString = OA.activeSequence.text
+                .slice(selFigStart, OA.figures[id].stringEnd)
+                .split (' ')
+                .filter (
+                    a => !(regexMoveFwdDn.test(a) || regexMoveTo.test(a) || regexCurveTo.test(a))
+                )
+                .join (' ');
 
         draggedRow = null; // reset draggedRow for next drag
 
@@ -10123,7 +10131,9 @@ function adjustMiniFormAPosition() {
     $('miniFormAContainer').style.transform = $('t_windArrow').style.transform = '';
     if (/[BC]/.test(OA.activeForm) && !OA.platform.smallMobile && $('figureSelector').classList.contains('active')) {
         const translateX = `translateX(${- Math.min(
-            $('sequenceArea').clientWidth-$('sequenceSvg').getAttribute('width')-$('miniFormAContainer').offsetWidth - 36,
+            window.innerHeight < window.innerWidth ?
+                Infinity :
+                $('sequenceArea').clientWidth-$('sequenceSvg').getAttribute('width')-$('miniFormAContainer').offsetWidth - 36,
             $('figureSelector').offsetWidth - 12
         )}px)`;
         $('miniFormAContainer').style.transform = translateX;
@@ -15940,7 +15950,6 @@ function buildForm(print) {
     if ($('printNotes').checked) {
         const
             group = document.createElementNS(svgNS, 'g'),
-            t = OA.SVGRoot.appendChild(document.createElementNS(svgNS, 'text')),
             dy = OA.style.printNotes.match(/font-size[ ]*:[ ]*([\d]+)/)[1],
             lines = $('notes').value.replace(/\r/g, '').split('\n');
         
@@ -15952,6 +15961,7 @@ function buildForm(print) {
         // temporarily attach text to SVGRoot. Needed as after possible
         // roll scaling, mySVG may be detached from DOM and t.getBBox()
         // does not work
+        const t = OA.SVGRoot.appendChild(document.createElementNS(svgNS, 'text'));
 
         t.setAttribute('style', OA.style.printNotes);
         lines.forEach ((l) => { t.appendChild(tspan(l, dy)) });

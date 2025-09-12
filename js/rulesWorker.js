@@ -1153,6 +1153,8 @@ var blobURL = URL.createObjectURL(new Blob(['(',
                       }
                       // apparently not in excludeRules
                       log.push('-basefig rule: ' + rule);
+                      
+                      const check = checkArray.slice();
                       // Apply conversions to the Aresti number before checking the rule
                       if (checkRule[rule].conv) {
                         const conversion = checkRule[rule].conv;
@@ -1170,7 +1172,6 @@ var blobURL = URL.createObjectURL(new Blob(['(',
                             }
                           } else {
                             // Check for individual roll Aresti number conversions
-                            const check = checkArray.slice();
                             logLine = 'Converted: ' + fullCheckLine + ' => ';
                             for (const conv of checkConv[conversion]) {
                               for (let m = 0; m < check.length; m++) {
