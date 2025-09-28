@@ -53,7 +53,7 @@ function OAconst (name, value) {
  A new x must be used for versions that create sequences not
  fully backward compatible with the previous version
 */
-const version = '2025.1.9';
+const version = '2025.1.11';
 // versionNew is an object that contains version update information
 // The structure is {vvv : [[ttt, n], ...], ...} , where
 // vvv = version number
