@@ -118,11 +118,16 @@ OpenAero 2016.3.2
 2025.1.3
 - Added k-min to all Free Known sequences to match the Known set
   Minimum Total K
+2026.1.1
+- Added 2026 reference sequences
+- Adjusted rules for tailslides in Adv Unknown (NP2026-15)
+- Added 9.10.2-4.3 and 9.10.7-9.3 in Unl Unknown (NP2026-20)
+- Updated check for down-foot 3/4 flicks to include NP2026-20
 */
 
 // open the rules.push command
 rules.push(
-"year=2025",
+"year=2026",
     //#######################################################################################
     //#
     //# Define Unlimited programmes.
@@ -196,7 +201,7 @@ rules.push(
     "posnl=40",//assume no line judges
     "poslj=20",
 
-    'reference="@A" -.\'pn(3f,3.\'). "@B" 4% /``+```5s,24..\';>iBpb(````````,3if\').\',8\',4 "@C" 48dh(4)5if\'~ "@D" /~3jio15-`` "@E" ````+\'\'1ac(\'22`),3\'\',7+``````',
+    'reference="@A" 5;3ifdh(\')\'\'22.\'\'~~ "@B" 2j2~ "@C" `+\'\'5ita``3if\'\' "@D" -````3,5.\'\'ig`6if,1\'~ "@E" ~.3,8\'pn(\'\',5f,8.\').\'\'-',
 
     "more=CIVA/IAC Unlimited Free Known",
 
@@ -413,8 +418,8 @@ rules.push(
     "why_de-UnlimitedNOU    = Diese gegenläufige oder unverbundene Rollenkombination ist nicht erlaubt",
     "UnlimitedNOU-rule   = Sporting Code Section 6 Part I, A.2.2",
 
-    // new in 2022 (NP2022-15)
-    "conv-3f_vdDhfFsz=^9\\.[1248]\\.[15]=v;^9\\.[1248]\\.2=d;^9\\.[1248]\\.4=D; ^9\\.[1248]\\.=h; ^9\\.9\\.[2-4]\\.3=3f; ^9\\.(9|10)\\.[1-5]=f;^9\\.9\\.[7-9]\\.3=3F;^9\\.(9|10)\\.=F; ^9\\.1[12]=s ; ^0\\.=z",
+    // New in 2022 (NP2022-15). Updated in 2026 (NP2026-20) to include negative flicks
+    "conv-3f_vdDhfFsz=^9\\.[1248]\\.[15]=v;^9\\.[1248]\\.2=d;^9\\.[1248]\\.4=D; ^9\\.[1248]\\.=h; ^9\\.9\\.[2-4]\\.3=3f; ^9\\.10\\.[2-4]\\.3=3f; ^9\\.(9|10)\\.[1-5]=f;^9\\.9\\.[7-9]\\.3=3F;^9\\.10\\.[7-9]\\.3=3F;^9\\.(9|10)\\.=F; ^9\\.1[12]=s ; ^0\\.=z",
 
     "rule-UnlimitedNO3f   = 3f_vdDhfFsz:d[,;]3F|3f[,;]D|h[,;]3F$|[vdDhsz,. ]+ 3F[,;]h$|^3f[,;]h",
     // 45° up | 45° down | Horizontal roll first then flick | Horizontal flick first under g load -> final rotation | Horizontal flick first standard load (+- 1g) -> first or only rotation
@@ -705,21 +710,15 @@ rules.push(
 "9.9.10.2-4",
 
 "9.10.1.2-4",
-"9.10.2.2",
-"9.10.2.4",
-"9.10.3.2",
-"9.10.3.4",
+"9.10.2.2-4", // Added 9.10.2.3 in 2026 (NP2026-20)
+"9.10.3.2-4", // Added 9.10.3.3 in 2026 (NP2026-20)
 "9.10.3.6",
-"9.10.4.2",
-"9.10.4.4",
+"9.10.4.2-4", // Added 9.10.4.3 in 2026 (NP2026-20)
 "9.10.5.2-4",
 "9.10.6.2-4",
-"9.10.7.2",
-"9.10.7.4",
-"9.10.8.2",
-"9.10.8.4",
-"9.10.9.2",
-"9.10.9.4",
+"9.10.7.2-4", // Added 9.10.7.3 in 2026 (NP2026-20)
+"9.10.8.2-4", // Added 9.10.8.3 in 2026 (NP2026-20)
+"9.10.9.2-4", // Added 9.10.9.3 in 2026 (NP2026-20)
 "9.10.10.2-4",
 
 // [156]i?s
@@ -1244,7 +1243,7 @@ rules.push(
 
 "figure-letters=ABCDE",
 
-'reference="@A" 1`dh(`)\'f\' "@B" ``+``````2f`rc48-````````` "@C" ``,8\'pb.3+`` "@D" ~-6m6f,44+` "@E" 2j2',
+'reference="@A" 24rp6- "@B" -2dh(,4)3f "@C" ,1m3,34- "@D" /sibpb(3)....4 "@E" ,2kf',
 
 // what info should be filled out
 "infocheck=pilot;actype;acreg;positioning",
@@ -1372,6 +1371,12 @@ rules.push(
 "why_fr-DHVM = maximun 9.1.1.1 autorisé en verticale montante",
 "why_de-DHVM = höchstens 9.1.1.1 auf vertikaler Aufwärtslinie erlaubt",
 
+"conv-advtavd= ^9\\.(1\\.5\\.[123])=v ; ^9\\.=x; ^0\\.=z",
+"rule-TAVD = advtavd: ^(x|z x)",
+"why-TAVD = only rolls allowed are 9.1.5.1-3 on vertical down",
+"why_fr-TAVD = seuls rotations autorisés sont 9.1.5.1-3 en descente verticale",
+"why_de-TAVD = nur 9.1.5.1-3 auf vertikaler Abwärtslinie erlaubt",
+
 "allow-defrules= Hor10stop",
 
 "1.1.1.1-4",
@@ -1412,8 +1417,8 @@ rules.push(
 "5.3.2.1-4  NOU ; NF:1 ; NF:2 ; DHVM ; DH45M",
 
 // tailslides
-"6.2.1.1 NR",
-"6.2.2.1 NR",
+"6.2.1.1 TAVD ; NOU",
+"6.2.2.1 TAVD ; NOU",
 
 // half loops
 "7.2.1.1-2  NF:1",
@@ -1632,7 +1637,7 @@ rules.push(
 
 "figure-letters=ABCDE",
 
-'reference="@A" mf- "@B" -`h24\' "@C" `+1j1 "@D" 2f`rc+` "@E" `+\'2\'rp22',
+'reference="@A" 22dh.\'\' "@B" rp2- "@C" ,24a44 "@D" \'2f.\'t.\'\' "@E" pb8.\'\'',
 
 // what info should be filled out
 "infocheck=pilot;actype;acreg;positioning",

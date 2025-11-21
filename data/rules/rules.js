@@ -49,7 +49,7 @@
  * To write or modify these files, you'll need:
  * 1. extensive knowledge of regular expressions
  * 2. extensive knowledge of sequence design and catalog info
- * 3. complete understanding of configuration files like this
+ * 3. a good understanding of configuration files like this
  * 4. a basic understanding of algorithms and how OpenAero processes the
  *    rules files
  * 

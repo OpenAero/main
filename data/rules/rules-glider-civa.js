@@ -110,10 +110,19 @@ OpenAero 2016.1
  *   Minimum Total K
  * 2025.1.7
  * - Corrected Unknown 1,3,4,5 to Unknown 1,2,3,4
+ * 2026.1.1
+ * - Added 2026 reference sequences
+ * - Added three- and four-line stall turns for Known and Free (NP2026-1)
+ * - Added three- and four-line stall turns for Unknown, including those proposed
+ *   by GAC (NP2026-1)
+ * - Added restriction for rolls on stall turn vertical down (NP2026-2)
+ * - Added 9.8.4.2 to Unl, 9.8.5.1 to Adv and Unl (NP2026-3)
+ * - Added 7.8.8.1 to Adv (NP2026-5)
+ * - Added roll restriction A.10.1.3 (NP2026-5)
 */
 
 rules.push (
-"year=2025",
+"year=2026",
 //###################################################################################
 //################################ CIVA GLIDERS KNOWN ###############################
 //###################################################################################
@@ -128,7 +137,7 @@ rules.push (
 
 "figure-letters=ABCDE",
 
-'reference="@A" ig2if "@B" of "@C" k2 "@D" \'4rp(2)2 "@E" 1j1',
+'reference="@A" id2f,2 "@B" o22 "@C" ,4b.2if "@D" ita4 "@E" 1jo1',
 
 // what info should be filled out
 "infocheck=pilot;actype;acreg;positioning",
@@ -259,6 +268,15 @@ rules.push (
 "3.3.1.1-4",
 
 "5.2.1.1-4",
+
+// Added in 2026 (NP2026-1)
+"5.3.1.1",
+"5.3.1.3",
+"5.3.3.1",
+"5.3.3.4",
+
+"5.4.1.1",
+//
 
 "6.2.1.1-4",
 "6.2.2.1-4",
@@ -574,6 +592,21 @@ rules.push (
 "why_de-nopushout=Kein negatives Abfangen nach mehr als einer halben Gestoßenen in der vertikalen Abwärtslinie",
 "nopushout-rule=Sporting Code Section 6 Part 2 A.22.1.1",
 
+"conv-vdqr=^9\\.[18]\\.5\\.1=v ; ^9\\.=x ; ^0\\.=z",
+"rule-max1q=vdqr:x",
+"why-max1q=For SZD-59 Acro and MDM 1 Fox not more than 1/4 roll down",
+"why_fr-max1q=Pour SZD-59 Acro et MDM 1 Fox, pas plus d'un quart de rouleaux verticalement vers le bas",
+"why_de-max1q=Für SZD-59 Acro und MDM 1 Fox nicht mehr als 1/4 Rollen in der vertikalen Abwärtslinie",
+"max1q-rule=Sporting Code Section 6 Part 2 A.6.1.2",
+
+// Rule triggers in case of ANY roll. Apply this rule only to relevant 360 degree rolls
+// in specific figures of Family 7.8
+"rule-nrdszd59=roll:[^z]",
+"why-nrdszd59=For SZD-59 Acro not more than 180 degrees of roll on negative 45 down",
+"why_fr-nrdszd59=Pour le SZD-59 Acro, pas plus de 180 degrés de roulis en descente inversée à 45 degrés",
+"why_de-nrdszd59=Für SZD-59 Acro: Nicht mehr als 180 Grad Rollwinkel bei umgekehrtem 45°-Abstieg",
+"nrdszd59-rule=Sporting Code Section 6 Part 2 A.10.1.3",
+
 // Sporting code 2.3.1.4
 "group-roller=^2\\.(1\\.[23]|2\\.[2-6])",
 "roller-name=Rolling turn",
@@ -688,9 +721,15 @@ rules.push (
 //------------
 // Rolling elements may only be added where indicated  ### acc. to A.6.1.1
 "5.2.1.1  NOAH",
-"5.2.1.2  NOAH ; NR:1 ; nopushout",
-"5.2.1.3  NOAH ; nopushout",
+"5.2.1.2  NOAH ; NR:1 ; nopushout ; max1q:2",
+"5.2.1.3  NOAH ; nopushout ; max1q:2",
 "5.2.1.4  NOAH  ; NR:1",
+
+"5.3.1.1 NR:1 ; NR:2",
+"5.3.1.3 NR:1 ; NR:2 ; max1q",
+"5.3.3.1 NR:2 ; NR:3",
+"5.3.3.4 NR:2 ; NR:3",
+"5.4.1.1 NR",
 
 // Tail-Slides
 //------------
@@ -751,21 +790,27 @@ rules.push (
 //--------------------------------------
 // no flick rolls on hor. entries in figures 7.8.1-4.1-2  ### acc. to A.10.1.1
 // no flick rolls on hor. exits in figures 7.8.5-8.1-2  ### acc. to A.10.1.2
+// no rolls > 180 deg on negative diagonal lines for SZD-59 (A.10.1.3) 
 // no rolls on diagonal lines acc. to Ch. 9 page 90
-"7.8.1.1-2 NOAH ;NF:1",
+"7.8.1.1 NOAH ;NF:1 ; nrdszd59:2",
+"7.8.1.2 NOAH ;NF:1 ; nrdszd59:3",
 "7.8.1.3-4 NOAH ;NR:1 ; NR:2 ; nfpf",
-"7.8.2.1-2 NOAH ;NF:1",
+"7.8.2.1 NOAH ;NF:1 ; nrdszd59:2",
+"7.8.2.2 NOAH ;NF:1",
 "7.8.2.3-4 NOAH ;NR:2 ; nfpf",
-"7.8.3.1-2 NOAH ;NF:1",
+"7.8.3.1 NOAH ;NF:1 ; nrdszd59:3",
+"7.8.3.2 NOAH ;NF:1",
 "7.8.3.3-4 NOAH ;NR:3 ; nfpf",
 "7.8.4.1-2 NOAH ;NF:1",
 "7.8.4.4  NOAH ;nfpf",
 "7.8.5.1-2 NOAH ;NR:1 ; NR:2 ; NF:3",
-"7.8.5.3-4 NOAH ;nfpf",
+"7.8.5.3 NOAH ;nfpf ; nrdszd59:2",
+"7.8.5.4 NOAH ;nfpf ; nrdszd59:1",
 "7.8.6.1-2 NOAH ;NR:1 ; NF:3",
 "7.8.6.3-4 NOAH ;NR:3 ; nfpf",//##### Anfrage bei Manfred
 "7.8.7.1-2 NOAH ;NR:2 ; NF:3",
-"7.8.7.3-4 NOAH ;nfpf",
+"7.8.7.3 NOAH ;nfpf",
+"7.8.7.4 NOAH ;nfpf ; nrdszd59:2",
 "7.8.8.1  NOAH ;NF:3",
 "7.8.8.3-4 NOAH ;nfpf",
 
@@ -936,6 +981,8 @@ rules.push (
 "9.4.4.2",
 
 "9.8.3.1-2",
+"9.8.4.2",
+"9.8.5.1",
 
 "9.9.2.2",
 "9.9.3.2",
@@ -972,7 +1019,7 @@ rules.push (
 
 "figure-letters=ABCDE",
 
-'reference="@A" -2t "@B" 6s "@C" 22c2 "@D" 2ip "@E" 2-',
+'reference="@A" id2- "@B" -,24c\'\'- "@C" -2t4 "@D" b..4 "@E" o1',
 
 // what info should be filled out
 "infocheck=pilot;actype;acreg;positioning",
@@ -1085,6 +1132,15 @@ rules.push (
 "3.3.1.4",
 
 "5.2.1.1",
+
+// Added in 2026 (NP2026-1)
+"5.3.1.1",
+"5.3.1.3",
+"5.3.3.1",
+"5.3.3.4",
+
+"5.4.1.1",
+//
 
 "6.2.1.1",
 "6.2.2.1",
@@ -1432,6 +1488,10 @@ rules.push (
 // Rolling elements may only be added where indicated  ### acc. to A.6.1.1
 "5.2.1.1  NR:1 ; NOAH",
 
+"5.3.1.1 NR:1 ; NR:2",
+"5.3.3.1 NR",
+"5.4.1.1 NR",
+
 // Tail-Slides
 //------------
 //Rolling elements may only be added where indicated  ### acc. to A.7.1.1
@@ -1471,6 +1531,7 @@ rules.push (
 "7.8.4.1  NOAH",
 "7.8.6.2  NR:1 ; NOAH",
 "7.8.6.3  NR:1 ; NR:3 ; NOAH",
+"7.8.8.1  NOAH",
 "7.8.8.4  NOAH",
 
 // Super-Eights
@@ -1574,6 +1635,7 @@ rules.push (
 "9.4.4.2",
 
 "9.8.3.1-2",
+"9.8.5.1",
 
 "9.11.1.4-6"
 

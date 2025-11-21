@@ -28,7 +28,13 @@
 // - The value is an OpenAero sequence link (use "File > Save as link" in OpenAero to generate)
 
 let library = {
-    'version': 2025.009,
+    'version': 2026.002,
+
+    '2026 CIVA Unl Free Known':'https://openaero.net/?s=hFVubGltaXRlZIdwb3dlcmVkiEZyZWUgS25vd26JQ0lWQYo0MIswjSJAQSIgNTszaWZkaCgnKaeyLqf-ICJAQiIgMmoyfiAoMCw4KSAiQEMiIGArpzVpdGHgM2lmpyAoMCwyKSAyJSAiQEQiIC3g4DMsNS6naWdgNmlmLDEnfiAoMCwxNikgIkBFIiB-LjMsOCdwbiinLDVmLDguJykupy2PQ0lWQZAyMDI1LjEuMTGRZ3JpZDo1',
+    '2026 CIVA Adv Free Known':'https://openaero.net/?s=hEFkdmFuY2Vkh3Bvd2VyZWSIUHJvZ3JhbW1lMYlDSVZBijMwizCNIkBBIiAyNHJwNi0gKDMsMCkgIkBCIiAtMmRoKCw0KTNmICgwLDgpICJAQyIgLDFtMywzNC0gKDAsNikgIkBEIiAvc2licGIoMymurjQgKDE0LDApICJARSIgLDJrZo9DSVZBkDIwMjUuMS4xMZFncmlkOjU',
+    '2026 CIVA Int Free Known':'https://openaero.net/?s=hEludGVybWVkaWF0ZYdwb3dlcmVkiFByb2dyYW1tZTGJQ0lWQYozMIswjSJAQSIgsmRoLqcgKC05LDApICJAQiIgcnAyLSAoLTEsMCkgIkBDIiAsMjRhtCAoOSwxMikgIkBEIiAnMmYuJ3QupyAoLTgsMCkgIkBFIiBwYjgup16PQ0lWQZAyMDI1LjEuMTGRZ3JpZDo1',
+    '2026 CIVA-Glider Unl Known':'https://openaero.net/?s=hFVubGltaXRlZIdnbGlkZXKIS25vd26JQ0lWQYoyNYswjSJAQSIgaWQyZiwyICJAQiIgb7IgIkBDIiAsNGIuMmlmICJARCIgaXRhNCAiQEUiIDFqbzGPQ0lWQZAyMDI1LjEuMTGRZ3JpZDo1',
+    '2026 CIVA-Glider Adv Known':'https://openaero.net/?s=hEFkdmFuY2Vkh2dsaWRlcohLbm93bolDSVZBijIwizCNIkBBIiBpZDItICJAQiIgLSwyNGOnLSAiQEMiIC0ydDQgIkBEIiBirjQgIkBFIiBvMY9DSVZBkDIwMjUuMS4xMZFncmlkOjU',
 
     '2026 NZAC Primary Known':'https://openaero.net/?s=hFByaW1hcnmFTlpBQyAyMDI1LzI2h3Bvd2VyZWSIS25vd24gMYlOWkFDijONNSUgYCtkK-AgaXYucy4nIC0xJSCuridjrq4uLDInK2AgMiUgYCtvIP6rLidoLier_iAuMSuPTlpBQ5AyMDI1LjEuM5FC',
     '2026 NZAC Primary Known II':'https://openaero.net/?s=hFByaW1hcnmFTlpBQyAyMDI1LzI2h3Bvd2VyZWSIS25vd24gMolOWkFDijONNSUgYCtkK-AgaXYucy4nIC0xJSCuridjrq4uLDInK2AgMiUgYCtvIP6rLidoLier_iAuMSuPTlpBQ5AyMDI1LjEuM5FC',

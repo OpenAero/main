@@ -1,3 +1,7 @@
+2026.1.1
+* Added CIVA Free Known figures for 2026
+* Updated CIVA rules for 2026 (Applied Power NP2026-15/20 and Glider NP2026-1/2/3/5/6)
+
 2025.1.11
 * Fixed issue with Settings tab selection
 

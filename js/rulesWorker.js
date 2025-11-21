@@ -13,7 +13,7 @@ var blobURL = URL.createObjectURL(new Blob(['(',
     /** Worker code starts here */
 
     // define worker globals
-    var
+    let
       activeForm,
       alertMsgs = [],
       alertMsgRules = {},
@@ -25,7 +25,7 @@ var blobURL = URL.createObjectURL(new Blob(['(',
       referenceSequence = {},
       rollFig = [],
       rules,
-      activeRules = false,
+      activeRules = false, // Are rules active?  If so, is object {description: xxx, logo: xxx}
       rulesKFigures = {},
       regexRulesAdditionals = /^(connectors|additionals)=([0-9]+)\/([0-9]+)/,
       regexUnlinkedRolls = /[,; ](9\.[1-8]\.[0-9.]*;9\.[1-8]\.)|(9\.(9|10)\.[0-9.]*;9\.(9|10))|(9\.1[12]\.[0-9.]*;9\.1[12])/,
@@ -43,7 +43,6 @@ var blobURL = URL.createObjectURL(new Blob(['(',
       checkRule = [],
       defRules = [],      // default rules in for rule/cat/seq to be applied to a figure check
       excludeRules = [],     // default rules excluded for this figure check
-      activeRules = false,   // Are rules active?  If so, is object {description: xxx, logo: xxx}
       figureLetters = '',    // Letters that can be assigned to individual figures
       additionalFig = { 'max': 0, 'totalK': 0 },    // Additional figures, max and K
       ruleSuperFamily = [],  // Array of rules for determining figure SF
@@ -65,10 +64,12 @@ var blobURL = URL.createObjectURL(new Blob(['(',
         // loadRulesFromDB loads the rules from indexedDB, when present
         function loadRulesFromDB (db) {
           readWriteDB (db, 'rules', 0).then(result => {
+            /*
             if (result) {
               console.log('Loading rules from DB')
               rules = result.rules;
             } else console.log ('No rules in DB');
+            */
             parseRules();
             // Force reloading of the active rules in the main thread
             postMessage({
@@ -1030,7 +1031,8 @@ var blobURL = URL.createObjectURL(new Blob(['(',
                 }
               }
               // Run rule checks on specific allowed figures if the
-              // checkAllowCatId object is not empty
+              // checkAllowCatId object is not empty. That is, ONLY run this
+              // when the basefigure is allowed
               if (Object.keys(checkAllowCatId).length > 0) {
                 //log.push ('Checking rules on specific allowed figures');
                 const arestiNr = fullCheckLine.split(' ')[0];
@@ -1132,7 +1134,8 @@ var blobURL = URL.createObjectURL(new Blob(['(',
                     } else console.log(`Referenced rule "${rule}" does not exist`);
 
                   }
-                  // Check default rules when applicable
+                  // Check default rules when applicable. NEVER executed when
+                  // basefigure is not allowed
                   if (defRules != []) {
                     let check = [];
                     for (let k = 0; k < defRules.length; k++) {
@@ -1154,7 +1157,7 @@ var blobURL = URL.createObjectURL(new Blob(['(',
                       // apparently not in excludeRules
                       log.push('-basefig rule: ' + rule);
                       
-                      const check = checkArray.slice();
+                      check = checkArray.slice();
                       // Apply conversions to the Aresti number before checking the rule
                       if (checkRule[rule].conv) {
                         const conversion = checkRule[rule].conv;
@@ -1639,7 +1642,7 @@ var blobURL = URL.createObjectURL(new Blob(['(',
 
 // activate Worker
 const rulesWorker = new Worker(blobURL);
-delete blobURL; // clean up
+blobURL = ''; // clean up
 
 // workerCallback is a global used for callback functions of form
 // workerCallback [id] = function
