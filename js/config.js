@@ -698,16 +698,75 @@ const figpat = {
   'pushPointTip' : 'U'
 };
 
-const drawAngles = {
+OAconst ('drawAngles', {
   'd':45, 'v':90, 'z':135, 'm':180,
   'c':225, 'p':270, 'r':315, 'o':360,
   'D':-45, 'V':-90, 'Z':-135, 'M':-180,
-  'C':-225, 'P':-270, 'R':-315, 'O':-360
-};
+  'C':-225, 'P':-270, 'R':-315, 'O':-360,
+});
 
 const rollAttitudes = {'0':'', '45':'d', '90':'v', '135':'d',
   '180':'', '225':'id', '270':'iv', '315':'id'
 };
+
+// Following factors are defined in the Aresti catalogue: II Method of evaluation.
+// Every base figure is a sum of these factors, divided by 10 and rounded to
+// the nearest integer. To reduce division, the numbers are divided by 10 here.
+
+OAconst ('calcK', {
+  // K factors for 1. Straight lines
+  line : {
+    270: 1.2, 315: 1.1, 0: 1, 45: 1.2, 90: 1.4,
+    135: 1.5, 180: 1.3, 225: 1.4,
+    // Negative values are used for push to vertical up or down
+    // (OA.negLoad = 1)
+    '-90': 1.7, '-270': 1.5,
+  },
+
+  // K factors for 2. Loop arcs
+  loopArc : {
+    'd':1, 'v':2, 'z':3, 'm':4,
+    'c':5, 'p':6, 'r':7, 'o':8,
+    'D':1.5, 'V':3, 'Z':4.5, 'M':6,
+    'C':7.5, 'P':9, 'R':10.5, 'O':12,
+  },
+
+  // 4. Double the coefficients for straight lines in Family 1
+  doubleFamily1 : true,
+
+  // 7. Turns. 0 = upright, 1 = inverted
+  turn90 : {0: 1, 1: 1.3},
+
+  // 8. Rolling turns. i = inward, o = outward
+  rollingTurn : {
+    powered: {
+      arc90     : {i: 4, o: 5},
+      rollPoints: {'90': 8, '120': 10.6, '180': 16, '360' :28},
+      nextRolls : 0.5,
+      reversal  : 2
+    },
+    glider: {
+      arc90     : {i: 5, o: 7},
+      rollPoints: {'90': 12, '120': 15, '180': 24, '360': 42},
+      nextRolls : 0.5,
+      reversal  : 5
+    }
+  },
+
+  // 9. Family 5
+  stallTurn : {0: 8.4, 1: 11.5},
+
+  // 10. Family 6
+  tailslide : {
+    powered: {0: 6.4, 1: 6.4},
+    glider : {0: 8.4, 1: 11.5}, 
+  },
+
+  // 11. Family 7
+  // There is no line between half loops in vertical S!
+  // So no coding required
+
+});
 
 // ****************
 // define Regex patterns for drawing and sequence parsing
@@ -744,10 +803,6 @@ const
 	regexFuFigNr = /\bfuFig(\d+)\b/,
 	// match (rolling) turns
 	regexTurn = /[0-9\+\-]j[io0-9\+\-]/,
-	// regexOLANBumpBug is used to check for the Humpty Bump direction bug
-	// in OLAN. It is only used when opening OLAN files.
-	regexOLANBumpBug = /(\&b)|(\&ipb)/,
-	regexOLANNBug = /n/,
 	regexPlusFullAnyRoll = new RegExp('[\\+\\' + figpat.fullroll + '\\' +
 		figpat.anyroll + '\\' + figpat.spinroll + ']', 'g'),
 	// regexRegistration is used to parse out aircraft registration from the

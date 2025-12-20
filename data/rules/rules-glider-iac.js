@@ -42,10 +42,12 @@
  * - Corrected Advanced Unknown max figure K to 160
  * 2025.1.7
  * - Corrected Sportsman Free max K to 103
+ * 2026.1.1
+ * - Updated Sportsman Free max K to 112 (109 + 3 fp)
 */
 
 rules.push (
-"year=2025",
+"year=2026",
 //###############################################################################
 //#### IAC Glider Sportsman KNOWN ###############################################
 //###############################################################################
@@ -95,7 +97,7 @@ rules.push (
 "[glider-IAC Sportsman Free]",
 
 "posnl=15",
-"k-max=103",
+"k-max=112", // = 109 + 3 fp
 "floating-point=3",
 
 "fam2-min=1",

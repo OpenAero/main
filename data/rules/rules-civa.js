@@ -418,18 +418,35 @@ rules.push(
     "why_de-UnlimitedNOU    = Diese gegenläufige oder unverbundene Rollenkombination ist nicht erlaubt",
     "UnlimitedNOU-rule   = Sporting Code Section 6 Part I, A.2.2",
 
-    // New in 2022 (NP2022-15). Updated in 2026 (NP2026-20) to include negative flicks
-    "conv-3f_vdDhfFsz=^9\\.[1248]\\.[15]=v;^9\\.[1248]\\.2=d;^9\\.[1248]\\.4=D; ^9\\.[1248]\\.=h; ^9\\.9\\.[2-4]\\.3=3f; ^9\\.10\\.[2-4]\\.3=3f; ^9\\.(9|10)\\.[1-5]=f;^9\\.9\\.[7-9]\\.3=3F;^9\\.10\\.[7-9]\\.3=3F;^9\\.(9|10)\\.=F; ^9\\.1[12]=s ; ^0\\.=z",
+    // Updated in 2026 (NP2026-20) to include negative flicks
+    "conv-3f_vdDhfFsz=" + [
+      '^9\\.[1248]\\.[15]=v',
+      '^9\\.[1248]\\.2=d',
+      '^9\\.[1248]\\.4=D',
+      '^9\\.[1248]\\.=h',
+      '^9\\.(9|10)\\.[2-4]\\.3=3f',
+      '^9\\.(9|10)\\.[1-5]=f',
+      '^9\\.(9|10)\\.[7-9]\\.3=3F',
+      '^9\\.(9|10)\\.=F',
+      '^9\\.1[12]=s',
+      '^0\\.=z',
+    ].join(';'),
 
-    "rule-UnlimitedNO3f   = 3f_vdDhfFsz:d[,;]3F|3f[,;]D|h[,;]3F$|[vdDhsz,. ]+ 3F[,;]h$|^3f[,;]h",
-    // 45° up | 45° down | Horizontal roll first then flick | Horizontal flick first under g load -> final rotation | Horizontal flick first standard load (+- 1g) -> first or only rotation
+    "rule-UnlimitedNO3f   = 3f_vdDhfFsz:" + [
+      'd[,;]3F',                // 45° up
+      '3f[,;]D',                // 45° down
+      'h[,;]3F',                // Horizontal roll first then flick
+      '[vdDhsz,. ]+ 3F[,;]h$',  // Horizontal flick first under g load -> final rotation
+      '^3f[,;]h',               // Horizontal flick first standard load (+- 1g) -> first or only rotation
+      '3[fF],3[fF]',            // Alternate 3 quarters flicks
+    ].join('|'),
     "why-UnlimitedNO3f    = 3/4 flick starting or ending with down rudder is not allowed",
-    "why_fr-UnlimitedNO3f = 3/4 déclenché positif départ ou arret pied bas interdit",
+    "why_fr-UnlimitedNO3f = 3/4 déclenché départ ou arret pied bas interdit",
     "why_de-UnlimitedNO3f = 3/4 Gerissene/Gestoßene beginnend oder endend mit Seitenruder unten ist nicht erlaubt",
 
     "rule-In_loop_3f   = 3f_vdDhfFsz:h[,;]3F$|3F[,;]h$",
     "why-In_loop_3f    = 3/4 flick in a loop starting or ending with down rudder is not allowed",
-    "why_fr-In_loop_3f = 3/4 déclenché positif dans une boucle départ ou arret pied bas interdit",
+    "why_fr-In_loop_3f = 3/4 déclenché dans une boucle départ ou arret pied bas interdit",
     "why_de-In_loop_3f = 3/4 Gerissene/Gestoßene im Loop beginnend oder endend mit Seitenruder unter is nicht erlaubt",
 
     // New in 2023 (NP2023-9)

@@ -2054,7 +2054,7 @@ function helpWindow(url, title) {
                 // hide elements with class noCordova
                 win.executeScript({
                     code:
-                        "var els = document.getElementsByClassName ('noCordova');" +
+                        "let els = document.getElementsByClassName ('noCordova');" +
                         "for (let i = 0; i < els.length; i++) els[i].classList.add ('noDisplay');"
                 })
             });
@@ -3011,7 +3011,7 @@ function makeTurnArc(rad, startRad, stopRad, paths) {
         }
     } else {
         const
-            rotAxisEllipse = (OA.yAxisOffset < 90) ? OA.perspectiveParam.rRotAngle : -OA.perspectiveParam.hRotAngle,
+            rotAxisEllipse = (OA.yAxisOffset < 90) ? OA.perspectiveParam.rotAngle : -OA.perspectiveParam.hRotAngle,
             xCurveRadius = roundTwo(OA.perspectiveParam.hXRadius * curveRadius),
             yCurveRadius = roundTwo(OA.perspectiveParam.hYRadius * curveRadius);
         let
@@ -3098,34 +3098,32 @@ function makeTurnDots(rad, startRad, stopRad, paths) {
 // makeTurnRoll creates rolls in rolling turns. Basically a minimal version of makeRoll
 // param is the amount of roll degrees
 function makeTurnRoll(param, rad) {
-    if ($('newTurnPerspective').checked) {
-        // Define the size of the arrow and its tip
-        var arrowTipWidth = 5;
-        var arrowTipLength = Math.PI / 4.5;
-        var arrowLength = Math.PI / 9;
-        var turnRollcurveRadius = rollcurveRadius * 2;
-    }
-    var paths = [];
-    var extent = Math.abs(param);
-    var sign = param > 0 ? 1 : -1;
-    var sweepFlag = param > 0 ? 1 : 0;
+
+    const
+        paths = [],
+        extent = Math.abs(param),
+        sign = param > 0 ? 1 : -1,
+        sweepFlag = param > 0 ? 1 : 0,
     // calculate sin and cos for rad once to save calculation time
-    var radSin = Math.sin(rad);
-    var radCos = Math.cos(rad);
+        radSin = Math.sin(rad),
+        radCos = Math.cos(rad);
+
     if (!$('newTurnPerspective').checked) {
         // Make the tip shape
-        var
+        let
             radPoint = rad + sign * (Math.PI / 3.5),
             dxTip = ((Math.cos(radPoint) - radCos) * rollcurveRadius),
             dyTip = -((Math.sin(radPoint) - radSin) * rollcurveRadius);
-        var path = 'm ' +
+        let path = 'm ' +
             roundTwo((Math.cos(radPoint) - radCos) * rollcurveRadius) + ',' +
             roundTwo(-((Math.sin(radPoint) - radSin) * rollcurveRadius)) + ' ';
-        var
-            radPoint = rad + sign * (Math.PI / 6),
+        
+        radPoint = rad + sign * (Math.PI / 6);
+        let
             dx = (((Math.cos(radPoint) * (rollcurveRadius + 4)) - (radCos * rollcurveRadius))) - dxTip,
             dy = -(((Math.sin(radPoint) * (rollcurveRadius + 4)) - (radSin * rollcurveRadius))) - dyTip;
         path += `l ${roundTwo(dx)},${roundTwo(dy)} `;
+
         dx = (((Math.cos(radPoint) * (rollcurveRadius - 4)) - (radCos * rollcurveRadius))) - dx - dxTip;
         dy = -(((Math.sin(radPoint) * (rollcurveRadius - 4)) - (radSin * rollcurveRadius))) - dy - dyTip;
         path += `l ${roundTwo(dx)},${roundTwo(dy)} z`;
@@ -3133,44 +3131,59 @@ function makeTurnRoll(param, rad) {
 
         // Calculate at which angle the curve starts and stops
         radPoint = (extent >= 360) ? rad - sign * (Math.PI / 6) : rad;
-        var dx = (Math.cos(radPoint) - radCos) * rollcurveRadius - dxTip;
-        var dy = -(Math.sin(radPoint) - radSin) * rollcurveRadius - dyTip;
+        dx = (Math.cos(radPoint) - radCos) * rollcurveRadius - dxTip;
+        dy = -(Math.sin(radPoint) - radSin) * rollcurveRadius - dyTip;
         // Make the curved path
         path = 'm ' + roundTwo(dxTip) + ',' + roundTwo(dyTip) + ' a ' +
             rollcurveRadius + ',' + rollcurveRadius + ' 0 0 ' + sweepFlag +
             ' ' + roundTwo(dx) + ',' + roundTwo(dy) + ' ';
         paths.push({ 'path': path, 'style': 'pos' });
     } else {
-        var perspSin = Math.sin(OA.yAxisOffset * degToRad);
-        var perspCos = Math.cos(OA.yAxisOffset * degToRad);
-        // get ellipse parameters
-        var rotAxisEllipse = (OA.yAxisOffset < 90) ? OA.perspectiveParam.hRotAngle : -OA.perspectiveParam.hRotAngle;
-        var xRollcurveRadius = roundTwo(OA.perspectiveParam.hXRadius * turnRollcurveRadius);
-        var yRollcurveRadius = roundTwo(OA.perspectiveParam.hYRadius * turnRollcurveRadius);
+        // Define the size of the arrow and its tip
+        const
+            arrowTipWidth = 5,
+            arrowTipLength = Math.PI / 4.5,
+            arrowLength = Math.PI / 9,
+            turnRollcurveRadius = rollcurveRadius * 2,
+            perspSin = Math.sin(OA.yAxisOffset * degToRad),
+            perspCos = Math.cos(OA.yAxisOffset * degToRad),
+            // get ellipse parameters
+            rotAxisEllipse = (OA.yAxisOffset < 90) ? OA.perspectiveParam.hRotAngle : -OA.perspectiveParam.hRotAngle,
+            xRollcurveRadius = roundTwo(OA.perspectiveParam.hXRadius * turnRollcurveRadius),
+            yRollcurveRadius = roundTwo(OA.perspectiveParam.hYRadius * turnRollcurveRadius);
+
+        let path = '';
+
         // Make the tip shape
-        var radPoint = rad + sign * arrowTipLength;
-        dxTip = ((Math.cos(radPoint) - radCos) * turnRollcurveRadius);
-        dyTip = -((Math.sin(radPoint) - radSin) * turnRollcurveRadius);
-        var elDxTip = dxTip - yAxisScaleFactor * dyTip * perspCos;
-        var elDyTip = yAxisScaleFactor * dyTip * perspSin;
-        path = `m ${roundTwo(elDxTip)},${roundTwo(elDyTip)} `;
-        var radPoint = rad + sign * arrowLength;
-        dx = (((Math.cos(radPoint) * (turnRollcurveRadius + arrowTipWidth)) - (radCos * turnRollcurveRadius))) - dxTip;
-        dy = -(((Math.sin(radPoint) * (turnRollcurveRadius + arrowTipWidth)) - (radSin * turnRollcurveRadius))) - dyTip;
-        var elDx = dx - yAxisScaleFactor * dy * perspCos;
-        var elDy = yAxisScaleFactor * dy * perspSin;
+        let radPoint = rad + sign * arrowTipLength;
+        const
+            dxTip = ((Math.cos(radPoint) - radCos) * turnRollcurveRadius),
+            dyTip = -((Math.sin(radPoint) - radSin) * turnRollcurveRadius),
+            elDxTip = dxTip - yAxisScaleFactor * dyTip * perspCos,
+            elDyTip = yAxisScaleFactor * dyTip * perspSin;
+        path += `m ${roundTwo(elDxTip)},${roundTwo(elDyTip)} `;
+
+        radPoint = rad + sign * arrowLength;
+        let
+            dx = (((Math.cos(radPoint) * (turnRollcurveRadius + arrowTipWidth)) - (radCos * turnRollcurveRadius))) - dxTip,
+            dy = -(((Math.sin(radPoint) * (turnRollcurveRadius + arrowTipWidth)) - (radSin * turnRollcurveRadius))) - dyTip,
+            elDx = dx - yAxisScaleFactor * dy * perspCos,
+            elDy = yAxisScaleFactor * dy * perspSin;
         path += `l ${roundTwo(elDx)},${roundTwo(elDy)} `;
+
         dx = (((Math.cos(radPoint) * (turnRollcurveRadius - arrowTipWidth)) - (radCos * turnRollcurveRadius))) - dx - dxTip;
         dy = -(((Math.sin(radPoint) * (turnRollcurveRadius - arrowTipWidth)) - (radSin * turnRollcurveRadius))) - dy - dyTip;
         elDx = dx - yAxisScaleFactor * dy * perspCos;
         elDy = yAxisScaleFactor * dy * perspSin;
         path += `l ${roundTwo(elDx)},${roundTwo(elDy)} z`;
+
         paths.push({ 'path': path, 'style': 'blackfill' });
 
         // Calculate at which angle the curve starts and stops
         radPoint = (extent >= 360) ? rad - sign * arrowLength : rad;
-        var dx = (Math.cos(radPoint) - radCos) * turnRollcurveRadius - dxTip;
-        var dy = -(Math.sin(radPoint) - radSin) * turnRollcurveRadius - dyTip;
+
+        dx = (Math.cos(radPoint) - radCos) * turnRollcurveRadius - dxTip;
+        dy = -(Math.sin(radPoint) - radSin) * turnRollcurveRadius - dyTip;
         elDx = dx - yAxisScaleFactor * dy * perspCos;
         elDy = yAxisScaleFactor * dy * perspSin;
         // Make the curved path
@@ -3180,6 +3193,7 @@ function makeTurnRoll(param, rad) {
                 ' ' + roundTwo(elDx) + ',' + roundTwo(elDy) + ' ',
             'style': 'pos'
         });
+
     }
     return paths;
 }
@@ -3336,7 +3350,7 @@ function makeTurn(draw) {
 // It returns the text as a paths, or false for no text
 function makeRollText(extent, stops, sign, comment, radSin, radCos) {
     // don't flip text by default and start with empty comment text
-    var
+    let
         flipText = false,
         text = '',
         dx = 0,
@@ -3615,7 +3629,7 @@ function makeSnap(params) {
         if (extent > 0) {
             // Save the status of the load variable, don't want to change that
             // during the roll
-            var saveLoad = OA.negLoad;
+            const saveLoad = OA.negLoad;
             // Make the line between the two rolls
             // Only move the pointer for rolls in the top
             if (rollTop) {
@@ -3796,7 +3810,7 @@ function makeShoulderRoll(params) {
         if (extent > 0) {
             // Save the status of the load variable, don't want to change that
             // during the roll
-            var saveLoad = OA.negLoad;
+            const saveLoad = OA.negLoad;
             // Make the line between the two rolls
             // Only move the pointer for rolls in the top
             paths = buildShape(rollTop ? 'Move' : 'Line', [0.5 / OA.scale], paths);
@@ -3874,7 +3888,7 @@ function makeRuade(params) {
         if (extent > 0) {
             // Save the status of the load variable, don't want to change that
             // during the roll
-            var saveLoad = OA.negLoad;
+            const saveLoad = OA.negLoad;
             // Make the line between the two rolls
             // Only move the pointer for rolls in the top
             if (rollTop) {
@@ -3962,7 +3976,7 @@ function makeLomcevak(params) {
         if (extent > 0) {
             // Save the status of the load variable, don't want to change that
             // during the roll
-            var saveLoad = OA.negLoad;
+            const saveLoad = OA.negLoad;
             // Make the line between the two rolls
             // Only move the pointer for rolls in the top
             if (rollTop) {
@@ -4020,14 +4034,16 @@ function makeTailslide(param) {
 
     let
         dx = (angle > 0) ? -radius : radius,
-        dy = radius;
+        dy = radius,
+        rotAxisEllipse,
+        xAxisRadius,
+        yAxisRadius;
         
     // Make the path and move the cursor
     if (((OA.direction % 180) == 90) && curvePerspective) {
-        var
-            rotAxisEllipse = (OA.yAxisOffset < 90) ? OA.perspectiveParam.rotAngle : -OA.perspectiveParam.rotAngle,
-            xAxisRadius = OA.perspectiveParam.xRadius * radius,
-            yAxisRadius = OA.perspectiveParam.yRadius * radius;
+        rotAxisEllipse = (OA.yAxisOffset < 90) ? OA.perspectiveParam.rotAngle : -OA.perspectiveParam.rotAngle;
+        xAxisRadius = OA.perspectiveParam.xRadius * radius;
+        yAxisRadius = OA.perspectiveParam.yRadius * radius;
 
         dx *= scaleLine.x;
         dy -= dx * scaleLine.y;
@@ -4116,8 +4132,6 @@ function makeTextBlock(text) {
         let fontSize = OA.style.textBlock.match(/font-size:[ ]*(\d+)px/)[1] || 20;
 
         // Parse special codes
-        // Not all OLAN special codes are supported yet. They will be
-        // filtered out
         let
             lineNr = 0,
             line = '',
@@ -4187,10 +4201,11 @@ function makeTextBlock(text) {
         // calculate where the center of the box should be
         // rotation is taken into account
         // current angle = angle to box center
-        const angle = dirAttToAngle(OA.direction, OA.attitude);
+        const
+            angle = dirAttToAngle(OA.direction, OA.attitude),
         // find distance from box edge to center in this direction
-        let s = Math.sin(angle);
-        let c = Math.cos(angle);
+            s = Math.sin(angle),
+            c = Math.cos(angle);
         if (s == 0) { // horizontal
             d = w / 2;
         } else if (c == 0) { // vertical
@@ -4200,12 +4215,9 @@ function makeTextBlock(text) {
         }
 
         // set top-left x and y of the text box
-        let x = roundTwo((c * d) - (w / 2)) + (moveXY ? parseInt(moveXY[1]) : 0);
-        let y = -roundTwo((s * d) + (h / 2)) + (moveXY ? parseInt(moveXY[2]) : 0);
-
-        // set dx and dy for starting the figure after the text box
-        let dx = moveXY ? 0 : roundTwo(2 * c * d);
-        let dy = moveXY ? 0 : - roundTwo(2 * s * d);
+        let
+            x = roundTwo((c * d) - (w / 2)) + (moveXY ? parseInt(moveXY[1]) : 0),
+            y = -roundTwo((s * d) + (h / 2)) + (moveXY ? parseInt(moveXY[2]) : 0);
 
         // draw rectangle around text
         paths.push({
@@ -4219,7 +4231,15 @@ function makeTextBlock(text) {
             x = roundTwo((c * d) - (h / 2)) + (moveXY ? parseInt(moveXY[1]) : 0);
             y = -roundTwo((s * d) + (w / 2)) + (moveXY ? parseInt(moveXY[2]) : 0);
         }
-        paths.push({ 'textBlock': t, 'x': x, 'y': y, 'dx': dx, 'dy': dy, 'r': rotate });
+        paths.push({
+            'textBlock': t,
+            'x': x,
+            'y': y,
+            // set dx and dy for starting the figure after the text box
+            'dx': moveXY ? 0 : roundTwo(2 * c * d),
+            'dy': moveXY ? 0 : - roundTwo(2 * s * d),
+            'r': rotate
+        });
 
         // put space after block
         if (!moveXY) paths.push(makeFigSpace(2)[0]);
@@ -4392,8 +4412,9 @@ function drawShape(paths, svgElement, prev) {
             }
         }
     } else if (paths.textBlock) {
-        var tb = paths.textBlock;
-        var spans = tb.getElementsByTagName('tspan');
+        const
+            tb = paths.textBlock,
+            spans = tb.getElementsByTagName('tspan');
         // set all tspan x values
         for (let i = 0; i < spans.length; i++) {
             spans[i].setAttribute('x', roundTwo(OA.X + paths.x));
@@ -4412,11 +4433,13 @@ function drawShape(paths, svgElement, prev) {
         // figure
         if (OA.figureStart.length > 0) {
             // count is used to make sure there is never an infinite loop
-            var count = 0;
+            let
+                count = 0,
+                overlap = false;
             do {
                 // Walk through the figure starts and see if we find any distance
                 // lower than minimum with the one we're making now
-                var overlap = false;
+                overlap = false;
                 for (let i = 0; i < OA.figureStart.length; i++) {
                     var distSq = (OA.figureStart[i].x - OA.X) * (OA.figureStart[i].x - OA.X) +
                         (OA.figureStart[i].y - OA.Y) * (OA.figureStart[i].y - OA.Y);
@@ -5016,13 +5039,15 @@ function launchURL(launchData) {
 
 // keyListener listens to key strokes for various usages
 function keyListener(e) {
-    // do not handle keys when in input area
-    if (e.target.nodeName == "INPUT" || e.target.nodeName == "TEXTAREA") return;
+    // do not handle keys when in input area or on button
+    if (
+        e.target.nodeName == "INPUT" ||
+        e.target.nodeName == "TEXTAREA" ||
+        e.target.nodeName == "BUTTON"
+    ) return;
     if (e.target.isContentEditable) return;
-    // use delete key for deleting figure
-    if (e.keyCode == 46) {
-        $('deleteFig').click();
-    }
+    // use delete or backspace key for deleting figure
+    if (['Delete', 'Backspace'].includes(e.key)) $('deleteFig').click();
 }
 
 // appZoom adds zoom functionality to the app and is called by keydown
@@ -5361,7 +5386,7 @@ function addEventListeners() {
     $('newTurnPerspective').addEventListener('change', draw, false);
     $('t_restoreDefaultSettings').addEventListener('mousedown', restoreDefaultSettings, false);
 
-    $('t_settingsClose').addEventListener('mousedown', () => { settingsDialog() }, false);
+    $('t_settingsClose').addEventListener('click', () => { settingsDialog() }, false);
 
     // reference sequence dialog
     $('t_referenceSequenceClose').addEventListener('mousedown', () => { referenceSequenceDialog(false) });
@@ -5430,12 +5455,12 @@ function addEventListeners() {
     $('imageWidth').addEventListener('change', saveImageSizeAdjust, false);
     $('imageHeight').addEventListener('change', saveImageSizeAdjust, false);
     $('pageSpacing').addEventListener('change', saveImageSizeAdjust, false);
-    $('t_printSavePdf').addEventListener('mousedown', printForms, false);
-    $('t_print').addEventListener('mousedown', printForms, false);
-    $('t_savePdf').addEventListener('mousedown', printForms, false);
-    $('t_saveAsPNG').addEventListener('mousedown', savePNG, false);
-    $('t_saveAsSVG').addEventListener('mousedown', saveSVG, false);
-    $('t_cancelPrint').addEventListener('mousedown', () => { printDialog() }, false);
+    $('t_printSavePdf').addEventListener('click', printForms, false);
+    $('t_print').addEventListener('click', printForms, false);
+    $('t_savePdf').addEventListener('click', printForms, false);
+    $('t_saveAsPNG').addEventListener('click', savePNG, false);
+    $('t_saveAsSVG').addEventListener('click', saveSVG, false);
+    $('t_cancelPrint').addEventListener('click', () => { printDialog() }, false);
     $('printNotesCopy').addEventListener('change', () => {
         $('printNotes').checked = $('printNotesCopy').checked;
     });
@@ -8308,7 +8333,7 @@ function parseFiguresFile() {
                 'name': splitLine[1]
             };
             // add an option for the group to the figure selector
-            var option = document.createElement('option');
+            const option = document.createElement('option');
             option.setAttribute('value', figGroupNr);
             option.setAttribute('id', `t_figureGroups.${OA.figGroup[figGroupNr].name}`);
             option.classList.add ('userText');
@@ -8321,8 +8346,9 @@ function parseFiguresFile() {
         } else {
             if (splitLine[0]) {
                 // Next we split the Aresti and K-factors part
-                var arestiK = splitLine[1].split("(");
-                var kFactors = arestiK[1].replace(")", "").split(":");
+                const
+                    arestiK = splitLine[1].split("("),
+                    kFactors = arestiK[1].replace(")", "").split(":");
                 if (!arestiK[1].match(/:/)) kFactors[1] = kFactors[0];
                 // Split K factors on the colon; kFactors[0] is for Powered,
                 // kFactors[1] is for Gliders
@@ -9142,7 +9168,7 @@ function changeFigureGroup() {
         if (OA.fig[i]) {
             // Only draw figures that are in this group AND have not been
             // drawn before (e.g. 1j and j)
-            if ((OA.fig[i].group == figureGroup) && !inArray(arestiDraw, (OA.fig[i].aresti + OA.fig[i].draw))) {
+            if ((OA.fig[i].group == figureGroup) && !arestiDraw.includes(OA.fig[i].aresti + OA.fig[i].draw)) {
                 if (!OA.fig[i].svg) {
                     // The figure has not been drawn in this session, go ahead and
                     // draw it. First we take the original base and remove + and
@@ -9555,8 +9581,8 @@ function selectFigure(e) {
                             out = '',
                             n = 0;
                         for (const draw of OA.fig[id].draw) {
-                            if (drawAngles[draw]) {
-                                att += drawAngles[draw];
+                            if (OA.drawAngles[draw]) {
+                                att += OA.drawAngles[draw];
                             } else if (draw.match(/[hHtTuU]/)) {
                                 att += 180;
                             } else if (draw == '_') {
@@ -11122,9 +11148,11 @@ function separateFigures(noConfirm) {
         }
         // Start a loop that will continue until nothing's done any more,
         // or until 10000 iterations
-        let count = 0;
+        let
+            count = 0,
+            movedFigure;
         do {
-            var movedFigure = false;
+            movedFigure = false;
             let i = 1;
             // start going through the figures from the second figure
             while (i < OA.figures.length && !movedFigure) {
@@ -11504,10 +11532,11 @@ function startFuDesigner(dontConfirm) {
                 $('tab-sequenceArea').classList.add('noDisplay');
 
                 // restore sequence container
-                var svg = $('sequenceArea');
+                const
+                    svg = $('sequenceArea'),
+                    placing = $('sequenceAreaPlacing');
                 svg.removeAttribute('style');
                 svg.classList.remove('hidden');
-                var placing = $('sequenceAreaPlacing');
                 placing.parentNode.insertBefore(svg, placing);
             }
             selectFigure(false);
@@ -11518,7 +11547,7 @@ function startFuDesigner(dontConfirm) {
 
             if (OA.platform.mobile) {
                 // move items from File menu to main menu for quick access
-                var items = document.getElementsByClassName('menuFileItem');
+                let items = document.getElementsByClassName('menuFileItem');
                 for (let i = 0; i < items.length; i++) {
                     $('menu').insertBefore(items[i], $('menuFile'));
                 }
@@ -11533,7 +11562,7 @@ function startFuDesigner(dontConfirm) {
 
             // clear the sequence if loading from Grid and no Additional
             // figure present
-            var noAdditional = true;
+            let noAdditional = true;
             for (let i = 0; i < OA.figures.length; i++) {
                 if (OA.figures[i].unknownFigureLetter === 'L') {
                     noAdditional = false;
@@ -11601,7 +11630,7 @@ function startFuDesigner(dontConfirm) {
 // newSequence is true when we are exiting because of loading of new
 // sequence
 function exitFuDesigner(newSequence) {
-    var sub;
+    let sub;
 
     function exitFu() {
         if (!newSequence) {
@@ -11619,15 +11648,15 @@ function exitFuDesigner(newSequence) {
 
             if (OA.platform.mobile) {
                 // move items from main menu back to File menu
-                var ul = $('menuFileUl');
-                var items = document.getElementsByClassName('menuFileItem');
+                const ul = $('menuFileUl');
+                let items = document.getElementsByClassName('menuFileItem');
                 for (let i = items.length - 1; i >= 0; i--) {
                     ul.insertBefore(items[i], items[i + 1]);
                 }
                 ul.parentNode.classList.remove('noDisplay');
             } else {
                 // move undoRedo
-                var undoRedo = $('undoRedo');
+                const undoRedo = $('undoRedo');
                 $('topBlock').insertBefore(
                     undoRedo, $('sequenceTextContainer'));
             }
@@ -11686,12 +11715,12 @@ function exitFuDesigner(newSequence) {
         exitFu();
     } else {
         // get alerts from alert area
-        var div = document.createElement('div');
+        const div = document.createElement('div');
         div.innerHTML = $('alerts').innerHTML;
         // remove label
         div.firstChild.remove();
 
-        var myAlerts = div.innerHTML;
+        let myAlerts = div.innerHTML;
 
         OA.figures.forEach ((f) => { if (f.aresti) sub = f.subSeq; });
         if (sub > 1) {
@@ -11700,16 +11729,18 @@ function exitFuDesigner(newSequence) {
 
         if (myAlerts.match(RegExp('(' + OA.userText.setUpright + ')|(' +
             OA.userText.setInverted + ')'))) {
-            myAlerts += '<br />' + OA.userText.FUexitEntryMatch;
+            myAlerts += `<br />${OA.userText.FUexitEntryMatch}`;
         }
 
         if (myAlerts !== '') {
-            var confirmText = '<p>' + OA.userText.FUerrorsDetected + '</p><p>' +
-                myAlerts + '</p><p>' + OA.userText.FUconfirmExit + '</p>';
-            confirmBox(confirmText, OA.userText.finalizeSequence, exitFu);
-        } else {
-            exitFu();
-        }
+            confirmBox (
+                `<p>${OA.userText.FUerrorsDetected}</p>
+                <p>${myAlerts}</p>
+                <p>${OA.userText.FUconfirmExit}</p>`,
+                OA.userText.finalizeSequence,
+                exitFu
+            );
+        } else exitFu();
     }
 }
 
@@ -11722,7 +11753,7 @@ function freeCell(sub, col, row) {
 
 // freeCellAddHandlers adds correct handlers to each table cell in the
 // Free (Un)known designer
-function freeCellAddHandlers(td) {
+function freeCellAddHandleers(td) {
     td.addEventListener('dragenter', () => {
         const nodes = $('fuSequence').getElementsByClassName('hover');
         while (nodes.length) nodes[0].classList.remove('hover');
@@ -11799,15 +11830,15 @@ function handleFreeDrop(e) {
     noPropagation(e); // Stops some browsers from redirecting.
 
     // Save scroll location, to restore later
-    var scrollTop = $('fuSequence').scrollTop;
+    const scrollTop = $('fuSequence').scrollTop;
 
     handleFreeDeselect(e);
 
     this.classList.remove('hover');
 
     // put dataTransfer text into string
-    var string = e.dataTransfer.getData('text');
-    var regexSub = /^"(\d+)" /;
+    let string = e.dataTransfer.getData('text');
+    const regexSub = /^"(\d+)" /;
 
     if (this.classList.contains('fuNewSub')) {
         // drop figure or subsequence to new subsequence. Make sure it ends with 'eu'
@@ -11819,20 +11850,19 @@ function handleFreeDrop(e) {
         }
     } else {
         // drop figure or subsequence on figure (or end)
-        var figNr = parseInt(this.className.match(regexFuFigNr)[1]);
-        var string = e.dataTransfer.getData('text');
+        const figNr = parseInt(this.className.match(regexFuFigNr)[1]);
 
         // if unknownFigureLetter is set, drop one figure earlier
-        var previous = OA.figures[figNr].unknownFigureLetter ? 1 : 0;
+        const previous = OA.figures[figNr].unknownFigureLetter ? 1 : 0;
 
         // a subsequence is marked by "n" at the start, where
         // n = subsequence number
-        var match = string.match(regexSub);
+        const match = string.match(regexSub);
         // check if dropping subsequence
         if (match) {
             // don't drop subsequence on itself
             if (OA.figures[figNr - 1].subSeq != match[1]) {
-                var t = '';
+                let t = '';
                 OA.figures.forEach ((f, i) => {
                     // put subsequence in new location
                     if (i == (figNr - previous)) {
@@ -12526,7 +12556,7 @@ function makeFormGrid(cols, width, svg = OA.SVGRoot) {
     $('gridTotalK').innerText = totalK;
 
     // update viewbox and svg height
-    var height = y + ch + 2;
+    const height = y + ch + 2;
     if (modifiedK.length) {
         drawText(changedFigureKText(modifiedK, OA.activeRules.description),
             0, -4, 'miniFormAModifiedK', 'start', '', svgElement);
@@ -12545,16 +12575,20 @@ function makeFormGrid(cols, width, svg = OA.SVGRoot) {
     // go through the figures again, set maximum scale to scaleMin * 2
     // and recenter horizontally when necessary
     sortFigures.forEach ((s) => {
-        var f = OA.figures[s.id];
-        var scale = f.viewScale;
+        const f = OA.figures[s.id];
+        let scale = f.viewScale;
         if (scale > (scaleMin * 2)) {
-            var scale = scaleMin * 2;
-            var bBox = f.bBox;
-            var x = roundTwo(f.tx + (bBox.x * f.viewScale) - ((cw - bBox.width * f.viewScale) / 2));
-            var y = roundTwo(f.ty + (bBox.y * f.viewScale) - ((f.fh - bBox.height * f.viewScale) / 2));
+            scale = scaleMin * 2;
+            const bBox = f.bBox;
             svg.getElementById('figure' + s.id).setAttribute('transform', 'translate(' +
-                roundTwo(x - (bBox.x * scale) + ((cw - bBox.width * scale) / 2)) +
-                ',' + roundTwo(y - (bBox.y * scale) + ((f.fh - bBox.height * scale) / 2)) +
+                roundTwo (
+                    (f.tx + (bBox.x * f.viewScale) - ((cw - bBox.width * f.viewScale) / 2)) -
+                    (bBox.x * scale) + ((cw - bBox.width * scale) / 2)
+                ) +
+                ',' + roundTwo (
+                    (f.ty + (bBox.y * f.viewScale) - ((f.fh - bBox.height * f.viewScale) / 2)) -
+                    (bBox.y * scale) + ((f.fh - bBox.height * scale) / 2)
+                ) +
                 ') scale(' + roundTwo(scale) + ')');
         }
     });
@@ -12577,7 +12611,7 @@ function makeFormGrid(cols, width, svg = OA.SVGRoot) {
     //
     // Here we match these until no more matches are possible
 
-    var sets = [];
+    const sets = [];
     OA.figures.forEach ((f) => {
         if (f.aresti) sets.push(OA.fig[f.figNr].entryExit);
     });
@@ -12616,15 +12650,16 @@ function makeFormGrid(cols, width, svg = OA.SVGRoot) {
 function getFigureSets(sets, maxSize) {
     maxSize = maxSize * 2 || Infinity; // *2 because every figure = 2 letters
 
-    var setFigs = [];
+    const setFigs = [];
     sets.forEach ((s, i) => { setFigs.push([i]) });
 
     if (sets.length > 1) {
         // first match correct speeds, then match with neutral
-        var matchNeutral = false;
+        let matchNeutral = false;
         do {
+            let join;
             do {
-                var join = false;
+                join = false;
                 for (let i = 0; i < (sets.length - 1); i++) {
                     for (let j = i + 1; j < sets.length; j++) {
                         // stop matching for this set when reaching maxSize
@@ -13145,7 +13180,7 @@ function makeFree() {
 // makeFormDescription creates a form that contains the figures
 // in describing text form. Can be used by a caller
 function makeFormDescription(svg) {
-    var text = '<div style="width: 800px;height: 990px;column-count: 3;">';
+    let text = '<div style="width: 800px;height: 990px;column-count: 3;">';
     OA.figures.forEach ((f) => {
         if (f.aresti) {
             text += '<div style="break-inside: avoid;"><strong>Figure ' + f.seqNr + '</strong><ol>';
@@ -13161,7 +13196,7 @@ function makeFormDescription(svg) {
 // addFormElements adds wind & mini form A and adjusts size
 function addFormElements(form) {
     // Find out how big the SVG has become and adjust margins
-    var
+    const
         bBox = OA.SVGRoot.getElementById('sequence').getBBox(),
         x = parseInt(bBox.x),
         y = parseInt(bBox.y) - 40,
@@ -13186,9 +13221,10 @@ function addFormElements(form) {
             });
         }
     } else {
+        let miniFormASize;
         // Add mini Form A, but only to Form B or C when miniFormA is set
         if (/^[BC]/.test(form) && OA.miniFormA) {
-            var miniFormASize = makeMiniFormA((w + x) + 20, y + 50, OA.miniFormA === 'tiny');
+            miniFormASize = makeMiniFormA((w + x) + 20, y + 50, OA.miniFormA === 'tiny');
         }
 
         // Draw wind arrow on Form B and C
@@ -13425,18 +13461,17 @@ function updateSequenceText(string) {
 // When force is set to true (e.g. after drag & drop) redraw will always
 // be done
 function checkSequenceChanged(force) {
-    var selStart = 0;
+    let
+        selStart = 0,
+        selectFigureId = false;
 
     if (document.activeElement === OA.sequenceText) {
-        var range = saveSelection(OA.sequenceText);
-        selStart = range.start;
+        selStart = saveSelection(OA.sequenceText).start;
     }
 
     if (/(\r\n|\n|\r)/gm.test(OA.sequenceText.innerHTML)) {
         updateSequenceText(OA.sequenceText.innerHTML.replace(/(\r\n|\n|\r)/gm, ' '));
     }
-
-    var selectFigureId = false;
 
     // whenever the sequence is empty, clear the filename
     if (OA.sequenceText.innerText == '') updateSaveFilename();
@@ -13450,44 +13485,48 @@ function checkSequenceChanged(force) {
         // reset sequence entry options
         updateSequenceOptions('');
         OA.activeSequence.text = OA.sequenceText.innerText.replace(/\u00a0/g, ' ');
-        var string = OA.activeSequence.text;
+        const string = OA.activeSequence.text;
 
         // whenever the string is empty, consider it 'saved'
         if (string === '') setSequenceSaved(true);
 
-        var
+        const
             figure = [],
-            thisFigure = { 'string': '', 'stringStart': 0, 'stringEnd': 0 },
-            inText = false;
+            thisFigure = { 'string': '', 'stringStart': 0, 'stringEnd': 0 };
+        let inText = false;
             
         for (let i = 0; i <= string.length; i++) {
             if (string[i] == userpat.comment) inText = !inText;
             if (((string[i] === ' ') || (i === string.length)) && !inText) {
                 if (thisFigure.string !== '') {
-                    var match = thisFigure.string.match(regexMoveForward);
-                    // Create a separate 'figure' for moveForward (x>) at the
-                    // beginning of a figure.
-                    // OLAN had it coupled to a figure but OpenAero keeps sequence
-                    // drawing instructions separate
-                    if (match) {
-                        figure.push({
-                            'string': match[0],
-                            'stringStart': thisFigure.stringStart,
-                            'stringEnd': (thisFigure.stringStart + match[0].length)
-                        });
-                        thisFigure.stringStart = thisFigure.stringStart + match[0].length;
-                        thisFigure.string = thisFigure.string.replace(regexMoveForward, '');
+                    {
+                        const match = thisFigure.string.match(regexMoveForward);
+                        // Create a separate 'figure' for moveForward (x>) at the
+                        // beginning of a figure.
+                        // OLAN had it coupled to a figure but OpenAero keeps sequence
+                        // drawing instructions separate
+                        if (match) {
+                            figure.push({
+                                'string': match[0],
+                                'stringStart': thisFigure.stringStart,
+                                'stringEnd': (thisFigure.stringStart + match[0].length)
+                            });
+                            thisFigure.stringStart = thisFigure.stringStart + match[0].length;
+                            thisFigure.string = thisFigure.string.replace(regexMoveForward, '');
+                        }
                     }
                     // do the same for moveDown (x^)
-                    var match = thisFigure.string.match(regexMoveDown);
-                    if (match) {
-                        figure.push({
-                            'string': match[0],
-                            'stringStart': thisFigure.stringStart,
-                            'stringEnd': (thisFigure.stringStart + match[0].length)
-                        });
-                        thisFigure.stringStart = thisFigure.stringStart + match[0].length;
-                        thisFigure.string = thisFigure.string.replace(regexMoveDown, '');
+                    {
+                        const match = thisFigure.string.match(regexMoveDown);
+                        if (match) {
+                            figure.push({
+                                'string': match[0],
+                                'stringStart': thisFigure.stringStart,
+                                'stringEnd': (thisFigure.stringStart + match[0].length)
+                            });
+                            thisFigure.stringStart = thisFigure.stringStart + match[0].length;
+                            thisFigure.string = thisFigure.string.replace(regexMoveDown, '');
+                        }
                     }
                     // only add figures that are not empty
                     if (thisFigure.string != '') {
@@ -13523,7 +13562,7 @@ function checkSequenceChanged(force) {
         OA.activeSequence.figures = figure;
 
         // Get current scroll position of the sequence
-        var scrollPosition = OA.SVGRoot ? OA.SVGRoot.parentNode.scrollTop : 0;
+        const scrollPosition = OA.SVGRoot ? OA.SVGRoot.parentNode.scrollTop : 0;
 
         // Update activeSequence.xml and storage
         changeSequenceInfo();
@@ -14010,14 +14049,14 @@ function checkSequenceMulti(body) {
 
     console.log('Checking: ' + OA.multi.fileList[0].name);
     // create log entry
-    var pre = document.createElement('pre');
+    const pre = document.createElement('pre');
     body.appendChild(pre);
     pre.appendChild(document.createTextNode('File: ' + OA.multi.fileList[0].name + '\n'));
 
     if (OA.multi.fileList[0].sequence) {
         activateXMLsequence(OA.multi.fileList[0].sequence, true);
 
-        var callback = function (data) {
+        const callback = function (data) {
             // clear any alert boxes. Errors are shown in the log.
             alertBox();
             // add alerts created by Worker and display them in the alerts area
@@ -14033,7 +14072,7 @@ function checkSequenceMulti(body) {
                 // concise log
 
                 // get alerts from alert area
-                var div = document.createElement('div');
+                const div = document.createElement('div');
                 div.innerHTML = $('alerts').innerHTML;
                 // remove label
                 div.firstChild.remove();
@@ -14053,7 +14092,7 @@ function checkSequenceMulti(body) {
                 }
             }
             // add delimiter
-            var delimiter = document.createElement('pre');
+            const delimiter = document.createElement('pre');
             body.appendChild(delimiter);
             delimiter.appendChild(document.createTextNode(
                 '\n--------------------------------------------------------\n'));
@@ -14263,15 +14302,15 @@ function loadSequence(fileString, callback) {
 // OLANtoXML transforms an OLAN file to OpenAero XML
 function OLANtoXML(string) {
     OA.OLAN.sequence = true;
-    var activeKey = false;
-    var lines = string.split('\n');
+    let activeKey = false;
+    const lines = string.split('\n');
     string = '<sequence>';
     lines.forEach ((l) => {
         // remove Windows linebreak
         l = l.replace('\r', '');
         // check for key match
         if (l.match(/^\[[a-zA-Z]+\]$/)) {
-            var key = l.toLowerCase().replace(/[^a-z]/g, '');
+            let key = l.toLowerCase().replace(/[^a-z]/g, '');
             if (key === 'sequence') {
                 key = 'sequence_text';
             }
@@ -14279,7 +14318,7 @@ function OLANtoXML(string) {
                 string += '</' + activeKey + '>';
                 activeKey = false;
             }
-            if (inArray(sequenceXMLlabels, key)) {
+            if (sequenceXMLlabels.includes(key)) {
                 string += '<' + key + '>';
                 activeKey = key;
             } else activeKey = false;
@@ -14579,7 +14618,7 @@ function checkOpenAeroVersion() {
     // first and second line, where the first roll is of uneven quarters
     if (compVersion(oa_version.value, '2016.1') < 0) {
         if (OA.sequenceText.innerText.match(/B/)) {
-            var f = sanitizeSpaces(OA.sequenceText.innerText).split(' ');
+            const f = sanitizeSpaces(OA.sequenceText.innerText).split(' ');
             for (let i = 0; i < f.length; i++) {
                 // remove comments
                 f[i] = f[i].replace(regexComments, '');
@@ -14620,11 +14659,11 @@ function checkOpenAeroVersion() {
         if (OA.sequenceText.innerText.replace(/[^\dzt ]|1|22|44|88|9|42|84|168/g, '').match(/\dzt/)) {
             // basic check passed, now check thoroughly and correct
             checkSequenceChanged();
-            var s = false;
+            let s = false;
             OA.figures.forEach ((f, i) => {
                 if (f.aresti && f.aresti[0].match(/1\.2\.1[12]/)) {
                     s = f.string;
-                    var m = s.match(/(zt[^-]*)(-+)/);
+                    let m = s.match(/(zt[^-]*)(-+)/);
                     if (m) {
                         s = s.replace(m[0], m[1] + Array(m[2].length).join('+'));
                     } else {
@@ -15182,7 +15221,7 @@ function openSequenceLink(e) {
 // field
 function parseAircraft(t) {
     for (let i = 0; i < regexRegistration.length; i++) {
-        var match = $('aircraft').value.match(regexRegistration[i]);
+        const match = $('aircraft').value.match(regexRegistration[i]);
         if (match) {
             return (t === 'registration' ?
                 match[0] : $('aircraft').value.replace(match[0], '').trim());
@@ -15219,8 +15258,7 @@ function printForms(evt) {
 function beforePrint(evt) {
     buildForms(window, function (printBody) {
         // update the print style with margins
-        var style = $('printStyle');
-        style.innerHTML = '@page {size: auto; margin: ' +
+        $('printStyle').innerHTML = '@page {size: auto; margin: ' +
             $('marginTop').value + 'mm ' +
             $('marginRight').value + 'mm ' +
             $('marginBottom').value + 'mm ' +
@@ -15245,10 +15283,10 @@ function beforePrint(evt) {
 
         // On Cordova, start printing now
         if (OA.platform.cordova) {
-            var printHtml =
+            let printHtml =
                 '<html>' +
                 '<head>' +
-                '<style type="text/css">' + style.innerHTML + '</style>' +
+                '<style type="text/css">' + $('printStyle').innerHTML + '</style>' +
                 '</head><body>' +
                 $('noScreen').innerHTML +
                 '</body>' +
@@ -16665,16 +16703,16 @@ function addFormElementsGrid(svg) {
     svg.setAttribute("viewBox", '0 0 800 1130');
 
     if (/^G\+|D/.test(OA.activeForm)) {
-        var children = svg.childNodes;
+        const children = svg.childNodes;
         for (let i = 0; i < children.length; i++) {
             children[i].setAttribute('transform',
                 'translate(0,140) ' +
                 (children[i].getAttribute('transform') || ''));
         }
 
-        var logoWidth = 0;
+        let logoWidth = 0;
         if (OA.logoImg) {
-            var logoSvg = buildLogoSvg(OA.logoImg, 0, 0, 200, 120,
+            const logoSvg = buildLogoSvg(OA.logoImg, 0, 0, 200, 120,
                 $('blackWhite').checked);
             svg.appendChild(logoSvg);
             logoWidth = parseInt(logoSvg.getBBox().width) + 32;
@@ -16683,7 +16721,7 @@ function addFormElementsGrid(svg) {
             $('date').value,
             logoWidth, 32, 'formATextHuge', 'start', '', svg);
         // scale down if needed
-        var scale = roundTwo((800 - logoWidth) / svg.lastChild.getBBox().width);
+        const scale = roundTwo((800 - logoWidth) / svg.lastChild.getBBox().width);
         if (scale < 1) {
             svg.lastChild.setAttribute(
                 'transform', 'scale(' + scale + ') ' +
@@ -16883,7 +16921,7 @@ function buildScoreColumn(svg) {
             drawText(totalK, 755, 330, 'formATextLarge', 'middle', '', svg);
             drawRectangle(620, 355, 179, 25, 'formLine', svg);
             drawText('Penalties', 710, 370, 'formATextBold', 'middle', '', svg);
-            var penalties = [
+            const penalties = [
                 'tooLow',
                 'tooHigh',
                 'interruptions',
@@ -16924,65 +16962,66 @@ function buildScoreColumn(svg) {
 
 // buildCornertab will append the righthand corner cut-off tab
 function buildCornertab(svg) {
+    let newText, textNode;
     drawLine(620, 1130, 179, -180, 'formLine', svg);
     drawLine(680, 1120, 110, -110, 'dotted', svg);
     drawLine(730, 1120, 60, -60, 'dotted', svg);
     // Add pilot's name
     if ($('pilot').value) {
-        var newText = document.createElementNS(svgNS, "text");
+        newText = document.createElementNS(svgNS, "text");
         newText.setAttribute('style', OA.style.formATextBold);
         newText.setAttribute('text-anchor', 'middle');
         newText.setAttribute('x', 730);
         newText.setAttribute('y', 1060);
         newText.setAttribute('transform', 'rotate(-45 730 1060)');
-        var textNode = document.createTextNode($('pilot').value);
+        textNode = document.createTextNode($('pilot').value);
         newText.appendChild(textNode);
         svg.appendChild(newText);
     }
     // Add pilot text
-    var newText = document.createElementNS(svgNS, "text");
+    newText = document.createElementNS(svgNS, "text");
     newText.setAttribute('style', OA.style.formAText);
     newText.setAttribute('text-anchor', 'middle');
     newText.setAttribute('x', 780);
     newText.setAttribute('y', 1035);
     newText.setAttribute('transform', 'rotate(-45 780 1035)');
-    var textNode = document.createTextNode(OA.userText.pilot);
+    textNode = document.createTextNode(OA.userText.pilot);
     newText.appendChild(textNode);
     svg.appendChild(newText);
     // Add aircraft info
     if (aircraft()) {
-        var newText = document.createElementNS(svgNS, "text");
+        newText = document.createElementNS(svgNS, "text");
         newText.setAttribute('style', OA.style.formATextBold);
         newText.setAttribute('text-anchor', 'middle');
         newText.setAttribute('x', 755);
         newText.setAttribute('y', 1085);
         newText.setAttribute('transform', 'rotate(-45 755 1085)');
         if (OA.formStyle == 'iac') {
-            var textNode = document.createTextNode($('acreg').value);
+            textNode = document.createTextNode($('acreg').value);
         } else {
-            var textNode = document.createTextNode(aircraft());
+            textNode = document.createTextNode(aircraft());
         }
         newText.appendChild(textNode);
         svg.appendChild(newText);
     }
     // Add aircraft text
-    var newText = document.createElementNS(svgNS, "text");
+    newText = document.createElementNS(svgNS, "text");
     newText.setAttribute('style', OA.style.formAText);
     newText.setAttribute('text-anchor', 'middle');
     newText.setAttribute('x', 785);
     newText.setAttribute('y', 1080);
     newText.setAttribute('transform', 'rotate(-45 785 1080)');
-    var textNode = document.createTextNode(OA.userText.ac);
+    textNode = document.createTextNode(OA.userText.ac);
     newText.appendChild(textNode);
     svg.appendChild(newText);
 }
 
 // activeFileName will return the current active file name, or create a
 // default file name. The result is appended with 'append' when supplied
-function activeFileName(append) {
-    append = append || '';
+function activeFileName(append = '') {
+    let fname;
     if (!OA.fileName.innerText) {
-        var fname = $('location').value + ' ';
+        fname = $('location').value + ' ';
         if (OA.sportingClass.value == 'glider') fname += 'Glider ';
         fname += $('category').value + ' ' +
             $('program').value + ' ' +
@@ -17003,9 +17042,8 @@ function saveImageSizeAdjust() {
     // Update the page set first
     updatePrintPageSetValue();
 
-    var
-        string = $('printPageSetString').value.toUpperCase(),
-        count = 0;
+    const string = $('printPageSetString').value.toUpperCase();
+    let count = 0;
     for (let i = 0; i < string.length; i++) {
         if (/[ABCRLG_ ]/.test(string[i]) ||
             (/\d[><]|[TFQ][><=]/.test(string.substring(i, i + 2)))) {
@@ -17020,7 +17058,7 @@ function saveImageSizeAdjust() {
     if (OA.multi.fileList.length > 1) count = count * OA.multi.fileList.length;
 
     // calculate ratio (Y / X) in base units
-    var ratio = ((count * 1130) +
+    const ratio = ((count * 1130) +
         ((count - 1) * $('pageSpacing').value)) / 800;
 
     if (this && this.id === 'imageHeight') {
@@ -17147,23 +17185,23 @@ function saveFigs() {
             // convert svg object to string
             svg = new XMLSerializer().serializeToString(svg);
             // create correct image filename
-            var fName = fPattern;
-            fName = fName.replace(/%pilot/g, $('pilot').value);
-            fName = fName.replace(/%aircraft/g, aircraft());
-            fName = fName.replace(/%location/g, $('location').value);
-            fName = fName.replace(/%date/g, $('date').value);
-            fName = fName.replace(/%class/g, OA.sportingClass.value);
-            fName = fName.replace(/%rules/g, $('rules').value);
-            fName = fName.replace(/%category/g, $('category').value);
-            fName = fName.replace(/%program/g, $('program').value);
-            fName = fName.replace(/%form/g, OA.activeForm[0]);
-            fName = fName.replace(/%figure/g, OA.figures[i].seqNr);
+            let fName = (fPattern
+                .replace(/%pilot/g, $('pilot').value)
+                .replace(/%aircraft/g, aircraft())
+                .replace(/%date/g, $('date').value)
+                .replace(/%class/g, OA.sportingClass.value)
+                .replace(/%rules/g, $('rules').value)
+                .replace(/%category/g, $('category').value)
+                .replace(/%program/g, $('program').value)
+                .replace(/%form/g, OA.activeForm[0])
+                .replace(/%figure/g, OA.figures[i].seqNr)
+            ).trim();
             if ($('saveFigsSeparateImageFormat').value == 'png') {
                 // rasterize canvas to png data URL (without data URL info) and
                 // put in ZIP file
                 svgToPng(svg, function (png) {
                     zip.file(
-                        fName.trim() + '.png',
+                        fName + '.png',
                         png.toDataURL().replace(/^data:[^,]*,/, ''),
                         { base64: true }
                     );
@@ -17175,7 +17213,7 @@ function saveFigs() {
                 svg = '<?xml version="1.0" standalone="no"?>\n' +
                     '<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.2//EN" ' +
                     '"http://www.w3.org/Graphics/SVG/1.2/DTD/svg12.dtd">\n' + svg;
-                zip.file(fName.trim() + '.svg', svg);
+                zip.file(fName + '.svg', svg);
                 i++;
                 zipFigure();
             }
@@ -17185,7 +17223,6 @@ function saveFigs() {
         }
     }
     zipFigure();
-
 }
 
 // svgToPng will convert an svg to a png image
@@ -17198,12 +17235,10 @@ function svgToPng(svg, callback) {
     // remove anything before <svg tag and create svg Blob
     svg = new Blob([svg.replace(/^.*?<svg/, '<svg')], { type: "image/svg+xml;charset=utf-8" });
 
-    var
+    const
         canvas = document.createElement('canvas'),
         ctx = canvas.getContext("2d"),
-        DOMURL = self.URL || self.webkitURL || self,
-        img = new Image(),
-        url = DOMURL.createObjectURL(svg);
+        img = new Image();
 
     // temporarily add canvas to document to make sure it will be drawn
     document.lastChild.appendChild(canvas);
@@ -17216,7 +17251,7 @@ function svgToPng(svg, callback) {
         if (callback) callback(canvas); else return canvas;
     }
     // convert svg to canvas
-    img.src = url;
+    img.src = (self.URL || self.webkitURL || self).createObjectURL(svg);
 
 }
 
@@ -17225,24 +17260,12 @@ function svgToPng(svg, callback) {
 function savePDF() {
 }
 
-// inArray returns all the array keys in 'arr' that hold 'val' as an array
-// Only works for numbered arrays!
-function inArray(arr, val) {
-    var result = [];
-    var i = arr.indexOf(val);
-    while (i >= 0) {
-        result.push(i);
-        i = arr.indexOf(val, i + 1);
-    }
-    if (result.length > 0) return result; else return false;
-}
-
 // buildIllegal builds the symbol for an illegal figure
 function buildIllegal(i) {
-    // create space before the figure
-    let paths = [];
-    paths = buildShape('FigSpace', 2, paths);
+
     const
+        // create space before the figure
+        paths = buildShape('FigSpace', 2, []),
         angle = dirAttToAngle(OA.direction, OA.attitude),
         dx = Math.cos(angle) * lineElement * 6,
         dy = -Math.sin(angle) * lineElement * 6;
@@ -17255,8 +17278,7 @@ function buildIllegal(i) {
             ' l ' + -dx + ',' + -dy + ' z', 'style': 'illegalBox', 'dx': dx, 'dy': dy
     });
     // Create empty space after illegal figure symbol
-    paths = buildShape('FigSpace', 2, paths);
-    OA.figures[i].paths = paths;
+    OA.figures[i].paths = buildShape('FigSpace', 2, paths);
     OA.figures[i].unknownFigureLetter = OA.unknownFigureLetter;
 }
 
@@ -17329,21 +17351,27 @@ function buildMoveDown(extent, i) {
 // figureChooser  = Optional argument, true if we are building the
 //                  figure for the figure chooser
 function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
-    var
-        figNr = figNrs[0],
-        roll = [],
-        rollSums = [],
-        rollPatterns = [],
-        rollInfo = [],
-        // lowKFlick is set when the K for flick should be low:
-        // vertical down after hammerhead, tailslide or after roll element
-        lowKFlick = false,
+    let
+        calcK = [],
         // entryAxis identifies the axis on which the figure starts
         entryAxis = ((OA.direction % 180) == 0) ? 'X' : 'Y',
         entryAtt = OA.attitude,
         entryDir = OA.direction,
         description = [],
-        figCheckLine = '';
+        figCheckLine = '',
+        figNr = figNrs[0],
+        figureDraw,
+        gapnr,
+        // lowKFlick is set when the K for flick should be low:
+        // vertical down after hammerhead, tailslide or after roll element
+        lowKFlick = false,
+        roll = [],
+        rollInfo = [],
+        rollnr,
+        rollPatterns = [],
+        rollSum,
+        rollSums = [],
+        splitLR = [];
 
     // goFront is set to true for every new figure that starts to front
     if (((OA.direction == 90) && (OA.attitude == 0)) || ((OA.direction == 270) && (OA.attitude == 180))) {
@@ -17352,7 +17380,8 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
         OA.goFront = true;
     }
 
-    var bareFigBase = OA.fig[figNr].base.replace(/[+-]+/g, '');
+    const bareFigBase = OA.fig[figNr].base.replace(/[+-]+/g, '');
+
 
     // In the first part we handle everything except (rolling) turns
     if (!regexTurn.test(OA.fig[figNr].base)) {
@@ -17361,11 +17390,11 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
         if (bareFigBase != '') {
             // prevent splitting on bareFigBase inside comments
             if (figString.match(/"/)) {
-                var inComment = false;
-                var l = bareFigBase.length;
+                let inComment = false;
+                const l = bareFigBase.length;
                 for (let i = 0; i <= (figString.length - l); i++) {
                     if (!inComment && (figString.substring(i, i + l) === bareFigBase)) {
-                        var splitLR = [
+                        splitLR = [
                             figString.substring(0, i),
                             figString.substring(i + l)
                         ];
@@ -17375,34 +17404,37 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
                     }
                 }
             } else {
-                var splitLR = figString.split(bareFigBase);
+                splitLR = figString.split(bareFigBase);
             }
         } else {
-            var splitLR = Array(figString);
+            splitLR = Array(figString);
         }
+
         // start with an empty set of rolls
         for (let i = 0; i < OA.fig[figNr].rolls.length; i++) {
             rollPatterns[i] = '';
         }
         // Find the roll patterns
-        var regEx = /[\+<\~\^\>]+/g;
-        rollPatterns[0] = splitLR[0].replace(regEx, '');
-        if (splitLR.length > 1) {
-            var moreRolls = splitLR[1].replace(regEx, '').split(')');
-            moreRolls.forEach ((r, i) => {
-                if (/\(/.test(r)) {
-                    rollPatterns[i + 1] = r.replace(/\(/g, '');
-                } else {
-                    rollPatterns[OA.fig[figNr].rolls.length - 1] = r;
-                }
-            });
+        {
+            const regEx = /[\+<\~\^\>]+/g;
+            rollPatterns[0] = splitLR[0].replace(regEx, '');
+            if (splitLR.length > 1) {
+                const moreRolls = splitLR[1].replace(regEx, '').split(')');
+                moreRolls.forEach ((r, i) => {
+                    if (/\(/.test(r)) {
+                        rollPatterns[i + 1] = r.replace(/\(/g, '');
+                    } else {
+                        rollPatterns[OA.fig[figNr].rolls.length - 1] = r;
+                    }
+                });
+            }
         }
 
         // Parse the roll patterns and find out where to put rolls, flicks,
         // spins and tumbles
         // We need to do this before building the figure because it can
         // affect our choice of figure
-        rollPatterns.forEach ((r, i) => {
+        rollPatterns.forEach ((rollPattern, i) => {
             roll[i] = [];
             rollInfo[i] = {
                 'gap': [0],
@@ -17411,9 +17443,8 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
                 'flipNumber': [],
                 'comment': []
             };
-            var rollPattern = r;
             rollSums[i] = 0;
-            var
+            let
                 rollSign = (/^[CL]/.test(OA.activeForm)) ? -1 : 1,
                 extent = 0,
                 subRoll = 0,
@@ -17426,7 +17457,8 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
                 for (let j = 0; j < rollPattern.length; j++) {
                     // check if we are not in a roll comment section
                     if (!inComment) {
-                        var char = rollPattern.charAt(j);
+                        const char = rollPattern.charAt(j);
+                        let type;
                         switch (char) {
                             case (userpat.comment):
                                 // start of comment
@@ -17461,7 +17493,7 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
                             case 'l':
                                 // Add single flicks, spins and tumbles
                                 // When there was a roll before, add a line first
-                                var type = {
+                                type = {
                                     'f': 'possnap',
                                     's': 'posspin',
                                     'e': 'posShoulderRoll',
@@ -17492,7 +17524,7 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
                             case 'i':
                                 // Add single inverted flicks, spins and tumbles
                                 // When there was a roll before, add a line first
-                                var type = {
+                                type = {
                                     'f': 'negsnap',
                                     's': 'negspin',
                                     'e': 'negShoulderRoll',
@@ -17526,12 +17558,11 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
                             // Handle all different kinds of rolls and their notation
                             default:
                                 if (parseInt(rollPattern[j])) {
-                                    var startJ = j;
-                                    var stops = 0;
+                                    const startJ = j;
+                                    let stops = 0;
                                     // When there was a roll before, add a line first
                                     if (extent > 0) {
-                                        var regex = /[fs]/;
-                                        if (regex.test(rollPattern)) {
+                                        if (/[fs]/.test(rollPattern)) {
                                             roll[i].push({ 'type': 'line', 'extent': 2, 'load': OA.negLoad })
                                         } else {
                                             roll[i].push({ 'type': 'line', 'extent': 1, 'load': OA.negLoad })
@@ -17577,10 +17608,10 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
                                     } else {
                                         extent = 90 * parseInt(rollPattern[j]);
                                     }
-                                    var illegalSnapSpin = false;
+                                    let illegalSnapSpin = false;
                                     switch (rollPattern.charAt(j + 1)) {
                                         case 'i':
-                                            var type = {
+                                            type = {
                                                 'f': 'negsnap',
                                                 's': 'negspin',
                                                 'e': 'negShoulderRoll',
@@ -17608,7 +17639,7 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
                                         case 'e':
                                         case 'u':
                                         case 'l':
-                                            var type = {
+                                            type = {
                                                 'f': 'possnap',
                                                 's': 'posspin',
                                                 'e': 'posShoulderRoll',
@@ -17661,7 +17692,7 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
                                     comment = '';
                                 } else if (rollPattern[j] === '0') {
                                     // Glider Super Slow roll
-                                    var startJ = j;
+                                    const startJ = j;
                                     // When there was a roll before, add a line first
                                     if (extent > 0) {
                                         roll[i].push({ 'type': 'line', 'extent': 2, 'load': OA.negLoad });
@@ -17717,7 +17748,7 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
         });
         // Set the number of the first roll for drawing later on
         // To do this we check the fig.pattern for a roll match before the base
-        var rollnr = regexRollBeforeBase.test(OA.fig[figNr].pattern) ? 0 : 1;
+        rollnr = regexRollBeforeBase.test(OA.fig[figNr].pattern) ? 0 : 1;
 
         // If there are multiple figNrs we check the rolls to see which one
         // matches best. It's very important that with different figures with
@@ -17725,9 +17756,9 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
         if (figNrs.length > 1) {
             // Set rollCorrMin to infinity to start with so the
             // first correction will allways be smaller
-            var rollCorrMin = Infinity;
+            let rollCorrMin = Infinity;
             figNrs.forEach ((fn) => {
-                var rollCorr = 0;
+                let rollCorr = 0;
                 roll.forEach ((r, i) => {
                     if (OA.fig[fn].rolls[i] == 2) {
                         // half roll symbol at this position in fig[xx].rolls[yy]
@@ -17751,21 +17782,23 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
                     rollnr = regexRollBeforeBase.test(OA.fig[figNr].pattern) ? 0 : 1;
                 }
             });
-            var figureDraw = OA.fig[figNr].draw;
-        } else var figureDraw = OA.fig[figNrs[0]].draw;
-    } else var figureDraw = OA.fig[figNrs[0]].draw;
+            figureDraw = OA.fig[figNr].draw;
+        } else figureDraw = OA.fig[figNrs[0]].draw;
+    } else figureDraw = OA.fig[figNrs[0]].draw;
+
     // The chosen figure is now final, so we can:
     // * assign Aresti Nr and K Factor to the figure
     // * fix the figNr in the figures object
     // * remove rolls where only line shortening/lengthening is allowed
-    var arestiNrs = new Array(OA.fig[figNr].aresti);
+    const arestiNrs = new Array(OA.fig[figNr].aresti);
+    let kFactors;
     if (!OA.fig[figNr].kRules) {
         if ((OA.sportingClass.value === 'glider') && OA.fig[figNr].kGlider) {
-            var kFactors = [parseInt(OA.fig[figNr].kGlider)];
+            kFactors = [parseInt(OA.fig[figNr].kGlider)];
         } else {
-            var kFactors = [parseInt(OA.fig[figNr].kPwrd)];
+            kFactors = [parseInt(OA.fig[figNr].kPwrd)];
         }
-    } else var kFactors = [parseInt(OA.fig[figNr].kRules)];
+    } else kFactors = [parseInt(OA.fig[figNr].kRules)];
     OA.figures[figStringIndex].figNr = figNr;
     figCheckLine = OA.fig[figNr].aresti;
 
@@ -17779,18 +17812,25 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
                 }
             }
             rollSums[i] = 0;
-            var gap = rollInfo[i].gap.reduce ((a,b) => parseInt(a) + parseInt(b));
-            rollInfo[i] = { gap: [gap], pattern: [], comment: [] };
+            rollInfo[i] = {
+                gap: [
+                    rollInfo[i].gap.reduce ((a,b) => parseInt(a) + parseInt(b))
+                ],
+                pattern: [],
+                comment: []
+            };
         }
     });
     // If we are not in Form A we check for entry and exit extension
     // and shortening and apply them
-    var entryExt = 0;
-    var exitExt = 0;
+    let
+        entryExt = 0,
+        exitExt = 0;
     if (OA.activeForm !== 'A') {
         // get position for the base (1) OR the roll(s) on a horizontal (2)
+        let basePos;
         if (bareFigBase != '') {
-            var basePos = figString.indexOf(bareFigBase);
+            basePos = figString.indexOf(bareFigBase);
         } else {
             stringLoop:
             for (let i = 0; i < figString.length; i++) {
@@ -17829,13 +17869,12 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
     OA.figures[figStringIndex].unknownFigureLetter = OA.unknownFigureLetter;
 
     // Now we go through the drawing instructions
-    var
+    let
         lineLength = 0,
         lineSum = 0,
         lineDraw = false,
         rollTop = false,
         afterRoll = false,
-        comment = false,
         // Build the start of figure symbol
         paths = buildShape('FigStart',
             {
@@ -17843,8 +17882,9 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
                 'first': OA.firstFigure,
                 'figId': figStringIndex
             },
-            paths),
-        entryLine = true;
+            []),
+        entryLine = true,
+        rollTopAngleAfter; // Will hold angle after a roll in the top
 
     // add any paths that were already provided
     // (e.g. for autocorrect red circle)
@@ -17892,11 +17932,38 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
             // the line. Do not make any existing line shorter than 1
             default:
                 if (lineDraw || afterRoll) {
+                    let params = [0.02];
                     if (lineDraw) {
                         lineSum = Math.max(lineSum, 1);
-                        var params = [lineSum];
+                        params = [lineSum];
                         lineLength += lineSum;
-                    } else var params = [0.02];
+                        const addCalcK = OA.negLoad && (OA.attitude % 180 == 90) ?
+                            OA.calcK.line[-OA.attitude] : OA.calcK.line[OA.attitude];
+                        if (
+                            calcK.length > 0 &&
+                            OA.calcK.doubleFamily1 &&
+                            /^1\./.test(arestiNrs[0]) &&
+                            calcK.slice(-1)[0] !== 0
+                        ) {
+                            // Double the K for all lines in Family 1, except when a roll has
+                            // occurred (in which case it was already counted once). But never
+                            // for the entry line
+                            calcK.push(2 * addCalcK);
+                        } else if (calcK.slice(-1)[0] == 0) {
+                            // In other cases where a roll has occurred, only add the second
+                            // line when attitude has changed, resulting in a different addCalcK,
+                            // and there is a line in the definition. Or for Family 1
+                            if (
+                                (
+                                    addCalcK !== calcK.slice(-2)[0] &&
+                                    /[\~\']/.test(figureDraw.charAt(i-1))
+                                ) || (
+                                    OA.calcK.doubleFamily1 &&
+                                    /^1\./.test(arestiNrs[0])
+                                )
+                            ) calcK.push (addCalcK);
+                        } else calcK.push(addCalcK); // In cases with no roll, just add addCalcK
+                    }
                     if (afterRoll) {
                         params.push('roll' + (rollnr - 1) + '-gap' + gapnr);
                         roll[rollnr - 1].lineLengthAfter = lineSum;
@@ -17906,7 +17973,6 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
                         OA.figures[figStringIndex].entryLength = lineSum;
                         entryLine = false;
                     }
-
                     paths = buildShape('Line', params, paths);
                     lineDraw = false;
                 }
@@ -17919,14 +17985,16 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
             case (figpat.hammer):
             case (figpat.pushhammer):
                 paths = buildShape('Hammer', lineLength, paths);
+                calcK.push (OA.calcK.stallTurn[OA.negLoad]);
                 // down line after hammer always positive
-                OA.negLoad = false;
+                OA.negLoad = 0;
                 lowKFlick = true;
                 break;
             // Make tailslides
             case (figpat.tailslidecanopy):
             case (figpat.tailslidewheels):
                 paths = buildShape('Tailslide', figureDraw.charAt(i), paths);
+                calcK.push (OA.calcK.tailslide[OA.sportingClass.value][OA.negLoad]);
                 lowKFlick = true;
                 break;
             case (figpat.pointTip):
@@ -17942,14 +18010,14 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
                 // mark rolls in the top
                 if (rollTop) rollInfo[rollnr].rollTop = true;
                 if (roll[rollnr]) {
-                    var
+                    let
                         rollPaths = [],
-                        rollSum = 0,
                         rollDone = false,
-                        attChanged = 0,
-                        gapnr = 0;
-
-                    roll[rollnr].forEach ((r, i) => {
+                        attChanged = 0;
+                    
+                    gapnr = 0;
+                    rollSum = 0;
+                    roll[rollnr].forEach ((r, j) => {
                         // Build line elements after all extensions and shortenings have been processed
                         if (r.type != 'line') {
                             if (lineDraw) {
@@ -17972,17 +18040,25 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
                                     r.lineLength = lineSum;
                                 }
                                 lineDraw = false;
+                                // Increase calcK with the correct value, but only for the first
+                                // roll in a roll element, and when there was already a line
+                                // in the figure drawing in figures.js
+                                if (gapnr == 1 && /[\~\'']/.test(figureDraw.charAt(i-1))) {
+                                    calcK.push(OA.negLoad && (OA.attitude % 180 == 90) ?
+                                        OA.calcK.line[-OA.attitude] : OA.calcK.line[OA.attitude]);
+                                }
                             } else if (!rollTop) {
                                 // add roll paths tiny line with id for handle, except
                                 // for rolls in the top
                                 rollPaths = buildShape(
                                     'Line',
-                                    [0.02, `roll${rollnr}-gap${i}`],
+                                    [0.02, `roll${rollnr}-gap${j}`],
                                     rollPaths
                                 );
                                 r.lineLength = 0.02;
                             }
-
+                            // Add a zero to mark roll(s)
+                            if (calcK.slice(-1)[0] !== 0) calcK.push(0);
                             lineSum = 0;
                         }
 
@@ -17990,7 +18066,7 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
 
                         // Find which roll in figures.js matches. There should only
                         // be one. Then add Aresti nr and K factor
-                        var rollAtt = rollAttitudes[OA.attitude];
+                        let rollAtt = rollAttitudes[OA.attitude];
                         // Find the correct snap/load combination
                         // Snaps started knife edge are judged as
                         // 'pos from neg'/'neg from pos' with foot-down entry
@@ -18005,7 +18081,7 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
                                 // Handle snaps from knife edge. Use rollSum to find the
                                 // previous amount of roll. Use switches to determine
                                 // correct virtual load/attitude combination
-                                var inv = ((OA.attitude > 90) && (OA.attitude < 270));
+                                let inv = ((OA.attitude > 90) && (OA.attitude < 270));
                                 inv = (inv == (((Math.abs(rollSum) - 90) % 360) == 0));
                                 inv = (inv == ((rollSum * r.extent) > 0));
                                 // 1) Foot up for pos start, foot down for neg start
@@ -18041,7 +18117,7 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
                                 }
                             }
                         }
-                        var thisRoll = OA.rollFig[rollAtt + r.pattern];
+                        const thisRoll = OA.rollFig[rollAtt + r.pattern];
                         if (thisRoll) {
                             arestiNrs.push(thisRoll.aresti);
                             if (thisRoll.kRules) {
@@ -18058,7 +18134,7 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
                             //   present warning
                             // - check if there are not more than two subsequent rolls
                             //   when nonArestiRolls is not checked
-                            var k = i - 1;
+                            let k = j - 1;
                             while (k > -1) {
                                 if (roll[rollnr][k].type != 'line') {
                                     figCheckLine += ((r.extent / roll[rollnr][k].extent) > 0) ? ';' : ',';
@@ -18234,8 +18310,9 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
 
                     rollSum = rollSums[rollnr];
                     // See if we have to autocorrect the rolls
+                    let autoCorr = 0;
                     if (OA.fig[figNr].rolls[rollnr] == 1) {
-                        var autoCorr = -(rollSum % 360);
+                        autoCorr = -(rollSum % 360);
                         // When a line is standing by to be built, build it before
                         // doing the autocorrect
                         if (autoCorr != 0) {
@@ -18309,27 +18386,24 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
                             if (OA.attitude < 0) OA.attitude += 360;
                             changeDir(180);
                         }
-                    } else {
-                        autoCorr = 0;
                     }
                     // Add autocorrect roll
                     if (autoCorr != 0) {
                         rollPaths = buildShape('Roll', Array(autoCorr, 0, false, false, true), rollPaths);
                         // Find which roll in figures.js matches. There should only be one.
                         // Then add Aresti nr and K factor
-                        var rollAtt = rollAttitudes[OA.attitude];
+                        const rollAtt = rollAttitudes[OA.attitude];
+                        let addRoll = false;
                         switch (Math.abs(autoCorr)) {
                             case (90):
-                                var addRoll = rollAtt + '4';
+                                addRoll = rollAtt + '4';
                                 break;
                             case (180):
-                                var addRoll = rollAtt + '2';
+                                addRoll = rollAtt + '2';
                                 break;
                             case (270):
-                                var addRoll = rollAtt + '3';
+                                addRoll = rollAtt + '3';
                                 break;
-                            default:
-                                var addRoll = false;
                         }
                         if (addRoll) {
                             arestiNrs.push(OA.rollFig[addRoll].aresti);
@@ -18349,7 +18423,12 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
                         if (OA.fig[figNr].rolls[rollnr] == 2) {
                             rollTopAngleAfter = -rollTopAngleAfter;
                         }
-                        var topLineAngle = (rollTopAngleAfter > 0) ? 45 : -45;
+                        calcK.push (
+                            OA.calcK.loopArc[
+                                Object.keys(OA.drawAngles).find(key => OA.drawAngles[key] === rollTopAngleAfter)[0]
+                            ]
+                        );
+                        const topLineAngle = (rollTopAngleAfter > 0) ? 45 : -45;
                         paths = buildShape('Curve', topLineAngle, paths);
                         if (rollPaths.length) {
                             // draw the second marker when there was a roll in the top
@@ -18360,10 +18439,11 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
                         }
                         paths = buildShape('Curve', rollTopAngleAfter - topLineAngle, paths);
                         // Retrieve the movement by the two curve paths
-                        var dx = paths[paths.length - 1].dx + paths[paths.length - 3].dx;
-                        var dy = paths[paths.length - 1].dy + paths[paths.length - 3].dy;
-                        var dxRolls = 0;
-                        var dyRolls = 0;
+                        let
+                            dx = paths[paths.length - 1].dx + paths[paths.length - 3].dx,
+                            dy = paths[paths.length - 1].dy + paths[paths.length - 3].dy,
+                            dxRolls = 0,
+                            dyRolls = 0;
 
                         // Retrieve the roll path movements
                         rollPaths.forEach ((p) => {
@@ -18378,20 +18458,21 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
                             'dx': -dx - (dxRolls / 2),
                             'dy': -dy - (dyRolls / 2)
                         });
+                        // Prepare the Move back to the right place at the end of
+                        // the curve after a roll in the top
+                        rollTop = {
+                            'path': '',
+                            'style': '',
+                            'dx': dx - (dxRolls / 2),
+                            'dy': dy - (dyRolls / 2)
+                        };
                     }
 
                     // Add all the roll paths
                     rollPaths.forEach ((p) => { paths.push(p) });
                     // Move back to the right place at the end of the curve after
                     // a roll in the top
-                    if (rollTop) {
-                        paths.push({
-                            'path': '',
-                            'style': '',
-                            'dx': dx - (dxRolls / 2),
-                            'dy': dy - (dyRolls / 2)
-                        });
-                    }
+                    if (rollTop) paths.push(rollTop);
                 }
 
                 // See if the direction should be changed from default.
@@ -18439,25 +18520,51 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
                 // X axis swap and autocorrect the exit of this figure for the
                 // next round
                 if (OA.OLAN.sequence) OLANXSwitch(figStringIndex);
-
+                
+                let prefix;
                 if (regexChangeDir.test(figString)) {
                     OA.figures[figStringIndex].switchX = true;
-                    var prefix = (/^[CL]/.test(OA.activeForm)) ? '' : userpat.moveforward;
+                    prefix = (/^[CL]/.test(OA.activeForm)) ? '' : userpat.moveforward;
                 } else {
                     OA.figures[figStringIndex].switchX = false;
-                    var prefix = (/^[CL]/.test(OA.activeForm)) ? userpat.moveforward : '';
+                    prefix = (/^[CL]/.test(OA.activeForm)) ? userpat.moveforward : '';
                 }
                 paths = buildShape('Turn', prefix +
                     figureDraw.replace(/[^jioJIO\d]+/g, ''), paths);
-                var regex = /[jioJIO\d]+/;
-                while (regex.test(figureDraw.charAt(i))) i++;
+                // Add K components
+                if (/[\d]/.test(figureDraw.replace(/[jioJIO]+\d/, ''))) {
+                    // Rolling turns. From Aresti catalogue II Method of Evaluation
+                    const
+                        p        = OA.calcK.rollingTurn[OA.sportingClass.value],
+                        extent   = figureDraw.match(/\d/)[0],
+                        rolls    = figureDraw.match(/\d(\d+)/)[1],
+                        rollSum  = rolls.split('').reduce ((s, a) => s + ((a == 5) ? 0.5 : parseInt(a)), 0),
+                        reversals= (/io|IO/.test(figureDraw) ? 1 : 0) * (Math.round(rollSum) - 1),
+                        arcsIn   = ((OA.negLoad ? /J/.test(figureDraw) : /j/.test(figureDraw)) ?
+                            (extent - Math.round(reversals / 2) * (rolls[0] == 5 ? 2/3 : 1) * (rolls[1] == 5 ? 1/3 : 1)) :
+                            Math.round(reversals / 2) * (rolls[0] == 5 ? 4/3 : 1) * (rolls[1] == 5 ? 2/3 : 1)),
+                        firstRollArc = extent / ((/2\.1\.2\./.test(arestiNrs[0]) ? 2 : 1) * rollSum) * 90,
+                        nextRollArcs = extent * 90 / firstRollArc - 1;
+                    calcK.push (
+                        p.arc90.i * arcsIn,
+                        p.arc90.o * (extent - arcsIn),
+                        p.rollPoints[firstRollArc],
+                        (p.rollPoints[firstRollArc] * nextRollArcs || 0) * p.nextRolls,
+                        p.reversal * reversals,
+                    )
+                } else {
+                    // Regular turns
+                    calcK.push (OA.calcK.turn90[OA.negLoad] * figureDraw.charAt (i + 1));
+                }
+                while (/[jioJIO\d]+/.test(figureDraw.charAt(i))) i++;
                 i--;
                 break;
             // Handle angle and curve drawing. In here we will also decide the
             // goRight parameter that decides how we roll vertical
             default:
-                if (figureDraw.charAt(i) in drawAngles) {
-                    var angle = parseInt(drawAngles[figureDraw.charAt(i)]);
+                if (figureDraw.charAt(i) in OA.drawAngles) {
+                    const angle = parseInt(OA.drawAngles[figureDraw.charAt(i)]);
+                    
                     // add text to description
                     description.push(sprintf(
                         (angle > 0) ? OA.userText.pullLoop : OA.userText.pushLoop, Math.abs(angle)));
@@ -18465,6 +18572,7 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
                     // specifically told to make a curve by '=' symbol
                     if ((Math.abs(angle) < 180) && (figureDraw.charAt(i + 1) != '=')) {
                         paths = buildShape('Corner', angle, paths);
+                        calcK.push (OA.calcK.loopArc[figureDraw.charAt(i)]);
                     } else {
                         // Draw curve. Half size when followed by '/' symbol
                         if (figureDraw.charAt(i + 1) == '/') {
@@ -18474,23 +18582,31 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
                         rollTop = (figureDraw[i + 1] == '!') ? true : false;
                         if ((Math.abs(angle) < 360) && !rollTop) {
                             paths = buildShape('Curve', angle, paths);
+                            calcK.push (OA.calcK.loopArc[figureDraw.charAt(i)]);
                         } else if (rollTop) {
                             // Split any loop with a roll in top so we can use the second
                             // part later to determine the top
                             // We do this by finding the point closest to the center of
                             // looping shape that has Attitude 0 or 180
-                            var attTop = OA.attitude + (angle / 2);
-                            var diffTop = ((attTop / 180) - parseInt((attTop + 90) / 180)) * 180;
+                            let
+                                attTop = OA.attitude + (angle / 2),
+                                diffTop = ((attTop / 180) - parseInt((attTop + 90) / 180)) * 180;
                             if (Math.abs(diffTop) > 90) {
                                 diffTop = ((attTop / 180) - parseInt((attTop - 90) / 180)) * 180;
                             }
-                            var angleTop = (angle / 2) - diffTop;
+                            const
+                                angleTop = (angle / 2) - diffTop,
+                                topLineAngle = (angleTop > 0) ? 45 : -45;
 
-                            var topLineAngle = (angleTop > 0) ? 45 : -45;
                             paths = buildShape('Curve', angleTop - topLineAngle, paths);
                             paths = buildShape('RollTopLine', '', paths);
                             paths = buildShape('Curve', topLineAngle, paths);
-                            var rollTopAngleAfter = angle - angleTop;
+                            rollTopAngleAfter = angle - angleTop;
+                            calcK.push (
+                                OA.calcK.loopArc[
+                                    Object.keys(OA.drawAngles).find(key => OA.drawAngles[key] === angleTop)[0]
+                                ]
+                            );
                         } else {
                             // Split full loops in several parts for drawing. Only used
                             // for loops without a roll in the top. Useful for vertical 8s
@@ -18562,6 +18678,13 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
     // there is no more processing after this
     if (lineDraw) {
         paths = buildShape('Line', [Math.max(lineSum, 1), 'exit'], paths);
+        // Add the calcK for the exit line (always level)
+        // In the (rare and illegal) case of just a horizontal line without
+        // roll, add it twice
+        if (calcK.slice(-1)[0] !== 0 && /^1\.1\.1\.[12]$/.test(arestiNrs[0])) {
+            calcK.push(OA.calcK.line[OA.attitude]);
+        }
+        calcK.push(OA.calcK.line[OA.attitude]);
         OA.figures[figStringIndex].exitLength = Math.max(lineSum, 1);
     }
 
@@ -18576,11 +18699,21 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
         figCheckLine = figCheckLine.replace('  ', ' 0.0.0.0 ').replace(/ $/, ' 0.0.0.0');
     }
 
+    // round calculated base figure K according Aresti Catalogue
+    //calcK = Math.round(calcK);
+
     // The figure is complete. Create the final figure object for later
     // processing such as drawing Forms and point & click figure editing
+    const calcKSum = calcK.reduce ((s, a) => s + a, 0);
+    if (seqNr && Math.round(calcKSum) !== kFactors[0]) {
+        console.log(seqNr + ' : ' + calcKSum);
+        console.log(calcK);
+    }
+
     Object.assign(OA.figures[figStringIndex], {
         aresti: arestiNrs,
         base: OA.fig[figNr].base,
+        calcK : calcK,
         checkLine: figCheckLine,
         description: description,
         entryExt: entryExt,
@@ -18646,7 +18779,7 @@ function checkQRollSwitch(figString, figStringIndex, pattern, seqNr, rollSum, fi
         }
         // find the next angle. Usually this will occur before a new rolling
         // element EXCEPT for tailslides and hammerheads
-        var
+        let
             nextAngle = 0,
             nextRollExtent = 0,
             nextRollExtentPrev = 0,
@@ -18657,9 +18790,9 @@ function checkQRollSwitch(figString, figStringIndex, pattern, seqNr, rollSum, fi
             firstRoll = (rollnr == 0) ? true : false;
 
         for (let i = fdIndex + 1; i < figureDraw.length; i++) {
-            if (figureDraw[i] in drawAngles) {
+            if (figureDraw[i] in OA.drawAngles) {
                 // found an angle
-                nextAngle = drawAngles[figureDraw[i]];
+                nextAngle = OA.drawAngles[figureDraw[i]];
                 // break the loop when the angle doesn't bring us back to vertical
                 if (nextAngle % 180) break;
             } else if (figureDraw[i] == figpat.fullroll) {
@@ -18691,9 +18824,10 @@ function checkQRollSwitch(figString, figStringIndex, pattern, seqNr, rollSum, fi
                         // see if there's a first part direction switcher (;> or ;^)
                         // before the pattern figure letters (e.g. bb)
                         // Remove when applied
-                        var regex = new RegExp(';[>^]' + pattern.match(/[a-zA-Z]+/)[0]);
+                        const
+                            regex = new RegExp(';[>^]' + pattern.match(/[a-zA-Z]+/)[0]),
+                            switchDir = regex.test(figString);
 
-                        var switchDir = regex.test(figString);
                         if (switchDir) figString = figString.replace(regex, "$1");
                         OA.figures[figStringIndex].switchFirstRoll = switchDir;
 
@@ -18751,7 +18885,7 @@ function checkQRollSwitch(figString, figStringIndex, pattern, seqNr, rollSum, fi
             } else OA.figures[figStringIndex].switchX = false;
             // check for the OLAN Humpty Bump direction bug
             if (OA.OLAN.bumpBugCheck) {
-                if (regexOLANBumpBug.test(pattern)) {
+                if (/(\&b)|(\&ipb)/.test(pattern)) {
                     OA.OLAN.bumpBugFigs.push(seqNr);
                     // autocorrect loaded OLAN sequence when applicable
                     if (OA.OLAN.sequence) {
@@ -18794,7 +18928,7 @@ function checkQRollSwitch(figString, figStringIndex, pattern, seqNr, rollSum, fi
             }
             // check for the OLAN N direction bug
             if (OA.OLAN.bumpBugCheck && OA.figures[figStringIndex].switchX) {
-                if (regexOLANNBug.test(pattern)) {
+                if (/n/.test(pattern)) {
                     OA.OLAN.nBugFigs.push(seqNr);
                 }
             }
@@ -18827,12 +18961,12 @@ function OLANXSwitch(figStringIndex) {
 
 // when force is true, update will be done even when it seems no change is made
 function updateSequence(figNr, figure, replace, fromFigSel, force) {
-    var updateSelected = true;
+    let updateSelected = true;
     // make sure figNr is handled as integer
     figNr = parseInt(figNr);
     // check if figure is from Figure Selector and correct direction changers
     if (fromFigSel) {
-        var prevFig = replace ? figNr - 1 : figNr;
+        const prevFig = replace ? figNr - 1 : figNr;
         // correct direction changers
         if (OA.figures[prevFig] && figure.match(/[a-zA-Z]/) &&
             (OA.figures[prevFig].exitAxis === 'Y')) {
@@ -18846,16 +18980,16 @@ function updateSequence(figNr, figure, replace, fromFigSel, force) {
     // just return if asked to replace an identical figure
     if (replace && (OA.figures[figNr].string == figure) && !force) return;
 
-    var string = '';
-    var separator = (figure == '') ? '' : ' ';
+    let string = '';
+    const separator = (figure == '') ? '' : ' ';
     for (let i = OA.figures.length - 1; i >= 0; i--) {
         if (i == figNr) {
             if (!replace) {
                 // Handle (multiple) moveto or curveto
                 if (figure.match(regexMoveTo) || figure.match(regexCurveTo)) {
-                    var
+                    const dxdy = figure.replace(/[^0-9\,\-]/g, '').split(',');
+                    let
                         curve = true,
-                        dxdy = figure.replace(/[^0-9\,\-]/g, '').split(','),
                         dx = parseInt(dxdy[0]),
                         dy = parseInt(dxdy[1]);
                     // go back until we find a real figure
@@ -19027,6 +19161,7 @@ function parseSequence() {
         subSequence = false,
         comments = false,
         figure = '',
+        figNrs,
         base = '',
         formBDirection = 0,
         match = false;
@@ -19150,9 +19285,11 @@ function parseSequence() {
                 figure = figure.replace (/-(?=--)/g, userpat.longforward);
             } else figure = figure.replace (/-(?=-)/g, userpat.longforward);
 
-            // replace longforward by 3x forward
+            // replace longforward by 3x forward, except in comments
             // e.g. -++h- will be -~~~~~~h-
-            figure = figure.replace(regexLongForward, userpat.forward + userpat.forward + userpat.forward);
+            if (!/^\".*\"$/.test (f.string)) {
+                figure = figure.replace(regexLongForward, userpat.forward + userpat.forward + userpat.forward);
+            }
         }
 
         // Parse out the instructions that are for drawing B and C forms only
@@ -19277,7 +19414,7 @@ function parseSequence() {
                 base = figure.replace(regexComments, '').replace(/[^a-zA-Z\-]+/g, '');
                 // Replace any x> format to move forward by x times >
                 if (regexMoveForward.test(figure)) {
-                    var moveFwd = OA.fig.match(regexMoveForward)[0];
+                    const moveFwd = OA.fig.match(regexMoveForward)[0];
                     if (parseInt(moveFwd)) {
                         figure = figure.replace(regexMoveForward, parseInt(moveFwd) + moveFwd.length - moveFwd.match(/\d*/).length - 1);
                     } else {
@@ -19322,7 +19459,7 @@ function parseSequence() {
                     if (base.charAt(base.length - 1) != '-') base += '+';
                 }
                 // Retrieve the figNrs (if any) from array figBaseLookup
-                var figNrs = OA.figBaseLookup[base];
+                figNrs = OA.figBaseLookup[base];
             }
 
             // Autocorrect the entry attitude for figures after the first
@@ -19375,7 +19512,7 @@ function parseSequence() {
                     f.comments = comments;
 
                     // add country when applicable
-                    var country = false;
+                    let country = false;
                     // check for three-letter flag country in separate "word"
                     match = comments.match(/\b[A-Z]{3}\b/g);
                     if (match) {

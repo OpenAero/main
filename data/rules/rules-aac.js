@@ -30,6 +30,8 @@
  * 2023.3.1
  * - Updated Sportsman Free K
  * - Addec fixed positioning K factors for Graduate and Sportsman
+ * 2026.1.1
+ * - Updated Intermediate Free Known reference sequence
  */
 
 rules.push (
@@ -88,8 +90,48 @@ rules.push (
 //##### AAC Intermediate  #######################################################
 //###############################################################################
 
+// Programme 1 is identical to the CIVA programme 1, except for the
+// reference sequence
 "[AAC Intermediate Programme1]",
-"more=CIVA Intermediate Programme1",
+"posnl=30",//no line judges
+"poslj=10",
+"k-max=200",
+"basefig-min=10",
+"basefig-max=10",
+
+"basefig-repeat=1",
+"roll-repeat=1",
+"snap-repeat=1",
+"spin-repeat=1",
+
+"fam5-min=1",
+"fam7-min=1",
+"fam8-min=1",
+"froll-min=1",
+"hroll-min=1",
+"qroll-min=1",
+"eroll-min=1",
+"snap-min=1",
+"spin-min=1",
+
+"group-roller=^2\\.(1\\.[23]|2\\.[2-7]|3\\.[2-6]|4\\.[2-8])",
+"roller-name=Rolling turn, family 2.1.2 to 2.1.3, 2.2.2 to 2.2.7, 2.3.2 to 2.3.6, 2.4.2 to 2.4.8",
+"roller-name_fr=Tonneaux en virage, famille 2.1.2, 2.1.3, 2.2.2 à 2.2.7, 2.3.2 à 2.3.6, 2.4.2 à 2.4.8",
+"roller-name_de=Rollenkreis, Familie 2.1.2 bis 2.1.3, 2.2.2 bis 2.2.7, 2.3.2 bis 2.3.6, 2.4.2 bis 2.4.8",
+"roller-min=1",
+
+"emptyline-max=0",
+
+"opposite-min=1",//one opposite roll is required!
+
+"figure-letters=ABCDE",
+
+'reference="@A" dh.\'\' "@B" rp2- "@C" ,24a44 "@D" \'2f.\'t.\'\' "@E" pb8.\'\'^',
+
+// what info should be filled out
+"infocheck=pilot;actype;acreg;positioning",
+// End of programme 1
+
 "[AAC Intermediate Programme2]",
 "more=CIVA Intermediate Programme2",
 "[AAC Intermediate Programme3]",
