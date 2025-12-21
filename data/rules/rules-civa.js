@@ -436,10 +436,11 @@ rules.push(
       'd[,;]3F',                // 45° up
       '3f[,;]D',                // 45° down
       'h[,;]3F',                // Horizontal roll first then flick
-      '[vdDhsz,. ]+ 3F[,;]h$',  // Horizontal flick first under g load -> final rotation
+      '[vdDhfFsz,. ]+ 3F[,;]h$',// Horizontal flick first under g load -> final rotation
       '^3f[,;]h',               // Horizontal flick first standard load (+- 1g) -> first or only rotation
       '3[fF],3[fF]',            // Alternate 3 quarters flicks
     ].join('|'),
+    
     "why-UnlimitedNO3f    = 3/4 flick starting or ending with down rudder is not allowed",
     "why_fr-UnlimitedNO3f = 3/4 déclenché départ ou arret pied bas interdit",
     "why_de-UnlimitedNO3f = 3/4 Gerissene/Gestoßene beginnend oder endend mit Seitenruder unten ist nicht erlaubt",
