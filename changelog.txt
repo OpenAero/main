@@ -4,6 +4,8 @@
 * Added functionality to automatically calculate base figure K factor from figure elements
 * Added AAC Intermediate Free Known figure set
 * Added IAC sequences for 2026 and updated Glider and Power Sportsman Free K
+* Removed code (introduced in 2022.5) that fixed Windows text block bug because Windows is now supported as PWA
+* Removed all other code that was specifically for Windows UWP
 
 2025.1.11
 * Fixed issue with Settings tab selection

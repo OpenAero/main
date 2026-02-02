@@ -244,14 +244,13 @@ OAconst ('platform', {
   // platform.cordova is set to true here. It is set to false in
 	// cordova.js when not compiled on Cordova
   cordova:   true,
-	// set platform for Android, Chrome, iOS, Windows and UWP
+	// set platform for Android, Chrome, iOS, Windows
 	android:   /Android/i.test(navigator.userAgent),
 	chrome:    ((typeof chrome !== 'undefined') && chrome.fileSystem),
     ios:       /i(Pad|Phone|Pod)/i.test(navigator.userAgent) ||
                /^Mac/.test(navigator.platform) && navigator.maxTouchPoints > 4,
 	windows10: /Windows\ NT\ 1/.test(navigator.userAgent),
-	windowsStore: 'ms-windows-store://pdp/?productid=9PDSX9ZDRB9B',
-	uwp:       window.Windows
+	windowsStore: 'ms-windows-store://pdp/?productid=9PDSX9ZDRB9B'
 });
 
 // Define the labels (=input field ids) for saving/loading sequences.
@@ -716,50 +715,50 @@ const rollAttitudes = {'0':'', '45':'d', '90':'v', '135':'d',
 OAconst ('calcK', {
   // K factors for 1. Straight lines
   line : {
-    270: 1.2, 315: 1.1, 0: 1, 45: 1.2, 90: 1.4,
-    135: 1.5, 180: 1.3, 225: 1.4,
+    270: 12, 315: 11, 0: 10, 45: 12, 90: 14,
+    135: 15, 180: 13, 225: 14,
     // Negative values are used for push to vertical up or down
     // (OA.negLoad = 1)
-    '-90': 1.7, '-270': 1.5,
+    '-90': 17, '-270': 15,
   },
 
   // K factors for 2. Loop arcs
   loopArc : {
-    'd':1, 'v':2, 'z':3, 'm':4,
-    'c':5, 'p':6, 'r':7, 'o':8,
-    'D':1.5, 'V':3, 'Z':4.5, 'M':6,
-    'C':7.5, 'P':9, 'R':10.5, 'O':12,
+    'd':10, 'v':20, 'z':30, 'm':40,
+    'c':50, 'p':60, 'r':70, 'o':80,
+    'D':15, 'V':30, 'Z':45, 'M':60,
+    'C':75, 'P':90, 'R':105, 'O':120,
   },
 
   // 4. Double the coefficients for straight lines in Family 1
   doubleFamily1 : true,
 
   // 7. Turns. 0 = upright, 1 = inverted
-  turn90 : {0: 1, 1: 1.3},
+  turn90 : {0: 10, 1: 13},
 
   // 8. Rolling turns. i = inward, o = outward
   rollingTurn : {
     powered: {
-      arc90     : {i: 4, o: 5},
-      rollPoints: {'90': 8, '120': 10.6, '180': 16, '360' :28},
+      arc90     : {i: 40, o: 50},
+      rollPoints: {'90': 80, '120': 106, '180': 160, '360' :280},
       nextRolls : 0.5,
-      reversal  : 2
+      reversal  : 20
     },
     glider: {
-      arc90     : {i: 5, o: 7},
-      rollPoints: {'90': 12, '120': 15, '180': 24, '360': 42},
+      arc90     : {i: 50, o: 70},
+      rollPoints: {'90': 120, '120': 150, '180': 240, '360': 420},
       nextRolls : 0.5,
-      reversal  : 5
+      reversal  : 50
     }
   },
 
   // 9. Family 5
-  stallTurn : {0: 8.4, 1: 11.5},
+  stallTurn : {0: 84, 1: 115},
 
   // 10. Family 6
   tailslide : {
-    powered: {0: 6.4, 1: 6.4},
-    glider : {0: 8.4, 1: 11.5}, 
+    powered: {0: 64, 1: 64},
+    glider : {0: 84, 1: 115}, 
   },
 
   // 11. Family 7

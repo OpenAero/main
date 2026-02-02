@@ -860,27 +860,6 @@ function cordovaPdf(uri, title) {
 }
 */
 
-/**************************************************************
- *
- * Windows functions
- *
- *************************************************************/
-
-/*
-// Open associated .seq file in Windows UWP
-if (platform.uwp) {
-    Windows.UI.WebUI.WebUIApplication.addEventListener(
-        'activated', function (activatedEventArgs) {
-            if (activatedEventArgs.kind === Windows.ApplicationModel.Activation.ActivationKind.file) {
-                Windows.Storage.FileIO.readTextAsync(activatedEventArgs.files[0])
-                    .done(function (text) {
-                        loadedSequenceWindows(text, activatedEventArgs.files[0].name);
-                    });
-            }
-        });
-}
-*/
-
 /************************************************
  * User interface functions
  ************************************************/
@@ -1766,17 +1745,6 @@ function infoBox(message, title) {
         // show box
         $('infoBox').classList.remove('noDisplay');
         dialogBuildContents('info', message, title);
-        /** Code to be used later for building UWP native dialogs. Most of
-         * the infoboxes should be progress boxes. See
-         * https://docs.microsoft.com/en-us/uwp/api/windows.ui.popups.messagedialog
-         * https://docs.microsoft.com/en-gb/windows/uwp/design/controls-and-patterns/progress-controls
-            if (platform.uwp) {
-                var dialog = new Windows.UI.Popups.MessageDialog (
-                    $('infoMessage').innerHTML,
-                    $('infoTitle').innerHTML);
-                dialog.showAsync ();
-            }
-            */
     } else {
         $('infoBox').classList.add('noDisplay');
     }
@@ -2064,12 +2032,6 @@ function helpWindow(url, title) {
         $('helpBox').classList.remove('noDisplay');
         $('helpTitle').innerText = title;
         $('helpContent').firstChild.src = url;
-    } else if (OA.platform.uwp) {
-        window.open(
-            url,
-            title,
-            'menubar=no, scrollbars=yes, status=no, toolbar=no, top=30, width=800'
-        );
     } else if (window.navigator.standalone) {
         // create and click <a> for standalone
         const a = document.createElement('a');
@@ -3538,7 +3500,7 @@ function makeRoll(params) {
             dx = paths[paths.length - 1].dx;
             dy = paths[paths.length - 1].dy;
             // glider super slow roll or regular roll
-            var radPoint = params[3] ? rad + sign * (Math.PI / 2) : rad + sign * (Math.PI / 3);
+            const radPoint = params[3] ? rad + sign * (Math.PI / 2) : rad + sign * (Math.PI / 3);
 
             dxTip = (((Math.cos(radPoint) * (rollcurveRadius + 2)) - (radCos * rollcurveRadius)));
             dyTip = -(((Math.sin(radPoint) * (rollcurveRadius + 2)) - (radSin * rollcurveRadius)));
@@ -3563,9 +3525,8 @@ function makeRoll(params) {
 // [3] is optional comment
 // Examples: (270,0) is a 3/4 pos snap. (180,1) is a 1/2 neg snap
 function makeSnap(params) {
-    var
-        paths = [],
-        extent = Math.abs(params[0]),
+
+    const
         sign = params[0] > 0 ? 1 : -1,
         rollTop = params.length > 2 ? params[2] : false,
         rad = (OA.attitude % 90) == 45 ? OA.trueDrawingAngle : dirAttToAngle(OA.direction, OA.attitude),
@@ -3575,10 +3536,13 @@ function makeSnap(params) {
         // tipFactor makes sure the tip symbol is exactly on the tip,
         // considering default line thickness
         tipFactor = snapElement2 / (snapElement2 + 0.75);
+    let
+        paths = [],
+        extent = Math.abs(params[0]);
 
     while (extent > 0) {
         // Make the base shape
-        var
+        let
             dxTip = -radSin * (snapElement2 + 0.75) * sign,
             dyTip = -radCos * (snapElement2 + 0.75) * sign,
             dx = radCos * snapElement,
@@ -3612,7 +3576,7 @@ function makeSnap(params) {
         // roll point and arc.
         // This is only necessary for rolls that are not multiples of 180
         if (extent == Math.abs(params[0])) {
-            var rollText = makeRollText(
+            const rollText = makeRollText(
                 extent,
                 0,
                 sign,
@@ -3632,11 +3596,8 @@ function makeSnap(params) {
             const saveLoad = OA.negLoad;
             // Make the line between the two rolls
             // Only move the pointer for rolls in the top
-            if (rollTop) {
-                paths = buildShape('Move', [snapElement017 / OA.scale], paths);
-            } else {
-                paths = buildShape('Line', [snapElement017 / OA.scale], paths);
-            }
+            paths = buildShape(rollTop ? 'Move' : 'Line', [snapElement017 / OA.scale], paths);
+            
             OA.negLoad = saveLoad;
             // Get the relative movement by the line and use this to build the
             // tip additional line
@@ -3662,25 +3623,24 @@ function makeSnap(params) {
 // [3] is optional comment
 // Examples: (270,0) is a 3/4 pos spin. (540,1) is a 1 1/2 neg spin
 function makeSpin(params) {
-    var
-        paths = [],
-        extent = Math.abs(params[0]),
+    const   
         sign = params[0] > 0 ? 1 : -1,
+        rollTop = params.length > 2 ? params[2] : false,
+        // tipFactor makes sure the tip symbol is exactly on the tip,
+        // considering default line thickness
+        tipFactor = spinElement2 / (spinElement2 - 0.75),
         rad = dirAttToAngle(OA.direction, OA.attitude),
         // calculate sin and cos for rad once to save calculation time
         radSin = Math.sin(rad),
         radCos = Math.cos(rad);
-
-    if (params.length > 2) var rollTop = params[2];
-
-    // tipFactor makes sure the tip symbol is exactly on the tip,
-    // considering default line thickness
-    var tipFactor = spinElement2 / (spinElement2 - 0.75);
+    let
+        paths = [],
+        extent = Math.abs(params[0]);
 
     while (extent > 0) {
         // Make the base shape
         // First make the tip line
-        var
+        let
             dxTip = -radSin * (spinElement2 - 0.75) * sign,
             dyTip = -radCos * (spinElement2 - 0.75) * sign,
             dx = radCos * spinElement,
@@ -3714,7 +3674,7 @@ function makeSpin(params) {
         // roll point and arc.
         // This is only necessary for spins that are not multiples of 180
         if (extent == Math.abs(params[0])) {
-            var rollText = makeRollText(
+            const rollText = makeRollText(
                 extent,
                 0,
                 sign,
@@ -4465,8 +4425,7 @@ function drawShape(paths, svgElement, prev) {
 
 // drawLine draws a line from x,y to x+dx,y+dy in style styleId
 // When an svg object is provided, it will be used i.s.o. the standard sequenceSvg
-function drawLine(x, y, dx, dy, styleId, svg) {
-    svg = svg || OA.SVGRoot.getElementById('sequence');
+function drawLine(x, y, dx, dy, styleId, svg = OA.SVGRoot.getElementById('sequence')) {
     const path = document.createElementNS(svgNS, "path");
     path.setAttribute('d', `M ${roundTwo(x)},${roundTwo(y)} l ${roundTwo(dx)},${roundTwo(dy)}`);
     path.setAttribute('style', OA.style[styleId]);
@@ -4491,8 +4450,7 @@ function drawRectangle(x, y, width, height, styleId = '', svg = OA.SVGRoot.getEl
 
 // drawText draws any text at position x, y in style styleId with
 // optional anchor, id, svg
-function drawText(text, x, y, styleId, anchor, id, svg, params={}) {
-    svg = svg || OA.SVGRoot.getElementById('sequence');
+function drawText(text, x, y, styleId, anchor, id, svg = OA.SVGRoot.getElementById('sequence'), params={}) {
     const newText = document.createElementNS(svgNS, "text");
     if (id) newText.setAttribute('id', id);
     if (OA.style && styleId) newText.setAttribute('style', OA.style[styleId]);
@@ -4510,15 +4468,11 @@ function drawText(text, x, y, styleId, anchor, id, svg, params={}) {
 // with optional anchor and id
 // w and h are width and height. With one of them not set the other will
 // be determined automatically
-function drawTextArea(text, x, y, w, h, styleId, id, svg) {
-    svg = svg || OA.SVGRoot.getElementById('sequence');
-
-    // determine current svg width for later checking of correct
-    // foreignObject handling
-    const svgWidth = svg.getBBox().width;
-
-    var newText = document.createElementNS(svgNS, "foreignObject");
-    const div = document.createElement('div');
+function drawTextArea(text, x, y, w, h, styleId, id, svg = OA.SVGRoot.getElementById('sequence')) {
+    const
+        div = document.createElement('div'),
+        newText = document.createElementNS(svgNS, "foreignObject");
+    
     newText.setAttribute('x', roundTwo(x));
     newText.setAttribute('y', roundTwo(y));
     if (w) {
@@ -4531,61 +4485,20 @@ function drawTextArea(text, x, y, w, h, styleId, id, svg) {
     newText.appendChild(div);
     svg.appendChild(newText);
 
-    // A bug in the Windows app causes the width of the svg to
-    // be incorrect when using foreignObject. So we check the new
-    // width. If it's wrong, redo everything as text lines
-    if (w && svg.getBBox().width > Math.max(svgWidth, x + w)) {
-        newText.remove();
-        var
-            newText = document.createElementNS(svgNS, 'g'),
-            words = text.split(' '),
-            textLine = document.createElementNS(svgNS, "text"),
-            textNode = document.createTextNode('|');
-
-        // First we find out the line height using | character
-        textLine.appendChild(textNode);
-        newText.appendChild(textLine);
-        svg.appendChild(newText);
-        if (styleId) newText.setAttribute('style', OA.style[styleId]);
-        var lineHeight = textLine.getBBox().height;
-        y += lineHeight;
-        // Now that we know, start building the lines, word by word
-        textLine.firstChild.data = words[0];
-        textLine.setAttribute('x', roundTwo(x));
-        textLine.setAttribute('y', roundTwo(y));
-        for (let i = 1; i < words.length; i++) {
-            var len = textNode.data.length;
-            textLine.firstChild.data += ` ${words[i]}`;
-            if (textLine.getComputedTextLength() > w) {
-                textLine.firstChild.data = textLine.firstChild.data.slice(0, len);
-                textLine = document.createElementNS(svgNS, "text");
-                y += lineHeight;
-                textLine.setAttribute("x", roundTwo(x));
-                textLine.setAttribute("y", roundTwo(y));
-                textNode = document.createTextNode(words[i]);
-                textLine.appendChild(textNode);
-                newText.appendChild(textLine);
-            }
-        }
-    }
-
     if (id) newText.setAttribute('id', id);
 
     return newText;
-
 }
 
 // drawCircle draws a circle
-function drawCircle(attributes, svg) {
-    svg = svg || OA.SVGRoot.getElementById('sequence');
+function drawCircle(attributes, svg = OA.SVGRoot.getElementById('sequence')) {
     const circle = document.createElementNS(svgNS, "circle");
     for (let key in attributes) circle.setAttribute(key, attributes[key]);
     svg.appendChild(circle);
 }
 
 // drawImage draws an image
-function drawImage(attributes, svg) {
-    svg = svg || OA.SVGRoot.getElementById('sequence');
+function drawImage(attributes, svg = OA.SVGRoot.getElementById('sequence')) {
     const image = document.createElementNS(svgNS, 'image');
     for (let key in attributes) {
         if (key === 'href') {
@@ -4601,9 +4514,9 @@ function drawImage(attributes, svg) {
 // doOnLoad is only called on initial loading of the page
 function doOnLoad() {
 
-    // Immediately remove splash screen on Windows or Cordova app
+    // Immediately remove splash screen on Cordova app
     // as splash screen is shown by the app itself
-    if (OA.platform.uwp || OA.platform.cordova) $('loading').remove();
+    if (OA.platform.cordova) $('loading').remove();
 
     // Check browser requirements by checking for Promise support.
     // OpenAero will not function without it!
@@ -4767,7 +4680,7 @@ function doOnLoad() {
     // add all listeners for clicks, keyup etc
     addEventListeners();
 
-    if (!(OA.platform.android || OA.platform.ios || OA.platform.uwp || OA.platform.windows10)) {
+    if (!(OA.platform.android || OA.platform.ios || OA.platform.windows10)) {
         // setup PWA handler. Must be done early to ensure triggering of
         // beforeinstallprompt
         const installPWA = $(OA.platform.mobile ?
@@ -4954,12 +4867,14 @@ function doOnLoad() {
 
     // Load completed, except possibly for asynchronous rule loading.
     // Fade out and remove splash screen in a second
-    if (!(OA.platform.cordova || OA.platform.uwp)) {
+    if (!(OA.platform.cordova)) {
         setTimeout(function () { $('loading').style = 'opacity: 0.01;'; }, 600);
         setTimeout(function () { $('loading').remove(); }, 1000);
     }
 
     currentUser();
+
+    //goThroughFigureGroups();
 }
 
 // launchURL is run during doOnLoad (web) or on event onLaunched (App)
@@ -5544,7 +5459,7 @@ function checkForApp() {
             chrome.management.uninstallSelf();
         });
     } else if (OA.platform.android || OA.platform.ios ||
-        (OA.platform.mobile && !(OA.platform.cordova || OA.platform.uwp))) {
+        (OA.platform.mobile && !(OA.platform.cordova))) {
         // Show the banner for getting the Android, iOS or PWA app under
         // certain conditions
         const
@@ -5567,8 +5482,6 @@ function checkForApp() {
             }
         } else localStorage.setItem('installAppAsked', 1);
 
-    } else if (OA.platform.uwp) {
-        // inside UWP app, do nothing
     } else if (OA.platform.windows10) {
         // add the link to Windows 10 installation to Tools
         $('installDesktopApp').classList.remove('noDisplay');
@@ -7603,7 +7516,7 @@ function checkUpdateDone() {
 
         // Wait a few seconds to give platform.cordova to be set if applicable
         setTimeout(function () {
-            if (OA.platform.cordova || OA.platform.uwp) {
+            if (OA.platform.cordova) {
                 alertBox(
                     { userText: 'installedApp' },
                     { userText: 'installation' }
@@ -8295,36 +8208,38 @@ function deleteLogo(evt) {
 // parseFiguresFile parses the figures file and stores it in several
 // arrays for fast retrieval
 function parseFiguresFile() {
-    var
-        groupRegex = new RegExp('^F\\d'),
-        figGroupSelector = $('figureGroup'),
+    const
+        figGroupSelector = $('figureGroup') || document.createElement('select'), // Create it in case it doesn't exist. To prevent execution errors
+        groupClasses = ['familyA', 'familyB'];
+    let
         figGroupNr = 0,
         entryExit = '',
         entryExitSplit = [],
         theBase = '',
         rollbase = '',
-        rolls = [];
+        rolls = [],
+        figMainGroup = '',
+        groupClass = 1;
 
     // add the Queue 'figure group' at the beginning
     OA.figGroup[0] = { 'family': '*', 'name': OA.userText.figureQueue };
     // add an option for the group to the figure selector
-    var option = document.createElement('option');
-    option.setAttribute('value', 0);
-    option.id = 't_figureQueue';
-    option.classList.add('userText');
-    if (figGroupSelector) figGroupSelector.appendChild(option);
+    {
+        const option = document.createElement('option');
+        option.setAttribute('value', 0);
+        option.id = 't_figureQueue';
+        option.classList.add('userText');
+        figGroupSelector.appendChild(option);
+    }
 
-    var figMainGroup = '';
-    var groupClasses = ['familyA', 'familyB'];
-    var groupClass = 1;
     for (let i = 0; i < figs.length; i++) {
         // Clean up the lines
-        var line = sanitizeSpaces(figs[i]);
+        const line = sanitizeSpaces(figs[i]);
         // Split the remainder on the space. Figure group lines and
         // Family 9 should now have two elements, the others three
-        var splitLine = line.split(" ");
+        const splitLine = line.split(" ");
         // check if we are dealing with a 'figure group' line
-        if (groupRegex.test(line)) {
+        if (/^F\d/.test(line)) {
             // increase figGroupNr counter
             figGroupNr++;
             // parse family and name
@@ -8333,57 +8248,59 @@ function parseFiguresFile() {
                 'name': splitLine[1]
             };
             // add an option for the group to the figure selector
-            const option = document.createElement('option');
-            option.setAttribute('value', figGroupNr);
-            option.setAttribute('id', `t_figureGroups.${OA.figGroup[figGroupNr].name}`);
-            option.classList.add ('userText');
             if (figMainGroup != line[1]) {
                 figMainGroup = line[1];
                 groupClass = 1 - groupClass;
             }
-            option.classList.add(groupClasses[groupClass]);
-            if (figGroupSelector) figGroupSelector.appendChild(option);
+            
+            figGroupSelector.appendChild (
+                Object.assign (
+                    document.createElement('option'),
+                    {
+                        'value': figGroupNr,
+                        'id': `t_figureGroups.${OA.figGroup[figGroupNr].name}`,
+                        'classList': `userText ${groupClasses[groupClass]}`
+                    }
+                )
+            )
         } else {
             if (splitLine[0]) {
                 // Next we split the Aresti and K-factors part
                 const
                     arestiK = splitLine[1].split("("),
-                    kFactors = arestiK[1].replace(")", "").split(":");
-                if (!arestiK[1].match(/:/)) kFactors[1] = kFactors[0];
+                    kFactors = arestiK.length > 1 ?
+                        arestiK[1].replace(")", "").split(":") :
+                        [-1];  // no K factors. Set to -1 and calculate later
                 // Split K factors on the colon; kFactors[0] is for Powered,
                 // kFactors[1] is for Gliders
-                OA.fig[i] = {
+                if (kFactors.length < 2) kFactors[1] = kFactors[0];
+
+                const thisFig = ({
                     'aresti': arestiK[0],
                     'kPwrd': parseInt(kFactors[0]),
                     'kGlider': parseInt(kFactors[1]),
                     'group': figGroupNr,
                     'pattern': splitLine[0]
-                };
-                (OA.arestiToFig[arestiK[0]] || (OA.arestiToFig[arestiK[0]] = [])).push(i);
+                });
+
+                (OA.arestiToFig[arestiK[0]] || (OA.arestiToFig[arestiK[0]] = [])).push(OA.fig.length);
                 // Extract roll elements for everything but roll figures
                 // and (rolling) turns
                 if (regexTurn.test(splitLine[0])) {
                     // handle (rolling) turns
                     theBase = splitLine[0];
-                    if (theBase in OA.figBaseLookup) {
-                        OA.figBaseLookup[theBase].push(i);
-                    } else {
-                        OA.figBaseLookup[theBase] = [i];
-                    }
-                    OA.fig[i].base = theBase;
-                    OA.fig[i].draw = splitLine[2];
-                    OA.fig[i].entryExit = OA.fig[i].entryExitGlider = OA.fig[i].entryExitPower =
+                    (OA.figBaseLookup[theBase] = OA.figBaseLookup[theBase] || []).push(OA.fig.length);
+                    thisFig.base = theBase;
+                    thisFig.draw = splitLine[2];
+                    thisFig.entryExit = thisFig.entryExitGlider = thisFig.entryExitPower =
                         theBase.replace(/[^-+]*/g, '').replace(/-/g, 'n').replace(/\+/g, 'N');
+                    OA.fig.push(thisFig);
                 } else if (splitLine.length > 2) {
                     // handle everything except (rolling) turns and rolls
                     theBase = splitLine[0].replace(regexTurnsAndRolls, '');
-                    if (theBase in OA.figBaseLookup) {
-                        OA.figBaseLookup[theBase].push(i);
-                    } else {
-                        OA.figBaseLookup[theBase] = [i];
-                    }
-                    OA.fig[i].base = theBase;
-                    OA.fig[i].draw = splitLine[2];
+                    (OA.figBaseLookup[theBase] = OA.figBaseLookup[theBase] || []).push(OA.fig.length);
+                    thisFig.base = theBase;
+                    thisFig.draw = splitLine[2];
                     // Find which rolls are possible in this figure, handle the
                     // empty base of rolls on horizontal
                     if (theBase.replace(/[\+\-]+/g, '') != '') {
@@ -8392,39 +8309,39 @@ function parseFiguresFile() {
                         rollbase = Array(splitLine[0].replace(/[\+\-]+/g, ''));
                     }
                     rolls = rollbase.join(')').replace(/[\(\+\-]+/g, '').split(')');
-                    OA.fig[i].rolls = [];
+                    thisFig.rolls = [];
                     for (let r = 0; r < rolls.length; r++) {
                         switch (rolls[r]) {
                             case (figpat.fullroll):
-                                OA.fig[i].rolls[r] = 1;
+                                thisFig.rolls[r] = 1;
                                 break;
                             case (figpat.halfroll):
-                                OA.fig[i].rolls[r] = 2;
+                                thisFig.rolls[r] = 2;
                                 break;
                             case (figpat.anyroll):
-                                OA.fig[i].rolls[r] = 3;
+                                thisFig.rolls[r] = 3;
                                 break;
                             case (figpat.spinroll):
-                                OA.fig[i].rolls[r] = 4;
+                                thisFig.rolls[r] = 4;
                                 break;
                             case (figpat.longforward):
-                                OA.fig[i].rolls[r] = 9;
+                                thisFig.rolls[r] = 9;
                                 break;
                             default:
-                                OA.fig[i].rolls[r] = 0;
+                                thisFig.rolls[r] = 0;
                         }
                     }
                     // create entry/exit speed and attitude codes
-                    entryExit = OA.fig[i].draw.replace(/[^dvzmcpro_]/gi, '');
+                    entryExit = thisFig.draw.replace(/[^dvzmcpro_]/gi, '');
                     // assure only half rolls remain
                     entryExitSplit = entryExit.split('_');
                     for (let j = 0; j < entryExitSplit.length; j++) {
                         // if first roll does not exist, combine this drawing part
                         // with the next roll (e.g. +id^-)
-                        if (OA.fig[i].rolls[0] === 0) {
-                            if (OA.fig[i].rolls[j + 1] === 2) entryExitSplit[j] += '^';
+                        if (thisFig.rolls[0] === 0) {
+                            if (thisFig.rolls[j + 1] === 2) entryExitSplit[j] += '^';
                         } else {
-                            if (OA.fig[i].rolls[j] === 2) entryExitSplit[j] += '^';
+                            if (thisFig.rolls[j] === 2) entryExitSplit[j] += '^';
                         }
                     }
                     // add attitude info
@@ -8443,14 +8360,15 @@ function parseFiguresFile() {
                         } else return (att === '+') ? 'N' : 'n';
                     }
 
-                    OA.fig[i].entryExitGlider = getCode(theBase[0], 'glider', 'entry') +
+                    thisFig.entryExitGlider = getCode(theBase[0], 'glider', 'entry') +
                         getCode(theBase.slice(-1), 'glider', 'exit');
-                    OA.fig[i].entryExitPower = getCode(theBase[0], 'power', 'entry') +
+                    thisFig.entryExitPower = getCode(theBase[0], 'power', 'entry') +
                         getCode(theBase.slice(-1), 'power', 'exit');
-                    OA.fig[i].entryExit = OA.fig[i].entryExitPower;
+                    thisFig.entryExit = thisFig.entryExitPower;
+
+                    OA.fig.push(thisFig);
                 } else {
-                    // Handle rolls
-                    delete (OA.fig[i]); // no fig object for rolls
+                    // Handle rolls (no fig object)
                     OA.rollFig[splitLine[0]] = {
                         aresti: arestiK[0],
                         kPwrd: parseInt(kFactors[0]),
@@ -8462,10 +8380,8 @@ function parseFiguresFile() {
         }
     }
     // select first figure group and create a clone of HTML content
-    if (figGroupSelector) {
-        figGroupSelector.value = 1;
-        $('figureGroupClone').innerHTML = figGroupSelector.innerHTML;
-    }
+    figGroupSelector.value = 1;
+    $('figureGroupClone').innerHTML = figGroupSelector.innerHTML;
 }
 
 // getRuleName will create the correct, active, ruleName
@@ -8709,8 +8625,9 @@ function checkSequence(show) {
             checkRules((data) => {
                 alertBox(() => {
                     // show log page
-                    var div = document.createElement('div');
-                    var pre = document.createElement('pre');
+                    const
+                        div = document.createElement('div'),
+                        pre = document.createElement('pre');
                     for (let i = 0; i < data.log.length; i++) {
                         pre.appendChild(document.createTextNode(data.log[i] + '\n'));
                     }
@@ -8807,14 +8724,16 @@ function setReferenceSequence(string, fixed) {
 // changeReferenceSequence is called when the reference sequence is
 // changed
 function changeReferenceSequence(auto) {
-    var
+
+    const
         // remove all line breaks from the sequence reference
         string = $('referenceSequenceString').value.replace(/(\r\n|\n|\r)/gm, ' '),
-        match,
         savedText = OA.activeSequence.text,
-        thisFigure = { 'string': '', 'stringStart': 0, 'stringEnd': 0 },
-        inText = false,
-        activeFormSave = OA.activeForm;
+        activeFormSave = OA.activeForm,
+        thisFigure = { 'string': '', 'stringStart': 0, 'stringEnd': 0 };
+    let
+        match,
+        inText = false;
 
     OA.activeSequence.figures = [];
     if (auto !== true) OA.savedReference = string;
@@ -8864,15 +8783,15 @@ function changeReferenceSequence(auto) {
 
     OA.activeForm = activeFormSave;
 
-    var figCount = OA.figures.filter((figure) => figure.aresti).length;
-
-    const div = $('referenceSequenceDialog');
-    var noDisplay = div.classList.contains('noDisplay');
+    const
+        figCount = OA.figures.filter((figure) => figure.aresti).length,
+        div = $('referenceSequenceDialog'),
+        noDisplay = div.classList.contains('noDisplay');
 
     // show div to make sure bBoxes can be calculated
     div.classList.remove('noDisplay');
 
-    var svg = $('referenceSequenceSvg');
+    const svg = $('referenceSequenceSvg');
     prepareSvg(svg);
     if (figCount) {
         makeFormGrid(figCount, figCount * 150, svg);
@@ -8895,7 +8814,7 @@ function changeReferenceSequence(auto) {
         }
     }
 
-    var remaining = OA.figureLetters;
+    let remaining = OA.figureLetters;
     for (let i = 0; i < OA.figureLetters.length; i++) {
         if (OA.referenceSequence.figures[OA.figureLetters[i]]) {
             remaining = remaining.replace(OA.figureLetters[i], '');
@@ -8905,7 +8824,7 @@ function changeReferenceSequence(auto) {
         sprintf(OA.userText.unusedFigureLetters, remaining.split('').join(' ')) : '';
 
     // send relevant parts of referenceSequence to rulesWorker
-    var refSeqCheck = { figures: {} };
+    const refSeqCheck = { figures: {} };
     for (let key in OA.referenceSequence.figures) {
         refSeqCheck.figures[key] = {
             checkLine: OA.referenceSequence.figures[key].checkLine,
@@ -9341,6 +9260,99 @@ function changeFigureGroup() {
     markFigures();
 }
 
+// goThroughFigureGroups goes through all figures or a selected group. This is a trimmed-down version of
+// changeFigureGroup that is intended for various troubleshooting issues.
+// It is not used for normal functioning !!!
+function goThroughFigureGroups () {
+    let
+        arestiDraw = [],
+        families = [1,2,3,4,5,6,7,8], // draw all
+        svg = $('figureChooserSvg'),
+        wrongK = [];
+
+    for (let i = 0; i < OA.fig.length; i++) {
+        // Do this asynchronously because it may take seconds on slow devices, blocking the interface
+        Promise.resolve().then(() => {
+            // Only draw figures that are in selected families AND have not been
+            // drawn before (e.g. 1j and j)
+            if (
+                families.includes(parseInt(OA.fig[i].aresti[0].split('.')[0])) &&
+                !arestiDraw.includes(OA.fig[i].aresti + OA.fig[i].draw)
+            ) {
+                if (!OA.fig[i].svg) {
+                    // The figure has not been drawn in this session, go ahead and draw it
+                    const figure = OA.fig[i].pattern          // start with original base
+                        .replace(/[\+]/g, '')               // remove +
+                        .replace(regexFullAnySpinRoll, '1') // replace full/any roll/spin symbols by '1'
+                        .replace(regexHalfRoll, '2');       // replace half roll symbols by actual half rolls
+                    OA.figures[-1] = []; // temporarily place the figure at index -1
+
+                    OA.attitude = OA.direction = (figure[0] != '-') ? 0 : 180;
+
+                    // build the figure
+                    const fig = buildFigure([i], figure, 1, -1, true);
+                    if (Math.abs(Math.round(fig.calcK.reduce ((s, a) => s + a, 0) / 10) - fig.k[0]) > 0) {
+                        wrongK.push(fig);
+                    }
+
+                    // clear the svg
+                    prepareSvg(svg);
+                    // reset X and Y and clear figureStart to prevent adjusting
+                    // figure position
+                    OA.X = OA.Y = 0;
+                    OA.figureStart = [];
+                    // draw the figure
+                    drawFullFigure(-1, true, svg);
+                }
+
+                // add this figure's Aresti number and pattern to arestiDraw
+                // so it is not drawn twice
+                arestiDraw.push(OA.fig[i].aresti + OA.fig[i].draw);
+            }
+            if (i === OA.fig.length - 1) {
+                // When any figure was drawn, redraw sequence
+                if (-1 in OA.figures) {
+                    // Clear alert messages created by building figures
+                    OA.alertMsgs = [];
+                    OA.alertMsgRules = {};
+                    // Delete this figure
+                    delete OA.figures[-1];
+                }
+
+                let table = `
+                <p>Table and console messages generated by goThroughFigureGroups</p>
+                <table>
+                <tr>
+                <th>Catalogue nr</th>
+                <th>Current K</th>
+                <th>Correct K</th>
+                <th>Difference</th>
+                <th>Point values</th>
+                </tr>
+                `;
+
+                for (const fig of wrongK) {
+                    const calcKSum = fig.calcK.reduce ((s, a) => s + a, 0) / 10;
+                    if (Math.round(calcKSum) !== fig.k[0]) {
+                        const calcK = `${fig.calcK.map(function(val){return roundTwo(val)}).join('+')} = ${roundTwo(calcKSum * 10)}`;
+                        table += `<tr>
+                        <td>${fig.aresti[0]}</td>
+                        <td>${fig.k[0]}</td>
+                        <td>${Math.round(calcKSum)}</td>
+                        <td>${Math.round(calcKSum-fig.k[0]).toLocaleString('en',{signDisplay:'exceptZero'})}</td>
+                        <td>${calcK}</td>
+                        </tr>`;
+                    }
+                }
+                table += `</table>Total figures with incorrect K: ${wrongK.length}`;
+                alertBox(table);
+
+                console.log(table);
+            }
+        });
+    }
+}
+
 // markFigures applies marking to figure chooser elements
 function markFigures() {
     markUsedFigures();
@@ -9486,7 +9498,8 @@ function markNotAllowedFigures() {
     function illegalFigure(td) {
         if (($('hideIllegal').checked == true) &&
             (OA.activeForm !== 'FU') &&
-            ($('figureGroup').value != 0)) {
+            ($('figureGroup').value != 0))
+        {
             td.classList.add('hidden');
             td.classList.remove('matchingFigure');
         } else {
@@ -9509,14 +9522,16 @@ function markNotAllowedFigures() {
                 illegalFigure(td[j]);
             } else if (OA.activeRules) {
                 if (Object.keys(OA.checkAllowCatId).length > 0) {
-                    var aresti = OA.fig[td[j].id].aresti;
+                    let
+                        aresti = OA.fig[td[j].id].aresti,
+                        totalK;
                     if (!OA.fig[td[j].id].kRules) {
-                        var totalK = parseInt((OA.sportingClass.value === 'powered') ?
+                        totalK = parseInt((OA.sportingClass.value === 'powered') ?
                             OA.fig[td[j].id].kPwrd : OA.fig[td[j].id].kGlider);
-                    } else var totalK = parseInt(OA.fig[td[j].id].kRules);
+                    } else totalK = parseInt(OA.fig[td[j].id].kRules);
                     totalK += parseInt(OA.fig[td[j].id].rollK);
 
-                    if (aresti.match(/^queue-/)) {
+                    if (/^queue-/.test(aresti)) {
                         aresti = aresti.match(/^queue-([0-9\.]+)/)[1];
                     }
 
@@ -9885,7 +9900,7 @@ function makeMiniFormAScreen() {
                             .replace(/((?:[^+]*\+){2}[^+]*)\+/g, '$1+\u200b');
                         break;
                     case '&Sigma;':
-                        var figK = 0;
+                        let figK = 0;
                         // Check for additionals
                         if (fig.unknownFigureLetter == 'L') {
                             if (OA.additionals <= OA.additionalFig.max) {
@@ -9913,9 +9928,6 @@ function makeMiniFormAScreen() {
                 tr.appendChild(td);
             });
             $('miniFormA').appendChild(tr);
-
-            // Allow the row to be dragged when there is more than 1 figure
-            // if (figureList.length > 1) tr.setAttribute('draggable', true);
         }
     });
 
@@ -10144,8 +10156,7 @@ function makeMiniFormAScreen() {
             </td>
         </tr>`;
     }
-    // Set fixed width of modifiedK (required by Windows app, no CSS solution found)
-    if (OA.platform.uwp) $('modifiedK').style.width = `${$('miniFormAHeader').getBoundingClientRect().width}px`;
+
     // Add text when K has been modified by rules
     $('modifiedK').innerHTML = modifiedK.length ?
         changedFigureKText(modifiedK, OA.activeRules.description) : '';
@@ -11256,11 +11267,6 @@ function moveClear(i) {
                 moveLRsign = -moveLRsign;
             }
             moveDown = Math.ceil(moveDown / lineElement);
-            // No longer necessary because we redraw every time. This code could be
-            // quicker but needs extra work. Keep it here just in case...
-            //        for (let j = i; j < figures.length; j++) {
-            //          if (figures[j].bBox) figures[j].bBox.y = figures[j].bBox.y + (moveDown * lineElement)
-            //        }
 
             // Use whatever requires least movement, with a slight preference for moving down
             if ((moveLRsign != 0) && (Math.abs(moveLR) < moveDown)) {
@@ -11278,16 +11284,15 @@ function moveClear(i) {
 
 // drawFullFigure draws a complete Aresti figure in the sequenceSvg
 // or in an other svg object when provided
-function drawFullFigure(i, draggable, svg) {
+function drawFullFigure(i, draggable, svg = OA.SVGRoot) {
     // default to SVGRoot when no svg object provided
-    svg = svg || OA.SVGRoot;
     // Mark the starting position of the figure
     OA.figures[i].startPos = { 'x': OA.X, 'y': OA.Y };
     OA.figures[i].draggable = draggable;
     // return for no-draw figures
     if (!OA.figures[i].paths) return;
     // Create a group for the figure, draw it and apply to the SVG
-    let group = document.createElementNS(svgNS, "g");
+    const group = document.createElementNS(svgNS, "g");
     group.setAttribute('id', 'figure' + i);
     // put the group in the DOM
     svg.getElementById('sequence').appendChild(group);
@@ -11363,10 +11368,8 @@ function addToQueue(e) {
     }
 
     let string = f.string
-        // remove extensions/shortenings
-        .replace(regexExtendShorten, '').replace(/-+/g, '-')
-        // remove comments
-        .replace(regexComments, '');
+        .replace(regexExtendShorten, '').replace(/-+/g, '-') // remove extensions/shortenings
+        .replace(regexComments, '');                         // remove comments
     // correct X/Y axis switch where necessary. Queue figures always
     // start on X axis
     if (f.entryAxis == 'Y') {
@@ -11383,16 +11386,16 @@ function addToQueue(e) {
 
     // append the figure to the fig object
     OA.fig.push({
-        'aresti': aresti,
-        'base': OA.fig[figNr].base,
-        'rolls': OA.fig[figNr].rolls,
-        'draw': OA.fig[figNr].draw,
+        'aresti' : aresti,
+        'base'   : OA.fig[figNr].base,
+        'rolls'  : OA.fig[figNr].rolls,
+        'draw'   : OA.fig[figNr].draw,
         'pattern': OA.fig[figNr].pattern,
-        'kPwrd': OA.fig[figNr].kPwrd,
+        'kPwrd'  : OA.fig[figNr].kPwrd,
         'kGlider': OA.fig[figNr].kGlider,
-        'kRules': OA.fig[figNr].kRules,
+        'kRules' : OA.fig[figNr].kRules,
         'unknownFigureLetter': f.unknownFigureLetter,
-        'group': 0,
+        'group'  : 0,
         'string': string
     });
 
@@ -11404,14 +11407,7 @@ function addToQueue(e) {
 // addAllToQueue adds all figures in sequence to queue
 function addAllToQueue() {
     // check if there are any figures to add
-    let noFigures = true;
-    for (const f of OA.figures) {
-        if (f.aresti) {
-            noFigures = false;
-            break;
-        }
-    }
-    if (noFigures) {
+    if (!OA.figures.some ((f) => f.aresti)) {
         alertBox(OA.userText.addAllToQueueNoFigures, OA.userText.addAllToQueue);
         return;
     }
@@ -11562,15 +11558,9 @@ function startFuDesigner(dontConfirm) {
 
             // clear the sequence if loading from Grid and no Additional
             // figure present
-            let noAdditional = true;
-            for (let i = 0; i < OA.figures.length; i++) {
-                if (OA.figures[i].unknownFigureLetter === 'L') {
-                    noAdditional = false;
-                    break;
-                }
-            }
-
-            let text = '';
+            let
+                noAdditional = !OA.figures.some ((f) => f.unknownFigureLetter === 'L'),
+                text = '';
             if (/^G/.test(OA.activeForm) && noAdditional) {
                 text = 'eu';
             } else {
@@ -11753,7 +11743,7 @@ function freeCell(sub, col, row) {
 
 // freeCellAddHandlers adds correct handlers to each table cell in the
 // Free (Un)known designer
-function freeCellAddHandleers(td) {
+function freeCellAddHandlers(td) {
     td.addEventListener('dragenter', () => {
         const nodes = $('fuSequence').getElementsByClassName('hover');
         while (nodes.length) nodes[0].classList.remove('hover');
@@ -11898,7 +11888,7 @@ function handleFreeRemove(e, el) {
     noPropagation(e); // Stops some browsers from redirecting.
 
     // Save scroll location, to restore later
-    let scrollTop = $('fuSequence').scrollTop;
+    const scrollTop = $('fuSequence').scrollTop;
 
     // Shrink figure to disappear
     el.parentNode.style.transform = 'scale(0.01)';
@@ -11957,7 +11947,7 @@ function buildFuFiguresTab() {
     Object.keys(OA.fuFig).forEach(key => {delete OA.fuFig[key]});
 
     for (let f of OA.figures) {
-        let l = f.unknownFigureLetter;
+        const l = f.unknownFigureLetter;
         if (l && (OA.figureLetters.indexOf(l) > -1) && f.aresti) {
             const figNr = f.figNr;
             // check if this letter exists already. If this happens, present
@@ -12006,7 +11996,7 @@ function buildFuFiguresTab() {
 
     // check if we have all required figures. If not, present error
     // message and return false
-    var missing = '';
+    let missing = '';
     OA.figureLetters.split('').forEach ((l) => { if (!OA.fuFig[l]) missing += l; });
 
     if (missing) {
@@ -12015,24 +12005,24 @@ function buildFuFiguresTab() {
     }
 
     // start adding the figures
-    var
+    const
         svg = $('figureChooserSvg'),
+        table = $('fuFiguresTable'),
+        fragment = document.createDocumentFragment(),
         // Define chooser width. Add margin to scroll for touch devices and iOS apps on Mac
         width = OA.platform.smallMobile ? 90 : (OA.platform.touch || (OA.platform.cordova && device.isiOSAppOnMac) ? 110 : 120),
         height = 100,
         maxColCount = OA.platform.smallMobile ? 1 : 2,
+        letters = OA.figureLetters.split('');
+    let
         colCount = 0,
-        letters = OA.figureLetters.split(''),
-        table = $('fuFiguresTable'),
-        tr,
-        fragment = document.createDocumentFragment();
-
+        tr;
+        
     OA.firstFigure = false;
 
     $('fu_figures').value = '';
     removeChildNodes(table);
-    // put figures in table. In essence this is a trimmed version of the
-    // routine in changeFigureGroup
+    // put figures in table
     letters.push(OA.additionalFig.max ? 'L' : 'X');
     letters.forEach((l) => {
         // clear the svg
@@ -12054,7 +12044,7 @@ function buildFuFiguresTab() {
             // draw the figure
             drawFullFigure(-1, true, svg);
             // retrieve the group holding the figure and set viewbox
-            var
+            const
                 group = svg.getElementById('figure-1'),
                 bBox = group.getBBox(),
                 xMargin = bBox.width / 20,
@@ -12087,7 +12077,7 @@ function buildFuFiguresTab() {
         }
         colCount = (colCount + 1) % maxColCount;
 
-        var td = document.createElement('td');
+        const td = document.createElement('td');
         tr.appendChild(td);
         td.setAttribute('id', 'fu' + l);
         if (!(/[LX]/.test(l))) {
@@ -12097,7 +12087,7 @@ function buildFuFiguresTab() {
                 '<div class="UFKInQueue">K:' +
                 OA.figures[-1].k.reduce((a, b) => a + b) + '</div>';
         } else {
-            var textDiv = td.appendChild(document.createElement('div'));
+            const textDiv = td.appendChild(document.createElement('div'));
             textDiv.innerHTML = OA.userText[(l === 'L') ? 'additional' : 'free'];
         }
         td.setAttribute(iosDragDropShim.enabled ? 'data-draggable' : 'draggable', true);
@@ -12652,7 +12642,7 @@ function getFigureSets(sets, maxSize) {
 
     const setFigs = [];
     sets.forEach ((s, i) => { setFigs.push([i]) });
-
+    
     if (sets.length > 1) {
         // first match correct speeds, then match with neutral
         let matchNeutral = false;
@@ -14343,7 +14333,9 @@ function OLANtoXML(string) {
 // activateXMLsequence will make a sequence provided as XML active
 // it returns true on succes and false on failure
 function activateXMLsequence(xml, noLoadRules) {
-    let freeUnknownSequence = '';
+    let
+        freeUnknownSequence = '',
+        prevForm = false;
 
     // make sure no figure is selected
     if (OA.selectedFigure.id !== null) selectFigure(false);
@@ -14413,9 +14405,9 @@ function activateXMLsequence(xml, noLoadRules) {
             $('acreg').value = parseAircraft('registration');
         }
 
-        var prevForm = OA.activeForm;
+        prevForm = OA.activeForm;
         // check for default_view
-        var view = $('default_view').value;
+        let view = $('default_view').value;
         if (view) {
             view = view.split(':');
             switch (view[0]) {
@@ -14440,8 +14432,7 @@ function activateXMLsequence(xml, noLoadRules) {
 
         setFormLayout(OA.activeForm);
 
-        var logo = $('logo').value;
-        if (logoImages[logo]) selectLogo(logo); else removeLogo();
+        if (logoImages[$('logo').value]) selectLogo($('logo').value); else removeLogo();
 
         checkOpenAeroVersion();
     }
@@ -14813,50 +14804,12 @@ function saveFile(data, name, ext, filter, format, param={}) {
 
     // depending on platform we choose a method for
     // saving the file with the following preference:
-    // 1) Use Windows.Storage for Windows UWP
-    // 2) Use Cordova file saving on Cordova
-    // 3) Use iOS save dialog on iOS
-    // 4) Use showSaveFilePicker when available (Chrome/Edge/Opera since late 2020)
-    // 5) Use "download" attribute
+    // 1) Use Cordova file saving on Cordova
+    // 2) Use iOS save dialog on iOS
+    // 3) Use showSaveFilePicker when available (Chrome/Edge/Opera since late 2020)
+    // 4) Use "download" attribute
 
-    if (OA.platform.uwp) {
-        // 1) Windows UWP saving
-        var savePicker = new Windows.Storage.Pickers.FileSavePicker();
-        savePicker.suggestedStartLocation =
-            Windows.Storage.Pickers.PickerLocationId.documentsLibrary;
-        // Dropdown of file types the user can save the file as
-        savePicker.fileTypeChoices.insert(filter.name, [filter.filter]);
-        savePicker.suggestedFileName = name + ext;
-
-        savePicker.pickSaveFileAsync().done(function (file) {
-            if (file) {
-                // Open the returned file in order to copy the data
-                file.openAsync(Windows.Storage.FileAccessMode.readWrite).then(function (output) {
-                    // Get the IInputStream stream from the blob object
-                    var input = OA.saveData.blob.msDetachStream();
-
-                    // Copy the stream from the blob to the File stream
-                    Windows.Storage.Streams.RandomAccessStream.copyAsync(input, output).then(function () {
-                        output.flushAsync().done(function () {
-                            //if (updateStatus === Windows.Storage.Provider.FileUpdateStatus.complete) {
-                            // update filename, except for zipped figure files
-                            if (ext != '.zip') updateSaveFilename(file.name.replace(/\.[^.]*$/, ''));
-                            if (ext === '.seq') setSequenceSaved(true);
-                            //} else {
-                            //	result = false;
-                            //}
-                            input.close();
-                            output.close();
-                        });
-                    });
-                });
-            } else {
-                // saving was cancelled
-                result = false;
-            }
-        });
-        return result;
-    } else if (OA.platform.cordova) { // On Cordova, use this instead of showSaveFilePicker 
+    if (OA.platform.cordova) { // On Cordova, use this instead of showSaveFilePicker 
         saveDialog(' ', name, ext, param);
     } else if ("showSaveFilePicker" in window) {
         // Use showSaveFilePicker when available (Chrome/Edge/Opera since late 2020)
@@ -18636,6 +18589,8 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
                             paths = buildShape ('Curve', angle * 0.5, paths);
                             if (smallCurve === 2) curveRadius += 1.5;
                             */
+
+                            calcK.push (OA.calcK.loopArc[figureDraw.charAt(i)]);
                         }
                         // if applicable, reset curveRadius when done
                         if (figureDraw.charAt(i + 1) == '/') curveRadius *= 2;
@@ -18704,16 +18659,10 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
 
     // The figure is complete. Create the final figure object for later
     // processing such as drawing Forms and point & click figure editing
-    const calcKSum = calcK.reduce ((s, a) => s + a, 0);
-    if (seqNr && Math.round(calcKSum) !== kFactors[0]) {
-        console.log(seqNr + ' : ' + calcKSum);
-        console.log(calcK);
-    }
-
     Object.assign(OA.figures[figStringIndex], {
         aresti: arestiNrs,
         base: OA.fig[figNr].base,
-        calcK : calcK,
+        calcK : calcK.filter((value) => value !== 0), // Remove zeroes from calcK
         checkLine: figCheckLine,
         description: description,
         entryExt: entryExt,
@@ -18765,6 +18714,8 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
     // set OLAN.inFigureXSwitchFig (used for OLAN sequence autocorrect) to
     // Infinity when we exit on X axis
     if ((OA.direction % 180) == 0) OA.OLAN.inFigureXSwitchFig = Infinity;
+
+    return OA.figures[figStringIndex];
 }
 
 // checkQRollSwitch checks for vertical 1/4 rolls and determines

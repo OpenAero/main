@@ -28,7 +28,7 @@
 // - The value is an OpenAero sequence link (use "File > Save as link" in OpenAero to generate)
 
 let library = {
-    'version': 2026.005,
+    'version': 2026.007,
 
     '2026 CIVA Unl Free Known':'https://openaero.net/?s=hFVubGltaXRlZIdwb3dlcmVkiEZyZWUgS25vd26JQ0lWQYo0MIswjSJAQSIgNTszaWZkaCgnKaeyLqf-ICJAQiIgMmoyfiAoMCw4KSAiQEMiIGArpzVpdGHgM2lmpyAoMCwyKSAyJSAiQEQiIC3g4DMsNS6naWdgNmlmLDEnfiAoMCwxNikgIkBFIiB-LjMsOCdwbiinLDVmLDguJykupy2PQ0lWQZAyMDI1LjEuMTGRZ3JpZDo1',
     '2026 CIVA Adv Free Known':'https://openaero.net/?s=hEFkdmFuY2Vkh3Bvd2VyZWSIUHJvZ3JhbW1lMYlDSVZBijMwizCNIkBBIiAyNHJwNi0gKDMsMCkgIkBCIiAtMmRoKCw0KTNmICgwLDgpICJAQyIgLDFtMywzNC0gKDAsNikgIkBEIiAvc2licGIoMymurjQgKDE0LDApICJARSIgLDJrZo9DSVZBkDIwMjUuMS4xMZFncmlkOjU',
@@ -38,11 +38,11 @@ let library = {
 
     '2026 AAC Int Free Known':'https://openaero.net/?s=hEludGVybWVkaWF0ZYdwb3dlcmVkiFByb2dyYW1tZTGJQUFDijMwizCNIkBBIiBkaC6nICgtOSwwKSAiQEIiIHJwMi0gKC0xLDApICJAQyIgLDI0YbQgKDksMTIpICJARCIgJzJmLid0LqcgKC04LDApICJARSIgcGI4Lqdej0FBQ5AyMDI1LjEuMTGRZ3JpZDo1',
 
-    '2026 IAC Primary Known':'https://openaero.net/?s=hFByaW1hcnmGMjAyNodwb3dlcmVkiEtub3duiUlBQ4o1izCNZCBpdjZzrqcgbyDgYGOurqcsMiAzJSDgKzJqIDQlICwxj0lBQ5AyMDI1LjEuMTGRQg',
+    '2026 IAC Primary Known':'https://openaero.net/?s=hFByaW1hcnmGMjAyNodwb3dlcmVkiEtub3duiUlBQ4o1izCNZCBpdmA2c66nIC5jLicyYCvgICgtMTUsMTMpIG8gNSUgMmorIDGPSUFDkDIwMjUuMS4xMZFC',
     '2026 IAC Sportsman Known':'https://openaero.net/?s=hFNwb3J0c21hboYyMDI2h3Bvd2VyZWSIS25vd26JSUFDijEwizCNMSUgq3YuK34gKC0yLDApIH4raXY2c66urq6nqyAxJSBjMuDg4GAgKC0yLDApIDUlIG0yK34gKDIsMCkgMzAlIOBgLDI0YSvg4CA0JSDgK28rYCAxNSUgYCsyav4gfqurq6dorqerKyAuJzErICgtMiwwKSB-qytrLDKurq4uK34gKDIsMCkgNCUgbSwyNI9JQUOQMjAyNS4xLjExkUI',
     '2026 IAC Intermediate Known':'https://openaero.net/?s=hEludGVybWVkaWF0ZYYyMDI2h3Bvd2VyZWSIS25vd26JSUFDijIwizCN4ygyKSJ8IjI0K-BgIC92NCBpdjVzrisgbyyyIOArcGKuLicyNC4nq_4gKC0xLDApIDklIGAr4ODgYDLgcmMssivg4GAgKC01LDApIH4rZGiurq6urqurq34gNSUgri5tMa2tfiAoMSwwKSA5JSAvLTJqLT4gLTI0IDFqMY9JQUOQMjAyNS4xLjExkUI',
     '2026 IAC Advanced Known':'https://openaero.net/?s=hEFkdmFuY2VkhjIwMjaHcG93ZXJlZIhLbm93bolJQUOKMzCLMI02JSC0Y2AsMuDg4GAgKDIsMCkgOSUgbTEtICgxMiwwKSAv_q0tLmiuri6nInwiMmaurq4uqyv-ICgtMTYsMCkgfquup24oLicyNK4uKS4ifCIyNC4nLSAoLTIsMCkg4C01aXOuLqdpQmIo4ODgKa6uric4JyAzJSA2bf4gKLEsMCkgsiUg4ODg4ODgYCw2Zmlj4ODgMuDg4OAtIDklIC1gYTMnLDM0K-AgNiUgYCvgYDhwYjOupyvgYCAzJSAyPiBgtCdtInwiMjQr_iAoNSwwKSA0JSAzam8zj0lBQ5AyMDI1LjEuMTGRQg',
-    '2026 IAC Unlimited Known':'https://openaero.net/?s=hFVubGltaXRlZIYyMDI2h3Bvd2VyZWSIS25vd26JSUFDijQwizCNMyUgL6ssMmlmJ3DiKODg4CwzNK4upyknsict_iAoLTIsMCkgNCUgfi3g4DVpcywyLqdpYuAsMjQtYCA3JSDgLWlmrq4naW4oLiwzLDM0ri6nKa6uLqct_iAyJSAyPiAtJzJhYyiuri6nLCJ8IjMyrq6uKa0gMyUgLeBgNa4sInwiMzTgcCgssimupywyNK6uq6sgKDMsMCkgIkBDIiA1JSAnOW02Ziw0OK0t_iBbOSwwXSA2JSAvLadpdGGnM2lmLiB-q7JirqczZi6nK_4gMyUgrq4nsm0yaWb-ICJARSIgMyUgL-Arj0lBQ5AyMDI1LjEuMTGRQg',
+    '2026 IAC Unlimited Known':'https://openaero.net/?s=hFVubGltaXRlZIYyMDI2h3Bvd2VyZWSIS25vd26JSUFDijQwizCNMyUgL6ssMmlmJ3DiKODg4CwzNK4upyknsict_iAoLTIsMCkgNCUgfi3g4DVpcywyLqdpYuAsMjQtYCA3JSDgLWlmrq4naW4oLiwzLDM0ri6nKa6uLqct_iAyJSAyPiAtJzJhYyiuri6nLCJ8IjMyrq6uKa0gMyUgLeBgNa4sInwiMzTgcCgssimupywyNK6uq6sgKDMsMCkgIkBDIiA1JSAnOW02Ziw0OK0t_iBbOSwwXSA2JSAvLadpdGGnM2lmLiB-q7JirqczZi6nK_4gMyUgrq4nsm0yaWb-ICJARSIgMyUgL-ArM2pvaTMrj0lBQ5AyMDI1LjEuMTGRQg',
 
     '2026 IAC-Glider Primary Known':'https://openaero.net/?s=hFByaW1hcnmGMjAyNodnbGlkZXKIS25vd26JSUFDijWLMI3-aWQu_iArb2orfiD-M2orYCAnMX4gYCsuaneupytgIC0xJSBvj0lBQ5AyMDI1LjEuMTGRQg',
     '2026 IAC-Glider Sportsman Known':'https://openaero.net/?s=hFNwb3J0c21hboYyMDI2h2dsaWRlcohLbm93bolJQUOKMTWLMI0tMSUgbTIgLTElIP5pdjVzJyAtMiUg_m9qq_4gLTIlIH4rbysgLTIlIGArYDKncmRirierqyAtMiUgK-BjLicyK2AgMSAtMSUgMmqPSUFDkDIwMjUuMS4xMZFC',

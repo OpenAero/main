@@ -1787,7 +1787,7 @@ var figs = [
 
 // Family 8.11. Cuban-vertical combinations
 "F8.11 cubanVertical",
-//"+_cv(^)&- 8.11.2.1(25) ~_c=~_~z~_~v~",
+"+_cv(^)&- 8.11.2.1 ~_c=~_~z~_~v~",
 
 /* family 9 placeholder */
 'F9 rollsAndSpins',
