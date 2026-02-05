@@ -265,474 +265,22 @@ OA.errors = [];
 // Use $ for document.getElementById. Saves around 20kB and improves readability
 const $ = id => document.getElementById(id);
 
-/*
- * steganography.js v1.0.3 2017-09-22
- *
- * Copyright (C) 2012 Peter Eigenschink (http://www.peter-eigenschink.at/)
- * Dual-licensed under MIT and Beerware license.
-*/
-(function (name, context, factory) {
-    // Supports UMD. AMD, CommonJS/Node.js and browser context
-    if (typeof module !== "undefined" && module.exports) {
-        module.exports = factory();
-    } else if (typeof define === "function" && define.amd) {
-        define(factory);
-    } else {
-        context[name] = factory();
-    }
-})("steg", this, () => {
-    var Cover = function Cover() { };
-    var util = {
-        "isPrime": function (n) {
-            if (isNaN(n) || !isFinite(n) || n % 1 || n < 2) return false;
-            if (n % 2 === 0) return (n === 2);
-            if (n % 3 === 0) return (n === 3);
-            var m = Math.sqrt(n);
-            for (let i = 5; i <= m; i += 6) {
-                if (n % i === 0) return false;
-                if (n % (i + 2) === 0) return false;
-            }
-            return true;
-        },
-        "findNextPrime": function (n) {
-            for (let i = n; true; i += 1)
-                if (util.isPrime(i)) return i;
-        },
-        "sum": function (func, end, options) {
-            var sum = 0;
-            options = options || {};
-            for (let i = options.start || 0; i < end; i += (options.inc || 1))
-                sum += func(i) || 0;
-
-            return (sum === 0 && options.defValue ? options.defValue : sum);
-        },
-        "product": function (func, end, options) {
-            var prod = 1;
-            options = options || {};
-            for (let i = options.start || 0; i < end; i += (options.inc || 1))
-                prod *= func(i) || 1;
-
-            return (prod === 1 && options.defValue ? options.defValue : prod);
-        },
-        "createArrayFromArgs": function (args, index, threshold) {
-            var ret = new Array(threshold - 1);
-            for (let i = 0; i < threshold; i += 1)
-                ret[i] = args(i >= index ? i + 1 : i);
-
-            return ret;
-        },
-        "loadImg": function (url) {
-            var image = new Image();
-            image.src = url;
-            return image;
-        }
-    };
-
-    Cover.prototype.config = {
-        "t": 3,
-        "threshold": 1,
-        "codeUnitSize": 16,
-        "args": function (i) { return i + 1; },
-        "messageDelimiter": function (modMessage, threshold) {
-            var delimiter = new Array(threshold * 3);
-            for (let i = 0; i < delimiter.length; i += 1)
-                delimiter[i] = 255;
-
-            return delimiter;
-        },
-        "messageCompleted": function (data, ithreshold) {
-            var done = true;
-            for (let j = 0; j < 16 && done; j += 1) {
-                done = done && (data[i + j * 4] === 255);
-            }
-            return done;
-        }
-    };
-    Cover.prototype.getHidingCapacity = function (image, options) {
-        options = options || {};
-        var config = this.config;
-
-        var width = options.width || image.width,
-            height = options.height || image.height,
-            t = options.t || config.t,
-            codeUnitSize = options.codeUnitSize || config.codeUnitSize;
-        return t * width * height / codeUnitSize >> 0;
-    };
-    Cover.prototype.encode = function (message, image, options) {
-        // Handle image url
-        if (image.length) {
-            image = util.loadImg(image);
-        } else if (image.src) {
-            image = util.loadImg(image.src);
-        } else if (!(image instanceof HTMLImageElement)) {
-            throw new Error('IllegalInput: The input image is neither an URL string nor an image.');
-        }
-
-        options = options || {};
-        var config = this.config;
-
-        var t = options.t || config.t,
-            threshold = options.threshold || config.threshold,
-            codeUnitSize = options.codeUnitSize || config.codeUnitSize,
-            prime = util.findNextPrime(Math.pow(2, t)),
-            args = options.args || config.args,
-            messageDelimiter = options.messageDelimiter || config.messageDelimiter;
-
-        if (!t || t < 1 || t > 7) throw new Error('IllegalOptions: Parameter t = " + t + " is not valid: 0 < t < 8');
-
-        var shadowCanvas = document.createElement('canvas'),
-            shadowCtx = shadowCanvas.getContext('2d');
-
-        shadowCanvas.style.display = 'none';
-        shadowCanvas.width = options.width || image.width;
-        shadowCanvas.height = options.height || image.height;
-        if (options.height && options.width) {
-            shadowCtx.drawImage(image, 0, 0, options.width, options.height);
-        } else {
-            shadowCtx.drawImage(image, 0, 0);
-        }
-
-        var imageData = shadowCtx.getImageData(0, 0, shadowCanvas.width, shadowCanvas.height),
-            data = imageData.data;
-
-        // bundlesPerChar ... Count of full t-bit-sized bundles per Character
-        // overlapping ... Count of bits of the currently handled character which are not handled during each run
-        // dec ... UTF-16 Unicode of the i-th character of the message
-        // curOverlapping ... The count of the bits of the previous character not handled in the previous run
-        // mask ... The raw initial bitmask, will be changed every run and if bits are overlapping
-        var bundlesPerChar = codeUnitSize / t >> 0,
-            overlapping = codeUnitSize % t,
-            modMessage = [],
-            decM, oldDec, oldMask, left, right,
-            dec, curOverlapping, mask;
-
-        var i, j;
-        for (i = 0; i <= message.length; i += 1) {
-            dec = message.charCodeAt(i) || 0;
-            curOverlapping = (overlapping * i) % t;
-            if (curOverlapping > 0 && oldDec) {
-                // Mask for the new character, shifted with the count of overlapping bits
-                mask = Math.pow(2, t - curOverlapping) - 1;
-                // Mask for the old character, i.e. the t-curOverlapping bits on the right
-                // of that character
-                oldMask = Math.pow(2, codeUnitSize) * (1 - Math.pow(2, -curOverlapping));
-                left = (dec & mask) << curOverlapping;
-                right = (oldDec & oldMask) >> (codeUnitSize - curOverlapping);
-                modMessage.push(left + right);
-
-                if (i < message.length) {
-                    mask = Math.pow(2, 2 * t - curOverlapping) * (1 - Math.pow(2, -t));
-                    for (j = 1; j < bundlesPerChar; j += 1) {
-                        decM = dec & mask;
-                        modMessage.push(decM >> (((j - 1) * t) + (t - curOverlapping)));
-                        mask <<= t;
-                    }
-                    if ((overlapping * (i + 1)) % t === 0) {
-                        mask = Math.pow(2, codeUnitSize) * (1 - Math.pow(2, -t));
-                        decM = dec & mask;
-                        modMessage.push(decM >> (codeUnitSize - t));
-                    }
-                    else if (((((overlapping * (i + 1)) % t) + (t - curOverlapping)) <= t)) {
-                        decM = dec & mask;
-                        modMessage.push(decM >> (((bundlesPerChar - 1) * t) + (t - curOverlapping)));
-                    }
-                }
-            }
-            else if (i < message.length) {
-                mask = Math.pow(2, t) - 1;
-                for (j = 0; j < bundlesPerChar; j += 1) {
-                    decM = dec & mask;
-                    modMessage.push(decM >> (j * t));
-                    mask <<= t;
-                }
-            }
-            oldDec = dec;
-        }
-
-        // Write Data
-        var offset, index, subOffset, delimiter = messageDelimiter(modMessage, threshold),
-            q, qS;
-        for (offset = 0; (offset + threshold) * 4 <= data.length && (offset + threshold) <= modMessage.length; offset += threshold) {
-            qS = [];
-            for (i = 0; i < threshold && i + offset < modMessage.length; i += 1) {
-                q = 0;
-                for (j = offset; j < threshold + offset && j < modMessage.length; j += 1)
-                    q += modMessage[j] * Math.pow(args(i), j - offset);
-                qS[i] = (255 - prime + 1) + (q % prime);
-            }
-            for (i = offset * 4; i < (offset + qS.length) * 4 && i < data.length; i += 4)
-                data[i + 3] = qS[(i / 4) % threshold];
-
-            subOffset = qS.length;
-        }
-        // Write message-delimiter
-        for (index = (offset + subOffset); index - (offset + subOffset) < delimiter.length && (offset + delimiter.length) * 4 < data.length; index += 1)
-            data[(index * 4) + 3] = delimiter[index - (offset + subOffset)];
-        // Clear remaining data
-        for (i = ((index + 1) * 4) + 3; i < data.length; i += 4) data[i] = 255;
-
-        imageData.data = data;
-        shadowCtx.putImageData(imageData, 0, 0);
-
-        return shadowCanvas.toDataURL();
-    };
-
-    Cover.prototype.decode = function (image, options) {
-        // Handle image url
-        if (image.length) {
-            image = util.loadImg(image);
-        } else if (image.src) {
-            image = util.loadImg(image.src);
-        } else if (!(image instanceof HTMLImageElement)) {
-            throw new Error('IllegalInput: The input image is neither an URL string nor an image.');
-        }
-
-        options = options || {};
-        var config = this.config;
-
-        var t = options.t || config.t,
-            threshold = options.threshold || config.threshold,
-            codeUnitSize = options.codeUnitSize || config.codeUnitSize,
-            prime = util.findNextPrime(Math.pow(2, t)),
-            args = options.args || config.args,
-            messageCompleted = options.messageCompleted || config.messageCompleted;
-
-        if (!t || t < 1 || t > 7) throw new Error('IllegalOptions: Parameter t = " + t + " is not valid: 0 < t < 8');
-
-        var shadowCanvas = document.createElement('canvas'),
-            shadowCtx = shadowCanvas.getContext('2d');
-
-        shadowCanvas.style.display = 'none';
-        shadowCanvas.width = options.width || image.width;
-        shadowCanvas.height = options.width || image.height;
-        if (options.height && options.width) {
-            shadowCtx.drawImage(image, 0, 0, options.width, options.height);
-        } else {
-            shadowCtx.drawImage(image, 0, 0);
-        }
-
-        var imageData = shadowCtx.getImageData(0, 0, shadowCanvas.width, shadowCanvas.height),
-            data = imageData.data,
-            modMessage = [],
-            q;
-
-        var i, k, done;
-        if (threshold === 1) {
-            for (i = 3, done = false; !done && i < data.length && !done; i += 4) {
-                done = messageCompleted(data, i, threshold);
-                if (!done) modMessage.push(data[i] - (255 - prime + 1));
-            }
-        }
-
-        var message = "", charCode = 0, bitCount = 0, mask = Math.pow(2, codeUnitSize) - 1;
-        for (i = 0; i < modMessage.length; i += 1) {
-            charCode += modMessage[i] << bitCount;
-            bitCount += t;
-            if (bitCount >= codeUnitSize) {
-                message += String.fromCharCode(charCode & mask);
-                bitCount %= codeUnitSize;
-                charCode = modMessage[i] >> (t - bitCount);
-            }
-        }
-        if (charCode !== 0) message += String.fromCharCode(charCode & mask);
-
-        return message;
-    };
-
-    return new Cover();
-});
-
 /*! sprintf-js | Alexandru Marasteanu <hello@alexei.ro> (http://alexei.ro/) | BSD-3-Clause */
 
 !function (a) { function b() { var a = arguments[0], c = b.cache; return c[a] && c.hasOwnProperty(a) || (c[a] = b.parse(a)), b.format.call(null, c[a], arguments) } function c(a) { return Object.prototype.toString.call(a).slice(8, -1).toLowerCase() } function d(a, b) { return Array(b + 1).join(a) } var e = { not_string: /[^s]/, number: /[dief]/, text: /^[^\x25]+/, modulo: /^\x25{2}/, placeholder: /^\x25(?:([1-9]\d*)\$|\(([^\)]+)\))?(\+)?(0|'[^$])?(-)?(\d+)?(?:\.(\d+))?([b-fiosuxX])/, key: /^([a-z_][a-z_\d]*)/i, key_access: /^\.([a-z_][a-z_\d]*)/i, index_access: /^\[(\d+)\]/, sign: /^[\+\-]/ }; b.format = function (a, f) { var g, h, i, j, k, l, m, n = 1, o = a.length, p = "", q = [], r = !0, s = ""; for (h = 0; o > h; h++)if (p = c(a[h]), "string" === p) q[q.length] = a[h]; else if ("array" === p) { if (j = a[h], j[2]) for (g = f[n], i = 0; i < j[2].length; i++) { if (!g.hasOwnProperty(j[2][i])) throw new Error(b("[sprintf] property '%s' does not exist", j[2][i])); g = g[j[2][i]] } else g = j[1] ? f[j[1]] : f[n++]; if ("function" == c(g) && (g = g()), e.not_string.test(j[8]) && "number" != c(g) && isNaN(g)) throw new TypeError(b("[sprintf] expecting number but found %s", c(g))); switch (e.number.test(j[8]) && (r = g >= 0), j[8]) { case "b": g = g.toString(2); break; case "c": g = String.fromCharCode(g); break; case "d": case "i": g = parseInt(g, 10); break; case "e": g = j[7] ? g.toExponential(j[7]) : g.toExponential(); break; case "f": g = j[7] ? parseFloat(g).toFixed(j[7]) : parseFloat(g); break; case "o": g = g.toString(8); break; case "s": g = (g = String(g)) && j[7] ? g.substring(0, j[7]) : g; break; case "u": g >>>= 0; break; case "x": g = g.toString(16); break; case "X": g = g.toString(16).toUpperCase() }!e.number.test(j[8]) || r && !j[3] ? s = "" : (s = r ? "+" : "-", g = g.toString().replace(e.sign, "")), l = j[4] ? "0" === j[4] ? "0" : j[4].charAt(1) : " ", m = j[6] - (s + g).length, k = j[6] && m > 0 ? d(l, m) : "", q[q.length] = j[5] ? s + g + k : "0" === l ? s + k + g : k + s + g } return q.join("") }, b.cache = {}, b.parse = function (a) { for (var b = a, c = [], d = [], f = 0; b;) { if (null !== (c = e.text.exec(b))) d[d.length] = c[0]; else if (null !== (c = e.modulo.exec(b))) d[d.length] = "%"; else { if (null === (c = e.placeholder.exec(b))) throw new SyntaxError("[sprintf] unexpected placeholder"); if (c[2]) { f |= 1; var g = [], h = c[2], i = []; if (null === (i = e.key.exec(h))) throw new SyntaxError("[sprintf] failed to parse named argument key"); for (g[g.length] = i[1]; "" !== (h = h.substring(i[0].length));)if (null !== (i = e.key_access.exec(h))) g[g.length] = i[1]; else { if (null === (i = e.index_access.exec(h))) throw new SyntaxError("[sprintf] failed to parse named argument key"); g[g.length] = i[1] } c[2] = g } else f |= 2; if (3 === f) throw new Error("[sprintf] mixing positional and named placeholders is not (yet) supported"); d[d.length] = c } b = b.substring(c[0].length) } return d }; var f = function (a, c, d) { return d = (c || []).slice(0), d.splice(0, 0, a), b.apply(null, d) }; "undefined" != typeof exports ? (exports.sprintf = b, exports.vsprintf = f) : (a.sprintf = b, a.vsprintf = f, "function" == typeof define && define.amd && define(function () { return { sprintf: b, vsprintf: f } })) }("undefined" == typeof window ? this : window);
 
-/* FileSaver.js
- * A saveAs() FileSaver implementation.
- * 1.3.2
- * 2016-06-16 18:25:19
- *
- * By Eli Grey, http://eligrey.com
- * License: MIT
- *   See https://github.com/eligrey/FileSaver.js/blob/master/LICENSE.md
- */
+/*
+* FileSaver.js
+* A saveAs() FileSaver implementation.
+* Version 2.0.4, retrieved 2026/02/05 09:40 UTC
+*
+* By Eli Grey, http://eligrey.com
+*
+* License : https://github.com/eligrey/FileSaver.js/blob/master/LICENSE.md (MIT)
+* source  : http://purl.eligrey.com/github/FileSaver.js
+*/
 
-/*global self */
-/*jslint bitwise: true, indent: 4, laxbreak: true, laxcomma: true, smarttabs: true, plusplus: true */
-
-/*! @source http://purl.eligrey.com/github/FileSaver.js/blob/master/FileSaver.js */
-
-var saveAs = saveAs || (function (view) {
-    // IE <10 is explicitly unsupported
-    if (typeof view === "undefined" || typeof navigator !== "undefined" && /MSIE [1-9]\./.test(navigator.userAgent)) {
-        return;
-    }
-    var
-        doc = view.document
-        // only get URL when necessary in case Blob.js hasn't overridden it yet
-        , get_URL = function () {
-            return view.URL || view.webkitURL || view;
-        }
-        , save_link = doc.createElementNS("http://www.w3.org/1999/xhtml", "a")
-        , can_use_save_link = "download" in save_link
-        , click = function (node) {
-            var event = new MouseEvent("click");
-            node.dispatchEvent(event);
-        }
-        , is_safari = /constructor/i.test(view.HTMLElement)
-        , is_chrome_ios = /CriOS\/[\d]+/.test(navigator.userAgent)
-        , throw_outside = function (ex) {
-            (view.setImmediate || view.setTimeout)(function () {
-                throw ex;
-            }, 0);
-        }
-        , force_saveable_type = "application/octet-stream"
-        // the Blob API is fundamentally broken as there is no "downloadfinished" event to subscribe to
-        , arbitrary_revoke_timeout = 1000 * 40 // in ms
-        , revoke = function (file) {
-            var revoker = function () {
-                if (typeof file === "string") { // file is an object URL
-                    get_URL().revokeObjectURL(file);
-                } else { // file is a File
-                    file.remove();
-                }
-            };
-            setTimeout(revoker, arbitrary_revoke_timeout);
-        }
-        , dispatch = function (filesaver, event_types, event) {
-            event_types = [].concat(event_types);
-            var i = event_types.length;
-            while (i--) {
-                var listener = filesaver["on" + event_types[i]];
-                if (typeof listener === "function") {
-                    try {
-                        listener.call(filesaver, event || filesaver);
-                    } catch (ex) {
-                        throw_outside(ex);
-                    }
-                }
-            }
-        }
-        , auto_bom = function (blob) {
-            // prepend BOM for UTF-8 XML and text/* types (including HTML)
-            // note: your browser will automatically convert UTF-16 U+FEFF to EF BB BF
-            if (/^\s*(?:text\/\S*|application\/xml|\S*\/\S*\+xml)\s*;.*charset\s*=\s*utf-8/i.test(blob.type)) {
-                return new Blob([String.fromCharCode(0xFEFF), blob], { type: blob.type });
-            }
-            return blob;
-        }
-        , FileSaver = function (blob, name, no_auto_bom) {
-            if (!no_auto_bom) {
-                blob = auto_bom(blob);
-            }
-            // First try a.download, then web filesystem, then object URLs
-            var
-                filesaver = this
-                , type = blob.type
-                , force = type === force_saveable_type
-                , object_url
-                , dispatch_all = function () {
-                    dispatch(filesaver, "writestart progress write writeend".split(" "));
-                }
-                // on any filesys errors revert to saving with object URLs
-                , fs_error = function () {
-                    if ((is_chrome_ios || (force && is_safari)) && view.FileReader) {
-                        // Safari doesn't allow downloading of blob urls
-                        var reader = new FileReader();
-                        reader.onloadend = function () {
-                            var url = is_chrome_ios ? reader.result : reader.result.replace(/^data:[^;]*;/, 'data:attachment/file;');
-                            var popup = view.open(url, '_blank');
-                            if (!popup) view.location.href = url;
-                            url = undefined; // release reference before dispatching
-                            filesaver.readyState = filesaver.DONE;
-                            dispatch_all();
-                        };
-                        reader.readAsDataURL(blob);
-                        filesaver.readyState = filesaver.INIT;
-                        return;
-                    }
-                    // don't create more object URLs than needed
-                    if (!object_url) {
-                        object_url = get_URL().createObjectURL(blob);
-                    }
-                    if (force) {
-                        view.location.href = object_url;
-                    } else {
-                        var opened = view.open(object_url, "_blank");
-                        if (!opened) {
-                            // Apple does not allow window.open, see https://developer.apple.com/library/safari/documentation/Tools/Conceptual/SafariExtensionGuide/WorkingwithWindowsandTabs/WorkingwithWindowsandTabs.html
-                            view.location.href = object_url;
-                        }
-                    }
-                    filesaver.readyState = filesaver.DONE;
-                    dispatch_all();
-                    revoke(object_url);
-                }
-                ;
-            filesaver.readyState = filesaver.INIT;
-
-            if (can_use_save_link) {
-                object_url = get_URL().createObjectURL(blob);
-                setTimeout(function () {
-                    save_link.href = object_url;
-                    save_link.download = name;
-                    click(save_link);
-                    dispatch_all();
-                    revoke(object_url);
-                    filesaver.readyState = filesaver.DONE;
-                });
-                return;
-            }
-
-            fs_error();
-        }
-        , FS_proto = FileSaver.prototype
-        , saveAs = function (blob, name, no_auto_bom) {
-            return new FileSaver(blob, name || blob.name || "download", no_auto_bom);
-        }
-        ;
-    // IE 10+ (native saveAs)
-    if (typeof navigator !== "undefined" && navigator.msSaveOrOpenBlob) {
-        return function (blob, name, no_auto_bom) {
-            name = name || blob.name || "download";
-
-            if (!no_auto_bom) {
-                blob = auto_bom(blob);
-            }
-            return navigator.msSaveOrOpenBlob(blob, name);
-        };
-    }
-
-    FS_proto.abort = function () { };
-    FS_proto.readyState = FS_proto.INIT = 0;
-    FS_proto.WRITING = 1;
-    FS_proto.DONE = 2;
-
-    FS_proto.error =
-        FS_proto.onwritestart =
-        FS_proto.onprogress =
-        FS_proto.onwrite =
-        FS_proto.onabort =
-        FS_proto.onerror =
-        FS_proto.onwriteend =
-        null;
-
-    return saveAs;
-}(
-    typeof self !== "undefined" && self
-    || typeof window !== "undefined" && window
-    || this.content
-));
-// `self` is undefined in Firefox for Android content script context
-// while `this` is nsIContentFrameMessageManager
-// with an attribute `content` that corresponds to the window
-
-if (typeof module !== "undefined" && module.exports) {
-    module.exports.saveAs = saveAs;
-} else if ((typeof define !== "undefined" && define !== null) && (define.amd !== null)) {
-    define([], () => {
-        return saveAs;
-    });
-}
+(function(a,b){if("function"==typeof define&&define.amd)define([],b);else if("undefined"!=typeof exports)b();else{b(),a.FileSaver={exports:{}}.exports}})(this,function(){"use strict";function b(a,b){return"undefined"==typeof b?b={autoBom:!1}:"object"!=typeof b&&(console.warn("Deprecated: Expected third argument to be a object"),b={autoBom:!b}),b.autoBom&&/^\s*(?:text\/\S*|application\/xml|\S*\/\S*\+xml)\s*;.*charset\s*=\s*utf-8/i.test(a.type)?new Blob(["\uFEFF",a],{type:a.type}):a}function c(a,b,c){var d=new XMLHttpRequest;d.open("GET",a),d.responseType="blob",d.onload=function(){g(d.response,b,c)},d.onerror=function(){console.error("could not download file")},d.send()}function d(a){var b=new XMLHttpRequest;b.open("HEAD",a,!1);try{b.send()}catch(a){}return 200<=b.status&&299>=b.status}function e(a){try{a.dispatchEvent(new MouseEvent("click"))}catch(c){var b=document.createEvent("MouseEvents");b.initMouseEvent("click",!0,!0,window,0,0,0,80,20,!1,!1,!1,!1,0,null),a.dispatchEvent(b)}}var f="object"==typeof window&&window.window===window?window:"object"==typeof self&&self.self===self?self:"object"==typeof global&&global.global===global?global:void 0,a=/Macintosh/.test(navigator.userAgent)&&/AppleWebKit/.test(navigator.userAgent)&&!/Safari/.test(navigator.userAgent),g=f.saveAs||("object"!=typeof window||window!==f?function(){}:"download"in HTMLAnchorElement.prototype&&!a?function(b,g,h){var i=f.URL||f.webkitURL,j=document.createElement("a");g=g||b.name||"download",j.download=g,j.rel="noopener","string"==typeof b?(j.href=b,j.origin===location.origin?e(j):d(j.href)?c(b,g,h):e(j,j.target="_blank")):(j.href=i.createObjectURL(b),setTimeout(function(){i.revokeObjectURL(j.href)},4E4),setTimeout(function(){e(j)},0))}:"msSaveOrOpenBlob"in navigator?function(f,g,h){if(g=g||f.name||"download","string"!=typeof f)navigator.msSaveOrOpenBlob(b(f,h),g);else if(d(f))c(f,g,h);else{var i=document.createElement("a");i.href=f,i.target="_blank",setTimeout(function(){e(i)})}}:function(b,d,e,g){if(g=g||open("","_blank"),g&&(g.document.title=g.document.body.innerText="downloading..."),"string"==typeof b)return c(b,d,e);var h="application/octet-stream"===b.type,i=/constructor/i.test(f.HTMLElement)||f.safari,j=/CriOS\/[\d]+/.test(navigator.userAgent);if((j||h&&i||a)&&"undefined"!=typeof FileReader){var k=new FileReader;k.onloadend=function(){var a=k.result;a=j?a:a.replace(/^data:[^;]*;/,"data:attachment/file;"),g?g.location.href=a:location=a,g=null},k.readAsDataURL(b)}else{var l=f.URL||f.webkitURL,m=l.createObjectURL(b);g?g.location=m:location.href=m,g=null,setTimeout(function(){l.revokeObjectURL(m)},4E4)}});f.saveAs=g.saveAs=g,"undefined"!=typeof module&&(module.exports=g)});
 
 // Nodelist.forEach polyfill
 if (window.NodeList && !NodeList.prototype.forEach) {
@@ -749,7 +297,8 @@ if (window.NodeList && !NodeList.prototype.forEach) {
 if (!HTMLCanvasElement.prototype.toBlob) {
     Object.defineProperty(HTMLCanvasElement.prototype, 'toBlob', {
         value: function (callback, type, quality) {
-            var binStr = atob(this.toDataURL(type, quality).split(',')[1]),
+            const
+                binStr = atob(this.toDataURL(type, quality).split(',')[1]),
                 len = binStr.length,
                 arr = new Uint8Array(len);
 
@@ -1203,8 +752,8 @@ var iosDragDropShim = {
 
     // DOM helpers
     function elementFromTouchEvent(el, event) {
-        var touch = event.changedTouches[0];
-        var target = doc.elementFromPoint(
+        const touch = event.changedTouches[0];
+        const target = doc.elementFromPoint(
             touch[coordinateSystemForElementFromPoint + "X"],
             touch[coordinateSystemForElementFromPoint + "Y"]
         );
@@ -1212,10 +761,10 @@ var iosDragDropShim = {
     }
 
     function readTransform(el) {
-        var transform = el.style["-webkit-transform"];
-        var x = 0;
-        var y = 0;
-        var match = /translate\(\s*(-?\d+)[^,]*,[^-\d]*(-?\d+)/.exec(transform);
+        let
+            x = 0,
+            y = 0,
+            match = /translate\(\s*(-?\d+)[^,]*,[^-\d]*(-?\d+)/.exec(el.style["-webkit-transform"]);
         if (match) {
             x = parseInt(match[1], 10);
             y = parseInt(match[2], 10);
@@ -1224,7 +773,7 @@ var iosDragDropShim = {
     }
 
     function writeTransform(el, x, y) {
-        var transform = el.style["-webkit-transform"].replace(/translate\(\D*\d+[^,]*,\D*\d+[^,]*\)\s*/g, '');
+        const transform = el.style["-webkit-transform"].replace(/translate\(\D*\d+[^,]*,\D*\d+[^,]*\)\s*/g, '');
         el.style["-webkit-transform"] = transform + " translate(" + x + "px," + y + "px)";
     }
 
@@ -2101,113 +1650,88 @@ function aboutDialog() {
 
 /** End dialogs and windows */
 
-// Datalist with combo box polyfill
+// Combo box. Do not replace by HTML5 datalist! It does not have the
+// desired functionality.
 // The correct values are put in the select list when the box is
 // activated by user
 function combo(id) {
     let self = this;
     self.inp = $(id);
-    /** DISABLED datalist. The autocomplete "feature" causes only rules
-     * matching the current value to show. This is not the desired
-     * behaviour for these fields.
-    */
-    if (false && 'options' in document.createElement('datalist')) {
-        var datalistId = 'datalist-' + id;
-        self.inp.setAttribute('list', datalistId);
-        var datalist = document.createElement('datalist');
-        datalist.id = datalistId;
-        self.inp.parentNode.appendChild(datalist);
-        self.inp.onfocus = function () {
-            // rebuild the list
-            switch (self.inp.id) {
-                case 'rules':
-                    updateRulesList();
-                    break;
-                case 'category':
-                    updateCategoryList();
-                    break;
-                case 'program':
-                    updateProgramList();
-            }
-        }
-        self.inp.onchange = function () { changeCombo(self.inp.id); };
-    } else {
-        self.hasfocus = false;
-        self.sel = -1;
-        self.ul = self.inp.nextSibling;
-        while (self.ul.tagName !== 'UL') self.ul = self.ul.nextSibling;
-        self.ul.onmouseover = function () {
-            self.ul.classList.remove('focused');
-        };
-        self.ul.onmouseout = function () {
-            self.ul.classList.add('focused');
-            if (!self.hasfocus) self.ul.style.display = 'none';
-        };
 
-        self.inp.onfocus = function () {
-            let ul = self.ul;
-            ul.style.display = 'block';
-            ul.classList.add('focused');
-            self.hasfocus = true;
-            self.sel = -1;
-            // rebuild the list
-            switch (ul.id) {
-                case 'rulesList':
-                    updateRulesList();
-                    break;
-                case 'categoryList':
-                    updateCategoryList();
-                    break;
-                case 'programList':
-                    updateProgramList();
-            }
-            self.addMouseDown();
-        };
-        self.inp.onblur = function () {
-            if (self.ul.classList.contains('focused')) {
-                self.rset(self);
-            }
-            self.ul.classList.remove('focused');
-            self.hasfocus = false;
-            changeCombo(self.inp.id);
-        };
-        self.inp.onkeyup = function (e) {
-            if (e.key == 40 || e.key == 13) {
-                if (self.sel == self.list.length - 1) {
-                    self.sel = -1;
-                }
-                self.inp.value = self.list[++self.sel].firstChild.data;
-                changeCombo(self.inp.id);
-            } else if (e.key == 38 && self.sel > 0) {
-                self.inp.value = self.list[--self.sel].firstChild.data;
-                changeCombo(self.inp.id);
-            }
-            return false;
-        };
-    }
-}
-// only apply these for polyfill
-if (!(false && 'options' in document.createElement('datalist'))) {
-    combo.prototype.rset = function (self) {
-        self.ul.style.display = 'none';
+    self.hasfocus = false;
+    self.sel = -1;
+    self.ul = self.inp.nextSibling;
+    while (self.ul.tagName !== 'UL') self.ul = self.ul.nextSibling;
+    self.ul.onmouseover = function () {
+        self.ul.classList.remove('focused');
+    };
+    self.ul.onmouseout = function () {
+        self.ul.classList.add('focused');
+        if (!self.hasfocus) self.ul.style.display = 'none';
+    };
+
+    self.inp.onfocus = function () {
+        let ul = self.ul;
+        ul.style.display = 'block';
+        ul.classList.add('focused');
+        self.hasfocus = true;
         self.sel = -1;
+        // rebuild the list
+        switch (ul.id) {
+            case 'rulesList':
+                updateRulesList();
+                break;
+            case 'categoryList':
+                updateCategoryList();
+                break;
+            case 'programList':
+                updateProgramList();
+        }
+        self.addMouseDown();
+    };
+    self.inp.onblur = function () {
+        if (self.ul.classList.contains('focused')) {
+            self.rset(self);
+        }
+        self.ul.classList.remove('focused');
+        self.hasfocus = false;
+        changeCombo(self.inp.id);
+    };
+    self.inp.onkeyup = function (e) {
+        if (e.key == 40 || e.key == 13) {
+            if (self.sel == self.list.length - 1) {
+                self.sel = -1;
+            }
+            self.inp.value = self.list[++self.sel].firstChild.data;
+            changeCombo(self.inp.id);
+        } else if (e.key == 38 && self.sel > 0) {
+            self.inp.value = self.list[--self.sel].firstChild.data;
+            changeCombo(self.inp.id);
+        }
         return false;
     }
-    combo.prototype.addMouseDown = function () {
-        let self = this;
-        self.list = self.ul.getElementsByTagName('li');
-        for (let i = self.list.length - 1; i >= 0; i--) {
-            self.list[i].addEventListener(
-                'mousedown',
-                function () {
-                    self.inp.value = this.firstChild ? this.firstChild.data : '';
-                    self.rset(self);
-                },
-                false
-            );
-        }
-        changeCombo(self.ul.id);
+}
+
+combo.prototype.rset = function (self) {
+    self.ul.style.display = 'none';
+    self.sel = -1;
+    return false;
+}
+
+combo.prototype.addMouseDown = function () {
+    let self = this;
+    self.list = self.ul.getElementsByTagName('li');
+    for (let i = self.list.length - 1; i >= 0; i--) {
+        self.list[i].addEventListener(
+            'mousedown',
+            function () {
+                self.inp.value = this.firstChild ? this.firstChild.data : '';
+                self.rset(self);
+            },
+            false
+        );
     }
+    changeCombo(self.ul.id);
 }
 
 // selectTab allows us to select different tabbed pages
@@ -2341,10 +1865,10 @@ function roundTwo(nr) {
 
 // sanitizeSpaces does:
 // transform tabs to spaces, multiple to single spaces and
-// remove leading and trailing spaces (when noLT is false)
-function sanitizeSpaces(line, noLT) {
+// remove leading and trailing spaces (when keepLTspaces is false or unset)
+function sanitizeSpaces(line, keepLTspaces) {
     line = line.replace(/[\t]/g, ' ').replace(/\s\s+/g, ' ');
-    return (noLT ? line : line.trim());
+    return (keepLTspaces ? line : line.trim());
 }
 
 // setSequenceSaved sets the sequenceSaved variable to true or false by
@@ -2434,13 +1958,13 @@ function dirAttToAngle(dir, att, nof=false) {
 }
 
 // changeDir changes Direction global by value
-// and checks it stays within 0-359
+// and makes sure that it stays within 0-359
 function changeDir(value) {
     OA.direction = (((OA.direction + value) % 360) + 360) % 360;
 }
 
 // changeAtt changes Attitude global by value
-// and checks it stays within 0-359
+// and makes sure that it stays within 0-359
 function changeAtt(value) {
     OA.attitude = (((OA.attitude + value) % 360) + 360) % 360;
     // update goRight for attitude changes. We monitor the exit direction
@@ -2468,9 +1992,9 @@ function changeRollFontSize(s) {
     OA.style.rollText = OA.style.rollText.replace(regex, `font-size: ${rollFontSize}px;`);
 }
 
-// myGetBBox accepts an element and returns the bBox for the element and
+// recursiveGetBBox accepts an element and returns the bBox for the element and
 // bBoxes for it's child elements
-function myGetBBox(e) {
+function recursiveGetBBox(e) {
     let bBox = e.getBBox();
     // add right, bottom and nodes
     bBox.right = bBox.x + bBox.width;
@@ -5338,6 +4862,7 @@ function addEventListeners() {
     // openSequenceLink dialog
     $('t_openSequenceLinkOpen').addEventListener('mousedown', () => { openSequenceLink(true) });
     $('t_openSequenceLinkCancel').addEventListener('mousedown', () => { openSequenceLink(false) });
+    $('openSequenceLinkUrl').onkeydown = (e) => {if (e.key === 'Enter') openSequenceLink(true)};
 
     // print/save image dialog
     {
@@ -11126,7 +10651,7 @@ function separateFigure(id) {
         }
         i++;
         // need to define bBox here
-        OA.figures[i].bBox = myGetBBox($('figure' + i));
+        OA.figures[i].bBox = recursiveGetBBox($('figure' + i));
         // separate the figure itself
         moveClear(i);
 
@@ -11300,7 +10825,7 @@ function drawFullFigure(i, draggable, svg = OA.SVGRoot) {
     OA.figures[i].paths.forEach ((p) => {
         bBox = drawShape(p, group, bBox) || bBox;
     });
-    OA.figures[i].bBox = myGetBBox(group);
+    OA.figures[i].bBox = recursiveGetBBox(group);
 }
 
 // setQueueMenuOptions enables/disables queue menu options as applicable
@@ -12116,10 +11641,8 @@ function changedFigureKText(figs) {
 
 // makeFormA creates Form A from the figures object
 function makeFormA() {
-    var
-        figNr = 0,
-        modifiedK = [],
-        svgElement = OA.SVGRoot.getElementById('sequence');
+    const modifiedK = [];
+    let figNr = 0;
 
     setYAxisOffset(yAxisOffsetDefault);
     OA.direction = 0;
@@ -12134,28 +11657,31 @@ function makeFormA() {
         }
     });
     // The final form will be 800x1000px, leaving room for the print header
-    var columnTitleHeight = 50;
+    let
+        columnTitleHeight = 50,
+        columnTitles,
+        columnWidths;
     // define column titles and widths
     switch (OA.formStyle) {
         case 'iac':
-            var columnTitles = ['No', 'Symbol', 'Cat. No.', 'K', 'Total K', 'Grade', 'Remarks'];
-            var columnWidths = [20, 100, 70, 30, 60, 80, 259];
+            columnTitles = ['No', 'Symbol', 'Cat. No.', 'K', 'Total K', 'Grade', 'Remarks'];
+            columnWidths = [20, 100, 70, 30, 60, 80, 259];
             break;
         case 'imac':
             columnTitleHeight = 30;
-            var columnTitles = ['No', 'Symbol', 'Catalogue No.', 'K', 'Total K', 'Score', 'Remarks'];
-            var columnWidths = [20, 90, 97, 33, 50, 60, 209];
+            columnTitles = ['No', 'Symbol', 'Catalogue No.', 'K', 'Total K', 'Score', 'Remarks'];
+            columnWidths = [20, 90, 97, 33, 50, 60, 209];
             break;
         default:
-            var columnTitles = ['No', 'Symbol', 'Cat. No.', 'K', 'Total K', 'Grade', 'Pos', 'Remarks'];
-            var columnWidths = [20, 100, 70, 30, 60, 70, 48, 221];
+            columnTitles = ['No', 'Symbol', 'Cat. No.', 'K', 'Total K', 'Grade', 'Pos', 'Remarks'];
+            columnWidths = [20, 100, 70, 30, 60, 70, 48, 221];
     }
     // define height of each row
-    var rowHeight = Math.min(parseInt((1000 - columnTitleHeight) / figNr), 125);
+    let rowHeight = Math.min(parseInt((1000 - columnTitleHeight) / figNr), 125);
     // build column titles
-    var x = 0;
+    let x = 0;
     columnTitles.forEach ((title, i) => {
-        var lastColumnPlusOne = i == columnTitles.length -1 ? 1 : 0;
+        const lastColumnPlusOne = i == (columnTitles.length - 1) ? 1 : 0;
         drawRectangle(x, 0, columnWidths[i] + lastColumnPlusOne, columnTitleHeight, 'formLine');
         drawText(
             title,
@@ -12165,18 +11691,22 @@ function makeFormA() {
             'middle');
         x += columnWidths[i];
     });
-    var y = columnTitleHeight;
-    var row = 0;
+    let
+        y = columnTitleHeight,
+        row = 0;
     OA.figureK = 0;
     for (let i = 0; i < OA.figures.length; i++) {
         // reduce rowheight for last one so border fits within height 1000
         if (row == (figNr - 1)) rowHeight -= 2;
         // find Aresti nr(s) and k(s) for figure
-        var aresti = OA.figures[i].aresti;
-        var k = OA.figures[i].k;
+        const
+            aresti = OA.figures[i].aresti,
+            k = OA.figures[i].k;
         // only draw if there is a (fake) aresti number
         if (aresti) {
-            var x = 0;
+            let
+                x = 0,
+                figK = 0;
             for (let column = 0; column < columnWidths.length; column++) {
                 switch (column) {
                     case (0):
@@ -12189,126 +11719,135 @@ function makeFormA() {
                         break;
                     case (1):
                         drawRectangle(x, y, columnWidths[column], rowHeight, 'pos');
-                        // Get the drawn figure from the SVG and set the correct scaling
-                        var group = OA.SVGRoot.getElementById('figure' + i);
-                        var bBox = group.getBBox();
-                        var scaleFigure = roundTwo(Math.min((columnWidths[column] - 10) / bBox.width, (rowHeight - 20) / bBox.height));
-                        var xMargin = (columnWidths[column] - bBox.width * scaleFigure) / 2;
-                        var yMargin = (rowHeight - bBox.height * scaleFigure) / 2;
-                        group.setAttribute('transform', 'translate(' +
-                            roundTwo((x + xMargin - bBox.x * scaleFigure)) + ' ' +
-                            roundTwo((y + yMargin - bBox.y * scaleFigure)) +
-                            ') scale(' + scaleFigure + ')');
+                        {
+                            // Get the drawn figure from the SVG and set the correct scaling
+                            const
+                                group = OA.SVGRoot.getElementById('figure' + i),
+                                bBox = group.getBBox(),
+                                scaleFigure = roundTwo(Math.min((columnWidths[column] - 10) / bBox.width, (rowHeight - 20) / bBox.height)),
+                                xMargin = (columnWidths[column] - bBox.width * scaleFigure) / 2,
+                                yMargin = (rowHeight - bBox.height * scaleFigure) / 2;
+                            group.setAttribute('transform', 'translate(' +
+                                roundTwo((x + xMargin - bBox.x * scaleFigure)) + ' ' +
+                                roundTwo((y + yMargin - bBox.y * scaleFigure)) +
+                                ') scale(' + scaleFigure + ')');
+                        }
                         break;
                     case (2):
                         drawRectangle(x, y, columnWidths[column], rowHeight, 'formLine');
-                        // set the font size from 8-13 depending on the amount of Aresti nrs
-                        var fontsize = Math.max(
-                            Math.min(
-                                parseInt(rowHeight / (aresti.length + 1)),
-                                13),
-                            8);
-                        for (let j = 0; j < aresti.length; j++) {
-                            if (aresti[j] in OA.rulesKFigures) modifiedK.push(row + 1);
-                            if (/^non-Aresti /.test(aresti[j])) {
-                                // User-built figures have red "Aresti" numbers
-                                drawText(aresti[j].replace(/^non-Aresti /, ''),
-                                    x + 10,
-                                    y + (j + 1.5) * fontsize,
-                                    'miniFormAModifiedK',
-                                    'start');
-                            } else {
-                                drawText(aresti[j],
-                                    x + 10,
-                                    y + (j + 1.5) * fontsize,
-                                    'formAText' + fontsize + 'px',
-                                    'start');
+                        {
+                            // set the font size from 8-13 depending on the amount of Aresti nrs
+                            const fontsize = Math.max(
+                                Math.min(
+                                    parseInt(rowHeight / (aresti.length + 1)),
+                                    13),
+                                8);
+                            for (let j = 0; j < aresti.length; j++) {
+                                if (aresti[j] in OA.rulesKFigures) modifiedK.push(row + 1);
+                                if (/^non-Aresti /.test(aresti[j])) {
+                                    // User-built figures have red "Aresti" numbers
+                                    drawText(aresti[j].replace(/^non-Aresti /, ''),
+                                        x + 10,
+                                        y + (j + 1.5) * fontsize,
+                                        'miniFormAModifiedK',
+                                        'start');
+                                } else {
+                                    drawText(aresti[j],
+                                        x + 10,
+                                        y + (j + 1.5) * fontsize,
+                                        'formAText' + fontsize + 'px',
+                                        'start');
+                                }
                             }
-                        }
-                        if (OA.figures[i].floatingPoint && /^(iac|imac)$/.test(OA.formStyle)) {
-                            // add 'F.P.' to IAC form A when applicable
-                            drawText('F.P.',
-                                x + columnWidths[column] / 2,
-                                y + (aresti.length + 2) * fontsize,
-                                'formATextBold' + fontsize + 'px',
-                                'middle');
+                            if (OA.figures[i].floatingPoint && /^(iac|imac)$/.test(OA.formStyle)) {
+                                // add 'F.P.' to IAC form A when applicable
+                                drawText('F.P.',
+                                    x + columnWidths[column] / 2,
+                                    y + (aresti.length + 2) * fontsize,
+                                    'formATextBold' + fontsize + 'px',
+                                    'middle');
+                            }
                         }
                         break;
                     case (3):
                         drawRectangle(x, y, columnWidths[column], rowHeight, 'formLine');
-                        var figK = 0;
-                        // set the font size from 8-13 depending on the amount of Aresti nrs
-                        var fontsize = Math.max(
-                            Math.min(
-                                parseInt(rowHeight / (aresti.length + 1)),
-                                13),
-                            8);
-                        k.forEach ((k, i) => {
-                            drawText(k,
-                                x + columnWidths[column] - 7,
-                                y + (i + 1.5) * fontsize,
-                                'formAText' + fontsize + 'px',
-                                'end');
-                            figK += parseInt(k);
-                        });
-                        // Adjust figure K for additionals
-                        if (OA.figures[i].additional) {
-                            if (OA.additionals <= OA.additionalFig.max) {
-                                figK = OA.additionalFig.totalK / OA.additionals;
-                            } else {
-                                if (OA.additionalFig.max > 0) {
-                                    figK = OA.additionalFig.totalK / OA.additionalFig.max[OA.sportingClass.value];
+                        {
+                            figK = 0;
+                            // set the font size from 8-13 depending on the amount of Aresti nrs
+                            const fontsize = Math.max(
+                                Math.min(
+                                    parseInt(rowHeight / (aresti.length + 1)),
+                                    13),
+                                8);
+                            k.forEach ((k, i) => {
+                                drawText(k,
+                                    x + columnWidths[column] - 7,
+                                    y + (i + 1.5) * fontsize,
+                                    'formAText' + fontsize + 'px',
+                                    'end');
+                                figK += parseInt(k);
+                            });
+                            // Adjust figure K for additionals
+                            if (OA.figures[i].additional) {
+                                if (OA.additionals <= OA.additionalFig.max) {
+                                    figK = OA.additionalFig.totalK / OA.additionals;
+                                } else {
+                                    if (OA.additionalFig.max > 0) {
+                                        figK = OA.additionalFig.totalK / OA.additionalFig.max[OA.sportingClass.value];
+                                    }
+                                    checkAlert(sprintf(OA.userText.maxAdditionals, OA.additionalFig.max),
+                                        false,
+                                        row + 1);
                                 }
-                                checkAlert(sprintf(OA.userText.maxAdditionals, OA.additionalFig.max),
-                                    false,
-                                    row + 1);
                             }
                         }
                         break;
                     case (4):
                         drawRectangle(x, y, columnWidths[column], rowHeight, 'formLine');
-                        if (OA.figures[i].floatingPoint) {
-                            drawText('(' + figK + ')',
-                                x + columnWidths[column] / 2,
-                                y + rowHeight / 2 + 10,
-                                'formAText',
-                                'middle');
-                            figK -= 1;
-                            drawText(figK,
-                                x + columnWidths[column] / 2,
-                                y + rowHeight / 2 - 8,
-                                'formATextBoldLarge',
-                                'middle');
-                        } else {
-                            drawText(figK,
-                                x + columnWidths[column] / 2,
-                                y + rowHeight / 2,
-                                'formATextBoldLarge',
-                                'middle');
+                        {
+                            if (OA.figures[i].floatingPoint) {
+                                drawText('(' + figK + ')',
+                                    x + columnWidths[column] / 2,
+                                    y + rowHeight / 2 + 10,
+                                    'formAText',
+                                    'middle');
+                                figK -= 1;
+                                drawText(figK,
+                                    x + columnWidths[column] / 2,
+                                    y + rowHeight / 2 - 8,
+                                    'formATextBoldLarge',
+                                    'middle');
+                            } else {
+                                drawText(figK,
+                                    x + columnWidths[column] / 2,
+                                    y + rowHeight / 2,
+                                    'formATextBoldLarge',
+                                    'middle');
+                            }
+                            if (($('printSF').checked === true) &&
+                                (OA.figures[i].superFamily)) {
+                                drawText('SF ' + OA.figures[i].superFamily,
+                                    x + columnWidths[column] / 2,
+                                    y + rowHeight - 10,
+                                    'formAText',
+                                    'middle');
+                            }
+                            // check if mark as additional or specific unknown figure
+                            if (OA.figures[i].additional) {
+                                drawText('additional',
+                                    x + columnWidths[column] / 2,
+                                    y + 15,
+                                    'formAText',
+                                    'middle');
+                            } else if (OA.figures[i].unknownFigureLetter) {
+                                drawText('Fig ' + OA.figures[i].unknownFigureLetter,
+                                    x + columnWidths[column] / 2,
+                                    y + 15,
+                                    'formAText',
+                                    'middle');
+                            }
+                            OA.figureK += figK;
                         }
-                        if (($('printSF').checked === true) &&
-                            (OA.figures[i].superFamily)) {
-                            drawText('SF ' + OA.figures[i].superFamily,
-                                x + columnWidths[column] / 2,
-                                y + rowHeight - 10,
-                                'formAText',
-                                'middle');
-                        }
-                        // check if mark as additional or specific unknown figure
-                        if (OA.figures[i].additional) {
-                            drawText('additional',
-                                x + columnWidths[column] / 2,
-                                y + 15,
-                                'formAText',
-                                'middle');
-                        } else if (OA.figures[i].unknownFigureLetter) {
-                            drawText('Fig ' + OA.figures[i].unknownFigureLetter,
-                                x + columnWidths[column] / 2,
-                                y + 15,
-                                'formAText',
-                                'middle');
-                        }
-                        OA.figureK += figK;
                         break;
                     case (5):
                         if (OA.formStyle == 'civa') {
@@ -12346,7 +11885,7 @@ function makeFormA() {
     }
     if (modifiedK.length) {
         drawText(changedFigureKText(modifiedK, OA.activeRules.description),
-            0, y + 12, 'miniFormAModifiedK', 'start', '', svgElement);
+            0, y + 12, 'miniFormAModifiedK', 'start', '', OA.SVGRoot.getElementById('sequence'));
         OA.SVGRoot.setAttribute("viewBox", '0 0 800 1020');
     } else OA.SVGRoot.setAttribute("viewBox", '0 0 800 1000');
 
@@ -12846,10 +12385,11 @@ function createFigureProposals() {
 // When additionalFig.max is zero, it's a Free Known. Otherwise, Unknown
 function makeFree() {
     // set sizes
-    var
+    const
         cellW = OA.platform.smallMobile ? 100 : 120,
         cellH = OA.platform.smallMobile ? 80 : 100,
-        div = $('fuSequence'),
+        div = $('fuSequence');
+    let
         subseqString = '',
         sub = 1,     // current subsequence number
         col = 1,     // subsequence table column
@@ -12947,8 +12487,9 @@ function makeFree() {
 
             // retrieve the group holding the figure and set viewbox (only fill
             // half the width)
-            var xMargin = bBox.width / 2;
-            var yMargin = bBox.height / 2;
+            const
+                xMargin = bBox.width / 2,
+                yMargin = bBox.height / 2;
             thisFig.setAttribute('transform', 'translate(' +
                 roundTwo((xMargin - bBox.x)) + ' ' +
                 roundTwo((yMargin - bBox.y)) + ')');
@@ -13008,8 +12549,9 @@ function makeFree() {
 
     // addFigureK adds figure K
     function addFigureK(container, f) {
-        const div = document.createElement('div');
-        const K = f.k.reduce((a, b) => a + b);
+        const
+            div = document.createElement('div'),
+            K = f.k.reduce((a, b) => a + b);
         div.classList.add('UFKInFigure');
         div.innerHTML = 'K:' + K;
         container.appendChild(div);
@@ -13034,12 +12576,12 @@ function makeFree() {
 
         f.subSeq = sub;
         if (f.aresti) {
-            var td = getTd();
+            const
+                td = getTd(),
+                svg = newSvg();
             addRemoveFigureButton(td);
             if (!OA.additionalFig.max) totalK += addFigureK(td, f);
             td.classList.add('fuFig' + i);
-
-            var svg = newSvg();
             td.appendChild(svg);
 
             // set different class for Additional and Free figures
@@ -13071,12 +12613,13 @@ function makeFree() {
             // and scaling
             OA.X = OA.Y = 0;
             drawFullFigure(i, false, svg);
-            var bBox = f.bBox;
-            var thisFig = svg.getElementById('figure' + i);
-
             // retrieve the group holding the figure and set viewbox
-            var xMargin = bBox.width / 20;
-            var yMargin = bBox.height / 20;
+            const
+                thisFig = svg.getElementById('figure' + i),
+                bBox = f.bBox,
+                xMargin = bBox.width / 20,
+                yMargin = bBox.height / 20;
+
             thisFig.setAttribute('transform', 'translate(' +
                 roundTwo((xMargin - bBox.x)) + ' ' +
                 roundTwo((yMargin - bBox.y)) + ')');
@@ -13111,7 +12654,7 @@ function makeFree() {
             OA.figures[i].subSeq = sub;
         } else if (/^[LX]$/.test(f.string)) {
             // undefined Additional figure
-            var td = getTd();
+            const td = getTd();
             td.innerHTML = OA.userText[(f.string === 'L') ? 'additional' : 'free'];
 
             addRemoveFigureButton(td);
@@ -13126,9 +12669,10 @@ function makeFree() {
     });
 
     // add 'new subsequence' block
-    var tr = document.createElement('tr');
+    const
+        tr = document.createElement('tr'),
+        td = freeCell(sub, 1, 1);
     table.appendChild(tr);
-    var td = freeCell(sub, 1, 1);
     freeCellAddHandlers(td);
     tr.appendChild(td);
     td.innerHTML = (sub === 1) ? OA.userText.dropFigureHere : OA.userText.newCopySubsequence;
@@ -14244,44 +13788,25 @@ function loadSequence(fileString, callback) {
     // Check if we have an OLAN sequence or an OpenAero XML sequence.
     // If the sequence file starts with '<sequence', assume it's an XML
     // sequence.
-    // If it does the same from steg decode, assume it's XML
     // If it starts with '[', assume it's an OLAN sequence.
     // In all other cases throw an error.
     try {
-        if (/^data:image\/png/.test(fileString)) {
-            const image = new Image();
-            image.src = fileString;
-            image.onload = function () {
-                const string = steg.decode(image);
-                if (string.match(/^<sequence/)) {
-                    // this is an OpenAero sequence, no need to do OLAN checks
-                    OA.OLAN.bumpBugCheck = false;
-                    callback(string);
-                    return;
-                } else {
-                    console.log('*** ' + OA.userText.notSequenceFile);
-                    callback(false);
-                }
-            }
-            return;
-        } else {
-            // if needed, decode from base64
-            if (/^data:/.test(fileString)) {
-                fileString = decodeURIComponent(escape(atob(
-                    fileString.replace(/^data:.*;base64,/, ''))));
-            }
+        // if needed, decode from base64
+        if (/^data:/.test(fileString)) {
+            fileString = decodeURIComponent(escape(atob(
+                fileString.replace(/^data:.*;base64,/, ''))));
+        }
 
-            if (/^<sequence/.test(fileString)) {
-                // this is an OpenAero sequence, no need to do OLAN checks
-                OA.OLAN.bumpBugCheck = false;
-                callback(fileString);
-                return;
-            }
-            if (fileString.charAt(0) === '[') {
-                // OLAN sequence, transform to XML
-                callback(OLANtoXML(fileString));
-                return;
-            }
+        if (/^<sequence/.test(fileString)) {
+            // this is an OpenAero sequence, no need to do OLAN checks
+            OA.OLAN.bumpBugCheck = false;
+            callback(fileString);
+            return;
+        }
+        if (fileString.charAt(0) === '[') {
+            // OLAN sequence, transform to XML
+            callback(OLANtoXML(fileString));
+            return;
         }
     } catch (err) { console.log(err) }
 
@@ -15161,7 +14686,9 @@ function openSequenceLink(e) {
             );
         } else updateSaveFilename(); // clear filename
     } else {
+        e.preventDefault();
         dialog.classList.remove('noDisplay');
+        link.focus();
     }
     link.value = '';
 }
@@ -17046,7 +16573,6 @@ function savePNG() {
     try {
         buildForms(false, function (svg) {
             svgToPng(svg, function (canvas) {
-                //        steg.encode (activeSequence.xml, canvas.toDataURL()).toBlob(function(blob){
                 canvas.toBlob(function (blob) {
                     saveFile(
                         blob,
@@ -19027,7 +18553,7 @@ function updateSequence(figNr, figure, replace, fromFigSel, force) {
         (OA.activeForm !== 'FU')) {
         if (replace) {
             // need to get bBox as it hasn't been loaded yet
-            OA.figures[figNr].bBox = myGetBBox($('figure' + figNr));
+            OA.figures[figNr].bBox = recursiveGetBBox($('figure' + figNr));
             separateFigure(figNr);
         } else {
             separateFigure(figNr + 1);
