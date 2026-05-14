@@ -219,6 +219,7 @@ lang.de = {
     'in Ihrer OpenAero App.',
   'emailSequence' : 'Sequenz per Email verschicken',
   'END' : 'ENDE',
+  // 'enableCaller' : 'Caller-Text in .seq Dateiausgabe einschließen',
   'entryExitAttExt' : 'Ein-/Ausgangs-Fluglage & &#8209;erweiterung',
       'exitDesigner': 'Designer verlassen',
   'exitFlyingMode': 'Verlassen',

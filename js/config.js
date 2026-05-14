@@ -361,6 +361,7 @@ const
   presentFileError = false,
   // define which settings will be saved in localStorage and sequence XML
   saveSettings = [
+  'enableCaller',
   'hideRarelyUsed',
   'language',
   'marginBottom',
