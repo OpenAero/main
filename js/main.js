@@ -4808,6 +4808,10 @@ function addEventListeners() {
     $('zipImageFilenamePattern').addEventListener('change', () => { saveSettingsStorage() }, false);
     $('saveFigsSeparateFigureNumbers').addEventListener('change', () => { saveSettingsStorage() }, false);
     $('saveFigsSeparateForms').addEventListener('change', () => { saveSettingsStorage() }, false);
+    $('enableCaller').addEventListener('change', () => {
+        saveSettingsStorage();
+        if ($('enableCaller').checked) generateAllCallerText();
+    }, false);
 
     $('numberInCircle').addEventListener('change', updateNumberInCircle, false);
     $('rollFontSize').addEventListener('change', updateRollFontSize, false);
@@ -7217,9 +7221,11 @@ function buildFigureXML() {
             // Append figure family
             f.appendChild(document.createElement('family'))
                 .appendChild(document.createTextNode(fig.family));
-            // Append figure description
-            f.appendChild(document.createElement('description'))
-                .appendChild(document.createTextNode(fig.description));
+            // Append caller text if available
+            if ($('enableCaller').checked && fig.caller) {
+                f.appendChild(document.createElement('caller'))
+                    .appendChild(document.createTextNode(fig.caller));
+            }
         }
     }
     // Append total figure K for sequence
@@ -19162,6 +19168,9 @@ function parseSequence() {
         OA.figures[i].paths.pop();
         OA.figures[i].paths = buildShape('FigStop', true, OA.figures[i].paths);
     }
+
+    // Generate caller text when enabled
+    if ($('enableCaller').checked) generateAllCallerText();
 }
 
 // do initialization when all DOM content has been loaded and device is ready (cordova)

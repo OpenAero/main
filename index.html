@@ -157,6 +157,8 @@
     <!-- create QR codes https://github.com/davidshimjs/qrcodejs inactive since 2015 -->
     <script src="js/qrcode.min.js"></script>
 
+    <!-- caller text generation for .seq output -->
+    <script src="js/caller.js"></script>
     <!-- The main script. Put it at the end when everything else is loaded -->
     <script src="js/main.js"></script>
 </head>
@@ -1473,6 +1475,11 @@
                     <label>
                         <span class="userText" id="t_showOptiSeqArea"></span>
                         <input type="checkbox" id="showOptiSeqArea" class="material-switch-input" checked>
+                        <span class="material-switch"></span>
+                    </label>
+                    <label>
+                        <span class="userText" id="t_enableCaller"></span>
+                        <input type="checkbox" id="enableCaller" class="material-switch-input" checked>
                         <span class="material-switch"></span>
                     </label>
                 </div>

@@ -222,6 +222,7 @@ lang.fr = {
   'du menu d\'OpenAero.',
 'emailSequence' : 'Envoyer par email le programme',
 'END' : 'FIN',
+// 'enableCaller' : 'Inclure le texte du caller dans la sortie du fichier .seq',
 'entryExitAttExt' : 'Attitude de début/fin et longueur',
     'exitDesigner': 'Quitter l\'assembleur',
     'exitFlyingMode': 'Quitter',

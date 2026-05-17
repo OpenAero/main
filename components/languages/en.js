@@ -245,6 +245,7 @@ lang.en = {
   'in your OpenAero app.', 
 'emailSequence' : 'Email sequence',
 'END' : 'END',
+'enableCaller' : 'Include caller text in .seq file output',
 'entryExitAttExt' : 'Entry/exit attitude & extension',
     'exitDesigner': 'Exit Designer',
 'exitFlyingMode': 'Exit',
