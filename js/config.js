@@ -53,7 +53,7 @@ function OAconst (name, value) {
  A new x must be used for versions that create sequences not
  fully backward compatible with the previous version
 */
-const version = '2026.1.1';
+const version = '2026.1.2';
 // versionNew is an object that contains version update information
 // The structure is {vvv : [[ttt, n], ...], ...} , where
 // vvv = version number
@@ -62,6 +62,8 @@ const version = '2026.1.1';
 const versionNew = {
   '2026.1.1': [
     ['Added 2026 CIVA sequences and updated CIVA rules', 4],
+    ['Added 2026 AAC Intermediate Free Known figure set', 3],
+    ['Added 2026 IAC sequences', 3],
   ],
   '2025.1.8': [
     ['Improved Flying Mode display', 3],

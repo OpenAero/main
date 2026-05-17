@@ -241,6 +241,7 @@ lang.de = {
     '180degreeTurns'    : '2.2 180 Grad Kurven',
     '270degreeTurns'    : '2.3 270 Grad Kurven',
     '360degreeTurns'    : '2.4 360 Grad Kurven',
+    '90+90degreeTurns'  : '2.5 90 + 90 Grad Kurven',
     combinationsOfLines : '3 Linienkombinationen',
     twoLineStallTurns   : '5.2 Zwei-Linien-Stall-Turns',
     threeLineStallTurns : '5.3 Drei-Linien-Stall-Turns',

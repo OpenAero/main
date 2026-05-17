@@ -267,6 +267,7 @@ lang.en = {
   '180degreeTurns'    : '2.2 180 degree Turns',
   '270degreeTurns'    : '2.3 270 degree Turns',
   '360degreeTurns'    : '2.4 360 degree Turns',
+  '90+90degreeTurns'  : '2.5 90 + 90 degree turns',
   combinationsOfLines : '3 Combinations of Lines',
   twoLineStallTurns   : '5.2 Two line Stall Turns',
   threeLineStallTurns : '5.3 Three line Stall Turns',

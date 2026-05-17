@@ -7,7 +7,7 @@
 * Removed all code that was specifically for Windows UWP because Windows is now supported as PWA
 * Removed all code for steganography encoding and decoding of sequence in .png files. Functionality was not used since 2019 and original source code contained errors
 * Updated FileSaver.js
-* Removed code for datalist handling of combobox as it does not provide the desired functionality
+* Removed code for datalist handling of combobox as its specification does not provide the desired functionality
 
 2025.1.11
 * Fixed issue with Settings tab selection

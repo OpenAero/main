@@ -1995,12 +1995,12 @@ function changeRollFontSize(s) {
 // recursiveGetBBox accepts an element and returns the bBox for the element and
 // bBoxes for it's child elements
 function recursiveGetBBox(e) {
-    let bBox = e.getBBox();
+    const bBox = e.getBBox();
     // add right, bottom and nodes
     bBox.right = bBox.x + bBox.width;
     bBox.bottom = bBox.y + bBox.height;
     bBox.nodes = [];
-    let nodes = e.childNodes;
+    const nodes = e.childNodes;
     for (let i = 0; i < nodes.length; i++) {
         bBox.nodes[i] = nodes[i].getBBox();
         // add right and bottom
@@ -2168,7 +2168,7 @@ function getFigureStartStyle(f) {
 
 // makeFigStop creates figure stop
 function makeFigStop(lastFig) {
-    let
+    const
         paths = { style: 'pos' },
         angle = (OA.direction + 90) * degToRad,
         dx = roundTwo(Math.cos(angle) * lineElement / OA.scale),
@@ -2590,7 +2590,7 @@ function makeTurnRoll(param, rad) {
         extent = Math.abs(param),
         sign = param > 0 ? 1 : -1,
         sweepFlag = param > 0 ? 1 : 0,
-    // calculate sin and cos for rad once to save calculation time
+        // calculate sin and cos for rad once to save calculation time
         radSin = Math.sin(rad),
         radCos = Math.cos(rad);
 
@@ -2687,6 +2687,7 @@ function makeTurnRoll(param, rad) {
 // makeTurn builds turns and rolling circles from the draw instructions
 // parsed from fig[i].draw
 function makeTurn(draw) {
+    //console.log(draw);
     // parse base
     var paths = [];
     // Check if we are in an in/out or out/in roll
@@ -3815,9 +3816,8 @@ function buildShape(shapeName, Params, paths = []) {
 // by hover
 // prev, if provided, should hold the contents and bounding box of a
 // previous text element to avoid.
-function drawShape(paths, svgElement, prev) {
+function drawShape(paths, svgElement = OA.SVGRoot.getElementById('sequence'), prev) {
     let cur = false;
-    svgElement = svgElement || OA.SVGRoot.getElementById('sequence');
 
     // decide if we are drawing a path or text or starting a figure
     if (paths.path) {
@@ -7746,6 +7746,34 @@ function parseFiguresFile() {
         figMainGroup = '',
         groupClass = 1;
 
+    // Calculate the K factors when they were not assigned
+    function calculateK (thisFig) {
+        if (thisFig.kPwrd == -1) {
+            const figure = thisFig.pattern          // start with original base
+                .replace(/[\+]/g, '')               // remove +
+                .replace(regexFullAnySpinRoll, '')  // remove full/any roll/spin symbols
+                .replace(regexHalfRoll, '2');       // replace half roll symbols by actual half rolls
+            // Insert a temporary "figure" in the sequence
+            OA.figures[-1] = [];
+            OA.attitude = OA.direction = (figure[0] != '-') ? 0 : 180;
+            {
+                OA.sportingClass.value = 'glider';
+                const fig = buildFigure([OA.fig.length - 1], figure, 1, -1, true);
+                OA.fig[OA.fig.length - 1].kGlider = Math.abs(Math.round(fig.calcK.reduce ((s, a) => s + a, 0) / 10));
+            }
+            {
+                OA.sportingClass.value = 'powered';
+                const fig = buildFigure([OA.fig.length - 1], figure, 1, -1, true);
+                OA.fig[OA.fig.length - 1].kPwrd = Math.abs(Math.round(fig.calcK.reduce ((s, a) => s + a, 0) / 10));
+                console.log(OA.fig[OA.fig.length - 1].aresti);
+                console.log(figure);
+                console.log(fig.calcK);
+            }
+
+            
+        }
+    }
+
     // add the Queue 'figure group' at the beginning
     OA.figGroup[0] = { 'family': '*', 'name': OA.userText.figureQueue };
     // add an option for the group to the figure selector
@@ -7820,6 +7848,7 @@ function parseFiguresFile() {
                     thisFig.entryExit = thisFig.entryExitGlider = thisFig.entryExitPower =
                         theBase.replace(/[^-+]*/g, '').replace(/-/g, 'n').replace(/\+/g, 'N');
                     OA.fig.push(thisFig);
+                    calculateK(thisFig);
                 } else if (splitLine.length > 2) {
                     // handle everything except (rolling) turns and rolls
                     theBase = splitLine[0].replace(regexTurnsAndRolls, '');
@@ -7892,6 +7921,8 @@ function parseFiguresFile() {
                     thisFig.entryExit = thisFig.entryExitPower;
 
                     OA.fig.push(thisFig);
+                    calculateK(thisFig);
+
                 } else {
                     // Handle rolls (no fig object)
                     OA.rollFig[splitLine[0]] = {
@@ -7904,6 +7935,16 @@ function parseFiguresFile() {
             }
         }
     }
+
+    // Remove fake figure used for calculating K factors
+    if (-1 in OA.figures) {
+        // Clear alert messages created by building figures
+        OA.alertMsgs = [];
+        OA.alertMsgRules = {};
+        // Delete this figure
+        delete OA.figures[-1];
+    }
+
     // select first figure group and create a clone of HTML content
     figGroupSelector.value = 1;
     $('figureGroupClone').innerHTML = figGroupSelector.innerHTML;
@@ -8827,7 +8868,7 @@ function goThroughFigureGroups () {
                     OA.X = OA.Y = 0;
                     OA.figureStart = [];
                     // draw the figure
-                    drawFullFigure(-1, true, svg);
+                    //drawFullFigure(-1, true, svg);
                 }
 
                 // add this figure's Aresti number and pattern to arestiDraw
@@ -9707,24 +9748,27 @@ function adjustMiniFormAPosition() {
 // makeMiniFormA creates a mini form A for printing and saving
 // It starts at (x, y) and returns width and height of the block
 function makeMiniFormA(x, y, tiny) {
-    var
+    const
         blockX = x,
-        blockY = y,
-        figNr = 0,
-        figureK = 0,
         modifiedK = [],
         widths = tiny ? [28, 0, 0, 35] : [30, 60, 26, 25],
         totalWidth = widths.reduce((a, b) => a + b, 0),
         svg = OA.SVGRoot.getElementById('sequence').appendChild(document.createElementNS(svgNS, 'g')),
         background = drawRectangle(x, y, totalWidth, 1, 'formRect', svg);
+    let
+        blockY = y,
+        figNr = 0,
+        figureK = 0;
         
     svg.id = 'miniFormA';
 
     if (!tiny) {
         // set the header for the correct sporting class
         if (OA.sportingClass.options[OA.sportingClass.selectedIndex]) {
-            var myClass = OA.sportingClass.options[OA.sportingClass.selectedIndex].innerHTML;
-            drawText(myClass, blockX + 4, blockY + 17, 'miniFormATotal', 'start', '', svg);
+            drawText(
+                OA.sportingClass.options[OA.sportingClass.selectedIndex].innerHTML,
+                blockX + 4, blockY + 17, 'miniFormATotal', 'start', '', svg
+            );
             drawRectangle(blockX, blockY, totalWidth, 24, 'formLine', svg);
             blockY += 24;
         }
@@ -9743,12 +9787,13 @@ function makeMiniFormA(x, y, tiny) {
     blockY += 24;
 
     for (let i = 0; i < OA.figures.length; i++) {
-        var aresti = OA.figures[i].aresti;
-        var k = OA.figures[i].k;
+        const
+            aresti = OA.figures[i].aresti,
+            k = OA.figures[i].k;
         if (aresti) {
             figNr++;
-            var figK = 0;
-            var topBlockY = blockY;
+            const topBlockY = blockY;
+            let figK = 0;
             if (tiny) blockY += 24;
             for (let j = 0; j < aresti.length; j++) {
                 if (aresti[j] in OA.rulesKFigures) modifiedK.push(figNr);
@@ -9811,7 +9856,7 @@ function makeMiniFormA(x, y, tiny) {
                     tiny ? 'formATextMedium' : 'miniFormA', 'end', '', svg);
             }
             drawLine(blockX, topBlockY, totalWidth, 0, 'formLine', svg);
-            var vertSize = (blockY - topBlockY + 12);
+            const vertSize = (blockY - topBlockY + 12);
             drawLine(blockX, topBlockY, 0, vertSize, 'formLine', svg);
             drawLine(blockX + widths[0], topBlockY, 0, vertSize, 'formLine', svg);
             if (!tiny) {
@@ -11261,7 +11306,7 @@ function exitFuDesigner(newSequence) {
 
 // freeCell builds a td element for specified subsequence, column and row
 function freeCell(sub, col, row) {
-    let td = document.createElement('td');
+    const td = document.createElement('td');
     td.id = 'sub' + sub + 'col' + col + 'row' + row;
     return td;
 }
@@ -11293,12 +11338,8 @@ function freeCellAddHandlers(td) {
 
 // noPropagation makes sure the event doesn't propagate/redirect
 function noPropagation(e) {
-    if (e.stopPropagation) {
-        e.stopPropagation();
-    }
-    if (e.preventDefault) {
-        e.preventDefault();
-    }
+    if (e.stopPropagation) e.stopPropagation();
+    if (e.preventDefault) e.preventDefault();
 }
 
 // handleFreeDragFigureStart is called when starting to drag a Free (Un)known
@@ -11407,8 +11448,8 @@ function handleFreeDrop(e) {
 }
 
 // handleFreeRemove handles removing a figure from the sequence
-function handleFreeRemove(e, el) {
-    el = el ? el : this;
+function handleFreeRemove(e) {
+    const el = this;
 
     noPropagation(e); // Stops some browsers from redirecting.
 
@@ -12085,10 +12126,10 @@ function makeFormGrid(cols, width, svg = OA.SVGRoot) {
     $('gridTotalK').innerText = totalK;
 
     // update viewbox and svg height
-    const height = y + ch + 2;
+    let height = y + ch + 2;
     if (modifiedK.length) {
         drawText(changedFigureKText(modifiedK, OA.activeRules.description),
-            0, -4, 'miniFormAModifiedK', 'start', '', svgElement);
+            0, -4, 'miniFormAModifiedK', 'start', '', svg.getElementById('sequence'));
         height += 12;
         svg.setAttribute("viewBox", '-1 -13 ' + (width + 2) + ' ' + height);
     } else svg.setAttribute("viewBox", '-1 -1 ' + (width + 2) + ' ' + height);
@@ -18008,33 +18049,67 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
                     OA.figures[figStringIndex].switchX = false;
                     prefix = (/^[CL]/.test(OA.activeForm)) ? userpat.moveforward : '';
                 }
-                paths = buildShape('Turn', prefix +
-                    figureDraw.replace(/[^jioJIO\d]+/g, ''), paths);
-                // Add K components
-                if (/[\d]/.test(figureDraw.replace(/[jioJIO]+\d/, ''))) {
-                    // Rolling turns. From Aresti catalogue II Method of Evaluation
-                    const
-                        p        = OA.calcK.rollingTurn[OA.sportingClass.value],
-                        extent   = figureDraw.match(/\d/)[0],
-                        rolls    = figureDraw.match(/\d(\d+)/)[1],
-                        rollSum  = rolls.split('').reduce ((s, a) => s + ((a == 5) ? 0.5 : parseInt(a)), 0),
-                        reversals= (/io|IO/.test(figureDraw) ? 1 : 0) * (Math.round(rollSum) - 1),
-                        arcsIn   = ((OA.negLoad ? /J/.test(figureDraw) : /j/.test(figureDraw)) ?
-                            (extent - Math.round(reversals / 2) * (rolls[0] == 5 ? 2/3 : 1) * (rolls[1] == 5 ? 1/3 : 1)) :
-                            Math.round(reversals / 2) * (rolls[0] == 5 ? 4/3 : 1) * (rolls[1] == 5 ? 2/3 : 1)),
-                        firstRollArc = extent / ((/2\.1\.2\./.test(arestiNrs[0]) ? 2 : 1) * rollSum) * 90,
-                        nextRollArcs = extent * 90 / firstRollArc - 1;
-                    calcK.push (
-                        p.arc90.i * arcsIn,
-                        p.arc90.o * (extent - arcsIn),
-                        p.rollPoints[firstRollArc],
-                        (p.rollPoints[firstRollArc] * nextRollArcs || 0) * p.nextRolls,
-                        p.reversal * reversals,
-                    )
-                } else {
-                    // Regular turns
-                    calcK.push (OA.calcK.turn90[OA.negLoad] * figureDraw.charAt (i + 1));
-                }
+                // If there are multiple occurences of j or J, split on those and
+                // draw each segment separately.
+                let rollingTurn = false;
+                figureDraw.match(/([jJ][ioIO\d]+)/g).forEach (match => {
+
+                    // Specific code for matching figures 2.5.2.1-4. HACK !!!
+                    if ((figureDraw.match(/1/g) || []).length === 3) {
+                        if (rollingTurn) {
+                            // add roll after the first 90 degrees of turn
+                            paths = buildShape(
+                                'Roll',
+                                [OA.negLoad != /j/.test(match) ? 360 : -360 ,0],
+                                paths
+                            );
+                        }
+                        paths = buildShape('Turn', prefix + '1', paths);
+                        // Remove turn degrees text
+                        for (let i = paths.length - 1; i >= 0; i--) {
+                            if (paths[i].text) {
+                                paths.splice(i, 1);
+                                break;
+                            }
+                        }
+                    } else {
+                        paths = buildShape('Turn', prefix +
+                            match.replace(/[^jioJIO\d]+/g, ''), paths);
+                    }
+                    // For multiple turns, continue in the same direction
+                    prefix = userpat.moveforward;
+
+                    // Add K components
+                    if (/[\d]/.test(match.replace(/[jioJIO]+\d/g, ''))) {
+                        // Rolling turns. From Aresti catalogue II Method of Evaluation
+                        const
+                            p        = OA.calcK.rollingTurn[OA.sportingClass.value],
+                            extent   = match.match(/\d/)[0],
+                            rolls    = match.match(/\d(\d+)/)[1],
+                            rollSum  = rolls.split('').reduce ((s, a) => s + ((a == 5) ? 0.5 : parseInt(a)), 0),
+                            reversals= (/io|IO/.test(match) ? 1 : 0) * (Math.round(rollSum) - 1),
+                            arcsIn   = ((OA.negLoad ? /J/.test(match) : /j/.test(match)) ?
+                                (extent - Math.round(reversals / 2) * (rolls[0] == 5 ? 2/3 : 1) * (rolls[1] == 5 ? 1/3 : 1)) :
+                                Math.round(reversals / 2) * (rolls[0] == 5 ? 4/3 : 1) * (rolls[1] == 5 ? 2/3 : 1)),
+                            firstRollArc = extent / ((/2\.1\.2\./.test(arestiNrs[0]) ? 2 : 1) * rollSum) * 90,
+                            nextRollArcs = extent * 90 / firstRollArc - 1;
+                        calcK.push (
+                            p.arc90.i * arcsIn,
+                            p.arc90.o * (extent - arcsIn),
+                            p.rollPoints[firstRollArc] * (rollingTurn ? 0.5 : 1),
+                            (p.rollPoints[firstRollArc] * nextRollArcs || 0) * p.nextRolls * (rollingTurn ? 0.5 : 1),
+                            p.reversal * reversals,
+                        )
+                        rollingTurn = true;
+                    } else if (rollingTurn) {
+                        // Continuation of rolling turn with a centralised single roll that
+                        // was only added to the first part (e.g. 2.5.2.1)
+                        calcK.push(OA.calcK.rollingTurn[OA.sportingClass.value].rollPoints[90])
+                    } else {
+                        // Regular turns
+                        calcK.push (OA.calcK.turn90[OA.negLoad] * figureDraw.charAt (i + 1));
+                    }
+                });
                 while (/[jioJIO\d]+/.test(figureDraw.charAt(i))) i++;
                 i--;
                 break;
@@ -18179,9 +18254,6 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
     while (/(  )|( $)/.test(figCheckLine)) {
         figCheckLine = figCheckLine.replace('  ', ' 0.0.0.0 ').replace(/ $/, ' 0.0.0.0');
     }
-
-    // round calculated base figure K according Aresti Catalogue
-    //calcK = Math.round(calcK);
 
     // The figure is complete. Create the final figure object for later
     // processing such as drawing Forms and point & click figure editing
