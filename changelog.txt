@@ -1,3 +1,6 @@
+2026.6.12
+* Updated BAeA naming for 2026 Sports Unknown, archived 2025 ruleset.
+
 2026.1.1
 * Added CIVA Free Known figures for 2026
 * Updated CIVA rules for 2026 (Applied Power NP2026-15/20 and Glider NP2026-1/2/3/5/6)
