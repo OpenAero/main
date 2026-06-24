@@ -2091,7 +2091,7 @@ function makeFigStart(params) {
             'style': 'openFigureStartMarker'
         });
         // Add the figure number
-        if (seqNr) paths.push({
+        if (seqNr && !OA.catalogueMode) paths.push({
             'text': seqNr,
             'style': seqNr < 10 ? 'figNbr_09' : 'figNbr_10',
             'x': 0,
@@ -2109,7 +2109,7 @@ function makeFigStart(params) {
             paths.push({ 'path': 'm 3,-6 a7,7 0 1 1 -6,0', 'style': 'openFigureStartMarker' });
         }
         // Add the figure number, except on Form A
-        if (seqNr && (OA.activeForm !== 'A')) {
+        if (seqNr && (OA.activeForm !== 'A') && !OA.catalogueMode) {
             paths.push({
                 'text': seqNr,
                 'style': 'figNbr_09',
@@ -6502,8 +6502,8 @@ function updateFigureOptions(figureId) {
 }
 
 // addRollSelectors will add all applicable roll selectors when
-// editing a figure
-// var figureId is the id of the figures[] object
+// editing a figure.
+// figureId is the id of the figures[] object
 function addRollSelectors(figureId) {
     const rollEl = $('rollInfo');
     if ((figureId === null) || !OA.fig[OA.figures[figureId].figNr]) {
@@ -7771,9 +7771,6 @@ function parseFiguresFile() {
                 OA.sportingClass.value = 'powered';
                 const fig = buildFigure([OA.fig.length - 1], figure, 1, -1, true);
                 OA.fig[OA.fig.length - 1].kPwrd = Math.abs(Math.round(fig.calcK.reduce ((s, a) => s + a, 0) / 10));
-                console.log(OA.fig[OA.fig.length - 1].aresti);
-                console.log(figure);
-                console.log(fig.calcK);
             }
 
             
@@ -8619,6 +8616,8 @@ function changeFigureGroup() {
         arestiRow = 0,
         figureGroup = e.value,
         table = $('figureChooserTable'),
+        tr,
+        td,
         svg = $('figureChooserSvg'),
         colCount = 0,
         fragment = document.createDocumentFragment();
@@ -8627,6 +8626,10 @@ function changeFigureGroup() {
     if (!OA.figGroup[figureGroup]) figureGroup = e.value = 1;
     
     // set the correct size and row count for the figure thumbnails
+    let
+        size,
+        newRow,
+        maxColCount;
     if (OA.figGroup[figureGroup].family == 9) { // rolls and spins group
         $('figureChooserColumns').classList.add('noDisplay');
         table.innerHTML = `
@@ -8639,20 +8642,19 @@ function changeFigureGroup() {
             </div>`;
         return;
     } else if (figureGroup != 0) { // normal Aresti group
-        var
-            size = 56,
-            newRow = /\.[01]$/,
-            maxColCount = 4;
+        maxColCount = 4;
+        size = 56;
+        newRow = /\.[01]$/;
         $('figureChooserColumns').classList.remove('noDisplay');
     } else { // queue group
-        var
-            maxColCount = $('queueColumns').value,
-            size = parseInt((280 / maxColCount) - 8),
-            newRow = /never/;
+        maxColCount = $('queueColumns').value;
+        size = parseInt((280 / maxColCount) - 8);
+        newRow = /never/;
         $('figureChooserColumns').classList.add('noDisplay');
     }
 
     OA.firstFigure = false;
+    OA.goRight = false;
 
     removeChildNodes(table);
     for (let i = 0; i < OA.fig.length; i++) {
@@ -8664,7 +8666,7 @@ function changeFigureGroup() {
                     // The figure has not been drawn in this session, go ahead and
                     // draw it. First we take the original base and remove + and
                     // replace full/any roll/spin symbols by '1'
-                    var figure = OA.fig[i].pattern.replace(/[\+]/g, '')
+                    let figure = OA.fig[i].pattern.replace(/[\+]/g, '')
                         .replace(regexFullAnySpinRoll, '1');
                     // next we replace half roll symbols by actual half rolls
                     figure = figure.replace(regexHalfRoll, '2');
@@ -8688,7 +8690,7 @@ function changeFigureGroup() {
                     // draw the figure
                     drawFullFigure(-1, true, svg);
                     // retrieve the group holding the figure and set viewbox
-                    var
+                    const
                         group = svg.getElementById('figure-1'),
                         bBox = group.getBBox(),
                         xMargin = bBox.width / 20,
@@ -8713,8 +8715,8 @@ function changeFigureGroup() {
                 }
                 if ((OA.fig[i].aresti.match(newRow) && (OA.fig[i].group != 0)) || (colCount == 0)) {
                     colCount = 0;
-                    var tr = document.createElement('tr');
-                    var td = document.createElement('td');
+                    tr = document.createElement('tr');
+                    td = document.createElement('td');
                     tr.appendChild(td);
                     td.classList.add('arestiRow');
                     // add Aresti row number if not in queue or non-Aresti figures
@@ -8732,16 +8734,17 @@ function changeFigureGroup() {
                 }
                 colCount++;
                 if (colCount >= maxColCount) colCount = 0;
-                var td = document.createElement('td');
+                td = document.createElement('td');
                 td.setAttribute('id', i);
-                var inner = document.createElement('div');
+                const inner = document.createElement('div');
                 td.appendChild(inner);
                 inner.innerHTML = OA.fig[i].svg;
                 td.addEventListener('mousedown', function () { selectFigure(this) });
-                var rollK = 0;
+                let rollK = 0;
                 if (!OA.fig[i].rollBase) OA.fig[i].rollBase = [];
+                let k;
                 if (OA.sportingClass.value === 'glider') {
-                    var k = OA.fig[i].kGlider;
+                    k = OA.fig[i].kGlider;
                     for (let j = 0; j < OA.fig[i].rollBase.length; j++) {
                         // Set rollK to -1 when this roll has 0K -> illegal
                         // Can only happen for queue figures
@@ -8758,7 +8761,7 @@ function changeFigureGroup() {
                         }
                     }
                 } else {
-                    var k = OA.fig[i].kPwrd;
+                    k = OA.fig[i].kPwrd;
                     for (let j = 0; j < OA.fig[i].rollBase.length; j++) {
                         // Set rollK to -1 when this roll has 0K -> illegal
                         // Can only happen for queue figures
@@ -8790,7 +8793,7 @@ function changeFigureGroup() {
                     // add class queue
                     td.classList.add('queue');
                     // add a 'remove' button
-                    var div = document.createElement('div');
+                    const div = document.createElement('div');
                     div.classList.add('removeFigureButton');
                     div.id = `removeFromQueue${i}`;
                     div.innerHTML = '<i class="material-icons">close</i>';
@@ -8803,7 +8806,7 @@ function changeFigureGroup() {
                     inner.appendChild(div);
                     // add the unknownFigureLetter where defined
                     if (OA.fig[i].unknownFigureLetter) {
-                        var div = document.createElement('div');
+                        const div = document.createElement('div');
                         div.classList.add('UFletterInQueue');
                         div.innerHTML = OA.fig[i].unknownFigureLetter;
                         inner.appendChild(div);
@@ -9136,6 +9139,7 @@ function markNotAllowedFigures() {
 // or false
 function selectFigure(e) {
     
+    let figure = false;
     // disable when sequence locked
     if ($('lock_sequence').value) return;
 
@@ -9199,7 +9203,9 @@ function selectFigure(e) {
             if (!figure) {
                 // Replace the selected figure or add a new figure at the end
                 // first we take the original base and remove + and full/any roll symbols
-                var figure = OA.fig[e.id].pattern.replace(regexPlusFullAnyRoll, '');
+                if (OA.catalogueMode) {
+                    figure = OA.fig[e.id].pattern.replace(/[\+]/g, '').replace(regexFullAnySpinRoll, '1');
+                } else figure = OA.fig[e.id].pattern.replace(regexPlusFullAnyRoll, '');
                 // Special case, put 0 for a horizontal line (figure 1.1.1.1)
                 if (OA.fig[e.id].pattern === '+_+') figure = '0';
                 // replace half roll symbols by actual half rolls
@@ -11963,8 +11969,8 @@ function makeFormGrid(cols, width, svg = OA.SVGRoot) {
     width = width || 800; // capture negative widths
 
     let
-        cw = parseInt(width / cols),
-        ch = parseInt(cw * 1.618), // Golden ratio
+        cw = parseInt(width / (OA.catalogueMode ? 8 : cols)),
+        ch = parseInt(cw * (OA.catalogueMode ? 1.2 : 1.618)), // Golden ratio
         x = 0,
         y = 0,
         col = 0,
@@ -12009,10 +12015,15 @@ function makeFormGrid(cols, width, svg = OA.SVGRoot) {
         let textWidth = 0;
         // yy is used to determine the top of all Aresti nrs, comments etc
         let yy = y + ch - 10;
-        drawText('K: ' + f.k.reduce ((a,b) => a + b),
-            x + 5, yy, 'formATextBold', 'start', '', svg);
-        totalK += f.k.reduce ((a,b) => a + b);
-        for (let j = f.k.length - 1; j >= 0; j--) {
+        // Don't add K factors of base figures and rolls in Catalogue Mode
+        if (!OA.catalogueMode) {
+            drawText('K: ' + f.k.reduce ((a,b) => a + b),
+                x + 5, yy, 'formATextBold', 'start', '', svg);
+            totalK += f.k.reduce ((a,b) => a + b);
+        }
+        
+        // Only show the base figure Aresti and K in Catalogue Mode
+        for (let j = OA.catalogueMode ? 0 : f.k.length - 1; j >= 0; j--) {
             if (f.aresti[j] in OA.rulesKFigures) modifiedK.push(f.seqNr);
             yy -= 15;
             drawText(f.aresti[j] + '(' + f.k[j] + ')',
@@ -17698,7 +17709,7 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
                                     false,
                                     false,
                                     r.comment,
-                                    figureChooser ? OA.fig[figNr].rolls[rollnr] : false
+                                    (figureChooser || OA.catalogueMode) ? OA.fig[figNr].rolls[rollnr] : false
                                 ),
                                     rollPaths);
                                 lineLength += parseInt((Math.abs(r.extent) - 1) / 360) * (10 / lineElement);
@@ -18057,8 +18068,15 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
                 }
                 // If there are multiple occurences of j or J, split on those and
                 // draw each segment separately.
-                let rollingTurn = false;
+                let
+                    rollingTurn = false,
+                    secondTurn = false,
+                    pointCorrDoubleTurnOneRoll = 0;
+
                 figureDraw.match(/([jJ][ioIO\d]+)/g).forEach (match => {
+
+                    // For multiple 90 degree turns, continue in the same direction
+                    if (secondTurn && /[jJ][ioIO]*1/.test(match)) prefix = userpat.moveforward;
 
                     // Specific code for matching figures 2.5.2.1-4. HACK !!!
                     if ((figureDraw.match(/1/g) || []).length === 3) {
@@ -18078,43 +18096,57 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
                                 break;
                             }
                         }
+                        // Set point correction factor for distribution of the roll
+                        // over 180 degrees of arc
+                        pointCorrDoubleTurnOneRoll = 50;  
                     } else {
                         paths = buildShape('Turn', prefix +
                             match.replace(/[^jioJIO\d]+/g, ''), paths);
                     }
-                    // For multiple turns, continue in the same direction
-                    prefix = userpat.moveforward;
 
                     // Add K components
                     if (/[\d]/.test(match.replace(/[jioJIO]+\d/g, ''))) {
                         // Rolling turns. From Aresti catalogue II Method of Evaluation
                         const
                             p        = OA.calcK.rollingTurn[OA.sportingClass.value],
-                            extent   = match.match(/\d/)[0],
+                            extent   = parseInt(match.match(/\d/)[0]),
                             rolls    = match.match(/\d(\d+)/)[1],
-                            rollSum  = rolls.split('').reduce ((s, a) => s + ((a == 5) ? 0.5 : parseInt(a)), 0),
-                            reversals= (/io|IO/.test(match) ? 1 : 0) * (Math.round(rollSum) - 1),
+                            rollSum  = rolls.split('').reduce ((s, a) => s + ((a == 5) ? 0.5 : parseInt(a)), 0);
+                        let
+                            rollReversals= (/io|IO/.test(match) ? 1 : 0) * (Math.round(rollSum) - 1);
+                        const
                             arcsIn   = ((OA.negLoad ? /J/.test(match) : /j/.test(match)) ?
-                                (extent - Math.round(reversals / 2) * (rolls[0] == 5 ? 2/3 : 1) * (rolls[1] == 5 ? 1/3 : 1)) :
-                                Math.round(reversals / 2) * (rolls[0] == 5 ? 4/3 : 1) * (rolls[1] == 5 ? 2/3 : 1)),
+                                (extent - Math.round(rollReversals / 2) * (rolls[0] == 5 ? 2/3 : 1) * (rolls[1] == 5 ? 1/3 : 1)) :
+                                Math.round(rollReversals / 2) * (rolls[0] == 5 ? 4/3 : 1) * (rolls[1] == 5 ? 2/3 : 1)),
                             firstRollArc = extent / ((/2\.1\.2\./.test(arestiNrs[0]) ? 2 : 1) * rollSum) * 90,
                             nextRollArcs = extent * 90 / firstRollArc - 1;
+                        // Add reversal here in case of reversal in roll direction when changing turn
+                        // direction. Don't do it before because arcsIn should not change
+                        if (rollingTurn && /(j.*j)|(J.*J)/.test(figureDraw)) rollReversals += 1;
+                        // Add the points to calcK for K factor calculation
                         calcK.push (
                             p.arc90.i * arcsIn,
                             p.arc90.o * (extent - arcsIn),
                             p.rollPoints[firstRollArc] * (rollingTurn ? 0.5 : 1),
-                            (p.rollPoints[firstRollArc] * nextRollArcs || 0) * p.nextRolls * (rollingTurn ? 0.5 : 1),
-                            p.reversal * reversals,
+                            (p.rollPoints[firstRollArc] * nextRollArcs || 0) * p.nextRolls,
+                            p.rollReversal * rollReversals,
+                            rollingTurn ? p.turnReversal : 0,
+                            pointCorrDoubleTurnOneRoll
                         )
                         rollingTurn = true;
                     } else if (rollingTurn) {
                         // Continuation of rolling turn with a centralised single roll that
                         // was only added to the first part (e.g. 2.5.2.1)
-                        calcK.push(OA.calcK.rollingTurn[OA.sportingClass.value].rollPoints[90])
+                        const p = OA.calcK.rollingTurn[OA.sportingClass.value];
+                        calcK.push(
+                            p.rollPoints[90],
+                            p.turnReversal
+                        )
                     } else {
                         // Regular turns
                         calcK.push (OA.calcK.turn90[OA.negLoad] * figureDraw.charAt (i + 1));
                     }
+                    secondTurn = true;
                 });
                 while (/[jioJIO\d]+/.test(figureDraw.charAt(i))) i++;
                 i--;
@@ -18313,7 +18345,6 @@ function buildFigure(figNrs, figString, seqNr, figStringIndex, figureChooser) {
         // copy update to figures.paths
         OA.figures[figStringIndex].paths = paths;
     }
-
 
     // set OLAN.inFigureXSwitchFig (used for OLAN sequence autocorrect) to
     // Infinity when we exit on X axis

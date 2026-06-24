@@ -34,7 +34,13 @@ This file is part of OpenAero.
  *
  **************************************************************/
 "use strict";
-var OA = {};
+// OA is used to hold a wide variety of globals. Prefer to eventually
+// migrate to having ALL globals in OA and OAconst to ease OpenAero
+// integration with other code
+const OA = {};
+
+// catalogueMode makes the figures show as they would in the Catalogue
+// OA.catalogueMode = true;
 
 // OAconst is used to define properties of OA that should not
 // be changed during runtime
@@ -742,16 +748,18 @@ OAconst ('calcK', {
   // 8. Rolling turns. i = inward, o = outward
   rollingTurn : {
     powered: {
-      arc90     : {i: 40, o: 50},
-      rollPoints: {'90': 80, '120': 106, '180': 160, '360' :280},
-      nextRolls : 0.5,
-      reversal  : 20
+      arc90       : {i: 40, o: 50},
+      rollPoints  : {'90': 80, '120': 106, '180': 160, '360' :280},
+      nextRolls   : 0.5,
+      rollReversal: 20,
+      turnReversal: 20,
     },
     glider: {
-      arc90     : {i: 50, o: 70},
-      rollPoints: {'90': 120, '120': 150, '180': 240, '360': 420},
-      nextRolls : 0.5,
-      reversal  : 50
+      arc90       : {i: 50, o: 70},
+      rollPoints  : {'90': 120, '120': 150, '180': 240, '360': 420},
+      nextRolls   : 0.5,
+      rollReversal: 50,
+      turnReversal: 50
     }
   },
 
