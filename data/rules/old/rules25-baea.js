@@ -34,11 +34,9 @@
 // - moved 2017 BAeA sequences to library
 // 2025.4.8
 // - Rewritten for BAeA's 2025 rules, all levels.
-// 2026.6.12
-// - Updated BAeA naming for 2026 Sports Unknown
 
 rules.push (
-"year=2026",
+"year=2025",
 //######################################################################
 //##### BAeA INTERMEDIATE 2025 FREE KNOWN ##############################
 //######################################################################
@@ -65,7 +63,7 @@ rules.push (
 //##### BAeA Sports Unknown ############################################
 //######################################################################
 //######################################################################
-"[BAeA Sports Unknown]",
+"[BAeA Sports Unknown1]",
 //Sequence basics
 "basefig-min=6",
 "basefig-max=10",
