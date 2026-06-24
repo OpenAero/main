@@ -1,5 +1,6 @@
-2026.6.12
-* Updated BAeA naming for 2026 Sports Unknown, archived 2025 ruleset.
+2026.1.2
+* Added caller texts for automated sequence calling (Issue #286)
+* Updated BAeA naming for 2026 Sports Unknown, archived 2025 ruleset
 
 2026.1.1
 * Added CIVA Free Known figures for 2026

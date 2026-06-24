@@ -269,6 +269,7 @@ lang.en = {
   '270degreeTurns'    : '2.3 270 degree Turns',
   '360degreeTurns'    : '2.4 360 degree Turns',
   '90+90degreeTurns'  : '2.5 90 + 90 degree turns',
+  '90+180degreeTurns' : '2.6 90 + 180 degree turns',
   combinationsOfLines : '3 Combinations of Lines',
   twoLineStallTurns   : '5.2 Two line Stall Turns',
   threeLineStallTurns : '5.3 Three line Stall Turns',
@@ -294,6 +295,7 @@ lang.en = {
   doubleHumptyBumps   : '8.8 Double Humpty Bumps',
   reversing114Loops   : '8.10 Reversing 1 1/4 Loops',
   cubanVertical       : '8.11 Cuban-vertical combinations',
+  verticalCuban       : '8.12 Vertical-Cuban combinations',
   rollsAndSpins       : '9 Rolls and spins',
   nonArestiCatalog    : '0 non-Aresti catalog'
 },
