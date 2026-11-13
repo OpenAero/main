@@ -4234,6 +4234,7 @@ function doOnLoad() {
     // load settings from storage
     loadSettingsStorage();
     loadPrintDialogStorage();
+    loadDrawingStyles();
 
     // load private logos
     {
@@ -5797,7 +5798,20 @@ function savePrintDialogStorage() {
     });
     localStorage.setItem('printDialog', JSON.stringify(settings));
 }
+// saveDrawingStyles will save drawing styles to localStorage
+function saveDrawingStyles() {
+  localStorage.setItem('drawingStyles', JSON.stringify(OA.style));
+}
 
+// loadDrawingStyles will load drawing styles from localStorage
+function loadDrawingStyles() {
+  const styles = JSON.parse(localStorage.getItem('drawingStyles') || 'null');
+  if (styles) {
+for (const key in styles) {
+     if (key in OA.style) OA.style[key] = styles[key];
+    }
+  }
+}
 // loadPrintDialogStorage will load the the print dialog settings from
 // storage
 function loadPrintDialogStorage() {
@@ -5869,6 +5883,7 @@ function updateStyle() {
     }
     // redraw sequence
     draw();
+    saveDrawingStyles();
 }
 
 // resetStyle resets a style (or all) to the default value
