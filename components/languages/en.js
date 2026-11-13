@@ -147,7 +147,6 @@ lang.en = {
 'boxOuts' : 'Box Outs',
 'cancel' : 'Cancel',
     'cancelPrint': 'Cancel',
-'cancelQRscan': 'Cancel',
 'cancelSave' : 'Cancel',
 'category' : 'Category',
 'changedFigureK' : 'Standard Aresti K of figure %s changed ' +

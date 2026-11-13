@@ -28,7 +28,7 @@
 body.menuOpen {
   overflow-y: hidden;
 }
-#cordovaStatusBar {
+#capacitorStatusBar {
     position: absolute;
     top: 0;
     right: 0;
@@ -63,16 +63,16 @@ body.menuOpen {
 #sequenceArea #t_windArrow {
   top: 61px;
 }
-.iosCordova #sequenceArea #t_windArrow {
-  top: 93px;
+.Capacitor #sequenceArea #t_windArrow {
+  top: calc(env(safe-area-inset-top) + 61px);
 }
 #miniFormAContainer {
   top: 100px;
   max-height: calc(100% - 110px);
 }
-.iosCordova #sequenceArea #miniFormAContainer {
-  top: 132px;
-  max-height: calc(100% - 142px);
+.Capacitor #sequenceArea #miniFormAContainer {
+  top: calc(env(safe-area-inset-top) + 100px);
+  max-height: calc(100% - env(safe-area-inset-top) - 110px);
 }
 /* menu */
 #hamburgerMenu {

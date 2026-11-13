@@ -752,9 +752,8 @@ textarea {
     transition: all 0.3s ease-in-out;
 }
 
-#mainOverlay.iosCordova {
-    top: 32px;
-    top: max(32px, env(safe-area-inset-top));
+#mainOverlay.Capacitor {
+    top: env(safe-area-inset-top);
 }
 
 #topBlock {

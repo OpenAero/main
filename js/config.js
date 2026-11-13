@@ -66,6 +66,11 @@ const version = '2026.1.2';
 // ttt = update text
 // n   = importance (higher = more important)
 const versionNew = {
+  '2026.1.2': [
+    ['Added 2026/2027 NZAC sequences', 3],
+    ['Added DKuV rules and logo', 3],
+    ['Converted app from (deprecated) Cordova to Capacitor (many changes)', 4]
+  ],
   '2026.1.1': [
     ['Added 2026 CIVA sequences and updated CIVA rules', 4],
     ['Added 2026 AAC Intermediate Free Known figure set', 3],
@@ -247,16 +252,17 @@ const svgNS = "http://www.w3.org/2000/svg";
 // xlink Name Space for including image in svg
 const xlinkNS = "http://www.w3.org/1999/xlink";
 
+// Declare global Capacitor plugins object
+OA.plugins = {};
+
 // platform holds various platform variables
 OAconst ('platform', {
-  // platform.cordova is set to true here. It is set to false in
-	// cordova.js when not compiled on Cordova
-  cordova:   true,
-	// set platform for Android, Chrome, iOS, Windows
 	android:   /Android/i.test(navigator.userAgent),
+  capacitor: (typeof Capacitor !== 'undefined' && Capacitor.isNativePlatform()),
 	chrome:    ((typeof chrome !== 'undefined') && chrome.fileSystem),
-    ios:       /i(Pad|Phone|Pod)/i.test(navigator.userAgent) ||
-               /^Mac/.test(navigator.platform) && navigator.maxTouchPoints > 4,
+  ios:       /i(Pad|Phone|Pod)/i.test(navigator.userAgent) ||
+             /^Mac/.test(navigator.platform) && navigator.maxTouchPoints > 4,
+  iosOnMac:  false,
 	windows10: /Windows\ NT\ 1/.test(navigator.userAgent),
 	windowsStore: 'ms-windows-store://pdp/?productid=9PDSX9ZDRB9B'
 });

@@ -156,7 +156,7 @@ OA.dragTarget = null;
 OA.platform.mobile = (window.matchMedia("(max-width: 767px)").matches ||
     ("ontouchstart" in document.documentElement) ||
     (navigator.userAgent.indexOf('IEMobile') !== -1) || 
-    OA.platform.cordova ||
+    OA.platform.capacitor ||
     false); // here
 
 // platform.touch is true on touch enabled devices
@@ -320,94 +320,146 @@ if (!Array.prototype.findLastIndex) {
 
 /**************************************************************
  *
- * Cordova functions
+ * Capacitor functions
  *
  *************************************************************/
 
-// cordovaHandleOpenURL handles opening a sequence file as received from
-// URL (iOS)
-function cordovaHandleOpenURL(url) {
-    window.resolveLocalFileSystemURI(
-        url,
-        function (fileEntry) {
-            fileEntry.file(
-                function (file) {
-                    openFile(file, 'Sequence');
-                },
-                function (error) {
-                    console.log(error);
-                }
-            )
-        },
-        function (error) {
-            console.log(error);
-        }
-    )
-}
+// Handle incoming sequence files or openaero.net deep links from Capacitor appUrlOpen.
+// Replaces legacy cordovaHandleIntent / FilePath logic.
+// @param {Object} data - Event data from Capacitor.Plugins.App.addListener('appUrlOpen')
+// @param {string} data.url - Incoming URI (e.g., content://..., file://..., or https://openaero.net/...)
+async function handleCapacitorAppUrlOpen(data) {
+    if (!data || !data.url) return;
 
-// cordovaHandleIntent handles opening a sequence file as received from
-// Intent (Android)
-function cordovaHandleIntent(intent) {	// intent.action android.intent.action.MAIN
-    if (intent.hasOwnProperty('data')) {
-        window.FilePath.resolveNativePath(intent.data, function (path) {
-            window.resolveLocalFileSystemURL(path, function (fileEntry) {
-                fileEntry.file(function (file) {
-                    openFile(file, 'Sequence');
-                });
-            });
-        }, function (error) {
-            if (OA.platform.android) {
-                window.plugins.webintent.getUri(
-                    function (uri) {
-                        if (uri.match(/^https:\/\/openaero.net\/\?s=/)) {
-                            launchURL({ url: uri });
-                        } else alertBox(OA.userText.saveDeviceFirst);
-                    }
-                );
-            } else alertBox(OA.userText.saveDeviceFirst);
-        });
-    } /*else {
-		window.FilePath.resolveNativePath(intent.clipItems[0].uri, function(path) {
-			console.log(path);
-			openFile(path, 'Sequence');
-		}, function(error) {console.log(error)});
-	}*/
-}
+    const uri = data.url;
 
-// cordovaSave uses the socialsharing plugin to provide options for
-// saving/exporting a file
-function cordovaSave(blob, filename) {
-    // use socialsharing to save or send file through dataURL.
-    let reader = new FileReader();
-    reader.onload = function (evt) {
-        const options = {
-            subject: filename,
-            // Add filename to dataURL with df:
-            files: [`df:${filename};${evt.target.result}`]
-        }
-        if ($('addSequenceLink').checked) {
-            options.message = `${OA.userText.emailHeader}
-                https://openaero.net/?s=${encodeBase64Url(compressSequence(OA.activeSequence.xml))}`;
-        }
-        window.plugins.socialsharing.shareWithOptions(options);
+    // 1. Handle openaero.net Deep Links
+    let parsedUrl;
+    try {
+        parsedUrl = new URL(uri);
+    } catch (e) {
+        parsedUrl = null;
     }
-    reader.readAsDataURL(blob);
+
+    if (parsedUrl && (parsedUrl.hostname === 'openaero.net' || parsedUrl.hostname === 'www.openaero.net')) {
+        launchURL({ url: uri });
+        return;
+    }
+
+    // 2. Handle Sequence File Openings (.seq)
+    try {
+        let fileContent;
+
+        // Use Filesystem plugin for BOTH content:// (Android) AND file:// (iOS native sandbox)
+        if ((uri.startsWith('content://') || uri.startsWith('file://')) && OA.plugins?.filesystem) {
+            const fileData = await OA.plugins.filesystem.readFile({
+                path: uri,
+                encoding: 'utf8' // Ensures string output, avoiding Base64
+            });
+            fileContent = fileData.data;
+        } else {
+            // Fallback for web / blob URLs
+            const response = await fetch(uri);
+            if (!response.ok) throw new Error(`HTTP error ${response.status}`);
+            fileContent = await response.text();
+        }
+
+        // Clean up encoded file name from path
+        const rawName = uri.split('/').pop().split('?')[0] || 'sequence.seq';
+        const fileName = decodeURIComponent(rawName);
+
+        // Construct standard File object for existing openFile function
+        const file = new File([fileContent], fileName, { type: 'text/plain' });
+        openFile(file, 'Sequence');
+
+    } catch (error) {
+        // Detailed console logging for Safari Remote Web Inspector
+        console.error('Failed to open incoming sequence file:', error, 'URI:', uri);
+        alertBox(OA.userText.saveDeviceFirst);
+    }
 }
 
-// cordovaPdf opens a pdf in an external viewer
-/* DISABLED DUE TO ANDROID COMPILE ISSUES
-function cordovaPdf(uri, title) {
-    window.resolveLocalFileSystemURL(cordova.file.applicationDirectory + '/www/' + uri, function (fileEntry) {
-        window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory, function (dirEntry) {
-            fileEntry.copyTo(dirEntry, uri.split('/').pop(), function (newFileEntry) {
-                var file = newFileEntry.nativeURL;
-                // open file
-                cordova.plugins.fileOpener2.open(file, 'application/pdf');
+// Saves/shares a file Blob using Capacitor Share & Filesystem plugins,
+// with a fallback for desktop web browsers.
+// @param {Blob} blob - File blob to save/share
+// @param {string} filename - Name of the file (e.g. "sequence.seq")
+async function capacitorSave(blob, filename) {
+    let messageText = '';
+    
+    const addLinkCheckbox = document.getElementById('addSequenceLink');
+    if (addLinkCheckbox && addLinkCheckbox.checked) {
+        const compressedSeq = compressSequence(OA.activeSequence.xml);
+        messageText = `${OA.userText.emailHeader}\nhttps://openaero.net/?s=${encodeBase64Url(compressedSeq)}`;
+    }
+
+    const isNative = Boolean(window.Capacitor && window.Capacitor.isNativePlatform());
+
+    if (isNative) {
+        try {
+            const { Share, Filesystem } = window.Capacitor.Plugins;
+
+            // 1. Convert Blob to base64 string for Filesystem API
+            const base64Data = await blobToBase64(blob);
+
+            // 2. Write file temporarily to Cache directory
+            const savedFile = await Filesystem.writeFile({
+                path: filename,
+                data: base64Data,
+                directory: 'CACHE'
             });
-        });
+
+            // 3. Share native file URI using Capacitor Share plugin
+            await Share.share({
+                title: filename,
+                subject: filename,
+                text: messageText,
+                files: [savedFile.uri]
+            });
+
+        } catch (error) {
+            console.error('Error sharing file with Capacitor:', error);
+            alertBox(OA.userText.saveDeviceFirst);
+        }
+    } else {
+        // Fallback for standard web browser execution
+        webSaveFallback(blob, filename, messageText);
+    }
+}
+
+// Helper: Converts Blob to base64 string without data-URL header prefix
+function blobToBase64(blob) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onerror = reject;
+        reader.onload = () => {
+            // Remove the "data:*/*;base64," prefix
+            const base64String = reader.result.split(',')[1];
+            resolve(base64String);
+        };
+        reader.readAsDataURL(blob);
     });
 }
-*/
+
+// Helper: Web browser fallback for saving/sharing
+function webSaveFallback(blob, filename, messageText) {
+    if (navigator.share && navigator.canShare && navigator.canShare({ files: [new File([blob], filename)] })) {
+        const file = new File([blob], filename, { type: blob.type || 'text/plain' });
+        navigator.share({
+            title: filename,
+            text: messageText,
+            files: [file]
+        }).catch(err => console.log('Web share dismissed:', err));
+    } else {
+        // Direct browser file download trigger
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(link.href);
+    }
+}
 
 /************************************************
  * User interface functions
@@ -985,17 +1037,17 @@ function switchSmallMobile() {
                 $('figureSelector'),
                 $('main'));
         }
-        // lock orientation in portrait on Cordova
+        // lock orientation in portrait
         if (window.screen.orientation && window.screen.orientation.lock) {
             window.screen.orientation.lock('portrait');
-        } else if (window['cordova'] && window['cordova'].plugins && window['cordova'].plugins.screenorientation) {
-            window['cordova'].plugins.screenorientation.setOrientation('portrait');
+        } else if (OA.platform.capacitor) { // If not natively available, try on Capacitor
+            OA.plugins.screenOrientation.lock('portrait');
         }
     } else {
         if (window.screen.orientation && window.screen.orientation.unlock) {
             window.screen.orientation.unlock();
-        } else if (window['cordova'] && window['cordova'].plugins && window['cordova'].plugins.screenorientation) {
-            window['cordova'].plugins.screenorientation.setOrientation('any');
+        } else if (OA.platform.capacitor) { // If not natively available, try on Capacitor
+            OA.plugins.screenOrientation.unlock();
         }
 
         $('t_fuDesigner').parentNode.classList.remove('noDisplay');
@@ -1080,16 +1132,11 @@ function mobileInterface() {
 
     // disable or change some items for iOS
     if (OA.platform.ios) {
-        // hide all save options, except on Cordova app
-        if (!OA.platform.cordova) {
+        // hide all save options, except on Capacitor app
+        if (!OA.platform.capacitor) {
             $('t_saveSequence').parentNode.classList.add('noDisplay');
             $('t_saveFigsSeparate').parentNode.classList.add('noDisplay');
             $('t_saveQueueFile').parentNode.classList.add('noDisplay');
-        } else {
-            // update save/print dialog for Cordova
-            $('t_printSavePdf').classList.add('noDisplay');
-            $('t_print').classList.remove('noDisplay');
-            $('t_savePdf').classList.remove('noDisplay');
         }
 
         $('t_saveAsSVG').classList.add('noDisplay');
@@ -1426,7 +1473,7 @@ function saveDialog(message, name, ext, param = {}) {
         $('saveFileMessage').innerHTML = message;
         $('dlTextField').value = name;
         $('fileExt').innerHTML = ext;
-        if (OA.platform.cordova) {
+        if (OA.platform.capacitor) {
             $('t_saveFile').innerText = OA.userText.saveShareFile;
         }
         // Don't show sequence link option if param.noSequenceLink is true
@@ -1558,37 +1605,46 @@ function proposalsToGrid() {
 
 // helpWindow will display a window with content from url and title
 function helpWindow(url, title) {
-    // set a small delay to make sure the menu is not again activated
     setTimeout(menuInactiveAll, 100);
 
-    if (OA.platform.cordova) {
-        if (OA.platform.android && /\.pdf$/.test(url)) {
-            /* cordovaPdf(url, title); */
-        } else {
-            let win = cordova.InAppBrowser.open(
-                url, '_blank', 'location=no,hardwareback=no,closebuttoncolor=#fb8c00');
-            win.addEventListener("loadstop", () => {
-                // hide elements with class noCordova
-                win.executeScript({
-                    code:
-                        "let els = document.getElementsByClassName ('noCordova');" +
-                        "for (let i = 0; i < els.length; i++) els[i].classList.add ('noDisplay');"
-                })
-            });
+    // On Capacitor or Mobile platforms, load inside the app's DOM helpBox iframe
+    if (OA.platform.capacitor || (OA.platform.mobile && !OA.platform.ios && !/\.pdf$/.test(url))) {
+        const helpBox = $('helpBox');
+        const helpTitle = $('helpTitle');
+        const helpContent = $('helpContent');
+
+        if (helpBox && helpTitle && helpContent) {
+            helpBox.classList.remove('noDisplay');
+            helpTitle.innerText = title;
+            
+            // Set iframe src to local help document
+            const frame = helpContent.querySelector('iframe') || helpContent.firstChild;
+            if (frame) {
+                frame.src = url;
+
+                // Inject CSS / hide elements once loaded inside iframe
+                frame.onload = () => {
+                    try {
+                        const frameDoc = frame.contentDocument || frame.contentWindow.document;
+                        if (frameDoc) {
+                            const els = frameDoc.getElementsByClassName('noCapacitor');
+                            for (let i = 0; i < els.length; i++) {
+                                els[i].classList.add('noDisplay');
+                            }
+                        }
+                    } catch (e) {
+                        // Cross-origin check safeguard
+                    }
+                };
+            }
         }
-    } else if (OA.platform.mobile && !OA.platform.ios && !/\.pdf$/.test(url)) {
-        // for platform.mobile, open inline except for PDF
-        $('helpBox').classList.remove('noDisplay');
-        $('helpTitle').innerText = title;
-        $('helpContent').firstChild.src = url;
+
     } else if (window.navigator.standalone) {
-        // create and click <a> for standalone
         const a = document.createElement('a');
         a.href = url;
         a.target = '_blank';
         a.click();
     } else {
-        // open new window for all others
         window.open(
             url,
             title,
@@ -1609,10 +1665,10 @@ function aboutDialog() {
             switch (compVersion(version, stableVersion)) {
                 case -1:
                     compText = OA.userText.aboutOlder;
-                    if (OA.platform.cordova && OA.platform.ios) {
+                    if (OA.platform.capacitor && OA.platform.ios) {
                         compText += OA.userText.aboutOlderIos;
                     } else
-                        if (OA.platform.cordova && OA.platform.android) {
+                        if (OA.platform.capacitor && OA.platform.android) {
                             compText += OA.userText.aboutOlderAndroid;
                         } else
                             if (!window.location.hostname.match(/^(.+\.)?openaero.net$/)) {
@@ -4035,12 +4091,63 @@ function drawImage(attributes, svg = OA.SVGRoot.getElementById('sequence')) {
 
 // Functions for setting up the software
 
+// setDevice is called first, forcing asynchronous 
+async function setDevice () {
+    if (typeof Capacitor === 'undefined' || !Capacitor.isNativePlatform()) return;
+
+    if (Capacitor.Plugins.Device) {
+        return (await Capacitor.Plugins.Device.getInfo());   
+    }
+}
+
+// initCapacitor is called to load Capacitor plugins
+function initCapacitor() {
+    if (typeof Capacitor === 'undefined' || !Capacitor.isNativePlatform()) return;
+
+    const nativePlugins = Capacitor.Plugins;
+    
+    async function getDevice () {
+      if (nativePlugins.Device) {
+        OA.plugins.device = await nativePlugins.Device.getInfo();
+        console.log(OA.plugins.device);
+      }      
+    }
+
+    // 1. App Plugin & Deep Links
+    if (nativePlugins.App) {
+        OA.plugins.app = nativePlugins.App;
+        nativePlugins.App.addListener('appUrlOpen', handleCapacitorAppUrlOpen);
+
+        nativePlugins.App.getLaunchUrl().then(launchData => {
+            if (launchData) handleCapacitorAppUrlOpen(launchData);
+        }).catch(err => console.error('[Capacitor] Launch URL error:', err));
+    }
+
+    // 2. Assign Plugins
+    OA.plugins.barcodeScanner = nativePlugins.CapacitorBarcodeScanner || null;
+    OA.plugins.filesystem = nativePlugins.Filesystem || null;
+    OA.plugins.inAppBrowser = nativePlugins.InAppBrowser || null;
+    OA.plugins.keepAwake = nativePlugins.CapacitorKeepAwake || null;
+    OA.plugins.keyboard = nativePlugins.Keyboard || null;
+    OA.plugins.printer = nativePlugins.Printer || null;
+    OA.plugins.screenOrientation = nativePlugins.ScreenOrientation || null;
+    OA.plugins.share = nativePlugins.Share || null;
+    OA.plugins.splashScreen = nativePlugins.SplashScreen || null;
+
+    OA.platform.iosOnMac = (OA.plugins.device && OA.plugins.device.platform === 'ios' && OA.plugins.device.operatingSystem === 'mac');
+
+    console.log('[Capacitor] Plugins available:', nativePlugins);
+    console.log('[Capacitor] Plugins initialized:', OA.plugins);
+}
+
 // doOnLoad is only called on initial loading of the page
 function doOnLoad() {
 
-    // Immediately remove splash screen on Cordova app
+    initCapacitor();
+
+    // Immediately remove splash screen on Capacitor app
     // as splash screen is shown by the app itself
-    if (OA.platform.cordova) $('loading').remove();
+    if (OA.platform.capacitor) $('loading').remove();
 
     // Check browser requirements by checking for Promise support.
     // OpenAero will not function without it!
@@ -4069,22 +4176,18 @@ function doOnLoad() {
     rulesWorker.postMessage({ action: 'sportingClass', class: OA.sportingClass.value });
     OA.fileName = $('fileName');
 
-    // Cordova app settings
-    if (OA.platform.cordova) {
-        
-        if (device.isiOSAppOnMac || device.isMacCatalystApp) {
+    // Capacitor app settings
+    if (OA.platform.capacitor) {
+
+        if (OA.platform.iosOnMac) {
             // Use the desktop interface when running on Mac Catalyst
             OA.platform.mobile = false;
-            /** QR Scanner disabled as it crashes app
             // Update menu for QR code scanning
             $('t_openSequenceLink').parentNode.classList.remove('divider');
             $('t_scanQRcode').parentNode.classList.remove('noDisplay');
-            */
-            // handle OpenURL for iOS
-            window.handleOpenURL = cordovaHandleOpenURL;
             // don't shrink view on Mac when entering text
-            Keyboard.shrinkView(false);
-            Keyboard.hideFormAccessoryBar(true);
+            OA.plugins.keyboard.setResizeMode({ mode: KeyboardResize.None });
+            OA.plugins.keyboard.setAccessoryBarVisible({ visible: false });
         } else {
             // Set mobile interface
             mobileInterface();
@@ -4105,59 +4208,14 @@ function doOnLoad() {
             // Update save dialog
             $('saveFileAddSequenceLink').classList.remove('noDisplay');
 
-            switch (device.platform.toLowerCase()) {
-                case 'ios':
-                    // handle OpenURL for iOS
-                    window.handleOpenURL = cordovaHandleOpenURL;
+            console.log(JSON.stringify(OA.plugins.device.platform));
 
-                    // shrink view for iOS when keyboard pops up
-                    Keyboard.shrinkView(true);
-
-                    // fix iOS Cordova contenteditable focus bug by setting
-                    // contentEditable to false on blur and restoring on focus
-                    OA.sequenceText.addEventListener('blur', () => {
-                        OA.sequenceText.setAttribute('contentEditable', false);
-                    });
-                    OA.sequenceText.addEventListener('touchstart', () => {
-                        OA.sequenceText.setAttribute('contentEditable', true);
-                    });
-                    OA.sequenceText.addEventListener('focus', () => {
-                        OA.sequenceText.setAttribute('contentEditable', true);
-                    });
-
-                    // Make sure full height is used before selecting keyboard
-                    // (seems like iOS bug)
-                    OA.sequenceText.focus();
-
-                    // add status bar inside webview
-                    $('cordovaStatusBar').classList.remove('noDisplay');
-                    $('mainOverlay').classList.add('iosCordova');
-                    setTimeout(function(){StatusBar.styleDefault();},1000);
-
-                    break;
-                case 'android':
-                    // handle Intents for Android
-                    window.plugins.intent.setNewIntentHandler(cordovaHandleIntent);
-                    window.plugins.webintent.onNewIntent(function (uri) {
-                        if (uri.match(/^https:\/\/openaero.net\/\?s=/)) {
-                            launchURL({ url: uri });
-                        }
-                    });
-                    // Handle the Intent when the app is not open
-                    // This will be executed only when the app starts or wasn't active
-                    // in the background
-                    window.plugins.intent.getCordovaIntent(cordovaHandleIntent);
-
-                    // Correctly set status bar in 2 seconds
-                    setTimeout(function(){
-                        StatusBar.overlaysWebView(false);
-                        StatusBar.backgroundColorByHexString("#512da8");
-                    }, 2000);
-                    break;
-            }
+            // add status bar inside webview
+            $('capacitorStatusBar').classList.remove('noDisplay');
+            $('mainOverlay').classList.add('Capacitor');
 
             // Remove splash screen in 1 second
-            setTimeout(function () {navigator.splashscreen.hide();}, 1000);
+            setTimeout(async () => {await OA.plugins.splashScreen.hide();}, 1000);
         }
     }
 
@@ -4223,16 +4281,16 @@ function doOnLoad() {
         launchQueue.setConsumer(async (launchParams) => {
             if (launchParams.files) {
                 loadedSequenceWindows (
-                    await launchParams.files[0].getFile(),
+                    launchParams.files[0].getFile(),
                     launchParams.files[0].name
                 )
             }
         });
     }
     
-    // Give Cordova or PWA three seconds to start, then...
+    // Give Capacitor or PWA three seconds to start, then...
     setTimeout(function () {
-        if (!OA.platform.cordova) checkForApp();
+        if (!OA.platform.capacitor) checkForApp();
     }, 3000);
 
     // build sequence svg
@@ -4369,7 +4427,7 @@ function doOnLoad() {
     }
 
     // Check if we are running from a file
-    if (!OA.platform.cordova && window.location.protocol === 'file:') {
+    if (!OA.platform.capacitor && window.location.protocol === 'file:') {
         if (presentFileError) OA.errors.push(OA.userText.runFromFile);
     }
 
@@ -4391,7 +4449,7 @@ function doOnLoad() {
 
     // Load completed, except possibly for asynchronous rule loading.
     // Fade out and remove splash screen in a second
-    if (!(OA.platform.cordova)) {
+    if (!(OA.platform.capacitor)) {
         setTimeout(function () { $('loading').style = 'opacity: 0.01;'; }, 600);
         setTimeout(function () { $('loading').remove(); }, 1000);
     }
@@ -4643,7 +4701,7 @@ function addEventListeners() {
 
     // virtual keyboard
     if (window.visualViewport &&
-        (typeof device !== 'undefined' ? !(device.isiOSAppOnMac || device.isMacCatalystApp) : true)) {
+        (OA.plugins.device ? ! OA.platform.iosOnMac : true)) {
         window.visualViewport.addEventListener("resize", () => {
             $('virtualKeyboard').style.top = window.visualViewport.height - 42 + 'px';
             $('virtualKeyboard').style.bottom = 'auto';
@@ -4847,8 +4905,8 @@ function addEventListeners() {
         // close dialog 1 second after click
         window.setTimeout(function () { saveDialog() }, 1000);
         let name = sanitizeFileName($('dlTextField').value);
-        if (OA.platform.cordova) {
-            cordovaSave(OA.saveData.blob, name + OA.saveData.ext);
+        if (OA.platform.capacitor) {
+            capacitorSave(OA.saveData.blob, name + OA.saveData.ext);
         } else saveAs(OA.saveData.blob, name + OA.saveData.ext);
     });
     $('t_cancelSave').addEventListener('mousedown', () => { saveDialog() }, false);
@@ -4900,8 +4958,6 @@ function addEventListeners() {
     $('imageHeight').addEventListener('change', saveImageSizeAdjust, false);
     $('pageSpacing').addEventListener('change', saveImageSizeAdjust, false);
     $('t_printSavePdf').addEventListener('click', printForms, false);
-    $('t_print').addEventListener('click', printForms, false);
-    $('t_savePdf').addEventListener('click', printForms, false);
     $('t_saveAsPNG').addEventListener('click', savePNG, false);
     $('t_saveAsSVG').addEventListener('click', saveSVG, false);
     $('t_cancelPrint').addEventListener('click', () => { printDialog() }, false);
@@ -4914,9 +4970,6 @@ function addEventListeners() {
         'mousedown', () => {
             removeBanner($('installApp'));
         });
-
-    // QR code scanner
-    $('t_cancelQRscan').addEventListener('mousedown', cancelQRscan, false);
 
     // Re-acquire wakeLock after visibility change, if set before
     document.addEventListener("visibilitychange", async () => {
@@ -4937,9 +4990,8 @@ function addMenuEventListeners() {
     workerCallback[id] = function () {
         addListeners($('menu'));
 
-        // Load the mobile interface when applicable, but not on Cordova, where it can be
-        // loaded after deviceReady
-        if (!OA.platform.cordova && (OA.platform.mobile || OA.platform.smallMobile)) mobileInterface();
+        // Load the mobile interface when applicable
+        if (OA.platform.mobile || OA.platform.smallMobile) mobileInterface();
 
         // when smallMobile is checked (loaded from settings), or when screen
         // width is small and no setting is found, switch to smallMobile.
@@ -4988,7 +5040,7 @@ function checkForApp() {
             chrome.management.uninstallSelf();
         });
     } else if (OA.platform.android || OA.platform.ios ||
-        (OA.platform.mobile && !(OA.platform.cordova))) {
+        (OA.platform.mobile && !(OA.platform.capacitor))) {
         // Show the banner for getting the Android, iOS or PWA app under
         // certain conditions
         const
@@ -5684,32 +5736,34 @@ function loadSettingsStorage (location = 'settings') {
             const
                 el = $(settingKey),
                 value = settings[settingKey];
-            if (el.type === 'checkbox') {
-                if (value == 1) {
-                    el.setAttribute('checked', 'checked');
-                } else {
-                    el.removeAttribute('checked');
-                }
-            } else if (el.type.match(/^select/)) {
-                // only set values that are in the list in a select
-                const nodes = el.childNodes;
-                for (const key in nodes) {
-                    // see if exact value is in there and set and break if so
-                    if (nodes[key].value == value) {
-                        el.value = value;
-                        break;
+            if (el) { // make sure that newer database (e.g. from devel) doesn't crash older version
+                if (el.type === 'checkbox') {
+                    if (value == 1) {
+                        el.setAttribute('checked', 'checked');
+                    } else {
+                        el.removeAttribute('checked');
                     }
-                    // if the value is numeric, find closest match
-                    if ((parseFloat(nodes[key].value) == nodes[key].value) &&
-                        (parseFloat(value) == value)) {
-                        if (Math.abs(nodes[key].value - value) < Math.abs(el.value - value)) {
-                            el.value = nodes[key].value;
+                } else if (el.type.match(/^select/)) {
+                    // only set values that are in the list in a select
+                    const nodes = el.childNodes;
+                    for (const key in nodes) {
+                        // see if exact value is in there and set and break if so
+                        if (nodes[key].value == value) {
+                            el.value = value;
+                            break;
+                        }
+                        // if the value is numeric, find closest match
+                        if ((parseFloat(nodes[key].value) == nodes[key].value) &&
+                            (parseFloat(value) == value)) {
+                            if (Math.abs(nodes[key].value - value) < Math.abs(el.value - value)) {
+                                el.value = nodes[key].value;
+                            }
                         }
                     }
+                } else {
+                    // only update non-empty settings
+                    if (value !== '') el.value = value;
                 }
-            } else {
-                // only update non-empty settings
-                if (value !== '') el.value = value;
             }
         }
         updateUserTexts();
@@ -7043,9 +7097,9 @@ function checkUpdateDone() {
             }
         }
 
-        // Wait a few seconds to give platform.cordova to be set if applicable
+        // Wait a few seconds to give platform.capacitor to be set if applicable
         setTimeout(function () {
-            if (OA.platform.cordova) {
+            if (OA.platform.capacitor) {
                 alertBox(
                     { userText: 'installedApp' },
                     { userText: 'installation' }
@@ -11588,7 +11642,7 @@ function buildFuFiguresTab() {
         table = $('fuFiguresTable'),
         fragment = document.createDocumentFragment(),
         // Define chooser width. Add margin to scroll for touch devices and iOS apps on Mac
-        width = OA.platform.smallMobile ? 90 : (OA.platform.touch || (OA.platform.cordova && device.isiOSAppOnMac) ? 110 : 120),
+        width = OA.platform.smallMobile ? 90 : (OA.platform.touch || OA.platform.iosOnMac ? 110 : 120),
         height = 100,
         maxColCount = OA.platform.smallMobile ? 1 : 2,
         letters = OA.figureLetters.split('');
@@ -13061,8 +13115,13 @@ function checkSequenceChanged(force) {
         selStart = saveSelection(OA.sequenceText).start;
     }
 
-    if (/(\r\n|\n|\r)/gm.test(OA.sequenceText.innerHTML)) {
-        updateSequenceText(OA.sequenceText.innerHTML.replace(/(\r\n|\n|\r)/gm, ' '));
+    // Remove newlines and "non-breaking hyphen" (from PDF string copy-paste)
+    if (/(\r\n|\n|\r|\u{2011})/ugm.test(OA.sequenceText.innerHTML)) {
+        updateSequenceText(
+            OA.sequenceText.innerHTML
+                .replace(/(\r\n|\n|\r)/gm, ' ')
+                .replace(/\u{2011}/ugm, '-')
+            );
     }
 
     // whenever the sequence is empty, clear the filename
@@ -13274,9 +13333,9 @@ async function flyingMode() {
     });
     OA.activeForm = 'F';
     // Don't sleep screen
-    if (window.plugins && window.plugins.insomnia) {
-        // Cordova
-        window.plugins.insomnia.keepAwake();
+    if (OA.plugins.keepAwake) {
+        // Capacitor
+        await OA.plugins.keepAwake.keepAwake();
     } else if ("wakeLock" in navigator) {
         // Supported browsers
         // Create a reference for the Wake Lock.
@@ -13314,9 +13373,9 @@ function exitFlyingMode() {
     // clear sequences after timeout
     setTimeout(function () { $('flyingModeSequence').innerHTML = '' }, 500);
     // Allow sleep again
-    if (window.plugins && window.plugins.insomnia) {
-        // Cordova
-        window.plugins.insomnia.allowSleepAgain();
+    if (OA.plugins.keepAwake) {
+        // Capacitor
+        OA.plugins.keepAwake.allowSleep();
     } else if (OA.wakeLock) {
         // Supported browsers
         OA.wakeLock.release().then(() => {
@@ -13647,6 +13706,8 @@ function checkSequenceMulti(body) {
 
     if (OA.multi.fileList[0].sequence) {
         activateXMLsequence(OA.multi.fileList[0].sequence, true);
+        // Add sequence link
+        pre.appendChild(document.createTextNode('Link: https://openaero.net/?s=' + encodeBase64Url(compressSequence(OA.activeSequence.xml))));
 
         const callback = function (data) {
             // clear any alert boxes. Errors are shown in the log.
@@ -14365,6 +14426,89 @@ function updateSaveFilename(fname) {
     localStorage.setItem('fileName', fname);
 }
 
+// saveWithNativePicker is called in Capacitor
+// to export file via Native Share Sheet
+async function saveWithNativePicker(data, name, ext) {
+    const capFs = OA.plugins?.filesystem || window.Capacitor?.Plugins?.Filesystem;
+    const Share = window.Capacitor?.Plugins?.Share || window.Capacitor?.Plugins?.CapacitorShare;
+
+    if (!capFs) return false;
+
+    // 1. Construct safe filename
+    let filename = name ? name : 'sequence';
+    if (ext && !filename.endsWith(ext)) {
+        filename += (ext.startsWith('.') ? ext : '.' + ext);
+    }
+    const safeFilename = filename.replace(/[/\\?%*:|"<>]/g, '-').trim();
+
+    try {
+        // 2. Format payload to strict String / Base64 format
+        let payload = '';
+        let isBase64 = false;
+
+        if (data instanceof Uint8Array || data instanceof ArrayBuffer) {
+            // Convert binary buffer to Base64
+            let binary = '';
+            const bytes = data instanceof Uint8Array ? data : new Uint8Array(data);
+            for (let i = 0; i < bytes.byteLength; i++) {
+                binary += String.fromCharCode(bytes[i]);
+            }
+            payload = btoa(binary);
+            isBase64 = true;
+        } else if (typeof data === 'string') {
+            payload = data;
+        } else if (OA.saveData?.blob) {
+            // Fallback: convert Blob to Base64
+            payload = await new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    const base64 = reader.result.split(',')[1] || '';
+                    resolve(base64);
+                };
+                reader.readAsDataURL(OA.saveData.blob);
+            });
+            isBase64 = true;
+        }
+
+        // 3. Build strictly formatted writeFile parameters for OS-PLUG-FILE
+        const writeOptions = {
+            path: safeFilename,
+            data: payload,
+            directory: 'CACHE', // Uppercase string constant expected by Capacitor Filesystem
+            recursive: true
+        };
+
+        // Only specify encoding if payload is UTF-8 text (NOT base64 binary)
+        if (!isBase64) {
+            writeOptions.encoding = 'utf8';
+        }
+
+        // 4. Perform write (Filesystem automatically overwrites existing files in CACHE)
+        const writeResult = await capFs.writeFile(writeOptions);
+
+        // 5. Present iOS Share Sheet to choose save location
+        if (Share && writeResult && (writeResult.uri || writeResult.url)) {
+            const fileUri = writeResult.uri || writeResult.url;
+
+            await Share.share({
+                title: 'Save File',
+                filename: safeFilename,
+                url: fileUri,
+                dialogTitle: 'Save File To...'
+            });
+
+            if (ext !== '.zip') updateSaveFilename(safeFilename.replace(/\.[^.]*$/, ''));
+            if (ext === '.seq') setSequenceSaved(true);
+            return true;
+        }
+
+    } catch (err) {
+        const errMsg = err?.message || err?.errorMessage || (typeof err === 'object' ? JSON.stringify(err) : String(err));
+        console.error('Error sharing/saving file:', errMsg);
+    }
+    return false;
+}
+
 // saveFile saves a file
 // The function returns true if the file was saved
 function saveFile(data, name, ext, filter, format, param={}) {
@@ -14387,13 +14531,17 @@ function saveFile(data, name, ext, filter, format, param={}) {
 
     // depending on platform we choose a method for
     // saving the file with the following preference:
-    // 1) Use Cordova file saving on Cordova
-    // 2) Use iOS save dialog on iOS
-    // 3) Use showSaveFilePicker when available (Chrome/Edge/Opera since late 2020)
+    // 1) Use Capacitor file saving on Capacitor
+    // 2) Use showSaveFilePicker when available (Chrome/Edge/Opera since late 2020)
+    // 3) Use iOS save dialog on iOS
     // 4) Use "download" attribute
 
-    if (OA.platform.cordova) { // On Cordova, use this instead of showSaveFilePicker 
-        saveDialog(' ', name, ext, param);
+    if (OA.platform.capacitor) { 
+        // Use native Share dialog to let user choose filename/location on Capacitor
+        saveWithNativePicker(data, name, ext).catch(err => {
+            // Fallback to internal saveDialog if Share is canceled or unavailable
+            saveDialog(' ', name, ext, param);
+        });
     } else if ("showSaveFilePicker" in window) {
         // Use showSaveFilePicker when available (Chrome/Edge/Opera since late 2020)
         async function getNewFileHandle(name, ext) {
@@ -14421,8 +14569,10 @@ function saveFile(data, name, ext, filter, format, param={}) {
             } else result = false;
         }
         getNewFileHandle(name, ext).catch (err => {result = false});
+
     } else if (OA.platform.ios) {
         saveDialog(OA.userText.iOSsaveFileMessage, name, ext, param);
+
     } else {
         // Fall back to legacy file picking
         saveDialog(OA.userText.downloadHTML5, name, ext, param);
@@ -14653,52 +14803,86 @@ function QRcode() {
     }, 10);
 }
 
-// scanQRcode opens the scanner for QR code sequences (Cordova only)
-function scanQRcode() {
-    // Hide all menus
-    menuInactiveAll();
+// Helper to restore UI state when QR scanning ends or is cancelled
+async function resetScannerUI() {
+    const Scanner = OA.plugins?.barcodeScanner;
 
-    // Make the webview transparent so the video preview is visible behind it.
-    QRScanner.show();
-
-    // Hide normal interface and show QR scan overlay
-    document.body.parentNode.style = "background: none transparent;";
-    document.body.style = "background: none transparent;";
-    $('mainOverlay').classList.add('movedFromView');
-
-    QRScanner.scan(function (err, sequenceLink) {
-        // Shut down QRScanner
-        QRScanner.destroy();
-
-        // Restore normal interface and hide QR scan overlay
-        document.body.parentNode.style = "";
-        document.body.style = "";
+    try {
+        if (Scanner) {
+            if (typeof Scanner.showBackground === 'function') {
+                await Scanner.showBackground();
+            }
+            if (typeof Scanner.stopScan === 'function') {
+                await Scanner.stopScan();
+            }
+        }
+    } catch (err) {
+        // Suppress expected errors when scanner is already stopped
+    } finally {
+        // Restore standard WebView background and overlay visibility
+        document.body.parentNode.style.background = "";
+        document.body.style.background = "";
         $('mainOverlay').classList.remove('movedFromView');
-
-        if (err && err.name == 'SCAN_CANCELED') {
-            // Error code 6 = scan cancelled 
-            return;
-        } else if (err) {
-            // Other error
-            alertBox(
-                sprintf(OA.userText.qrScanFail, err.name),
-                OA.userText.openSequenceLink
-            );
-        } else if (!launchURL({ url: sequenceLink })) {
-            // Show an error when launchURL gives an error
-            alertBox(
-                sprintf(OA.userText.openSequenceLinkError, sequenceLink),
-                OA.userText.openSequenceLink
-            );
-            // Should be good...
-        } else updateSaveFilename(); // clear filename
-    });
-
+    }
 }
 
-// cancelQRscan cancels QR code scanning
-function cancelQRscan() {
-    QRScanner.cancelScan();
+async function scanQRcode() {
+    // Reference the new MLKit Barcode Scanning plugin
+    const BarcodeScanner = window.Capacitor?.Plugins?.BarcodeScanner || window.Capacitor?.Plugins?.MlkitBarcodeScanning;
+
+    if (!BarcodeScanner) {
+        console.warn('MLKit Barcode Scanner plugin is unavailable.');
+        return;
+    }
+
+    menuInactiveAll();
+
+    try {
+        // 1. Request Camera Permissions
+        const { camera } = await BarcodeScanner.requestPermissions();
+        if (camera !== 'granted' && camera !== 'limited') {
+            alertBox(
+                OA.userText?.cameraPermissionDenied || 'Camera permission is required to scan QR codes.',
+                OA.userText?.openSequenceLink
+            );
+            return;
+        }
+
+        // 2. Execute Scan (Targeting QR Code format)
+        const { barcodes } = await BarcodeScanner.scan({
+            formats: ['QR_CODE']
+        });
+
+        // 3. Handle Result
+        if (barcodes && barcodes.length > 0) {
+            const sequenceLink = barcodes[0].rawValue || barcodes[0].displayValue;
+
+            if (sequenceLink) {
+                if (!launchURL({ url: sequenceLink })) {
+                    alertBox(
+                        sprintf(OA.userText.openSequenceLinkError, sequenceLink),
+                        OA.userText.openSequenceLink
+                    );
+                } else {
+                    updateSaveFilename();
+                }
+            }
+        }
+
+    } catch (err) {
+        const errMsg = err?.message || err?.errorMessage || (typeof err === 'object' ? JSON.stringify(err) : String(err));
+        
+        // Suppress user cancellation alert
+        const isUserCancel = errMsg.includes('canceled') || errMsg.includes('cancelled') || errMsg.includes('user');
+
+        if (!isUserCancel) {
+            console.error('Error in scanQRcode:', err);
+            alertBox(
+                sprintf(OA.userText.qrScanFail, errMsg),
+                OA.userText.openSequenceLink
+            );
+        }
+    }
 }
 
 // emailSequence creates an email with a complete sequence as a URL in
@@ -14774,12 +14958,10 @@ function aircraft() {
 }
 
 // printForms will print selected forms
-// Depending on the system a method will be chosen:
-// 1) Integrate print into main page and use screen and media print styles
-// 2) Check if called from "Save PDF" on Cordova app
+// Integrate print into main page and use screen and media print styles
 function printForms(evt) {
 
-    if (OA.platform.cordova) {
+    if (OA.platform.capacitor) {
         beforePrint(evt);
     } else {
         window.print();
@@ -14791,7 +14973,7 @@ function printForms(evt) {
     return true;
 }
 
-// Before printing, adjust layout. When using Cordova, printing is
+// Before printing, adjust layout. When using Capacitor, printing is
 // activated from this function also
 function beforePrint(evt) {
     buildForms(window, function (printBody) {
@@ -14819,8 +15001,8 @@ function beforePrint(evt) {
         }
         window.document.title = activeFileName();
 
-        // On Cordova, start printing now
-        if (OA.platform.cordova) {
+        // On Capacitor, start printing now
+        if (OA.platform.capacitor) {
             let printHtml =
                 '<html>' +
                 '<head>' +
@@ -14829,20 +15011,9 @@ function beforePrint(evt) {
                 $('noScreen').innerHTML +
                 '</body>' +
                 '</html>';
-            if (evt && evt.target && evt.target.id === 't_savePdf') {
-                // Font size of directly generated pdf in iOS is too large (cordova bug?).
-                // Reduce font sizes. HACK!
-                printHtml = printHtml.replace(/font-size[ ]*:[ ]*(\d+)/g, match =>
-                    `font-size:${Math.round(parseInt(match.match(/\d+/))*0.7)}`
-                );
-                pdf.fromData(printHtml, {
-                    documentSize: 'A4',
-                    type: 'share',
-                    fileName: activeFileName() + '.pdf'
-                });
-            } else {
-                cordova.plugins.printer.print(printHtml);
-            }
+            OA.plugins.printer.printHtml({
+                html: printHtml
+            });
         }
 
     });
@@ -16790,11 +16961,6 @@ function svgToPng(svg, callback) {
     // convert svg to canvas
     img.src = (self.URL || self.webkitURL || self).createObjectURL(svg);
 
-}
-
-// savePDF will save any combination of pages as a single PDF
-// NOT functional yet!
-function savePDF() {
 }
 
 // buildIllegal builds the symbol for an illegal figure
@@ -19204,9 +19370,13 @@ function parseSequence() {
     if ($('enableCaller').checked) generateAllCallerText();
 }
 
-// do initialization when all DOM content has been loaded and device is ready (cordova)
-if (OA.platform.cordova) {
-    document.addEventListener("deviceready", doOnLoad);
-} else {
-    document.addEventListener("DOMContentLoaded", doOnLoad, false);
-}
+// do initialization when all DOM content has been loaded
+document.addEventListener(
+    "DOMContentLoaded",
+    async () => {
+        OA.plugins.device = await setDevice();
+        console.log("Loading...");
+        doOnLoad();
+    },
+    false
+);

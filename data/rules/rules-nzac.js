@@ -30,10 +30,13 @@
 - Updated Sports Free maximum K to 129
 2025.1.9
 - Updated Free Known reference figures for 2025
+2026.1.2
+- Updated Free Known reference figures for 2026
+- Updated Sports Free maximum K to 127
 */
 
 rules.push (
-"year=2025",
+"year=2026",
 
 //###############################################################################
 //##### NZAC BASE ###############################################################
@@ -80,7 +83,7 @@ rules.push (
 "fam7-min=1",
 "fam8-min=1",
 "spin-min=1",
-"k-max=129",
+"k-max=127",
 "allow=^[1-9]", //all figures are allowed for the Free program
 "group-frollsport=^9\\.[1234]",
 "frollsport-name=family 9.1-9.4 (roll)",
@@ -105,8 +108,7 @@ rules.push (
 "[NZAC Unlimited Free Known]",
 "posnl=40",//assume no line judges
 "poslj=20",
-'reference="@A" -.\'pn(3f,3.\'). "@B" 4% /``+```5s,24..\';>iBpb(````````,3if\').\',8\',4 "@C" 48dh(4)5if\'~ "@D" /~3jio15-`` "@E" ````+\'\'1ac(\'22`),3\'\',7+``````',
-
+'reference="@A" 5;3ifdh()22.~~ "@B" 2j2~ "@C" `+5ita``3if "@D" -````3,5.ig`6if,1~ "@E" ~.3,8pn(,5f,8.).-',
 "more=NZAC/IAC Unlimited Free Known",
 
 //######################################################################################
@@ -661,7 +663,7 @@ rules.push (
 
 "figure-letters=ABCDE",
 
-'reference="@A" 1`dh(`)\'f\' "@B" ``+``````2f`rc48-````````` "@C" ``,8\'pb.3+`` "@D" ~-6m6f,44+` "@E" 2j2',
+'reference="@A" 24rp6- "@B" -2dh(,4)3f "@C" ,1m3,34- "@D" /sibpb(3)....4 "@E" ,2kf',
 
 // what info should be filled out
 "infocheck=pilot;actype;acreg;positioning",
@@ -1025,7 +1027,7 @@ rules.push (
 
 "figure-letters=ABCDE",
 
-'reference="@A" mf- "@B" -`h24\' "@C" `+1j1 "@D" 2f`rc+` "@E" `+\'2\'rp22',
+'reference="@A" 22dh. "@B" rp2- "@C" ,24a44 "@D" 2f.t. "@E" pb8.^',
 
 // what info should be filled out
 "infocheck=pilot;actype;acreg;positioning",

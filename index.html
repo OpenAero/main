@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <!--
   index.html
   This file is part of OpenAero.
@@ -118,8 +118,6 @@
     </script>
     <!-- configuration, must be first OpenAero js -->
     <script src="js/config.js"></script>
-    <!-- cordova.js is only loaded when NOT running Cordova and sets platform.cordova = false -->
-    <script src="cordova.js"></script>
     <!-- interface languages -->
     <script src="components/languages/en.js"></script>
     <script src="components/languages/de.js"></script>
@@ -137,6 +135,7 @@
     <script src="data/rules/rules-aac.js"></script>
     <script src="data/rules/rules-aeci.js"></script>
     <script src="data/rules/rules-baea.js"></script>
+    <script src="data/rules/rules-dkuv.js"></script>
     <script src="data/rules/rules-france.js"></script>
     <script src="data/rules/rules-ga.js"></script>
     <script src="data/rules/rules-glider-iac.js"></script>
@@ -163,14 +162,9 @@
     <script src="js/main.js"></script>
 </head>
 <body>
-    <div id="cordovaStatusBar" class="noDisplay"></div>
+    <div id="capacitorStatusBar" class="noDisplay"></div>
     <div id="qrCodeForPrint" class="noPrint hidden"></div>
-    <div id="scanQRcode" class="noPrint">
-        <img src="data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgODggODgiIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczpzdmc9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48Y2xpcFBhdGggaWQ9ImNsaXBQYXRoIj48cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIC8+PHJlY3QgeD0iNzIiIHk9IjAiIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgLz48cmVjdCB4PSIwIiB5PSI3MiIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiAvPjxyZWN0IHg9IjcyIiB5PSI3MiIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiAvPjwvY2xpcFBhdGg+PC9kZWZzPjxwYXRoIHN0eWxlPSJmaWxsOm5vbmU7c3Ryb2tlOiNmYjhjMDA7c3Ryb2tlLXdpZHRoOjIiIGQ9Im0gMTIsNCBoIDY0IGMgNCwwIDgsNCA4LDggdiA2NCBjIDAsNCAtNCw4IC04LDggaCAtNjQgYyAtNCwwIC04LC00IC04LC04IHYgLTY0IGMgMCwtNCA0LC04IDgsLTggeiIgY2xpcC1wYXRoPSJ1cmwoI2NsaXBQYXRoKSIgLz48L3N2Zz4=" id="scanQRcorners">
-        <span id="t_cancelQRscan" class="textButton userText"></span>
-    </div>
     <div id="mainOverlay" class="noPrint fullscreen">
-        <!-- <div id="qrcode" class="noDisplay"></div> -->
         <!-- Flying mode overlay-->
         <div id="flyingMode" class="flyingModeHidden">
             <div id="flyingModeTop">

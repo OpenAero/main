@@ -1,6 +1,10 @@
 2026.1.2
 * Added caller texts for automated sequence calling (Issue #286)
 * Updated BAeA naming for 2026 Sports Unknown, archived 2025 ruleset
+* Fixed issue where newer database (e.g. from devel) could crash older version
+* Added NZAC rules for 2026/2027
+* Added DKuV rules and logo
+* Converted app from (deprecated) Cordova to Capacitor (many changes)
 
 2026.1.1
 * Added CIVA Free Known figures for 2026

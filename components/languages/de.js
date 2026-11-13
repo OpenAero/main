@@ -122,7 +122,6 @@ lang.de = {
   'boxOuts' : 'außerhalb Box',
   'cancel' : 'abbrechen',
       'cancelPrint': 'Abbrechen',
-  'cancelQRscan': 'Abbrechen',
   'cancelSave' : 'Abbrechen',
   'category' : 'Kategorie',
   'changedFigureK' : 'Standard Aresti K von Figur %s geändert ' +

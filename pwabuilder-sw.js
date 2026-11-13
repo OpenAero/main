@@ -3,7 +3,6 @@
 const CACHE = "pwabuilder-precache-OpenAero";
 const precacheFiles = [
 'changelog.txt',
-'cordova.js',
 'assets/css/desktop.css',
 'assets/css/desktop-largeMobile.css',
 'assets/css/general.css',
@@ -79,6 +78,7 @@ const precacheFiles = [
 'data/rules/rules-ga.js',
 'data/rules/rules-sac.js',
 'data/rules/rules-baea.js',
+'data/rules/rules-dkuv.js',
 'data/rules/rules-france.js',
 'data/rules/rules-aac.js',
 'data/rules/rules-iac.js',

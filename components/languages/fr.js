@@ -123,7 +123,6 @@ lang.fr = {
 'browserDetect' : 'Votre navigateur est identifié en tant que: %s.<br>',
 'cancel' : 'Annuler',
     'cancelPrint': 'Annuler',
-'cancelQRscan': 'Annuler',
 'cancelSave' : 'Annuler',
 'category' : 'Catégorie',
 'changedFigureK' : 'Le K Aresti normal de la figure %s a été changé ' +
